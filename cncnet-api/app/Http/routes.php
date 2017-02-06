@@ -21,8 +21,8 @@ Route::controllers
 Route::group(['prefix' => 'api/v1/'], function () 
 {
     // Auth Endpoints
-    Route::get('/auth/{player?}', 'ApiAuthController@getAuth');
-    Route::put('/auth/{player}', 'ApiAuthController@putAuth');
+    Route::get('/auth/', 'ApiAuthController@getAuth');
+    Route::get('/auth/{player}', 'ApiAuthController@putAuth');
 
     // General Endpoints
     Route::get('/ping', 'ApiLadderController@pingLadder');
