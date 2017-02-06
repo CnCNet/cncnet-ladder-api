@@ -4,12 +4,13 @@ class ApiAuthController extends Controller
 {
     public function __construct()
     {
-
+        $this->middleware('auth.basic');
     }
     
     public function getAuth()
     {
-        return "TODO - Get Auth";
+        $user = \Auth::user();
+        return $user->usernames;
     }
 
     public function putAuth()

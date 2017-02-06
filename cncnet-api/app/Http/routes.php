@@ -11,6 +11,13 @@
 |
 */
 
+Route::get('/', function(){ return "Api"; });
+Route::controllers
+([
+	'auth' => 'Auth\AuthController',
+	'password' => 'Auth\PasswordController',
+]);
+
 Route::group(['prefix' => 'api/v1/'], function () 
 {
     // Auth Endpoints

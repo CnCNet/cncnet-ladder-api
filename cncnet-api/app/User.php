@@ -15,4 +15,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	protected $fillable = ['name', 'email', 'password'];
 
 	protected $hidden = ['password', 'remember_token'];
+
+    public function usernames()
+	{
+		return $this->hasMany('App\Player');
+	}
 }
