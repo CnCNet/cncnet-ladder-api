@@ -2,11 +2,10 @@
 
 class LadderService 
 {
+    public function __construct()
+    {
 
-	public function __construct()
-	{
-
-	}
+    }
 
     public function getLadderByGame($game)
     {
@@ -15,8 +14,8 @@ class LadderService
             ->first();
     }
     
-	public function getLadderByGameAbbreviation($game, $limit = 25)
-	{
+    public function getLadderByGameAbbreviation($game, $limit = 25)
+    {
         $ladder = $this->getLadderByGame($game);
 
         if($ladder == null)
@@ -28,7 +27,7 @@ class LadderService
             ->get();
 
         return $players;
-	}
+    }
 
     public function getLadderGameById($game, $gameId)
     {

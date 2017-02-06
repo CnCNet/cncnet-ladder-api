@@ -19,5 +19,10 @@ class Player extends Model {
 	protected $fillable = ['username', 'win_count', 'loss_count', 'games_count', 
     'dc_count', 'oos_count', 'points', 'countries'];
 
+    /**
+	* The attributes excluded from the model's JSON form.
+	*
+	* @var array
+	*/
     protected $hidden = ['user_id', 'created_at', 'updated_at', 'ladder_id'];
 }

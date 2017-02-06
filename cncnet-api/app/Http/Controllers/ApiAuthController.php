@@ -1,19 +1,19 @@
 <?php namespace App\Http\Controllers;
 
-class ApiAuthController extends Controller {
+class ApiAuthController extends Controller 
+{
+    public function __construct()
+    {
 
-	public function __construct()
-	{
-
-	}
+    }
     
-	public function getAuth()
-	{
+    public function getAuth()
+    {
         return "TODO - Get Auth";
-	}
+    }
 
-	public function putAuth()
-	{
+    public function putAuth()
+    {
         return "TODO - Put Auth";
-	}
+    }
 }

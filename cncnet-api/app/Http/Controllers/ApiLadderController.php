@@ -8,10 +8,10 @@ class ApiLadderController extends Controller
 {
     private $ladderService;
 
-	public function __construct()
-	{
+    public function __construct()
+    {
         $this->ladderService = new LadderService();
-	}
+    }
     
     public function pingLadder(Request $request)
     {
