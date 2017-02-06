@@ -2,27 +2,12 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Player extends Model {
-
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
+class Player extends Model 
+{
 	protected $table = 'players';
 
-	/**
-	 * The attributes that are mass assignable.
-	 *
-	 * @var array
-	 */
 	protected $fillable = ['username', 'win_count', 'loss_count', 'games_count', 
     'dc_count', 'oos_count', 'points', 'countries'];
 
-    /**
-	* The attributes excluded from the model's JSON form.
-	*
-	* @var array
-	*/
     protected $hidden = ['user_id', 'created_at', 'updated_at', 'ladder_id'];
 }

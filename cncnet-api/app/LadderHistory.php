@@ -2,8 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class LadderHistory extends Model {
-
-	//
-
+class LadderHistory extends Model
+{
+    
 }
