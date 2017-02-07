@@ -18,21 +18,20 @@ Route::controllers
 	'password' => 'Auth\PasswordController',
 ]);
 
+Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], function()
+{
+    Route::get('/token', 'ApiAuthController@getAuth');
+});
+
 Route::group(['prefix' => 'api/v1/'], function () 
 {
-    // Auth Endpoints
-    Route::get('/auth/', 'ApiAuthController@getAuth');
-    Route::get('/auth/{player}', 'ApiAuthController@putAuth');
-
     // General Endpoints
     Route::get('/ping', 'ApiLadderController@pingLadder');
+
+    // Player Endpoints
+    Route::put('/player/{username}', 'ApiPlayerController@createPlayer');
     
     // Ladder Endpoints
-    // https://github.com/sean3z/cncnet-api
-    // :game can be any of the following ^(td|d2k?|ra2?|ts|dta|fs|yr|am)$
-    // :gameId can only be numeric (\d+)
-    // :player and :clan can be alpha-numeric with some special characters (\w\d\[\])
-
     Route::post('/ladder/{game}', 'ApiLadderController@postLadder');
     Route::get('/ladder/{game}', 'ApiLadderController@getLadder');
     Route::get('/ladder/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');

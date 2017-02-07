@@ -1,40 +1,25 @@
 <?php 
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
-use App\Http\Services\AuthService;
+use JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class ApiAuthController extends Controller 
 {
-    private $authService;
-
     public function __construct()
     {
-        $this->authService = new AuthService();
+
     }
     
-    public function getAuth(Request $request, $player = null)
+    public function getAuth(Request $request)
     {
-        $this->middleware('auth.basic');
         $user = \Auth::user();
-        return $user->usernames;
+        $token = JWTAuth::fromUser($user);
+        return response()->json(compact('token'));
     }
 
     public function putAuth(Request $request, $player = null)
     {
-        $user = $this->authService->addUser($request, \Auth::user());
 
-        if($user == null)
-            return "Error finding or creating user";
-
-        $player = $this->authService->addPlayerToUser($player, $user);
-        
-        if($player == null)
-        {
-            return response()->json([], 403);
-        }
-        else
-        {
-            return response()->json($player, 200);
-        }
     }
 }
