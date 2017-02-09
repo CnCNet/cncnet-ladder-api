@@ -25,6 +25,7 @@ Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], fu
 
 Route::group(['prefix' => 'api/v1/user/'], function()
 {
+    Route::get('/account', 'ApiUserController@getAccount');
     Route::post('/create', 'ApiUserController@createUser');
 });
 
@@ -34,7 +35,7 @@ Route::group(['prefix' => 'api/v1/'], function ()
     Route::get('/ping', 'ApiLadderController@pingLadder');
 
     // Player Endpoints
-    Route::put('/player/{username}', 'ApiPlayerController@createPlayer');
+    Route::post('/player/{username}', 'ApiPlayerController@createPlayer');
     
     // Ladder Endpoints
     Route::post('/ladder/{game}', 'ApiLadderController@postLadder');

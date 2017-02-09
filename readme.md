@@ -22,3 +22,6 @@ Successful authentication of this endpoint will return an auth token for future 
 ###### User Creation
 * POST `/user/create` using HTTP authentication
 Request requires email, password. Returns token.
+
+###### Player Creation
+* POST `/player/:username`

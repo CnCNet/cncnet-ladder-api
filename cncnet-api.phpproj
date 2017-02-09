@@ -25,12 +25,14 @@
     <Compile Include="cncnet-api\app\Game.php" />
     <Compile Include="cncnet-api\app\Handlers\Commands\.gitkeep" />
     <Compile Include="cncnet-api\app\Handlers\Events\.gitkeep" />
+    <Compile Include="cncnet-api\app\Http\Controllers\ApiUserController.php" />
+    <Compile Include="cncnet-api\app\Http\Controllers\ApiPlayerController.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\ApiLadderController.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\Auth\AuthController.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\Auth\PasswordController.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\Controller.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\ApiAuthController.php" />
-    <Compile Include="cncnet-api\app\Http\Middleware\ApiStatelessFilter.php" />
+    <Compile Include="cncnet-api\app\Http\Middleware\AuthenticateOnceWithBasicAuth.php" />
     <Compile Include="cncnet-api\app\Http\Middleware\Authenticate.php" />
     <Compile Include="cncnet-api\app\Http\Middleware\RedirectIfAuthenticated.php" />
     <Compile Include="cncnet-api\app\Http\Middleware\VerifyCsrfToken.php" />
@@ -38,6 +40,7 @@
     <Compile Include="cncnet-api\app\Http\Kernel.php" />
     <Compile Include="cncnet-api\app\Http\routes.php" />
     <Compile Include="cncnet-api\app\Http\Services\AuthService.php" />
+    <Compile Include="cncnet-api\app\Http\Services\PlayerService.php" />
     <Compile Include="cncnet-api\app\Http\Services\LadderService.php" />
     <Compile Include="cncnet-api\app\Ladder.php" />
     <Compile Include="cncnet-api\app\LadderGame.php" />
@@ -59,6 +62,7 @@
     <Compile Include="cncnet-api\config\compile.php" />
     <Compile Include="cncnet-api\config\database.php" />
     <Compile Include="cncnet-api\config\filesystems.php" />
+    <Compile Include="cncnet-api\config\jwt.php" />
     <Compile Include="cncnet-api\config\mail.php" />
     <Compile Include="cncnet-api\config\queue.php" />
     <Compile Include="cncnet-api\config\services.php" />
@@ -4395,7 +4399,6 @@
     <Compile Include="cncnet-api\vendor\vlucas\phpdotenv\phpunit.xml" />
     <Compile Include="cncnet-api\vendor\vlucas\phpdotenv\README.md" />
     <Compile Include="cncnet-api\vendor\autoload.php" />
-    <Compile Include="cncnet-api\vendor\compiled.php" />
     <Compile Include="cncnet-api\vendor\services.json" />
     <Compile Include="cncnet-api\.env" />
     <Compile Include="cncnet-api\.env.example" />
@@ -4408,7 +4411,7 @@
     <Compile Include="cncnet-api\package.json" />
     <Compile Include="cncnet-api\phpspec.yml" />
     <Compile Include="cncnet-api\phpunit.xml" />
-    <Compile Include="cncnet-api\readme.md" />
+    <Compile Include="readme.md" />
     <Compile Include="cncnet-api\server.php" />
   </ItemGroup>
   <ItemGroup>

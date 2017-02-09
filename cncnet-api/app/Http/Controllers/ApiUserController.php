@@ -16,6 +16,13 @@ class ApiUserController extends Controller
         $this->authService = new AuthService();
     }
 
+    public function getAccount(Request $request)
+    {
+        $user = $this->authService->getUser();
+
+        return $user->usernames;
+    }
+
     public function createUser(Request $request)
     {
         $token = JWTAuth::getToken();
