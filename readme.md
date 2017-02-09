@@ -19,6 +19,10 @@ Prefix requests with `api/v1/`
 * GET `/auth/token` HTTP authentication using Account credentials
 Successful authentication of this endpoint will return an auth token for future requests.
 
+###### User Account
+* GET `/user/account`
+Returns a list of player usernames linked to this account.
+
 ###### User Creation
 * POST `/user/create` using HTTP authentication
 Request requires email, password. Returns token.
