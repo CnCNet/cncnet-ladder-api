@@ -23,9 +23,9 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    public function postLadder()
+    public function postLadder(Request $request)
     {
-        return "TODO - Post Ladder";
+        // todo
     }
 
     public function getLadderGame(Request $request, $game = null, $gameId = null)

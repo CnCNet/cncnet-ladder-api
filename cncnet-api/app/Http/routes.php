@@ -1,22 +1,16 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
+Route::get('/', function () {
+    return redirect('ladder/');
+});
 
-Route::group(['prefix' => 'ladder/{game}'], function()
+Route::group(['prefix' => 'ladder/'], function()
 {
-    Route::get('/', 'LadderController@getLadderIndex');
-    Route::get('/player/', 'LadderController@getLadderIndex');
-    Route::get('/player/{player}', 'LadderController@getLadderPlayer');
-    Route::get('/games/{gameId}', 'LadderController@getLadderGame');
+    Route::get('/', 'LadderController@getLadders');
+    Route::get('/{game}', 'LadderController@getLadderIndex');
+    Route::get('/{game}/player/', 'LadderController@getLadderIndex');
+    Route::get('/{game}/player/{player}', 'LadderController@getLadderPlayer');
+    Route::get('/{game}/games/{gameId}', 'LadderController@getLadderGame');
 });
 
 Route::controllers

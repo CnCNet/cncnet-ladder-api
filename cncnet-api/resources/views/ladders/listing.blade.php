@@ -2,8 +2,16 @@
 @section('title', 'Ladder')
 
 @section('cover')
-/images/feature/feature-yr.jpg
+/images/feature/feature-{{ $ladder->abbreviation }}.jpg
 @endsection
+
+@if($ladder->abbreviation == "ra")
+    <?php $dir = "red-alert"; ?>
+@elseif($ladder->abbreviation == "ts")
+    <?php $dir = "tiberian-sun"; ?>
+@elseif($ladder->abbreviation == "yr")
+    <?php $dir = "yuris-revenge"; ?>
+@endif
 
 @section('feature')
 <div class="feature-background sub-feature-background">
@@ -11,23 +19,11 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2">
                 <h1>
-                    <img src="/images/games/yuris-revenge/logo.png" alt="Yuri's Revenge logo" class="logo" />
+                    <img src="/images/games/{{ $dir }}/logo.png" class="logo" />
                 </h1>
-                <p>
-                   Competitive Ladders for Yuri's Revenge
+                <p class="text-uppercase">
+                   Play. Compete. <strong>Conquer.</strong>
                 </p>
-                <ul class="list-inline">
-                    <li>
-                        <p>
-                            <a class="btn btn-primary btn-lg" href="#download">Primary</a>
-                        </p>
-                    </li>
-                    <li>
-                        <p>
-                            <a class="btn btn-secondary btn-lg" href="what-is-cncnet">Secondary</a>
-                        </p>
-                    </li>
-                </ul>
             </div>
         </div>
     </div>
@@ -36,29 +32,51 @@
 
 
 @section('content')
-<div class="container">
-    <div class="row">
+<section class="cncnet-features general-texture game-detail">
+    <div class="container">
 
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                <tr>
-                    <th class="rank">Rank <i class="fa fa-trophy fa-fw"></i></th>
-                    <th>Profile <i class="fa fa-user fa-fw"></i></th>
-                    <th class="hidden-xs">Points <i class="fa fa-bolt fa-fw"></i></th>
-                    <th>Won <i class="fa fa-level-up fa-fw"></i></th>
-                    <th>Lost <i class="fa fa-level-down fa-fw"></i></th>
-                    <th>Winning % </th>
-                </tr>
-                </thead>
-                <tbody>
+        <div class="feature">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-center" style="padding-bottom: 40px;">
+                        <h1>{{ $ladder->name }}</h1>
+                        <p class="lead">Find the latest competitive games</p>
+                    </div>
 
-                </tbody>
-            </table>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th class="rank">Rank <i class="fa fa-trophy fa-fw"></i></th>
+                                <th>Profile <i class="fa fa-user fa-fw"></i></th>
+                                <th class="hidden-xs">Points <i class="fa fa-bolt fa-fw"></i></th>
+                                <th>Won <i class="fa fa-level-up fa-fw"></i></th>
+                                <th>Lost <i class="fa fa-level-down fa-fw"></i></th>
+                                <th>Winning % </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach($players as $k => $player)
+                            <tr>
+                                <td>#{{ $k + 1 }}</td>
+                                <td>
+                                    <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}">{{ $player->username }}</a>
+                                </td>
+                                <td>{{ $player->points }}</td>
+                                <td>{{ $player->win_count }}</td>
+                                <td>{{ $player->loss_count }}</td>
+                                <td></td>
+                            </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
+    </div>
+</section>
 
 @endsection
 

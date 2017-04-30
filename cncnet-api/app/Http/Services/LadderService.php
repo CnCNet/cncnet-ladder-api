@@ -7,6 +7,11 @@ class LadderService
 
     }
     
+    public function getLadders()
+    {
+        return \App\Ladder::where("ladder_history_id", "=", null)->get();
+    }
+
     public function getLadderByGame($game)
     {
         return \App\Ladder::where("abbreviation", "=", $game)
