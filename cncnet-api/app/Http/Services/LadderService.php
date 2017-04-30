@@ -6,12 +6,19 @@ class LadderService
     {
 
     }
-
+    
     public function getLadderByGame($game)
     {
         return \App\Ladder::where("abbreviation", "=", $game)
             ->where("ladder_history_id", "=", null)
             ->first();
+    }
+    
+    public function getLaddersByGame($game)
+    {
+        return \App\Ladder::where("abbreviation", "=", $game)
+            ->where("ladder_history_id", "=", null)
+            ->get();
     }
     
     public function getLadderByGameAbbreviation($game, $limit = 25)
@@ -54,5 +61,17 @@ class LadderService
 
         return \App\Player::where("ladder_id", "=", $ladder->id)
             ->where("username", "=", $player)->first();
+    }
+
+    public function getLadderPlayers($game)
+    {
+        $ladder = $this->getLadderByGame($game);
+
+        if($ladder == null)
+            return "No ladder found";
+
+        return \App\Player::where("ladder_id", "=", $ladder->id)
+            ->orderBy("points", "DESC")
+            ->get();
     }
 }

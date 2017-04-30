@@ -11,7 +11,14 @@
 |
 */
 
-Route::get('/', function(){ return "Api"; });
+Route::group(['prefix' => 'ladder/{game}'], function()
+{
+    Route::get('/', 'LadderController@getLadderIndex');
+    Route::get('/player/', 'LadderController@getLadderIndex');
+    Route::get('/player/{player}', 'LadderController@getLadderPlayer');
+    Route::get('/games/{gameId}', 'LadderController@getLadderGame');
+});
+
 Route::controllers
 ([
 	'auth' => 'Auth\AuthController',
@@ -23,14 +30,11 @@ Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], fu
     Route::get('/token', 'ApiAuthController@getAuth');
 });
 
-Route::group(['prefix' => 'api/v1/user/'], function()
-{
-    Route::get('/account', 'ApiUserController@getAccount');
-    Route::post('/create', 'ApiUserController@createUser');
-});
-
 Route::group(['prefix' => 'api/v1/'], function () 
 {
+    Route::get('/user/account', 'ApiUserController@getAccount');
+    Route::post('/user/create', 'ApiUserController@createUser');
+
     // General Endpoints
     Route::get('/ping', 'ApiLadderController@pingLadder');
 
