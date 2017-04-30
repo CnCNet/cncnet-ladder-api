@@ -6,7 +6,7 @@ class Game extends Model
 {
     protected $table = 'games';
 
-    protected $fillable = ['wol_gid', 'duration', 'afps', 'crates', 'oosy', 'bases', 'units', 'tech'];
+    protected $fillable = ['wol_game_id', 'duration', 'afps', 'crates', 'oosy', 'bases', 'units', 'tech'];
 
     protected $hidden = ['created_at', 'updated_at'];
 

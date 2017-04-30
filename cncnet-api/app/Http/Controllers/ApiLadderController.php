@@ -3,14 +3,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
+use \App\Http\Services\GameService;
 
 class ApiLadderController extends Controller 
 {
     private $ladderService;
+    private $gameService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
+        $this->gameService = new GameService();
     }
     
     public function pingLadder(Request $request)
@@ -23,97 +26,41 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    // Credit: https://github.com/dkeetonx
-    public function postLadder(Request $request)
+    public function postLadder(Request $request, $game = null, $playerId = null)
     {
-        // TODO - handle request and saving
+        $file = "stats_ts.dmp"; // TODO handle incoming file
+        $result = $this->gameService->processStatsDmp($file);
 
-        $file = "stats_ts.dmp";
-        $fh = fopen($file, "r");
+        if(count($result) == 0 || $result == null)
+            return "Error processing stats file";
 
-        $data = fread($fh, 4);
+        // Check a ladder exists for this game
+        $ladder = $this->ladderService->getLadderByGame($game);
+        if ($ladder == null)
+            return "Ladder does not exist";
+        
+        // Unique Identifier - TODO
+        $uniqueId = 1;
 
-        if (!$data) {
-           return;
-        }
+        // Check we've got a record of the game already
+        $ladderGame = \App\Game::where("wol_game_id", "=", $uniqueId)->first();
 
-        $offset = 4;
-        $stats_ver = unpack("V", $data)[1];
-
-        print "Stats version = $stats_ver\n";
-
-        $pad = 0;
-
-        while (!feof($fh)) 
+        if($ladderGame == null)
         {
-            $data = fread($fh, 8);
-            if (!$data) 
-            {
-                // exit loop here
-                print "\$data filed";
-                break;
-            }
-
-            $ttl = unpack("A4tag/ntype/nlength", $data);
-            $pad = ($ttl["length"] % 4) ? 4 - ($ttl["length"] %  4) : 0;
-
-            print "$ttl[tag] $ttl[type] $ttl[length]";
-
-            if ($ttl["length"] > 0) 
-            {
-                $data = fread($fh, $ttl["length"]);
-
-                if ($pad > 0 ) 
-                {
-                    fread($fh, $pad);
-                }
-
-                switch ($ttl["type"]) 
-                {
-                    case 20:
-                        $v = unpack("C$ttl[length]", $data);
-                        print "\t";
-                        print "<<raw data HERE>>";
-                        break;
-                    case 1:
-                        $v = unpack("C", $data);
-                        print "\t$v[1]";
-                        break;
-                    case 2:
-                        $v = unpack("C", $data);
-                        if ($v[1] == 0) {
-                            print "\tFalse";
-                        }
-                        else {
-                            print "\tTrue";
-                        }
-                        break;
-                    case 3:
-                        $v = unpack("n", $data);
-                        print "\t$v[1]";
-                        break;
-                    case 4:
-                        $v = unpack("n", $data);
-                        print "\t$v[1]";
-                        break;
-                    case 5:
-                        $v = unpack("N", $data);
-                        print "\t$v[1]";
-                        break;
-                    case 6:
-                        $v = unpack("N", $data);
-                        print "\t$v[1]";
-                        break;
-                    case 7:
-                        $ttl["length"] -= 1;
-                        $v = unpack("a$ttl[length]", $data);
-                        print "\t$v[1]";
-                        break;
-                }
-            }
-
-            print "\n";
+            // Game does not exist so create it
+            $ladderGame = new \App\Game();
+            $ladderGame->ladder_id = $ladder->id;
+            $ladderGame->wol_game_id = $uniqueId;
+            $ladderGame->save();
         }
+
+        // Keep a record of the raw stats
+        $rawStats = $this->gameService->saveRawStats($result, $ladderGame->id, $ladder->id);
+
+        // Now save the actual stats
+        $gameStats = $this->gameService->saveGameStats($result,  $ladderGame->id, $playerId);
+
+        return $gameStats;
     }
 
     public function getLadderGame(Request $request, $game = null, $gameId = null)
