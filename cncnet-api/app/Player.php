@@ -7,7 +7,17 @@ class Player extends Model
 	protected $table = 'players';
 
 	protected $fillable = ['username', 'win_count', 'loss_count', 'games_count', 
-    'dc_count', 'oos_count', 'points', 'countries'];
+    'dc_count', 'oos_count', 'points', 'countries', 'ladder_id'];
 
-    protected $hidden = ['user_id', 'created_at', 'updated_at', 'ladder_id'];
+    protected $hidden = ['user_id', 'created_at', 'updated_at'];
+
+    public function stats()
+	{
+        return $this->hasMany('App\GameStats');
+	}
+        
+    public function games()
+    {
+        return $this->hasMany("App\PlayerGame");
+    }
 }

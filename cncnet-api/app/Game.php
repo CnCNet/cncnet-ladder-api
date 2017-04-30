@@ -9,4 +9,14 @@ class Game extends Model
     protected $fillable = ['wol_gid', 'duration', 'afps', 'crates', 'oosy', 'bases', 'units', 'tech'];
 
     protected $hidden = ['created_at', 'updated_at'];
+
+    public function stats()
+	{
+        return $this->hasMany('App\GameStats');
+	}
+
+    public function players()
+	{
+        return $this->hasMany('App\Player');
+	}
 }

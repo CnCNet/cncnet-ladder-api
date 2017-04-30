@@ -243,3 +243,7 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+# Stuff we don't need on repo for now
+*/public/
+*/resources/lang/

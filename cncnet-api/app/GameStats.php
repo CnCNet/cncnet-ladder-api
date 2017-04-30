@@ -13,4 +13,9 @@ class GameStats extends Model
         'plk', 'blk', 'vsk', 'blc', 'spc', 'ded', 'spa', 
         'rsg', 'aly', 'tid', 'ipa'
     ];
+
+    public function player()
+	{
+        return $this->belongsTo('App\Player');
+	}
 }
