@@ -4,16 +4,19 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\GameService;
+use \App\Http\Services\PlayerService;
 
 class ApiLadderController extends Controller 
 {
     private $ladderService;
     private $gameService;
+    private $playerService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
         $this->gameService = new GameService();
+        $this->playerService = new PlayerService();
     }
     
     public function pingLadder(Request $request)
@@ -26,28 +29,33 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    public function postLadder(Request $request, $game = null, $playerId = null)
+    // TODO - Middleware to check auth token and that playerId is valid to their account
+    public function postLadder(Request $request, $game = null)
     {
-        $file = "stats_ts.dmp"; // TODO handle incoming file
+        $file = "stats.dmp"; // TODO handle incoming file
         $result = $this->gameService->processStatsDmp($file);
 
-        if(count($result) == 0 || $result == null)
-            return "Error processing stats file";
+        if (count($result) == 0 || $result == null)
+            return response()->json(['No data'], 400);
+
+        // Player Check
+        $player = $this->playerService->findPlayerById($request->playerId);
+        if ($player == null)
+            return response()->json(['Player does not exist'], 400);
 
         // Check a ladder exists for this game
         $ladder = $this->ladderService->getLadderByGame($game);
         if ($ladder == null)
-            return "Ladder does not exist";
+            return response()->json(['Ladder does not exist'], 400);
         
-        // Unique Identifier - TODO
-        $uniqueId = 1;
+        // Unique Identifier - IDNO
+        $uniqueId = $this->gameService->getUniqueGameIdentifier($result);
 
         // Check we've got a record of the game already
         $ladderGame = \App\Game::where("wol_game_id", "=", $uniqueId)->first();
 
-        if($ladderGame == null)
+        if ($ladderGame == null)
         {
-            // Game does not exist so create it
             $ladderGame = new \App\Game();
             $ladderGame->ladder_id = $ladder->id;
             $ladderGame->wol_game_id = $uniqueId;
@@ -56,11 +64,15 @@ class ApiLadderController extends Controller
 
         // Keep a record of the raw stats
         $rawStats = $this->gameService->saveRawStats($result, $ladderGame->id, $ladder->id);
+        if($rawStats == null)
+            return response()->json(['Raw stats were not saved'], 400);
 
         // Now save the actual stats
-        $gameStats = $this->gameService->saveGameStats($result,  $ladderGame->id, $playerId);
+        $gameStats = $this->gameService->saveGameStats($result,  $ladderGame->id, $player);
+        if($gameStats == null)
+            return response()->json(['Game stats were not saved'], 400);
 
-        return $gameStats;
+        return response()->json(['success'], 200);
     }
 
     public function getLadderGame(Request $request, $game = null, $gameId = null)

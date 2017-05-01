@@ -24,4 +24,14 @@ class PlayerService
             return $player;
         }
     }
+
+    public function findPlayerById($id)
+    {
+        $player = \App\Player::find($id);
+
+        if($player != null)
+            return $player->first();
+        else
+            return null;
+    }
 }

@@ -1,5 +1,10 @@
 <?php namespace App\Http\Services;
 
+use Illuminate\Http\Request;
+use \App\Http\Services\LadderService;
+use \App\Http\Services\GameService;
+use \App\Http\Services\PlayerService;
+
 class GameService
 {
     public function __construct()
@@ -7,31 +12,95 @@ class GameService
 
     }
 
-    public function saveGameStats($result, $gameId, $playerId)
+    public function getUniqueGameIdentifier($result)
     {
-        if ($gameId == null || $playerId = null || $result == null)
-            return "Invalid request for saving game stats";
+        foreach ($result as $k => $v)
+        {
+            if($k == "idno")
+                return $v;
+        }
+        return null;
+    }
 
-        $gameStats = \App\GameStats::where("player_id", "=", $playerId)
+    public function saveGameStats($result, $gameId, $player)
+    {
+        if ($gameId == null || $player == null || $result == null)
+            return null;
+
+        $gameStats = \App\GameStats::where("player_id", "=", $player->id)
             ->where("game_id", "=", $gameId)->first();
 
         if ($gameStats != null)
-            return "Stats already received for this game";
+            return null;
 
         // Safe to record game stats
         $stats = new \App\GameStats();
+        $stats->save();
+
+        $playerName = null;
+
+        // Safety - is the player who they say
+        $playerIndex = -1;
+
+        foreach($result as $k => $v)
+        {
+            $index = substr($k, strlen($k) - 1);
+            
+            if (is_numeric($index))
+            {
+                $playerIndex = $index;
+            }
+
+            if ($playerIndex != -1)
+            {
+                if($result["nam" . $playerIndex] != null)
+                {
+                    $playerName = $result["nam" . $playerIndex];
+                    
+                    if($player->username == $playerName)
+                    {
+                        $playerName = $player->username;
+                        break;
+                    }
+                } 
+            } 
+        }
+
+        if($playerName == null)
+            return null;
+
         foreach($result as $k => $v)
         {
             $stats->game_id = $gameId;
-            $stats->player_id = $playerId;
-            if(isset($stats->{$k}))
+            $stats->player_id = $player->id;
+
+            $index = substr($k, strlen($k) - 1);
+            $newKey = substr($k, 0, -1);
+            
+            // maybe
+            if (is_numeric($index) && $index == $playerIndex)
             {
-                $stats->{$k} = $v;
+                if (in_array($newKey, $stats->columns)) 
+                {
+                    $stats->{$newKey} = $v;
+                }
+            }
+            else
+            {
+                if (in_array($newKey, $stats->columns)) 
+                {
+                    $stats->{$newKey} = $v;
+                }
             }
         }
-        $stats->save();
 
+        $stats->save();
         return $stats;
+    }
+
+    private function setStatValue()
+    {
+        
     }
 
     public function saveRawStats($result, $gameId, $ladderId)
@@ -74,7 +143,7 @@ class GameService
             $ttl = unpack("A4tag/ntype/nlength", $data);
             $pad = ($ttl["length"] % 4) ? 4 - ($ttl["length"] %  4) : 0;
             
-            print "$ttl[tag] $ttl[type] $ttl[length]";
+            //print "$ttl[tag] $ttl[type] $ttl[length]";
  
             if ($ttl["length"] > 0) 
             {
@@ -89,7 +158,7 @@ class GameService
                 
                 if($val != null)
                 {
-                    $result[$ttl["tag"]] = $val;
+                    $result[strtolower($ttl["tag"])] = $val;
                 }
             }
         }
