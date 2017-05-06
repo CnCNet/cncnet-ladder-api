@@ -1,10 +1,5 @@
 <?php namespace App\Http\Services;
 
-use Illuminate\Http\Request;
-use \App\Http\Services\LadderService;
-use \App\Http\Services\GameService;
-use \App\Http\Services\PlayerService;
-
 class GameService
 {
     public function __construct()

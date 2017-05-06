@@ -11,6 +11,20 @@
         </div>
         <div class="collapse navbar-collapse" id="navigation-links">
             <ul class="nav navbar-nav">
+                @if(isset($ladders))
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ladders <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        @foreach($ladders as $k => $ladder)
+                        <li>
+                            <a href="/ladder/{{ $ladder->abbreviation }}/" title="Tiberian Dawn" class="game-cover game-{{ $ladder->abbreviation }}">
+                                {{ $ladder->name }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </li>
+                @endif
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Downloads <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -32,8 +46,6 @@
                     </ul>
                 </li>
                 <li><a href="//forums.cncnet.org">Forums</a></li>
-                <li><a href="/developers">Developers</a></li>
-                {{-- <li><a href="/live">Live</a></li>--}}
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
@@ -53,7 +65,36 @@
                         <li class="cncnet-status"><a href="status">CnCNet Status <span class="pull-right">OK</span></a></li>
                     </ul>
                 </li>
-                <li><a href="buy">Where to Buy C&amp;C</a></li>
+                <li class="dropdown">
+                    <?php $user = \Auth::user(); ?>
+                  
+                    <a href="status" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <div class="user-profile">
+                        <ul class="list-inline">
+                            <li>
+                                <i class="fa fa-user-circle fa-lg" aria-hidden="true"></i>
+                            </li>
+                            <li>
+                                @if(isset($user))
+                                    {{ $user->name }} <span class="caret"></span>
+                                @else
+                                    Ladder Account <span class="caret"></span>
+                                @endif
+                            </li>
+                        </div>
+                    </a>
+
+                    @if(isset($user))
+                    <ul class="dropdown-menu">
+                        <li><a href="/auth/logout">Sign out</a></li>
+                    </ul>
+                    @else
+                    <ul class="dropdown-menu">
+                        <li><a href="/auth/login">Sign in</a></li>
+                        <li><a href="/auth/register">Sign up</a></li>
+                    </ul>
+                    @endif
+                </li>
             </ul>
         </div>
     </div>
