@@ -5,7 +5,6 @@
 /images/feature/feature-td.jpg
 @endsection
 
-
 @section('feature')
 <div class="feature-background sub-feature-background">
     <div class="container">

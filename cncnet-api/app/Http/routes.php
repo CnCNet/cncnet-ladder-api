@@ -19,6 +19,12 @@ Route::controllers
 	'password' => 'Auth\PasswordController',
 ]);
 
+Route::group(['prefix' => 'account', 'middleware' => 'auth'], function () 
+{
+    Route::get('/', 'AccountController@getAccountIndex');
+    Route::post('/username', 'AccountController@createUsername');
+});
+
 Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], function()
 {
     Route::get('/token', 'ApiAuthController@getAuth');

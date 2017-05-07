@@ -20,4 +20,9 @@ class Player extends Model
     {
         return $this->hasMany("App\PlayerGame");
     }
+
+    public function ladder()
+    {
+        return $this->belongsTo("App\Ladder");
+    }
 }

@@ -86,6 +86,7 @@
 
                     @if(isset($user))
                     <ul class="dropdown-menu">
+                        <li><a href="/account">Manage Account</a></li>
                         <li><a href="/auth/logout">Sign out</a></li>
                     </ul>
                     @else

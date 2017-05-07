@@ -10,7 +10,7 @@ class PlayerService
 
     }
 
-    public function addPlayerToUser($username, $user)
+    public function addPlayerToUser($username, $user, $ladderId)
     {
         $player = \App\Player::where("username", "=", $username)->first();
         
@@ -19,6 +19,7 @@ class PlayerService
             $player = new \App\Player();
             $player->username = $username;
             $player->user_id = $user->id;
+            $player->ladder_id = $ladderId;
             $player->save();
 
             return $player;

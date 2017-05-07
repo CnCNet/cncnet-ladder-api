@@ -95,7 +95,6 @@
     <Compile Include="cncnet-api\resources\views\components\supported-games.blade.php" />
     <Compile Include="cncnet-api\resources\views\emails\password.blade.php" />
     <Compile Include="cncnet-api\resources\views\errors\503.blade.php" />
-    <Compile Include="cncnet-api\resources\views\index.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\index.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\player-view.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\listing.blade.php" />
