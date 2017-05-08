@@ -68,7 +68,7 @@ class ApiLadderController extends Controller
             return response()->json(['Raw stats were not saved'], 400);
 
         // Now save the actual stats
-        $gameStats = $this->gameService->saveGameStats($result,  $ladderGame->id, $player);
+        $gameStats = $this->gameService->saveGameStats($result, $ladderGame->id, $player);
         if($gameStats == null)
             return response()->json(['Game stats were not saved'], 400);
 

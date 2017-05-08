@@ -113,6 +113,7 @@
                         @foreach($player->games()->get() as $game)
                         <?php $g = \App\Game::find($game->game_id)->first(); ?>
                         <?php $stats = \App\Game::find($game->game_id)->stats()->get(); ?>
+
                         <tr>
                             <td>
                                 {{ $g->created_at }} - {{ $g->duration }}

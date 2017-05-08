@@ -72,7 +72,7 @@ class GameService
             $index = substr($k, strlen($k) - 1);
             $newKey = substr($k, 0, -1);
             
-            // maybe
+            // TODO needs some thought
             if (is_numeric($index) && $index == $playerIndex)
             {
                 if (in_array($newKey, $stats->columns)) 
@@ -85,6 +85,12 @@ class GameService
                 if (in_array($newKey, $stats->columns)) 
                 {
                     $stats->{$newKey} = $v;
+                }
+
+                if (in_array($k, $stats->columns)) 
+                {
+                    echo "Saving " . $stats->{$k} . $v;
+                    $stats->{$k} = $v;
                 }
             }
         }
