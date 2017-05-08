@@ -111,9 +111,11 @@
                         <tbody>
 
                         @foreach($player->games()->get() as $game)
-                        <?php $g = \App\Game::find($game->game_id)->first(); ?>
-                        <?php $stats = \App\Game::find($game->game_id)->stats()->get(); ?>
+                        <?php $g = \App\Game::find($game->game_id); ?>
+                        @if($g != null)
 
+                        <?php $g = $g->first(); ?>
+                        <?php $stats = \App\Game::find($game->game_id)->stats()->get(); ?>
                         <tr>
                             <td>
                                 {{ $g->created_at }} - {{ $g->duration }}
@@ -139,7 +141,9 @@
                                 @endforeach
                                 </ul>
                             </td>
-                            <td>{{ \App\Map::find($g->map_id)->first()->name }}</td>
+                            <td>
+                                {{-- \App\Map::find($g->map_id)->first()->name --}}
+                            </td>
                             <td>
                                 <ul class="list-unstyled">
                                     <li>Crates: {{ $g->crates ? "On": "Off" }}</li>
@@ -153,6 +157,7 @@
                                 </ul>
                             </td>
                         </tr>
+                        @endif
                         @endforeach
                         </tbody>
                     </table>

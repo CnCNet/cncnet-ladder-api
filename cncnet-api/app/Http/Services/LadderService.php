@@ -9,20 +9,18 @@ class LadderService
     
     public function getLadders()
     {
-        return \App\Ladder::where("ladder_history_id", "=", null)->get();
+        return \App\Ladder::all();
     }
 
     public function getLadderByGame($game)
     {
         return \App\Ladder::where("abbreviation", "=", $game)
-            ->where("ladder_history_id", "=", null)
             ->first();
     }
     
     public function getLaddersByGame($game)
     {
         return \App\Ladder::where("abbreviation", "=", $game)
-            ->where("ladder_history_id", "=", null)
             ->get();
     }
     
