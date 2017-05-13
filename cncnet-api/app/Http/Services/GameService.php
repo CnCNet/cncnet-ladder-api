@@ -115,6 +115,8 @@ class GameService
     // Credit: https://github.com/dkeetonx
     public function processStatsDmp($file)
     {
+        if($file == null) return;
+
         $fh = fopen($file, "r");
         $data = fread($fh, 4);
  
@@ -213,5 +215,23 @@ class GameService
         }
 
         return null;
+    }
+
+    public function saveGameDetails($ladderGame, $gameStats)
+    {
+        // TODO refine
+
+        $ladderGame->afps = $gameStats->afps;
+        $ladderGame->oosy = $gameStats->oosy;
+        $ladderGame->bamr = $gameStats->bamr;
+        $ladderGame->crat = $gameStats->crat;
+        $ladderGame->dura = $gameStats->dura;
+        $ladderGame->cred = $gameStats->cred;
+        $ladderGame->shrt = $gameStats->shrt;
+        $ladderGame->supr = $gameStats->supr;
+        $ladderGame->unit = $gameStats->unit;
+        $ladderGame->plrs = $gameStats->unit;
+
+        $ladderGame->save();
     }
 }

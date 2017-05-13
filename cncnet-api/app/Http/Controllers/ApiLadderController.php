@@ -33,12 +33,12 @@ class ApiLadderController extends Controller
     public function postLadder(Request $request, $game = null)
     {
         $file = $request->file('file');
-        $sha1 = sha1_file($file);
-
         $result = $this->gameService->processStatsDmp($file);
 
         if (count($result) == 0 || $result == null)
             return response()->json(['No data'], 400);
+
+        $sha1 = sha1_file($file);
 
         // Player Check
         $player = $this->playerService->findPlayerById($request->playerId);
@@ -70,23 +70,14 @@ class ApiLadderController extends Controller
         if ($rawStats == null)
             return response()->json(['Raw stats were not saved'], 400);
 
-        // Verify stats file being received
-        $rawGames = \App\GameRaw::where("game_id", "=", $ladderGame->id)->get();
-
-        if ($rawGames != null && count($rawGames) > 0)
-        {
-            $hash = $rawGames[0]['hash'];
-            foreach ($rawGames as $rg)
-            {
-                if ($hash != $rg->hash)
-                    return response()->json(['Hashed stats were not the same'], 400);
-            }
-        }
-
         // Now save the actual stats
         $gameStats = $this->gameService->saveGameStats($result, $ladderGame->id, $player);
         if($gameStats != 200)
             return response()->json(['Error' => $gameStats], 400);
+
+        // Update Game
+        $gameStats = \App\GameStats::where("game_id", "=", $ladderGame->id)->first();
+        $this->gameService->saveGameDetails($ladderGame, $gameStats);
 
         // Create Player Game Record
         $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)

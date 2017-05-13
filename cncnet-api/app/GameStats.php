@@ -11,7 +11,9 @@ class GameStats extends Model
         'hrv', 'crd', 'inb', 'unb', 'plb', 'blb', 'vsb', 
         'inl', 'unl', 'pll', 'bll', 'vsl', 'ink', 'unk', 
         'plk', 'blk', 'vsk', 'blc', 'spc', 'ded', 'spa', 
-        'rsg', 'aly', 'tid', 'ipa'
+        'rsg', 'aly', 'tid', 'ipa', 'bamr', 'oosy', 'afps',
+        'plrs', 'unit', 'mode', 'supr', 'shrt', 'cred', 'dura',
+        'fini', 'trny', 'gsku', 'idno', 'vers'
     ];
 
     public $columns = [
@@ -19,7 +21,9 @@ class GameStats extends Model
         'hrv', 'crd', 'inb', 'unb', 'plb', 'blb', 'vsb', 
         'inl', 'unl', 'pll', 'bll', 'vsl', 'ink', 'unk', 
         'plk', 'blk', 'vsk', 'blc', 'spc', 'ded', 'spa', 
-        'rsg', 'aly', 'tid', 'ipa'
+        'rsg', 'aly', 'tid', 'ipa', 'bamr', 'oosy', 'afps',
+        'plrs', 'unit', 'mode', 'supr', 'shrt', 'cred', 'dura',
+        'fini', 'trny', 'gsku', 'idno', 'vers'
     ];
 
     public $timestamps = false;

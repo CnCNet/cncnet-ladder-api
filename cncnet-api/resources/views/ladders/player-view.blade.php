@@ -101,10 +101,9 @@
                     <table class="table table-hover player-games">
                         <thead>
                         <tr>
-                            <th>When &amp; Duration <i class="fa fa-clock-o fa-fw"></i></th>
+                            <th>When <i class="fa fa-clock-o fa-fw"></i></th>
                             <th>Players in game <i class="fa fa-user fa-fw"></i></th>
                             <th>Map played <i class="fa fa-map-marker fa-fw"></i></th>
-                            <th>Game Settings <i class="fa fa-cog fa-fw"></i></th>
                             <th>Game Details <i class="fa fa-level-down fa-fw"></i></th>
                         </tr>
                         </thead>
@@ -118,7 +117,7 @@
                         <?php $stats = \App\Game::find($game->game_id)->stats()->get(); ?>
                         <tr>
                             <td>
-                                {{ $g->created_at }} - {{ $g->duration }}
+                                {{ $g->created_at->format('d/m/Y - H:i') }}
                             </td>
                             <td>
                                 <ul class="list-unstyled">
@@ -130,9 +129,11 @@
                                         <a href="/ladder/{{ $ladder->abbreviation }}/player/{{$p->username}}">
                                             {{ $p->username }} 
                                           
-                                            @if($s->cmp == 1) 
+                                            @if($s->cmp == 256) 
                                             <i class="fa fa-angle-double-up fa-lg" aria-hidden="true" style="color:green;"></i> 
-                                            @else 
+                                            @elseif($s->cmp == 2)
+                                            <i class="fa fa-angle-double-right fa-lg" aria-hidden="true" style="color:orange"></i> 
+                                            @else
                                             <i class="fa fa-angle-double-down fa-lg" aria-hidden="true" style="color:red"></i> 
                                             @endif
                                         </a>
@@ -146,14 +147,13 @@
                             </td>
                             <td>
                                 <ul class="list-unstyled">
-                                    <li>Crates: {{ $g->crates ? "On": "Off" }}</li>
-                                </ul>
-                            </td>
-                            <td>
-                                <ul class="list-unstyled">
+                                    <li>Starting Credits: {{ $g->cred }}</li>
+                                    <li>Game Duration: {{ gmdate("H:i:s", $g->dura) }}</li>
+                                    <li>Tournament: {{ $g->trny == true ? "Yes" : "No" }}</li>
+                                    <li>Base Repacks: {{ $g->bamr == true ? "On" : "Off" }}</li>
                                     <li>Average FPS: {{ $g->afps }}</li>
-                                    <li>Bases: {{ $g->bases }}</li>
-                                    <li>Out of Sync: {{ $g->oosy ? "Yes" : "No" }}</li>
+                                    <li>Out of Sync: {{ $g->oosy == true ? "Yes" : "No" }}</li>
+                                    <li>Crates: {{ $g->crat == true ? "On" : "Off" }}</li>
                                 </ul>
                             </td>
                         </tr>
