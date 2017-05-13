@@ -22,6 +22,7 @@
     <Compile Include="cncnet-api\app\Events\Event.php" />
     <Compile Include="cncnet-api\app\Exceptions\Handler.php" />
     <Compile Include="cncnet-api\app\GameRaw.php" />
+    <Compile Include="cncnet-api\app\Http\Controllers\AccountController.php" />
     <Compile Include="cncnet-api\app\Http\Services\GameService.php" />
     <Compile Include="cncnet-api\app\Map.php" />
     <Compile Include="cncnet-api\app\GameStats.php" />
@@ -87,6 +88,10 @@
     <Compile Include="cncnet-api\public\.htaccess" />
     <Compile Include="cncnet-api\public\favicon.ico" />
     <Compile Include="cncnet-api\public\index.php" />
+    <Compile Include="cncnet-api\resources\lang\en\footer.php" />
+    <Compile Include="cncnet-api\resources\lang\en\homepage.php" />
+    <Compile Include="cncnet-api\resources\lang\en\validation.php" />
+    <Compile Include="cncnet-api\resources\views\auth\account.blade.php" />
     <Compile Include="cncnet-api\resources\views\auth\login.blade.php" />
     <Compile Include="cncnet-api\resources\views\auth\password.blade.php" />
     <Compile Include="cncnet-api\resources\views\auth\register.blade.php" />
@@ -4462,6 +4467,7 @@
     <Folder Include="cncnet-api\public\images\textures\" />
     <Folder Include="cncnet-api\public\js\" />
     <Folder Include="cncnet-api\resources\lang" />
+    <Folder Include="cncnet-api\resources\lang\en\" />
     <Folder Include="cncnet-api\resources\views\auth" />
     <Folder Include="cncnet-api\resources\views\components\" />
     <Folder Include="cncnet-api\resources\views\emails" />

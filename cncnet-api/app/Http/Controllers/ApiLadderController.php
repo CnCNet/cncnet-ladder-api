@@ -32,7 +32,7 @@ class ApiLadderController extends Controller
     // TODO - Middleware to check auth token and that playerId is valid to their account
     public function postLadder(Request $request, $game = null)
     {
-        $file = "stats_ts.dmp"; // TODO handle incoming file
+        $file = $request->file('file');
         $result = $this->gameService->processStatsDmp($file);
 
         if (count($result) == 0 || $result == null)
