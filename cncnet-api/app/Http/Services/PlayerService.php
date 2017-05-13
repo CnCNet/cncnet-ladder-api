@@ -28,11 +28,6 @@ class PlayerService
 
     public function findPlayerById($id)
     {
-        $player = \App\Player::find($id);
-
-        if($player != null)
-            return $player->first();
-        else
-            return null;
+        return \App\Player::where("id", "=", $id)->first();
     }
 }

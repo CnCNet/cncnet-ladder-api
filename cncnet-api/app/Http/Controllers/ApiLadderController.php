@@ -33,6 +33,8 @@ class ApiLadderController extends Controller
     public function postLadder(Request $request, $game = null)
     {
         $file = $request->file('file');
+        $sha1 = sha1_file($file);
+
         $result = $this->gameService->processStatsDmp($file);
 
         if (count($result) == 0 || $result == null)
@@ -40,6 +42,7 @@ class ApiLadderController extends Controller
 
         // Player Check
         $player = $this->playerService->findPlayerById($request->playerId);
+
         if ($player == null)
             return response()->json(['Player does not exist'], 400);
 
@@ -63,14 +66,27 @@ class ApiLadderController extends Controller
         }
 
         // Keep a record of the raw stats
-        $rawStats = $this->gameService->saveRawStats($result, $ladderGame->id, $ladder->id);
-        if($rawStats == null)
+        $rawStats = $this->gameService->saveRawStats($result, $ladderGame->id, $ladder->id, $sha1);
+        if ($rawStats == null)
             return response()->json(['Raw stats were not saved'], 400);
+
+        // Verify stats file being received
+        $rawGames = \App\GameRaw::where("game_id", "=", $ladderGame->id)->get();
+
+        if ($rawGames != null && count($rawGames) > 0)
+        {
+            $hash = $rawGames[0]['hash'];
+            foreach ($rawGames as $rg)
+            {
+                if ($hash != $rg->hash)
+                    return response()->json(['Hashed stats were not the same'], 400);
+            }
+        }
 
         // Now save the actual stats
         $gameStats = $this->gameService->saveGameStats($result, $ladderGame->id, $player);
-        if($gameStats == null)
-            return response()->json(['Game stats were not saved'], 400);
+        if($gameStats != 200)
+            return response()->json(['Error' => $gameStats], 400);
 
         // Create Player Game Record
         $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)
@@ -95,5 +111,13 @@ class ApiLadderController extends Controller
     public function getLadderPlayer(Request $request, $game = null, $player = null)
     {
         return $this->ladderService->getLadderPlayer($game, $player);
+    }
+        
+    public function viewRawGame(Request $request, $rawId)
+    {
+        $rawGame = \App\GameRaw::where("id", "=", $rawId)->first();
+
+        return response($rawGame->packet, 200)
+                  ->header('Content-Type', 'application/json');
     }
 }

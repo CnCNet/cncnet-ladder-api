@@ -47,5 +47,6 @@ Route::group(['prefix' => 'api/v1/'], function ()
     Route::get('/ladder/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');
     Route::get('/ladder/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
 
-    // Clan Endpoints
+    // Debug
+    Route::get('/ladder/raw/{rawId}', 'ApiLadderController@viewRawGame');
 });

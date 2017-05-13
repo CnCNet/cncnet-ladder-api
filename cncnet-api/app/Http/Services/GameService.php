@@ -17,16 +17,17 @@ class GameService
         return null;
     }
 
+    // TODO - Need to verify game stats against other players if game exists.
     public function saveGameStats($result, $gameId, $player)
     {
         if ($gameId == null || $player == null || $result == null)
-            return null;
+            return "Missing game information";;
 
         $gameStats = \App\GameStats::where("player_id", "=", $player->id)
             ->where("game_id", "=", $gameId)->first();
 
         if ($gameStats != null)
-            return null;
+            return "Game stats already exist for this player and this game";
 
         // Safe to record game stats
         $stats = new \App\GameStats();
@@ -62,7 +63,7 @@ class GameService
         }
 
         if($playerName == null)
-            return null;
+            return "Could not match stats player name to user database";
 
         foreach($result as $k => $v)
         {
@@ -96,20 +97,16 @@ class GameService
         }
 
         $stats->save();
-        return $stats;
+        return 200;
     }
-
-    private function setStatValue()
-    {
-        
-    }
-
-    public function saveRawStats($result, $gameId, $ladderId)
+    
+    public function saveRawStats($result, $gameId, $ladderId, $sha1)
     {
         $raw = new \App\GameRaw();
         $raw->packet = json_encode($result);
         $raw->game_id = $gameId;
         $raw->ladder_id = $ladderId;
+        $raw->hash = $sha1;
         $raw->save();
 
         return $raw;
@@ -156,11 +153,7 @@ class GameService
                 }
 
                 $val = $this->getFieldValue($ttl, $data);
-                
-                if($val != null)
-                {
-                    $result[strtolower($ttl["tag"])] = $val;
-                }
+                $result[strtolower($ttl["tag"])] = $val;
             }
         }
         return $result;
