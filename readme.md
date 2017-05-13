@@ -7,7 +7,7 @@ Prefix requests with `api/v1/`
 * GET `/ping` to ensure that the server is online
 
 ###### Ladder Endpoints
-* Not yet implemented: POST `/ladder/:game` accepts gameres packet (via POST body) for the supplied `:game`
+* POST `/ladder/:game` accepts gameres packet (via POST body) for the supplied `:game`
 * GET `/ladder/:game` will return the top 150 leaderboard players for the supplied `:game`
 * GET `/ladder/:game/game/:gameId` will return all data for a given `:gameId`
 * GET `/ladder/:game/player/:player` will return most data for given `:player`
