@@ -72,6 +72,18 @@ class ApiLadderController extends Controller
         if($gameStats == null)
             return response()->json(['Game stats were not saved'], 400);
 
+        // Create Player Game Record
+        $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)
+            ->where("game_id", "=", $ladderGame->id)->first();
+
+        if ($playerGame == null)
+        {
+            $playerGame = new \App\PlayerGame();
+            $playerGame->game_id = $ladderGame->id;
+            $playerGame->player_id = $player->id;
+            $playerGame->save();
+        }
+
         return response()->json(['success'], 200);
     }
 
