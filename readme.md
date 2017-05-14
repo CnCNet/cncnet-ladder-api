@@ -5,6 +5,7 @@ The aim is to support all CnCNet games at https://cncnet.org which feature recor
 ## Local Development
 * Installing the projects dependencies `npm install` 
 * Configure `.env-example` to your local mysql database
+* Run `composer install`
 * Run `php artisan serve`
 
 ## REST v1 API Endpoints
