@@ -106,11 +106,21 @@
                                 <ul class="list-inline">
                                 @foreach($stats as $s)
                                     <?php $p = $s->player()->first(); ?>
+
+                                    <?php 
+                                        $points = \App\PlayerPoint::where("game_id", "=", $game->game_id)
+                                        ->where("player_id", "=", $p->id)->first();
+                                    ?>
+
                                     @if($p)
                                     <li>
                                         <a href="/ladder/{{ $ladder->abbreviation }}/player/{{$p->username}}">
                                             {{ $p->username }} 
-                                          
+                                            
+                                            @if(isset($points))
+                                            ({{ $points->game_won ? "+" : "-" }} {{ $points->points_awarded }})
+                                            @endif
+
                                             @if($s->cmp == 256) 
                                             <i class="fa fa-trophy fa-lg" aria-hidden="true" style="color:green;"></i> 
                                             @elseif($s->cmp == 2)
@@ -132,8 +142,8 @@
                                     <li>Starting Credits: {{ $g->cred }}</li>
                                     <li>Game Duration: {{ gmdate("H:i:s", $g->dura) }}</li>
                                     <li>Tournament: {{ $g->trny ? "Yes" : "No" }}</li>
-                                    <li>MCV Redeploy: {{ $g->bamr & 1 ? "On" : "Off" }}</li>       
-                                    <li>Build off Ally Conyard: {{ $g->bamr & 2 ? "On" : "Off" }}</li>
+                                    <li>MCV Redeploy: {{ $g->bamr == 1 || $g->bamr == 3 ? "On" : "Off" }}</li>                 
+                                    <li>Build off Ally Conyard: {{ $g->bamr == 2 || $g->bamr == 3 ? "On" : "Off" }}</li>
                                     <li>Average FPS: {{ $g->afps }}</li>
                                     <li>Out of Sync: {{ $g->oosy ? "Yes" : "No" }}</li>
                                     <li>Crates: {{ $g->crat ? "On" : "Off" }}</li>

@@ -117,10 +117,27 @@ class ApiLadderController extends Controller
             $playerA = $this->playerService->findPlayerById($players["lost"]["id"])->first();
             $playerB = $this->playerService->findPlayerById($players["won"]["id"])->first();
 
+            $playerPoints = new \App\PlayerPoint();
+            $playerPoints->player_id = $playerA->id;
+            $playerPoints->game_id = $gameId;
+            $playerPoints->points_awarded = $results["a"];
+            $playerPoints->game_won = 0;
+            $playerPoints->save();
+
+            $playerPoints = new \App\PlayerPoint();
+            $playerPoints->player_id = $playerB->id;
+            $playerPoints->game_id = $gameId;
+            $playerPoints->points_awarded = $results["b"];
+            $playerPoints->game_won = 1;
+            $playerPoints->save();
+
             $playerA->points = $results["a"];
+            if ($playerA->loss_count != 0)
+                $playerA->loss_count -= 1;
             $playerA->save();
 
             $playerB->points = $results["b"];
+            $playerB->win_count += 1;
             $playerB->save();
 
             return $results;
