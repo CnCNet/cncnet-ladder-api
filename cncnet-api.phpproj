@@ -4468,13 +4468,13 @@
     <Folder Include="cncnet-api\public\js\" />
     <Folder Include="cncnet-api\resources\lang" />
     <Folder Include="cncnet-api\resources\lang\en\" />
+    <Folder Include="cncnet-api\resources\sass\" />
     <Folder Include="cncnet-api\resources\views\auth" />
     <Folder Include="cncnet-api\resources\views\components\" />
     <Folder Include="cncnet-api\resources\views\emails" />
     <Folder Include="cncnet-api\resources\views\errors" />
     <Folder Include="cncnet-api\resources\views\layouts\" />
     <Folder Include="cncnet-api\resources\views\ladders\" />
-    <Folder Include="cncnet-api\resources\views\pages\" />
     <Folder Include="cncnet-api\resources\views\vendor" />
     <Folder Include="cncnet-api\resources\views" />
     <Folder Include="cncnet-api\resources" />
@@ -5434,6 +5434,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="cncnet-api\public\css\font-awesome.min.css" />
+    <Content Include="cncnet-api\public\css\ladder.css" />
     <Content Include="cncnet-api\public\images\favicon\android-chrome-192x192.png" />
     <Content Include="cncnet-api\public\images\favicon\android-chrome-256x256.png" />
     <Content Include="cncnet-api\public\images\favicon\apple-touch-icon.png" />
@@ -5483,10 +5484,8 @@
     <Content Include="cncnet-api\public\images\textures\triangles-dark.png" />
     <Content Include="cncnet-api\public\images\textures\triangles.png" />
     <Content Include="cncnet-api\public\js\cncnet-game-detail.js" />
-    <Content Include="cncnet-api\public\js\cncnet-home.js" />
     <Content Include="cncnet-api\public\js\cncnet-online.js" />
-    <Content Include="cncnet-api\public\js\cncnet-renegade-servers.js" />
     <Content Include="cncnet-api\public\js\cncnet-status.js" />
-    <Content Include="cncnet-api\public\js\jquery.bxslider.min.js" />
+    <Content Include="cncnet-api\resources\sass\ladder.scss" />
   </ItemGroup>
 </Project>
