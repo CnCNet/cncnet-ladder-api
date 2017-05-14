@@ -26,6 +26,22 @@ class PlayerService
         }
     }
 
+    public function createPlayerGame($player, $game)
+    {
+        $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)
+            ->where("game_id", "=", $game->id)->first();
+
+        if ($playerGame == null)
+        {
+            $playerGame = new \App\PlayerGame();
+            $playerGame->game_id = $game->id;
+            $playerGame->player_id = $player->id;
+            $playerGame->save();
+        }
+
+        return $playerGame;
+    }
+
     public function findPlayerById($id)
     {
         return \App\Player::where("id", "=", $id)->first();

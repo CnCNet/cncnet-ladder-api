@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
+use \App\Http\Services\PointService;
 
 class ApiLadderController extends Controller 
 {
@@ -30,67 +31,45 @@ class ApiLadderController extends Controller
     }
 
     // TODO - Middleware to check auth token and that playerId is valid to their account
-    public function postLadder(Request $request, $game = null)
+    // TODO - Currently if there is no unique id from stats - game gets recorded more than once. 
+    public function postLadder(Request $request, $cncnetGame = null)
     {
-        $file = $request->file('file');
-        $result = $this->gameService->processStatsDmp($file);
+        $result = $this->gameService->processStatsDmp( $request->file('file'));
 
         if (count($result) == 0 || $result == null)
             return response()->json(['No data'], 400);
 
-        $sha1 = sha1_file($file);
-
         // Player Check
         $player = $this->playerService->findPlayerById($request->playerId);
-
         if ($player == null)
             return response()->json(['Player does not exist'], 400);
 
         // Check a ladder exists for this game
-        $ladder = $this->ladderService->getLadderByGame($game);
+        $ladder = $this->ladderService->getLadderByGame($cncnetGame);
         if ($ladder == null)
             return response()->json(['Ladder does not exist'], 400);
         
-        // Unique Identifier - IDNO
+        // Check Game Exists
         $uniqueId = $this->gameService->getUniqueGameIdentifier($result);
-
-        // Check we've got a record of the game already
-        $ladderGame = \App\Game::where("wol_game_id", "=", $uniqueId)->first();
-
-        if ($ladderGame == null)
-        {
-            $ladderGame = new \App\Game();
-            $ladderGame->ladder_id = $ladder->id;
-            $ladderGame->wol_game_id = $uniqueId;
-            $ladderGame->save();
-        }
+        $game = $this->gameService->findOrCreateGame($uniqueId, $ladder);
 
         // Keep a record of the raw stats
-        $rawStats = $this->gameService->saveRawStats($result, $ladderGame->id, $ladder->id, $sha1);
+        $rawStats = $this->gameService->saveRawStats($result, $game->id, $ladder->id);
         if ($rawStats == null)
             return response()->json(['Raw stats were not saved'], 400);
 
         // Now save the actual stats
-        $gameStats = $this->gameService->saveGameStats($result, $ladderGame->id, $player);
-        if($gameStats != 200)
+        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player);
+        if ($gameStats != 200)
             return response()->json(['Error' => $gameStats], 400);
 
-        // Update Game
-        $gameStats = \App\GameStats::where("game_id", "=", $ladderGame->id)->get();
+        // Update Game Record
+        $gameStats = \App\GameStats::where("game_id", "=", $game->id)->get();
         if (count($gameStats) <= 1)
-            $this->gameService->saveGameDetails($ladderGame, $gameStats[0]);
+            $this->gameService->saveGameDetails($game, $gameStats[0]);
 
         // Create Player Game Record
-        $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)
-            ->where("game_id", "=", $ladderGame->id)->first();
-
-        if ($playerGame == null)
-        {
-            $playerGame = new \App\PlayerGame();
-            $playerGame->game_id = $ladderGame->id;
-            $playerGame->player_id = $player->id;
-            $playerGame->save();
-        }
+        $this->playerService->createPlayerGame($player, $game);
 
         return response()->json(['success'], 200);
     }

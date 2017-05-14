@@ -100,13 +100,12 @@ class GameService
         return 200;
     }
     
-    public function saveRawStats($result, $gameId, $ladderId, $sha1)
+    public function saveRawStats($result, $gameId, $ladderId)
     {
         $raw = new \App\GameRaw();
         $raw->packet = json_encode($result);
         $raw->game_id = $gameId;
         $raw->ladder_id = $ladderId;
-        $raw->hash = $sha1;
         $raw->save();
 
         return $raw;
@@ -115,7 +114,8 @@ class GameService
     // Credit: https://github.com/dkeetonx
     public function processStatsDmp($file)
     {
-        if($file == null) return;
+        if($file == null)
+            return null;
 
         $fh = fopen($file, "r");
         $data = fread($fh, 4);
@@ -230,8 +230,23 @@ class GameService
         $ladderGame->shrt = $gameStats->shrt;
         $ladderGame->supr = $gameStats->supr;
         $ladderGame->unit = $gameStats->unit;
-        $ladderGame->plrs = $gameStats->unit;
+        $ladderGame->plrs = $gameStats->plrs;
 
         $ladderGame->save();
+    }
+
+    public function findOrCreateGame($id, $ladder)
+    {
+        $game = \App\Game::where("wol_game_id", "=", $id)->first();
+
+        if ($game == null)
+        {
+            $game = new \App\Game();
+            $game->ladder_id = $ladder->id;
+            $game->wol_game_id = $id;
+            $game->save();
+        }
+
+        return $game;
     }
 }
