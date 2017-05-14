@@ -12,6 +12,7 @@ class ApiLadderController extends Controller
     private $ladderService;
     private $gameService;
     private $playerService;
+    private $pointService;
 
     public function __construct()
     {
@@ -71,7 +72,59 @@ class ApiLadderController extends Controller
         // Create Player Game Record
         $this->playerService->createPlayerGame($player, $game);
 
+        // Award ELO points
+        $this->awardPoints($game->id);
+
         return response()->json(['success'], 200);
+    }
+
+    public function awardPoints($gameId)
+    {
+        $games = \App\GameStats::where("game_id", "=", $gameId)->get();
+        $players = [];
+
+        // 1vs1 For now
+        if (count($games) == 2)
+        {
+            // We have both games in, so now we can do elo and award points to winners/losers
+            foreach ($games as $g)
+            {
+                // Safety?
+                if ($g->plrs == 2)
+                {
+                    $player = $this->playerService->findPlayerById($g->player_id)->first();
+                    
+                    if ($player == null)
+                        return response()->json(['error' => 'Player not found'], 400);
+
+                    // TODO - Need some proper logic to know who has actually won
+                    if ($g->cmp == 256)
+                    {
+                        $players["won"] = $player;
+                    }
+                    else 
+                    {
+                        $players["lost"] = $player;
+                    }
+                }
+            }
+
+            // TODO - refine
+
+            $points = new PointService($players["lost"]["points"], $players["won"]["points"], 0, 1);
+            $results = $points->getNewRatings();
+
+            $playerA = $this->playerService->findPlayerById($players["lost"]["id"])->first();
+            $playerB = $this->playerService->findPlayerById($players["won"]["id"])->first();
+
+            $playerA->points = $results["a"];
+            $playerA->save();
+
+            $playerB->points = $results["b"];
+            $playerB->save();
+
+            return $results;
+        }
     }
 
     public function getLadderGame(Request $request, $game = null, $gameId = null)

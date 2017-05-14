@@ -49,4 +49,5 @@ Route::group(['prefix' => 'api/v1/'], function ()
 
     // Debug
     Route::get('/ladder/raw/{rawId}', 'ApiLadderController@viewRawGame');
+    Route::get('/ladder/elo/{gameId}', 'ApiLadderController@awardPoints');
 });

@@ -132,8 +132,8 @@
                                     <li>Starting Credits: {{ $g->cred }}</li>
                                     <li>Game Duration: {{ gmdate("H:i:s", $g->dura) }}</li>
                                     <li>Tournament: {{ $g->trny ? "Yes" : "No" }}</li>
-                                    <li>MCV Redeploy: {{ $g->bamr == 1 || $g->bamr == 3 ? "On" : "Off" }}</li>                 
-                                    <li>Build off Ally Conyard: {{ $g->bamr == 2 || $g->bamr == 3 ? "On" : "Off" }}</li>
+                                    <li>MCV Redeploy: {{ $g->bamr & 1 ? "On" : "Off" }}</li>       
+                                    <li>Build off Ally Conyard: {{ $g->bamr & 2 ? "On" : "Off" }}</li>
                                     <li>Average FPS: {{ $g->afps }}</li>
                                     <li>Out of Sync: {{ $g->oosy ? "Yes" : "No" }}</li>
                                     <li>Crates: {{ $g->crat ? "On" : "Off" }}</li>
