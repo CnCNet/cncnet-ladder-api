@@ -51,18 +51,18 @@
                 <li class="dropdown">
                     <a href="status" class="dropdown-toggle status-cncnet status-text" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Players Online <span class="online">...</span> <span class="caret"></span></a>
                     <ul class="dropdown-menu status-games">
-                        <li class="game-status status-td"><a href="command-and-conquer">Command &amp; Conquer <span class="online">999</span></a></li>
-                        <li class="game-status status-ra"><a href="red-alert">Red Alert <span class="online">999</span></a></li>
-                        <li class="game-status status-d2"><a href="dune-2000">Dune 2000 <span class="online">999</span></a></li>
-                        <li class="game-status status-ts"><a href="tiberian-sun">Tiberian Sun <span class="online">999</span></a></li>
-                        <li class="game-status status-yr"><a href="yuris-revenge">Yuri's Revenge <span class="online">999</span></a></li>
-                        <li class="game-status status-rg"><a href="renegade">Renegade <span class="online">...</span></a></li>
+                        <li class="game-status status-td"><a href="//cncnet.org/command-and-conquer">Command &amp; Conquer <span class="online">999</span></a></li>
+                        <li class="game-status status-ra"><a href="//cncnet.org/red-alert">Red Alert <span class="online">999</span></a></li>
+                        <li class="game-status status-d2"><a href="//cncnet.org/dune-2000">Dune 2000 <span class="online">999</span></a></li>
+                        <li class="game-status status-ts"><a href="//cncnet.org/tiberian-sun">Tiberian Sun <span class="online">999</span></a></li>
+                        <li class="game-status status-yr"><a href="//cncnet.org/yuris-revenge">Yuri's Revenge <span class="online">999</span></a></li>
+                        <li class="game-status status-rg"><a href="//cncnet.org/renegade">Renegade <span class="online">...</span></a></li>
                         <li role="seperator" class="divider"></li>
-                        <li class="game-status status-dta"><a href="dawn-of-the-tiberium-age">Dawn of the Tiberium Age <span class="online">999</span></a></li>
-                        <li class="game-status status-mo"><a href="mental-omega">Mental Omega<span class="online">999</span></a></li>
-                        <li class="game-status status-ti"><a href="twisted-insurrection">Twisted Insurrection<span class="online">999</span></a></li>
+                        <li class="game-status status-dta"><a href="//cncnet.org/dawn-of-the-tiberium-age">Dawn of the Tiberium Age <span class="online">999</span></a></li>
+                        <li class="game-status status-mo"><a href="//cncnet.org/mental-omega">Mental Omega<span class="online">999</span></a></li>
+                        <li class="game-status status-ti"><a href="//cncnet.org/twisted-insurrection">Twisted Insurrection<span class="online">999</span></a></li>
                         <li role="seperator" class="divider"></li>
-                        <li class="cncnet-status"><a href="status">CnCNet Status <span class="pull-right">OK</span></a></li>
+                        <li class="cncnet-status"><a href="//cncnet.org/status">CnCNet Status <span class="pull-right">OK</span></a></li>
                     </ul>
                 </li>
                 <li class="dropdown">

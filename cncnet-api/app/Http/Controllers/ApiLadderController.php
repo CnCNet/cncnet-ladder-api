@@ -76,8 +76,9 @@ class ApiLadderController extends Controller
             return response()->json(['Error' => $gameStats], 400);
 
         // Update Game
-        $gameStats = \App\GameStats::where("game_id", "=", $ladderGame->id)->first();
-        $this->gameService->saveGameDetails($ladderGame, $gameStats);
+        $gameStats = \App\GameStats::where("game_id", "=", $ladderGame->id)->get();
+        if (count($gameStats) <= 1)
+            $this->gameService->saveGameDetails($ladderGame, $gameStats[0]);
 
         // Create Player Game Record
         $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)

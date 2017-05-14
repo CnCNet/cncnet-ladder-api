@@ -1,0 +1,64 @@
+.btn-transparent {
+  color: white;
+  text-transform: uppercase;
+  font-size: 15px; }
+
+.btn-transparent i {
+  margin-left: -20px; }
+
+h1 small {
+  display: block;
+  font-size: 19px;
+  text-transform: uppercase;
+  font-weight: 300; }
+
+.profile {
+  background: #131313;
+  padding: 20px;
+  margin: 0 auto;
+  border-bottom: 5px solid #00ce00;
+  border-radius: 5px; }
+
+.rank {
+  padding-bottom: 15px; }
+
+.rank-title {
+  text-transform: uppercase;
+  font-weight: 600; }
+
+.rank-title.gold {
+  color: #ffb300; }
+
+.rank-title.silver {
+  color: silver; }
+
+.rank-title.bronze {
+  color: brown; }
+
+.rank-title.normal {
+  color: #505050; }
+
+.table-hover > tbody > tr {
+  transition: all 0.3s; }
+
+.table-hover > tbody > tr:hover {
+  background-color: #0e0e0e; }
+
+.table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td {
+  border-top: 1px solid #252525; }
+
+.badge-winpercent {
+  background-color: #00a300; }
+
+.panel.panel-default {
+  background: #000; }
+
+.panel-default > .panel-heading {
+  background-color: #000000;
+  padding: 15px;
+  color: white;
+  font-weight: 500;
+  font-size: 18px; }
+
+input.form-control {
+  color: #232323; }

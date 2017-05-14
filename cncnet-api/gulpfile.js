@@ -1,16 +1,18 @@
-var elixir = require('laravel-elixir');
+'use strict';
 
-/*
- |--------------------------------------------------------------------------
- | Elixir Asset Management
- |--------------------------------------------------------------------------
- |
- | Elixir provides a clean, fluent API for defining some basic Gulp tasks
- | for your Laravel application. By default, we are compiling the Less
- | file for our application, as well as publishing vendor resources.
- |
- */
+var gulp = require('gulp');
+var sass = require('gulp-sass');
 
-elixir(function(mix) {
-    mix.less('app.less');
+gulp.task('sass', function () {
+    return gulp.src('./resources/sass/**/*.scss')
+      .pipe(sass().on('error', sass.logError))
+      .pipe(gulp.dest('./public/css'));
+});
+
+gulp.task('sass:watch', function () {
+    gulp.watch([
+        './resources/sass/**/**/*.scss',
+        './resources/sass/**/*.scss',
+        './resources/sass/*.scss',
+    ], ['sass']);
 });

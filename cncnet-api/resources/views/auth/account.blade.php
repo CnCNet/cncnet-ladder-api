@@ -23,7 +23,7 @@
 @endsection
 
 @section('content')
-<section class="light-texture">
+<section>
     <div class="container">
         <div class="feature">
             <div class="row">
@@ -38,7 +38,7 @@
     </div>
 </section>
 
-<section>
+<section class="cncnet-features dark-texture">
     <div class="container">
         <div class="row">
 

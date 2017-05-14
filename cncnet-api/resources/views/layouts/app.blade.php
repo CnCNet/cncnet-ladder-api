@@ -16,6 +16,7 @@
     @yield('meta')
     <title>@yield('title') - CnCNet</title>
     <link rel="stylesheet" href="/css/app.css" />
+    <link rel="stylesheet" href="/css/ladder.css" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
     <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" href="images/favicon/favicon-32x32.png" sizes="32x32">
@@ -51,16 +52,16 @@
                 <div class="col-md-2">
                     <h3>{{ trans('footer.footer_games') }}</h3>
                     <ul class="list-unstyled">
-                        <li><a href="command-and-conquer">Command &amp; Conquer</a></li>
-                        <li><a href="red-alert">Red Alert</a></li>
-                        <li><a href="dune-2000">Dune 2000</a></li>
-                        <li><a href="tiberian-sun">Tiberian Sun</a></li>
-                        <li><a href="red-alert-2">Red Alert 2</a></li>
-                        <li><a href="yuris-revenge">Yuri's Revenge</a></li>
-                        <li><a href="renegade">Renegade</a></li>
-                        <li><a href="dawn-of-the-tiberium-age">Dawn of the Tiberium Age</a></li>
-                        <li><a href="mental-omega">Mental Omega</a></li>
-                        <li><a href="twisted-insurrection">Twisted Insurrection</a></li>
+                        <li><a href="//cncnet.org/command-and-conquer">Command &amp; Conquer</a></li>
+                        <li><a href="//cncnet.org/red-alert">Red Alert</a></li>
+                        <li><a href="//cncnet.org/dune-2000">Dune 2000</a></li>
+                        <li><a href="//cncnet.org/tiberian-sun">Tiberian Sun</a></li>
+                        <li><a href="//cncnet.org/red-alert-2">Red Alert 2</a></li>
+                        <li><a href="//cncnet.org/yuris-revenge">Yuri's Revenge</a></li>
+                        <li><a href="//cncnet.org/renegade">Renegade</a></li>
+                        <li><a href="//cncnet.org/dawn-of-the-tiberium-age">Dawn of the Tiberium Age</a></li>
+                        <li><a href="//cncnet.org/mental-omega">Mental Omega</a></li>
+                        <li><a href="//cncnet.org/twisted-insurrection">Twisted Insurrection</a></li>
                     </ul>
                 </div>
                 
@@ -104,8 +105,8 @@
                         <li><img src="/images/logo.png" width="200" alt="CnCNet Logo" /></li>
                     </ul>
                     <ul class="list-inline text-right">
-                        <li><a href="privacy-policy" title="{{ trans('footer.footer_privacy_policy') }}">{{ trans('footer.footer_privacy_policy') }}</a></li>
-                        <li><a href="terms-and-conditions" title="{{ trans('footer.footer_terms_conditions') }}">{{ trans('footer.footer_terms_conditions') }}</a></li>
+                        <li><a href="//cncnet.org/privacy-policy" title="{{ trans('footer.footer_privacy_policy') }}">{{ trans('footer.footer_privacy_policy') }}</a></li>
+                        <li><a href="//cncnet.org/terms-and-conditions" title="{{ trans('footer.footer_terms_conditions') }}">{{ trans('footer.footer_terms_conditions') }}</a></li>
                         <li>Copyright  &copy; CnCNet 2009 - {{ Date("Y") }}</li>
                     </ul>
                 </div>
