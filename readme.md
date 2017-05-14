@@ -3,7 +3,8 @@ This is currently a Work in progress CnCNet Ladder API & UI for Command & Conque
 The aim is to support all CnCNet games at https://cncnet.org which feature recording in-game statistics.
 
 ###### Local Development
-* Installing the projects dependencies `npm install` Configure `.env-example` to your local mysql database
+* Installing the projects dependencies `npm install` 
+* Configure `.env-example` to your local mysql database
 * Run `php artisan serve`
 
 ## REST v1 API Endpoints
