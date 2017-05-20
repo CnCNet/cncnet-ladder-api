@@ -24,6 +24,7 @@
     <Compile Include="cncnet-api\app\GameRaw.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\AccountController.php" />
     <Compile Include="cncnet-api\app\Http\Services\GameService.php" />
+    <Compile Include="cncnet-api\app\Http\Services\PointService.php" />
     <Compile Include="cncnet-api\app\Map.php" />
     <Compile Include="cncnet-api\app\GameStats.php" />
     <Compile Include="cncnet-api\app\Game.php" />
@@ -48,6 +49,7 @@
     <Compile Include="cncnet-api\app\Http\Services\PlayerService.php" />
     <Compile Include="cncnet-api\app\Http\Services\LadderService.php" />
     <Compile Include="cncnet-api\app\Ladder.php" />
+    <Compile Include="cncnet-api\app\PlayerPoint.php" />
     <Compile Include="cncnet-api\app\PlayerGame.php" />
     <Compile Include="cncnet-api\app\LadderGame.php" />
     <Compile Include="cncnet-api\app\LadderHistory.php" />
@@ -76,6 +78,7 @@
     <Compile Include="cncnet-api\config\view.php" />
     <Compile Include="cncnet-api\database\migrations\.gitkeep" />
     <Compile Include="cncnet-api\database\migrations\2017_05_01_080800_create_games_raw_table.php" />
+    <Compile Include="cncnet-api\database\migrations\2017_05_14_204749_create_player_points_table.php" />
     <Compile Include="cncnet-api\database\seeds\.gitkeep" />
     <Compile Include="cncnet-api\database\seeds\DatabaseSeeder.php" />
     <Compile Include="cncnet-api\database\.gitignore" />

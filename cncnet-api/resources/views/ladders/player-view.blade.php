@@ -30,7 +30,13 @@
         <div class="profile">
             <div class="row">
                 <div class="col-md-9">
-                    <h3 class="battle-percentage">{{ $player->username }} - <span class="badge badge-winpercent text-uppercase">Win Percentage - 25%</span></h3>
+                    <h3 class="battle-percentage">{{ $player->username }}
+                         @if($player->win_count > 0)  
+                        <span class="badge badge-winpercent text-uppercase">
+                            Win Percentage - {{ $player->win_count / ($player->win_count + $player->loss_count) * 100 }}%
+                        </span>
+                        @endif
+                    </h3>
                 </div>
                 <div class="col-md-3">
                     <div class="profile-rank text-right">
@@ -111,7 +117,7 @@
                                         $points = \App\PlayerPoint::where("game_id", "=", $game->game_id)
                                         ->where("player_id", "=", $p->id)->first();
                                     ?>
-
+                          
                                     @if($p)
                                     <li>
                                         <a href="/ladder/{{ $ladder->abbreviation }}/player/{{$p->username}}">
@@ -122,11 +128,11 @@
                                             @endif
 
                                             @if($s->cmp == 256) 
-                                            <i class="fa fa-trophy fa-lg" aria-hidden="true" style="color:green;"></i> 
+                                            <i class="fa fa-plus fa-lg fa-fw" aria-hidden="true" style="color:green;"></i> 
                                             @elseif($s->cmp == 2)
                                             <i class="fa fa-sort-desc fa-lg" aria-hidden="true" style="color:orange"></i> 
                                             @else
-                                            <i class="fa fa-bolt fa-lg" aria-hidden="true" style="color:red"></i> 
+                                            <i class="fa fa-minus fa-lg fa-fw" aria-hidden="true" style="color:red"></i> 
                                             @endif
                                         </a>
                                     </li>

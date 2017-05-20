@@ -44,6 +44,6 @@ class PlayerService
 
     public function findPlayerById($id)
     {
-        return \App\Player::where("id", "=", $id)->first();
+        return \App\Player::find($id);
     }
 }

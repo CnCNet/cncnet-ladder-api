@@ -2,9 +2,11 @@
 
 class GameService
 {
+    private $maxPlayers;
+
     public function __construct()
     {
-
+        $this->maxPlayers = 8;
     }
 
     public function getUniqueGameIdentifier($result)
@@ -33,70 +35,45 @@ class GameService
         $stats = new \App\GameStats();
         $stats->save();
 
-        $playerName = null;
+        // Max no. of real players in a game
+        $playerIndex = 0;
 
-        // Safety - is the player who they say
-        $playerIndex = -1;
-
-        foreach($result as $k => $v)
+        while ($playerIndex <= $this->maxPlayers)
         {
-            $index = substr($k, strlen($k) - 1);
-            
-            if (is_numeric($index))
+            // Loop our submitted game result
+            foreach($result as $k => $v)
             {
-                $playerIndex = $index;
-            }
-
-            if ($playerIndex != -1)
-            {
-                if($result["nam" . $playerIndex] != null)
+                // Get the stats Player ID matched to Player Username
+                if (isset($result["nam" . $playerIndex]) && $player->username == $result["nam" . $playerIndex])
                 {
-                    $playerName = $result["nam" . $playerIndex];
-                    
-                    if($player->username == $playerName)
+                    // Player Index from Stats File, e.g nam#(index)
+                    $gamePlayerIndex = substr($k, -1);
+
+                    // Store Stats Info on Player
+                    if ($gamePlayerIndex == $playerIndex)
                     {
-                        $playerName = $player->username;
-                        break;
+                        $key = substr($k, 0, -1);
+
+                        if (in_array($key, $stats->playerStatsColumns)) 
+                        {
+                            $stats->{$key} = $v;
+                        }
                     }
-                } 
-            } 
-        }
-
-        if($playerName == null)
-            return "Could not match stats player name to user database";
-
-        foreach($result as $k => $v)
-        {
-            $stats->game_id = $gameId;
-            $stats->player_id = $player->id;
-
-            $index = substr($k, strlen($k) - 1);
-            $newKey = substr($k, 0, -1);
-            
-            // TODO needs some thought
-            if (is_numeric($index) && $index == $playerIndex)
-            {
-                if (in_array($newKey, $stats->columns)) 
-                {
-                    $stats->{$newKey} = $v;
                 }
-            }
-            else
-            {
-                if (in_array($newKey, $stats->columns)) 
+                else if (in_array($k, $stats->gameStatsColumns)) 
                 {
-                    $stats->{$newKey} = $v;
-                }
-
-                if (in_array($k, $stats->columns)) 
-                {
-                    echo "Saving " . $stats->{$k} . $v;
+                    // Store Non Player Specific Stats
                     $stats->{$k} = $v;
                 }
             }
+
+            $stats->player_id = $player->id;
+            $stats->game_id = $gameId;
+            $stats->save();
+
+            $playerIndex++;
         }
 
-        $stats->save();
         return 200;
     }
     

@@ -6,7 +6,7 @@ class Player extends Model
 {
 	protected $table = 'players';
 
-	protected $fillable = ['username', 'win_count', 'loss_count', 'games_count', 
+	protected $fillable = ['id', 'username', 'win_count', 'loss_count', 'games_count', 
     'dc_count', 'oos_count', 'points', 'countries', 'ladder_id'];
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];

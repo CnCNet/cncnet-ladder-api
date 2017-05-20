@@ -42,6 +42,7 @@ class ApiLadderController extends Controller
 
         // Player Check
         $player = $this->playerService->findPlayerById($request->playerId);
+
         if ($player == null)
             return response()->json(['Player does not exist'], 400);
 
@@ -89,11 +90,10 @@ class ApiLadderController extends Controller
             // We have both games in, so now we can do elo and award points to winners/losers
             foreach ($games as $g)
             {
-                // Safety?
                 if ($g->plrs == 2)
                 {
-                    $player = $this->playerService->findPlayerById($g->player_id)->first();
-                    
+                    $player = $this->playerService->findPlayerById($g->player_id);
+
                     if ($player == null)
                         return response()->json(['error' => 'Player not found'], 400);
 
@@ -114,8 +114,8 @@ class ApiLadderController extends Controller
             $points = new PointService($players["lost"]["points"], $players["won"]["points"], 0, 1);
             $results = $points->getNewRatings();
 
-            $playerA = $this->playerService->findPlayerById($players["lost"]["id"])->first();
-            $playerB = $this->playerService->findPlayerById($players["won"]["id"])->first();
+            $playerA = $this->playerService->findPlayerById($players["lost"]["id"]);
+            $playerB = $this->playerService->findPlayerById($players["won"]["id"]);
 
             $playerPoints = new \App\PlayerPoint();
             $playerPoints->player_id = $playerA->id;
