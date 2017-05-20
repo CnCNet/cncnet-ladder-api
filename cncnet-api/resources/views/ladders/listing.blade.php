@@ -65,7 +65,13 @@
                                 <td>{{ $player->points }}</td>
                                 <td>{{ $player->win_count }}</td>
                                 <td>{{ $player->loss_count }}</td>
-                                <td></td>
+                                <td>
+                                @if($player->win_count > 0)  
+                                    {{ $player->win_count / ($player->win_count + $player->loss_count) * 100 }}%
+                                @else
+                                    0%
+                                @endif
+                                </td>
                             </tr>
                             @endforeach
                             </tbody>

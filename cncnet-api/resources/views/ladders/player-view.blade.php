@@ -64,16 +64,12 @@
                             <i class="fa fa-level-up fa-fw"></i>
                         </li>
                         <li>
-                            Total Games <strong>{{ $player->games_count }} </strong>
+                            Total Games <strong>{{ $player->win_count + $player->loss_count }} </strong>
                             <i class="fa fa-diamond fa-fw"></i>
                         </li>                
                         <li>
-                            FPS <strong>{{ $player->games_count }} </strong>
-                            <i class="fa fa-diamond fa-fw"></i>
-                        </li>               
-                        <li>
-                            Hours Played <strong>{{ $player->games_count }} </strong>
-                            <i class="fa fa-diamond fa-fw"></i>
+                            FPS <strong></strong>
+                            <i class="fa fa-industry fa-fw"></i>
                         </li>
                     </ul>
                 </div>
@@ -128,11 +124,11 @@
                                             @endif
 
                                             @if($s->cmp == 256) 
-                                            <i class="fa fa-plus fa-lg fa-fw" aria-hidden="true" style="color:green;"></i> 
+                                            <i class="fa fa-level-up fa-lg fa-fw" aria-hidden="true" style="color:green;"></i> 
                                             @elseif($s->cmp == 2)
                                             <i class="fa fa-sort-desc fa-lg" aria-hidden="true" style="color:orange"></i> 
                                             @else
-                                            <i class="fa fa-minus fa-lg fa-fw" aria-hidden="true" style="color:red"></i> 
+                                            <i class="fa fa-level-down fa-lg fa-fw" aria-hidden="true" style="color:red"></i> 
                                             @endif
                                         </a>
                                     </li>
