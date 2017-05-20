@@ -64,7 +64,7 @@
                             <i class="fa fa-level-up fa-fw"></i>
                         </li>
                         <li>
-                            Total Games <strong>{{ $player->win_count + $player->loss_count }} </strong>
+                            Total Games <strong>{{ $player->games_count }} </strong>
                             <i class="fa fa-diamond fa-fw"></i>
                         </li>                
                         <li>

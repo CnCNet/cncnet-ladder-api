@@ -74,6 +74,7 @@ class LadderService
             return "No ladder found";
 
         return \App\Player::where("ladder_id", "=", $ladder->id)
+            ->where("games_count", ">", "0")
             ->orderBy("points", "DESC")
             ->get();
     }

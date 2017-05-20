@@ -25,6 +25,7 @@ class LadderController extends Controller
     {
         return view("ladders.listing", 
         array(
+            "ladders" => $this->ladderService->getLadders(),
             "ladder" => $this->ladderService->getLadderByGame($request->game),
             "players" => $this->ladderService->getLadderPlayers($request->game, $request->player))
         );
@@ -50,6 +51,7 @@ class LadderController extends Controller
         return view
         ( "ladders.player-view", 
             array (
+                "ladders" => $this->ladderService->getLadders(),
                 "ladder" => $this->ladderService->getLadderByGame($request->game),
                 "player" =>$this->ladderService->getLadderPlayer($game, $player)
             )

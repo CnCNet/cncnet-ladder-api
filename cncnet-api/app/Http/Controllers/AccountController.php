@@ -36,6 +36,7 @@ class AccountController extends Controller
         ]);
 
         $user = \Auth::user(); 
-        return $this->playerService->addPlayerToUser($request->username, $user, $request->ladder);
+        $this->playerService->addPlayerToUser($request->username, $user, $request->ladder);
+        return redirect("/account");
     }
 }

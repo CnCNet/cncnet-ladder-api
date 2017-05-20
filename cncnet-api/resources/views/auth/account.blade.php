@@ -81,10 +81,11 @@
                         <thead>
                             <tr>
                                 <th>Username <i class="fa fa-user-o fa-fw"></i></th>
-                                <th>Points <i class="fa fa-user-o fa-fw"></i></th>
-                                <th>Wins <i class="fa fa-user-o fa-fw"></i></th>
-                                <th>Losses <i class="fa fa-user-o fa-fw"></i></th>
-                                <th>Ladder <i class="fa fa-user-o fa-fw"></i></th>
+                                <th>Points <i class="fa fa-bolt fa-fw"></i></th>
+                                <th>Wins <i class="fa fa-level-up fa-fw"></i></th>
+                                <th>Losses <i class="fa fa-level-down fa-fw"></i></th>
+                                <th>Winning % </th>
+                                <th>Ladder <i class="fa fa-trophy fa-fw"></i></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -103,6 +104,13 @@
                                 </td>          
                                 <td>
                                     {{ $u->loss_count }}
+                                </td>
+                                <td>
+                                @if($u->win_count > 0)  
+                                    {{ $u->win_count / ($u->win_count + $u->loss_count) * 100 }}%
+                                @else
+                                    0%
+                                @endif
                                 </td>
                                 <td>
                                 @if(isset($u->ladder()->first()->abbreviation))

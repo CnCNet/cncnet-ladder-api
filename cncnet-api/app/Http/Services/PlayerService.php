@@ -46,4 +46,33 @@ class PlayerService
     {
         return \App\Player::find($id);
     }
+
+    public function awardPlayerPoints($playerId, $gameId, $points, $won = false)
+    {
+        $playerPoints = new \App\PlayerPoint();
+        $playerPoints->player_id = $playerId;
+        $playerPoints->game_id = $gameId;
+        $playerPoints->points_awarded = $points;
+        $playerPoints->game_won = $won;
+        $playerPoints->save();
+    }
+
+    public function updatePlayerStats($player, $points, $won = false)
+    {
+        $player->points = $points;
+        $player->games_count += 1;
+
+        if ($won)
+        {
+            $player->win_count += 1;
+            $player->points += $points;
+        }
+        else
+        {
+            $player->loss_count -= 1;
+            $player->points -= $points;
+        }
+  
+        $player->save();
+    }
 }
