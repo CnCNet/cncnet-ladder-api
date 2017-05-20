@@ -96,3 +96,17 @@ input.form-control
 {
     color: #232323;
 }
+
+.game-detail 
+{
+    margin-top: -50px;
+    position: relative;
+    z-index: 1;
+}
+
+.game-list 
+{   
+    z-index: 0;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
