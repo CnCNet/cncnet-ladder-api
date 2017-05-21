@@ -36,7 +36,7 @@ Route::group(['prefix' => 'api/v1/'], function ()
     Route::post('/user/create', 'ApiUserController@createUser');
 
     // Result Endpoints
-    Route::post('/result/{game}', 'ApiLadderController@postLadder');
+    Route::post('/result/{game}/{username}', 'ApiLadderController@postLadder');
 
     // General Endpoints
     Route::get('/ping', 'ApiLadderController@pingLadder');

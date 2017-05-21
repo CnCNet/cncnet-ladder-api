@@ -30,7 +30,7 @@ class ApiUserController extends Controller
         if ($request->email == null && $request->password == null)
         {
             return response()->json(['bad_parameters'], 400);
-        }
+        } 
 
         if($token == null)
         {

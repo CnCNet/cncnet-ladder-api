@@ -6,6 +6,7 @@ use \App\Http\Services\LadderService;
 use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
+use \App\Http\Services\AuthService;
 
 class ApiLadderController extends Controller 
 {
@@ -13,12 +14,14 @@ class ApiLadderController extends Controller
     private $gameService;
     private $playerService;
     private $pointService;
+    private $authService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
         $this->gameService = new GameService();
         $this->playerService = new PlayerService();
+        $this->authService = new AuthService();
     }
     
     public function pingLadder(Request $request)
@@ -31,9 +34,8 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    // TODO - Middleware to check auth token and that playerId is valid to their account
     // TODO - Currently if there is no unique id from stats - game gets recorded more than once. 
-    public function postLadder(Request $request, $cncnetGame = null)
+    public function postLadder(Request $request, $cncnetGame = null, $username = null)
     {
         $result = $this->gameService->processStatsDmp( $request->file('file'));
 
@@ -41,7 +43,14 @@ class ApiLadderController extends Controller
             return response()->json(['No data'], 400);
 
         // Player Check
-        $player = $this->playerService->findPlayerById($request->playerId);
+        $player = \App\Player::where("username", "=", $username)->first();
+        $authUser = $this->authService->getUser($request);
+
+        if($authUser == null || $player == null)
+            return response()->json(['No User'], 400);
+
+        if ($authUser->id != $player->user_id)
+            return response()->json(['User mismatch'], 400);
 
         if ($player == null)
             return response()->json(['Player does not exist'], 400);
