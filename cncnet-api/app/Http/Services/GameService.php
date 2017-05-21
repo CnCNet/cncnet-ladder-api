@@ -103,8 +103,6 @@ class GameService
  
         $stats_ver = unpack("V", $data)[1];
  
-        print "Stats version = $stats_ver\n";
- 
         $pad = 0;
         $result = [];
 

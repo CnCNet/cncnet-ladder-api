@@ -47,6 +47,11 @@ class PlayerService
         return \App\Player::find($id);
     }
 
+    public function findPlayerByName($name)
+    {
+        return \App\Player::where("username", "=", $name)->first();
+    }
+
     public function awardPlayerPoints($playerId, $gameId, $points, $won = false)
     {
         $playerPoints = new \App\PlayerPoint();

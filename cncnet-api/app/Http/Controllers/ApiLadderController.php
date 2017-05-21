@@ -37,16 +37,18 @@ class ApiLadderController extends Controller
     // TODO - Currently if there is no unique id from stats - game gets recorded more than once. 
     public function postLadder(Request $request, $cncnetGame = null, $username = null)
     {
-        $result = $this->gameService->processStatsDmp( $request->file('file'));
+        $result = $this->gameService->processStatsDmp($request->file('file'));
 
         if (count($result) == 0 || $result == null)
             return response()->json(['No data'], 400);
 
         // Player Check
-        $player = \App\Player::where("username", "=", $username)->first();
-        $authUser = $this->authService->getUser($request);
+        $player = $this->playerService->findPlayerByName($username);
+        if($player == null)
+            return response()->json(['No player found by that username'], 400);
 
-        if($authUser == null || $player == null)
+        $authUser = $this->authService->getUser($request);
+        if($authUser == null)
             return response()->json(['No User'], 400);
 
         if ($authUser->id != $player->user_id)
