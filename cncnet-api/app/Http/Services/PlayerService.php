@@ -69,8 +69,8 @@ class PlayerService
         }
         else
         {
-            $player->loss_count -= 1;
-            $player->points -= $points;
+            $player->loss_count = $player->loss_count > 0 ? $player->loss_count -= 1 : 0;
+            $player->points = $player->points > 0 ? $player->points -= $points : 0;
         }
   
         $player->save();
