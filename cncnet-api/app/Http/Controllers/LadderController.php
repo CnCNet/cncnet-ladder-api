@@ -53,7 +53,8 @@ class LadderController extends Controller
             array (
                 "ladders" => $this->ladderService->getLadders(),
                 "ladder" => $this->ladderService->getLadderByGame($request->game),
-                "player" =>$this->ladderService->getLadderPlayer($game, $player)
+                "player" => $this->ladderService->getLadderPlayer($game, $player),
+                "rank" => $this->ladderService->getLadderPlayerRank($request->game, $request->player)
             )
         );
     }

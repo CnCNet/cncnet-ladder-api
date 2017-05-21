@@ -78,4 +78,25 @@ class LadderService
             ->orderBy("points", "DESC")
             ->get();
     }
+
+    public function getLadderPlayerRank($game, $username)
+    {
+        $ladder = $this->getLadderByGame($game);
+
+        if($ladder == null)
+            return "No ladder found";
+
+        $players = \App\Player::where("ladder_id", "=", $ladder->id)
+            ->where("games_count", ">", "0")
+            ->orderBy("points", "DESC")
+            ->get();
+
+        foreach($players as $k => $player)
+        {
+            if($player->username == $username)
+                return $k + 1;
+        }
+
+        return -1;
+    }
 }

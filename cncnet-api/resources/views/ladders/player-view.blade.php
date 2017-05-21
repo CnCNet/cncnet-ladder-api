@@ -42,7 +42,7 @@
                     <div class="profile-rank text-right">
                     <ul class="list-unstyled">
                         <li class="rank">
-                            <h2>Rank #1</h2>
+                            <h2>Rank #{{ $rank or "Unranked" }}</h2>
                         </li>
                         <li class="rank-title gold">
                             <i class='fa fa-trophy fa-fw fa-2x'></i>
@@ -86,6 +86,7 @@
                     <table class="table table-hover player-games">
                         <thead>
                         <tr>
+                            <th>#</th>
                             <th>When <i class="fa fa-clock-o fa-fw"></i></th>
                             <th>Players in game <i class="fa fa-user fa-fw"></i></th>
                             <th>Map played <i class="fa fa-map-marker fa-fw"></i></th>
@@ -93,14 +94,22 @@
                         </tr>
                         </thead>
                         <tbody>
-
+                        {{-- TODO: These really need to be in a controller --}}
                         @foreach($player->games()->get() as $game)
-                        <?php $g = \App\Game::find($game->game_id); ?>
-                        @if($g != null)
+                        <?php $g = \App\Game::where("id", "=", $game->game_id)->first(); ?>
 
-                        <?php $g = $g->first(); ?>
+                        @if($g != null)
                         <?php $stats = \App\Game::find($game->game_id)->stats()->get(); ?>
                         <tr>
+                            <td>
+                                <ul class="list-unstyled">
+                                    <li>Game Id: {{ $g->id }}</li>
+                                    <?php $raw = \App\GameRaw::where("game_id", "=", $g->id)->get(); ?>
+                                    @foreach($raw as $r)
+                                    <li>Raw Stats: <a href="/api/v1/ladder/raw/{{ $r != null ? $r->id : ""}} " target="_blank">{{ $r != null ? $r->id : "" }}</a></li>
+                                    @endforeach
+                                </ul>
+                            </td>
                             <td>
                                 {{ $g->created_at->format('d/m/Y - H:i') }}
                             </td>
@@ -111,7 +120,8 @@
 
                                     <?php 
                                         $points = \App\PlayerPoint::where("game_id", "=", $game->game_id)
-                                        ->where("player_id", "=", $p->id)->first();
+                                        ->where("player_id", "=", $p->id)
+                                        ->first();
                                     ?>
                           
                                     @if($p)
@@ -137,7 +147,7 @@
                                 </ul>
                             </td>
                             <td>
-                                {{-- \App\Map::find($g->map_id)->first()->name --}}
+                                {{ $g->scen }}
                             </td>
                             <td>
                                 <ul class="list-unstyled">
