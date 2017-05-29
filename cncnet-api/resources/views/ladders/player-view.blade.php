@@ -147,7 +147,7 @@
                                 </ul>
                             </td>
                             <td>
-                                {{ $g->scen }}
+                                {{ $g->scen or "Unknown" }}
                             </td>
                             <td>
                                 <ul class="list-unstyled">
