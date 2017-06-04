@@ -54,9 +54,6 @@ class ApiLadderController extends Controller
         if ($authUser->id != $player->user_id)
             return response()->json(['User mismatch'], 400);
 
-        if ($player == null)
-            return response()->json(['Player does not exist'], 400);
-
         // Check a ladder exists for this game
         $ladder = $this->ladderService->getLadderByGame($cncnetGame);
         if ($ladder == null)
@@ -72,7 +69,7 @@ class ApiLadderController extends Controller
             return response()->json(['Raw stats were not saved'], 400);
 
         // Now save the actual stats
-        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player);
+        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id);
         if ($gameStats != 200)
             return response()->json(['Error' => $gameStats], 400);
 
@@ -80,9 +77,6 @@ class ApiLadderController extends Controller
         $gameStats = \App\GameStats::where("game_id", "=", $game->id)->get();
         if (count($gameStats) <= 1)
             $this->gameService->saveGameDetails($game, $gameStats[0]);
-
-        // Create Player Game Record
-        $this->playerService->createPlayerGame($player, $game);
 
         // Award ELO points
         $this->awardPoints($game->id);
@@ -92,46 +86,59 @@ class ApiLadderController extends Controller
 
     public function awardPoints($gameId)
     {
-        $games = \App\GameStats::where("game_id", "=", $gameId)->get();
+        $game = \App\GameStats::where("game_id", "=", $gameId)->first();
+        $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
         $players = [];
 
-        // 1vs1 For now
-        if (count($games) == 2)
+        foreach($gamePlayers as $gamePlayer)
         {
-            // We have both games in, so now we can do elo and award points to winners/losers
-            foreach ($games as $g)
+            $player = $this->playerService->findPlayerById($gamePlayer->player_id);
+            if ($player == null)
+                return response()->json(['error' => 'Player not found'], 400);
+
+            if($gamePlayer->result)
             {
-                if ($g->plrs == 2)
-                {
-                    $player = $this->playerService->findPlayerById($g->player_id);
-
-                    if ($player == null)
-                        return response()->json(['error' => 'Player not found'], 400);
-
-                    if ($g->cmp == 256)
-                    {
-                        $players["won"] = $player;
-                    }
-                    else 
-                    {
-                        $players["lost"] = $player;
-                    }
-                }
+                $players["won"] = $player;
             }
+            else
+            {
+                $players["lost"] = $player;
+            }
+        }
 
-            $points = new PointService($players["lost"]["points"], $players["won"]["points"], 0, 1);
-            $results = $points->getNewRatings();
+        $points = new PointService($players["lost"]["points"], $players["won"]["points"], 0, 1);
+        $results = $points->getNewRatings();
 
-            $playerA = $this->playerService->findPlayerById($players["lost"]["id"]);
-            $playerB = $this->playerService->findPlayerById($players["won"]["id"]);
+        foreach ($players as $k => $player)
+        {
+            $playerPoints = \App\PlayerPoint::where("player_id", "=", $player->id)
+                ->where("game_id", "=", $gameId)->first();
 
-            $this->playerService->awardPlayerPoints($playerA->id, $gameId, $results["a"]);
-            $this->playerService->awardPlayerPoints($playerB->id, $gameId, $results["b"], true);
+            if ($playerPoints != null)
+                return;
 
-            $this->playerService->updatePlayerStats($playerA, $results["a"]);
-            $this->playerService->updatePlayerStats($playerB, $results["b"], true);
+            if ($k == "lost")
+            {
+                $this->playerService->awardPlayerPoints($player->id, $gameId, $results["a"], false);
 
-            return $results;
+                $currentPoints = $player->points; // todo
+                if ($currentPoints > 0)
+                {
+                    $player->points -= $results["a"];
+                }
+
+                $player->games_count += 1;
+                $player->loss_count += 1;
+                $player->save();
+            }
+            else if ($k == "won")
+            {
+                $this->playerService->awardPlayerPoints($player->id, $gameId, $results["b"], true);
+                $player->points += $results["b"];
+                $player->games_count += 1;
+                $player->win_count += 1;
+                $player->save();
+            }
         }
     }
 

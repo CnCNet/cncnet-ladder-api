@@ -26,16 +26,17 @@ class PlayerService
         }
     }
 
-    public function createPlayerGame($player, $game)
+    public function createPlayerGame($player, $gameId, $won)
     {
         $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)
-            ->where("game_id", "=", $game->id)->first();
+            ->where("game_id", "=", $gameId)->first();
 
         if ($playerGame == null)
         {
             $playerGame = new \App\PlayerGame();
-            $playerGame->game_id = $game->id;
+            $playerGame->game_id = $gameId;
             $playerGame->player_id = $player->id;
+            $playerGame->result = $won;
             $playerGame->save();
         }
 

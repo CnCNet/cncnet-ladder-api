@@ -22,6 +22,7 @@
     <Compile Include="cncnet-api\app\Events\Event.php" />
     <Compile Include="cncnet-api\app\Exceptions\Handler.php" />
     <Compile Include="cncnet-api\app\GameRaw.php" />
+    <Compile Include="cncnet-api\app\GamePlayer.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\AccountController.php" />
     <Compile Include="cncnet-api\app\Http\Services\GameService.php" />
     <Compile Include="cncnet-api\app\Http\Services\PointService.php" />
@@ -79,6 +80,7 @@
     <Compile Include="cncnet-api\database\migrations\.gitkeep" />
     <Compile Include="cncnet-api\database\migrations\2017_05_01_080800_create_games_raw_table.php" />
     <Compile Include="cncnet-api\database\migrations\2017_05_14_204749_create_player_points_table.php" />
+    <Compile Include="cncnet-api\database\migrations\2017_06_03_160715_create_game_players_table.php" />
     <Compile Include="cncnet-api\database\seeds\.gitkeep" />
     <Compile Include="cncnet-api\database\seeds\DatabaseSeeder.php" />
     <Compile Include="cncnet-api\database\.gitignore" />

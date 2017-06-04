@@ -89,17 +89,16 @@
                             <th>#</th>
                             <th>When <i class="fa fa-clock-o fa-fw"></i></th>
                             <th>Players in game <i class="fa fa-user fa-fw"></i></th>
-                            <th>Map played <i class="fa fa-map-marker fa-fw"></i></th>
                             <th>Game Details <i class="fa fa-level-down fa-fw"></i></th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        {{-- TODO: These really need to be in a controller --}}
-                        @foreach($player->games()->get() as $game)
+                        @foreach($player->games()->orderBy("id", "DESC")->get() as $game)
                         <?php $g = \App\Game::where("id", "=", $game->game_id)->first(); ?>
 
                         @if($g != null)
-                        <?php $stats = \App\Game::find($game->game_id)->stats()->get(); ?>
+                        <?php $stats = \App\Game::find($game->game_id)->stats()->first(); ?>
                         <tr>
                             <td>
                                 <ul class="list-unstyled">
@@ -115,39 +114,38 @@
                             </td>
                             <td>
                                 <ul class="list-inline">
-                                @foreach($stats as $s)
-                                    <?php $p = $s->player()->first(); ?>
-
+                                <?php $playerGames = \App\PlayerGame::where("game_id", "=", $game->game_id)->get(); ?>
+                                @foreach($playerGames as $pg)
+                                <li>
                                     <?php 
+                                        $player = $pg->player()->first();
                                         $points = \App\PlayerPoint::where("game_id", "=", $game->game_id)
-                                        ->where("player_id", "=", $p->id)
+                                        ->where("player_id", "=", $player->id)
                                         ->first();
                                     ?>
-                          
-                                    @if($p)
-                                    <li>
-                                        <a href="/ladder/{{ $ladder->abbreviation }}/player/{{$p->username}}">
-                                            {{ $p->username }} 
+                                    @if(isset($points))      
+                                    <a href="/ladder/{{ $ladder->abbreviation }}/player/{{$player->username}}">
+                                        {{ $player->username }} 
                                             
-                                            @if(isset($points))
-                                            ({{ $points->game_won ? "+" : "-" }} {{ $points->points_awarded }})
-                                            @endif
+                                        @if(isset($points))
+                                        ({{ $points->game_won ? "+" : "" }} {{ $points->points_awarded }})
+                                        @endif
 
-                                            @if($s->cmp == 256) 
-                                            <i class="fa fa-level-up fa-lg fa-fw" aria-hidden="true" style="color:green;"></i> 
-                                            @elseif($s->cmp == 2)
-                                            <i class="fa fa-sort-desc fa-lg" aria-hidden="true" style="color:orange"></i> 
-                                            @else
-                                            <i class="fa fa-level-down fa-lg fa-fw" aria-hidden="true" style="color:red"></i> 
-                                            @endif
-                                        </a>
-                                    </li>
+                                        @if($points->game_won) 
+                                        <i class="fa fa-level-up fa-lg fa-fw" aria-hidden="true" style="color:green;"></i> 
+                                        @else
+                                        <i class="fa fa-level-down fa-lg fa-fw" aria-hidden="true" style="color:red"></i> 
+                                        @endif
+                                    </a>
                                     @endif
+                                </li>
                                 @endforeach
                                 </ul>
                             </td>
                             <td>
-                                {{ $g->scen or "Unknown" }}
+                            <ul class="list-unstyled">
+                                <li><i class="fa fa-map-marker fa-fw"></i> {{ $stats->scen or "Unknown" }}</li>
+                            </ul>
                             </td>
                             <td>
                                 <ul class="list-unstyled">
