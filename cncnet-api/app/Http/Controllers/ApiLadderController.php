@@ -122,7 +122,7 @@ class ApiLadderController extends Controller
             {
                 $newPoints = ($player->points > 0 ? $results["a"] - $player->points : $results["a"]);
                 $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints);
-                $player->points = $results["a"];
+                $player->points = $results["a"] > 0 ? $results["a"] : 0;
 
                 $player->games_count += 1;
                 $player->loss_count += 1;

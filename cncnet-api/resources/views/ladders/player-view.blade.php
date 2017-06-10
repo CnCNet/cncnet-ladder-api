@@ -33,7 +33,7 @@
                     <h3 class="battle-percentage">{{ $player->username }}
                          @if($player->win_count > 0)  
                         <span class="badge badge-winpercent text-uppercase">
-                            Win Percentage - {{ $player->win_count / ($player->win_count + $player->loss_count) * 100 }}%
+                            Win Percentage - {{ number_format($player->win_count / ($player->win_count + $player->loss_count) * 100) }}%
                         </span>
                         @endif
                     </h3>

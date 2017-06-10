@@ -52,7 +52,7 @@
                                 <th class="hidden-xs">Points <i class="fa fa-bolt fa-fw"></i></th>
                                 <th>Won <i class="fa fa-level-up fa-fw"></i></th>
                                 <th>Lost <i class="fa fa-level-down fa-fw"></i></th>
-                                <th>Winning % </th>
+                                <th>Win % </th>
                             </tr>
                             </thead>
                             <tbody>
@@ -67,7 +67,7 @@
                                 <td>{{ $player->loss_count }}</td>
                                 <td>
                                 @if($player->win_count > 0)  
-                                    {{ $player->win_count / ($player->win_count + $player->loss_count) * 100 }}%
+                                    {{ number_format($player->win_count / ($player->win_count + $player->loss_count) * 100) }}%
                                 @else
                                     0%
                                 @endif
