@@ -16,6 +16,8 @@ class ApiLadderController extends Controller
     private $pointService;
     private $authService;
 
+    private $elo;
+
     public function __construct()
     {
         $this->ladderService = new LadderService();
@@ -86,7 +88,6 @@ class ApiLadderController extends Controller
 
     public function awardPoints($gameId)
     {
-        $game = \App\GameStats::where("game_id", "=", $gameId)->first();
         $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
         $players = [];
 
@@ -119,13 +120,9 @@ class ApiLadderController extends Controller
 
             if ($k == "lost")
             {
-                $this->playerService->awardPlayerPoints($player->id, $gameId, $results["a"], false);
-
-                $currentPoints = $player->points; // todo
-                if ($currentPoints > 0)
-                {
-                    $player->points -= $results["a"];
-                }
+                $newPoints = ($player->points > 0 ? $results["a"] - $player->points : $results["a"]);
+                $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints);
+                $player->points = $results["a"];
 
                 $player->games_count += 1;
                 $player->loss_count += 1;
@@ -133,8 +130,10 @@ class ApiLadderController extends Controller
             }
             else if ($k == "won")
             {
-                $this->playerService->awardPlayerPoints($player->id, $gameId, $results["b"], true);
-                $player->points += $results["b"];
+                $newPoints = ($player->points > 0 ? $results["b"] - $player->points : $results["b"]);
+                $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints, true);
+                $player->points = $results["b"];
+
                 $player->games_count += 1;
                 $player->win_count += 1;
                 $player->save();

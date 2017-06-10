@@ -41,7 +41,7 @@ class GameService
         // Max no. of real players in a game
         $playerIndex = 0;
 
-        while ($playerIndex <= 2)
+        while ($playerIndex <= $this->maxPlayers)
         {
             // Loop our submitted game result
             foreach($result as $k => $v)
