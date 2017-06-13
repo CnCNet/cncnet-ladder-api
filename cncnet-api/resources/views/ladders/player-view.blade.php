@@ -5,6 +5,10 @@
 /images/feature/feature-yr.jpg
 @endsection
 
+@section('css')
+<link rel="stylesheet" href="/css/dials.css" />
+@endsection
+
 @section('feature')
 <div class="feature-background sub-feature-background">
     <div class="container">
@@ -23,37 +27,15 @@
 </div>
 @endsection
 
-
 @section('content')
 <section class="game-detail">
     <div class="container">
         <div class="profile">
             <div class="row">
-                <div class="col-md-9">
-                    <h3 class="battle-percentage">{{ $player->username }}
-                         @if($player->win_count > 0)  
-                        <span class="badge badge-winpercent text-uppercase">
-                            Win Percentage - {{ number_format($player->win_count / ($player->win_count + $player->loss_count) * 100) }}%
-                        </span>
-                        @endif
+                <div class="col-md-7 col-md-offset-1">
+                    <h3 class="battle-percentage">
+                        {{ $player->username }}
                     </h3>
-                </div>
-                <div class="col-md-3">
-                    <div class="profile-rank text-right">
-                    <ul class="list-unstyled">
-                        <li class="rank">
-                            <h2>Rank #{{ $rank or "Unranked" }}</h2>
-                        </li>
-                        <li class="rank-title gold">
-                            <i class='fa fa-trophy fa-fw fa-2x'></i>
-                            Colonel
-                        </li>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
                     <ul class="list-inline">
                         <li>
                             Points <strong>{{ $player->points }}</strong>
@@ -64,14 +46,64 @@
                             <i class="fa fa-level-up fa-fw"></i>
                         </li>
                         <li>
-                            Total Games <strong>{{ $player->games_count }} </strong>
-                            <i class="fa fa-diamond fa-fw"></i>
+                            Disconnects <strong>0</strong>
                         </li>                
                         <li>
-                            FPS <strong></strong>
-                            <i class="fa fa-industry fa-fw"></i>
+                            Reconnection Errors <strong>0</strong>
                         </li>
                     </ul>
+                    
+                    <ul class="list-inline">
+                        <li>
+                        @if ($player->win_count > 0)  
+                        <?php $winPercent = number_format($player->win_count / ($player->win_count + $player->loss_count) * 100); ?>
+                        <div class="c100 p{{ $winPercent }} center big green">
+                            <p class="title">Winning</p>
+                            <p class="value">{{ $winPercent }}%</p>
+                            <div class="slice"><div class="bar"></div><div class="fill"></div></div>
+                        </div>
+                        @endif
+                        </li>
+                        <li>
+                            <div class="c100 p77 center big purple">
+                                <p class="title">Games</p>
+                                <p class="value">{{ $player->games_count }}   <i class="fa fa-diamond fa-fw"></i></p>
+                                <div class="slice"><div class="bar"></div><div class="fill"></div></div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="c100 p55 center big blue">
+                                <p class="title">Average FPS</p>
+                                <p class="value">55 <i class="fa fa-industry fa-fw"></i></p>
+                                <div class="slice"><div class="bar"></div><div class="fill"></div></div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <div class="profile-rank text-right">
+                    <ul class="list-unstyled">
+                        <li class="rank">
+                            <h1>Rank #{{ $rank or "Unranked" }}</h1>
+                        </li>
+                        @if($rank == 1)
+                        <li class="rank-title gold">
+                            General  <i class='fa fa-trophy fa-fw fa-2x'></i>
+                        </li>
+                        @elseif ($rank == 2)
+                        <li class="rank-title silver">
+                            Lieutenant General <i class='fa fa-trophy fa-fw fa-2x'></i>
+                        </li>
+                        @elseif ($rank == 3)
+                        <li class="rank-title bronze">
+                            Major General <i class='fa fa-trophy fa-fw fa-2x'></i>
+                        </li>
+                        @else
+                        <li class="rank-title">
+                            Lieutenant 
+                        </li>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
@@ -157,6 +189,9 @@
                                     <li>Average FPS: {{ $g->afps }}</li>
                                     <li>Out of Sync: {{ $g->oosy ? "Yes" : "No" }}</li>
                                     <li>Crates: {{ $g->crat ? "On" : "Off" }}</li>
+                                    <li>Superweapons: {{ $g->supr ? "On" : "Off" }}</li>
+                                    <li>Unit Count Start: {{ $g->unit ? $g->unit : 0 }}</li>
+                                    <li>Players in Game: {{ $g->plrs ? $g->plrs : 0 }}</li>
                                 </ul>
                             </td>
                         </tr>
@@ -170,4 +205,3 @@
     </div>
 </section>
 @endsection
-

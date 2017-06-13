@@ -110,3 +110,69 @@ input.form-control
     padding-top: 50px;
     padding-bottom: 50px;
 }
+
+// HTML Dial Overrides
+.c100.big 
+{
+    font-size: 150px;
+}
+
+.c100.big 
+{
+    margin: 30px 30px 0 0;
+}
+
+.c100 
+{
+    background-color: #171717;
+
+    &:after 
+    {
+        top: 0.04em;
+        left: 0.04em;
+        width: 0.92em;
+        height: 0.92em;
+        background-color: #131313;
+    }
+}
+
+.c100.green .bar, .c100.green .fill 
+{
+    border-color: #00ce00!important;
+}
+
+.c100.purple .bar, .c100.purple .fill 
+{
+    border-color: #ff01f1!important;
+}
+
+.c100.blue .bar, .c100.blue .fill 
+{
+    border-color: #0083f3!important;
+}
+
+.c100 .title
+{
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 20%;
+    text-align: center;
+    z-index: 9;
+    color: #c3c3c3;
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.c100 .value 
+{
+    position: absolute;
+    right: 0;
+    left: 0;
+    text-align: center;
+    z-index: 9;
+    color: #9a9a9a;
+    font-weight: 100;
+    font-size: 30px;
+    bottom: 30px;
+}
