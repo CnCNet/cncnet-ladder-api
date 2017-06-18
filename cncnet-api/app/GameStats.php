@@ -23,7 +23,7 @@ class GameStats extends Model
         'plk', 'blk', 'vsk', 'blc', 'spc', 'ded', 'spa', 
         'rsg', 'aly', 'tid', 'ipa', 'bamr'     
     ];
-
+    
     public $gameStatsColumns = 
     [
         //'myid',
@@ -54,9 +54,7 @@ class GameStats extends Model
         'gsku',
         'idno'
     ];
-
-
-
+    
     public $timestamps = false;
 
     public function player()

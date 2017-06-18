@@ -4455,6 +4455,7 @@
     <Folder Include="cncnet-api\public\css" />
     <Folder Include="cncnet-api\public\fonts" />
     <Folder Include="cncnet-api\public" />
+    <Folder Include="cncnet-api\public\fonts\ranks\" />
     <Folder Include="cncnet-api\public\images\" />
     <Folder Include="cncnet-api\public\images\favicon\" />
     <Folder Include="cncnet-api\public\images\feature\" />
@@ -5438,8 +5439,16 @@
     <Folder Include="cncnet-api" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="cncnet-api\public\css\dials.css" />
     <Content Include="cncnet-api\public\css\font-awesome.min.css" />
     <Content Include="cncnet-api\public\css\ladder.css" />
+    <Content Include="cncnet-api\public\css\ranks.css" />
+    <Content Include="cncnet-api\public\fonts\fontawesome-webfont.eot" />
+    <Content Include="cncnet-api\public\fonts\fontawesome-webfont.svg" />
+    <Content Include="cncnet-api\public\fonts\fontawesome-webfont.ttf" />
+    <Content Include="cncnet-api\public\fonts\fontawesome-webfont.woff" />
+    <Content Include="cncnet-api\public\fonts\fontawesome-webfont.woff2" />
+    <Content Include="cncnet-api\public\fonts\FontAwesome.otf" />
     <Content Include="cncnet-api\public\images\favicon\android-chrome-192x192.png" />
     <Content Include="cncnet-api\public\images\favicon\android-chrome-256x256.png" />
     <Content Include="cncnet-api\public\images\favicon\apple-touch-icon.png" />
@@ -5491,6 +5500,8 @@
     <Content Include="cncnet-api\public\js\cncnet-game-detail.js" />
     <Content Include="cncnet-api\public\js\cncnet-online.js" />
     <Content Include="cncnet-api\public\js\cncnet-status.js" />
+    <Content Include="cncnet-api\resources\sass\dials.scss" />
     <Content Include="cncnet-api\resources\sass\ladder.scss" />
+    <Content Include="cncnet-api\resources\sass\ranks.scss" />
   </ItemGroup>
 </Project>

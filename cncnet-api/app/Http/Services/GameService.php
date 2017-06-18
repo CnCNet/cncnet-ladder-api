@@ -125,8 +125,6 @@ class GameService
            return "Error";
         }
  
-        $stats_ver = unpack("V", $data)[1];
- 
         $pad = 0;
         $result = [];
 
@@ -135,15 +133,12 @@ class GameService
             $data = fread($fh, 8);
             if (!$data) 
             {
-                // exit loop here
                 break;
             }
  
             $ttl = unpack("A4tag/ntype/nlength", $data);
             $pad = ($ttl["length"] % 4) ? 4 - ($ttl["length"] %  4) : 0;
             
-            //print "$ttl[tag] $ttl[type] $ttl[length]";
- 
             if ($ttl["length"] > 0) 
             {
                 $data = fread($fh, $ttl["length"]);
@@ -153,67 +148,112 @@ class GameService
                     fread($fh, $pad);
                 }
 
-                $val = $this->getFieldValue($ttl, $data);
-                $result[strtolower($ttl["tag"])] = $val;
+                $fieldValueArr = $this->getFieldValue($ttl, $data);
+                $result[$ttl["tag"]] = ["tag" => $ttl["tag"], "length" => $ttl["length"], "raw" => json_encode($fieldValueArr["raw"]), "value" => $fieldValueArr["val"]];
             }
         }
+
+        $types = array ("CRA","BLC","BLK","PLK","UNK","INK","BLL","PLL","UNL","INL","BLB","PLB","UNB","INB");
+        $gameUnitTypes = config("types.YR");
+
+        foreach ($types as $tag) 
+        {
+            $lookup = $gameUnitTypes[substr($tag, 0, 2)];
+
+            for ($i = 0; $i < 8; $i++) 
+            {
+                if (isset($result["$tag$i"])) 
+                {
+                    $raw = json_decode($result["$tag$i"]["raw"]);
+                    $length = $result["$tag$i"]["length"];
+                    
+                    for ($j = 0, $t = 0; $j < $length; $j += 4, $t++) 
+                    {
+                        $count = unpack("N", substr($raw, $j, 4))[1];
+                        if ($count >= 0) 
+                        {
+                            if ($lookup && $lookup[$t]) 
+                            {
+                                $result["$tag$i"]["counts"][$lookup[$t]] = $count;
+                            }
+                            else 
+                            {
+                                $result["$tag$i"]["counts"][$t] = $count;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         return $result;
     }
 
     private function getFieldValue($ttl, $data)
     {
+        $response = ["raw" => null, "val" => null];
+
         switch ($ttl["type"]) 
         {
             //FIELDTYPE_BYTE
             case 1:
                 $v = unpack("C", $data);
-                return $v[1];
+                $response["val"] = $v[1];
+                break;
  
             //FIELDTYPE_BOOLEAN
             case 2:
                 $v = unpack("C", $data);
                 if ($v[1] == 0) 
                 {
-                    return false;
+                    $response["val"] = false;
+                    break;
                 }
                 else 
                 {
-                    return true;
+                    $response["val"] = true;
+                    break;
                 }
  
             //FIELDTYPE_SHORT
             case 3:
                 $v = unpack("n", $data);
-                return $v[1];
+                $response["val"] = $v[1];
+                break;
  
             //FIELDTYPE_UNSIGNED_SHORT
             case 4:
                 $v = unpack("n", $data);
-                return $v[1];
+                $response["val"] = $v[1];
+                break;
  
             //FIELDTYPE_LONG
             case 5:
                 $v = unpack("N", $data);
-                return $v[1];
+                $response["val"] = $v[1];
+                break;
  
             //FIELDTYPE_UNSIGNED_LONG
             case 6:
                 $v = unpack("N", $data);
-                return $v[1];
+                $response["val"] = $v[1];
+                break;
  
             //FIELDTYPE_CHAR
             case 7:
                 $ttl["length"] -= 1;
                 $v = unpack("a$ttl[length]", $data);
-                return $v[1];
+                $response["val"] = $v[1];
+                break;
  
             //FIELDTYPE_CUSTOM_LENGTH
             case 20:
-                $v = unpack("C$ttl[length]", $data);
-                return "<<raw data HERE>>";
+                $response["val"] = null;
+                $response["raw"] = substr($data, 0, $ttl["length"]);;
+                break;
         }
 
-        return null;
+        return $response;
     }
 
     public function saveGameDetails($ladderGame, $gameStats)
