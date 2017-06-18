@@ -7,47 +7,22 @@ class GameStats extends Model
 	protected $table = 'game_stats';
 
 	protected $fillable = [
-        'cmp', 'col', 'sid', 'pc', 'scen',
-        'hrv', 'crd', 'inb', 'unb', 'plb', 'blb', 'vsb', 
-        'inl', 'unl', 'pll', 'bll', 'vsl', 'ink', 'unk', 
-        'plk', 'blk', 'vsk', 'blc', 'spc', 'ded', 'spa', 
-        'rsg', 'aly', 'tid', 'ipa', 'bamr', 'oosy', 'afps',
+        'cmp', 'col', 'sid',
+        'spc',  'ipa', 'bamr', 'oosy', 'afps',
         'plrs', 'unit', 'mode', 'supr', 'shrt', 'cred', 'dura',
         'fini', 'trny', 'gsku', 'idno', 'vers'
     ];
 
     public $playerStatsColumns = [
-        'cmp', 'col', 'sid', 'pc', 'scen',
-        'hrv', 'crd', 'inb', 'unb', 'plb', 'blb', 'vsb', 
-        'inl', 'unl', 'pll', 'bll', 'vsl', 'ink', 'unk', 
-        'plk', 'blk', 'vsk', 'blc', 'spc', 'ded', 'spa', 
-        'rsg', 'aly', 'tid', 'ipa', 'bamr'     
+        'cmp', 'col', 'sid',
+        'ipa', 'bamr'     
     ];
     
     public $gameStatsColumns = 
     [
-        //'myid',
-        //'acco',
-        //'date',
         'vers',
-        //'sped',
         'afps',
-        //'time',
-        //'spid',
         'plrs',
-        //'pngr',
-        //'pngs',
-        'scen',
-        'unit',
-        //'aipl',
-        'crat',
-        //'base',
-        'bamr',
-        'mode',
-        'supr',
-        'shrt',
-        'cred',
-        'dura',
         'fini',
         'oosy',
         'trny',
@@ -61,4 +36,9 @@ class GameStats extends Model
 	{
         return $this->belongsTo('App\Player');
 	}
+
+    public function game()
+    {
+        return $this->belongsTo('App\Game');
+    }
 }

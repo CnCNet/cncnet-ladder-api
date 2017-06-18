@@ -42,7 +42,7 @@ class LadderService
     public function getLadderGameById($game, $gameId)
     {
         $ladder = $this->getLadderByGame($game);
-
+ 
         if($ladder == null || $gameId == null)
             return "Invalid parameters";
 
@@ -50,9 +50,9 @@ class LadderService
             ->where("game_id", "=", $gameId)->first();
 
         if($ladderGame == null)
-            return "Game not found";
+            return null;
 
-        return \App\Game::find($ladderGame->id)->first();
+        return \App\Game::where("id", "=", $ladderGame->game_id)->first();
     }
 
     public function getLadderPlayer($game, $player)

@@ -16,6 +16,11 @@ class Player extends Model
         return $this->hasMany('App\GameStats');
 	}
         
+    public function playerStats()
+	{
+        return $this->hasMany('App\PlayerStats');
+	}
+        
     public function games()
     {
         return $this->hasMany("App\PlayerGame");

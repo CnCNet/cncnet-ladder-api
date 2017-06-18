@@ -160,7 +160,7 @@
                                         {{ $player->username }} 
                                             
                                         @if(isset($points))
-                                        ({{ $points->game_won ? "+" : "" }} {{ $points->points_awarded }})
+                                        + {{ $points->points_awarded }}
                                         @endif
 
                                         @if($points->game_won) 

@@ -76,6 +76,7 @@
     <Compile Include="cncnet-api\config\queue.php" />
     <Compile Include="cncnet-api\config\services.php" />
     <Compile Include="cncnet-api\config\session.php" />
+    <Compile Include="cncnet-api\config\types.php" />
     <Compile Include="cncnet-api\config\view.php" />
     <Compile Include="cncnet-api\database\migrations\.gitkeep" />
     <Compile Include="cncnet-api\database\migrations\2017_05_01_080800_create_games_raw_table.php" />

@@ -15,8 +15,8 @@ class GameService
     {
         foreach ($result as $k => $v)
         {
-            if($k == "idno")
-                return $v;
+            if($k == "IDNO")
+                return $v["value"];
         }
         return null;
     }
@@ -24,13 +24,10 @@ class GameService
     // TODO - Need to verify game stats against other players if game exists.
     public function saveGameStats($result, $gameId, $senderId)
     {
-        if ($gameId == null || $result == null)
-            return "Missing game information";;
-
         // TODO - check we don't have GameStats for GameID and PlayerId already
         $gameStats = \App\GameStats::where("player_id", "=", $senderId)
             ->where("game_id", "=", $gameId)->first();
-            
+
         if ($gameStats != null)
             return 200;
 
@@ -38,24 +35,26 @@ class GameService
         $stats->player_id = $senderId;
         $stats->save();
 
-        // Max no. of real players in a game
-        $playerIndex = 0;
+        $playerStats = new \App\PlayerStats();
+        $playerStats->player_id = $senderId;
+        $playerStats->game_stats_id = $stats->id;
+        $playerStats->player_stats = json_encode($result);
+        $playerStats->save();
 
+        // Loop our submitted game result
+        $playerIndex = 0;
         while ($playerIndex <= $this->maxPlayers)
         {
-            // Loop our submitted game result
             foreach($result as $k => $v)
             {
-                if (isset($result["nam" . $playerIndex]))
+                if (isset($result["NAM" . $playerIndex]))
                 {
                     // Player Index from Stats File, e.g nam#(index)
                     $gamePlayerIndex = substr($k, -1);
-                    
-                    $player = $this->playerService->findPlayerByName($result["nam" . $playerIndex]);
+
+                    $player = $this->playerService->findPlayerByName($result["NAM" . $playerIndex]["value"]);
                     if ($player == null)
-                    {
-                        return "Player does not exist";
-                    } 
+                        break;
 
                     // Store Stats Info on Player
                     if ($gamePlayerIndex == $playerIndex)
@@ -66,29 +65,30 @@ class GameService
                         $pg = \App\PlayerGame::where("game_id", "=", $gameId)
                             ->where("player_id", "=", $player->id)->first();
 
+                        // TODO - Add proper logic for determining game result
                         if($pg == null)
                         {
                             $won = false;
-                            if ($key == "cmp" && $v == 256)
+                            if ($key == "CMP" && $v["value"] == 256)
                             {
                                 $this->playerService->createPlayerGame($player, $gameId, true);
                             }
-                            else if ($key == "cmp" && $v != 256)
+                            else if ($key == "CMP" && $v["value"] != 256)
                             {
                                 $this->playerService->createPlayerGame($player, $gameId, false);
                             }
                         }
 
-                        if (in_array($key, $stats->playerStatsColumns)) 
+                        if (in_array(strtolower($key), $stats->playerStatsColumns)) 
                         {
-                            $stats->{$key} = $v;
+                            $stats->{strtolower($key)} = $v["value"];
                         }
                     }
                 }
-                else if (in_array($k, $stats->gameStatsColumns)) 
+                else if (in_array(strtolower($k), $stats->gameStatsColumns)) 
                 {
                     // Store Non Player Specific Stats
-                    $stats->{$k} = $v;
+                    $stats->{strtolower($k)} = $v["value"];
                 }
             }
 
