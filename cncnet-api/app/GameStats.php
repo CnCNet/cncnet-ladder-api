@@ -18,18 +18,6 @@ class GameStats extends Model
         'ipa', 'bamr'     
     ];
     
-    public $gameStatsColumns = 
-    [
-        'vers',
-        'afps',
-        'plrs',
-        'fini',
-        'oosy',
-        'trny',
-        'gsku',
-        'idno'
-    ];
-    
     public $timestamps = false;
 
     public function player()

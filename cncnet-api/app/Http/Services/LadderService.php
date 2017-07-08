@@ -62,8 +62,22 @@ class LadderService
         if($ladder == null)
             return "No ladder found";
 
-        return \App\Player::where("ladder_id", "=", $ladder->id)
+        $player = \App\Player::where("ladder_id", "=", $ladder->id)
             ->where("username", "=", $player)->first();
+
+        $rank = $this->getLadderPlayerRank($game, $player->username);
+        $games = \App\PlayerGame::where("player_id", "=", $player->id)->count();
+        $gamesWon = \App\PlayerGame::where("player_id", "=", $player->id)->where("result", "=", 1)->count();
+        $gamesLost = ($games - $gamesWon);
+
+        return [
+            "username" => $player->username, 
+            "points" => $player->points, 
+            "rank" => $rank, 
+            "game_count" => $games, 
+            "games_won" => $gamesWon,
+            "games_lost" => $gamesLost
+        ];
     }
 
     public function getLadderPlayers($game)
@@ -74,7 +88,6 @@ class LadderService
             return "No ladder found";
 
         return \App\Player::where("ladder_id", "=", $ladder->id)
-            ->where("games_count", ">", "0")
             ->orderBy("points", "DESC")
             ->get();
     }
@@ -87,7 +100,6 @@ class LadderService
             return "No ladder found";
 
         $players = \App\Player::where("ladder_id", "=", $ladder->id)
-            ->where("games_count", ">", "0")
             ->orderBy("points", "DESC")
             ->get();
 

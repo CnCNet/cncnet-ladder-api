@@ -30,8 +30,8 @@
 </div>
 @endsection
 
-
 @section('content')
+{{ $players }}
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
 
@@ -42,47 +42,40 @@
                         <h1>{{ $ladder->name }}</h1>
                         <p class="lead">Find the latest competitive games</p>
                     </div>
-
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th class="rank">Rank <i class="fa fa-trophy fa-fw"></i></th>
-                                <th>Profile <i class="fa fa-user fa-fw"></i></th>
-                                <th class="hidden-xs">Points <i class="fa fa-bolt fa-fw"></i></th>
-                                <th>Won <i class="fa fa-level-up fa-fw"></i></th>
-                                <th>Lost <i class="fa fa-level-down fa-fw"></i></th>
-                                <th>Win % </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            @foreach($players as $k => $player)
-                            <tr>
-                                <td>#{{ $k + 1 }}</td>
-                                <td>
-                                    <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}">{{ $player->username }}</a>
-                                </td>
-                                <td>{{ $player->points }}</td>
-                                <td>{{ $player->win_count }}</td>
-                                <td>{{ $player->loss_count }}</td>
-                                <td>
-                                @if($player->win_count > 0)  
-                                    {{ number_format($player->win_count / ($player->win_count + $player->loss_count) * 100) }}%
-                                @else
-                                    0%
-                                @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
+                    <style>
+                    .profile-listing 
+                    {
+                        background: black;
+                        padding: 30px 50px;
+                        border-radius: 5px;
+                        margin: 15px 0;
+                    }
+                    .profile-link
+                    {
+                        display: block; 
+                    }
+                     .profile-link:hover
+                    {
+                        text-decoration: none;
+                    }
+                    </style>
+                    <div class="row">
+                        @foreach($players as $k => $player)
+                        <div class="col-md-4">
+                            <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
+                            <div class="profile-listing">
+                                <h3>Rank: <i class="fa fa-trophy fa-fw"></i> #{{ $k + 1 }}</h3>
+                                <p>Player: <i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
+                                <p>Points: <i class="fa fa-bolt fa-fw"></i> {{ $player->points }}</p>
+                            </div>
+                            </a>
+                        </div>
+                        @endforeach
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </section>
-
 @endsection
 

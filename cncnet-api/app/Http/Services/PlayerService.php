@@ -26,7 +26,7 @@ class PlayerService
         }
     }
 
-    public function createPlayerGame($player, $gameId, $won)
+    public function createPlayerGame($player, $opponent, $gameId, $won)
     {
         $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)
             ->where("game_id", "=", $gameId)->first();
@@ -36,6 +36,7 @@ class PlayerService
             $playerGame = new \App\PlayerGame();
             $playerGame->game_id = $gameId;
             $playerGame->player_id = $player->id;
+            $playerGame->opponent_id = $opponent->id;
             $playerGame->result = $won;
             $playerGame->save();
         }
@@ -48,7 +49,7 @@ class PlayerService
         return \App\Player::find($id);
     }
 
-    public function findPlayerByName($name)
+    public function findPlayerByUsername($name)
     {
         return \App\Player::where("username", "=", $name)->first();
     }

@@ -30,39 +30,61 @@
 </div>
 @endsection
 
-
 @section('content')
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
 
-        <div class="feature">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="text-center" style="padding-bottom: 40px;">
-                        <h1>{{ $ladder->name }}</h1>
-                        <p class="lead">Find the latest competitive games</p>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <h3>Deets</h3>
+                        {{ $game }}
+                        <h3>Map</h3>
+                        <img src="https://grant.cnc-comm.com/tmp/d179f3b4590e7f014d0761d670c5374de9458ef5.png" class="img-responsive">
                     </div>
 
-                    <div class="table-responsive">
-                        @foreach($gameStats as $gameStat)
-                            <pre>
-                                {{ $gameStat->game }}
-                            </pre>
-                            @if($gameStat->id == $playerStats->game_stats_id)
-                            <pre>
-                                <?php
-                                    $pt = json_decode($playerStats->player_stats);
-                                    print_r($pt);
-                                ?>
-                            </pre>
-                            @endif
-                        @endforeach
+                    @foreach($stats as $k => $stat)
+
+                    <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
+                    <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
+
+                    <div class="col-md-12">
+                        <h3>Player {{$k + 1}} </h3>
+                        <p>{{ $player->username }}</p>
+                        {{ $player }}
+
+                        <div class="rank-title gold">
+                            1st <i class="fa fa-trophy fa-fw fa-2x"></i>
+                        </div>
+
+                        <div class="stats clearfix" style="background: black; font-size: 10px;">
+                            
+                            Colour: {{ $gameStats->col }}               <br>
+                            Country: {{ $gameStats->cty }}              <br>
+                            Credits: {{ $gameStats->crd }}              <br>
+                            Infantry Left: {{ $gameStats->inl }}        <br>
+                            Planes Left: {{ $gameStats->pll }}          <br>
+                            Buildings Left: {{ $gameStats->bll }}       <br>
+                            Units Bought: {{ $gameStats->unb }}         <br>
+                            Infantry Bought: {{ $gameStats->inb }}      <br>
+                            Planes Bought: {{ $gameStats->plb }}        <br>
+                            Buildings Bought: {{ $gameStats->blb }}     <br>
+                            Units Bought: {{ $gameStats->unk }}         <br>
+                            Infantry Bought: {{ $gameStats->ink }}      <br>
+                            Planes Killed: {{ $gameStats->plk }}        <br>
+                            Buildings Destroyed: {{ $gameStats->blk }}  <br>
+                            Buildings Captured: {{ $gameStats->blc }}   <br>
+                            Crates Found: {{ $gameStats->cra }}         <br>
+                            Harvested: {{ $gameStats->hrv }}            <br>
+                        </div>
                     </div>
+
+                    @endforeach
                 </div>
             </div>
-        </div>
     </div>
 </section>
 
 @endsection
-

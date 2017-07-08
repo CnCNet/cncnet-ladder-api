@@ -7,9 +7,23 @@ class Game extends Model
     protected $table = 'games';
 
     protected $fillable = ['wol_game_id', 'duration', 'afps', 
-    'oosy', 'bamr', 'crat', 'dura', 'cred', 'shrt', 'supr', 'unit', 'plrs', 'scen'];
+    'oosy', 'bamr', 'crat', 'dura', 'cred', 'shrt', 'supr', 'unit', 'plrs', 'scen', 'afps'];
 
     protected $hidden = ['created_at', 'updated_at'];
+        
+    public $gameColumns = 
+    [
+        'afps',
+        'oosy',
+        'bamr',
+        'crat',
+        'dura',
+        'cred',
+        'shrt',
+        'supr',
+        'unit',
+        'plrs',
+    ];
 
     public function stats()
 	{

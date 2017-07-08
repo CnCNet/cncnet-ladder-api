@@ -23,6 +23,7 @@
     <Compile Include="cncnet-api\app\Exceptions\Handler.php" />
     <Compile Include="cncnet-api\app\GameRaw.php" />
     <Compile Include="cncnet-api\app\GamePlayer.php" />
+    <Compile Include="cncnet-api\app\PlayerStats.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\AccountController.php" />
     <Compile Include="cncnet-api\app\Http\Services\GameService.php" />
     <Compile Include="cncnet-api\app\Http\Services\PointService.php" />
@@ -107,6 +108,7 @@
     <Compile Include="cncnet-api\resources\views\emails\password.blade.php" />
     <Compile Include="cncnet-api\resources\views\errors\503.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\index.blade.php" />
+    <Compile Include="cncnet-api\resources\views\ladders\game-view.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\player-view.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\listing.blade.php" />
     <Compile Include="cncnet-api\resources\views\layouts\app.blade.php" />

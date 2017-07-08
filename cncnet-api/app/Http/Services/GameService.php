@@ -11,93 +11,103 @@ class GameService
         $this->playerService = new PlayerService();
     }
 
-    public function getUniqueGameIdentifier($result)
+    public function saveGameStats($result, $gameId, $playerId)
     {
-        foreach ($result as $k => $v)
-        {
-            if($k == "IDNO")
-                return $v["value"];
-        }
-        return null;
-    }
-
-    // TODO - Need to verify game stats against other players if game exists.
-    public function saveGameStats($result, $gameId, $senderId)
-    {
-        // TODO - check we don't have GameStats for GameID and PlayerId already
-        $gameStats = \App\GameStats::where("player_id", "=", $senderId)
-            ->where("game_id", "=", $gameId)->first();
+        $game = \App\Game::where("id", "=", $gameId)->first();
+        $gameStats = \App\GameStats::where("player_id", "=", $playerId)
+            ->where("game_id", "=", $gameId)
+            ->first();
 
         if ($gameStats != null)
-            return 200;
+        {
+            $gameStats->delete(); // Debug
+        }
 
-        $stats = new \App\GameStats();
-        $stats->player_id = $senderId;
+        $stats = new \App\Stats();
         $stats->save();
 
-        $playerStats = new \App\PlayerStats();
-        $playerStats->player_id = $senderId;
-        $playerStats->game_stats_id = $stats->id;
-        $playerStats->player_stats = json_encode($result);
-        $playerStats->save();
+        $gameStats = new \App\GameStats();
+        $gameStats->player_id = $playerId;
+        $gameStats->stats_id = $stats->id;
+        $gameStats->game_id = $gameId;
+        $gameStats->save();
 
-        // Loop our submitted game result
-        $playerIndex = 0;
-        while ($playerIndex <= $this->maxPlayers)
+        $player = \App\Player::where("id", "=", $playerId)->first();
+
+        if ($player == null)
         {
-            foreach($result as $k => $v)
+            break;
+        }
+
+        $id = -1; // Player Index 
+        foreach($result as $key => $value)
+        {
+            $property = substr($key, 0, -1);
+
+            if ($property == "NAM")
             {
-                if (isset($result["NAM" . $playerIndex]))
+                if (isset($value["value"]) && $value["value"] == $player->username)
                 {
-                    // Player Index from Stats File, e.g nam#(index)
-                    $gamePlayerIndex = substr($k, -1);
+                    $id = substr($key, -1);
+                }
+            }
+        }
 
-                    $player = $this->playerService->findPlayerByName($result["NAM" . $playerIndex]["value"]);
-                    if ($player == null)
-                        break;
+        if ($id != -1)
+        {
+            foreach($result as $key => $value)
+            {
+                $cid = substr($key, -1); // Current Index
+                $property = substr($key, 0, -1); // Property without index
 
-                    // Store Stats Info on Player
-                    if ($gamePlayerIndex == $playerIndex)
+                if ($cid == $id)
+                {
+                    // Save Game Specific Stats like buildings bought, destroyed etc
+                    if (in_array(strtolower($property), $stats->gameStatsColumns)) 
                     {
-                        $key = substr($k, 0, -1);
+                        $stats->{strtolower($property)} = json_encode($value);
+                    }
 
-                        // Add Player to the game if we haven't already
-                        $pg = \App\PlayerGame::where("game_id", "=", $gameId)
-                            ->where("player_id", "=", $player->id)->first();
+                    $playerGame = \App\PlayerGame::where("game_id", "=", $gameId)
+                        ->where("player_id", "=", $player->id)
+                        ->first();
 
-                        // TODO - Add proper logic for determining game result
-                        if($pg == null)
+                    // Works for now
+                    if ($id == 0)
+                    {
+                        $opponent = $result["NAM1"]["value"];
+                    }
+                    else if ($id == 1)
+                    {
+                        $opponent = $result["NAM0"]["value"];
+                    }
+
+                    $opponent = \App\Player::where("username", "=", $opponent)->first();
+
+                    if($playerGame == null && $property == "CMP")
+                    {
+                        $gameResult = $value["value"];
+                        switch($gameResult)
                         {
-                            $won = false;
-                            if ($key == "CMP" && $v["value"] == 256)
-                            {
-                                $this->playerService->createPlayerGame($player, $gameId, true);
-                            }
-                            else if ($key == "CMP" && $v["value"] != 256)
-                            {
-                                $this->playerService->createPlayerGame($player, $gameId, false);
-                            }
-                        }
-
-                        if (in_array(strtolower($key), $stats->playerStatsColumns)) 
-                        {
-                            $stats->{strtolower($key)} = $v["value"];
+                            case $gameResult & GameResult::COMPLETION_WON:
+                                $this->playerService->createPlayerGame($player, $opponent, $gameId, true);
+                                break;
+                            case $gameResult & GameResult::COMPLETION_DISCONNECTED:
+                            case $gameResult & GameResult::COMPLETION_NO_COMPLETION:
+                            case $gameResult & GameResult::COMPLETION_QUIT:
+                            case $gameResult & GameResult::COMPLETION_DEFEATED:
+                            default: 
+                                $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
                         }
                     }
                 }
-                else if (in_array(strtolower($k), $stats->gameStatsColumns)) 
-                {
-                    // Store Non Player Specific Stats
-                    $stats->{strtolower($k)} = $v["value"];
-                }
             }
-
-            $stats->game_id = $gameId;
-            $stats->save();
-
-            $playerIndex++;
         }
-    
+
+        $gameStats->save();
+        $stats->save();
+        $game->save();
+      
         return 200;
     }
     
@@ -256,26 +266,10 @@ class GameService
         return $response;
     }
 
-    public function saveGameDetails($ladderGame, $gameStats)
+    public function findOrCreateGame($result, $ladder)
     {
-        // TODO refine
+        $id = $this->getUniqueGameIdentifier($result);
 
-        $ladderGame->afps = $gameStats->afps;
-        $ladderGame->oosy = $gameStats->oosy;
-        $ladderGame->bamr = $gameStats->bamr;
-        $ladderGame->crat = $gameStats->crat;
-        $ladderGame->dura = $gameStats->dura;
-        $ladderGame->cred = $gameStats->cred;
-        $ladderGame->shrt = $gameStats->shrt;
-        $ladderGame->supr = $gameStats->supr;
-        $ladderGame->unit = $gameStats->unit;
-        $ladderGame->plrs = $gameStats->plrs;
-
-        $ladderGame->save();
-    }
-
-    public function findOrCreateGame($id, $ladder)
-    {
         $game = \App\Game::where("wol_game_id", "=", $id)->first();
 
         if ($game == null)
@@ -286,6 +280,42 @@ class GameService
             $game->save();
         }
 
+        $ladderGame = \App\LadderGame::where("game_id", "=", $game->id)->first();
+        if ($ladderGame == null)
+        {
+            $ladderGame = new \App\LadderGame();
+            $ladderGame->game_id = $game->id;
+            $ladderGame->ladder_id = $ladder->id;
+            $ladderGame->save();
+        }
+
+        foreach($result as $key => $value)
+        {
+            $gameProperty = substr($key, -1);
+
+            if(!is_numeric($gameProperty))
+            {
+                // Save Game Details like average fps, out of sync errors etc
+                if (in_array(strtolower($key), $game->gameColumns)) 
+                {
+                    var_dump($value["value"]);
+                    $game->{strtolower($key)} = $value["value"];
+                }
+            }
+        }
+
+        $game->save();
+
         return $game;
+    }
+
+    private function getUniqueGameIdentifier($result)
+    {
+        foreach ($result as $k => $v)
+        {
+            if($k == "IDNO")
+                return $v["value"];
+        }
+        return null;
     }
 }

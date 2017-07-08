@@ -36,96 +36,85 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    // TODO - Currently if there is no unique id from stats - game gets recorded more than once. 
     public function postLadder(Request $request, $cncnetGame = null, $username = null)
     {
+        // Game stats result
         $result = $this->gameService->processStatsDmp($request->file('file'));
         if (count($result) == 0 || $result == null)
         {
             return response()->json(['No data'], 400);
         }
 
-        // Check a ladder exists for this game
+        // Ladder exists
         $ladder = $this->ladderService->getLadderByGame($cncnetGame);
         if ($ladder == null)
         {
             return response()->json(['Ladder does not exist'], 400);
         }
 
-        // Player Checks
-        $player = $this->playerService->findPlayerByName($username);
+        // Player checks
+        $player = $this->checkPlayer($request, $username);
         if($player == null)
         {
-            return response()->json(['No player found by that username'], 400);
+            return response()->json(['Player error'], 400);
         }
 
-        $authUser = $this->authService->getUser($request);
-        if($authUser == null)
-        {
-            return response()->json(['No user found'], 400);
-        }
-
-        if ($authUser->id != $player->user_id)
-        {
-            return response()->json(['Player nickname does not belong to user sending result'], 400);
-        }
-
-        // Check Game Exists
-        $uniqueId = $this->gameService->getUniqueGameIdentifier($result);
-        $game = $this->gameService->findOrCreateGame($uniqueId, $ladder);
+        // Game creation
+        $game = $this->gameService->findOrCreateGame($result, $ladder);
         if ($game == null)
         {
             return response()->json(['Error creating game'], 400);
         }
 
-        $ladderGame = \App\LadderGame::where("game_id", "=", $game->id)->first();
-        if ($ladderGame == null)
-        {
-            $ladderGame = new \App\LadderGame();
-            $ladderGame->game_id = $game->id;
-            $ladderGame->ladder_id = $ladder->id;
-            $ladderGame->save();
-        }
-
         // Keep a record of the raw stats sent in
         $rawStats = $this->gameService->saveRawStats($result, $game->id, $ladder->id);
-        if ($rawStats == null)
-            return response()->json(['Raw stats were not saved'], 400);
 
         // Now save the processed stats
         $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id);
         if ($gameStats != 200)
+        {
             return response()->json(['Error' => $gameStats], 400);
-
-        // Update Game Record
-        $gameStats = \App\GameStats::where("game_id", "=", $game->id)->get();
-        if (count($gameStats) <= 1)
-            $this->gameService->saveGameDetails($game, $gameStats[0]);
+        }
 
         // Award ELO points
         $this->awardPoints($game->id);
-
         return response()->json(['success'], 200);
+    }
+    
+    // TODO - should be middleware
+    private function checkPlayer($request, $username)
+    {
+        $player = $this->playerService->findPlayerByUsername($username);
+        $authUser = $this->authService->getUser($request);
+        /*
+        if ($player == null || $authUser == null)
+            return null;
+
+        if ($authUser->id != $player->user_id)
+            return null;
+        */       
+        return $player;
     }
 
     public function awardPoints($gameId)
     {
-        $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
         $players = [];
+        $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
 
-        foreach($gamePlayers as $gamePlayer)
+        foreach($gamePlayers as $player)
         {
-            $player = $this->playerService->findPlayerById($gamePlayer->player_id);
-            if ($player == null)
-                return response()->json(['error' => 'Player not found'], 400);
+            $plr = $this->playerService->findPlayerById($player->player_id);
+            $opn = $this->playerService->findPlayerById($player->opponent_id);
 
-            if($gamePlayer->result)
+            if ($player->result)
             {
-                $players["won"] = $player;
+                $players["won"] = $plr;
+                $players["lost"] = $opn;
             }
-            else
+            else 
             {
-                $players["lost"] = $player;
+                $players["won"] = $opn;
+                $players["lost"] = $plr;
             }
         }
 
@@ -145,9 +134,6 @@ class ApiLadderController extends Controller
                 $newPoints = ($player->points > 0 ? $results["a"] - $player->points : $results["a"]);
                 $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints);
                 $player->points = $results["a"];
-
-                $player->games_count += 1;
-                $player->loss_count += 1;
                 $player->save();
             }
             else if ($k == "won")
@@ -155,9 +141,6 @@ class ApiLadderController extends Controller
                 $newPoints = ($player->points > 0 ? $results["b"] - $player->points : $results["b"]);
                 $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints, true);
                 $player->points = $results["b"];
-
-                $player->games_count += 1;
-                $player->win_count += 1;
                 $player->save();
             }
         }

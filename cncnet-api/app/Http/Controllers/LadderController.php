@@ -45,27 +45,25 @@ class LadderController extends Controller
     {
         $game = $this->ladderService->getLadderGameById($game, $gameId);
         $ladder = $this->ladderService->getLadderByGame($request->game);
+        $stats = $game->stats()->get();
 
-        $stats = $game->stats;
-        $playerStats = [];
-        foreach($stats as $stat)
-        {
-            $player = \App\Player::where("id", "=", $stat->player_id)->first();
-            $playerStats = $player->playerStats()->first();
-        }
-
-        return view('ladders.game-view', array("gameStats" => $stats, "playerStats" => $playerStats,  "ladder" => $ladder));
+        return view('ladders.game-view', array("game" => $game, "stats" => $stats, "ladder" => $ladder));
     }
 
     public function getLadderPlayer(Request $request, $game = null, $player = null)
     {
+        $ladder = $this->ladderService->getLadderByGame($request->game);
+        $player = \App\Player::where("ladder_id", "=", $ladder->id)
+            ->where("username", "=", $player)->first();
+        $games = $player->games()->orderBy("id", "DESC")->get();
+        
         return view
-        ( "ladders.player-view", 
+        ( 
+            "ladders.player-view", 
             array (
-                "ladders" => $this->ladderService->getLadders(),
-                "ladder" => $this->ladderService->getLadderByGame($request->game),
-                "player" => $this->ladderService->getLadderPlayer($game, $player),
-                "rank" => $this->ladderService->getLadderPlayerRank($request->game, $request->player)
+                "ladder" => $ladder,
+                "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($game, $player->username))),
+                "games" => $games
             )
         );
     }
