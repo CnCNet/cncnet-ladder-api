@@ -157,9 +157,9 @@ class GameService
                 {
                     fread($fh, $pad);
                 }
-
+                
                 $fieldValueArr = $this->getFieldValue($ttl, $data);
-                $result[$ttl["tag"]] = ["tag" => $ttl["tag"], "length" => $ttl["length"], "raw" => json_encode($fieldValueArr["raw"]), "value" => $fieldValueArr["val"]];
+                $result[$ttl["tag"]] = ["tag" => $ttl["tag"], "length" => $ttl["length"], "raw" => json_encode(mb_convert_encoding($fieldValueArr["raw"],'UTF-8','UTF-8')), "value" => $fieldValueArr["val"]];
             }
         }
 
