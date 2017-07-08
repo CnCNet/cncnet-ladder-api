@@ -31,7 +31,6 @@
 @endsection
 
 @section('content')
-{{ $players }}
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
 
@@ -39,34 +38,21 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="text-center" style="padding-bottom: 40px;">
-                        <h1>{{ $ladder->name }}</h1>
-                        <p class="lead">Find the latest competitive games</p>
+                        <h1>1vs1 Rankings</h1>
                     </div>
-                    <style>
-                    .profile-listing 
-                    {
-                        background: black;
-                        padding: 30px 50px;
-                        border-radius: 5px;
-                        margin: 15px 0;
-                    }
-                    .profile-link
-                    {
-                        display: block; 
-                    }
-                     .profile-link:hover
-                    {
-                        text-decoration: none;
-                    }
-                    </style>
+
                     <div class="row">
                         @foreach($players as $k => $player)
                         <div class="col-md-4">
                             <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                             <div class="profile-listing">
-                                <h3>Rank: <i class="fa fa-trophy fa-fw"></i> #{{ $k + 1 }}</h3>
-                                <p>Player: <i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
-                                <p>Points: <i class="fa fa-bolt fa-fw"></i> {{ $player->points }}</p>
+                                <div class="rank">
+                                    </ul>
+                                    <i class="rank rank-01-e9-3"></i> 
+                                </div>
+                                <h3>Rank  #{{ $k + 1 }} </h3> 
+                                <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
+                                <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $player->points }}</p>
                             </div>
                             </a>
                         </div>

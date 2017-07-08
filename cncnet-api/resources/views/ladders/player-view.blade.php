@@ -104,7 +104,7 @@
                 @foreach($games as $g)
                 <?php $game = \App\Game::where("id", "=", $g->game_id)->first(); ?>
                 <a href="/ladder/{{ $ladder->abbreviation }}/games/{{ $game->id }}">
-                {{ $game }}
+                {{ $game->id }}
                 </a>
                 @endforeach
             </div>

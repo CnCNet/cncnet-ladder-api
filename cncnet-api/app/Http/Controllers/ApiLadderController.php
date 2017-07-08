@@ -67,7 +67,7 @@ class ApiLadderController extends Controller
         }
 
         // Keep a record of the raw stats sent in
-        $rawStats = $this->gameService->saveRawStats($result, $game->id, $ladder->id);
+        $this->gameService->saveRawStats($result, $game->id, $ladder->id);
 
         // Now save the processed stats
         $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id);

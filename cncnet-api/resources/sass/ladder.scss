@@ -104,6 +104,13 @@ input.form-control
     z-index: 1;
 }
 
+.game-detail .game-details 
+{
+    width: 500px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
 .game-list 
 {   
     z-index: 0;
@@ -175,4 +182,89 @@ input.form-control
     font-weight: 100;
     font-size: 30px;
     bottom: 30px;
+}
+
+.profile-listing 
+{
+    background: #080808;
+    padding: 30px 50px;
+    border-radius: 5px;
+    margin: 15px 0;
+    border: 1px solid #060606;
+
+    &:hover 
+    {
+        background: #000;
+        border: 1px solid #000;
+
+    }
+}
+
+.profile-link
+{
+    display: block; 
+    text-decoration: none;
+
+    &:hover, &:active, &:focus
+    {
+        color: silver;
+        text-decoration: none;
+    }
+}
+
+.rank 
+{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.rank i 
+{
+    font-size: 66px;
+    color: #101010;
+}
+
+.username 
+{ 
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.points 
+{
+    color: #24f900;
+}
+
+h3.game-intro > span:first-child:after 
+{
+    content: " vs ";
+    font-size: 43px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 15px
+}
+
+h3.game-intro 
+{
+    margin-top: 0;
+    padding: 15px 0;
+    font-size: 25px;
+}
+
+.game-profile 
+{
+    background: #0a0a0a;
+    padding: 20px;
+    margin: 0 auto;
+    border-bottom: 5px solid #101010;
+    border-radius: 5px;
+}
+
+.feature-map img 
+{
+    max-width: 80%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
 }

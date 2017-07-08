@@ -20,7 +20,7 @@ class GameService
 
         if ($gameStats != null)
         {
-            $gameStats->delete(); // Debug
+            return;
         }
 
         $stats = new \App\Stats();
@@ -36,7 +36,7 @@ class GameService
 
         if ($player == null)
         {
-            break;
+            return;
         }
 
         $id = -1; // Player Index 
@@ -298,7 +298,7 @@ class GameService
                 // Save Game Details like average fps, out of sync errors etc
                 if (in_array(strtolower($key), $game->gameColumns)) 
                 {
-                    var_dump($value["value"]);
+                    var_dump($gameProperty);
                     $game->{strtolower($key)} = $value["value"];
                 }
             }

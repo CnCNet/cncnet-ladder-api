@@ -25,4 +25,24 @@ class Player extends Model
     {
         return $this->belongsTo("App\Ladder");
     }
+
+    public function rank($game, $username)
+    {
+        $ladder = \App\Ladder::where("abbreviation", "=", $game)->first();
+
+        if($ladder == null)
+            return null;
+
+        $players = \App\Player::where("ladder_id", "=", $ladder->id)
+            ->orderBy("points", "DESC")
+            ->get();
+
+        foreach($players as $k => $player)
+        {
+            if($player->username == $username)
+                return $k + 1;
+        }
+
+        return -1;
+    }
 }

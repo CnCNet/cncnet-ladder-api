@@ -6,8 +6,20 @@ class Game extends Model
 {
     protected $table = 'games';
 
-    protected $fillable = ['wol_game_id', 'duration', 'afps', 
-    'oosy', 'bamr', 'crat', 'dura', 'cred', 'shrt', 'supr', 'unit', 'plrs', 'scen', 'afps'];
+    protected $fillable = 
+    [
+        'afps',
+        'oosy',
+        'bamr',
+        'crat',
+        'dura',
+        'cred',
+        'shrt',
+        'supr',
+        'unit',
+        'plrs',
+        'scen'
+    ];
 
     protected $hidden = ['created_at', 'updated_at'];
         
@@ -23,6 +35,7 @@ class Game extends Model
         'supr',
         'unit',
         'plrs',
+        'scen'
     ];
 
     public function stats()
