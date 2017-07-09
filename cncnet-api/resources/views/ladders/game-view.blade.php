@@ -29,6 +29,11 @@
                 <a href="/ladder/{{ $ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
                     <i class="fa fa-chevron-left fa-lg fa-fw" aria-hidden="true"></i> Player Leaderboard
                 </a>
+                <br>
+                <?php $raw = \App\GameRaw::where("game_id", "=", $game->id)->get(); ?>
+                @foreach($raw as $r)
+                Raw Stats: <a href="/api/v1/ladder/raw/{{ $r != null ? $r->id : ""}} " target="_blank">{{ $r != null ? $r->id : "" }}</a><br>
+                @endforeach
             </div>
         </div>
     </div>
@@ -39,11 +44,18 @@
 <section class="game-detail">
     <div class="container">
         <div class="game-profile">
+
+            @foreach($stats as $k => $stat)
+                <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
+                <div class="hidden-xs faction faction-{{ $gameStats->faction($ladder->abbreviation, $gameStats->cty) }} @if($k == 0)faction-left @else faction-right @endif"></div>
+            @endforeach
+
             <div class="row">
                 <div class="col-md-10 col-md-offset-1 text-center">
 
                     <h3 class="game-intro"> 
                         @foreach($stats as $k => $stat)
+                            <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
                             <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
                             <?php $points = \App\PlayerPoint::where("game_id", "=", $game->id)
                                     ->where("player_id", "=", $player->id)

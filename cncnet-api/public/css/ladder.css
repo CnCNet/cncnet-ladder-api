@@ -195,6 +195,7 @@ h3.game-intro {
   max-width: 100%; }
 
 .game-profile {
+  position: relative;
   background: #0a0a0a;
   padding: 20px;
   margin: 0 auto;
@@ -209,3 +210,56 @@ h3.game-intro {
 
 .hud.overlay-gb {
   background: url(../images/hud/overlay-gb.png); }
+
+.faction {
+  position: absolute;
+  background-repeat: no-repeat;
+  height: 100%;
+  top: 20px;
+  background-size: 50%; }
+
+.faction-left {
+  background-position: top left;
+  left: 15px;
+  top: 15px; }
+
+.faction-right {
+  background-position: top right;
+  right: 15px;
+  top: 15px; }
+
+.faction-britain,
+.faction-america,
+.faction-korea,
+.faction-france,
+.faction-germany {
+  background-image: url(../images/hud/allied.png);
+  width: 200px; }
+
+.faction-iraq,
+.faction-cuba,
+.faction-russia,
+.faction-libya,
+.faction-germany {
+  background-image: url(../images/hud/soviet.png);
+  width: 200px; }
+
+.faction-yuri {
+  background-image: url(../images/hud/yuri.png);
+  width: 200px; }
+
+/* Extra small devices (phones, less than 768px) */
+/* No media query since this is the default in Bootstrap */
+/* Small devices (tablets, 768px and up) */
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .faction {
+    background-size: auto; }
+  .faction-britain,
+  .faction-america,
+  .faction-korea,
+  .faction-france,
+  .faction-germany {
+    background-size: 100%; } }
+
+/* Large devices (large desktops, 1200px and up) */
