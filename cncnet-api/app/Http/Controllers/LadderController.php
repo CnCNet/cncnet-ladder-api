@@ -16,7 +16,8 @@ class LadderController extends Controller
     public function getLadders(Request $request)
     {
         return view("ladders.index", 
-        array(
+        array
+        (
             "ladders" => $this->ladderService->getLadders())
         );
     }
@@ -24,7 +25,9 @@ class LadderController extends Controller
     public function getLadderIndex(Request $request)
     {
         return view("ladders.listing", 
-        array(
+        array
+        (
+            "games" => $this->ladderService->getRecentLadderGames($request->game),
             "ladders" => $this->ladderService->getLadders(),
             "ladder" => $this->ladderService->getLadderByGame($request->game),
             "players" => $this->ladderService->getLadderPlayers($request->game, $request->player))

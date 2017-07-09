@@ -39,6 +39,16 @@ class LadderService
         return $players;
     }
 
+    public function getRecentLadderGames($game, $limit = 4)
+    {
+        $ladder = $this->getLadderByGame($game);
+        $recentGames = \App\Game::where("ladder_id", "=", $ladder->id)
+            ->orderBy("id", "DESC")
+            ->limit($limit)
+            ->get();
+        return $recentGames;
+    }
+
     public function getLadderGameById($game, $gameId)
     {
         $ladder = $this->getLadderByGame($game);

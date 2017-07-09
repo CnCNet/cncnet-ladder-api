@@ -61,21 +61,28 @@
                     </h3>
 
                     <div class="feature-map">
-                        <p>{{ $game->scen }}</p>
-                        <img src="https://grant.cnc-comm.com/tmp/d179f3b4590e7f014d0761d670c5374de9458ef5.png">
+                        <p class="points">{{ $game->scen }}</p>
+
+                        <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
+                        @if ($map != null)
+                        <div class="feature-map text-center">
+                            <img src="/images/maps/{{ $ladder->abbreviation}}/{{ $map->hash . ".png" }}">
+                        </div>
+                        @endif
                     </div>
 
                     <ul class="list-inline game-details">
-                        <li>Superweapons: {{ $game->supr ? "On" : "Off" }}</li>
-                        <li>Crates: {{ $game->crat ? "On" : "Off" }}</li>
-                        <li>Credits: {{ $game->cred }}</li>
-                        <li>Duration: {{ gmdate("H:i:s", $game->dura) }}</li>
-                        <li>MCV Redeploy: {{ $game->bamr }}</li>                 
-                        <li>Build off Ally Conyard: {{ $game->bamr }}</li>
-                        <li>Average FPS: {{ $game->afps }}</li>
-                        <li>Reconnection Error: {{ $game->oosy ? "Yes" : "No" }}</li>
-                        <li>Unit Count Start: {{ $game->unit ? $game->unit : 0 }}</li>
-                        <li>Players in Game: {{ $game->plrs ? $game->plrs : 0 }}</li>
+                        <li><strong>Short Game:</strong> {{ $game->shrt ? "On" : "Off" }}</li>
+                        <li><strong>Superweapons:</strong> {{ $game->supr ? "On" : "Off" }}</li>
+                        <li><strong>Crates:</strong> {{ $game->crat ? "On" : "Off" }}</li>
+                        <li><strong>Credits:</strong> {{ $game->cred }}</li>
+                        <li><strong>Duration:</strong> {{ gmdate("H:i:s", $game->dura) }}</li>
+                        <li><strong>MCV Redeploy:</strong> {{ $game->bamr & 1 ? "On" : "Off" }}</li>                 
+                        <li><strong>Build off Ally Conyard:</strong> {{ $game->bamr & 2 ? "On" : "Off" }}</li>
+                        <li><strong>Average FPS:</strong> {{ $game->afps }}</li>
+                        <li><strong>Reconnection Error:</strong> {{ $game->oosy ? "Yes" : "No" }}</li>
+                        <li><strong>Unit Count Start:</strong> {{ $game->unit ? $game->unit : 0 }}</li>
+                        <li><strong>Players in Game:</strong> {{ $game->plrs ? $game->plrs : 0 }}</li>
                     </ul>
                 </div>
             </div>

@@ -18,7 +18,8 @@ class Game extends Model
         'supr',
         'unit',
         'plrs',
-        'scen'
+        'scen',
+        'hash'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -35,7 +36,8 @@ class Game extends Model
         'supr',
         'unit',
         'plrs',
-        'scen'
+        'scen',
+        'hash'
     ];
 
     public function stats()

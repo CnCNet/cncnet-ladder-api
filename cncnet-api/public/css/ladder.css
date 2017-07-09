@@ -169,6 +169,28 @@ h3.game-intro {
   padding: 15px 0;
   font-size: 25px; }
 
+.recent-games .profile-listing {
+  padding: 20px; }
+
+.recent-games h3.game-intro {
+  font-size: 15px;
+  padding: 5px 0;
+  text-align: center; }
+
+.recent-games h3.game-intro > span:first-child:after {
+  font-size: 18px;
+  padding: 5px;
+  display: block;
+  width: 100%; }
+
+.recent-games .feature-map {
+  margin: 0;
+  margin-bottom: 15px;
+  margin-top: 0; }
+
+.recent-games .feature-map img {
+  max-width: 100%; }
+
 .game-profile {
   background: #0a0a0a;
   padding: 20px;
@@ -181,3 +203,6 @@ h3.game-intro {
   margin: 0 auto;
   margin-bottom: 20px;
   margin-top: 20px; }
+
+.hud.overlay-gb {
+  background: url(../images/hud/overlay-gb.png); }

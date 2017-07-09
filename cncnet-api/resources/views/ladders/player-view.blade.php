@@ -101,12 +101,20 @@
             <div class="col-md-12">
                 <h3>Recent Games</h3>
          
+                <ul>
                 @foreach($games as $g)
+                @if($g != null)
                 <?php $game = \App\Game::where("id", "=", $g->game_id)->first(); ?>
-                <a href="/ladder/{{ $ladder->abbreviation }}/games/{{ $game->id }}">
-                {{ $game->id }}
-                </a>
+                    @if ($game != null)
+                    <li>
+                        <a href="/ladder/{{ $ladder->abbreviation }}/games/{{ $game->id }}">
+                            {{ "Game ID: " . $game->id . " - " . $game->scen }}
+                        </a>
+                    </li>
+                    @endif
+                @endif
                 @endforeach
+                </ul>
             </div>
         </div>
     </div>
