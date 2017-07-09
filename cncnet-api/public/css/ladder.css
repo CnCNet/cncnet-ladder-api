@@ -169,6 +169,9 @@ h3.game-intro {
   padding: 15px 0;
   font-size: 25px; }
 
+.recent-games {
+  margin-bottom: 15px; }
+
 .recent-games .profile-listing {
   padding: 20px; }
 
