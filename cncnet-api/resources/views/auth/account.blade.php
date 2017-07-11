@@ -53,7 +53,13 @@
                         @endforeach
                     </ul>
                 </div>
+                @elseif (Session::has('error'))
+                <div class="alert alert-danger">
+                    {{Session::get('error')}}
+                </div>
                 @endif
+
+               
 
                 <form method="POST" action="account/username">
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">

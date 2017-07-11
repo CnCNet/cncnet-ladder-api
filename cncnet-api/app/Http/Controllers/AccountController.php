@@ -32,11 +32,16 @@ class AccountController extends Controller
     {
         $this->validate($request, [
             'ladder' => 'required|string|',
-            'username' => 'required|string|unique:players',
+            'username' => 'required|string|max:12',
         ]);
 
         $user = \Auth::user(); 
-        $this->playerService->addPlayerToUser($request->username, $user, $request->ladder);
+        $username = $this->playerService->addPlayerToUser($request->username, $user, $request->ladder);
+
+        if ($username == null)
+        {
+             $request->session()->flash('error', 'This username has been taken');
+        }
         return redirect("/account");
     }
 }

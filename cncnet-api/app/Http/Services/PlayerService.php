@@ -12,7 +12,8 @@ class PlayerService
 
     public function addPlayerToUser($username, $user, $ladderId)
     {
-        $player = \App\Player::where("username", "=", $username)->first();
+        $player = \App\Player::where("username", "=", $username)
+            ->where("ladder_id", "=", $ladderId)->first();
         
         if ($player == null)
         {
@@ -24,6 +25,8 @@ class PlayerService
 
             return $player;
         }
+
+        return null;
     }
 
     public function createPlayerGame($player, $opponent, $gameId, $won)
