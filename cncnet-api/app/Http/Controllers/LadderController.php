@@ -24,7 +24,6 @@ class LadderController extends Controller
 
     public function getLadderIndex(Request $request)
     {
-    return $this->ladderService->getLadderPlayers($request->game);
         return view("ladders.listing", 
         array
         (
