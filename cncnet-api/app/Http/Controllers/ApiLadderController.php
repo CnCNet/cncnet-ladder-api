@@ -53,7 +53,7 @@ class ApiLadderController extends Controller
         }
 
         // Player checks
-        $player = $this->checkPlayer($request, $username);
+        $player = $this->checkPlayer($request, $username, $ladder);
         if($player == null)
         {
             return response()->json(['Player error'], 400);
@@ -82,9 +82,9 @@ class ApiLadderController extends Controller
     }
     
     // TODO - should be middleware
-    private function checkPlayer($request, $username)
+    private function checkPlayer($request, $username, $ladder)
     {
-        $player = $this->playerService->findPlayerByUsername($username);
+        $player = $this->playerService->findPlayerByUsername($username, $ladder);
         $authUser = $this->authService->getUser($request);
         /*
         if ($player == null || $authUser == null)

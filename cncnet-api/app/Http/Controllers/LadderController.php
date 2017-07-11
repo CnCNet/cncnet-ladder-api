@@ -24,14 +24,15 @@ class LadderController extends Controller
 
     public function getLadderIndex(Request $request)
     {
+    return $this->ladderService->getLadderPlayers($request->game);
         return view("ladders.listing", 
         array
         (
             "games" => $this->ladderService->getRecentLadderGames($request->game),
             "ladders" => $this->ladderService->getLadders(),
             "ladder" => $this->ladderService->getLadderByGame($request->game),
-            "players" => $this->ladderService->getLadderPlayers($request->game, $request->player))
-        );
+            "players" => $this->ladderService->getLadderPlayers($request->game)
+        ));
     }
 
     public function getLaddersByGame(Request $request)
