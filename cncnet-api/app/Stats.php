@@ -26,6 +26,7 @@ class Stats extends Model
     {
         $ladder = \App\Ladder::where("abbreviation", "=", $game)->first();
         $val = json_decode($val);
+        if ($val == null) return "";
 
         switch($val->value)
         {

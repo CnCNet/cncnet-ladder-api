@@ -266,26 +266,33 @@ h3.game-intro
     font-size: 15px;
     padding: 5px 0;
     text-align: center;
+    height: 100px;
 }
 
 .recent-games h3.game-intro > span:first-child:after 
 {
-    font-size: 18px;
+    font-size: 25px;
     padding: 5px;
     display: block;
     width: 100%;
+    margin-left: -5px;
 }
 
 .recent-games .feature-map 
 {
-    margin: 0;
     margin-bottom: 15px;
     margin-top: 0;
+    height: 150px;
 }
 
 .recent-games .feature-map img 
 {
     max-width: 100%;
+}
+
+.recent-games .points 
+{
+    font-size: 15px;
 }
 
 .game-profile 
@@ -351,13 +358,13 @@ h3.game-intro
 .faction-germany 
 {
     background-image: url(../images/hud/soviet.png);
-    width: 200px;
+    width: 150px;
 }
 
 .faction-yuri
 {
     background-image: url(../images/hud/yuri.png);
-    width: 200px;
+    width: 150px;
 }
 
 
@@ -381,6 +388,11 @@ h3.game-intro
     .faction-america,
     .faction-korea,
     .faction-france,
+    .faction-germany,
+    .faction-iraq,
+    .faction-cuba,
+    .faction-russia,
+    .faction-libya,
     .faction-germany 
     {
         background-size: 100%;

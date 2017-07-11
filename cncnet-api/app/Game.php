@@ -8,6 +8,8 @@ class Game extends Model
 
     protected $fillable = 
     [
+        'ladder_id',
+        'wol_game_id',
         'afps',
         'oosy',
         'bamr',

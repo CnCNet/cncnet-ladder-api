@@ -159,7 +159,7 @@ class GameService
                 }
                 
                 $fieldValueArr = $this->getFieldValue($ttl, $data);
-                $result[$ttl["tag"]] = ["tag" => $ttl["tag"], "length" => $ttl["length"], "raw" => json_encode(mb_convert_encoding($fieldValueArr["raw"],'UTF-8','UTF-8')), "value" => $fieldValueArr["val"]];
+                $result[$ttl["tag"]] = ["tag" => $ttl["tag"], "length" => $ttl["length"], "raw" => base64_encode($fieldValueArr["raw"]), "value" => $fieldValueArr["val"]];
             }
         }
 
@@ -174,7 +174,7 @@ class GameService
             {
                 if (isset($result["$tag$i"])) 
                 {
-                    $raw = json_decode($result["$tag$i"]["raw"]);
+                    $raw = base64_decode($result["$tag$i"]["raw"]);
                     $length = $result["$tag$i"]["length"];
                     
                     for ($j = 0, $t = 0; $j < $length; $j += 4, $t++) 
@@ -298,7 +298,6 @@ class GameService
                 // Save Game Details like average fps, out of sync errors etc
                 if (in_array(strtolower($key), $game->gameColumns)) 
                 {
-                    var_dump($gameProperty);
                     $game->{strtolower($key)} = $value["value"];
                 }
             }

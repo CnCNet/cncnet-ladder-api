@@ -48,8 +48,9 @@ class LadderController extends Controller
     {
         $game = $this->ladderService->getLadderGameById($game, $gameId);
         $ladder = $this->ladderService->getLadderByGame($request->game);
+            
+        if ($game == null) return "No game";
         $stats = $game->stats()->get();
-
         return view('ladders.game-view', array("game" => $game, "stats" => $stats, "ladder" => $ladder));
     }
 

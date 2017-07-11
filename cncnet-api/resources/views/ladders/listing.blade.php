@@ -59,15 +59,17 @@
                                                     ->where("player_id", "=", $player->id)
                                                     ->first();
                                             ?>
-                                          
+                                            
+                                            @if ($points != null)
                                             <span class="player">
-                                                {{ $player->username }} +{{ $points->points_awarded }}
+                                                {{ $player->username or "Unknown" }} +{{ $points->points_awarded or "" }}
                                                 @if($points->game_won) 
                                                     <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i> 
                                                 @else 
                                                     <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i> 
                                                 @endif
                                             </span>
+                                            @endif
                                         @endforeach
                                         </h3>
                                     </div>
