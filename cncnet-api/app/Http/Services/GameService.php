@@ -123,7 +123,7 @@ class GameService
     }
 
     // Credit: https://github.com/dkeetonx
-    public function processStatsDmp($file)
+    public function processStatsDmp($file, $cncnetGame)
     {
         if($file == null)
             return null;
@@ -164,7 +164,7 @@ class GameService
         }
 
         $types = array ("CRA","BLC","BLK","PLK","UNK","INK","BLL","PLL","UNL","INL","BLB","PLB","UNB","INB");
-        $gameUnitTypes = config("types.YR");
+        $gameUnitTypes = config("types." . strtoupper($cncnetGame));
 
         foreach ($types as $tag) 
         {

@@ -39,7 +39,7 @@ class ApiLadderController extends Controller
     public function postLadder(Request $request, $cncnetGame = null, $username = null)
     {
         // Game stats result
-        $result = $this->gameService->processStatsDmp($request->file('file'));
+        $result = $this->gameService->processStatsDmp($request->file('file'), $cncnetGame);
         if (count($result) == 0 || $result == null)
         {
             return response()->json(['No data'], 400);
