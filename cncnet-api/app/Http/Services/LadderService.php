@@ -71,29 +71,53 @@ class LadderService
         return \App\Game::where("id", "=", $ladderGame->game_id)->first();
     }
 
-    public function getLadderPlayer($game, $player)
+    public function getLadderPlayer($ladder, $player)
     {
-        $ladder = $this->getLadderByGame($game);
-
         if($ladder == null)
             return "No ladder found";
 
         $player = \App\Player::where("ladder_id", "=", $ladder->id)
             ->where("username", "=", $player)->first();
 
-        $rank = $this->getLadderPlayerRank($game, $player->username);
-        $games = \App\PlayerGame::where("player_id", "=", $player->id)->count();
+        $rank = $this->getLadderPlayerRank($ladder->abbreviation, $player->username);
+        $games = \App\PlayerGame::where("player_id", "=", $player->id);
+        $gamesCount = $games->count();
         $gamesWon = \App\PlayerGame::where("player_id", "=", $player->id)->where("result", "=", 1)->count();
-        $gamesLost = ($games - $gamesWon);
+        $gamesLost = ($gamesCount - $gamesWon);
+        $averageFps = $this->calculateAverageFPS($games);
 
         return [
             "username" => $player->username, 
             "points" => $player->points, 
             "rank" => $rank, 
-            "game_count" => $games, 
+            "game_count" => $gamesCount, 
             "games_won" => $gamesWon,
-            "games_lost" => $gamesLost
+            "games_lost" => $gamesLost,
+            "average_fps" => $averageFps
         ];
+    }
+
+    private function calculateAverageFPS($games)
+    {   
+        $afps = 0;
+        $count = $games->count();
+        $games = $games->get();
+
+        foreach($games as $game)
+        {
+            $g = $game->game()->first();
+            if ($g != null) 
+            {
+                $afps += $g->afps;
+            }
+        }
+
+        if ($count > 0)
+        {
+            return round($afps / $count);
+        }
+
+        return $afps;
     }
 
     public function getLadderPlayers($game)

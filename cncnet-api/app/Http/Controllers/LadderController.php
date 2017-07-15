@@ -54,19 +54,30 @@ class LadderController extends Controller
         return view('ladders.game-view', array("game" => $game, "stats" => $stats, "ladder" => $ladder));
     }
 
-    public function getLadderPlayer(Request $request, $game = null, $player = null)
+    public function getLadderPlayer(Request $request, $cncnetGame = null, $player = null)
     {
+        $games = [];
         $ladder = $this->ladderService->getLadderByGame($request->game);
         $player = \App\Player::where("ladder_id", "=", $ladder->id)
             ->where("username", "=", $player)->first();
-        $games = $player->games()->orderBy("id", "DESC")->get();
-        
+
+        $playerGames = $player->games()->orderBy("id", "DESC")->get();
+        foreach($playerGames as $cncnetGame)
+        {
+            $g = $cncnetGame->game()->first();
+            if ($g != null)
+            {
+                $games[] = $g;
+            }
+        }
+
         return view
         ( 
             "ladders.player-view", 
-            array (
+            array 
+            (
                 "ladder" => $ladder,
-                "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($game, $player->username))),
+                "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($ladder, $player->username))),
                 "games" => $games
             )
         );

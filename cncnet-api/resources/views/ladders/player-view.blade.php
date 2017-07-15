@@ -42,7 +42,7 @@
                             <i class="fa fa-bolt fa-fw"></i>
                         </li>
                         <li>
-                            Won <strong>{{ $player->win_count or "" }}</strong>
+                            Won <strong>{{ $player->games_won or "" }}</strong>
                             <i class="fa fa-level-up fa-fw"></i>
                         </li>
                         <li>
@@ -65,16 +65,16 @@
                         @endif
                         </li>
                         <li>
-                            <div class="c100 p77 center big purple">
+                            <div class="c100 p100 center big purple">
                                 <p class="title">Games</p>
                                 <p class="value"> {{ $player->game_count }}   <i class="fa fa-diamond fa-fw"></i></p>
                                 <div class="slice"><div class="bar"></div><div class="fill"></div></div>
                             </div>
                         </li>
                         <li>
-                            <div class="c100 p55 center big blue">
+                            <div class="c100 p{{ 100 - (60 - $player->average_fps) }} center big blue">
                                 <p class="title">Average FPS</p>
-                                <p class="value">55 <i class="fa fa-industry fa-fw"></i></p>
+                                <p class="value">{{ $player->average_fps }} <i class="fa fa-industry fa-fw"></i></p>
                                 <div class="slice"><div class="bar"></div><div class="fill"></div></div>
                             </div>
                         </li>
@@ -95,26 +95,12 @@
         </div>
     </div>
 </section>
+
 <section class="cncnet-features dark-texture">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h3>Recent Games</h3>
-         
-                <ul>
-                @foreach($games as $g)
-                @if($g != null)
-                <?php $game = \App\Game::where("id", "=", $g->game_id)->first(); ?>
-                    @if ($game != null)
-                    <li>
-                        <a href="/ladder/{{ $ladder->abbreviation }}/games/{{ $game->id }}">
-                            {{ "Game ID: " . $game->id . " - " . $game->scen }}
-                        </a>
-                    </li>
-                    @endif
-                @endif
-                @endforeach
-                </ul>
+                @include('ladders._recent-games', ['games' => $games])
             </div>
         </div>
     </div>
