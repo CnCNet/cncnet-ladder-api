@@ -1,6 +1,7 @@
 <?php
 
-Route::get('/', function () {
+Route::get('/', function () 
+{
     return redirect('ladder/');
 });
 
@@ -11,6 +12,7 @@ Route::group(['prefix' => 'ladder/'], function()
     Route::get('/{game}/player/', 'LadderController@getLadderIndex');
     Route::get('/{game}/player/{player}', 'LadderController@getLadderPlayer');
     Route::get('/{game}/games/{gameId}', 'LadderController@getLadderGame');
+    Route::get('/{game}/badges', 'LadderController@getBadgesIndex');
 });
 
 Route::controllers
