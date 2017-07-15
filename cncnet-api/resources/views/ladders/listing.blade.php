@@ -53,8 +53,7 @@
                             <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                                 <div class="profile-listing">
                                     <div class="rank">
-                                        </ul>
-                                        <i class="rank rank-01-e9-3"></i> 
+                                        <i class="rank {{ $player->badge($player->points) }}"></i> 
                                     </div>
                                     <h3>Rank  #{{ $k + 1 }} </h3> 
                                     <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>

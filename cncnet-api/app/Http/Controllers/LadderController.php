@@ -78,7 +78,7 @@ class LadderController extends Controller
             (
                 "ladder" => $ladder,
                 "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($ladder, $player->username))),
-                "games" => $games
+                "games" => $games,
             )
         );
     }

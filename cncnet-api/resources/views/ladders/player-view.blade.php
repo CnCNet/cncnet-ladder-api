@@ -32,7 +32,7 @@
     <div class="container">
         <div class="profile">
             <div class="row">
-                <div class="col-md-7 col-md-offset-1">
+                <div class="col-md-8 col-md-offset-1">
                     <h3 class="battle-percentage"> 
                         {{ $player->username }}
                     </h3>
@@ -80,15 +80,16 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-md-3">
-                    <div class="profile-rank text-right">
-                    <ul class="list-unstyled">
-                        <li class="rank">
-                            <h1>Rank #{{ $player->rank == -1 ? "Unranked" : $player->rank }}</h1>
-                        </li>
-                        <li class="rank-title">
-                            Lieutenant 
-                        </li>
+                <div class="col-md-2 text-center">
+                    <div class="profile-rank">
+                        <ul class="list-unstyled">
+                            <li class="rank">
+                                <h1>Rank #{{ $player->rank == -1 ? "Unranked" : $player->rank }}</h1>
+                            </li>
+                        </ul>
+                        <div class="rank">
+                            <i class="rank {{ $player->badge }}"></i> 
+                        </div>
                     </div>
                 </div>
             </div>

@@ -147,14 +147,42 @@ input.form-control {
     color: silver;
     text-decoration: none; }
 
-.rank {
+.profile-listing .rank {
   position: absolute;
-  top: 10px;
-  right: 10px; }
+  top: 15px;
+  right: 15px;
+  font-size: 54px; }
 
 .rank i {
-  font-size: 66px;
-  color: #101010; }
+  font-size: 100px;
+  text-align: center; }
+
+.badge-0 {
+  color: #3e3e3e; }
+
+.badge-1 {
+  color: #9E9E9E; }
+
+.badge-2 {
+  color: #E91E63; }
+
+.badge-3 {
+  color: #ff8f00; }
+
+.badge-4 {
+  color: #36e1f4; }
+
+.badge-5 {
+  color: #ff8f00; }
+
+.badge-6 {
+  color: #ff8f00; }
+
+.badge-7 {
+  color: #ff8f00; }
+
+.badge-8 {
+  color: #ff8f00; }
 
 .username {
   color: #ffffff;

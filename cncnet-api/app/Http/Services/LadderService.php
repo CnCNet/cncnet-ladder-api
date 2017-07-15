@@ -85,6 +85,7 @@ class LadderService
         $gamesWon = \App\PlayerGame::where("player_id", "=", $player->id)->where("result", "=", 1)->count();
         $gamesLost = ($gamesCount - $gamesWon);
         $averageFps = $this->calculateAverageFPS($games);
+        $badge = $player->badge($player->points);
 
         return [
             "username" => $player->username, 
@@ -93,7 +94,8 @@ class LadderService
             "game_count" => $gamesCount, 
             "games_won" => $gamesWon,
             "games_lost" => $gamesLost,
-            "average_fps" => $averageFps
+            "average_fps" => $averageFps,
+            "badge" => $badge
         ];
     }
 
