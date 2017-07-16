@@ -49,6 +49,6 @@ class Game extends Model
 
     public function players()
 	{
-        return $this->hasMany('App\Player');
+        return $this->hasMany('App\PlayerGame');
 	}
 }

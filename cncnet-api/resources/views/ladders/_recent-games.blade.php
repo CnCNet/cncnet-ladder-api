@@ -1,8 +1,16 @@
+<?php
+    $numOfCols = 4;
+    $rowCount = 0;
+    $bootstrapColWidth = 12 / $numOfCols;
+?>
+
 <h3>Recent Games</h3>
 <div class="recent-games">
+
     <div class="row">
-        @foreach($games as $game)
-        <div class="col-md-3">
+    @foreach($games as $game)
+              
+        <div class="col-md-{{ $bootstrapColWidth }}">
             <a href="/ladder/{{$ladder->abbreviation . "/games/" . $game->id }}" class="profile-link">
                 <div class="profile-listing">
                     <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
@@ -51,6 +59,11 @@
                 </div>
             </a>
         </div>
-        @endforeach
+
+        <?php $rowCount++; ?>
+        @if($rowCount % $numOfCols == 0)
+        </div><div class="row">
+        @endif
+    @endforeach
     </div>
 </div>

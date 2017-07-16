@@ -21,6 +21,12 @@ Route::controllers
 	'password' => 'Auth\PasswordController',
 ]);
 
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () 
+{
+    Route::get('/{cncnetGame}', 'AdminController@getAdminIndex');
+    Route::post('/{cncnetGame}/delete', 'AdminController@deleteGame');
+});
+
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function () 
 {
     Route::get('/', 'AccountController@getAccountIndex');

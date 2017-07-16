@@ -91,6 +91,8 @@ class ApiLadderController extends Controller
         $player = $this->playerService->findPlayerByUsername($username, $ladder);
         $authUser = $this->authService->getUser($request);
         /*
+        // TODO 
+        // Add back when no longer testing
         if ($player == null || $authUser == null)
             return null;
 

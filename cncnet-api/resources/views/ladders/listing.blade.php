@@ -52,12 +52,13 @@
                         <div class="col-md-4">
                             <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                                 <div class="profile-listing">
+                                    <?php $points = $player->points($ladder->abbreviation, $player->username); ?>
                                     <div class="rank">
-                                        <i class="rank {{ $player->badge($player->points) }}"></i> 
+                                        <i class="rank {{ $player->badge($points) }}"></i> 
                                     </div>
                                     <h3>Rank  #{{ $k + 1 }} </h3> 
                                     <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
-                                    <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $player->points }}</p>
+                                    <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points }}</p>
                                 </div>
                             </a>
                         </div>

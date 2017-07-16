@@ -1,5 +1,7 @@
 <?php namespace App\Http\Services;
 
+use \Illuminate\Database\Eloquent\Collection;
+
 class LadderService 
 {
     public function __construct()
@@ -128,10 +130,17 @@ class LadderService
 
         if($ladder == null)
             return "No ladder found";
+        
+        $players = new Collection();
+        $ladderPlayers = \App\Player::where("ladder_id", "=", $ladder->id)->get();
 
-        return \App\Player::where("ladder_id", "=", $ladder->id)
-            ->orderBy("points", "DESC")
-            ->get();
+        foreach($ladderPlayers as $player)
+        {
+            $player["points"] = $playerPoints = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
+            $players->add($player);
+        }
+
+        return $players->sortByDesc('points')->values()->all();
     }
 
     public function getLadderPlayerRank($game, $username)

@@ -26,6 +26,26 @@ class Player extends Model
         return $this->belongsTo("App\Ladder");
     }
 
+    public static function points($cncnetGame, $username)
+    {
+        $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
+
+        if($ladder == null)
+            return 0;
+
+        $player = \App\Player::where("ladder_id", "=", $ladder->id)
+            ->where("username", "=", $username)
+            ->first();
+
+        if ($player == null) 
+            return 0;
+
+        $playerPoints = \App\PlayerPoint::where("player_id", "=", $player->id)
+            ->sum("points_awarded");
+
+        return $playerPoints;
+    }
+
     public function rank($game, $username)
     {
         $ladder = \App\Ladder::where("abbreviation", "=", $game)->first();
