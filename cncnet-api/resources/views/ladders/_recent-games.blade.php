@@ -52,9 +52,9 @@
                         ?>
                         @if ($days > 0)
                         {{ $days . " " . str_plural("day", $days) . " ago" }}
-                        @elseif ($days == 0)
+                        @elseif ($days > 0)
                         {{ $hours . " " . str_plural("hour", $hours) . " ago" }}
-                        @elseif ($hours == 0)
+                        @elseif ($days <= 0)
                         {{ $minutes . " " . str_plural("minute", $minutes) . " ago" }}
                         @endif
                     </div>

@@ -18,7 +18,7 @@
     @yield('css')
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="stylesheet" href="/css/ranks.css" />
-    <link rel="stylesheet" href="/css/ladder.css?v=0.0.7" />
+    <link rel="stylesheet" href="/css/ladder.css?v=0.0.8" />
     <link rel="stylesheet" href="/css/flags.css?v=0.0.1" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
     <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png">
