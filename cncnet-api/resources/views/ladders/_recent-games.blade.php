@@ -27,8 +27,8 @@
                     @foreach($game->stats as $k => $stat)
                         <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
                         <?php $points = \App\PlayerPoint::where("game_id", "=", $game->id)
-                                ->where("player_id", "=", $player->id)
-                                ->first();
+                            ->where("player_id", "=", $player->id)
+                            ->first();
                         ?>
                                             
                         @if ($points != null)
