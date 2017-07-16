@@ -34,7 +34,6 @@ class LadderService
             return "No ladder found";
 
         $players = \App\Player::where("ladder_id", "=", $ladder->id)
-            ->orderBy("points", "DESC")
             ->limit($limit)
             ->get();
 
@@ -82,16 +81,17 @@ class LadderService
             ->where("username", "=", $player)->first();
 
         $rank = $this->getLadderPlayerRank($ladder->abbreviation, $player->username);
+        $points = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
         $games = \App\PlayerGame::where("player_id", "=", $player->id);
         $gamesCount = $games->count();
         $gamesWon = \App\PlayerGame::where("player_id", "=", $player->id)->where("result", "=", 1)->count();
         $gamesLost = ($gamesCount - $gamesWon);
         $averageFps = $this->calculateAverageFPS($games);
-        $badge = $player->badge($player->points);
+        $badge = $player->badge($points);
 
         return [
             "username" => $player->username, 
-            "points" => $player->points, 
+            "points" => $points, 
             "rank" => $rank, 
             "game_count" => $gamesCount, 
             "games_won" => $gamesWon,
@@ -136,7 +136,7 @@ class LadderService
 
         foreach($ladderPlayers as $player)
         {
-            $player["points"] = $playerPoints = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
+            $player["points"] = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
             $players->add($player);
         }
 
@@ -150,16 +150,7 @@ class LadderService
         if($ladder == null)
             return "No ladder found";
 
-        $players = \App\Player::where("ladder_id", "=", $ladder->id)
-            ->orderBy("points", "DESC")
-            ->get();
-
-        foreach($players as $k => $player)
-        {
-            if($player->username == $username)
-                return $k + 1;
-        }
-
-        return -1;
+        $player = new \App\Player();
+        return $player->rank($game, $username);
     }
 }

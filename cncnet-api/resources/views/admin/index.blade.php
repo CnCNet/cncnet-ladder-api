@@ -13,6 +13,7 @@
                 <h1>
                     CnCNet Admin
                 </h1>
+                <p>Admin panel for {{ $ladder->name }}
             </div>
         </div>
     </div>
@@ -29,21 +30,18 @@
 <section class="light-texture game-detail supported-games">
     <div class="container">
         <div class="feature">
-
-                <div class="row">
-                @foreach($games->get() as $game)
-              
-                    <div class="col-md-{{ $bootstrapColWidth }}">
-                        @include("admin._manage-game")
-                    </div>
-
-                    <?php $rowCount++; ?>
-                    @if($rowCount % $numOfCols == 0)
-                    </div><div class="row">
-                    @endif
-                @endforeach
+            <h3>Manage Games for {{ $ladder->name }} </h3>
+            <div class="row">
+            @foreach($games->get() as $game)
+                <div class="col-md-{{ $bootstrapColWidth }}">
+                    @include("admin._manage-game")
                 </div>
 
+                <?php $rowCount++; ?>
+                @if($rowCount % $numOfCols == 0)
+                </div><div class="row">
+                @endif
+            @endforeach
             </div>
         </div>
     </div>

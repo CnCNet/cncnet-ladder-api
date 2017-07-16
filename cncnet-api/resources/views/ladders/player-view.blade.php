@@ -38,7 +38,7 @@
                     </h3>
                     <ul class="list-inline">
                         <li>
-                            Points <strong>{{ \App\Player::points($ladder->abbreviation, $player->username) }}</strong>
+                            Points <strong> {{ $player->points }} </strong>
                             <i class="fa fa-bolt fa-fw"></i>
                         </li>
                         <li>

@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use \Illuminate\Database\Eloquent\Collection;
 
 class Player extends Model 
 {
@@ -26,41 +27,26 @@ class Player extends Model
         return $this->belongsTo("App\Ladder");
     }
 
-    public static function points($cncnetGame, $username)
+    public function rank($cncnetGame, $username)
     {
+        $players = new Collection();
         $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
+        $ladderPlayers = \App\Player::where("ladder_id", "=", $ladder->id)->get();
 
-        if($ladder == null)
-            return 0;
-
-        $player = \App\Player::where("ladder_id", "=", $ladder->id)
-            ->where("username", "=", $username)
-            ->first();
-
-        if ($player == null) 
-            return 0;
-
-        $playerPoints = \App\PlayerPoint::where("player_id", "=", $player->id)
-            ->sum("points_awarded");
-
-        return $playerPoints;
-    }
-
-    public function rank($game, $username)
-    {
-        $ladder = \App\Ladder::where("abbreviation", "=", $game)->first();
-
-        if($ladder == null)
-            return null;
-
-        $players = \App\Player::where("ladder_id", "=", $ladder->id)
-            ->orderBy("points", "DESC")
-            ->get();
-
-        foreach($players as $k => $player)
+        foreach($ladderPlayers as $player)
         {
-            if($player->username == $username)
+            $player["points"] = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
+            $players->add($player);
+        }
+
+        $players = $players->sortByDesc('points')->values()->all();
+
+        foreach($players as $k => $p)
+        {
+            if ($p->username == $username)
+            {
                 return $k + 1;
+            }
         }
 
         return -1;

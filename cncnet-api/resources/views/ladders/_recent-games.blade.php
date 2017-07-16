@@ -14,11 +14,13 @@
             <a href="/ladder/{{$ladder->abbreviation . "/games/" . $game->id }}" class="profile-link">
                 <div class="profile-listing">
                     <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
-                    @if ($map != null)
                     <div class="feature-map text-center">
+                        @if (isset($map->hash))
                         <img src="/images/maps/{{ $ladder->abbreviation}}/{{ $map->hash . ".png" }}">
+                        @else 
+                        <img src="http://via.placeholder.com/300x150/1f1f1f?text={{ $game->scen }}" />
+                        @endif
                     </div>
-                    @endif
                     <p class="username text-center" style="margin-bottom:0">1vs1</p>
                     <p class="points text-center">{{ $game->scen or "Unknown" }}</p>
                     <h3 class="game-intro"> 
