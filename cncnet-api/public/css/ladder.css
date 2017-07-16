@@ -131,6 +131,7 @@ input.form-control {
   bottom: 30px; }
 
 .profile-listing {
+  position: relative;
   background: #080808;
   padding: 30px 50px;
   border-radius: 5px;
@@ -260,13 +261,13 @@ h3.game-intro {
 
 .faction-left {
   background-position: top left;
-  left: 15px;
-  top: 15px; }
+  left: 30px;
+  top: 30px; }
 
 .faction-right {
   background-position: top right;
-  right: 15px;
-  top: 15px; }
+  right: 30px;
+  top: 30px; }
 
 .faction-britain,
 .faction-america,
@@ -308,3 +309,8 @@ h3.game-intro {
     background-size: 100%; } }
 
 /* Large devices (large desktops, 1200px and up) */
+.country {
+  position: absolute;
+  right: 30px;
+  bottom: 25px;
+  font-size: 45px; }

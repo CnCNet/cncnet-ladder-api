@@ -63,7 +63,37 @@ class Stats extends Model
                 return "";
         }
 
-
         return -1;
+    }
+
+    public function country($side)
+    {     
+        $val = json_decode($side);
+        if ($val == null) return "";
+
+        switch($val->value)
+        {
+            case 0:
+                return "um";
+            case 1:
+                return "kr";
+            case 2:
+                return "fr";
+            case 3:
+                return "de";
+            case 4:
+                return "gb";
+            case 5:
+                return "ly";
+            case 6:
+                return "iq";
+            case 7:
+                return "cu";
+            case 8: 
+                return "ru";
+            case 9:
+                return "yuri";
+        }
+        return "";
     }
 }

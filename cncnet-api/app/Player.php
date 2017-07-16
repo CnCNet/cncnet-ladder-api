@@ -52,6 +52,20 @@ class Player extends Model
         return -1;
     }
 
+    public function playerPoints($cncnetGame, $username)
+    {
+        $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
+        if ($ladder == null) return "No ladder";
+
+        $player = \App\Player::where("username", "=", $username)
+            ->where("ladder_id", "=", $ladder->id)->first();
+        if ($player == null) return "No player";
+
+        $points = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
+
+        return $points;
+    }
+
     public function badge($rank)
     {
         switch ($rank)

@@ -112,17 +112,21 @@
             <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
             <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
             <?php $rank = $player->rank($ladder->abbreviation, $player->username); ?>
+            <?php $points = $player->playerPoints($ladder->abbreviation, $player->username); ?>
 
             <div class="col-md-6">
                 <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                     <div class="profile-listing">
                         <div class="rank">
-                            </ul>
-                            <i class="rank {{ $player->badge($player->points) }}"></i> 
+                            <i class="rank {{ $player->badge($points) }}"></i> 
                         </div>
                         <h3>Rank  #{{ $rank }} </h3> 
                         <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
-                        <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $player->points }}</p>
+                        <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points  }}</p>
+
+                        <div class="country">
+                            <span class="flag-icon flag-icon-{{ $gameStats->country($gameStats->cty) }}"></span>
+                        </div>
                     </div>
                 </a>
 
