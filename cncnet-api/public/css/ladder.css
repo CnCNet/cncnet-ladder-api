@@ -130,16 +130,19 @@ input.form-control {
   font-size: 30px;
   bottom: 30px; }
 
-.profile-listing {
+.points {
+  color: #24f900; }
+
+.profile-listing, .profile-detail {
   position: relative;
   background: #080808;
   padding: 30px 50px;
   border-radius: 5px;
   margin: 15px 0;
   border: 1px solid #060606; }
-  .profile-listing:hover {
-    background: #000;
-    border: 1px solid #000; }
+
+.profile-detail .points {
+  color: #fff; }
 
 .profile-link {
   display: block;
@@ -148,11 +151,12 @@ input.form-control {
     color: silver;
     text-decoration: none; }
 
-.profile-listing .rank {
+.profile-listing .rank, .profile-detail .rank {
   position: absolute;
   top: 15px;
   right: 15px;
-  font-size: 54px; }
+  font-size: 54px;
+  color: #fff; }
 
 .rank i {
   font-size: 100px;
@@ -189,9 +193,6 @@ input.form-control {
   color: #ffffff;
   font-weight: bold; }
 
-.points {
-  color: #24f900; }
-
 h3.game-intro > span:first-child:after {
   content: " vs ";
   font-size: 43px;
@@ -207,7 +208,7 @@ h3.game-intro {
 .recent-games {
   margin-bottom: 15px; }
 
-.recent-games .profile-listing {
+.recent-games .profile-listing, .recent-games .profile-detail {
   padding: 20px; }
 
 .recent-games h3.game-intro {
@@ -288,6 +289,111 @@ h3.game-intro {
 .faction-yuri {
   background-image: url(../images/hud/yuri.png);
   width: 150px; }
+
+.player-stats-panel {
+  margin-top: -20px;
+  border-radius: 2px; }
+
+.player-stats-panel .info {
+  background: rgba(0, 0, 0, 0.3);
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  color: #fff; }
+
+.player-panel-blue {
+  background: #000c2d;
+  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #000c2d 1%, #001266 51%, #001b7c 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #000c2d 1%, #001266 51%, #001b7c 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #000c2d 1%, #001266 51%, #001b7c 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000c2d', endColorstr='#001b7c',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */
+  border: 1px solid #0036d8; }
+
+.player-panel-red {
+  background: #870000;
+  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #870000 0%, #b20000 51%, #6b0001 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #870000 0%, #b20000 51%, #6b0001 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #870000 0%, #b20000 51%, #6b0001 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#870000', endColorstr='#6b0001',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */
+  border: 1px solid #ce0000; }
+
+.player-panel-orange {
+  background: #ed8200;
+  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #ed8200 0%, #ed6600 51%, #c96100 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #ed8200 0%, #ed6600 51%, #c96100 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #ed8200 0%, #ed6600 51%, #c96100 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed8200', endColorstr='#c96100',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */
+  border: 1px solid #ff7000; }
+
+.player-panel-yellow {
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ed8200+1,f4e400+51,ffee00+100 */
+  background: #ffed51;
+  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #ffed51 1%, #ffe500 51%, #fcde00 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #ffed51 1%, #ffe500 51%, #fcde00 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #ffed51 1%, #ffe500 51%, #fcde00 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffed51', endColorstr='#fcde00',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */
+  border: 1px solid #ffe400; }
+
+.player-panel-yellow h3,
+.player-panel-yellow p {
+  color: #000; }
+
+.player-panel-teal {
+  background: #00c9f2;
+  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #00c9f2 1%, #00b1dd 51%, #008dce 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #00c9f2 1%, #00b1dd 51%, #008dce 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #00c9f2 1%, #00b1dd 51%, #008dce 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00c9f2', endColorstr='#008dce',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */ }
+
+.player-panel-purple {
+  background: #3000f4;
+  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #3000f4 1%, #7500ea 51%, #8500f2 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #3000f4 1%, #7500ea 51%, #8500f2 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #3000f4 1%, #7500ea 51%, #8500f2 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3000f4', endColorstr='#8500f2',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */ }
+
+.player-panel-pink {
+  background: #f74ff7;
+  /* Old browsers */
+  background: -moz-linear-gradient(-45deg, #f74ff7 1%, #af00bf 51%, #b2009d 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(-45deg, #f74ff7 1%, #af00bf 51%, #b2009d 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(135deg, #f74ff7 1%, #af00bf 51%, #b2009d 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f74ff7', endColorstr='#b2009d',GradientType=1 );
+  /* IE6-9 fallback on horizontal gradient */
+  border: 1px solid #e900f3; }
 
 /* Extra small devices (phones, less than 768px) */
 /* No media query since this is the default in Bootstrap */

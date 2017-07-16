@@ -96,4 +96,32 @@ class Stats extends Model
         }
         return "";
     }
+
+    public function colour($colour)
+    {     
+        $val = json_decode($colour);
+        if ($val == null) return "";
+
+        switch($val->value)
+        {
+            case 3:
+                return "yellow";
+            case 13:
+                return "orange";
+            case 11:
+                return "red";
+            case 15: 
+                return "pink";
+            case 17:
+                return "purple";
+            case 21:
+                return "blue";
+            case 25:
+                return "teal";
+            case 29:
+                return "green";
+        }
+
+        return "random";
+    }
 }

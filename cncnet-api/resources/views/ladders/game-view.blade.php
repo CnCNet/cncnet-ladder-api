@@ -116,40 +116,39 @@
 
             <div class="col-md-6">
                 <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
-                    <div class="profile-listing">
+                    <div class="profile-detail">
                         <div class="rank">
                             <i class="rank {{ $player->badge($points) }}"></i> 
                         </div>
                         <h3>Rank  #{{ $rank }} </h3> 
                         <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
                         <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points  }}</p>
-
+                        <p class="colour player-panel-{{ $gameStats->colour($gameStats->col) }}" style="width:25px;height:25px;"></p>
                         <div class="country">
                             <span class="flag-icon flag-icon-{{ $gameStats->country($gameStats->cty) }}"></span>
                         </div>
                     </div>
                 </a>
-
-                <div class="stats clearfix">
-                <pre style="background: black; color: silver;">
-                    Colour: {{ $gameStats->col }}             
-                    Country: {{ $gameStats->cty }}           
-                    Credits: {{ $gameStats->crd }}             
-                    Infantry Left: {{ $gameStats->inl }}       
-                    Planes Left: {{ $gameStats->pll }}        
-                    Buildings Left: {{ $gameStats->bll }}      
-                    Units Bought: {{ $gameStats->unb }}        
-                    Infantry Bought: {{ $gameStats->inb }}     
-                    Planes Bought: {{ $gameStats->plb }}       
-                    Buildings Bought: {{ $gameStats->blb }}    
-                    Units Bought: {{ $gameStats->unk }}        
-                    Infantry Bought: {{ $gameStats->ink }}     
-                    Planes Killed: {{ $gameStats->plk }}       
-                    Buildings Destroyed: {{ $gameStats->blk }}  
-                    Buildings Captured: {{ $gameStats->blc }}  
-                    Crates Found: {{ $gameStats->cra }}        
-                    Harvested: {{ $gameStats->hrv }}            
-                </pre>
+                <div class="player-stats-panel">
+                    <pre style="background: black; color: silver; border: none;">
+                        Colour: {{ $gameStats->col }}             
+                        Country: {{ $gameStats->cty }}           
+                        Credits: {{ $gameStats->crd }}             
+                        Infantry Left: {{ $gameStats->inl }}       
+                        Planes Left: {{ $gameStats->pll }}        
+                        Buildings Left: {{ $gameStats->bll }}      
+                        Units Bought: {{ $gameStats->unb }}        
+                        Infantry Bought: {{ $gameStats->inb }}     
+                        Planes Bought: {{ $gameStats->plb }}       
+                        Buildings Bought: {{ $gameStats->blb }}    
+                        Units Bought: {{ $gameStats->unk }}        
+                        Infantry Bought: {{ $gameStats->ink }}     
+                        Planes Killed: {{ $gameStats->plk }}       
+                        Buildings Destroyed: {{ $gameStats->blk }}  
+                        Buildings Captured: {{ $gameStats->blc }}  
+                        Crates Found: {{ $gameStats->cra }}        
+                        Harvested: {{ $gameStats->hrv }}            
+                    </pre>
                 </div>
             </div>
             @endforeach

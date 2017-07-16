@@ -70,7 +70,7 @@ class ApiLadderController extends Controller
         $this->gameService->saveRawStats($result, $game->id, $ladder->id);
 
         // Now save the processed stats
-        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id);
+        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder->id);
         if ($gameStats != 200)
         {
             return response()->json(['Error' => $gameStats], 400);

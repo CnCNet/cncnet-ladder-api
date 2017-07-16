@@ -11,7 +11,7 @@ class GameService
         $this->playerService = new PlayerService();
     }
 
-    public function saveGameStats($result, $gameId, $playerId)
+    public function saveGameStats($result, $gameId, $playerId, $ladderId)
     {
         $game = \App\Game::where("id", "=", $gameId)->first();
         $gameStats = \App\GameStats::where("player_id", "=", $playerId)
@@ -82,7 +82,17 @@ class GameService
                         $opponent = $result["NAM0"]["value"];
                     }
 
-                    $opponent = \App\Player::where("username", "=", $opponent)->first();
+                    $opponent = \App\Player::where("username", "=", $opponent)
+                        ->where("ladder_id", "=", $ladderId)->first();
+
+                    if ($opponent == null)
+                    {
+                        $game->delete();
+                        $stats->delete();
+                        $gameStats->delete();
+
+                        return null;
+                    }
 
                     if($playerGame == null && $property == "CMP")
                     {
