@@ -110,8 +110,10 @@
     <Compile Include="cncnet-api\resources\views\errors\503.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\index.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\game-view.blade.php" />
+    <Compile Include="cncnet-api\resources\views\ladders\badges.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\player-view.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\listing.blade.php" />
+    <Compile Include="cncnet-api\resources\views\ladders\_recent-games.blade.php" />
     <Compile Include="cncnet-api\resources\views\layouts\app.blade.php" />
     <Compile Include="cncnet-api\resources\views\vendor\.gitkeep" />
     <Compile Include="cncnet-api\storage\app\.gitignore" />

@@ -118,7 +118,7 @@
                     <div class="profile-listing">
                         <div class="rank">
                             </ul>
-                            <i class="rank rank-01-e9-3"></i> 
+                            <i class="rank {{ $player->badge($player->points) }}"></i> 
                         </div>
                         <h3>Rank  #{{ $rank }} </h3> 
                         <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>

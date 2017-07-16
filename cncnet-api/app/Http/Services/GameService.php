@@ -304,7 +304,6 @@ class GameService
         }
 
         $game->save();
-
         return $game;
     }
 

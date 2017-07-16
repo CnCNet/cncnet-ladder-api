@@ -77,7 +77,11 @@ class ApiLadderController extends Controller
         }
 
         // Award ELO points
-        $this->awardPoints($game->id);
+        if ($game->plrs == 2)
+        {
+            $this->awardPoints($game->id);
+        }
+
         return response()->json(['success'], 200);
     }
     
@@ -100,7 +104,7 @@ class ApiLadderController extends Controller
     {
         $players = [];
         $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
-
+        return $gamePlayers;
         foreach($gamePlayers as $player)
         {
             $plr = $this->playerService->findPlayerById($player->player_id);
