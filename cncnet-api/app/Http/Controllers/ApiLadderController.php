@@ -106,7 +106,6 @@ class ApiLadderController extends Controller
     {
         $players = [];
         $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
-        return $gamePlayers;
         foreach($gamePlayers as $player)
         {
             $plr = $this->playerService->findPlayerById($player->player_id);
@@ -139,15 +138,11 @@ class ApiLadderController extends Controller
             {
                 $newPoints = ($player->points > 0 ? $results["a"] - $player->points : $results["a"]);
                 $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints);
-                $player->points = $results["a"];
-                $player->save();
             }
             else if ($k == "won")
             {
                 $newPoints = ($player->points > 0 ? $results["b"] - $player->points : $results["b"]);
                 $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints, true);
-                $player->points = $results["b"];
-                $player->save();
             }
         }
     }
