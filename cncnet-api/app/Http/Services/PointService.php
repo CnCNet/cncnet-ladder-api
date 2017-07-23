@@ -13,14 +13,14 @@ class PointService
     /**
      * @var int The K Factor used.
      */
-    const KFACTOR = 16;
+    protected $KFACTOR = 16;
 
     /**
      * Protected & private variables.
      */
     protected $_ratingA;
     protected $_ratingB;
-    
+
     protected $_scoreA;
     protected $_scoreB;
 
@@ -39,8 +39,9 @@ class PointService
      * @param int Score of A
      * @param int Score of B
      */
-    public function  __construct($ratingA,$ratingB,$scoreA,$scoreB)
+    public function  __construct($k,$ratingA,$ratingB,$scoreA,$scoreB)
     {
+        $this->KFACTOR = $k;
         $this->_ratingA = $ratingA;
         $this->_ratingB = $ratingB;
         $this->_scoreA = $scoreA;
@@ -63,8 +64,9 @@ class PointService
      * @param int Score of A
      * @param int Score of B
      */
-    public function setNewSettings($ratingA,$ratingB,$scoreA,$scoreB)
+    public function setNewSettings($k,$ratingA,$ratingB,$scoreA,$scoreB)
     {
+        $this -> KFACTOR = $k;
         $this -> _ratingA = $ratingA;
         $this -> _ratingB = $ratingB;
         $this -> _scoreA = $scoreA;
@@ -109,8 +111,8 @@ class PointService
 
     protected function _getNewRatings($ratingA,$ratingB,$expectedA,$expectedB,$scoreA,$scoreB)
     {
-        $newRatingA = $ratingA + ( self::KFACTOR * ( $scoreA - $expectedA ) );
-        $newRatingB = $ratingB + ( self::KFACTOR * ( $scoreB - $expectedB ) );
+        $newRatingA = $ratingA + ( $this->KFACTOR * ( $scoreA - $expectedA ) );
+        $newRatingB = $ratingB + ( $this->KFACTOR * ( $scoreB - $expectedB ) );
 
         return array (
             'a' => $newRatingA,

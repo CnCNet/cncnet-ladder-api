@@ -3,7 +3,7 @@
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
-class PlayerService 
+class PlayerService
 {
     public function __construct()
     {
@@ -14,7 +14,7 @@ class PlayerService
     {
         $player = \App\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladderId)->first();
-        
+
         if ($player == null)
         {
             $player = new \App\Player();
@@ -23,6 +23,9 @@ class PlayerService
             $player->ladder_id = $ladderId;
             $player->save();
 
+            $prating = new \App\PlayerRating();
+            $prating->player_id = $player['id'];
+            $prating->save();
             return $player;
         }
 
@@ -50,6 +53,11 @@ class PlayerService
     public function findPlayerById($id)
     {
         return \App\Player::find($id);
+    }
+
+    public function findPlayerRatingByPid($pid)
+    {
+        return \App\PlayerRating::where('player_id', '=', $pid)->first();
     }
 
     public function findPlayerByUsername($name, $ladder)
@@ -83,7 +91,32 @@ class PlayerService
             $player->loss_count = $player->loss_count > 0 ? $player->loss_count -= 1 : 0;
             $player->points = $player->points > 0 ? $player->points -= $points : 0;
         }
-  
+
         $player->save();
+    }
+
+    public function getEloKvalue($players)
+    {
+        // For players with less than 10 games, K will be 32, otherwise 16
+        foreach ($players as $playerRating)
+        {
+            if ($playerRating->rated_games < 10)
+            {
+                return 32;
+            }
+        }
+        return 16;
+    }
+
+    public function updatePlayerRating($playerRating, $newRating)
+    {
+        if ($newRating > $playerRating->peak_rating)
+        {
+            $playerRating->peak_rating = $newRating;
+        }
+
+        $playerRating->rating = $newRating;
+        $playerRating->rated_games = $playerRating->rate_games + 1;
+        $playerRating->save();
     }
 }
