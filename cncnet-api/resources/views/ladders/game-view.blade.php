@@ -54,16 +54,38 @@
                 <div class="col-md-10 col-md-offset-1 text-center">
 
                     <h3 class="game-intro"> 
-                        <?php $playersPoints = \App\PlayerPoint::where("game_id", "=", $game->id)->get(); ?>
-                        @foreach($playersPoints as $points)
-                        <span class="player">
-                            {{ $points->player()->first()->username or "Unknown" }} +{{ $points->points_awarded or "" }}
-                            @if($points->game_won) 
-                                <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i> 
-                            @else 
-                                <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i> 
+                        @foreach($stats as $k => $stat)
+                            <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
+                            <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
+                            <?php $points = \App\PlayerPoint::where("game_id", "=", $game->id)
+                                    ->where("player_id", "=", $player->id)
+                                    ->first();
+                            ?>
+                            @if ($points != null)
+                                <span class="player">
+                                    {{ $player->username or "Unknown" }} <strong>+{{ $points->points_awarded or "" }}</strong>
+                                    @if($points->game_won) 
+                                        <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i> 
+                                    @else 
+                                        <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i> 
+                                    @endif
+                                </span>
+                        
+                                @if (count($stats) == 1)
+                                    <?php $points = \App\PlayerPoint::where("game_id", "=", $game->id)
+                                        ->where("player_id", "!=", $player->id)
+                                        ->first();
+                                    ?>
+                                    <span class="player">
+                                        {{ $points->player()->first()->username or "Unknown" }} <strong>+{{ $points->points_awarded or "" }}</strong>
+                                        @if ($points->game_won) 
+                                            <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i> 
+                                        @else 
+                                            <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i> 
+                                        @endif
+                                    </span>
+                                @endif
                             @endif
-                        </span>
                         @endforeach
                     </h3>
 
@@ -113,7 +135,7 @@
                         <div class="rank">
                             <i class="rank {{ $player->badge($points) }}"></i> 
                         </div>
-                        <h3>Rank  #{{ $rank }} </h3> 
+                        <h3>Rank  #{{ $rank }}</h3> 
                         <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
                         <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points  }}</p>
                         <p class="points">

@@ -17,7 +17,6 @@
                 <h1>
                     {{ $player->username or "" }} <small>Battle Statistics</small>
                 </h1>
-                Rating: {{ $player->rating }} <br>
                 <a href="/ladder/{{ $ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
                     <i class="fa fa-chevron-left fa-lg fa-fw" aria-hidden="true"></i> Player Leaderboard
                 </a>
@@ -84,7 +83,10 @@
                     <div class="profile-rank">
                         <ul class="list-unstyled">
                             <li class="rank">
-                                <h1>Rank #{{ $player->rank == -1 ? "Unranked" : $player->rank }}</h1>
+                                <h1>
+                                    Rank #{{ $player->rank == -1 ? "Unranked" : $player->rank }}
+                                    <small style="color: #00ce00;">Rating <strong>#{{ $player->rating }}</strong></small>
+                                </h1>
                             </li>
                         </ul>
                         <div class="rank">

@@ -55,7 +55,10 @@
                                     <div class="rank">
                                         <i class="rank {{ $player->badge($player->points)}}"></i> 
                                     </div>
-                                    <h3>Rank #{{ $k + 1 }} </h3> 
+                                    <h3>
+                                        Rank #{{ $k + 1 }} <br>
+                                        <small>Rating <strong>#{{ $player->rating()->first()->rating }}</strong></small>
+                                    </h3> 
                                     <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
                                     <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $player->points }}</p>
                                 </div>

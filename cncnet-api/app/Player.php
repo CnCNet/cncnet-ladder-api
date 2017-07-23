@@ -20,6 +20,11 @@ class Player extends Model
     public function games()
     {
         return $this->hasMany("App\PlayerGame");
+    }   
+
+    public function rating()
+    {
+        return $this->hasMany("App\PlayerRating");
     }
 
     public function ladder()
