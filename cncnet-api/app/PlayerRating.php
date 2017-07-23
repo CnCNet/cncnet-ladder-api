@@ -2,9 +2,8 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class PlayerRating extends Model {
-
-	//
+class PlayerRating extends Model 
+{
     public function __construct()
     {
         $this->rating = 1200;
