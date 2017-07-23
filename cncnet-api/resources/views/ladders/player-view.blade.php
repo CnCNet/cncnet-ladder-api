@@ -15,9 +15,9 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2">
                 <h1>
-                    {{ $player->username or "" }} <small>Battle Statistics</small> 
+                    {{ $player->username or "" }} <small>Battle Statistics</small>
                 </h1>
-
+                Rating: {{ $player->rating }} <br>
                 <a href="/ladder/{{ $ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
                     <i class="fa fa-chevron-left fa-lg fa-fw" aria-hidden="true"></i> Player Leaderboard
                 </a>
@@ -33,7 +33,7 @@
         <div class="profile">
             <div class="row">
                 <div class="col-md-8 col-md-offset-1">
-                    <h3 class="battle-percentage"> 
+                    <h3 class="battle-percentage">
                         {{ $player->username }}
                     </h3>
                     <ul class="list-inline">
@@ -47,15 +47,15 @@
                         </li>
                         <li>
                             Disconnects <strong>0</strong>
-                        </li>                
+                        </li>
                         <li>
                             Reconnection Errors <strong>0</strong>
                         </li>
                     </ul>
-                    
+
                     <ul class="list-inline">
                         <li>
-                        @if ($player->games_won > 0)  
+                        @if ($player->games_won > 0)
                         <?php $winPercent = number_format($player->games_won / ($player->games_won + $player->games_lost) * 100); ?>
                         <div class="c100 p{{ $winPercent }} center big green">
                             <p class="title">Winning</p>
@@ -88,7 +88,7 @@
                             </li>
                         </ul>
                         <div class="rank">
-                            <i class="rank {{ $player->badge }}"></i> 
+                            <i class="rank {{ $player->badge }}"></i>
                         </div>
                     </div>
                 </div>

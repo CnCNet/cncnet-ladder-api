@@ -2,13 +2,13 @@
 
 use \Illuminate\Database\Eloquent\Collection;
 
-class LadderService 
+class LadderService
 {
     public function __construct()
     {
 
     }
-    
+
     public function getLadders()
     {
         return \App\Ladder::all();
@@ -19,13 +19,13 @@ class LadderService
         return \App\Ladder::where("abbreviation", "=", $game)
             ->first();
     }
-    
+
     public function getLaddersByGame($game)
     {
         return \App\Ladder::where("abbreviation", "=", $game)
             ->get();
     }
-    
+
     public function getLadderByGameAbbreviation($game, $limit = 25)
     {
         $ladder = $this->getLadderByGame($game);
@@ -43,7 +43,7 @@ class LadderService
     public function getRecentLadderGames($game, $limit = 4)
     {
         $ladder = $this->getLadderByGame($game);
- 
+
         $recentGames =  \App\Game::where("ladder_id", "=", $ladder->id)
             ->leftJoin('player_points as pp', 'games.id', '=', 'pp.game_id')
             ->whereNotNull('pp.id')
@@ -59,7 +59,7 @@ class LadderService
     public function getLadderGameById($game, $gameId)
     {
         $ladder = $this->getLadderByGame($game);
- 
+
         if($ladder == null || $gameId == null)
             return "Invalid parameters";
 
@@ -88,21 +88,23 @@ class LadderService
         $gamesLost = ($gamesCount - $gamesWon);
         $averageFps = $this->calculateAverageFPS($games);
         $badge = $player->badge($points);
+        $playerRating = \App\PlayerRating::where("player_id", "=", $player->id)->first()->rating;
 
         return [
-            "username" => $player->username, 
-            "points" => $points, 
-            "rank" => $rank, 
-            "game_count" => $gamesCount, 
+            "username" => $player->username,
+            "points" => $points,
+            "rank" => $rank,
+            "game_count" => $gamesCount,
             "games_won" => $gamesWon,
             "games_lost" => $gamesLost,
             "average_fps" => $averageFps,
-            "badge" => $badge
+            "badge" => $badge,
+            "rating" => $playerRating
         ];
     }
 
     private function calculateAverageFPS($games)
-    {   
+    {
         $afps = 0;
         $count = $games->count();
         $games = $games->get();
@@ -110,7 +112,7 @@ class LadderService
         foreach($games as $game)
         {
             $g = $game->game()->first();
-            if ($g != null) 
+            if ($g != null)
             {
                 $afps += $g->afps;
             }
@@ -130,7 +132,7 @@ class LadderService
 
         if($ladder == null)
             return "No ladder found";
-        
+
         $players = new Collection();
         $ladderPlayers = \App\Player::where("ladder_id", "=", $ladder->id)->get();
 

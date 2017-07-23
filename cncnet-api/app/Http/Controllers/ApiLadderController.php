@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,7 +8,7 @@ use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
 
-class ApiLadderController extends Controller 
+class ApiLadderController extends Controller
 {
     private $ladderService;
     private $gameService;
@@ -25,7 +25,7 @@ class ApiLadderController extends Controller
         $this->playerService = new PlayerService();
         $this->authService = new AuthService();
     }
-    
+
     public function pingLadder(Request $request)
     {
         return "pong";
@@ -84,21 +84,21 @@ class ApiLadderController extends Controller
 
         return response()->json(['success'], 200);
     }
-    
+
     // TODO - should be middleware
     private function checkPlayer($request, $username, $ladder)
     {
         $player = $this->playerService->findPlayerByUsername($username, $ladder);
         $authUser = $this->authService->getUser($request);
         /*
-        // TODO 
+        // TODO
         // Add back when no longer testing
         if ($player == null || $authUser == null)
             return null;
 
         if ($authUser->id != $player->user_id)
             return null;
-        */       
+        */
         return $player;
     }
 
@@ -108,23 +108,27 @@ class ApiLadderController extends Controller
         $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
         foreach($gamePlayers as $player)
         {
-            $plr = $this->playerService->findPlayerById($player->player_id);
-            $opn = $this->playerService->findPlayerById($player->opponent_id);
+            $plr = $this->playerService->findPlayerRatingByPid($player->player_id);
+            $opn = $this->playerService->findPlayerRatingByPid($player->opponent_id);
 
             if ($player->result)
             {
                 $players["won"] = $plr;
                 $players["lost"] = $opn;
             }
-            else 
+            else
             {
                 $players["won"] = $opn;
                 $players["lost"] = $plr;
             }
         }
 
-        $points = new PointService($players["lost"]["points"], $players["won"]["points"], 1, 2);
+        $elo_k = $this->playerService->getEloKvalue($players);
+
+        $points = new PointService($elo_k, $players["lost"]["rating"], $players["won"]["rating"], 0, 1);
         $results = $points->getNewRatings();
+
+        $gvc = 6; //TODO: develop a function for GameValueComponent
 
         foreach ($players as $k => $player)
         {
@@ -136,15 +140,20 @@ class ApiLadderController extends Controller
 
             if ($k == "lost")
             {
-                $newPoints = ($player->points > 0 ? $results["a"] - $player->points : $results["a"]);
-                $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints);
+                $diff = $results["a"] - $player->rating;
+                $newPoints = $gvc + ($diff > 0 ? $diff : 0);
+                $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints);
             }
             else if ($k == "won")
             {
-                $newPoints = ($player->points > 0 ? $results["b"] - $player->points : $results["b"]);
-                $this->playerService->awardPlayerPoints($player->id, $gameId, $newPoints, true);
+                $diff = $results["b"] - $player->rating;
+                $newPoints = $gvc + ($diff > 1 ? $diff : 1);
+                $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints, true);
             }
         }
+
+        $this->playerService->updatePlayerRating($players["lost"], $results["a"]);
+        $this->playerService->updatePlayerRating($players["won"], $results["b"]);
     }
 
     public function getLadderGame(Request $request, $game = null, $gameId = null)
@@ -156,7 +165,7 @@ class ApiLadderController extends Controller
     {
         return $this->ladderService->getLadderPlayer($game, $player);
     }
-        
+
     public function viewRawGame(Request $request, $rawId)
     {
         $rawGame = \App\GameRaw::where("id", "=", $rawId)->first();
