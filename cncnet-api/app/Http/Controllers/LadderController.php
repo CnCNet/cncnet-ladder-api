@@ -58,10 +58,18 @@ class LadderController extends Controller
     {
         $game = $this->ladderService->getLadderGameById($game, $gameId);
         $ladder = $this->ladderService->getLadderByGame($request->game);
+
             
         if ($game == null) return "No game";
         $stats = $game->stats()->get();
-        return view('ladders.game-view', array("game" => $game, "stats" => $stats, "ladder" => $ladder));
+
+        return view('ladders.game-view', 
+        array(
+            "game" => $game, 
+            "stats" => $stats, 
+            "ladder" => $ladder,
+            "ladders" => $this->ladderService->getLadders(),
+        ));
     }
 
     public function getLadderPlayer(Request $request, $cncnetGame = null, $player = null)
@@ -86,6 +94,7 @@ class LadderController extends Controller
             "ladders.player-view", 
             array 
             (
+                "ladders" => $this->ladderService->getLadders(),
                 "ladder" => $ladder,
                 "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($ladder, $player->username))),
                 "games" => $games,

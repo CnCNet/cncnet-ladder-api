@@ -2,7 +2,13 @@
 @section('title', 'Ladder')
 
 @section('cover')
+@if($ladder->abbreviation == "ra")
+/images/feature/feature-ra.jpg
+@elseif($ladder->abbreviation == "ts")
+/images/feature/feature-ts.jpg
+@elseif($ladder->abbreviation == "yr")
 /images/feature/feature-yr.jpg
+@endif
 @endsection
 
 @section('css')
@@ -85,7 +91,7 @@
                             <li class="rank">
                                 <h1>
                                     Rank #{{ $player->rank == -1 ? "Unranked" : $player->rank }}
-                                    <small style="color: #00ce00;">Rating <strong>#{{ $player->rating }}</strong></small>
+                                    <small>Rating <strong>#{{ $player->rating }}</strong></small>
                                 </h1>
                             </li>
                         </ul>
