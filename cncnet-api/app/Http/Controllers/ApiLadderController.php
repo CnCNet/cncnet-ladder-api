@@ -128,7 +128,10 @@ class ApiLadderController extends Controller
         $points = new PointService($elo_k, $players["lost"]["rating"], $players["won"]["rating"], 0, 1);
         $results = $points->getNewRatings();
 
-        $gvc = 6; //TODO: develop a function for GameValueComponent
+
+        // Tweak this number until things feel right
+        $gvcWon = ceil(($players["lost"]["rating"] * $players["won"]["rating"]) / 200000);
+        $gvcLost = ceil($gvcWon/2);
 
         foreach ($players as $k => $player)
         {
@@ -141,19 +144,24 @@ class ApiLadderController extends Controller
             if ($k == "lost")
             {
                 $diff = $results["a"] - $player->rating;
-                $newPoints = $gvc + ($diff > 0 ? $diff : 0);
+                $newPoints = $gvcLost + ($diff > 0 ? $diff : 0);
                 $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints);
             }
             else if ($k == "won")
             {
                 $diff = $results["b"] - $player->rating;
-                $newPoints = $gvc + ($diff > 1 ? $diff : 1);
+                $newPoints = $gvcWon + ($diff > 1 ? $diff : 1);
                 $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints, true);
             }
         }
 
         $this->playerService->updatePlayerRating($players["lost"], $results["a"]);
         $this->playerService->updatePlayerRating($players["won"], $results["b"]);
+    }
+
+    public function getCurrentLadders(Request $request)
+    {
+        return $this->ladderService->getLadders();
     }
 
     public function getLadderGame(Request $request, $game = null, $gameId = null)
