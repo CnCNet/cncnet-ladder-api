@@ -1,6 +1,6 @@
 <?php
 
-Route::get('/', function () 
+Route::get('/', function ()
 {
     return redirect('ladder/');
 });
@@ -21,13 +21,13 @@ Route::controllers
 	'password' => 'Auth\PasswordController',
 ]);
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () 
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function ()
 {
     Route::get('/{cncnetGame}', 'AdminController@getAdminIndex');
     Route::post('/{cncnetGame}/delete', 'AdminController@deleteGame');
 });
 
-Route::group(['prefix' => 'account', 'middleware' => 'auth'], function () 
+Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
 {
     Route::get('/', 'AccountController@getAccountIndex');
     Route::post('/username', 'AccountController@createUsername');
@@ -38,7 +38,7 @@ Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], fu
     Route::get('/token', 'ApiAuthController@getAuth');
 });
 
-Route::group(['prefix' => 'api/v1/'], function () 
+Route::group(['prefix' => 'api/v1/'], function ()
 {
     Route::get('/user/account', 'ApiUserController@getAccount');
     Route::post('/user/create', 'ApiUserController@createUser');
@@ -51,8 +51,9 @@ Route::group(['prefix' => 'api/v1/'], function ()
 
     // Player Endpoints
     Route::post('/player/{username}', 'ApiPlayerController@createPlayer');
-    
+
     // Ladder Endpoints
+    Route::get('/ladder', 'ApiLadderController@getCurrentLadders');
     Route::get('/ladder/{game}', 'ApiLadderController@getLadder');
     Route::get('/ladder/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');
     Route::get('/ladder/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
@@ -60,4 +61,8 @@ Route::group(['prefix' => 'api/v1/'], function ()
     // Debug
     Route::get('/ladder/raw/{rawId}', 'ApiLadderController@viewRawGame');
     Route::get('/ladder/elo/{gameId}', 'ApiLadderController@awardPoints');
+
+    // QuickMatch Endpoints
+    Route::get('/qm/ladder/{ladderAbbrev}/maps', 'ApiQuickMatchController@mapListRequest');
+    Route::post('/qm/{ladderAbbrev}/{playerName}', 'ApiQuickMatchController@matchRequest');
 });

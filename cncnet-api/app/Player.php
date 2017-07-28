@@ -3,11 +3,11 @@
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
 
-class Player extends Model 
+class Player extends Model
 {
 	protected $table = 'players';
 
-	protected $fillable = ['user_id', 'username', 'win_count', 'loss_count', 'games_count', 
+	protected $fillable = ['user_id', 'username', 'win_count', 'loss_count', 'games_count',
     'dc_count', 'oos_count', 'points', 'countries', 'ladder_id'];
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
@@ -16,11 +16,11 @@ class Player extends Model
 	{
         return $this->hasMany('App\GameStats');
 	}
-        
+
     public function games()
     {
         return $this->hasMany("App\PlayerGame");
-    }   
+    }
 
     public function rating()
     {
