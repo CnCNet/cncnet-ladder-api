@@ -2,16 +2,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
+use \App\Http\Services\AdminService;
 
 class AdminController extends Controller 
 {
     private $ladderService;
+    private $adminService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();  
+        $this->adminService = new AdminService();  
     }
 
     public function getAdminIndex(Request $request)
@@ -21,7 +23,13 @@ class AdminController extends Controller
 
     public function getLadderSetupIndex(Request $request)
     {
-        return view("admin.ladder-setup", ["ladders" => $this->ladderService->getLadders()]);
+        $ladderRules = \App\QmLadderRules::all();
+        return view("admin.ladder-setup", ["ladders" => $this->ladderService->getLadders(), "rules" => $ladderRules]);
+    }
+
+    public function postLadderSetupRules(Request $request)
+    {
+        return $this->adminService->saveQMLadderRulesRequest($request);
     }
 
     public function getManageUsersIndex(Request $request)
