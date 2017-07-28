@@ -12,4 +12,9 @@ class Ladder extends Model
     {
         return $this->hasMany('App\QmLadderRules');
     }
+
+    public function sides()
+    {
+        return $this->hasMany('App\Side');
+    }
 }

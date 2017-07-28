@@ -11,7 +11,12 @@ class LadderService
 
     public function getLadders()
     {
-        return \App\Ladder::all();
+        $ladders = \App\Ladder::all();
+        foreach ($ladders as $ladder)
+        {
+            $ladder["sides"] = $ladder->sides()->get();
+        }
+        return $ladders;
     }
 
     public function getLadderByGame($game)
