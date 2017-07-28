@@ -86,6 +86,11 @@
 
                     @if(isset($user))
                     <ul class="dropdown-menu">
+                        @if($user->isModerator())
+                        <li>
+                            <a href="/admin/">Admin Panel</a>
+                        </li>
+                        @endif
                         <li><a href="/account">Manage Account</a></li>
                         <li><a href="/auth/logout">Sign out</a></li>
                     </ul>

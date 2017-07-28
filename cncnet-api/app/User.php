@@ -25,4 +25,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return $this->hasMany('App\Player');
 	}
+    
+    public function isAdmin()
+    {
+        return in_array(\Auth::user()->group, [self::God, self::Admin]);
+    }
+
+    public function isGod()
+    {
+        return in_array(\Auth::user()->group, [self::God]);
+    }
+
+    public function isModerator()
+    {
+        return in_array(\Auth::user()->group, [self::God, self::Admin, self::Moderator]);
+    }
 }
