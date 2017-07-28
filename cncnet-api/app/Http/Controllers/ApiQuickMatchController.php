@@ -29,6 +29,18 @@ class ApiQuickMatchController extends Controller
           return \App\QmMap::where('ladder_id', $this->ladderService->getLadderByGame($ladderAbbrev)->id)->get();
     }
 
+    public function sidesListRequest(Request $request, $ladderAbbrev = null)
+    {
+        $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
+        $rules = $ladder->qmLadderRules()->first();
+        $allowed_sides = $rules->allowed_sides();
+        $sides = $ladder->sides()->get();
+
+        return $sides->filter(function ($side) use(&$allowed_sides)
+                              {
+                                  return in_array($side->local_id, $allowed_sides);
+                              } );
+    }
 
     public function matchRequest(Request $request, $ladderAbbrev = null, $playerName = null)
     {
@@ -160,7 +172,7 @@ class ApiQuickMatchController extends Controller
                     $map_count = \App\QmMap::where('ladder_id', $qmPlayer->ladder_id)->get()->count();
                     for ($i = 0; $i < $map_count; $i++)
                     {
-                        $bit = 1 >> $i;
+                        $bit = 1 << $i;
                         if ($bit & $common_bits)
                         {
                             $common_maps[] = $i;
@@ -181,9 +193,7 @@ class ApiQuickMatchController extends Controller
                     $qmMatch->save();
 
                     $qmMap = $qmMatch->map()->first();
-                    var_dump($qmMatch->qm_map_id);
-                    var_dump($qmMatch->map()->toSql());
-                    $spawn_order = explode(',', $qmMap->spawn_order);
+                  $spawn_order = explode(',', $qmMap->spawn_order);
 
                     // Set up player specific information
                     // Color will be used for spawn location

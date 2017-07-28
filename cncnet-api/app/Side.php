@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class QmPlayer extends Model {
+class Side extends Model {
 
 	//
 
