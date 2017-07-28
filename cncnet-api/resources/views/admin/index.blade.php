@@ -13,35 +13,52 @@
                 <h1>
                     CnCNet Admin
                 </h1>
-                <p>Admin panel for {{ $ladder->name }}
+                <p>Admin panel
             </div>
         </div>
     </div>
 </div>
 @endsection
 
-
 @section('content')
-<?php
-    $numOfCols = 3;
-    $rowCount = 0;
-    $bootstrapColWidth = 12 / $numOfCols;
-?>
 <section class="light-texture game-detail supported-games">
     <div class="container">
         <div class="feature">
-            <h3>Manage Games for {{ $ladder->name }} </h3>
+
             <div class="row">
-            @foreach($games->get() as $game)
-                <div class="col-md-{{ $bootstrapColWidth }}">
-                    @include("admin._manage-game")
+                <div class="col-md-4">
+                    <a href="/admin/users" class="profile-link">
+                        <div class="profile-listing">
+                            <h3>Users</h3>
+                            <p>Manage everything to do with Users</p>
+                        </div>
+                    </a>
+                </div>  
+              
+                <div class="col-md-4">
+                    <a href="/admin/setup" class="profile-link">
+                        <div class="profile-listing">
+                            <h3>Ladder Setup</h3>
+                            <p>Manage maps, rules, and all things related to the ladder</p>
+                        </div>
+                    </a>
+                </div>
+              
+                <div class="col-md-4">
+                    <div class="profile-link">
+                        <div class="profile-listing">
+                            <h3>Games</h3>
+                            <p>Manage maps, rules, and all things related to the ladder</p>
+                            
+                            <ul class="list-unstyled">
+                            @foreach($ladders as $ladder)
+                            <li><a href="/admin/games/{{ $ladder->abbreviation }}">{{ $ladder->name }}</a></li>
+                            @endforeach
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
-                <?php $rowCount++; ?>
-                @if($rowCount % $numOfCols == 0)
-                </div><div class="row">
-                @endif
-            @endforeach
             </div>
         </div>
     </div>

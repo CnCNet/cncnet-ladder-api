@@ -7,12 +7,29 @@ use \App\Http\Services\LadderService;
 
 class AdminController extends Controller 
 {
+    private $ladderService;
+
     public function __construct()
     {
-      
+        $this->ladderService = new LadderService();  
     }
 
-    public function getAdminIndex(Request $request, $cncnetGame = null)
+    public function getAdminIndex(Request $request)
+    {
+        return view("admin.index", ["ladders" => $this->ladderService->getLadders()]);
+    }
+
+    public function getLadderSetupIndex(Request $request)
+    {
+        return view("admin.ladder-setup", ["ladders" => $this->ladderService->getLadders()]);
+    }
+
+    public function getManageUsersIndex(Request $request)
+    {
+        return view("admin.manage-users", ["ladders" => $this->ladderService->getLadders()]);
+    }
+
+    public function getManageGameIndex(Request $request, $cncnetGame = null)
     {
         $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
 
@@ -20,7 +37,7 @@ class AdminController extends Controller
             return "No ladder";
         
         $games = \App\Game::where("ladder_id", "=", $ladder->id)->orderBy("id", "DESC");
-        return view("admin.index", ["games" => $games, "ladder" => $ladder]);
+        return view("admin.manage-games", ["games" => $games, "ladder" => $ladder]);
     }
 
     public function deleteGame(Request $request)

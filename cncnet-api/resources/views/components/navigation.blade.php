@@ -88,7 +88,7 @@
                     <ul class="dropdown-menu">
                         @if($user->isModerator())
                         <li>
-                            <a href="/admin/">Admin Panel</a>
+                            <a href="/admin/">Admin</a>
                         </li>
                         @endif
                         <li><a href="/account">Manage Account</a></li>

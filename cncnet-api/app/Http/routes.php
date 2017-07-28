@@ -25,8 +25,12 @@ Route::controllers
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth', 'group' => [User::Admin, User::God]], function ()
 {
-    Route::get('/{cncnetGame}', 'AdminController@getAdminIndex');
-    Route::post('/{cncnetGame}/delete', 'AdminController@deleteGame');
+    Route::get('/', 'AdminController@getAdminIndex');
+    Route::get('/users', 'AdminController@getManageUsersIndex');
+    Route::get('/setup', 'AdminController@getLadderSetupIndex');
+    
+    Route::get('/games/{cncnetGame}', 'AdminController@getManageGameIndex');
+    Route::post('/games/{cncnetGame}/delete', 'AdminController@deleteGame');
 });
 
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
