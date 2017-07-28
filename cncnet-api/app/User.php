@@ -10,6 +10,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 {
 	use Authenticatable, CanResetPassword;
 
+    const God = "God";
+    const Admin = "Admin";
+    const Moderator = "Moderator";
+    const User = "User";
+
 	protected $table = 'users';
 
 	protected $fillable = ['name', 'email', 'password'];

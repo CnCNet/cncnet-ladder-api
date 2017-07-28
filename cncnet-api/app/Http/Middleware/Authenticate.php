@@ -44,6 +44,19 @@ class Authenticate {
 			}
 		}
 
+        $route = $request->route();
+        $actions = $route->getAction();
+
+        if (isset($actions["group"]))
+        {
+            $group = $actions["group"];
+
+            if (!in_array ($this->auth->user()->group, $group ))
+            {
+				return redirect()->guest('auth/login');
+            }
+        }
+
 		return $next($request);
 	}
 

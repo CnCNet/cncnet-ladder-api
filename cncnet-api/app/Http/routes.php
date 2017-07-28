@@ -1,5 +1,7 @@
 <?php
 
+use \App\User;
+
 Route::get('/', function ()
 {
     return redirect('ladder/');
@@ -21,7 +23,7 @@ Route::controllers
 	'password' => 'Auth\PasswordController',
 ]);
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function ()
+Route::group(['prefix' => 'admin', 'middleware' => 'auth', 'group' => [User::Admin, User::God]], function ()
 {
     Route::get('/{cncnetGame}', 'AdminController@getAdminIndex');
     Route::post('/{cncnetGame}/delete', 'AdminController@deleteGame');
