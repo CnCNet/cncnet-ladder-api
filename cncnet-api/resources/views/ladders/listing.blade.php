@@ -2,16 +2,17 @@
 @section('title', 'Ladder')
 
 @section('cover')
-/images/feature/feature-{{ $ladder->abbreviation }}.jpg
+/images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
 @endsection
-
-@if($ladder->abbreviation == "ra")
+<?php /*
+@if($history->ladder->abbreviation == "ra")
     <?php $dir = "red-alert"; ?>
-@elseif($ladder->abbreviation == "ts")
+@elseif($history->ladder->abbreviation == "ts")
     <?php $dir = "tiberian-sun"; ?>
-@elseif($ladder->abbreviation == "yr")
+@elseif($history->ladder->abbreviation == "yr")
     <?php $dir = "yuris-revenge"; ?>
-@endif
+@endif*/
+?>
 
 @section('feature')
 <div class="feature-background sub-feature-background">
@@ -19,7 +20,7 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2">
                 <h1>
-                    <img src="/images/games/{{ $dir }}/logo.png" class="logo" />
+                    <img src="/images/games/{{ $dir or "" }}/logo.png" class="logo" />
                 </h1>
                 <p class="text-uppercase">
                    Play. Compete. <strong>Conquer.</strong>
@@ -50,7 +51,7 @@
                     <div class="row">
                         @foreach($players as $k => $player)
                         <div class="col-md-4">
-                            <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
+                            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                                 <div class="profile-listing">
                                     <div class="rank">
                                         <i class="rank {{ $player->badge($player->points)}}"></i> 

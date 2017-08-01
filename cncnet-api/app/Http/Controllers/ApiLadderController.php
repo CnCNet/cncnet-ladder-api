@@ -7,6 +7,7 @@ use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
+use \Carbon\Carbon;
 
 class ApiLadderController extends Controller
 {
@@ -52,6 +53,23 @@ class ApiLadderController extends Controller
             return response()->json(['Ladder does not exist'], 400);
         }
 
+        // Get Active Ladder
+        $start = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+
+        $activeLadder = \App\LadderHistory::where("starts", ">=", $start)
+            ->where("ends", "<=", $end)->first();
+
+        if ($activeLadder == null)
+        {
+            // Create one automagically
+            $activeLadder = new \App\LadderHistory();
+            $activeLadder->starts = $start;
+            $activeLadder->starts = $end;
+            $activeLadder->ladder_id = $ladder->id;
+            $activeLadder->save();
+        }
+
         // Player checks
         $player = $this->checkPlayer($request, $username, $ladder);
         if($player == null)
@@ -60,14 +78,14 @@ class ApiLadderController extends Controller
         }
 
         // Game creation
-        $game = $this->gameService->findOrCreateGame($result, $ladder);
+        $game = $this->gameService->findOrCreateGame($result, $activeLadder);
         if ($game == null)
         {
             return response()->json(['Error creating game'], 400);
         }
 
         // Keep a record of the raw stats sent in
-        $this->gameService->saveRawStats($result, $game->id, $ladder->id);
+        $this->gameService->saveRawStats($result, $game->id, $activeLadder->id);
 
         // Now save the processed stats
         $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder->id);

@@ -10,11 +10,11 @@ Route::get('/', function ()
 Route::group(['prefix' => 'ladder/'], function()
 {
     Route::get('/', 'LadderController@getLadders');
-    Route::get('/{game}', 'LadderController@getLadderIndex');
-    Route::get('/{game}/player/', 'LadderController@getLadderIndex');
-    Route::get('/{game}/player/{player}', 'LadderController@getLadderPlayer');
-    Route::get('/{game}/games/{gameId}', 'LadderController@getLadderGame');
-    Route::get('/{game}/badges', 'LadderController@getBadgesIndex');
+    Route::get('{date}/{game}', 'LadderController@getLadderIndex');
+    Route::get('{date}/{game}/player/', 'LadderController@getLadderIndex');
+    Route::get('{date}/{game}/player/{player}', 'LadderController@getLadderPlayer');
+    Route::get('{date}/{game}/games/{gameId}', 'LadderController@getLadderGame');
+    Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
 });
 
 Route::controllers

@@ -1,6 +1,8 @@
 <?php 
 namespace App\Http\Controllers;
 
+use \Carbon\Carbon;
+use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 
@@ -37,10 +39,10 @@ class LadderController extends Controller
         return view("ladders.listing", 
         array
         (
-            "games" => $this->ladderService->getRecentLadderGames($request->game),
+            "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
             "ladders" => $this->ladderService->getLadders(),
-            "ladder" => $this->ladderService->getLadderByGame($request->game),
-            "players" => $this->ladderService->getLadderPlayers($request->game)
+            "history" => $this->ladderService->getActiveLadderByDate($request->date),
+            "players" => $this->ladderService->getLadderPlayers($request->date, $request->game)
         ));
     }
 
@@ -54,12 +56,11 @@ class LadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    public function getLadderGame(Request $request, $game = null, $gameId = null)
+    public function getLadderGame(Request $request, $date = null, $game = null, $gameId = null)
     {
-        $game = $this->ladderService->getLadderGameById($game, $gameId);
-        $ladder = $this->ladderService->getLadderByGame($request->game);
-
-            
+        $ladder = $this->ladderService->getActiveLadderByDate($date);
+        $game = $this->ladderService->getLadderGameById($ladder, $gameId);
+        
         if ($game == null) return "No game";
         $stats = $game->stats()->get();
 
@@ -72,10 +73,10 @@ class LadderController extends Controller
         ));
     }
 
-    public function getLadderPlayer(Request $request, $cncnetGame = null, $player = null)
+    public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $player = null)
     {
         $games = [];
-        $ladder = $this->ladderService->getLadderByGame($request->game);
+        $ladder = $this->ladderService->getActiveLadderByDate($date);
         $player = \App\Player::where("ladder_id", "=", $ladder->id)
             ->where("username", "=", $player)->first();
 
@@ -95,7 +96,7 @@ class LadderController extends Controller
             array 
             (
                 "ladders" => $this->ladderService->getLadders(),
-                "ladder" => $ladder,
+                "history" => $ladder,
                 "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($ladder, $player->username))),
                 "games" => $games,
             )

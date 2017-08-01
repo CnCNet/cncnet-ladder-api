@@ -32,11 +32,12 @@ class Player extends Model
         return $this->belongsTo("App\Ladder");
     }
 
-    public function rank($cncnetGame, $username)
+    public function rank($ladderId, $username)
     {
         $players = new Collection();
-        $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
-        $ladderPlayers = \App\Player::where("ladder_id", "=", $ladder->id)->get();
+        $history = \App\LadderHistory::where("id", "=", $ladderId)->first();
+
+        $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->get();
 
         foreach($ladderPlayers as $player)
         {

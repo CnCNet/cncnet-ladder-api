@@ -1,6 +1,7 @@
 <?php namespace App\Http\Services;
 
 use \Illuminate\Database\Eloquent\Collection;
+use \Carbon\Carbon;
 
 class LadderService
 {
@@ -17,6 +18,21 @@ class LadderService
             $ladder["sides"] = $ladder->sides()->get();
         }
         return $ladders;
+    }
+
+    public function getActiveLadderByDate($date)
+    {
+        $date = explode("-", $date);
+        $month = $date[0];
+        $year = $date[1];
+
+        $date = Carbon::create($year, $month, 01, 0);
+      
+        $start = $date->startOfMonth()->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+
+        return \App\LadderHistory::where("starts", "=", $start)
+            ->where("ends", "=", $end)->first();
     }
 
     public function getLadderByGame($game)
@@ -45,11 +61,15 @@ class LadderService
         return $players;
     }
 
-    public function getRecentLadderGames($game, $limit = 4)
+    public function getRecentLadderGames($date, $game, $limit = 4)
     {
-        $ladder = $this->getLadderByGame($game);
+        $history = $this->getActiveLadderByDate($date);
+        if ($history == null)
+        {
+            dd("Dang it");
+        }
 
-        $recentGames =  \App\Game::where("ladder_id", "=", $ladder->id)
+        $recentGames = \App\Game::where("ladder_history_id", "=", $history->id)
             ->leftJoin('player_points as pp', 'games.id', '=', 'pp.game_id')
             ->whereNotNull('pp.id')
             ->orderBy("games.id", "DESC")
@@ -61,14 +81,12 @@ class LadderService
         return $recentGames;
     }
 
-    public function getLadderGameById($game, $gameId)
+    public function getLadderGameById($history, $gameId)
     {
-        $ladder = $this->getLadderByGame($game);
-
-        if($ladder == null || $gameId == null)
+        if($history == null || $gameId == null)
             return "Invalid parameters";
 
-        $ladderGame = \App\LadderGame::where("ladder_id", "=", $ladder->id)
+        $ladderGame = \App\LadderGame::where("ladder_history_id", "=", $history->ladder->id)
             ->where("game_id", "=", $gameId)->first();
 
         if($ladderGame == null)
@@ -77,15 +95,15 @@ class LadderService
         return \App\Game::where("id", "=", $ladderGame->game_id)->first();
     }
 
-    public function getLadderPlayer($ladder, $player)
+    public function getLadderPlayer($history, $player)
     {
-        if($ladder == null)
+        if($history == null)
             return "No ladder found";
 
-        $player = \App\Player::where("ladder_id", "=", $ladder->id)
+        $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
             ->where("username", "=", $player)->first();
 
-        $rank = $this->getLadderPlayerRank($ladder->abbreviation, $player->username);
+        $rank = $this->getLadderPlayerRank($history->id, $player->username);
         $points = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
         $games = \App\PlayerGame::where("player_id", "=", $player->id);
         $gamesCount = $games->count();
@@ -131,15 +149,15 @@ class LadderService
         return $afps;
     }
 
-    public function getLadderPlayers($game)
+    public function getLadderPlayers($date, $game)
     {
-        $ladder = $this->getLadderByGame($game);
+        $ladder = $this->getActiveLadderByDate($date);
 
         if($ladder == null)
             return "No ladder found";
 
         $players = new Collection();
-        $ladderPlayers = \App\Player::where("ladder_id", "=", $ladder->id)->get();
+        $ladderPlayers = \App\Player::where("ladder_id", "=", $ladder->ladder->id)->get();
 
         foreach($ladderPlayers as $player)
         {
@@ -150,14 +168,9 @@ class LadderService
         return $players->sortByDesc('points')->values()->all();
     }
 
-    public function getLadderPlayerRank($game, $username)
+    public function getLadderPlayerRank($historyId, $username)
     {
-        $ladder = $this->getLadderByGame($game);
-
-        if($ladder == null)
-            return "No ladder found";
-
         $player = new \App\Player();
-        return $player->rank($game, $username);
+        return $player->rank($historyId, $username);
     }
 }

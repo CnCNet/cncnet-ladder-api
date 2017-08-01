@@ -11,12 +11,12 @@
     @foreach($games as $game)
               
         <div class="col-md-{{ $bootstrapColWidth }}">
-            <a href="/ladder/{{$ladder->abbreviation . "/games/" . $game->id }}" class="profile-link">
+            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->id }}" class="profile-link">
                 <div class="profile-listing">
                     <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
                     <div class="feature-map text-center">
                         @if (isset($map->hash))
-                        <img src="/images/maps/{{ $ladder->abbreviation}}/{{ $map->hash . ".png" }}">
+                        <img src="/images/maps/{{ $history->ladder->abbreviation}}/{{ $map->hash . ".png" }}">
                         @else 
                         <img src="http://via.placeholder.com/300x150/1f1f1f?text={{ $game->scen }}" />
                         @endif

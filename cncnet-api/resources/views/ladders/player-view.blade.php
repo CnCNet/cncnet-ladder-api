@@ -2,13 +2,7 @@
 @section('title', 'Ladder')
 
 @section('cover')
-@if($ladder->abbreviation == "ra")
-/images/feature/feature-ra.jpg
-@elseif($ladder->abbreviation == "ts")
-/images/feature/feature-ts.jpg
-@elseif($ladder->abbreviation == "yr")
-/images/feature/feature-yr.jpg
-@endif
+
 @endsection
 
 @section('css')
@@ -23,7 +17,7 @@
                 <h1>
                     {{ $player->username or "" }} <small>Battle Statistics</small>
                 </h1>
-                <a href="/ladder/{{ $ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
+                <a href="/ladder/{{ $history->ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
                     <i class="fa fa-chevron-left fa-lg fa-fw" aria-hidden="true"></i> Player Leaderboard
                 </a>
             </div>

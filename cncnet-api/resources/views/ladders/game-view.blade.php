@@ -23,7 +23,7 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2">
                 <h1>
-                    <img src="/images/games/{{ $dir }}/logo.png" class="logo" />
+                    <img src="/images/games/{{ $dir or "" }}/logo.png" class="logo" />
                 </h1>
              
                 <a href="/ladder/{{ $ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
@@ -76,6 +76,7 @@
                                         ->where("player_id", "!=", $player->id)
                                         ->first();
                                     ?>
+                                    @if ($points != null)
                                     <span class="player">
                                         {{ $points->player()->first()->username or "Unknown" }} <strong>+{{ $points->points_awarded or "" }}</strong>
                                         @if ($points->game_won) 
@@ -84,6 +85,7 @@
                                             <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i> 
                                         @endif
                                     </span>
+                                    @endif
                                 @endif
                             @endif
                         @endforeach
@@ -126,8 +128,8 @@
             @foreach($stats as $k => $stat)
             <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
             <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
-            <?php $rank = $player->rank($ladder->abbreviation, $player->username); ?>
-            <?php $points = $player->playerPoints($ladder->abbreviation, $player->username); ?>
+            <?php $rank = $player->rank($ladder->id, $player->username); ?>
+            <?php $points = $player->playerPoints($ladder->id, $player->username); ?>
 
             <div class="col-md-6">
                 <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">

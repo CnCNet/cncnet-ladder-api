@@ -285,7 +285,7 @@ class GameService
         if ($game == null)
         {
             $game = new \App\Game();
-            $game->ladder_id = $ladder->id;
+            $game->ladder_history_id = $ladder->id;
             $game->wol_game_id = $id;
             $game->save();
         }
@@ -295,7 +295,7 @@ class GameService
         {
             $ladderGame = new \App\LadderGame();
             $ladderGame->game_id = $game->id;
-            $ladderGame->ladder_id = $ladder->id;
+            $ladderGame->ladder_history_id = $ladder->id;
             $ladderGame->save();
         }
 
