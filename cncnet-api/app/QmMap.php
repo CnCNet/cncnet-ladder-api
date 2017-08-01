@@ -19,4 +19,15 @@ class QmMap extends Model {
     {
         return $this->belongsTo('App\Map');
     }
+
+    public static function findMapsByLadder($id)
+    {
+        $qmMaps = \App\QmMap::where('ladder_id', $id)->get();
+
+        return $qmMaps->map( function($qmMap)
+        {
+            $qmMap["hash"] = $qmMap->map()->first()->hash;
+            return $qmMap;
+        });
+    }
 }
