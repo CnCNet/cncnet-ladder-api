@@ -98,6 +98,7 @@
     <Compile Include="cncnet-api\database\migrations\2017_07_23_220359_create_qm_match_players_table.php" />
     <Compile Include="cncnet-api\database\migrations\2017_07_25_230316_create_qm_ladder_rules_table.php" />
     <Compile Include="cncnet-api\database\migrations\2017_07_27_233514_create_sides_table.php" />
+    <Compile Include="cncnet-api\database\migrations\2017_07_28_180037_create_ladder_history_table.php" />
     <Compile Include="cncnet-api\database\migrations\2017_07_28_180036_edit_users_table.php" />
     <Compile Include="cncnet-api\database\seeds\.gitkeep" />
     <Compile Include="cncnet-api\database\seeds\DatabaseSeeder.php" />

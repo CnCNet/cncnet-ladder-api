@@ -20,7 +20,18 @@ class LadderService
         return $ladders;
     }
 
-    public function getActiveLadderByDate($date)
+    public function getLatestLadders()
+    {
+        $date = Carbon::now();
+        
+        $start = $date->startOfMonth()->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+
+        return \App\LadderHistory::where("starts", "=", $start)
+            ->where("ends", "=", $end)->get();
+    }
+
+    public function getActiveLadderByDate($date, $cncnetGame = null)
     {
         $date = explode("-", $date);
         $month = $date[0];
@@ -31,8 +42,19 @@ class LadderService
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        return \App\LadderHistory::where("starts", "=", $start)
-            ->where("ends", "=", $end)->first();
+        if ($cncnetGame == null)
+        {
+            return \App\LadderHistory::where("starts", "=", $start)
+                ->where("ends", "=", $end)->first();
+        }
+        else
+        {
+            $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
+            return \App\LadderHistory::where("starts", "=", $start)
+                ->where("ends", "=", $end)
+                ->where("ladder_id", "=", $ladder->id)
+                ->first();
+        }
     }
 
     public function getLadderByGame($game)
@@ -61,24 +83,18 @@ class LadderService
         return $players;
     }
 
-    public function getRecentLadderGames($date, $game, $limit = 4)
+    public function getRecentLadderGames($date, $cncnetGame, $limit = 4)
     {
-        $history = $this->getActiveLadderByDate($date);
+        $history = $this->getActiveLadderByDate($date, $cncnetGame);
         if ($history == null)
         {
-            dd("Dang it");
+            return [];
         }
-
-        $recentGames = \App\Game::where("ladder_history_id", "=", $history->id)
-            ->leftJoin('player_points as pp', 'games.id', '=', 'pp.game_id')
-            ->whereNotNull('pp.id')
-            ->orderBy("games.id", "DESC")
-            ->select("games.*")
-            ->distinct()
-            ->limit(4)
-            ->get();
-
-        return $recentGames;
+     
+        return \App\Game::where("ladder_history_id", "=", $history->id)
+        ->orderBy("games.id", "DESC")
+        ->limit(4)
+        ->get();
     }
 
     public function getLadderGameById($history, $gameId)
@@ -103,7 +119,7 @@ class LadderService
         $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
             ->where("username", "=", $player)->first();
 
-        $rank = $this->getLadderPlayerRank($history->id, $player->username);
+        $rank = $this->getLadderPlayerRank($history, $player->username);
         $points = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
         $games = \App\PlayerGame::where("player_id", "=", $player->id);
         $gamesCount = $games->count();
@@ -149,19 +165,22 @@ class LadderService
         return $afps;
     }
 
-    public function getLadderPlayers($date, $game)
+    public function getLadderPlayers($date, $cncnetGame)
     {
-        $ladder = $this->getActiveLadderByDate($date);
+        $history = $this->getActiveLadderByDate($date, $cncnetGame);
 
-        if($ladder == null)
+        if($history == null)
             return "No ladder found";
 
         $players = new Collection();
-        $ladderPlayers = \App\Player::where("ladder_id", "=", $ladder->ladder->id)->get();
+        $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->get();
 
         foreach($ladderPlayers as $player)
         {
-            $player["points"] = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
+            $player["points"] = \App\PlayerPoint::where("player_id", "=", $player->id)
+                ->where("ladder_history_id", "=", $history->id)
+                ->sum("points_awarded");
+
             $players->add($player);
         }
 

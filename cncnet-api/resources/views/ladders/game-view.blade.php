@@ -6,14 +6,15 @@
 @endsection
 
 @section('cover')
-/images/feature/feature-{{ $ladder->abbreviation }}.jpg
+/images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
 @endsection
 
-@if($ladder->abbreviation == "ra")
+
+@if($history->ladder->abbreviation == "ra")
     <?php $dir = "red-alert"; ?>
-@elseif($ladder->abbreviation == "ts")
+@elseif($history->ladder->abbreviation == "ts")
     <?php $dir = "tiberian-sun"; ?>
-@elseif($ladder->abbreviation == "yr")
+@elseif($history->ladder->abbreviation == "yr")
     <?php $dir = "yuris-revenge"; ?>
 @endif
 
@@ -26,7 +27,7 @@
                     <img src="/images/games/{{ $dir or "" }}/logo.png" class="logo" />
                 </h1>
              
-                <a href="/ladder/{{ $ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
+                <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
                     <i class="fa fa-chevron-left fa-lg fa-fw" aria-hidden="true"></i> Player Leaderboard
                 </a>
                 <br>
@@ -47,7 +48,7 @@
 
             @foreach($stats as $k => $stat)
                 <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
-                <div class="hidden-xs faction faction-{{ $gameStats->faction($ladder->abbreviation, $gameStats->cty) }} @if($k == 0)faction-left @else faction-right @endif"></div>
+                <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($k == 0)faction-left @else faction-right @endif"></div>
             @endforeach
 
             <div class="row">
@@ -97,7 +98,7 @@
                         <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
                         @if ($map != null)
                         <div class="feature-map text-center">
-                            <img src="/images/maps/{{ $ladder->abbreviation}}/{{ $map->hash . ".png" }}">
+                            <img src="/images/maps/{{ $history->ladder->abbreviation}}/{{ $map->hash . ".png" }}">
                         </div>
                         @endif
                     </div>
@@ -128,11 +129,11 @@
             @foreach($stats as $k => $stat)
             <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
             <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
-            <?php $rank = $player->rank($ladder->id, $player->username); ?>
-            <?php $points = $player->playerPoints($ladder->id, $player->username); ?>
+            <?php $rank = $player->rank($history, $player->username); ?>
+            <?php $points = $player->playerPoints($history, $player->username); ?>
 
             <div class="col-md-6">
-                <a href="/ladder/{{ $ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
+                <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                     <div class="profile-detail">
                         <div class="rank">
                             <i class="rank {{ $player->badge($points) }}"></i> 

@@ -4,15 +4,14 @@
 @section('cover')
 /images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
 @endsection
-<?php /*
+
 @if($history->ladder->abbreviation == "ra")
     <?php $dir = "red-alert"; ?>
 @elseif($history->ladder->abbreviation == "ts")
     <?php $dir = "tiberian-sun"; ?>
 @elseif($history->ladder->abbreviation == "yr")
     <?php $dir = "yuris-revenge"; ?>
-@endif*/
-?>
+@endif
 
 @section('feature')
 <div class="feature-background sub-feature-background">

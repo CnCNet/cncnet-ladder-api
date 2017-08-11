@@ -32,21 +32,21 @@ class Player extends Model
         return $this->belongsTo("App\Ladder");
     }
 
-    public function rank($ladderId, $username)
+    public function rank($history, $username)
     {
         $players = new Collection();
-        $history = \App\LadderHistory::where("id", "=", $ladderId)->first();
-
         $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->get();
 
         foreach($ladderPlayers as $player)
         {
-            $player["points"] = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
+            $player["points"] = \App\PlayerPoint::where("player_id", "=", $player->id)
+            ->where("ladder_history_id", "=", $history->id)
+            ->sum("points_awarded");
+
             $players->add($player);
         }
 
         $players = $players->sortByDesc('points')->values()->all();
-
         foreach($players as $k => $p)
         {
             if ($p->username == $username)
@@ -54,22 +54,19 @@ class Player extends Model
                 return $k + 1;
             }
         }
-
         return -1;
     }
 
-    public function playerPoints($cncnetGame, $username)
+    public function playerPoints($history, $username)
     {
-        $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
-        if ($ladder == null) return "No ladder";
-
         $player = \App\Player::where("username", "=", $username)
-            ->where("ladder_id", "=", $ladder->id)->first();
+            ->where("ladder_id", "=", $history->ladder->id)->first();
+
         if ($player == null) return "No player";
 
-        $points = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
-
-        return $points;
+        return \App\PlayerPoint::where("player_id", "=", $player->id)
+            ->where("ladder_history_id", "=", $history->id)
+            ->sum("points_awarded");
     }
 
     public function badge($rank)

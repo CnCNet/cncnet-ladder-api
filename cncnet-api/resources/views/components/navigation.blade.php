@@ -15,10 +15,10 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ladders <span class="caret"></span></a>
                     <ul class="dropdown-menu">
-                        @foreach($ladders as $k => $ladder)
+                        @foreach($ladders as $history)
                         <li>
-                            <a href="/ladder/{{ $ladder->abbreviation }}/" title="Tiberian Dawn" class="game-cover game-{{ $ladder->abbreviation }}">
-                                {{ $ladder->name }}
+                            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}">
+                                {{ $history->ladder->name }}
                             </a>
                         </li>
                         @endforeach

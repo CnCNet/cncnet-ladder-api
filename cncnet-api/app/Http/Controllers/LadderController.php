@@ -30,7 +30,7 @@ class LadderController extends Controller
         return view("ladders.index", 
         array
         (
-            "ladders" => $this->ladderService->getLadders())
+            "ladders" => $this->ladderService->getLatestLadders())
         );
     }
 
@@ -39,9 +39,9 @@ class LadderController extends Controller
         return view("ladders.listing", 
         array
         (
+            "ladders" => $this->ladderService->getLatestLadders(),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
-            "ladders" => $this->ladderService->getLadders(),
-            "history" => $this->ladderService->getActiveLadderByDate($request->date),
+            "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
             "players" => $this->ladderService->getLadderPlayers($request->date, $request->game)
         ));
     }
@@ -56,10 +56,10 @@ class LadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    public function getLadderGame(Request $request, $date = null, $game = null, $gameId = null)
+    public function getLadderGame(Request $request, $date = null, $cncnetGame = null, $gameId = null)
     {
-        $ladder = $this->ladderService->getActiveLadderByDate($date);
-        $game = $this->ladderService->getLadderGameById($ladder, $gameId);
+        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+        $game = $this->ladderService->getLadderGameById($history, $gameId);
         
         if ($game == null) return "No game";
         $stats = $game->stats()->get();
@@ -68,19 +68,27 @@ class LadderController extends Controller
         array(
             "game" => $game, 
             "stats" => $stats, 
-            "ladder" => $ladder,
-            "ladders" => $this->ladderService->getLadders(),
+            "history" => $history,
+            "ladders" => $this->ladderService->getLatestLadders(),
         ));
     }
 
     public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $player = null)
     {
         $games = [];
-        $ladder = $this->ladderService->getActiveLadderByDate($date);
-        $player = \App\Player::where("ladder_id", "=", $ladder->id)
+        $history = $this->ladderService->getActiveLadderByDate($date);
+        $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
             ->where("username", "=", $player)->first();
 
-        $playerGames = $player->games()->orderBy("id", "DESC")->get();
+        if ($player == null) 
+            return "No Player";
+
+        $playerGames = \App\PlayerGame::where("player_id", "=", $player->id)
+            ->leftJoin("games as g", "g.id", "=", "player_games.game_id")
+            ->where("g.ladder_history_id", "=", $history->id)
+            ->orderBy("g.id", "DESC")
+            ->get();
+
         foreach($playerGames as $cncnetGame)
         {
             $g = $cncnetGame->game()->first();
@@ -95,9 +103,9 @@ class LadderController extends Controller
             "ladders.player-view", 
             array 
             (
-                "ladders" => $this->ladderService->getLadders(),
-                "history" => $ladder,
-                "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($ladder, $player->username))),
+                "ladders" => $this->ladderService->getLatestLadders(),
+                "history" => $history,
+                "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($history, $player->username))),
                 "games" => $games,
             )
         );

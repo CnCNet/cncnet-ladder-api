@@ -33,16 +33,16 @@
                         <p class="lead">Find the latest competitive ladders below.</p>
                     </div>
 
-                    @foreach($ladders as $k => $ladder)
+                    @foreach($ladders as $history)
                     <div class="col-md-4">
                         <div class="box">
-                            <a href="/ladder/{{ $ladder->abbreviation }}/" title="Tiberian Dawn" class="game-cover game-{{ $ladder->abbreviation }}">
+                            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="game-cover game-{{ $history->ladder->abbreviation }}">
                                 <span class="image"></span>
-                                <span class="sr-only">{{ $ladder->name }}</span>
+                                <span class="sr-only">{{ $history->ladder->name }}</span>
                             </a>
                             <div class="description">
-                                <h3>{{ $ladder->name }} </h3>
-                                <a class="btn btn-tertiary btn-md" href="/ladder/{{ $ladder->abbreviation }}/">Go to Ladder</a>
+                                <h3>{{ $history->ladder->name }} </h3>
+                                <a class="btn btn-tertiary btn-md" href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/">Go to Ladder</a>
                             </div>
                         </div>
                     </div>
