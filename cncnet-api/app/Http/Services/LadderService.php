@@ -102,9 +102,9 @@ class LadderService
         if($history == null || $gameId == null)
             return "Invalid parameters";
 
-        $ladderGame = \App\LadderGame::where("ladder_history_id", "=", $history->ladder->id)
+        $ladderGame = \App\LadderGame::where("ladder_history_id", "=", $history->id)
             ->where("game_id", "=", $gameId)->first();
-
+        
         if($ladderGame == null)
             return null;
 
