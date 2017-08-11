@@ -26,7 +26,8 @@ class ApiQuickMatchController extends Controller
 
     public function mapListRequest(Request $request, $ladderAbbrev = null)
     {
-          return \App\QmMap::where('ladder_id', $this->ladderService->getLadderByGame($ladderAbbrev)->id)->get();
+        //$qmMaps = \App\QmMap::where('ladder_id', $this->ladderService->getLadderByGame($ladderAbbrev)->id)->get();
+        return \App\QmMap::findMapsByLadder($this->ladderService->getLadderByGame($ladderAbbrev)->id);
     }
 
     public function sidesListRequest(Request $request, $ladderAbbrev = null)
@@ -58,8 +59,6 @@ class ApiQuickMatchController extends Controller
                                       ->where('waiting', true)->first();
 
 
-        //$json = $request->getContent();
-        //$json = $request->json()->all();
         switch ($request->type ) {
         case "quit":
             if ($qmPlayer != null)
@@ -242,6 +241,8 @@ class ApiQuickMatchController extends Controller
                   ,"AIPlayers" =>      0
                   ,"Name" =>           $qmPlayer->player()->first()->username
                   ,"Port" =>           $qmPlayer->ip_port
+                  ,"Side" =>           $qmPlayer->actual_side
+                  ,"Color" =>          $qmPlayer->color
                   ,"Firestorm" =>      b_to_ini($qmMap->firestorm)
                   ,"ShortGame" =>      b_to_ini($qmMap->shortgame)
                   ,"MultiEngineer" =>  b_to_ini($qmMap->multi_eng)
@@ -267,6 +268,9 @@ class ApiQuickMatchController extends Controller
             $allPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
             $other_idx = 1;
 
+            $multi_idx = $qmPlayer->color + 1;
+            $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
+
             foreach ($allPlayers as $opn)
             {
                 $spawnStruct["spawn"]["Other{$other_idx}"] = [
@@ -276,9 +280,10 @@ class ApiQuickMatchController extends Controller
                     "Ip" => $opn->ip_address,
                     "Port" => $opn->port,
                 ];
-                $spawnStruct["spawn"]["SpawnLocations"]["Multi{$other_idx}"] = $opn->location;
+                $multi_idx = $opn->color + 1;
+                $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
                 $other_idx++;
-            }
+           }
             return $spawnStruct;
             break;
         default:
@@ -288,8 +293,8 @@ class ApiQuickMatchController extends Controller
     }
 }
 
-    function b_to_ini($bool)
-    {
-        if ($bool == null) return $bool;
-        return $bool ? "Yes" : "No";
-    }
+function b_to_ini($bool)
+{
+    if ($bool == null) return $bool;
+    return $bool ? "Yes" : "No";
+}
