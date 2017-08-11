@@ -57,8 +57,8 @@
                     <div class="form-group">
                         <label for="ladder">Ladder</label>
                         <select name="ladder" id="ladder" class="form-control">
-                        @foreach($ladders as $ladder)
-                        <option value="{{$ladder->id}}">{{$ladder->name}}</option>
+                        @foreach($ladders as $history)
+                        <option value="{{ $history->ladder->id }}">{{ $history->ladder->name }}</option>
                         @endforeach
                         </select>
                     </div>
