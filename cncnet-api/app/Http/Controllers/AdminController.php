@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\AdminService;
+use \Carbon\Carbon;
 
 class AdminController extends Controller 
 {
@@ -18,13 +19,13 @@ class AdminController extends Controller
 
     public function getAdminIndex(Request $request)
     {
-        return view("admin.index", ["ladders" => $this->ladderService->getLadders()]);
+        return view("admin.index", ["ladders" => $this->ladderService->getLatestLadders()]);
     }
 
     public function getLadderSetupIndex(Request $request)
     {
         $ladderRules = \App\QmLadderRules::all();
-        return view("admin.ladder-setup", ["ladders" => $this->ladderService->getLadders(), "rules" => $ladderRules]);
+        return view("admin.ladder-setup", ["ladders" => $this->ladderService->getLatestLadders(), "rules" => $ladderRules]);
     }
 
     public function postLadderSetupRules(Request $request)
@@ -34,7 +35,7 @@ class AdminController extends Controller
 
     public function getManageUsersIndex(Request $request)
     {
-        return view("admin.manage-users", ["ladders" => $this->ladderService->getLadders()]);
+        return view("admin.manage-users", ["ladders" => $this->ladderService->getLatestLadders()]);
     }
 
     public function getManageGameIndex(Request $request, $cncnetGame = null)
@@ -43,8 +44,17 @@ class AdminController extends Controller
 
         if ($ladder == null) 
             return "No ladder";
-        
-        $games = \App\Game::where("ladder_id", "=", $ladder->id)->orderBy("id", "DESC");
+
+        $date = Carbon::now();
+        $start = $date->startOfMonth()->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+
+        $history = \App\LadderHistory::where("starts", "=", $start)
+            ->where("ends", "=", $end)
+            ->where("ladder_id", "=", $ladder->id)
+            ->first();
+
+        $games = \App\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC");
         return view("admin.manage-games", ["games" => $games, "ladder" => $ladder]);
     }
 

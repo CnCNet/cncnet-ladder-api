@@ -51,8 +51,8 @@
                             <p>Manage maps, rules, and all things related to the ladder</p>
                             
                             <ul class="list-unstyled">
-                            @foreach($ladders as $ladder)
-                            <li><a href="/admin/games/{{ $ladder->abbreviation }}">{{ $ladder->name }}</a></li>
+                            @foreach($ladders as $history)
+                            <li><a href="/admin/games/{{ $history->ladder->abbreviation }}">{{ $history->ladder->name }}</a></li>
                             @endforeach
                             </ul>
                         </div>
