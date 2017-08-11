@@ -2,7 +2,7 @@
 @section('title', 'Ladder')
 
 @section('cover')
-
+/images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
 @endsection
 
 @section('css')
@@ -17,7 +17,10 @@
                 <h1>
                     {{ $player->username or "" }} <small>Battle Statistics</small>
                 </h1>
-                <a href="/ladder/{{ $history->ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
+                <p class="text-uppercase">
+                   Player Ladder <strong>{{ Carbon\Carbon::parse($history->starts)->format('m-Y') }}</strong>
+                </p>
+                <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}" class="btn btn-transparent btn-lg">
                     <i class="fa fa-chevron-left fa-lg fa-fw" aria-hidden="true"></i> Player Leaderboard
                 </a>
             </div>

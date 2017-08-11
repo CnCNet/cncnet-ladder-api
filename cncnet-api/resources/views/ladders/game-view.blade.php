@@ -26,7 +26,9 @@
                 <h1>
                     <img src="/images/games/{{ $dir or "" }}/logo.png" class="logo" />
                 </h1>
-             
+                <p class="text-uppercase">
+                   Player Ladder <strong>{{ Carbon\Carbon::parse($history->starts)->format('m-Y') }}</strong>
+                </p>
                 <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/" class="btn btn-transparent btn-lg">
                     <i class="fa fa-chevron-left fa-lg fa-fw" aria-hidden="true"></i> Player Leaderboard
                 </a>

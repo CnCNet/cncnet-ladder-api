@@ -22,7 +22,7 @@
                     <img src="/images/games/{{ $dir or "" }}/logo.png" class="logo" />
                 </h1>
                 <p class="text-uppercase">
-                   Play. Compete. <strong>Conquer.</strong>
+                   Player Ladder <strong>{{ Carbon\Carbon::parse($history->starts)->format('m-Y') }}</strong>
                 </p>
             </div>
         </div>
