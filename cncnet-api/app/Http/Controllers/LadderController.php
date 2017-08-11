@@ -73,13 +73,14 @@ class LadderController extends Controller
         ));
     }
 
-    public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $player = null)
+    public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $username = null)
     {
         $games = [];
-        $history = $this->ladderService->getActiveLadderByDate($date);
+        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+  
         $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
-            ->where("username", "=", $player)->first();
-
+            ->where("username", "=", $username)->first();
+      
         if ($player == null) 
             return "No Player";
 
