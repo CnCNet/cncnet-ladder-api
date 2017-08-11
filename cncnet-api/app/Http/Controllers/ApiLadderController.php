@@ -48,6 +48,7 @@ class ApiLadderController extends Controller
 
         // Ladder exists
         $ladder = $this->ladderService->getLadderByGame($cncnetGame);
+
         if ($ladder == null)
         {
             return response()->json(['Ladder does not exist'], 400);
@@ -58,7 +59,9 @@ class ApiLadderController extends Controller
         $end = Carbon::now()->endOfMonth();
 
         $activeLadder = \App\LadderHistory::where("starts", ">=", $start)
-            ->where("ends", "<=", $end)->first();
+            ->where("ends", "<=", $end)
+            ->where("ladder_id", "=", $ladder->id)
+            ->first();
 
         if ($activeLadder == null)
         {
