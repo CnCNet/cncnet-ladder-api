@@ -73,22 +73,19 @@
                         <thead>
                             <tr>
                                 <th>Username <i class="fa fa-user-o fa-fw"></i></th>
-                                <th>Points <i class="fa fa-bolt fa-fw"></i></th>
+                               <!-- <th>Points <i class="fa fa-bolt fa-fw"></i></th>
                                 <th>Wins <i class="fa fa-level-up fa-fw"></i></th>
                                 <th>Losses <i class="fa fa-level-down fa-fw"></i></th>
-                                <th>Winning % </th>
+                                <th>Winning % </th>-->
                                 <th>Ladder <i class="fa fa-trophy fa-fw"></i></th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach($user->usernames()->get() as $u)
                             <tr>
-                                @if(isset($u->ladder()->first()->abbreviation))
-                                    <td><a href="/ladder/{{ $u->ladder()->first()->abbreviation }}/player/{{ $u->username }}">{{ $u->username }}</a></td>
-                                @else
-                                    Ladder not found for player {{ $u->username }}
-                                @endif
-                                <td>
+                                <td>{{ $u->username }}</td>
+                     
+                               <!-- <td>
                                     {{ $u->points }}
                                 </td>          
                                 <td>
@@ -103,7 +100,7 @@
                                 @else
                                     0%
                                 @endif
-                                </td>
+                                </td>-->
                                 <td>
                                 @if(isset($u->ladder()->first()->abbreviation))
                                     {{ $u->ladder()->first()->name }}

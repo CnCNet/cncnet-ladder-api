@@ -23,7 +23,7 @@ class AccountController extends Controller
         return view("auth.account", 
             array (
                 "user" => $user,
-                "ladders" => $this->ladderService->getLadders()
+                "ladders" => $this->ladderService->getLatestLadders()
             )
         );
     }
