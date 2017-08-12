@@ -66,13 +66,14 @@ class PlayerService
             ->where("ladder_id", "=", $ladder->id)->first();
     }
 
-    public function awardPlayerPoints($playerId, $gameId, $points, $won = false)
+    public function awardPlayerPoints($playerId, $gameId, $points, $won, $history)
     {
         $playerPoints = new \App\PlayerPoint();
         $playerPoints->player_id = $playerId;
         $playerPoints->game_id = $gameId;
         $playerPoints->points_awarded = $points;
         $playerPoints->game_won = $won;
+        $playerPoints->ladder_history_id = $history->id;
         $playerPoints->save();
     }
 

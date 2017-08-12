@@ -9,7 +9,6 @@
 
     <div class="row">
     @foreach($games as $game)
-              
         <div class="col-md-{{ $bootstrapColWidth }}">
             <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->id }}" class="profile-link">
                 <div class="profile-listing">

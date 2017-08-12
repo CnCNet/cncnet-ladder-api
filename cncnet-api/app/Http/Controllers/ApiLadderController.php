@@ -58,20 +58,10 @@ class ApiLadderController extends Controller
         $start = Carbon::now()->startOfMonth();
         $end = Carbon::now()->endOfMonth();
 
-        $activeLadder = \App\LadderHistory::where("starts", ">=", $start)
-            ->where("ends", "<=", $end)
+        $history = \App\LadderHistory::where("starts", "=", $start)
+            ->where("ends", "=", $end)
             ->where("ladder_id", "=", $ladder->id)
             ->first();
-
-        if ($activeLadder == null)
-        {
-            // Create one automagically
-            $activeLadder = new \App\LadderHistory();
-            $activeLadder->starts = $start;
-            $activeLadder->starts = $end;
-            $activeLadder->ladder_id = $ladder->id;
-            $activeLadder->save();
-        }
 
         // Player checks
         $player = $this->checkPlayer($request, $username, $ladder);
@@ -81,17 +71,17 @@ class ApiLadderController extends Controller
         }
 
         // Game creation
-        $game = $this->gameService->findOrCreateGame($result, $activeLadder);
+        $game = $this->gameService->findOrCreateGame($result, $history);
         if ($game == null)
         {
             return response()->json(['Error creating game'], 400);
         }
 
         // Keep a record of the raw stats sent in
-        $this->gameService->saveRawStats($result, $game->id, $activeLadder->id);
+        $this->gameService->saveRawStats($result, $game->id, $history->id);
 
         // Now save the processed stats
-        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder->id);
+        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id, $history->ladder->id);
         if ($gameStats != 200)
         {
             return response()->json(['Error' => $gameStats], 400);
@@ -100,7 +90,7 @@ class ApiLadderController extends Controller
         // Award ELO points
         if ($game->plrs == 2)
         {
-            $this->awardPoints($game->id);
+            $this->awardPoints($game->id, $history);
         }
 
         return response()->json(['success'], 200);
@@ -123,10 +113,11 @@ class ApiLadderController extends Controller
         return $player;
     }
 
-    public function awardPoints($gameId)
+    public function awardPoints($gameId, $history)
     {
         $players = [];
         $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
+
         foreach($gamePlayers as $player)
         {
             $plr = $this->playerService->findPlayerRatingByPid($player->player_id);
@@ -149,30 +140,31 @@ class ApiLadderController extends Controller
         $points = new PointService($elo_k, $players["lost"]["rating"], $players["won"]["rating"], 0, 1);
         $results = $points->getNewRatings();
 
-
         // Tweak this number until things feel right
         $gvcWon = ceil(($players["lost"]["rating"] * $players["won"]["rating"]) / 200000);
         $gvcLost = ceil($gvcWon/2);
 
         foreach ($players as $k => $player)
         {
-            $playerPoints = \App\PlayerPoint::where("player_id", "=", $player->id)
-                ->where("game_id", "=", $gameId)->first();
-
-            if ($playerPoints != null)
-                return;
+            $playerPointRecords = \App\PlayerPoint::where("game_id", "=", $gameId)->count();
+            
+            if ($playerPointRecords == 2)
+            {
+                // Points awarded already
+                break; 
+            }
 
             if ($k == "lost")
             {
                 $diff = $results["a"] - $player->rating;
                 $newPoints = $gvcLost + ($diff > 0 ? $diff : 0);
-                $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints);
+                $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints, false, $history);
             }
             else if ($k == "won")
             {
                 $diff = $results["b"] - $player->rating;
                 $newPoints = $gvcWon + ($diff > 1 ? $diff : 1);
-                $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints, true);
+                $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints, true, $history);
             }
         }
 
