@@ -5,21 +5,13 @@
 /images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
 @endsection
 
-@if($history->ladder->abbreviation == "ra")
-    <?php $dir = "red-alert"; ?>
-@elseif($history->ladder->abbreviation == "ts")
-    <?php $dir = "tiberian-sun"; ?>
-@elseif($history->ladder->abbreviation == "yr")
-    <?php $dir = "yuris-revenge"; ?>
-@endif
-
 @section('feature')
 <div class="feature-background sub-feature-background">
     <div class="container">
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2">
                 <h1>
-                    <img src="/images/games/{{ $dir or "" }}/logo.png" class="logo" />
+                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" class="logo" />
                 </h1>
                 <p class="text-uppercase">
                    Player Ladder <strong>{{ Carbon\Carbon::parse($history->starts)->format('m-Y') }}</strong>
@@ -33,13 +25,11 @@
 @section('content')
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
-
         <div class="row">
             <div class="col-md-12">
                 @include('ladders._recent-games')
             </div>
         </div>
-
         <div class="feature">
             <div class="row">
                 <div class="col-md-12">
@@ -69,8 +59,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </section>
 @endsection
-

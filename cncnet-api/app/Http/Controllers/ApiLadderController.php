@@ -48,7 +48,6 @@ class ApiLadderController extends Controller
 
         // Ladder exists
         $ladder = $this->ladderService->getLadderByGame($cncnetGame);
-
         if ($ladder == null)
         {
             return response()->json(['Ladder does not exist'], 400);
