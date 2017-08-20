@@ -74,6 +74,7 @@
                             <tr>
                                 <th>Username <i class="fa fa-user-o fa-fw"></i></th>
                                 <th>Ladder <i class="fa fa-trophy fa-fw"></i></th>
+                                <th>Player Card</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,14 +82,13 @@
                             @foreach($user->usernames()->get() as $u)
                             <tr>
                                 <td>{{ $u->username }}</td>
-                                <td>Player Card</td>
                                 <td>
                                 @if(isset($u->ladder()->first()->abbreviation))
                                     {{ $u->ladder()->first()->name }}
                                 @endif
                                 </td>
                                 <td>
-                                    <form method="POST" action="account/card">
+                                    <form class="form-inline" method="POST" action="account/card">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                         <input type="hidden" name="playerId" value="{{ $u->id }}">
                                         <select class="form-control" name="cardId">

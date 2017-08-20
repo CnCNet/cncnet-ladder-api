@@ -3081,6 +3081,25 @@
   .faction-germany {
     background-size: 100%; } }
 
+footer a:hover, .btn:hover, a {
+  color: #007dff; }
+
+.btn-primary {
+  color: #fff;
+  background-color: #0068d2;
+  border-color: #0068d2; }
+  .btn-primary:focus, .btn-primary:active:hover, .btn-primary:active:focus, .btn-primary:hover, .btn-primary:active {
+    background-color: #004082;
+    border-color: #004082; }
+
+.btn-secondary:focus, .btn-secondary:active:hover, .btn-secondary:active:focus, .btn-secondary:hover, .btn-secondary:active {
+  background-color: #000;
+  border-color: #000; }
+
+.btn-tertiary:focus, .btn-tertiary:active:hover, .btn-tertiary:active:focus, .btn-tertiary:hover, .btn-tertiary:active {
+  border-color: #0068d2;
+  color: #0068d2; }
+
 .btn-transparent {
   color: white;
   text-transform: uppercase;
@@ -3226,10 +3245,6 @@ h3.game-intro {
   margin: 0 auto;
   margin-bottom: 20px;
   margin-top: 20px; }
-
-footer a:hover, .btn:hover, a {
-  color: #007dff;
-  border-color: #007dff; }
 
 .ladder-cover {
   position: relative;

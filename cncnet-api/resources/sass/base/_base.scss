@@ -1,4 +1,46 @@
-﻿.btn-transparent 
+﻿footer a:hover, .btn:hover, a
+{
+    color: #007dff;
+}
+
+.btn-primary
+{
+    color: #fff;
+    background-color: #0068d2;
+    border-color: #0068d2;
+
+    &:focus,
+    &:active:hover,
+    &:active:focus,
+    &:hover, &:active {
+        background-color: #004082;
+        border-color: #004082;
+    }
+}
+
+.btn-secondary 
+{
+    &:focus,
+    &:active:hover,
+    &:active:focus,
+    &:hover, &:active {
+        background-color: #000;
+        border-color: #000;
+    }
+}
+
+.btn-tertiary 
+{
+    &:focus,
+    &:active:hover,
+    &:active:focus,
+    &:hover, &:active {
+        border-color: #0068d2;
+        color: #0068d2;
+    }
+}
+
+.btn-transparent 
 {
     color: white;
     text-transform: uppercase;
@@ -210,12 +252,6 @@ h3.game-intro
     margin: 0 auto;
     margin-bottom: 20px;
     margin-top: 20px;
-}
-
-footer a:hover, .btn:hover, a
-{
-    color: #007dff;
-    border-color: #007dff;
 }
 
 .ladder-cover
