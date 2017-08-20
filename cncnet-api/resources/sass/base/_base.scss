@@ -1,0 +1,275 @@
+﻿.btn-transparent 
+{
+    color: white;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+.btn-transparent i 
+{
+    margin-left: -20px;
+}
+
+h1 small 
+{
+    display: block;
+    font-size: 19px;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+.profile 
+{
+    background: #131313;
+    padding: 20px;
+    margin: 0 auto;
+    border-bottom: 5px solid rgb(0, 206, 0);
+    border-radius: 5px;
+}
+
+.date
+{
+    text-transform: uppercase;
+    font-size: 14px;
+    color: #2d2d2d;
+    font-weight: bold;
+}
+
+.rank 
+{
+    padding-bottom: 15px;
+}
+
+.rank-title 
+{
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.rank-title.gold
+{
+    color: #ffb300;
+}
+
+.rank-title.silver
+{
+    color: silver;
+}
+
+.rank-title.bronze
+{
+    color: brown;
+}
+
+.rank-title.normal
+{
+    color: #505050;
+}
+
+.table-hover > tbody > tr
+{
+    transition: all 0.3s;
+} 
+
+.table-hover > tbody > tr:hover 
+{
+    background-color: #0e0e0e;
+}
+
+.table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td 
+{
+    border-top: 1px solid #252525;
+}
+
+.badge-winpercent 
+{
+    background-color: #00a300;
+}
+
+.panel.panel-default 
+{
+    background: #000;
+}
+
+.panel-default > .panel-heading 
+{
+    background-color: #000000;
+    padding: 15px;
+    color: white;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+input.form-control
+{
+    color: #232323;
+}
+
+.game-detail 
+{
+    margin-top: -50px;
+    position: relative;
+    z-index: 1;
+}
+
+.game-detail .game-details 
+{
+    width: 500px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.game-list 
+{   
+    z-index: 0;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.points 
+{
+    color: #24f900;
+}
+
+
+
+h3.game-intro > span:first-child:after 
+{
+    content: " vs ";
+    font-size: 43px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 15px
+}
+
+h3.game-intro 
+{
+    margin-top: 0;
+    padding: 15px 0;
+    font-size: 25px;
+}
+
+.recent-games 
+{
+    margin-bottom: 15px;
+}
+
+.recent-games .profile-listing 
+{
+    padding: 20px;
+}
+
+.recent-games h3.game-intro
+{
+    font-size: 15px;
+    padding: 5px 0;
+    text-align: center;
+    height: 100px;
+}
+
+.recent-games h3.game-intro > span:first-child:after 
+{
+    font-size: 25px;
+    padding: 5px;
+    display: block;
+    width: 100%;
+    margin-left: -5px;
+}
+
+.recent-games .feature-map 
+{
+    margin-bottom: 15px;
+    margin-top: 0;
+    height: 150px;
+}
+
+.recent-games .feature-map img 
+{
+    max-width: 100%;
+    height: 120px;
+}
+
+.recent-games .points 
+{
+    font-size: 15px;
+}
+
+.game-profile 
+{
+    position: relative;
+    background: #0a0a0a;
+    padding: 20px;
+    margin: 0 auto;
+    border-bottom: 5px solid #101010;
+    border-radius: 5px;
+}
+
+.feature-map img 
+{
+    max-width: 80%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+footer a:hover, .btn:hover, a
+{
+    color: #007dff;
+    border-color: #007dff;
+}
+
+.ladder-cover
+{
+    position: relative;
+    height: 300px;
+    background-repeat: no-repeat;
+    background-position: 80%;
+    width: 100%;
+    display: table;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+
+.badge-cover 
+{
+    position: absolute;
+    right: 15px;
+    bottom: 15px;
+}
+
+.ladder-cover .details 
+{
+    vertical-align: middle;
+    display: table-cell;
+    text-align: right;
+    width: 100%;
+    color: #fff;
+}
+
+.ladder-cover .type 
+{
+    width: 50%;
+    margin-left: auto;
+    text-align: center;
+} 
+
+.ladder-cover .type .lead 
+{
+    font-size: 47px;
+    color: #fff;
+    font-family: Roboto;
+    line-height: 1.0;
+}
+
+.ladder-link 
+{
+    display: block;
+    text-decoration: none;
+    color: #fff;
+
+    &:hover, &:focus 
+    {
+        color: #fff;
+        text-decoration: none;
+    }
+}

@@ -1,89 +1,882 @@
-.btn-transparent {
-  color: white;
-  text-transform: uppercase;
-  font-size: 15px; }
+/****************************************************************
+ *
+ * CSS Percentage Circle
+ * Author: Andre Firchow
+ *
+*****************************************************************/
+.rect-auto, .c100.p51 .slice, .c100.p52 .slice, .c100.p53 .slice, .c100.p54 .slice, .c100.p55 .slice, .c100.p56 .slice, .c100.p57 .slice, .c100.p58 .slice, .c100.p59 .slice, .c100.p60 .slice, .c100.p61 .slice, .c100.p62 .slice, .c100.p63 .slice, .c100.p64 .slice, .c100.p65 .slice, .c100.p66 .slice, .c100.p67 .slice, .c100.p68 .slice, .c100.p69 .slice, .c100.p70 .slice, .c100.p71 .slice, .c100.p72 .slice, .c100.p73 .slice, .c100.p74 .slice, .c100.p75 .slice, .c100.p76 .slice, .c100.p77 .slice, .c100.p78 .slice, .c100.p79 .slice, .c100.p80 .slice, .c100.p81 .slice, .c100.p82 .slice, .c100.p83 .slice, .c100.p84 .slice, .c100.p85 .slice, .c100.p86 .slice, .c100.p87 .slice, .c100.p88 .slice, .c100.p89 .slice, .c100.p90 .slice, .c100.p91 .slice, .c100.p92 .slice, .c100.p93 .slice, .c100.p94 .slice, .c100.p95 .slice, .c100.p96 .slice, .c100.p97 .slice, .c100.p98 .slice, .c100.p99 .slice, .c100.p100 .slice {
+  clip: rect(auto, auto, auto, auto); }
 
-.btn-transparent i {
-  margin-left: -20px; }
+.pie, .c100 .bar, .c100.p51 .fill, .c100.p52 .fill, .c100.p53 .fill, .c100.p54 .fill, .c100.p55 .fill, .c100.p56 .fill, .c100.p57 .fill, .c100.p58 .fill, .c100.p59 .fill, .c100.p60 .fill, .c100.p61 .fill, .c100.p62 .fill, .c100.p63 .fill, .c100.p64 .fill, .c100.p65 .fill, .c100.p66 .fill, .c100.p67 .fill, .c100.p68 .fill, .c100.p69 .fill, .c100.p70 .fill, .c100.p71 .fill, .c100.p72 .fill, .c100.p73 .fill, .c100.p74 .fill, .c100.p75 .fill, .c100.p76 .fill, .c100.p77 .fill, .c100.p78 .fill, .c100.p79 .fill, .c100.p80 .fill, .c100.p81 .fill, .c100.p82 .fill, .c100.p83 .fill, .c100.p84 .fill, .c100.p85 .fill, .c100.p86 .fill, .c100.p87 .fill, .c100.p88 .fill, .c100.p89 .fill, .c100.p90 .fill, .c100.p91 .fill, .c100.p92 .fill, .c100.p93 .fill, .c100.p94 .fill, .c100.p95 .fill, .c100.p96 .fill, .c100.p97 .fill, .c100.p98 .fill, .c100.p99 .fill, .c100.p100 .fill {
+  position: absolute;
+  border: 0.08em solid #307bbb;
+  width: 0.84em;
+  height: 0.84em;
+  clip: rect(0em, 0.5em, 1em, 0em);
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+  -webkit-transform: rotate(0deg);
+  -moz-transform: rotate(0deg);
+  -ms-transform: rotate(0deg);
+  -o-transform: rotate(0deg);
+  transform: rotate(0deg); }
 
-h1 small {
-  display: block;
-  font-size: 19px;
-  text-transform: uppercase;
-  font-weight: 300; }
+.pie-fill, .c100.p51 .bar:after, .c100.p51 .fill, .c100.p52 .bar:after, .c100.p52 .fill, .c100.p53 .bar:after, .c100.p53 .fill, .c100.p54 .bar:after, .c100.p54 .fill, .c100.p55 .bar:after, .c100.p55 .fill, .c100.p56 .bar:after, .c100.p56 .fill, .c100.p57 .bar:after, .c100.p57 .fill, .c100.p58 .bar:after, .c100.p58 .fill, .c100.p59 .bar:after, .c100.p59 .fill, .c100.p60 .bar:after, .c100.p60 .fill, .c100.p61 .bar:after, .c100.p61 .fill, .c100.p62 .bar:after, .c100.p62 .fill, .c100.p63 .bar:after, .c100.p63 .fill, .c100.p64 .bar:after, .c100.p64 .fill, .c100.p65 .bar:after, .c100.p65 .fill, .c100.p66 .bar:after, .c100.p66 .fill, .c100.p67 .bar:after, .c100.p67 .fill, .c100.p68 .bar:after, .c100.p68 .fill, .c100.p69 .bar:after, .c100.p69 .fill, .c100.p70 .bar:after, .c100.p70 .fill, .c100.p71 .bar:after, .c100.p71 .fill, .c100.p72 .bar:after, .c100.p72 .fill, .c100.p73 .bar:after, .c100.p73 .fill, .c100.p74 .bar:after, .c100.p74 .fill, .c100.p75 .bar:after, .c100.p75 .fill, .c100.p76 .bar:after, .c100.p76 .fill, .c100.p77 .bar:after, .c100.p77 .fill, .c100.p78 .bar:after, .c100.p78 .fill, .c100.p79 .bar:after, .c100.p79 .fill, .c100.p80 .bar:after, .c100.p80 .fill, .c100.p81 .bar:after, .c100.p81 .fill, .c100.p82 .bar:after, .c100.p82 .fill, .c100.p83 .bar:after, .c100.p83 .fill, .c100.p84 .bar:after, .c100.p84 .fill, .c100.p85 .bar:after, .c100.p85 .fill, .c100.p86 .bar:after, .c100.p86 .fill, .c100.p87 .bar:after, .c100.p87 .fill, .c100.p88 .bar:after, .c100.p88 .fill, .c100.p89 .bar:after, .c100.p89 .fill, .c100.p90 .bar:after, .c100.p90 .fill, .c100.p91 .bar:after, .c100.p91 .fill, .c100.p92 .bar:after, .c100.p92 .fill, .c100.p93 .bar:after, .c100.p93 .fill, .c100.p94 .bar:after, .c100.p94 .fill, .c100.p95 .bar:after, .c100.p95 .fill, .c100.p96 .bar:after, .c100.p96 .fill, .c100.p97 .bar:after, .c100.p97 .fill, .c100.p98 .bar:after, .c100.p98 .fill, .c100.p99 .bar:after, .c100.p99 .fill, .c100.p100 .bar:after, .c100.p100 .fill {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg); }
 
-.profile {
-  background: #131313;
-  padding: 20px;
-  margin: 0 auto;
-  border-bottom: 5px solid #00ce00;
-  border-radius: 5px; }
-
-.date {
-  text-transform: uppercase;
-  font-size: 14px;
-  color: #2d2d2d;
-  font-weight: bold; }
-
-.rank {
-  padding-bottom: 15px; }
-
-.rank-title {
-  text-transform: uppercase;
-  font-weight: 600; }
-
-.rank-title.gold {
-  color: #ffb300; }
-
-.rank-title.silver {
-  color: silver; }
-
-.rank-title.bronze {
-  color: brown; }
-
-.rank-title.normal {
-  color: #505050; }
-
-.table-hover > tbody > tr {
-  transition: all 0.3s; }
-
-.table-hover > tbody > tr:hover {
-  background-color: #0e0e0e; }
-
-.table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td {
-  border-top: 1px solid #252525; }
-
-.badge-winpercent {
-  background-color: #00a300; }
-
-.panel.panel-default {
-  background: #000; }
-
-.panel-default > .panel-heading {
-  background-color: #000000;
-  padding: 15px;
-  color: white;
-  font-weight: 500;
-  font-size: 18px; }
-
-input.form-control {
-  color: #232323; }
-
-.game-detail {
-  margin-top: -50px;
+.c100 {
   position: relative;
-  z-index: 1; }
+  font-size: 120px;
+  width: 1em;
+  height: 1em;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+  float: left;
+  margin: 0 0.1em 0.1em 0;
+  background-color: #cccccc; }
 
-.game-detail .game-details {
-  width: 500px;
-  max-width: 100%;
+.c100 *, .c100 *:before, .c100 *:after {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box; }
+
+.c100.center {
+  float: none;
   margin: 0 auto; }
 
-.game-list {
-  z-index: 0;
-  padding-top: 50px;
-  padding-bottom: 50px; }
+.c100.big {
+  font-size: 240px; }
 
+.c100.small {
+  font-size: 80px; }
+
+.c100 > span {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 5em;
+  line-height: 5em;
+  font-size: 0.2em;
+  color: #cccccc;
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  -webkit-transition-timing-function: ease-out;
+  -moz-transition-timing-function: ease-out;
+  -o-transition-timing-function: ease-out;
+  transition-timing-function: ease-out; }
+
+.c100:after {
+  position: absolute;
+  top: 0.08em;
+  left: 0.08em;
+  display: block;
+  content: " ";
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+  background-color: whitesmoke;
+  width: 0.84em;
+  height: 0.84em;
+  -webkit-transition-property: all;
+  -moz-transition-property: all;
+  -o-transition-property: all;
+  transition-property: all;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  -o-transition-timing-function: ease-in;
+  transition-timing-function: ease-in; }
+
+.c100 .slice {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  clip: rect(0em, 1em, 1em, 0.5em); }
+
+.c100.p1 .bar {
+  -webkit-transform: rotate(3.6deg);
+  -moz-transform: rotate(3.6deg);
+  -ms-transform: rotate(3.6deg);
+  -o-transform: rotate(3.6deg);
+  transform: rotate(3.6deg); }
+
+.c100.p2 .bar {
+  -webkit-transform: rotate(7.2deg);
+  -moz-transform: rotate(7.2deg);
+  -ms-transform: rotate(7.2deg);
+  -o-transform: rotate(7.2deg);
+  transform: rotate(7.2deg); }
+
+.c100.p3 .bar {
+  -webkit-transform: rotate(10.8deg);
+  -moz-transform: rotate(10.8deg);
+  -ms-transform: rotate(10.8deg);
+  -o-transform: rotate(10.8deg);
+  transform: rotate(10.8deg); }
+
+.c100.p4 .bar {
+  -webkit-transform: rotate(14.4deg);
+  -moz-transform: rotate(14.4deg);
+  -ms-transform: rotate(14.4deg);
+  -o-transform: rotate(14.4deg);
+  transform: rotate(14.4deg); }
+
+.c100.p5 .bar {
+  -webkit-transform: rotate(18deg);
+  -moz-transform: rotate(18deg);
+  -ms-transform: rotate(18deg);
+  -o-transform: rotate(18deg);
+  transform: rotate(18deg); }
+
+.c100.p6 .bar {
+  -webkit-transform: rotate(21.6deg);
+  -moz-transform: rotate(21.6deg);
+  -ms-transform: rotate(21.6deg);
+  -o-transform: rotate(21.6deg);
+  transform: rotate(21.6deg); }
+
+.c100.p7 .bar {
+  -webkit-transform: rotate(25.2deg);
+  -moz-transform: rotate(25.2deg);
+  -ms-transform: rotate(25.2deg);
+  -o-transform: rotate(25.2deg);
+  transform: rotate(25.2deg); }
+
+.c100.p8 .bar {
+  -webkit-transform: rotate(28.8deg);
+  -moz-transform: rotate(28.8deg);
+  -ms-transform: rotate(28.8deg);
+  -o-transform: rotate(28.8deg);
+  transform: rotate(28.8deg); }
+
+.c100.p9 .bar {
+  -webkit-transform: rotate(32.4deg);
+  -moz-transform: rotate(32.4deg);
+  -ms-transform: rotate(32.4deg);
+  -o-transform: rotate(32.4deg);
+  transform: rotate(32.4deg); }
+
+.c100.p10 .bar {
+  -webkit-transform: rotate(36deg);
+  -moz-transform: rotate(36deg);
+  -ms-transform: rotate(36deg);
+  -o-transform: rotate(36deg);
+  transform: rotate(36deg); }
+
+.c100.p11 .bar {
+  -webkit-transform: rotate(39.6deg);
+  -moz-transform: rotate(39.6deg);
+  -ms-transform: rotate(39.6deg);
+  -o-transform: rotate(39.6deg);
+  transform: rotate(39.6deg); }
+
+.c100.p12 .bar {
+  -webkit-transform: rotate(43.2deg);
+  -moz-transform: rotate(43.2deg);
+  -ms-transform: rotate(43.2deg);
+  -o-transform: rotate(43.2deg);
+  transform: rotate(43.2deg); }
+
+.c100.p13 .bar {
+  -webkit-transform: rotate(46.8deg);
+  -moz-transform: rotate(46.8deg);
+  -ms-transform: rotate(46.8deg);
+  -o-transform: rotate(46.8deg);
+  transform: rotate(46.8deg); }
+
+.c100.p14 .bar {
+  -webkit-transform: rotate(50.4deg);
+  -moz-transform: rotate(50.4deg);
+  -ms-transform: rotate(50.4deg);
+  -o-transform: rotate(50.4deg);
+  transform: rotate(50.4deg); }
+
+.c100.p15 .bar {
+  -webkit-transform: rotate(54deg);
+  -moz-transform: rotate(54deg);
+  -ms-transform: rotate(54deg);
+  -o-transform: rotate(54deg);
+  transform: rotate(54deg); }
+
+.c100.p16 .bar {
+  -webkit-transform: rotate(57.6deg);
+  -moz-transform: rotate(57.6deg);
+  -ms-transform: rotate(57.6deg);
+  -o-transform: rotate(57.6deg);
+  transform: rotate(57.6deg); }
+
+.c100.p17 .bar {
+  -webkit-transform: rotate(61.2deg);
+  -moz-transform: rotate(61.2deg);
+  -ms-transform: rotate(61.2deg);
+  -o-transform: rotate(61.2deg);
+  transform: rotate(61.2deg); }
+
+.c100.p18 .bar {
+  -webkit-transform: rotate(64.8deg);
+  -moz-transform: rotate(64.8deg);
+  -ms-transform: rotate(64.8deg);
+  -o-transform: rotate(64.8deg);
+  transform: rotate(64.8deg); }
+
+.c100.p19 .bar {
+  -webkit-transform: rotate(68.4deg);
+  -moz-transform: rotate(68.4deg);
+  -ms-transform: rotate(68.4deg);
+  -o-transform: rotate(68.4deg);
+  transform: rotate(68.4deg); }
+
+.c100.p20 .bar {
+  -webkit-transform: rotate(72deg);
+  -moz-transform: rotate(72deg);
+  -ms-transform: rotate(72deg);
+  -o-transform: rotate(72deg);
+  transform: rotate(72deg); }
+
+.c100.p21 .bar {
+  -webkit-transform: rotate(75.6deg);
+  -moz-transform: rotate(75.6deg);
+  -ms-transform: rotate(75.6deg);
+  -o-transform: rotate(75.6deg);
+  transform: rotate(75.6deg); }
+
+.c100.p22 .bar {
+  -webkit-transform: rotate(79.2deg);
+  -moz-transform: rotate(79.2deg);
+  -ms-transform: rotate(79.2deg);
+  -o-transform: rotate(79.2deg);
+  transform: rotate(79.2deg); }
+
+.c100.p23 .bar {
+  -webkit-transform: rotate(82.8deg);
+  -moz-transform: rotate(82.8deg);
+  -ms-transform: rotate(82.8deg);
+  -o-transform: rotate(82.8deg);
+  transform: rotate(82.8deg); }
+
+.c100.p24 .bar {
+  -webkit-transform: rotate(86.4deg);
+  -moz-transform: rotate(86.4deg);
+  -ms-transform: rotate(86.4deg);
+  -o-transform: rotate(86.4deg);
+  transform: rotate(86.4deg); }
+
+.c100.p25 .bar {
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg); }
+
+.c100.p26 .bar {
+  -webkit-transform: rotate(93.6deg);
+  -moz-transform: rotate(93.6deg);
+  -ms-transform: rotate(93.6deg);
+  -o-transform: rotate(93.6deg);
+  transform: rotate(93.6deg); }
+
+.c100.p27 .bar {
+  -webkit-transform: rotate(97.2deg);
+  -moz-transform: rotate(97.2deg);
+  -ms-transform: rotate(97.2deg);
+  -o-transform: rotate(97.2deg);
+  transform: rotate(97.2deg); }
+
+.c100.p28 .bar {
+  -webkit-transform: rotate(100.8deg);
+  -moz-transform: rotate(100.8deg);
+  -ms-transform: rotate(100.8deg);
+  -o-transform: rotate(100.8deg);
+  transform: rotate(100.8deg); }
+
+.c100.p29 .bar {
+  -webkit-transform: rotate(104.4deg);
+  -moz-transform: rotate(104.4deg);
+  -ms-transform: rotate(104.4deg);
+  -o-transform: rotate(104.4deg);
+  transform: rotate(104.4deg); }
+
+.c100.p30 .bar {
+  -webkit-transform: rotate(108deg);
+  -moz-transform: rotate(108deg);
+  -ms-transform: rotate(108deg);
+  -o-transform: rotate(108deg);
+  transform: rotate(108deg); }
+
+.c100.p31 .bar {
+  -webkit-transform: rotate(111.6deg);
+  -moz-transform: rotate(111.6deg);
+  -ms-transform: rotate(111.6deg);
+  -o-transform: rotate(111.6deg);
+  transform: rotate(111.6deg); }
+
+.c100.p32 .bar {
+  -webkit-transform: rotate(115.2deg);
+  -moz-transform: rotate(115.2deg);
+  -ms-transform: rotate(115.2deg);
+  -o-transform: rotate(115.2deg);
+  transform: rotate(115.2deg); }
+
+.c100.p33 .bar {
+  -webkit-transform: rotate(118.8deg);
+  -moz-transform: rotate(118.8deg);
+  -ms-transform: rotate(118.8deg);
+  -o-transform: rotate(118.8deg);
+  transform: rotate(118.8deg); }
+
+.c100.p34 .bar {
+  -webkit-transform: rotate(122.4deg);
+  -moz-transform: rotate(122.4deg);
+  -ms-transform: rotate(122.4deg);
+  -o-transform: rotate(122.4deg);
+  transform: rotate(122.4deg); }
+
+.c100.p35 .bar {
+  -webkit-transform: rotate(126deg);
+  -moz-transform: rotate(126deg);
+  -ms-transform: rotate(126deg);
+  -o-transform: rotate(126deg);
+  transform: rotate(126deg); }
+
+.c100.p36 .bar {
+  -webkit-transform: rotate(129.6deg);
+  -moz-transform: rotate(129.6deg);
+  -ms-transform: rotate(129.6deg);
+  -o-transform: rotate(129.6deg);
+  transform: rotate(129.6deg); }
+
+.c100.p37 .bar {
+  -webkit-transform: rotate(133.2deg);
+  -moz-transform: rotate(133.2deg);
+  -ms-transform: rotate(133.2deg);
+  -o-transform: rotate(133.2deg);
+  transform: rotate(133.2deg); }
+
+.c100.p38 .bar {
+  -webkit-transform: rotate(136.8deg);
+  -moz-transform: rotate(136.8deg);
+  -ms-transform: rotate(136.8deg);
+  -o-transform: rotate(136.8deg);
+  transform: rotate(136.8deg); }
+
+.c100.p39 .bar {
+  -webkit-transform: rotate(140.4deg);
+  -moz-transform: rotate(140.4deg);
+  -ms-transform: rotate(140.4deg);
+  -o-transform: rotate(140.4deg);
+  transform: rotate(140.4deg); }
+
+.c100.p40 .bar {
+  -webkit-transform: rotate(144deg);
+  -moz-transform: rotate(144deg);
+  -ms-transform: rotate(144deg);
+  -o-transform: rotate(144deg);
+  transform: rotate(144deg); }
+
+.c100.p41 .bar {
+  -webkit-transform: rotate(147.6deg);
+  -moz-transform: rotate(147.6deg);
+  -ms-transform: rotate(147.6deg);
+  -o-transform: rotate(147.6deg);
+  transform: rotate(147.6deg); }
+
+.c100.p42 .bar {
+  -webkit-transform: rotate(151.2deg);
+  -moz-transform: rotate(151.2deg);
+  -ms-transform: rotate(151.2deg);
+  -o-transform: rotate(151.2deg);
+  transform: rotate(151.2deg); }
+
+.c100.p43 .bar {
+  -webkit-transform: rotate(154.8deg);
+  -moz-transform: rotate(154.8deg);
+  -ms-transform: rotate(154.8deg);
+  -o-transform: rotate(154.8deg);
+  transform: rotate(154.8deg); }
+
+.c100.p44 .bar {
+  -webkit-transform: rotate(158.4deg);
+  -moz-transform: rotate(158.4deg);
+  -ms-transform: rotate(158.4deg);
+  -o-transform: rotate(158.4deg);
+  transform: rotate(158.4deg); }
+
+.c100.p45 .bar {
+  -webkit-transform: rotate(162deg);
+  -moz-transform: rotate(162deg);
+  -ms-transform: rotate(162deg);
+  -o-transform: rotate(162deg);
+  transform: rotate(162deg); }
+
+.c100.p46 .bar {
+  -webkit-transform: rotate(165.6deg);
+  -moz-transform: rotate(165.6deg);
+  -ms-transform: rotate(165.6deg);
+  -o-transform: rotate(165.6deg);
+  transform: rotate(165.6deg); }
+
+.c100.p47 .bar {
+  -webkit-transform: rotate(169.2deg);
+  -moz-transform: rotate(169.2deg);
+  -ms-transform: rotate(169.2deg);
+  -o-transform: rotate(169.2deg);
+  transform: rotate(169.2deg); }
+
+.c100.p48 .bar {
+  -webkit-transform: rotate(172.8deg);
+  -moz-transform: rotate(172.8deg);
+  -ms-transform: rotate(172.8deg);
+  -o-transform: rotate(172.8deg);
+  transform: rotate(172.8deg); }
+
+.c100.p49 .bar {
+  -webkit-transform: rotate(176.4deg);
+  -moz-transform: rotate(176.4deg);
+  -ms-transform: rotate(176.4deg);
+  -o-transform: rotate(176.4deg);
+  transform: rotate(176.4deg); }
+
+.c100.p50 .bar {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg); }
+
+.c100.p51 .bar {
+  -webkit-transform: rotate(183.6deg);
+  -moz-transform: rotate(183.6deg);
+  -ms-transform: rotate(183.6deg);
+  -o-transform: rotate(183.6deg);
+  transform: rotate(183.6deg); }
+
+.c100.p52 .bar {
+  -webkit-transform: rotate(187.2deg);
+  -moz-transform: rotate(187.2deg);
+  -ms-transform: rotate(187.2deg);
+  -o-transform: rotate(187.2deg);
+  transform: rotate(187.2deg); }
+
+.c100.p53 .bar {
+  -webkit-transform: rotate(190.8deg);
+  -moz-transform: rotate(190.8deg);
+  -ms-transform: rotate(190.8deg);
+  -o-transform: rotate(190.8deg);
+  transform: rotate(190.8deg); }
+
+.c100.p54 .bar {
+  -webkit-transform: rotate(194.4deg);
+  -moz-transform: rotate(194.4deg);
+  -ms-transform: rotate(194.4deg);
+  -o-transform: rotate(194.4deg);
+  transform: rotate(194.4deg); }
+
+.c100.p55 .bar {
+  -webkit-transform: rotate(198deg);
+  -moz-transform: rotate(198deg);
+  -ms-transform: rotate(198deg);
+  -o-transform: rotate(198deg);
+  transform: rotate(198deg); }
+
+.c100.p56 .bar {
+  -webkit-transform: rotate(201.6deg);
+  -moz-transform: rotate(201.6deg);
+  -ms-transform: rotate(201.6deg);
+  -o-transform: rotate(201.6deg);
+  transform: rotate(201.6deg); }
+
+.c100.p57 .bar {
+  -webkit-transform: rotate(205.2deg);
+  -moz-transform: rotate(205.2deg);
+  -ms-transform: rotate(205.2deg);
+  -o-transform: rotate(205.2deg);
+  transform: rotate(205.2deg); }
+
+.c100.p58 .bar {
+  -webkit-transform: rotate(208.8deg);
+  -moz-transform: rotate(208.8deg);
+  -ms-transform: rotate(208.8deg);
+  -o-transform: rotate(208.8deg);
+  transform: rotate(208.8deg); }
+
+.c100.p59 .bar {
+  -webkit-transform: rotate(212.4deg);
+  -moz-transform: rotate(212.4deg);
+  -ms-transform: rotate(212.4deg);
+  -o-transform: rotate(212.4deg);
+  transform: rotate(212.4deg); }
+
+.c100.p60 .bar {
+  -webkit-transform: rotate(216deg);
+  -moz-transform: rotate(216deg);
+  -ms-transform: rotate(216deg);
+  -o-transform: rotate(216deg);
+  transform: rotate(216deg); }
+
+.c100.p61 .bar {
+  -webkit-transform: rotate(219.6deg);
+  -moz-transform: rotate(219.6deg);
+  -ms-transform: rotate(219.6deg);
+  -o-transform: rotate(219.6deg);
+  transform: rotate(219.6deg); }
+
+.c100.p62 .bar {
+  -webkit-transform: rotate(223.2deg);
+  -moz-transform: rotate(223.2deg);
+  -ms-transform: rotate(223.2deg);
+  -o-transform: rotate(223.2deg);
+  transform: rotate(223.2deg); }
+
+.c100.p63 .bar {
+  -webkit-transform: rotate(226.8deg);
+  -moz-transform: rotate(226.8deg);
+  -ms-transform: rotate(226.8deg);
+  -o-transform: rotate(226.8deg);
+  transform: rotate(226.8deg); }
+
+.c100.p64 .bar {
+  -webkit-transform: rotate(230.4deg);
+  -moz-transform: rotate(230.4deg);
+  -ms-transform: rotate(230.4deg);
+  -o-transform: rotate(230.4deg);
+  transform: rotate(230.4deg); }
+
+.c100.p65 .bar {
+  -webkit-transform: rotate(234deg);
+  -moz-transform: rotate(234deg);
+  -ms-transform: rotate(234deg);
+  -o-transform: rotate(234deg);
+  transform: rotate(234deg); }
+
+.c100.p66 .bar {
+  -webkit-transform: rotate(237.6deg);
+  -moz-transform: rotate(237.6deg);
+  -ms-transform: rotate(237.6deg);
+  -o-transform: rotate(237.6deg);
+  transform: rotate(237.6deg); }
+
+.c100.p67 .bar {
+  -webkit-transform: rotate(241.2deg);
+  -moz-transform: rotate(241.2deg);
+  -ms-transform: rotate(241.2deg);
+  -o-transform: rotate(241.2deg);
+  transform: rotate(241.2deg); }
+
+.c100.p68 .bar {
+  -webkit-transform: rotate(244.8deg);
+  -moz-transform: rotate(244.8deg);
+  -ms-transform: rotate(244.8deg);
+  -o-transform: rotate(244.8deg);
+  transform: rotate(244.8deg); }
+
+.c100.p69 .bar {
+  -webkit-transform: rotate(248.4deg);
+  -moz-transform: rotate(248.4deg);
+  -ms-transform: rotate(248.4deg);
+  -o-transform: rotate(248.4deg);
+  transform: rotate(248.4deg); }
+
+.c100.p70 .bar {
+  -webkit-transform: rotate(252deg);
+  -moz-transform: rotate(252deg);
+  -ms-transform: rotate(252deg);
+  -o-transform: rotate(252deg);
+  transform: rotate(252deg); }
+
+.c100.p71 .bar {
+  -webkit-transform: rotate(255.6deg);
+  -moz-transform: rotate(255.6deg);
+  -ms-transform: rotate(255.6deg);
+  -o-transform: rotate(255.6deg);
+  transform: rotate(255.6deg); }
+
+.c100.p72 .bar {
+  -webkit-transform: rotate(259.2deg);
+  -moz-transform: rotate(259.2deg);
+  -ms-transform: rotate(259.2deg);
+  -o-transform: rotate(259.2deg);
+  transform: rotate(259.2deg); }
+
+.c100.p73 .bar {
+  -webkit-transform: rotate(262.8deg);
+  -moz-transform: rotate(262.8deg);
+  -ms-transform: rotate(262.8deg);
+  -o-transform: rotate(262.8deg);
+  transform: rotate(262.8deg); }
+
+.c100.p74 .bar {
+  -webkit-transform: rotate(266.4deg);
+  -moz-transform: rotate(266.4deg);
+  -ms-transform: rotate(266.4deg);
+  -o-transform: rotate(266.4deg);
+  transform: rotate(266.4deg); }
+
+.c100.p75 .bar {
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg); }
+
+.c100.p76 .bar {
+  -webkit-transform: rotate(273.6deg);
+  -moz-transform: rotate(273.6deg);
+  -ms-transform: rotate(273.6deg);
+  -o-transform: rotate(273.6deg);
+  transform: rotate(273.6deg); }
+
+.c100.p77 .bar {
+  -webkit-transform: rotate(277.2deg);
+  -moz-transform: rotate(277.2deg);
+  -ms-transform: rotate(277.2deg);
+  -o-transform: rotate(277.2deg);
+  transform: rotate(277.2deg); }
+
+.c100.p78 .bar {
+  -webkit-transform: rotate(280.8deg);
+  -moz-transform: rotate(280.8deg);
+  -ms-transform: rotate(280.8deg);
+  -o-transform: rotate(280.8deg);
+  transform: rotate(280.8deg); }
+
+.c100.p79 .bar {
+  -webkit-transform: rotate(284.4deg);
+  -moz-transform: rotate(284.4deg);
+  -ms-transform: rotate(284.4deg);
+  -o-transform: rotate(284.4deg);
+  transform: rotate(284.4deg); }
+
+.c100.p80 .bar {
+  -webkit-transform: rotate(288deg);
+  -moz-transform: rotate(288deg);
+  -ms-transform: rotate(288deg);
+  -o-transform: rotate(288deg);
+  transform: rotate(288deg); }
+
+.c100.p81 .bar {
+  -webkit-transform: rotate(291.6deg);
+  -moz-transform: rotate(291.6deg);
+  -ms-transform: rotate(291.6deg);
+  -o-transform: rotate(291.6deg);
+  transform: rotate(291.6deg); }
+
+.c100.p82 .bar {
+  -webkit-transform: rotate(295.2deg);
+  -moz-transform: rotate(295.2deg);
+  -ms-transform: rotate(295.2deg);
+  -o-transform: rotate(295.2deg);
+  transform: rotate(295.2deg); }
+
+.c100.p83 .bar {
+  -webkit-transform: rotate(298.8deg);
+  -moz-transform: rotate(298.8deg);
+  -ms-transform: rotate(298.8deg);
+  -o-transform: rotate(298.8deg);
+  transform: rotate(298.8deg); }
+
+.c100.p84 .bar {
+  -webkit-transform: rotate(302.4deg);
+  -moz-transform: rotate(302.4deg);
+  -ms-transform: rotate(302.4deg);
+  -o-transform: rotate(302.4deg);
+  transform: rotate(302.4deg); }
+
+.c100.p85 .bar {
+  -webkit-transform: rotate(306deg);
+  -moz-transform: rotate(306deg);
+  -ms-transform: rotate(306deg);
+  -o-transform: rotate(306deg);
+  transform: rotate(306deg); }
+
+.c100.p86 .bar {
+  -webkit-transform: rotate(309.6deg);
+  -moz-transform: rotate(309.6deg);
+  -ms-transform: rotate(309.6deg);
+  -o-transform: rotate(309.6deg);
+  transform: rotate(309.6deg); }
+
+.c100.p87 .bar {
+  -webkit-transform: rotate(313.2deg);
+  -moz-transform: rotate(313.2deg);
+  -ms-transform: rotate(313.2deg);
+  -o-transform: rotate(313.2deg);
+  transform: rotate(313.2deg); }
+
+.c100.p88 .bar {
+  -webkit-transform: rotate(316.8deg);
+  -moz-transform: rotate(316.8deg);
+  -ms-transform: rotate(316.8deg);
+  -o-transform: rotate(316.8deg);
+  transform: rotate(316.8deg); }
+
+.c100.p89 .bar {
+  -webkit-transform: rotate(320.4deg);
+  -moz-transform: rotate(320.4deg);
+  -ms-transform: rotate(320.4deg);
+  -o-transform: rotate(320.4deg);
+  transform: rotate(320.4deg); }
+
+.c100.p90 .bar {
+  -webkit-transform: rotate(324deg);
+  -moz-transform: rotate(324deg);
+  -ms-transform: rotate(324deg);
+  -o-transform: rotate(324deg);
+  transform: rotate(324deg); }
+
+.c100.p91 .bar {
+  -webkit-transform: rotate(327.6deg);
+  -moz-transform: rotate(327.6deg);
+  -ms-transform: rotate(327.6deg);
+  -o-transform: rotate(327.6deg);
+  transform: rotate(327.6deg); }
+
+.c100.p92 .bar {
+  -webkit-transform: rotate(331.2deg);
+  -moz-transform: rotate(331.2deg);
+  -ms-transform: rotate(331.2deg);
+  -o-transform: rotate(331.2deg);
+  transform: rotate(331.2deg); }
+
+.c100.p93 .bar {
+  -webkit-transform: rotate(334.8deg);
+  -moz-transform: rotate(334.8deg);
+  -ms-transform: rotate(334.8deg);
+  -o-transform: rotate(334.8deg);
+  transform: rotate(334.8deg); }
+
+.c100.p94 .bar {
+  -webkit-transform: rotate(338.4deg);
+  -moz-transform: rotate(338.4deg);
+  -ms-transform: rotate(338.4deg);
+  -o-transform: rotate(338.4deg);
+  transform: rotate(338.4deg); }
+
+.c100.p95 .bar {
+  -webkit-transform: rotate(342deg);
+  -moz-transform: rotate(342deg);
+  -ms-transform: rotate(342deg);
+  -o-transform: rotate(342deg);
+  transform: rotate(342deg); }
+
+.c100.p96 .bar {
+  -webkit-transform: rotate(345.6deg);
+  -moz-transform: rotate(345.6deg);
+  -ms-transform: rotate(345.6deg);
+  -o-transform: rotate(345.6deg);
+  transform: rotate(345.6deg); }
+
+.c100.p97 .bar {
+  -webkit-transform: rotate(349.2deg);
+  -moz-transform: rotate(349.2deg);
+  -ms-transform: rotate(349.2deg);
+  -o-transform: rotate(349.2deg);
+  transform: rotate(349.2deg); }
+
+.c100.p98 .bar {
+  -webkit-transform: rotate(352.8deg);
+  -moz-transform: rotate(352.8deg);
+  -ms-transform: rotate(352.8deg);
+  -o-transform: rotate(352.8deg);
+  transform: rotate(352.8deg); }
+
+.c100.p99 .bar {
+  -webkit-transform: rotate(356.4deg);
+  -moz-transform: rotate(356.4deg);
+  -ms-transform: rotate(356.4deg);
+  -o-transform: rotate(356.4deg);
+  transform: rotate(356.4deg); }
+
+.c100.p100 .bar {
+  -webkit-transform: rotate(360deg);
+  -moz-transform: rotate(360deg);
+  -ms-transform: rotate(360deg);
+  -o-transform: rotate(360deg);
+  transform: rotate(360deg); }
+
+.c100:hover {
+  cursor: default; }
+
+.c100:hover > span {
+  width: 3.33em;
+  line-height: 3.33em;
+  font-size: 0.3em;
+  color: #307bbb; }
+
+.c100:hover:after {
+  top: 0.04em;
+  left: 0.04em;
+  width: 0.92em;
+  height: 0.92em; }
+
+.c100.dark {
+  background-color: #777777; }
+
+.c100.dark .bar,
+.c100.dark .fill {
+  border-color: #c6ff00 !important; }
+
+.c100.dark > span {
+  color: #777777; }
+
+.c100.dark:after {
+  background-color: #666666; }
+
+.c100.dark:hover > span {
+  color: #c6ff00; }
+
+.c100.green .bar, .c100.green .fill {
+  border-color: #4db53c !important; }
+
+.c100.green:hover > span {
+  color: #4db53c; }
+
+.c100.green.dark .bar, .c100.green.dark .fill {
+  border-color: #5fd400 !important; }
+
+.c100.green.dark:hover > span {
+  color: #5fd400; }
+
+.c100.orange .bar, .c100.orange .fill {
+  border-color: #dd9d22 !important; }
+
+.c100.orange:hover > span {
+  color: #dd9d22; }
+
+.c100.orange.dark .bar, .c100.orange.dark .fill {
+  border-color: #e08833 !important; }
+
+.c100.orange.dark:hover > span {
+  color: #e08833; }
+
+/*
+// HTML Dial Overrides
+*/
 .c100.big {
   font-size: 150px; }
 
@@ -130,125 +923,1996 @@ input.form-control {
   font-size: 30px;
   bottom: 30px; }
 
-.points {
-  color: #24f900; }
+.flag-icon-background {
+  background-size: contain;
+  background-position: 50%;
+  background-repeat: no-repeat; }
 
-.profile-listing, .profile-detail {
+.flag-icon {
+  background-size: contain;
+  background-position: 50%;
+  background-repeat: no-repeat;
   position: relative;
-  background: #080808;
-  padding: 30px 50px;
-  border-radius: 5px;
-  margin: 15px 0;
-  border: 1px solid #060606; }
+  display: inline-block;
+  width: 1.33333333em;
+  line-height: 1em; }
 
-.profile-detail .points {
-  color: #fff; }
+.flag-icon:before {
+  content: "\00a0"; }
 
-.profile-link {
-  display: block;
-  text-decoration: none; }
-  .profile-link:hover, .profile-link:active, .profile-link:focus {
-    color: silver;
-    text-decoration: none; }
+.flag-icon.flag-icon-squared {
+  width: 1em; }
 
-.profile-listing .rank, .profile-detail .rank {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 54px;
-  color: #fff; }
+.flag-icon-ad {
+  background-image: url(../images/flags/4x3/ad.svg); }
 
-.rank i {
-  font-size: 100px;
+.flag-icon-ad.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ad.svg); }
+
+.flag-icon-ae {
+  background-image: url(../images/flags/4x3/ae.svg); }
+
+.flag-icon-ae.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ae.svg); }
+
+.flag-icon-af {
+  background-image: url(../images/flags/4x3/af.svg); }
+
+.flag-icon-af.flag-icon-squared {
+  background-image: url(../images/flags/1x1/af.svg); }
+
+.flag-icon-ag {
+  background-image: url(../images/flags/4x3/ag.svg); }
+
+.flag-icon-ag.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ag.svg); }
+
+.flag-icon-ai {
+  background-image: url(../images/flags/4x3/ai.svg); }
+
+.flag-icon-ai.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ai.svg); }
+
+.flag-icon-al {
+  background-image: url(../images/flags/4x3/al.svg); }
+
+.flag-icon-al.flag-icon-squared {
+  background-image: url(../images/flags/1x1/al.svg); }
+
+.flag-icon-am {
+  background-image: url(../images/flags/4x3/am.svg); }
+
+.flag-icon-am.flag-icon-squared {
+  background-image: url(../images/flags/1x1/am.svg); }
+
+.flag-icon-ao {
+  background-image: url(../images/flags/4x3/ao.svg); }
+
+.flag-icon-ao.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ao.svg); }
+
+.flag-icon-aq {
+  background-image: url(../images/flags/4x3/aq.svg); }
+
+.flag-icon-aq.flag-icon-squared {
+  background-image: url(../images/flags/1x1/aq.svg); }
+
+.flag-icon-ar {
+  background-image: url(../images/flags/4x3/ar.svg); }
+
+.flag-icon-ar.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ar.svg); }
+
+.flag-icon-as {
+  background-image: url(../images/flags/4x3/as.svg); }
+
+.flag-icon-as.flag-icon-squared {
+  background-image: url(../images/flags/1x1/as.svg); }
+
+.flag-icon-at {
+  background-image: url(../images/flags/4x3/at.svg); }
+
+.flag-icon-at.flag-icon-squared {
+  background-image: url(../images/flags/1x1/at.svg); }
+
+.flag-icon-au {
+  background-image: url(../images/flags/4x3/au.svg); }
+
+.flag-icon-au.flag-icon-squared {
+  background-image: url(../images/flags/1x1/au.svg); }
+
+.flag-icon-aw {
+  background-image: url(../images/flags/4x3/aw.svg); }
+
+.flag-icon-aw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/aw.svg); }
+
+.flag-icon-ax {
+  background-image: url(../images/flags/4x3/ax.svg); }
+
+.flag-icon-ax.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ax.svg); }
+
+.flag-icon-az {
+  background-image: url(../images/flags/4x3/az.svg); }
+
+.flag-icon-az.flag-icon-squared {
+  background-image: url(../images/flags/1x1/az.svg); }
+
+.flag-icon-ba {
+  background-image: url(../images/flags/4x3/ba.svg); }
+
+.flag-icon-ba.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ba.svg); }
+
+.flag-icon-bb {
+  background-image: url(../images/flags/4x3/bb.svg); }
+
+.flag-icon-bb.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bb.svg); }
+
+.flag-icon-bd {
+  background-image: url(../images/flags/4x3/bd.svg); }
+
+.flag-icon-bd.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bd.svg); }
+
+.flag-icon-be {
+  background-image: url(../images/flags/4x3/be.svg); }
+
+.flag-icon-be.flag-icon-squared {
+  background-image: url(../images/flags/1x1/be.svg); }
+
+.flag-icon-bf {
+  background-image: url(../images/flags/4x3/bf.svg); }
+
+.flag-icon-bf.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bf.svg); }
+
+.flag-icon-bg {
+  background-image: url(../images/flags/4x3/bg.svg); }
+
+.flag-icon-bg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bg.svg); }
+
+.flag-icon-bh {
+  background-image: url(../images/flags/4x3/bh.svg); }
+
+.flag-icon-bh.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bh.svg); }
+
+.flag-icon-bi {
+  background-image: url(../images/flags/4x3/bi.svg); }
+
+.flag-icon-bi.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bi.svg); }
+
+.flag-icon-bj {
+  background-image: url(../images/flags/4x3/bj.svg); }
+
+.flag-icon-bj.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bj.svg); }
+
+.flag-icon-bl {
+  background-image: url(../images/flags/4x3/bl.svg); }
+
+.flag-icon-bl.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bl.svg); }
+
+.flag-icon-bm {
+  background-image: url(../images/flags/4x3/bm.svg); }
+
+.flag-icon-bm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bm.svg); }
+
+.flag-icon-bn {
+  background-image: url(../images/flags/4x3/bn.svg); }
+
+.flag-icon-bn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bn.svg); }
+
+.flag-icon-bo {
+  background-image: url(../images/flags/4x3/bo.svg); }
+
+.flag-icon-bo.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bo.svg); }
+
+.flag-icon-bq {
+  background-image: url(../images/flags/4x3/bq.svg); }
+
+.flag-icon-bq.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bq.svg); }
+
+.flag-icon-br {
+  background-image: url(../images/flags/4x3/br.svg); }
+
+.flag-icon-br.flag-icon-squared {
+  background-image: url(../images/flags/1x1/br.svg); }
+
+.flag-icon-bs {
+  background-image: url(../images/flags/4x3/bs.svg); }
+
+.flag-icon-bs.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bs.svg); }
+
+.flag-icon-bt {
+  background-image: url(../images/flags/4x3/bt.svg); }
+
+.flag-icon-bt.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bt.svg); }
+
+.flag-icon-bv {
+  background-image: url(../images/flags/4x3/bv.svg); }
+
+.flag-icon-bv.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bv.svg); }
+
+.flag-icon-bw {
+  background-image: url(../images/flags/4x3/bw.svg); }
+
+.flag-icon-bw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bw.svg); }
+
+.flag-icon-by {
+  background-image: url(../images/flags/4x3/by.svg); }
+
+.flag-icon-by.flag-icon-squared {
+  background-image: url(../images/flags/1x1/by.svg); }
+
+.flag-icon-bz {
+  background-image: url(../images/flags/4x3/bz.svg); }
+
+.flag-icon-bz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/bz.svg); }
+
+.flag-icon-ca {
+  background-image: url(../images/flags/4x3/ca.svg); }
+
+.flag-icon-ca.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ca.svg); }
+
+.flag-icon-cc {
+  background-image: url(../images/flags/4x3/cc.svg); }
+
+.flag-icon-cc.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cc.svg); }
+
+.flag-icon-cd {
+  background-image: url(../images/flags/4x3/cd.svg); }
+
+.flag-icon-cd.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cd.svg); }
+
+.flag-icon-cf {
+  background-image: url(../images/flags/4x3/cf.svg); }
+
+.flag-icon-cf.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cf.svg); }
+
+.flag-icon-cg {
+  background-image: url(../images/flags/4x3/cg.svg); }
+
+.flag-icon-cg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cg.svg); }
+
+.flag-icon-ch {
+  background-image: url(../images/flags/4x3/ch.svg); }
+
+.flag-icon-ch.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ch.svg); }
+
+.flag-icon-ci {
+  background-image: url(../images/flags/4x3/ci.svg); }
+
+.flag-icon-ci.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ci.svg); }
+
+.flag-icon-ck {
+  background-image: url(../images/flags/4x3/ck.svg); }
+
+.flag-icon-ck.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ck.svg); }
+
+.flag-icon-cl {
+  background-image: url(../images/flags/4x3/cl.svg); }
+
+.flag-icon-cl.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cl.svg); }
+
+.flag-icon-cm {
+  background-image: url(../images/flags/4x3/cm.svg); }
+
+.flag-icon-cm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cm.svg); }
+
+.flag-icon-cn {
+  background-image: url(../images/flags/4x3/cn.svg); }
+
+.flag-icon-cn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cn.svg); }
+
+.flag-icon-co {
+  background-image: url(../images/flags/4x3/co.svg); }
+
+.flag-icon-co.flag-icon-squared {
+  background-image: url(../images/flags/1x1/co.svg); }
+
+.flag-icon-cr {
+  background-image: url(../images/flags/4x3/cr.svg); }
+
+.flag-icon-cr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cr.svg); }
+
+.flag-icon-cu {
+  background-image: url(../images/flags/4x3/cu.svg); }
+
+.flag-icon-cu.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cu.svg); }
+
+.flag-icon-cv {
+  background-image: url(../images/flags/4x3/cv.svg); }
+
+.flag-icon-cv.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cv.svg); }
+
+.flag-icon-cw {
+  background-image: url(../images/flags/4x3/cw.svg); }
+
+.flag-icon-cw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cw.svg); }
+
+.flag-icon-cx {
+  background-image: url(../images/flags/4x3/cx.svg); }
+
+.flag-icon-cx.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cx.svg); }
+
+.flag-icon-cy {
+  background-image: url(../images/flags/4x3/cy.svg); }
+
+.flag-icon-cy.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cy.svg); }
+
+.flag-icon-cz {
+  background-image: url(../images/flags/4x3/cz.svg); }
+
+.flag-icon-cz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/cz.svg); }
+
+.flag-icon-de {
+  background-image: url(../images/flags/4x3/de.svg); }
+
+.flag-icon-de.flag-icon-squared {
+  background-image: url(../images/flags/1x1/de.svg); }
+
+.flag-icon-dj {
+  background-image: url(../images/flags/4x3/dj.svg); }
+
+.flag-icon-dj.flag-icon-squared {
+  background-image: url(../images/flags/1x1/dj.svg); }
+
+.flag-icon-dk {
+  background-image: url(../images/flags/4x3/dk.svg); }
+
+.flag-icon-dk.flag-icon-squared {
+  background-image: url(../images/flags/1x1/dk.svg); }
+
+.flag-icon-dm {
+  background-image: url(../images/flags/4x3/dm.svg); }
+
+.flag-icon-dm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/dm.svg); }
+
+.flag-icon-do {
+  background-image: url(../images/flags/4x3/do.svg); }
+
+.flag-icon-do.flag-icon-squared {
+  background-image: url(../images/flags/1x1/do.svg); }
+
+.flag-icon-dz {
+  background-image: url(../images/flags/4x3/dz.svg); }
+
+.flag-icon-dz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/dz.svg); }
+
+.flag-icon-ec {
+  background-image: url(../images/flags/4x3/ec.svg); }
+
+.flag-icon-ec.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ec.svg); }
+
+.flag-icon-ee {
+  background-image: url(../images/flags/4x3/ee.svg); }
+
+.flag-icon-ee.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ee.svg); }
+
+.flag-icon-eg {
+  background-image: url(../images/flags/4x3/eg.svg); }
+
+.flag-icon-eg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/eg.svg); }
+
+.flag-icon-eh {
+  background-image: url(../images/flags/4x3/eh.svg); }
+
+.flag-icon-eh.flag-icon-squared {
+  background-image: url(../images/flags/1x1/eh.svg); }
+
+.flag-icon-er {
+  background-image: url(../images/flags/4x3/er.svg); }
+
+.flag-icon-er.flag-icon-squared {
+  background-image: url(../images/flags/1x1/er.svg); }
+
+.flag-icon-es {
+  background-image: url(../images/flags/4x3/es.svg); }
+
+.flag-icon-es.flag-icon-squared {
+  background-image: url(../images/flags/1x1/es.svg); }
+
+.flag-icon-et {
+  background-image: url(../images/flags/4x3/et.svg); }
+
+.flag-icon-et.flag-icon-squared {
+  background-image: url(../images/flags/1x1/et.svg); }
+
+.flag-icon-fi {
+  background-image: url(../images/flags/4x3/fi.svg); }
+
+.flag-icon-fi.flag-icon-squared {
+  background-image: url(../images/flags/1x1/fi.svg); }
+
+.flag-icon-fj {
+  background-image: url(../images/flags/4x3/fj.svg); }
+
+.flag-icon-fj.flag-icon-squared {
+  background-image: url(../images/flags/1x1/fj.svg); }
+
+.flag-icon-fk {
+  background-image: url(../images/flags/4x3/fk.svg); }
+
+.flag-icon-fk.flag-icon-squared {
+  background-image: url(../images/flags/1x1/fk.svg); }
+
+.flag-icon-fm {
+  background-image: url(../images/flags/4x3/fm.svg); }
+
+.flag-icon-fm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/fm.svg); }
+
+.flag-icon-fo {
+  background-image: url(../images/flags/4x3/fo.svg); }
+
+.flag-icon-fo.flag-icon-squared {
+  background-image: url(../images/flags/1x1/fo.svg); }
+
+.flag-icon-fr {
+  background-image: url(../images/flags/4x3/fr.svg); }
+
+.flag-icon-fr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/fr.svg); }
+
+.flag-icon-ga {
+  background-image: url(../images/flags/4x3/ga.svg); }
+
+.flag-icon-ga.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ga.svg); }
+
+.flag-icon-gb {
+  background-image: url(../images/flags/4x3/gb.svg); }
+
+.flag-icon-gb.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gb.svg); }
+
+.flag-icon-gd {
+  background-image: url(../images/flags/4x3/gd.svg); }
+
+.flag-icon-gd.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gd.svg); }
+
+.flag-icon-ge {
+  background-image: url(../images/flags/4x3/ge.svg); }
+
+.flag-icon-ge.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ge.svg); }
+
+.flag-icon-gf {
+  background-image: url(../images/flags/4x3/gf.svg); }
+
+.flag-icon-gf.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gf.svg); }
+
+.flag-icon-gg {
+  background-image: url(../images/flags/4x3/gg.svg); }
+
+.flag-icon-gg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gg.svg); }
+
+.flag-icon-gh {
+  background-image: url(../images/flags/4x3/gh.svg); }
+
+.flag-icon-gh.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gh.svg); }
+
+.flag-icon-gi {
+  background-image: url(../images/flags/4x3/gi.svg); }
+
+.flag-icon-gi.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gi.svg); }
+
+.flag-icon-gl {
+  background-image: url(../images/flags/4x3/gl.svg); }
+
+.flag-icon-gl.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gl.svg); }
+
+.flag-icon-gm {
+  background-image: url(../images/flags/4x3/gm.svg); }
+
+.flag-icon-gm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gm.svg); }
+
+.flag-icon-gn {
+  background-image: url(../images/flags/4x3/gn.svg); }
+
+.flag-icon-gn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gn.svg); }
+
+.flag-icon-gp {
+  background-image: url(../images/flags/4x3/gp.svg); }
+
+.flag-icon-gp.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gp.svg); }
+
+.flag-icon-gq {
+  background-image: url(../images/flags/4x3/gq.svg); }
+
+.flag-icon-gq.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gq.svg); }
+
+.flag-icon-gr {
+  background-image: url(../images/flags/4x3/gr.svg); }
+
+.flag-icon-gr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gr.svg); }
+
+.flag-icon-gs {
+  background-image: url(../images/flags/4x3/gs.svg); }
+
+.flag-icon-gs.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gs.svg); }
+
+.flag-icon-gt {
+  background-image: url(../images/flags/4x3/gt.svg); }
+
+.flag-icon-gt.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gt.svg); }
+
+.flag-icon-gu {
+  background-image: url(../images/flags/4x3/gu.svg); }
+
+.flag-icon-gu.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gu.svg); }
+
+.flag-icon-gw {
+  background-image: url(../images/flags/4x3/gw.svg); }
+
+.flag-icon-gw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gw.svg); }
+
+.flag-icon-gy {
+  background-image: url(../images/flags/4x3/gy.svg); }
+
+.flag-icon-gy.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gy.svg); }
+
+.flag-icon-hk {
+  background-image: url(../images/flags/4x3/hk.svg); }
+
+.flag-icon-hk.flag-icon-squared {
+  background-image: url(../images/flags/1x1/hk.svg); }
+
+.flag-icon-hm {
+  background-image: url(../images/flags/4x3/hm.svg); }
+
+.flag-icon-hm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/hm.svg); }
+
+.flag-icon-hn {
+  background-image: url(../images/flags/4x3/hn.svg); }
+
+.flag-icon-hn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/hn.svg); }
+
+.flag-icon-hr {
+  background-image: url(../images/flags/4x3/hr.svg); }
+
+.flag-icon-hr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/hr.svg); }
+
+.flag-icon-ht {
+  background-image: url(../images/flags/4x3/ht.svg); }
+
+.flag-icon-ht.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ht.svg); }
+
+.flag-icon-hu {
+  background-image: url(../images/flags/4x3/hu.svg); }
+
+.flag-icon-hu.flag-icon-squared {
+  background-image: url(../images/flags/1x1/hu.svg); }
+
+.flag-icon-id {
+  background-image: url(../images/flags/4x3/id.svg); }
+
+.flag-icon-id.flag-icon-squared {
+  background-image: url(../images/flags/1x1/id.svg); }
+
+.flag-icon-ie {
+  background-image: url(../images/flags/4x3/ie.svg); }
+
+.flag-icon-ie.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ie.svg); }
+
+.flag-icon-il {
+  background-image: url(../images/flags/4x3/il.svg); }
+
+.flag-icon-il.flag-icon-squared {
+  background-image: url(../images/flags/1x1/il.svg); }
+
+.flag-icon-im {
+  background-image: url(../images/flags/4x3/im.svg); }
+
+.flag-icon-im.flag-icon-squared {
+  background-image: url(../images/flags/1x1/im.svg); }
+
+.flag-icon-in {
+  background-image: url(../images/flags/4x3/in.svg); }
+
+.flag-icon-in.flag-icon-squared {
+  background-image: url(../images/flags/1x1/in.svg); }
+
+.flag-icon-io {
+  background-image: url(../images/flags/4x3/io.svg); }
+
+.flag-icon-io.flag-icon-squared {
+  background-image: url(../images/flags/1x1/io.svg); }
+
+.flag-icon-iq {
+  background-image: url(../images/flags/4x3/iq.svg); }
+
+.flag-icon-iq.flag-icon-squared {
+  background-image: url(../images/flags/1x1/iq.svg); }
+
+.flag-icon-ir {
+  background-image: url(../images/flags/4x3/ir.svg); }
+
+.flag-icon-ir.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ir.svg); }
+
+.flag-icon-is {
+  background-image: url(../images/flags/4x3/is.svg); }
+
+.flag-icon-is.flag-icon-squared {
+  background-image: url(../images/flags/1x1/is.svg); }
+
+.flag-icon-it {
+  background-image: url(../images/flags/4x3/it.svg); }
+
+.flag-icon-it.flag-icon-squared {
+  background-image: url(../images/flags/1x1/it.svg); }
+
+.flag-icon-je {
+  background-image: url(../images/flags/4x3/je.svg); }
+
+.flag-icon-je.flag-icon-squared {
+  background-image: url(../images/flags/1x1/je.svg); }
+
+.flag-icon-jm {
+  background-image: url(../images/flags/4x3/jm.svg); }
+
+.flag-icon-jm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/jm.svg); }
+
+.flag-icon-jo {
+  background-image: url(../images/flags/4x3/jo.svg); }
+
+.flag-icon-jo.flag-icon-squared {
+  background-image: url(../images/flags/1x1/jo.svg); }
+
+.flag-icon-jp {
+  background-image: url(../images/flags/4x3/jp.svg); }
+
+.flag-icon-jp.flag-icon-squared {
+  background-image: url(../images/flags/1x1/jp.svg); }
+
+.flag-icon-ke {
+  background-image: url(../images/flags/4x3/ke.svg); }
+
+.flag-icon-ke.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ke.svg); }
+
+.flag-icon-kg {
+  background-image: url(../images/flags/4x3/kg.svg); }
+
+.flag-icon-kg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/kg.svg); }
+
+.flag-icon-kh {
+  background-image: url(../images/flags/4x3/kh.svg); }
+
+.flag-icon-kh.flag-icon-squared {
+  background-image: url(../images/flags/1x1/kh.svg); }
+
+.flag-icon-ki {
+  background-image: url(../images/flags/4x3/ki.svg); }
+
+.flag-icon-ki.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ki.svg); }
+
+.flag-icon-km {
+  background-image: url(../images/flags/4x3/km.svg); }
+
+.flag-icon-km.flag-icon-squared {
+  background-image: url(../images/flags/1x1/km.svg); }
+
+.flag-icon-kn {
+  background-image: url(../images/flags/4x3/kn.svg); }
+
+.flag-icon-kn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/kn.svg); }
+
+.flag-icon-kp {
+  background-image: url(../images/flags/4x3/kp.svg); }
+
+.flag-icon-kp.flag-icon-squared {
+  background-image: url(../images/flags/1x1/kp.svg); }
+
+.flag-icon-kr {
+  background-image: url(../images/flags/4x3/kr.svg); }
+
+.flag-icon-kr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/kr.svg); }
+
+.flag-icon-kw {
+  background-image: url(../images/flags/4x3/kw.svg); }
+
+.flag-icon-kw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/kw.svg); }
+
+.flag-icon-ky {
+  background-image: url(../images/flags/4x3/ky.svg); }
+
+.flag-icon-ky.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ky.svg); }
+
+.flag-icon-kz {
+  background-image: url(../images/flags/4x3/kz.svg); }
+
+.flag-icon-kz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/kz.svg); }
+
+.flag-icon-la {
+  background-image: url(../images/flags/4x3/la.svg); }
+
+.flag-icon-la.flag-icon-squared {
+  background-image: url(../images/flags/1x1/la.svg); }
+
+.flag-icon-lb {
+  background-image: url(../images/flags/4x3/lb.svg); }
+
+.flag-icon-lb.flag-icon-squared {
+  background-image: url(../images/flags/1x1/lb.svg); }
+
+.flag-icon-lc {
+  background-image: url(../images/flags/4x3/lc.svg); }
+
+.flag-icon-lc.flag-icon-squared {
+  background-image: url(../images/flags/1x1/lc.svg); }
+
+.flag-icon-li {
+  background-image: url(../images/flags/4x3/li.svg); }
+
+.flag-icon-li.flag-icon-squared {
+  background-image: url(../images/flags/1x1/li.svg); }
+
+.flag-icon-lk {
+  background-image: url(../images/flags/4x3/lk.svg); }
+
+.flag-icon-lk.flag-icon-squared {
+  background-image: url(../images/flags/1x1/lk.svg); }
+
+.flag-icon-lr {
+  background-image: url(../images/flags/4x3/lr.svg); }
+
+.flag-icon-lr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/lr.svg); }
+
+.flag-icon-ls {
+  background-image: url(../images/flags/4x3/ls.svg); }
+
+.flag-icon-ls.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ls.svg); }
+
+.flag-icon-lt {
+  background-image: url(../images/flags/4x3/lt.svg); }
+
+.flag-icon-lt.flag-icon-squared {
+  background-image: url(../images/flags/1x1/lt.svg); }
+
+.flag-icon-lu {
+  background-image: url(../images/flags/4x3/lu.svg); }
+
+.flag-icon-lu.flag-icon-squared {
+  background-image: url(../images/flags/1x1/lu.svg); }
+
+.flag-icon-lv {
+  background-image: url(../images/flags/4x3/lv.svg); }
+
+.flag-icon-lv.flag-icon-squared {
+  background-image: url(../images/flags/1x1/lv.svg); }
+
+.flag-icon-ly {
+  background-image: url(../images/flags/4x3/ly.svg); }
+
+.flag-icon-ly.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ly.svg); }
+
+.flag-icon-ma {
+  background-image: url(../images/flags/4x3/ma.svg); }
+
+.flag-icon-ma.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ma.svg); }
+
+.flag-icon-mc {
+  background-image: url(../images/flags/4x3/mc.svg); }
+
+.flag-icon-mc.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mc.svg); }
+
+.flag-icon-md {
+  background-image: url(../images/flags/4x3/md.svg); }
+
+.flag-icon-md.flag-icon-squared {
+  background-image: url(../images/flags/1x1/md.svg); }
+
+.flag-icon-me {
+  background-image: url(../images/flags/4x3/me.svg); }
+
+.flag-icon-me.flag-icon-squared {
+  background-image: url(../images/flags/1x1/me.svg); }
+
+.flag-icon-mf {
+  background-image: url(../images/flags/4x3/mf.svg); }
+
+.flag-icon-mf.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mf.svg); }
+
+.flag-icon-mg {
+  background-image: url(../images/flags/4x3/mg.svg); }
+
+.flag-icon-mg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mg.svg); }
+
+.flag-icon-mh {
+  background-image: url(../images/flags/4x3/mh.svg); }
+
+.flag-icon-mh.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mh.svg); }
+
+.flag-icon-mk {
+  background-image: url(../images/flags/4x3/mk.svg); }
+
+.flag-icon-mk.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mk.svg); }
+
+.flag-icon-ml {
+  background-image: url(../images/flags/4x3/ml.svg); }
+
+.flag-icon-ml.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ml.svg); }
+
+.flag-icon-mm {
+  background-image: url(../images/flags/4x3/mm.svg); }
+
+.flag-icon-mm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mm.svg); }
+
+.flag-icon-mn {
+  background-image: url(../images/flags/4x3/mn.svg); }
+
+.flag-icon-mn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mn.svg); }
+
+.flag-icon-mo {
+  background-image: url(../images/flags/4x3/mo.svg); }
+
+.flag-icon-mo.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mo.svg); }
+
+.flag-icon-mp {
+  background-image: url(../images/flags/4x3/mp.svg); }
+
+.flag-icon-mp.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mp.svg); }
+
+.flag-icon-mq {
+  background-image: url(../images/flags/4x3/mq.svg); }
+
+.flag-icon-mq.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mq.svg); }
+
+.flag-icon-mr {
+  background-image: url(../images/flags/4x3/mr.svg); }
+
+.flag-icon-mr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mr.svg); }
+
+.flag-icon-ms {
+  background-image: url(../images/flags/4x3/ms.svg); }
+
+.flag-icon-ms.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ms.svg); }
+
+.flag-icon-mt {
+  background-image: url(../images/flags/4x3/mt.svg); }
+
+.flag-icon-mt.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mt.svg); }
+
+.flag-icon-mu {
+  background-image: url(../images/flags/4x3/mu.svg); }
+
+.flag-icon-mu.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mu.svg); }
+
+.flag-icon-mv {
+  background-image: url(../images/flags/4x3/mv.svg); }
+
+.flag-icon-mv.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mv.svg); }
+
+.flag-icon-mw {
+  background-image: url(../images/flags/4x3/mw.svg); }
+
+.flag-icon-mw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mw.svg); }
+
+.flag-icon-mx {
+  background-image: url(../images/flags/4x3/mx.svg); }
+
+.flag-icon-mx.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mx.svg); }
+
+.flag-icon-my {
+  background-image: url(../images/flags/4x3/my.svg); }
+
+.flag-icon-my.flag-icon-squared {
+  background-image: url(../images/flags/1x1/my.svg); }
+
+.flag-icon-mz {
+  background-image: url(../images/flags/4x3/mz.svg); }
+
+.flag-icon-mz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/mz.svg); }
+
+.flag-icon-na {
+  background-image: url(../images/flags/4x3/na.svg); }
+
+.flag-icon-na.flag-icon-squared {
+  background-image: url(../images/flags/1x1/na.svg); }
+
+.flag-icon-nc {
+  background-image: url(../images/flags/4x3/nc.svg); }
+
+.flag-icon-nc.flag-icon-squared {
+  background-image: url(../images/flags/1x1/nc.svg); }
+
+.flag-icon-ne {
+  background-image: url(../images/flags/4x3/ne.svg); }
+
+.flag-icon-ne.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ne.svg); }
+
+.flag-icon-nf {
+  background-image: url(../images/flags/4x3/nf.svg); }
+
+.flag-icon-nf.flag-icon-squared {
+  background-image: url(../images/flags/1x1/nf.svg); }
+
+.flag-icon-ng {
+  background-image: url(../images/flags/4x3/ng.svg); }
+
+.flag-icon-ng.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ng.svg); }
+
+.flag-icon-ni {
+  background-image: url(../images/flags/4x3/ni.svg); }
+
+.flag-icon-ni.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ni.svg); }
+
+.flag-icon-nl {
+  background-image: url(../images/flags/4x3/nl.svg); }
+
+.flag-icon-nl.flag-icon-squared {
+  background-image: url(../images/flags/1x1/nl.svg); }
+
+.flag-icon-no {
+  background-image: url(../images/flags/4x3/no.svg); }
+
+.flag-icon-no.flag-icon-squared {
+  background-image: url(../images/flags/1x1/no.svg); }
+
+.flag-icon-np {
+  background-image: url(../images/flags/4x3/np.svg); }
+
+.flag-icon-np.flag-icon-squared {
+  background-image: url(../images/flags/1x1/np.svg); }
+
+.flag-icon-nr {
+  background-image: url(../images/flags/4x3/nr.svg); }
+
+.flag-icon-nr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/nr.svg); }
+
+.flag-icon-nu {
+  background-image: url(../images/flags/4x3/nu.svg); }
+
+.flag-icon-nu.flag-icon-squared {
+  background-image: url(../images/flags/1x1/nu.svg); }
+
+.flag-icon-nz {
+  background-image: url(../images/flags/4x3/nz.svg); }
+
+.flag-icon-nz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/nz.svg); }
+
+.flag-icon-om {
+  background-image: url(../images/flags/4x3/om.svg); }
+
+.flag-icon-om.flag-icon-squared {
+  background-image: url(../images/flags/1x1/om.svg); }
+
+.flag-icon-pa {
+  background-image: url(../images/flags/4x3/pa.svg); }
+
+.flag-icon-pa.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pa.svg); }
+
+.flag-icon-pe {
+  background-image: url(../images/flags/4x3/pe.svg); }
+
+.flag-icon-pe.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pe.svg); }
+
+.flag-icon-pf {
+  background-image: url(../images/flags/4x3/pf.svg); }
+
+.flag-icon-pf.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pf.svg); }
+
+.flag-icon-pg {
+  background-image: url(../images/flags/4x3/pg.svg); }
+
+.flag-icon-pg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pg.svg); }
+
+.flag-icon-ph {
+  background-image: url(../images/flags/4x3/ph.svg); }
+
+.flag-icon-ph.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ph.svg); }
+
+.flag-icon-pk {
+  background-image: url(../images/flags/4x3/pk.svg); }
+
+.flag-icon-pk.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pk.svg); }
+
+.flag-icon-pl {
+  background-image: url(../images/flags/4x3/pl.svg); }
+
+.flag-icon-pl.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pl.svg); }
+
+.flag-icon-pm {
+  background-image: url(../images/flags/4x3/pm.svg); }
+
+.flag-icon-pm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pm.svg); }
+
+.flag-icon-pn {
+  background-image: url(../images/flags/4x3/pn.svg); }
+
+.flag-icon-pn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pn.svg); }
+
+.flag-icon-pr {
+  background-image: url(../images/flags/4x3/pr.svg); }
+
+.flag-icon-pr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pr.svg); }
+
+.flag-icon-ps {
+  background-image: url(../images/flags/4x3/ps.svg); }
+
+.flag-icon-ps.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ps.svg); }
+
+.flag-icon-pt {
+  background-image: url(../images/flags/4x3/pt.svg); }
+
+.flag-icon-pt.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pt.svg); }
+
+.flag-icon-pw {
+  background-image: url(../images/flags/4x3/pw.svg); }
+
+.flag-icon-pw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/pw.svg); }
+
+.flag-icon-py {
+  background-image: url(../images/flags/4x3/py.svg); }
+
+.flag-icon-py.flag-icon-squared {
+  background-image: url(../images/flags/1x1/py.svg); }
+
+.flag-icon-qa {
+  background-image: url(../images/flags/4x3/qa.svg); }
+
+.flag-icon-qa.flag-icon-squared {
+  background-image: url(../images/flags/1x1/qa.svg); }
+
+.flag-icon-re {
+  background-image: url(../images/flags/4x3/re.svg); }
+
+.flag-icon-re.flag-icon-squared {
+  background-image: url(../images/flags/1x1/re.svg); }
+
+.flag-icon-ro {
+  background-image: url(../images/flags/4x3/ro.svg); }
+
+.flag-icon-ro.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ro.svg); }
+
+.flag-icon-rs {
+  background-image: url(../images/flags/4x3/rs.svg); }
+
+.flag-icon-rs.flag-icon-squared {
+  background-image: url(../images/flags/1x1/rs.svg); }
+
+.flag-icon-ru {
+  background-image: url(../images/flags/4x3/ru.svg); }
+
+.flag-icon-ru.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ru.svg); }
+
+.flag-icon-rw {
+  background-image: url(../images/flags/4x3/rw.svg); }
+
+.flag-icon-rw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/rw.svg); }
+
+.flag-icon-sa {
+  background-image: url(../images/flags/4x3/sa.svg); }
+
+.flag-icon-sa.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sa.svg); }
+
+.flag-icon-sb {
+  background-image: url(../images/flags/4x3/sb.svg); }
+
+.flag-icon-sb.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sb.svg); }
+
+.flag-icon-sc {
+  background-image: url(../images/flags/4x3/sc.svg); }
+
+.flag-icon-sc.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sc.svg); }
+
+.flag-icon-sd {
+  background-image: url(../images/flags/4x3/sd.svg); }
+
+.flag-icon-sd.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sd.svg); }
+
+.flag-icon-se {
+  background-image: url(../images/flags/4x3/se.svg); }
+
+.flag-icon-se.flag-icon-squared {
+  background-image: url(../images/flags/1x1/se.svg); }
+
+.flag-icon-sg {
+  background-image: url(../images/flags/4x3/sg.svg); }
+
+.flag-icon-sg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sg.svg); }
+
+.flag-icon-sh {
+  background-image: url(../images/flags/4x3/sh.svg); }
+
+.flag-icon-sh.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sh.svg); }
+
+.flag-icon-si {
+  background-image: url(../images/flags/4x3/si.svg); }
+
+.flag-icon-si.flag-icon-squared {
+  background-image: url(../images/flags/1x1/si.svg); }
+
+.flag-icon-sj {
+  background-image: url(../images/flags/4x3/sj.svg); }
+
+.flag-icon-sj.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sj.svg); }
+
+.flag-icon-sk {
+  background-image: url(../images/flags/4x3/sk.svg); }
+
+.flag-icon-sk.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sk.svg); }
+
+.flag-icon-sl {
+  background-image: url(../images/flags/4x3/sl.svg); }
+
+.flag-icon-sl.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sl.svg); }
+
+.flag-icon-sm {
+  background-image: url(../images/flags/4x3/sm.svg); }
+
+.flag-icon-sm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sm.svg); }
+
+.flag-icon-sn {
+  background-image: url(../images/flags/4x3/sn.svg); }
+
+.flag-icon-sn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sn.svg); }
+
+.flag-icon-so {
+  background-image: url(../images/flags/4x3/so.svg); }
+
+.flag-icon-so.flag-icon-squared {
+  background-image: url(../images/flags/1x1/so.svg); }
+
+.flag-icon-sr {
+  background-image: url(../images/flags/4x3/sr.svg); }
+
+.flag-icon-sr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sr.svg); }
+
+.flag-icon-ss {
+  background-image: url(../images/flags/4x3/ss.svg); }
+
+.flag-icon-ss.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ss.svg); }
+
+.flag-icon-st {
+  background-image: url(../images/flags/4x3/st.svg); }
+
+.flag-icon-st.flag-icon-squared {
+  background-image: url(../images/flags/1x1/st.svg); }
+
+.flag-icon-sv {
+  background-image: url(../images/flags/4x3/sv.svg); }
+
+.flag-icon-sv.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sv.svg); }
+
+.flag-icon-sx {
+  background-image: url(../images/flags/4x3/sx.svg); }
+
+.flag-icon-sx.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sx.svg); }
+
+.flag-icon-sy {
+  background-image: url(../images/flags/4x3/sy.svg); }
+
+.flag-icon-sy.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sy.svg); }
+
+.flag-icon-sz {
+  background-image: url(../images/flags/4x3/sz.svg); }
+
+.flag-icon-sz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/sz.svg); }
+
+.flag-icon-tc {
+  background-image: url(../images/flags/4x3/tc.svg); }
+
+.flag-icon-tc.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tc.svg); }
+
+.flag-icon-td {
+  background-image: url(../images/flags/4x3/td.svg); }
+
+.flag-icon-td.flag-icon-squared {
+  background-image: url(../images/flags/1x1/td.svg); }
+
+.flag-icon-tf {
+  background-image: url(../images/flags/4x3/tf.svg); }
+
+.flag-icon-tf.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tf.svg); }
+
+.flag-icon-tg {
+  background-image: url(../images/flags/4x3/tg.svg); }
+
+.flag-icon-tg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tg.svg); }
+
+.flag-icon-th {
+  background-image: url(../images/flags/4x3/th.svg); }
+
+.flag-icon-th.flag-icon-squared {
+  background-image: url(../images/flags/1x1/th.svg); }
+
+.flag-icon-tj {
+  background-image: url(../images/flags/4x3/tj.svg); }
+
+.flag-icon-tj.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tj.svg); }
+
+.flag-icon-tk {
+  background-image: url(../images/flags/4x3/tk.svg); }
+
+.flag-icon-tk.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tk.svg); }
+
+.flag-icon-tl {
+  background-image: url(../images/flags/4x3/tl.svg); }
+
+.flag-icon-tl.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tl.svg); }
+
+.flag-icon-tm {
+  background-image: url(../images/flags/4x3/tm.svg); }
+
+.flag-icon-tm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tm.svg); }
+
+.flag-icon-tn {
+  background-image: url(../images/flags/4x3/tn.svg); }
+
+.flag-icon-tn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tn.svg); }
+
+.flag-icon-to {
+  background-image: url(../images/flags/4x3/to.svg); }
+
+.flag-icon-to.flag-icon-squared {
+  background-image: url(../images/flags/1x1/to.svg); }
+
+.flag-icon-tr {
+  background-image: url(../images/flags/4x3/tr.svg); }
+
+.flag-icon-tr.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tr.svg); }
+
+.flag-icon-tt {
+  background-image: url(../images/flags/4x3/tt.svg); }
+
+.flag-icon-tt.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tt.svg); }
+
+.flag-icon-tv {
+  background-image: url(../images/flags/4x3/tv.svg); }
+
+.flag-icon-tv.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tv.svg); }
+
+.flag-icon-tw {
+  background-image: url(../images/flags/4x3/tw.svg); }
+
+.flag-icon-tw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tw.svg); }
+
+.flag-icon-tz {
+  background-image: url(../images/flags/4x3/tz.svg); }
+
+.flag-icon-tz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/tz.svg); }
+
+.flag-icon-ua {
+  background-image: url(../images/flags/4x3/ua.svg); }
+
+.flag-icon-ua.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ua.svg); }
+
+.flag-icon-ug {
+  background-image: url(../images/flags/4x3/ug.svg); }
+
+.flag-icon-ug.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ug.svg); }
+
+.flag-icon-um {
+  background-image: url(../images/flags/4x3/um.svg); }
+
+.flag-icon-um.flag-icon-squared {
+  background-image: url(../images/flags/1x1/um.svg); }
+
+.flag-icon-us {
+  background-image: url(../images/flags/4x3/us.svg); }
+
+.flag-icon-us.flag-icon-squared {
+  background-image: url(../images/flags/1x1/us.svg); }
+
+.flag-icon-uy {
+  background-image: url(../images/flags/4x3/uy.svg); }
+
+.flag-icon-uy.flag-icon-squared {
+  background-image: url(../images/flags/1x1/uy.svg); }
+
+.flag-icon-uz {
+  background-image: url(../images/flags/4x3/uz.svg); }
+
+.flag-icon-uz.flag-icon-squared {
+  background-image: url(../images/flags/1x1/uz.svg); }
+
+.flag-icon-va {
+  background-image: url(../images/flags/4x3/va.svg); }
+
+.flag-icon-va.flag-icon-squared {
+  background-image: url(../images/flags/1x1/va.svg); }
+
+.flag-icon-vc {
+  background-image: url(../images/flags/4x3/vc.svg); }
+
+.flag-icon-vc.flag-icon-squared {
+  background-image: url(../images/flags/1x1/vc.svg); }
+
+.flag-icon-ve {
+  background-image: url(../images/flags/4x3/ve.svg); }
+
+.flag-icon-ve.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ve.svg); }
+
+.flag-icon-vg {
+  background-image: url(../images/flags/4x3/vg.svg); }
+
+.flag-icon-vg.flag-icon-squared {
+  background-image: url(../images/flags/1x1/vg.svg); }
+
+.flag-icon-vi {
+  background-image: url(../images/flags/4x3/vi.svg); }
+
+.flag-icon-vi.flag-icon-squared {
+  background-image: url(../images/flags/1x1/vi.svg); }
+
+.flag-icon-vn {
+  background-image: url(../images/flags/4x3/vn.svg); }
+
+.flag-icon-vn.flag-icon-squared {
+  background-image: url(../images/flags/1x1/vn.svg); }
+
+.flag-icon-vu {
+  background-image: url(../images/flags/4x3/vu.svg); }
+
+.flag-icon-vu.flag-icon-squared {
+  background-image: url(../images/flags/1x1/vu.svg); }
+
+.flag-icon-wf {
+  background-image: url(../images/flags/4x3/wf.svg); }
+
+.flag-icon-wf.flag-icon-squared {
+  background-image: url(../images/flags/1x1/wf.svg); }
+
+.flag-icon-ws {
+  background-image: url(../images/flags/4x3/ws.svg); }
+
+.flag-icon-ws.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ws.svg); }
+
+.flag-icon-ye {
+  background-image: url(../images/flags/4x3/ye.svg); }
+
+.flag-icon-ye.flag-icon-squared {
+  background-image: url(../images/flags/1x1/ye.svg); }
+
+.flag-icon-yt {
+  background-image: url(../images/flags/4x3/yt.svg); }
+
+.flag-icon-yt.flag-icon-squared {
+  background-image: url(../images/flags/1x1/yt.svg); }
+
+.flag-icon-za {
+  background-image: url(../images/flags/4x3/za.svg); }
+
+.flag-icon-za.flag-icon-squared {
+  background-image: url(../images/flags/1x1/za.svg); }
+
+.flag-icon-zm {
+  background-image: url(../images/flags/4x3/zm.svg); }
+
+.flag-icon-zm.flag-icon-squared {
+  background-image: url(../images/flags/1x1/zm.svg); }
+
+.flag-icon-zw {
+  background-image: url(../images/flags/4x3/zw.svg); }
+
+.flag-icon-zw.flag-icon-squared {
+  background-image: url(../images/flags/1x1/zw.svg); }
+
+.flag-icon-es-ct {
+  background-image: url(../images/flags/4x3/es-ct.svg); }
+
+.flag-icon-es-ct.flag-icon-squared {
+  background-image: url(../images/flags/1x1/es-ct.svg); }
+
+.flag-icon-eu {
+  background-image: url(../images/flags/4x3/eu.svg); }
+
+.flag-icon-eu.flag-icon-squared {
+  background-image: url(../images/flags/1x1/eu.svg); }
+
+.flag-icon-gb-eng {
+  background-image: url(../images/flags/4x3/gb-eng.svg); }
+
+.flag-icon-gb-eng.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gb-eng.svg); }
+
+.flag-icon-gb-nir {
+  background-image: url(../images/flags/4x3/gb-nir.svg); }
+
+.flag-icon-gb-nir.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gb-nir.svg); }
+
+.flag-icon-gb-sct {
+  background-image: url(../images/flags/4x3/gb-sct.svg); }
+
+.flag-icon-gb-sct.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gb-sct.svg); }
+
+.flag-icon-gb-wls {
+  background-image: url(../images/flags/4x3/gb-wls.svg); }
+
+.flag-icon-gb-wls.flag-icon-squared {
+  background-image: url(../images/flags/1x1/gb-wls.svg); }
+
+.flag-icon-un {
+  background-image: url(../images/flags/4x3/un.svg); }
+
+.flag-icon-un.flag-icon-squared {
+  background-image: url(../images/flags/1x1/un.svg); }
+
+@font-face {
+  font-family: "military-rank-icons";
+  src: url("../fonts/ranks/military-rank-icons.eot");
+  src: url("../fonts/ranks/military-rank-icons.eot?#iefix") format("embedded-opentype"), url("../fonts/ranks/military-rank-icons.woff") format("woff"), url("../fonts/ranks/military-rank-icons.ttf") format("truetype"), url("../fonts/ranks/military-rank-icons.svg#military-rank-icons") format("svg");
+  font-weight: normal;
+  font-style: normal; }
+
+[data-rank]:before {
+  font-family: "military-rank-icons" !important;
+  content: attr(data-rank);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+[class^="rank-"]:before,
+[class*=" rank-"]:before {
+  font-family: "military-rank-icons" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale; }
+
+/* makes the font 33% larger relative to the icon container */
+.rank-lg {
+  font-size: 1.3333333333333333em;
+  line-height: 0.75em;
+  vertical-align: -15%; }
+
+.rank-2x {
+  font-size: 2em; }
+
+.rank-3x {
+  font-size: 3em; }
+
+.rank-4x {
+  font-size: 4em; }
+
+.rank-5x {
+  font-size: 5em; }
+
+.rank-6x {
+  font-size: 6em; }
+
+.rank-7x {
+  font-size: 7em; }
+
+.rank-8x {
+  font-size: 8em; }
+
+.rank-9x {
+  font-size: 9em; }
+
+.rank-10x {
+  font-size: 10em; }
+
+.rank-11x {
+  font-size: 11em; }
+
+.rank-12x {
+  font-size: 12em; }
+
+.rank-13x {
+  font-size: 13em; }
+
+.rank-14x {
+  font-size: 14em; }
+
+.rank-fw {
+  width: 1.2857142857142858em;
   text-align: center; }
 
-.badge-0 {
-  color: #0e0e0e; }
+.rank-ul {
+  padding-left: 0;
+  margin-left: 2.142857142857143em;
+  list-style-type: none; }
 
-.badge-1 {
-  color: #131313; }
+.rank-ul > li {
+  position: relative; }
 
-.badge-2 {
-  color: #1f1f1f; }
+.rank-li {
+  position: absolute;
+  left: -2.142857142857143em;
+  width: 2.142857142857143em;
+  top: 0.14285714285714285em;
+  text-align: center; }
 
-.badge-3 {
-  color: #313131; }
+.rank-li.rank-lg {
+  left: -1.8571428571428572em; }
 
-.badge-4 {
-  color: #580067; }
+.rank-border {
+  padding: .2em .25em .15em;
+  border: solid 0.08em #222222;
+  border-radius: .1em; }
 
-.badge-5 {
-  color: #920000; }
+.pull-right {
+  float: right; }
 
-.badge-6 {
-  color: #d40056; }
+.pull-left {
+  float: left; }
 
-.badge-7 {
-  color: #de005a; }
+.rank-pull-left {
+  margin-right: .3em; }
 
-.badge-8 {
-  color: #ff8f00; }
+.rank-pull-right {
+  margin-left: .3em; }
 
-.username {
-  color: #ffffff;
-  font-weight: bold; }
+.rank-spin {
+  -webkit-animation: spin 2s infinite linear;
+  -moz-animation: spin 2s infinite linear;
+  -o-animation: spin 2s infinite linear;
+  animation: spin 2s infinite linear; }
 
-h3.game-intro > span:first-child:after {
-  content: " vs ";
-  font-size: 43px;
-  font-weight: bold;
-  font-style: italic;
-  padding: 15px; }
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg); }
+  100% {
+    -moz-transform: rotate(359deg); } }
 
-h3.game-intro {
-  margin-top: 0;
-  padding: 15px 0;
-  font-size: 25px; }
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(359deg); } }
 
-.recent-games {
-  margin-bottom: 15px; }
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg); }
+  100% {
+    -o-transform: rotate(359deg); } }
 
-.recent-games .profile-listing, .recent-games .profile-detail {
-  padding: 20px; }
+@-ms-keyframes spin {
+  0% {
+    -ms-transform: rotate(0deg); }
+  100% {
+    -ms-transform: rotate(359deg); } }
 
-.recent-games h3.game-intro {
-  font-size: 15px;
-  padding: 5px 0;
-  text-align: center;
-  height: 100px; }
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
 
-.recent-games h3.game-intro > span:first-child:after {
-  font-size: 25px;
-  padding: 5px;
-  display: block;
-  width: 100%;
-  margin-left: -5px; }
+.rank-rotate-90 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  transform: rotate(90deg); }
 
-.recent-games .feature-map {
-  margin-bottom: 15px;
-  margin-top: 0;
-  height: 150px; }
+.rank-rotate-180 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2);
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  transform: rotate(180deg); }
 
-.recent-games .feature-map img {
-  max-width: 100%;
-  height: 120px; }
+.rank-rotate-270 {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+  -webkit-transform: rotate(270deg);
+  -moz-transform: rotate(270deg);
+  -ms-transform: rotate(270deg);
+  -o-transform: rotate(270deg);
+  transform: rotate(270deg); }
 
-.recent-games .points {
-  font-size: 15px; }
+.rank-flip-horizontal {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=0, mirror=1);
+  -webkit-transform: scale(-1, 1);
+  -moz-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  transform: scale(-1, 1); }
 
-.game-profile {
+.rank-flip-vertical {
+  filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=2, mirror=1);
+  -webkit-transform: scale(1, -1);
+  -moz-transform: scale(1, -1);
+  -ms-transform: scale(1, -1);
+  -o-transform: scale(1, -1);
+  transform: scale(1, -1); }
+
+.rank-stack {
   position: relative;
-  background: #0a0a0a;
-  padding: 20px;
-  margin: 0 auto;
-  border-bottom: 5px solid #101010;
-  border-radius: 5px; }
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  line-height: 2em;
+  vertical-align: middle; }
 
-.feature-map img {
-  max-width: 80%;
-  margin: 0 auto;
-  margin-bottom: 20px;
-  margin-top: 20px; }
+.rank-stack-1x,
+.rank-stack-2x {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center; }
+
+.rank-stack-1x {
+  line-height: inherit; }
+
+.rank-stack-2x {
+  font-size: 2em; }
+
+.rank-inverse {
+  color: #ffffff; }
+
+.rank-inverse-warrant {
+  background-color: #222222;
+  color: #FFF; }
+
+.rank-03-e2:before {
+  content: "a"; }
+
+.rank-03-e3:before {
+  content: "b"; }
+
+.rank-03-e4-1:before {
+  content: "c"; }
+
+.rank-03-e4-2:before {
+  content: "d"; }
+
+.rank-03-e5:before {
+  content: "e"; }
+
+.rank-03-e6:before {
+  content: "f"; }
+
+.rank-03-e7:before {
+  content: "g"; }
+
+.rank-03-e8-1:before {
+  content: "h"; }
+
+.rank-03-e8-2:before {
+  content: "i"; }
+
+.rank-03-e9-1:before {
+  content: "j"; }
+
+.rank-03-e9-2:before {
+  content: "k"; }
+
+.rank-03-e9-3:before {
+  content: "l"; }
+
+.rank-04-e2:before {
+  content: "m"; }
+
+.rank-04-e3:before {
+  content: "n"; }
+
+.rank-04-e4:before {
+  content: "o"; }
+
+.rank-04-e5:before {
+  content: "p"; }
+
+.rank-04-e6:before {
+  content: "q"; }
+
+.rank-04-e7:before {
+  content: "r"; }
+
+.rank-04-e8:before {
+  content: "s"; }
+
+.rank-04-e9-1:before {
+  content: "t"; }
+
+.rank-04-e9-2:before {
+  content: "u"; }
+
+.rank-04-e9-3:before {
+  content: "v"; }
+
+.rank-04-e9-4:before {
+  content: "w"; }
+
+.rank-02-02-e2:before {
+  content: "x"; }
+
+.rank-02-02-e3:before {
+  content: "y"; }
+
+.rank-02-02-e4:before {
+  content: "z"; }
+
+.rank-02-02-e5:before {
+  content: "A"; }
+
+.rank-02-02-e6:before {
+  content: "B"; }
+
+.rank-02-02-e7:before {
+  content: "C"; }
+
+.rank-02-02-e9:before {
+  content: "D"; }
+
+.rank-02-02-e9-1:before {
+  content: "E"; }
+
+.rank-02-00-e2:before {
+  content: "F"; }
+
+.rank-02-00-e3:before {
+  content: "G"; }
+
+.rank-02-00-e4:before {
+  content: "H"; }
+
+.rank-02-00-e5:before {
+  content: "I"; }
+
+.rank-02-00-e6:before {
+  content: "J"; }
+
+.rank-02-00-e7:before {
+  content: "K"; }
+
+.rank-02-00-e8:before {
+  content: "L"; }
+
+.rank-02-00-e9-01:before {
+  content: "M"; }
+
+.rank-02-00-e9-02:before {
+  content: "N"; }
+
+.rank-02-01-e2:before {
+  content: "O"; }
+
+.rank-02-01-e3:before {
+  content: "P"; }
+
+.rank-02-01-e4:before {
+  content: "Q"; }
+
+.rank-02-01-e5:before {
+  content: "R"; }
+
+.rank-02-01-e6:before {
+  content: "S"; }
+
+.rank-02-01-e7:before {
+  content: "T"; }
+
+.rank-02-01-e8:before {
+  content: "U"; }
+
+.rank-02-01-e9:before {
+  content: "V"; }
+
+.rank-01-cw2:before {
+  content: "W"; }
+
+.rank-01-cw5:before {
+  content: "X"; }
+
+.rank-01-o1:before {
+  content: "Y"; }
+
+.rank-01-o2:before {
+  content: "Z"; }
+
+.rank-01-o3:before {
+  content: "0"; }
+
+.rank-01-o4:before {
+  content: "1"; }
+
+.rank-01-o5:before {
+  content: "2"; }
+
+.rank-01-o6:before {
+  content: "3"; }
+
+.rank-01-o7:before {
+  content: "4"; }
+
+.rank-01-o8:before {
+  content: "5"; }
+
+.rank-01-o9:before {
+  content: "6"; }
+
+.rank-01-o10:before {
+  content: "7"; }
+
+.rank-01-w1:before {
+  content: "8"; }
+
+.rank-01-e2:before {
+  content: "9"; }
+
+.rank-01-e3:before {
+  content: "!"; }
+
+.rank-01-e4:before {
+  content: "\""; }
+
+.rank-01-e5:before {
+  content: "#"; }
+
+.rank-01-e6:before {
+  content: "$"; }
+
+.rank-01-e7:before {
+  content: "%"; }
+
+.rank-01-e8-1:before {
+  content: "&"; }
+
+.rank-01-e8-2:before {
+  content: "'"; }
+
+.rank-01-e9-1:before {
+  content: "("; }
+
+.rank-01-e9-2:before {
+  content: ")"; }
+
+.rank-01-e9-3:before {
+  content: "*"; }
 
 .hud.overlay-gb {
   background: url(../images/hud/overlay-gb.png); }
@@ -395,9 +3059,12 @@ h3.game-intro {
   /* IE6-9 fallback on horizontal gradient */
   border: 1px solid #e900f3; }
 
-/* Extra small devices (phones, less than 768px) */
-/* No media query since this is the default in Bootstrap */
-/* Small devices (tablets, 768px and up) */
+.country {
+  position: absolute;
+  right: 30px;
+  bottom: 25px;
+  font-size: 45px; }
+
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 992px) {
   .faction {
@@ -414,9 +3081,305 @@ h3.game-intro {
   .faction-germany {
     background-size: 100%; } }
 
-/* Large devices (large desktops, 1200px and up) */
-.country {
+.btn-transparent {
+  color: white;
+  text-transform: uppercase;
+  font-size: 15px; }
+
+.btn-transparent i {
+  margin-left: -20px; }
+
+h1 small {
+  display: block;
+  font-size: 19px;
+  text-transform: uppercase;
+  font-weight: 300; }
+
+.profile {
+  background: #131313;
+  padding: 20px;
+  margin: 0 auto;
+  border-bottom: 5px solid #00ce00;
+  border-radius: 5px; }
+
+.date {
+  text-transform: uppercase;
+  font-size: 14px;
+  color: #2d2d2d;
+  font-weight: bold; }
+
+.rank {
+  padding-bottom: 15px; }
+
+.rank-title {
+  text-transform: uppercase;
+  font-weight: 600; }
+
+.rank-title.gold {
+  color: #ffb300; }
+
+.rank-title.silver {
+  color: silver; }
+
+.rank-title.bronze {
+  color: brown; }
+
+.rank-title.normal {
+  color: #505050; }
+
+.table-hover > tbody > tr {
+  transition: all 0.3s; }
+
+.table-hover > tbody > tr:hover {
+  background-color: #0e0e0e; }
+
+.table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td {
+  border-top: 1px solid #252525; }
+
+.badge-winpercent {
+  background-color: #00a300; }
+
+.panel.panel-default {
+  background: #000; }
+
+.panel-default > .panel-heading {
+  background-color: #000000;
+  padding: 15px;
+  color: white;
+  font-weight: 500;
+  font-size: 18px; }
+
+input.form-control {
+  color: #232323; }
+
+.game-detail {
+  margin-top: -50px;
+  position: relative;
+  z-index: 1; }
+
+.game-detail .game-details {
+  width: 500px;
+  max-width: 100%;
+  margin: 0 auto; }
+
+.game-list {
+  z-index: 0;
+  padding-top: 50px;
+  padding-bottom: 50px; }
+
+.points {
+  color: #24f900; }
+
+h3.game-intro > span:first-child:after {
+  content: " vs ";
+  font-size: 43px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 15px; }
+
+h3.game-intro {
+  margin-top: 0;
+  padding: 15px 0;
+  font-size: 25px; }
+
+.recent-games {
+  margin-bottom: 15px; }
+
+.recent-games .profile-listing {
+  padding: 20px; }
+
+.recent-games h3.game-intro {
+  font-size: 15px;
+  padding: 5px 0;
+  text-align: center;
+  height: 100px; }
+
+.recent-games h3.game-intro > span:first-child:after {
+  font-size: 25px;
+  padding: 5px;
+  display: block;
+  width: 100%;
+  margin-left: -5px; }
+
+.recent-games .feature-map {
+  margin-bottom: 15px;
+  margin-top: 0;
+  height: 150px; }
+
+.recent-games .feature-map img {
+  max-width: 100%;
+  height: 120px; }
+
+.recent-games .points {
+  font-size: 15px; }
+
+.game-profile {
+  position: relative;
+  background: #0a0a0a;
+  padding: 20px;
+  margin: 0 auto;
+  border-bottom: 5px solid #101010;
+  border-radius: 5px; }
+
+.feature-map img {
+  max-width: 80%;
+  margin: 0 auto;
+  margin-bottom: 20px;
+  margin-top: 20px; }
+
+footer a:hover, .btn:hover, a {
+  color: #007dff;
+  border-color: #007dff; }
+
+.ladder-cover {
+  position: relative;
+  height: 300px;
+  background-repeat: no-repeat;
+  background-position: 80%;
+  width: 100%;
+  display: table;
+  border-radius: 4px;
+  border: 1px solid transparent; }
+
+.badge-cover {
   position: absolute;
-  right: 30px;
-  bottom: 25px;
-  font-size: 45px; }
+  right: 15px;
+  bottom: 15px; }
+
+.ladder-cover .details {
+  vertical-align: middle;
+  display: table-cell;
+  text-align: right;
+  width: 100%;
+  color: #fff; }
+
+.ladder-cover .type {
+  width: 50%;
+  margin-left: auto;
+  text-align: center; }
+
+.ladder-cover .type .lead {
+  font-size: 47px;
+  color: #fff;
+  font-family: Roboto;
+  line-height: 1.0; }
+
+.ladder-link {
+  display: block;
+  text-decoration: none;
+  color: #fff; }
+  .ladder-link:hover, .ladder-link:focus {
+    color: #fff;
+    text-decoration: none; }
+
+.feature-component .feature-background:after {
+  height: 400px;
+  background: linear-gradient(to bottom, rgba(0, 95, 246, 0) 0%, rgba(0, 110, 246, 0.03) 14%, rgba(0, 72, 246, 0.09) 32%, rgba(0, 121, 246, 0.31) 60%, #004993 110%); }
+
+.feature-component p {
+  font-size: 22px;
+  line-height: 1.0;
+  font-weight: 100; }
+
+.feature-component .feature-background:before {
+  height: 300px; }
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+  .feature-component .feature-background.sub-feature-background {
+    padding-top: 105px;
+    padding-bottom: 100px; } }
+
+.navigation-component .status-text {
+  color: #007dff !important; }
+
+.navigation-component .nav-title,
+.navigation-component .online {
+  color: #007dff; }
+
+.game-box-link:hover {
+  text-decoration: none; }
+
+.game-box {
+  border-radius: 5px;
+  border: 2px solid transparent; }
+
+.game-box .preview {
+  position: relative;
+  height: 180px;
+  background-repeat: no-repeat;
+  border-radius: 5px 5px 0 0;
+  transition: all 4s;
+  transition-delay: 0.1s; }
+
+.game-box .preview:hover {
+  background-position: 50% 100%; }
+
+.game-box .preview .status {
+  position: absolute;
+  background: #000;
+  top: 10px;
+  right: 10px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: table;
+  text-align: center;
+  text-decoration: none;
+  font-size: 20px; }
+
+.game-box .preview .status:before {
+  font-family: FontAwesome;
+  display: table-cell;
+  vertical-align: middle; }
+
+.game-box .preview .status-lost:before {
+  content: "\f185";
+  color: #03bcd4; }
+
+.game-box .preview .status-won:before {
+  content: "\f091";
+  color: #00ec00; }
+
+.game-box .preview .status-live:before {
+  content: "\f1e8";
+  color: #00ec00; }
+
+.game-box .preview .status-progress:before {
+  content: "\f1e8";
+  color: #636363; }
+
+.game-box .details {
+  padding: 15px;
+  background: #000 url(/images/textures/pattern-repeat.png); }
+
+.game-box .details .title,
+.game-box .details .status {
+  font-weight: 600;
+  margin-bottom: 0; }
+
+.game-box .details .status {
+  font-size: 12px;
+  color: #797979; }
+
+.game-box .details .status.online {
+  color: #00ec00; }
+
+.game-box .footer {
+  background: #000;
+  padding: 10px;
+  border-radius: 0 0 5px 5px; }
+
+.game-box .footer .won .points {
+  font-weight: 600; }
+
+.game-box .footer .lost .points {
+  color: #03bcd4;
+  font-weight: 600; }
+
+.game-box .footer .vs {
+  margin: 0;
+  font-size: 21px;
+  color: #fff;
+  font-weight: 600;
+  font-style: italic; }

@@ -27,8 +27,11 @@ class LadderService
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        return \App\LadderHistory::where("starts", "=", $start)
-            ->where("ends", "=", $end)->get();
+        return \App\LadderHistory::leftJoin("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+            ->where("ladder_history.starts", "=", $start)
+            ->where("ladder_history.ends", "=", $end)
+            ->whereNotNull("ladder.id")
+            ->get();
     }
 
     public function getActiveLadderByDate($date, $cncnetGame = null)

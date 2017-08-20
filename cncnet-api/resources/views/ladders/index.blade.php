@@ -2,7 +2,7 @@
 @section('title', 'Ladder')
 
 @section('cover')
-/images/feature/feature-td.jpg
+/images/feature/feature-index.jpg
 @endsection
 
 @section('feature')
@@ -11,10 +11,10 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2">
                 <h1>
-                    CnCNet Ladders
+                    CnCNet <strong>Ladders</strong>
                 </h1>
-                <p class="text-uppercase">
-                   Play. Compete. <strong>Conquer.</strong>
+                <p>
+                   Play, Compete, <strong>Conquer!</strong>
                 </p>
             </div>
         </div>
@@ -27,27 +27,75 @@
     <div class="container">
         <div class="feature">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="text-center" style="padding-bottom: 40px;">
-                        <h1>Ready to face the competition?</h1>
-                        <p class="lead">Find the latest competitive ladders below.</p>
-                    </div>
-
-                    @foreach($ladders as $history)
-                    <div class="col-md-4">
-                        <div class="box">
-                            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="game-cover game-{{ $history->ladder->abbreviation }}">
-                                <span class="image"></span>
-                                <span class="sr-only">{{ $history->ladder->name }}</span>
-                            </a>
-                            <div class="description">
-                                <h3>{{ $history->ladder->name }} </h3>
-                                <a class="btn btn-tertiary btn-md" href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/">Go to Ladder</a>
+                @foreach($ladders as $history)
+                <div class="col-md-6">
+                    <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
+                        <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
+                            <div class="details">
+                                <div class="type">
+                                    <h1>{{ $history->ladder->name }}</h1>
+                                    <p class="lead">1<strong>vs</strong>1</p>
+                                </div>
+                            </div>
+                            <div class="badge-cover">
+                                <ul class="list-inline">
+                                    <li>
+                                        <small>{{ Carbon\Carbon::parse($history->starts)->format('F Y') }} Competition</small>
+                                    </li>
+                                    <li>
+                                        <img src="/images/ladder/badge-cover.png" alt="badge" />
+                                    </li>
+                                </ul>
                             </div>
                         </div>
+                    </a>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+<section class="light-texture game-detail supported-games">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Games in progress</h3>
+                <div class="row">
+                    <div class="col-md-3">
+                        @include("components/game-box", ["status" => "won"])
                     </div>
-                    @endforeach
-                    
+                    <div class="col-md-3">
+                        @include("components/game-box", ["status" => "lost"])
+                    </div>
+                    <div class="col-md-3">
+                        @include("components/game-box", ["status" => "live"])
+                    </div>
+                    <div class="col-md-3">
+                        @include("components/game-box", ["status" => "progress"])
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="light-texture game-detail supported-games">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Recently played</h3>
+                <div class="row">
+                    <div class="col-md-3">
+                        @include("components/game-box", ["status" => "won"])
+                    </div>
+                    <div class="col-md-3">
+                        @include("components/game-box", ["status" => "lost"])
+                    </div>
+                    <div class="col-md-3">
+                        @include("components/game-box", ["status" => "live"])
+                    </div>
+                    <div class="col-md-3">
+                        @include("components/game-box", ["status" => "progress"])
+                    </div>
                 </div>
             </div>
         </div>

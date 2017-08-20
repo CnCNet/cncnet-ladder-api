@@ -1,4 +1,4 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Roboto:100,300,400,700");
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)
@@ -1381,7 +1381,7 @@ dd {
 .dl-horizontal dd:after {
   clear: both; }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .dl-horizontal dt {
     float: left;
     width: 160px;
@@ -3269,7 +3269,7 @@ tbody.collapse.in {
   bottom: 100%;
   margin-bottom: 2px; }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .navbar-right .dropdown-menu {
     right: 0;
     left: auto; }
@@ -3678,7 +3678,7 @@ tbody.collapse.in {
     display: table; }
   .navbar:after {
     clear: both; }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar {
       border-radius: 4px; } }
 
@@ -3689,7 +3689,7 @@ tbody.collapse.in {
 .navbar-header:after {
   clear: both; }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .navbar-header {
     float: left; } }
 
@@ -3707,7 +3707,7 @@ tbody.collapse.in {
     clear: both; }
   .navbar-collapse.in {
     overflow-y: auto; }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar-collapse {
       width: auto;
       border-top: 0;
@@ -3739,7 +3739,7 @@ tbody.collapse.in {
 .container-fluid > .navbar-collapse {
   margin-right: -15px;
   margin-left: -15px; }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .container > .navbar-header,
     .container > .navbar-collapse,
     .container-fluid > .navbar-header,
@@ -3750,7 +3750,7 @@ tbody.collapse.in {
 .navbar-static-top {
   z-index: 1000;
   border-width: 0 0 1px; }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar-static-top {
       border-radius: 0; } }
 
@@ -3760,7 +3760,7 @@ tbody.collapse.in {
   right: 0;
   left: 0;
   z-index: 1030; }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar-fixed-top,
     .navbar-fixed-bottom {
       border-radius: 0; } }
@@ -3784,7 +3784,7 @@ tbody.collapse.in {
     text-decoration: none; }
   .navbar-brand > img {
     display: block; }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar > .container .navbar-brand,
     .navbar > .container-fluid .navbar-brand {
       margin-left: -15px; } }
@@ -3809,7 +3809,7 @@ tbody.collapse.in {
     border-radius: 1px; }
   .navbar-toggle .icon-bar + .icon-bar {
     margin-top: 4px; }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar-toggle {
       display: none; } }
 
@@ -3819,7 +3819,7 @@ tbody.collapse.in {
     padding-top: 10px;
     padding-bottom: 10px;
     line-height: 22px; }
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     .navbar-nav .open .dropdown-menu {
       position: static;
       float: none;
@@ -3835,7 +3835,7 @@ tbody.collapse.in {
         line-height: 22px; }
         .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-nav .open .dropdown-menu > li > a:focus {
           background-image: none; } }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar-nav {
       float: left;
       margin: 0; }
@@ -3893,12 +3893,12 @@ tbody.collapse.in {
       margin-left: 0; }
     .navbar-form .has-feedback .form-control-feedback {
       top: 0; } }
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     .navbar-form .form-group {
       margin-bottom: 5px; }
       .navbar-form .form-group:last-child {
         margin-bottom: 0; } }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar-form {
       width: auto;
       border: 0;
@@ -3934,13 +3934,13 @@ tbody.collapse.in {
 .navbar-text {
   margin-top: 14px;
   margin-bottom: 14px; }
-  @media (min-width: 768px) {
+  @media (min-width: 1024px) {
     .navbar-text {
       float: left;
       margin-left: 15px;
       margin-right: 15px; } }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .navbar-left {
     float: left !important; }
   .navbar-right {
@@ -3982,7 +3982,7 @@ tbody.collapse.in {
   .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
     background-color: black;
     color: #fff; }
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
       color: #ccc; }
       .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
@@ -4040,7 +4040,7 @@ tbody.collapse.in {
   .navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
     background-color: #090909;
     color: #fff; }
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     .navbar-inverse .navbar-nav .open .dropdown-menu > .dropdown-header {
       border-color: #090909; }
     .navbar-inverse .navbar-nav .open .dropdown-menu .divider {
@@ -4078,7 +4078,7 @@ tbody.collapse.in {
   .breadcrumb > li {
     display: inline-block; }
     .breadcrumb > li + li:before {
-      content: "/ ";
+      content: "/ ";
       padding: 0 5px;
       color: #ccc; }
   .breadcrumb > .active {
@@ -6030,7 +6030,7 @@ footer .partners img {
 .navigation-component .navbar-default .navbar-toggle {
   border-color: transparent; }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .navigation-component {
     background: transparent; } }
 
@@ -6055,6 +6055,43 @@ footer .partners img {
   padding-bottom: 5px;
   color: #f68b00; }
 
+body {
+  width: 100%;
+  height: 100%; }
+
+.slideout-menu {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 256px;
+  min-height: 100vh;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  z-index: 0;
+  display: none; }
+
+.slideout-menu-left {
+  left: 0; }
+
+.slideout-menu-right {
+  right: 0; }
+
+.slideout-panel {
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+  background-color: #FFF;
+  /* A background-color is required */
+  min-height: 100vh; }
+
+.slideout-open,
+.slideout-open body,
+.slideout-open .slideout-panel {
+  overflow: hidden; }
+
+.slideout-open .slideout-menu {
+  display: block; }
+
 @media screen and (min-width: 768px) {
   .feature-component h1 {
     font-size: 58px;
@@ -6068,6 +6105,14 @@ footer .partners img {
   position: relative;
   background-image: url(../images/feature/feature-yuri.png);
   background-position: bottom center; }
+  .feature-component:before {
+    content: "";
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    top: 0;
+    background: linear-gradient(to top, rgba(246, 139, 0, 0) 0%, rgba(0, 0, 0, 0.03) 14%, rgba(0, 0, 0, 0.09) 32%, rgba(0, 0, 0, 0.31) 60%, rgba(11, 11, 11, 0.8) 110%);
+    animation: fadein 2s; }
 
 .feature-component .container {
   max-width: 100%;
@@ -6577,6 +6622,9 @@ footer .partners img {
   padding-bottom: 20px;
   max-width: 100%; }
 
+.logo {
+  max-width: 100%; }
+
 .feature-logo img {
   max-width: 100%; }
 
@@ -6618,6 +6666,110 @@ footer .partners img {
 
 .game-detail strong.status-cncnet.online .number {
   color: #3a3a3a; }
+
+.live-status .badge {
+  background-color: #ff0000; }
+
+.twitch .badge {
+  background: green;
+  line-height: 1.5;
+  position: relative;
+  bottom: 3px; }
+
+.twitch .bio {
+  padding: 0 20px; }
+
+.twitch .bio > .profile {
+  padding: 15px 15px 0; }
+
+.twitch .bio > ul {
+  padding: 15px; }
+
+.twitch .chat {
+  background: black;
+  padding: 20px;
+  margin-top: -5px;
+  border-radius: 0px 0 5px 5px;
+  margin: -10px auto;
+  text-align: center; }
+
+.twitch .badge {
+  background: green;
+  line-height: 1.5;
+  position: relative;
+  bottom: 3px; }
+
+.twitch .badge-right {
+  background: #e60000;
+  float: right; }
+
+.twitch iframe {
+  max-width: 100%;
+  border: none; }
+
+.twitch .bio {
+  display: block;
+  line-height: 1.42857;
+  background-color: #0c0c0c;
+  border: 1px solid #0c0c0c;
+  border-radius: 4px;
+  -webkit-transition: all 0.2s ease-in-out;
+  -o-transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
+  padding: 0 20px; }
+
+.twitch .bio > .profile {
+  padding: 15px 15px 0; }
+
+.twitch .bio > ul {
+  padding: 15px; }
+
+.ember-chat .chat-header {
+  box-shadow: inset 0 -1px 0 0 #000000;
+  background-color: #000000; }
+
+.videos-latest .link {
+  display: block;
+  width: 300px;
+  height: 100%;
+  max-width: 100%; }
+
+.videos-homepage .link {
+  margin: 0 auto; }
+
+.videos-latest .video {
+  transition: all 4s;
+  transition-delay: 0.1s; }
+
+.videos-latest .video:hover {
+  background-position: 50% 100%; }
+
+.video {
+  height: 500px;
+  background-position: 100% 0;
+  margin-bottom: 20px; }
+
+.videos-staff-picks .video {
+  height: 210px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center; }
+
+.cncnet-videos h4 {
+  line-height: 1.5;
+  font-size: 18px;
+  margin-bottom: 15px;
+  font-weight: 300;
+  color: #d6d6d6; }
+
+.cncnet-videos date {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 10px 0;
+  display: block;
+  color: #f68b04;
+  font-weight: 500; }
 
 .game-status a:before {
   content: "";

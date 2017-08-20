@@ -1,0 +1,125 @@
+﻿$lostColour: #03bcd4;
+$wonColour: #00ec00;
+
+.game-box-link:hover 
+{
+    text-decoration: none;
+}
+
+.game-box 
+{
+    border-radius: 5px;
+    border: 2px solid transparent;
+}
+
+.game-box .preview
+{
+    position: relative;
+    height: 180px;
+    background-repeat: no-repeat;
+    border-radius: 5px 5px 0 0;
+    transition: all 4s;
+    transition-delay: 0.1s;
+}
+
+.game-box .preview:hover 
+{
+    background-position: 50% 100%;
+}
+
+.game-box .preview .status 
+{
+    position: absolute;
+    background: #000;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: table;
+    text-align: center;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.game-box .preview .status:before 
+{
+    font-family: FontAwesome;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.game-box .preview .status-lost:before
+{
+    content: "\f185";
+    color: $lostColour;
+}
+
+.game-box .preview .status-won:before
+{
+    content: "\f091";
+    color: $wonColour;
+}
+
+.game-box .preview .status-live:before
+{
+    content: "\f1e8";
+    color: $wonColour;
+}
+
+.game-box .preview .status-progress:before
+{
+    content: "\f1e8";
+    color: #636363;
+}
+
+.game-box .details
+{
+    padding: 15px;
+    background: #000 url(/images/textures/pattern-repeat.png);
+}
+
+.game-box .details .title,
+.game-box .details .status
+{
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+.game-box .details .status
+{
+    font-size: 12px;
+    color: #797979;
+}
+
+.game-box .details .status.online 
+{
+    color: #00ec00;
+}
+
+.game-box .footer 
+{
+    background: #000;
+    padding: 10px;
+    border-radius: 0 0 5px 5px;
+}
+
+.game-box .footer .won .points 
+{
+    font-weight: 600;
+}
+
+.game-box .footer .lost .points 
+{
+    color: $lostColour;
+    font-weight: 600;
+}
+
+.game-box .footer .vs 
+{
+    margin: 0;
+    font-size: 21px;
+    color: #fff;
+    font-weight: 600;
+    font-style: italic;
+}

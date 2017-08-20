@@ -15,16 +15,6 @@ class LadderController extends Controller
         $this->ladderService = new LadderService();
     }
     
-    public function getBadgesIndex(Request $request)
-    {
-        return view("ladders.badges", 
-        array
-        (
-            "ladders" => $this->ladderService->getLadders(),
-            "ladder" => $this->ladderService->getLadderByGame($request->game))
-        );
-    }
-
     public function getLadders(Request $request)
     {
         return view("ladders.index", 
