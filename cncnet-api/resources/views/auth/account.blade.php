@@ -40,8 +40,8 @@
 
 <section class="cncnet-features dark-texture">
     <div class="container">
-        <div class="row">
 
+        <div class="row">
             <div class="col-md-4">
                 <h2>Add a new username?</h2>
 
@@ -73,38 +73,33 @@
                         <thead>
                             <tr>
                                 <th>Username <i class="fa fa-user-o fa-fw"></i></th>
-                               <!-- <th>Points <i class="fa fa-bolt fa-fw"></i></th>
-                                <th>Wins <i class="fa fa-level-up fa-fw"></i></th>
-                                <th>Losses <i class="fa fa-level-down fa-fw"></i></th>
-                                <th>Winning % </th>-->
                                 <th>Ladder <i class="fa fa-trophy fa-fw"></i></th>
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $cards = \App\Card::all(); ?>
                             @foreach($user->usernames()->get() as $u)
                             <tr>
                                 <td>{{ $u->username }}</td>
-                     
-                               <!-- <td>
-                                    {{ $u->points }}
-                                </td>          
-                                <td>
-                                    {{ $u->win_count }}
-                                </td>          
-                                <td>
-                                    {{ $u->loss_count }}
-                                </td>
-                                <td>
-                                @if($u->win_count > 0)  
-                                    {{ $u->win_count / ($u->win_count + $u->loss_count) * 100 }}%
-                                @else
-                                    0%
-                                @endif
-                                </td>-->
+                                <td>Player Card</td>
                                 <td>
                                 @if(isset($u->ladder()->first()->abbreviation))
                                     {{ $u->ladder()->first()->name }}
                                 @endif
+                                </td>
+                                <td>
+                                    <form method="POST" action="account/card">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" name="playerId" value="{{ $u->id }}">
+                                        <select class="form-control" name="cardId">
+                                            @foreach($cards as $card)
+                                                <option value="{{ $card->id }}" @if($card->id == $u->card_id) selected @endif>
+                                                {{ $card->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <button type="submit" class="btn btn-secondary">Save</button>
+                                    </form>
                                 </td>
                             </tr>
                             @endforeach

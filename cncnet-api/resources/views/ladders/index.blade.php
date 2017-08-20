@@ -55,6 +55,7 @@
         </div>
     </div>
 </section>
+
 <section class="light-texture game-detail supported-games">
     <div class="container">
         <div class="row">
@@ -78,6 +79,7 @@
         </div>
     </div>
 </section>
+
 <section class="light-texture game-detail supported-games">
     <div class="container">
         <div class="row">
@@ -102,4 +104,3 @@
     </div>
 </section>
 @endsection
-

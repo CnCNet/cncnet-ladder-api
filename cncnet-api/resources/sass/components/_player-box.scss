@@ -1,0 +1,107 @@
+﻿.player-box
+{
+    background: #000;
+    border-radius: 5px;
+    padding: 30px;
+}
+.player-box-link 
+{
+    display: block;
+    color: #fff;
+    margin-bottom: 25px;
+    &:hover, &:focus { text-decoration: none; }
+}
+
+.player-box .rank 
+{
+    font-weight: 100;
+    font-size: 38px;
+    margin-top: 10px;
+}
+
+.player-box .username 
+{
+    color: #fff;
+    margin-bottom: 0;
+}
+
+.player-box .points 
+{
+    font-size: 12px;
+}
+
+.player-box .player-badge 
+{
+    width: 71px;
+    height: 64px;
+    background-repeat: no-repeat;
+    margin-left: -5px;
+}
+
+.player-box .badge-500
+{
+    background: url(/images/badges/500-points.png);
+}
+.player-box .badge-1000
+{
+    background: url(/images/badges/1000-points.png);
+}
+.player-box .badge-1500
+{
+    background: url(/images/badges/1500-points.png);
+}
+.player-box .badge-2000
+{
+    background: url(/images/badges/2000-points.png);
+}
+.player-box .badge-3000
+{
+    background: url(/images/badges/3000-points.png);
+}
+
+.player-card 
+{
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top right;
+}
+
+.player-card.carville
+{
+    background-image: url(/images/cards/player-cards-yr-carville.jpg);
+}
+
+.player-card.yuri
+{
+    background-image: url(/images/cards/player-cards-yr-yuri.jpg);
+}
+
+.player-card.kane
+{
+    background-image: url(/images/cards/player-cards-ts-kane.jpg);
+}
+
+.player-card.gdi
+{
+    background-image: url(/images/cards/player-cards-ts-gdi.jpg);
+}
+
+.player-card.nod
+{
+    background-image: url(/images/cards/player-cards-ts-nod.jpg);
+}
+
+.player-card.ts-tank
+{
+    background-image: url(/images/cards/player-cards-ts-tank.jpg);
+}
+
+.player-card.ts-commander
+{
+    background-image: url(/images/cards/player-cards-ts-commander.jpg);
+}
+
+.player-card.yuri-closeup
+{
+    background-image: url(/images/cards/player-cards-yr-closeup.jpg);
+}

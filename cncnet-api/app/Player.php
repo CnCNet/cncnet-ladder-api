@@ -32,6 +32,11 @@ class Player extends Model
         return $this->belongsTo("App\Ladder");
     }
 
+    public function card()
+    {
+        return $this->belongsTo("App\Card");
+    }
+
     public function rank($history, $username)
     {
         $players = new Collection();
@@ -69,65 +74,33 @@ class Player extends Model
             ->sum("points_awarded");
     }
 
-    public function badge($rank)
+    public function badge($points)
     {
-        switch ($rank)
+        $points = ceil($points);
+
+        if ($points >= 3000)
         {
-            case $rank >= 0 && $rank <= 50:
-                return "rank-01-e2 badge-0";
-
-            case $rank > 50 && $rank <= 100:
-                return "rank-01-e3 badge-1";
-
-            case $rank > 100 && $rank <= 200:
-                return "rank-01-e4 badge-2";
-
-            case $rank > 200 && $rank <= 300:
-                return "rank-01-e5 badge-2";
-
-            case $rank > 300 && $rank <= 400:
-                return "rank-01-e6 badge-3";
-
-            case $rank > 400 && $rank <= 500:
-                return "rank-01-e7 badge-3";
-
-            case $rank > 500 && $rank <= 600:
-                return "rank-01-e8-1 badge-4";
-
-            case $rank > 600 && $rank <= 700:
-                return "rank-01-e8-2 badge-4";
-
-            case $rank > 700 && $rank <= 800:
-                return "rank-01-e9-1 badge-4";
-
-            case $rank > 800 && $rank <= 900:
-                return "rank-01-e9-2 badge-5";
-
-            case $rank > 900 && $rank <= 1000:
-                return "rank-01-e9-3 badge-5";
-
-            case $rank > 1000 && $rank <= 1100:
-                return "rank-02-00-e2 badge-6";
-
-            case $rank > 1100 && $rank <= 1200:
-                return "rank-02-00-e3 badge-6";
-
-            case $rank > 1200 && $rank <= 1300:
-                return "rank-02-00-e4 badge-7";
-
-            case $rank > 1300 && $rank <= 1400:
-                return "rank-02-00-e5 badge-7";
-
-            case $rank > 1400 && $rank <= 1500:
-                return "rank-02-00-e6 badge-7";
-
-            case $rank > 1500 && $rank <= 1600:
-                return "rank-02-00-e7 badge-7";
-
-            case $rank > 1600:
-                return "rank-02-00-e9-01 badge-8";
-
-            default: "";
+            return "badge-3000";
+        }
+        else if ($points >= 2000)
+        {
+            return "badge-2000";
+        }
+        else if ($points >= 1500)
+        {
+            return "badge-1500";
+        }
+        else if ($points >= 1000)
+        {
+            return "badge-1000";
+        }
+        else if ($points >= 500)
+        {
+            return "badge-500";
+        }
+        else
+        {
+            return "";
         }
     }
 }

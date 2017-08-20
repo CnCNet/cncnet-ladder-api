@@ -19,7 +19,6 @@ class AccountController extends Controller
     public function getAccountIndex(Request $request)
     {
         $user = \Auth::user(); 
-
         return view("auth.account", 
             array (
                 "user" => $user,
@@ -43,5 +42,17 @@ class AccountController extends Controller
              $request->session()->flash('error', 'This username has been taken');
         }
         return redirect("/account");
+    }
+
+    public function updatePlayerCard(Request $request)
+    {
+        $this->validate($request, [
+            'cardId' => 'required|string',
+            'playerId' => 'required|string'
+        ]);
+
+        $user = \Auth::user();
+        $card = \App\Card::find($request->cardId);
+        return $this->playerService->updatePlayerCard($user, $card, $request->playerId);
     }
 }

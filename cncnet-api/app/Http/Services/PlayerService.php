@@ -50,6 +50,28 @@ class PlayerService
         return $playerGame;
     }
 
+    public function updatePlayerCard($user, $card, $playerId)
+    {
+        if ($card == null)
+        {
+            $request->session()->flash('error', 'There was a problem saving your profile card');
+            return redirect("/account");
+        }
+
+        // Check the playerId belongs to us
+        foreach($user->usernames as $user)
+        {
+            if ($user->id == $playerId)
+            {
+                $player = \App\Player::find($user->id);
+                $player->card_id = $card->id;
+                $player->save();
+            }
+        }
+
+        return redirect("/account");
+    }
+
     public function findPlayerById($id)
     {
         return \App\Player::find($id);
