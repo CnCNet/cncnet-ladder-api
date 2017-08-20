@@ -17,6 +17,12 @@
                 <p>
                     CnCNet Ladders <strong>1vs1</strong>
                 </p>
+                <p>
+                    <a href="/ladder" class="previous-link">
+                        <i class="fa fa-caret-left" aria-hidden="true"></i>
+                        <i class="fa fa-caret-left" aria-hidden="true"></i>
+                    </a>
+                </p>
             </div>
         </div>
     </div>

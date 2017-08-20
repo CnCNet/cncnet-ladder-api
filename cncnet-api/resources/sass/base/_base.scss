@@ -52,6 +52,18 @@
     margin-left: -20px;
 }
 
+.previous-link 
+{
+    color: #fff;
+
+    &:hover,
+    &:focus
+    {
+        text-decoration: none;
+        color: #007dff;
+    }
+}
+
 h1 small 
 {
     display: block;

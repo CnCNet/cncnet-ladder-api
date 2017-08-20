@@ -3108,6 +3108,12 @@ footer a:hover, .btn:hover, a {
 .btn-transparent i {
   margin-left: -20px; }
 
+.previous-link {
+  color: #fff; }
+  .previous-link:hover, .previous-link:focus {
+    text-decoration: none;
+    color: #007dff; }
+
 h1 small {
   display: block;
   font-size: 19px;
