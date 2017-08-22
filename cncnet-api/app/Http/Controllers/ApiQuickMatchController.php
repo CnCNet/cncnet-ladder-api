@@ -192,7 +192,7 @@ class ApiQuickMatchController extends Controller
                     $qmMatch->save();
 
                     $qmMap = $qmMatch->map()->first();
-                  $spawn_order = explode(',', $qmMap->spawn_order);
+                    $spawn_order = explode(',', $qmMap->spawn_order);
 
                     // Set up player specific information
                     // Color will be used for spawn location
@@ -240,7 +240,7 @@ class ApiQuickMatchController extends Controller
                   ,"IsSpectator" =>    "No"
                   ,"AIPlayers" =>      0
                   ,"Name" =>           $qmPlayer->player()->first()->username
-                  ,"Port" =>           $qmPlayer->ip_port
+                  ,"Port" =>           $qmPlayer->port
                   ,"Side" =>           $qmPlayer->actual_side
                   ,"Color" =>          $qmPlayer->color
                   ,"Firestorm" =>      b_to_ini($qmMap->firestorm)
@@ -274,7 +274,7 @@ class ApiQuickMatchController extends Controller
             foreach ($allPlayers as $opn)
             {
                 $spawnStruct["spawn"]["Other{$other_idx}"] = [
-
+                    "Name" => $opn->player()->first()->username,
                     "Side" => $opn->actual_side,
                     "Color" => $opn->color,
                     "Ip" => $opn->ip_address,
@@ -283,7 +283,7 @@ class ApiQuickMatchController extends Controller
                 $multi_idx = $opn->color + 1;
                 $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
                 $other_idx++;
-           }
+            }
             return $spawnStruct;
             break;
         default:
