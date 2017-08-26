@@ -3120,13 +3120,6 @@ h1 small {
   text-transform: uppercase;
   font-weight: 300; }
 
-.profile {
-  background: #131313;
-  padding: 20px;
-  margin: 0 auto;
-  border-bottom: 5px solid #00ce00;
-  border-radius: 5px; }
-
 .date {
   text-transform: uppercase;
   font-size: 14px;
@@ -3296,6 +3289,29 @@ h3.game-intro {
 .feature .header {
   padding: 15px 0;
   margin-bottom: 25px; }
+
+/* Player Detail */
+.player .player-statistics {
+  padding: 0; }
+
+.player .feature-background {
+  padding-bottom: 0;
+  color: #fff;
+  font-size: 15px; }
+
+.profile {
+  background: url(../images/textures/dark-pattern.jpg);
+  padding: 40px;
+  margin: 0 auto; }
+
+.player .rank {
+  font-size: 70px;
+  font-weight: 600; }
+
+.player .rank span {
+  font-size: 65%;
+  letter-spacing: -1px;
+  font-weight: 500; }
 
 .feature-component .feature-background:after {
   height: 400px;
