@@ -30,33 +30,96 @@
     font-size: 12px;
 }
 
-.player-box .player-badge 
+.player-badge 
 {
-    width: 71px;
-    height: 64px;
+    width: 90px;
+    height: 86px;
     background-repeat: no-repeat;
+    background-position: center;
     margin-left: -5px;
 }
 
-.player-box .badge-500
+.badge-2x
+{
+    width: 209px;
+    height: 200px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.badge-100
+{
+    background: url(/images/badges/100-points.png);
+}
+.badge-250
+{
+    background: url(/images/badges/250-points.png);
+}
+.badge-500
 {
     background: url(/images/badges/500-points.png);
 }
-.player-box .badge-1000
+.badge-1000
 {
     background: url(/images/badges/1000-points.png);
 }
-.player-box .badge-1500
+.badge-1500
 {
     background: url(/images/badges/1500-points.png);
 }
-.player-box .badge-2000
+.badge-2000
 {
     background: url(/images/badges/2000-points.png);
 }
-.player-box .badge-3000
+.badge-2500
+{
+    background: url(/images/badges/2500-points.png);
+}
+.badge-3000
 {
     background: url(/images/badges/3000-points.png);
+}
+.badge-3500
+{
+    background: url(/images/badges/3500-points.png);
+}
+
+// x2
+.badge-100-x2
+{
+    background: url(/images/badges/100x2-points.png);
+}
+.badge-250-x2
+{
+    background: url(/images/badges/250x2-points.png);
+}
+.badge-500-x2
+{
+    background: url(/images/badges/500x2-points.png);
+}
+.badge-1000-x2
+{
+    background: url(/images/badges/1000x2-points.png);
+}
+.badge-1500-x2
+{
+    background: url(/images/badges/1500x2-points.png);
+}
+.badge-2000-x2
+{
+    background: url(/images/badges/2000x2-points.png);
+}
+.badge-2500-x2
+{
+    background: url(/images/badges/2500x2-points.png);
+}
+.badge-3000-x2
+{
+    background: url(/images/badges/3000x2-points.png);
+}
+.badge-3500-x2
+{
+    background: url(/images/badges/3500x2-points.png);
 }
 
 .player-card 

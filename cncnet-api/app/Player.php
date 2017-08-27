@@ -98,6 +98,14 @@ class Player extends Model
         {
             return "badge-500";
         }
+        else if ($points >= 250)
+        {
+            return "badge-250";
+        }
+        else if ($points >= 100)
+        {
+            return "badge-100";
+        }
         else
         {
             return "";

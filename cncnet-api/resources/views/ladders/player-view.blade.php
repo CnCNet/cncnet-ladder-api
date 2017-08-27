@@ -27,6 +27,7 @@
                 </div>
                 <div class="col-md-6 text-right">
                     <h1 class="rank"><span class="text-uppercase">Rank</span> #{{ $player->rank == -1 ? "Unranked" : $player->rank }}</h1>
+                    <div class="player-badge badge-2x {{ $player->badge }}-x2"></div>
                 </div>
             </div>
         </div>
@@ -51,7 +52,6 @@
                         ])
                     </div>
                     <div class="col-md-4">
-                        <div class="player-badge"></div>
                     </div>
                 </div>
             </div>

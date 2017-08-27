@@ -37,3 +37,8 @@ Request requires email, password. Returns token.
 
 ###### Player Creation
 * POST `/player/:username`
+
+### Copyright belonging to CnCNet
+Using the following images without our consent is strictly forbidden. Do not use these on your own site that is public.
+* Player Badges, found in `/public/images/badges`
+* Logo

@@ -9,6 +9,22 @@
     padding: 0;
 }
 
+.player .player-badge 
+{
+    margin-right: 0;
+    margin-left: auto;
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) 
+{ 
+    .player .player-badge 
+    {
+        position: absolute;
+        right: 25px;
+    }
+}
+
 .player .feature-background
 {
     padding-bottom: 0;
@@ -19,10 +35,9 @@
 .profile 
 {
     background: url(../images/textures/dark-pattern.jpg);
-    padding: 40px;
+    padding: 15px;
     margin: 0 auto;
 }
-
 
 .player .rank 
 {
