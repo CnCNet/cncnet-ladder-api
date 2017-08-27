@@ -11,6 +11,7 @@
             @if ($pp->player_id == $player->id)
                 @include("components/game-box", 
                 [
+                    "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->id,
                     "game" => $history->ladder->abbreviation,
                     "status" => $pp->game_won ? "won" : "lost",
                     "points" => $pp,
