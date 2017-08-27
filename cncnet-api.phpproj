@@ -16,6 +16,7 @@
     <IncludeDebugInformation>false</IncludeDebugInformation>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="cncnet-api\app\Card.php" />
     <Compile Include="cncnet-api\app\Commands\Command.php" />
     <Compile Include="cncnet-api\app\Console\Commands\Inspire.php" />
     <Compile Include="cncnet-api\app\Console\Kernel.php" />
@@ -125,8 +126,11 @@
     <Compile Include="cncnet-api\resources\views\auth\password.blade.php" />
     <Compile Include="cncnet-api\resources\views\auth\register.blade.php" />
     <Compile Include="cncnet-api\resources\views\auth\reset.blade.php" />
+    <Compile Include="cncnet-api\resources\views\components\dials.blade.php" />
     <Compile Include="cncnet-api\resources\views\components\form-messages.blade.php" />
+    <Compile Include="cncnet-api\resources\views\components\game-box.blade.php" />
     <Compile Include="cncnet-api\resources\views\components\navigation.blade.php" />
+    <Compile Include="cncnet-api\resources\views\components\player-box.blade.php" />
     <Compile Include="cncnet-api\resources\views\components\supported-games.blade.php" />
     <Compile Include="cncnet-api\resources\views\emails\password.blade.php" />
     <Compile Include="cncnet-api\resources\views\errors\503.blade.php" />
@@ -134,8 +138,9 @@
     <Compile Include="cncnet-api\resources\views\ladders\game-view.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\badges.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\player-view.blade.php" />
+    <Compile Include="cncnet-api\resources\views\ladders\player-view-old.blade.php" />
     <Compile Include="cncnet-api\resources\views\ladders\listing.blade.php" />
-    <Compile Include="cncnet-api\resources\views\ladders\_recent-games.blade.php" />
+    <Compile Include="cncnet-api\resources\views\components\recent-games.blade.php" />
     <Compile Include="cncnet-api\resources\views\layouts\app.blade.php" />
     <Compile Include="cncnet-api\resources\views\vendor\.gitkeep" />
     <Compile Include="cncnet-api\storage\app\.gitignore" />
@@ -4485,6 +4490,8 @@
     <Folder Include="cncnet-api\public" />
     <Folder Include="cncnet-api\public\fonts\ranks\" />
     <Folder Include="cncnet-api\public\images\" />
+    <Folder Include="cncnet-api\public\images\badges\" />
+    <Folder Include="cncnet-api\public\images\cards\" />
     <Folder Include="cncnet-api\public\images\favicon\" />
     <Folder Include="cncnet-api\public\images\feature\" />
     <Folder Include="cncnet-api\public\images\flags\" />
@@ -5480,6 +5487,19 @@
     <Content Include="cncnet-api\public\fonts\fontawesome-webfont.woff" />
     <Content Include="cncnet-api\public\fonts\fontawesome-webfont.woff2" />
     <Content Include="cncnet-api\public\fonts\FontAwesome.otf" />
+    <Content Include="cncnet-api\public\images\badges\1000-points.png" />
+    <Content Include="cncnet-api\public\images\badges\1500-points.png" />
+    <Content Include="cncnet-api\public\images\badges\2000-points.png" />
+    <Content Include="cncnet-api\public\images\badges\3000-points.png" />
+    <Content Include="cncnet-api\public\images\badges\500-points.png" />
+    <Content Include="cncnet-api\public\images\cards\player-cards-ts-commander.jpg" />
+    <Content Include="cncnet-api\public\images\cards\player-cards-ts-gdi.jpg" />
+    <Content Include="cncnet-api\public\images\cards\player-cards-ts-kane.jpg" />
+    <Content Include="cncnet-api\public\images\cards\player-cards-ts-nod.jpg" />
+    <Content Include="cncnet-api\public\images\cards\player-cards-ts-tank.jpg" />
+    <Content Include="cncnet-api\public\images\cards\player-cards-yr-carville.jpg" />
+    <Content Include="cncnet-api\public\images\cards\player-cards-yr-closeup.jpg" />
+    <Content Include="cncnet-api\public\images\cards\player-cards-yr-yuri.jpg" />
     <Content Include="cncnet-api\public\images\favicon\android-chrome-192x192.png" />
     <Content Include="cncnet-api\public\images\favicon\android-chrome-256x256.png" />
     <Content Include="cncnet-api\public\images\favicon\apple-touch-icon.png" />
@@ -5493,6 +5513,7 @@
     <Content Include="cncnet-api\public\images\feature\feature-dta.jpg" />
     <Content Include="cncnet-api\public\images\feature\feature-dune.jpg" />
     <Content Include="cncnet-api\public\images\feature\feature-games.jpg" />
+    <Content Include="cncnet-api\public\images\feature\feature-index.jpg" />
     <Content Include="cncnet-api\public\images\feature\feature-index.png" />
     <Content Include="cncnet-api\public\images\feature\feature-mo.jpg" />
     <Content Include="cncnet-api\public\images\feature\feature-ra.jpg" />
@@ -6039,11 +6060,18 @@
     <Content Include="cncnet-api\public\images\games\ra\logo.png" />
     <Content Include="cncnet-api\public\images\games\ts\logo.png" />
     <Content Include="cncnet-api\public\images\games\yr\logo.png" />
+    <Content Include="cncnet-api\public\images\hud\allied.png" />
+    <Content Include="cncnet-api\public\images\hud\bar.png" />
     <Content Include="cncnet-api\public\images\hud\overlay-gb.png" />
-    <Content Include="cncnet-api\public\images\ladder\ts-cover.jpg" />
-    <Content Include="cncnet-api\public\images\ladder\yr-cover.jpg" />
+    <Content Include="cncnet-api\public\images\hud\soviet.png" />
+    <Content Include="cncnet-api\public\images\hud\yuri.png" />
+    <Content Include="cncnet-api\public\images\ladder\badge-cover.png" />
+    <Content Include="cncnet-api\public\images\ladder\ts-cover.png" />
+    <Content Include="cncnet-api\public\images\ladder\yr-cover.png" />
     <Content Include="cncnet-api\public\images\logo.png" />
     <Content Include="cncnet-api\public\images\meta.png" />
+    <Content Include="cncnet-api\public\images\textures\dark-pattern.jpg" />
+    <Content Include="cncnet-api\public\images\textures\pattern-repeat.png" />
     <Content Include="cncnet-api\public\images\textures\triangle-repeat-light.png" />
     <Content Include="cncnet-api\public\images\textures\triangle-repeat.png" />
     <Content Include="cncnet-api\public\images\textures\triangles-dark-invert.png" />
@@ -6052,6 +6080,9 @@
     <Content Include="cncnet-api\public\js\cncnet-game-detail.js" />
     <Content Include="cncnet-api\public\js\cncnet-online.js" />
     <Content Include="cncnet-api\public\js\cncnet-status.js" />
+    <Content Include="cncnet-api\resources\sass\base\_player.scss" />
+    <Content Include="cncnet-api\resources\sass\components\_game-box.scss" />
+    <Content Include="cncnet-api\resources\sass\components\_player-box.scss" />
     <Content Include="cncnet-api\resources\sass\ladder.scss" />
     <Content Include="cncnet-api\resources\sass\components\_navigation.scss" />
     <Content Include="cncnet-api\resources\sass\components\_feature.scss" />

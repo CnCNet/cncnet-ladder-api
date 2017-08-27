@@ -1,5 +1,5 @@
 <div class="game-box">
-    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map->hash or ""}}.png)">
+    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map or ""}}.png)">
         <a href="#" class="status status-{{ $status or "lost"}}"></a>
     </div>
 

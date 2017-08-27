@@ -14,7 +14,7 @@
                     "game" => $history->ladder->abbreviation,
                     "status" => $pp->game_won ? "won" : "lost",
                     "points" => $pp,
-                    "map" => $game->map,
+                    "map" => $game->hash,
                     "title" => $game->scen,
                     "date" => $game->created_at
                 ])
