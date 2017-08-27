@@ -51,4 +51,14 @@ class Game extends Model
 	{
         return $this->hasMany('App\PlayerGame');
 	}
+
+    public function map()
+    {
+        return $this->belongsTo('App\Map', 'hash');
+    }
+
+    public function playerPoints()
+    {
+        return $this->hasMany('App\PlayerPoint', 'game_id');
+    }
 }

@@ -60,45 +60,10 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h3>Games in progress</h3>
-                <div class="row">
-                    <div class="col-md-3">
-                        @include("components/game-box", ["status" => "won"])
-                    </div>
-                    <div class="col-md-3">
-                        @include("components/game-box", ["status" => "lost"])
-                    </div>
-                    <div class="col-md-3">
-                        @include("components/game-box", ["status" => "live"])
-                    </div>
-                    <div class="col-md-3">
-                        @include("components/game-box", ["status" => "progress"])
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="light-texture game-detail supported-games">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <h3>Recently played</h3>
-                <div class="row">
-                    <div class="col-md-3">
-                        @include("components/game-box", ["status" => "won"])
-                    </div>
-                    <div class="col-md-3">
-                        @include("components/game-box", ["status" => "lost"])
-                    </div>
-                    <div class="col-md-3">
-                        @include("components/game-box", ["status" => "live"])
-                    </div>
-                    <div class="col-md-3">
-                        @include("components/game-box", ["status" => "progress"])
-                    </div>
-                </div>
+                <?php /*
+                <h3>Recentl played games</h3>
+                @include("components.recent-games", ["player" => [], "games" => $games])
+                */ ?>
             </div>
         </div>
     </div>

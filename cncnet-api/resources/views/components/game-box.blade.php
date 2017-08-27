@@ -1,21 +1,25 @@
 <div class="game-box">
-    <div class="preview" style="background-image:url(/images/maps/yr/8a815dd293f6eabe4e12721932ce47a38509b57d.png)">
+    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map->hash or ""}}.png)">
         <a href="#" class="status status-{{ $status or "lost"}}"></a>
     </div>
- 
-    <a href="#" class="game-box-link">
+
+    <a href="{{ $url or ""}}" class="game-box-link">
         <div class="details text-center">
-            <h4 class="title">{{ $title or "Box Title" }}</h4>
-            <small class="status">Streaming</small>
+            <h4 class="title">{{ $title }}</h4>
+            <?php $now = \Carbon\Carbon::now(); $days = $date->diffInDays($now); ?>
+            <small class="status text-capitalize">{{ $status . " " . $days . " days ago"}}</small>
         </div>
         <div class="footer text-center">
-            <h5 class="player won">
-                {{ $playerA or "Player A" }} <span class="points">+14</span>
+            <?php $opponent = \App\PlayerPoint::where("game_id", "=", $points->game_id)->where("player_id", "!=", $points->player_id)->first(); ?>
+            <h5 class="player {{ $status or "lost"}}">
+                {{ $points->player->username }} <span class="points">+{{ $points->points_awarded }}</span>
             </h5>
             <p class="vs">vs</p>
-            <h5 class="player lost">
-                {{ $playerB or "Player B" }} <span class="points">+14</span>
+            @if ($opponent)
+            <h5 class="player {{ $status == "won" ? "lost" : "won" }}">
+                {{ $opponent->player->username }} <span class="points">+{{ $opponent->points_awarded }}</span>
             </h5>
+            @endif
         </div>
     </a>
 </div>

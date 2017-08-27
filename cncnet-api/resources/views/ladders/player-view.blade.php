@@ -63,27 +63,8 @@
             <div class="row">
                 <div class="col-md-12">
                     <h3>Recently played</h3>
-                    <div class="row">
-                        <div class="col-md-3">
-                            @include("components/game-box", ["status" => "won"])
-                        </div>
-                        <div class="col-md-3">
-                            @include("components/game-box", ["status" => "lost"])
-                        </div>
-                        <div class="col-md-3">
-                            @include("components/game-box", ["status" => "live"])
-                        </div>
-                        <div class="col-md-3">
-                            @include("components/game-box", ["status" => "progress"])
-                        </div>
-                    </div>
+                    @include("components.recent-games", ["player" => $player, "games" => $games])
                 </div>
-
-                <pre>
-                    @foreach($games as $game)
-                    {{ $game }}
-                    @endforeach
-                </pre>
             </div>
         </div>
     </section>

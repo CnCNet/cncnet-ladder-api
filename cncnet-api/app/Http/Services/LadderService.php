@@ -133,6 +133,7 @@ class LadderService
         $playerRating = \App\PlayerRating::where("player_id", "=", $player->id)->first()->rating;
 
         return [
+            "id" => $player->id,
             "username" => $player->username,
             "points" => $points,
             "rank" => $rank,

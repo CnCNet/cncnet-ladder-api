@@ -884,13 +884,13 @@
   margin: 30px 30px 0 0; }
 
 .c100 {
-  background-color: #171717; }
+  background-color: #000000; }
   .c100:after {
     top: 0.04em;
     left: 0.04em;
     width: 0.92em;
     height: 0.92em;
-    background-color: #131313; }
+    background-color: rgba(6, 6, 6, 0.93); }
 
 .c100.green .bar, .c100.green .fill {
   border-color: #00ce00 !important; }
@@ -3290,6 +3290,9 @@ h3.game-intro {
   padding: 15px 0;
   margin-bottom: 25px; }
 
+.recent-game {
+  margin-bottom: 15px; }
+
 /* Player Detail */
 .player .player-statistics {
   padding: 0; }
@@ -3349,6 +3352,7 @@ h3.game-intro {
   position: relative;
   height: 180px;
   background-repeat: no-repeat;
+  background-color: #000;
   border-radius: 5px 5px 0 0;
   transition: all 4s;
   transition-delay: 0.1s; }

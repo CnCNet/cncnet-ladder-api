@@ -20,8 +20,8 @@ class LadderController extends Controller
         return view("ladders.index", 
         array
         (
-            "ladders" => $this->ladderService->getLatestLadders())
-        );
+            "ladders" => $this->ladderService->getLatestLadders()
+        ));
     }
 
     public function getLadderIndex(Request $request)
