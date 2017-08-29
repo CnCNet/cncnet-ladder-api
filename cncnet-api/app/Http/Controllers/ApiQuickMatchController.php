@@ -67,6 +67,11 @@ class ApiQuickMatchController extends Controller
             }
             return array("type" => "quit");
             break;
+        case "update":
+            if ($qmPlayer != null)
+            {
+            }
+            break;
 
         case "match me up":
             /* This matchup system is restful, a player will have to check in to see if there
@@ -83,14 +88,18 @@ class ApiQuickMatchController extends Controller
                 $qmPlayer->map_bitfield = $request->map_bitfield;
                 $qmPlayer->waiting = true;
 
-                $tunnel = $request->tunnel_ping[0];
-                $qmPlayer->tunnel_ip = $tunnel['ip'];
-                $qmPlayer->tunnel_port = $tunnel['port'];
-
                 // color, chosen_side, actual_side and saving is done in the next if-statement
                 $qmPlayer->qm_match_id = null;
                 $qmPlayer->tunnel_id = null;
 
+                $qmPlayer->ip_address = $request->ip_address;
+                $qmPlayer->port = $request->ip_port;
+
+                $qmPlayer->lan_ip = $request->lan_ip;
+                $qmPlayer->lan_port = $request->lan_port;
+
+                $qmPlayer->ipv6_address = $request->ipv6_address;
+                $qmPlayer->ipv6_port = $request->ipv6_port;
             }
 
             if ($qmPlayer->qm_match_id == null)
@@ -111,8 +120,6 @@ class ApiQuickMatchController extends Controller
                 }
 
                 $qmPlayer->map_bitfield = $request->map_bitfield;
-                $qmPlayer->ip_address = $request->ip_address;
-                $qmPlayer->port = $request->ip_port;
 
                 try
                 {
@@ -141,8 +148,8 @@ class ApiQuickMatchController extends Controller
                         ->whereNull('qm_match_id')
                         ->join('player_ratings', 'player_ratings.player_id', '=', 'qm_match_players.player_id')
                         ->selectRAW( "qm_match_players.id as id, waiting, qm_match_players.player_id as player_id,"
-                                    ."ladder_id, map_bitfield, chosen_side, actual_side, ip_address, port, tunnel_ip"
-                                    .",tunnel_port, color, location, qm_match_id, tunnel_id,"
+                                    ."ladder_id, map_bitfield, chosen_side, actual_side, ip_address, port, lan_ip"
+                                    .",lan_port, ipv6_address, ipv6_port, color, location, qm_match_id, tunnel_id,"
                                     ."qm_match_players.created_at as created_at"
                                     .", qm_match_players.updated_at as updated_at"
                                     .", ABS($rating - rating)"
@@ -186,8 +193,6 @@ class ApiQuickMatchController extends Controller
                     $qmMatch->ladder_id = $qmPlayer->ladder_id;
                     $qmMatch->qm_map_id = \App\QmMap::where('bit_idx', $common_maps[$map_idx])
                                                     ->where('ladder_id', $qmMatch->ladder_id)->first()->id;
-                    $qmMatch->tunnel_ip = $qmPlayer->tunnel_ip;
-                    $qmMatch->tunnel_port = $qmPlayer->tunnel_port;
                     $qmMatch->seed = rand(-2147483647, 2147483647);
                     $qmMatch->save();
 
@@ -220,7 +225,7 @@ class ApiQuickMatchController extends Controller
             // If we've made it this far, lets send the spawn details
 
             $spawnStruct = array("type" => "spawn");
-            $qmPlayer->wating = false;
+            $qmPlayer->waiting = false;
             $qmMatch = \App\QmMatch::find($qmPlayer->qm_match_id);
             $qmMap = $qmMatch->map()->first();
             $map = $qmMap->map()->first();
@@ -279,11 +284,18 @@ class ApiQuickMatchController extends Controller
                     "Color" => $opn->color,
                     "Ip" => $opn->ip_address,
                     "Port" => $opn->port,
+                    "IPv6" => $opn->ipv6_address,
+                    "PortV6" => $opn->ipv6_port,
+                    "LanIP" => $opn->lan_ip,
+                    "LanPort" => $opn->lan_port
                 ];
                 $multi_idx = $opn->color + 1;
                 $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
                 $other_idx++;
             }
+            $qmPlayer->waiting = false;
+            $qmPlayer->save();
+
             return $spawnStruct;
             break;
         default:
