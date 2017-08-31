@@ -249,7 +249,7 @@ class ApiQuickMatchController extends Controller
                   ,"Side" =>           $qmPlayer->actual_side
                   ,"Color" =>          $qmPlayer->color
                   ,"Firestorm" =>      b_to_ini($qmMap->firestorm)
-                  ,"ShortGame" =>      b_to_ini($qmMap->shortgame)
+                  ,"ShortGame" =>      b_to_ini($qmMap->short_game)
                   ,"MultiEngineer" =>  b_to_ini($qmMap->multi_eng)
                   ,"MCVRedeploy" =>    b_to_ini($qmMap->redeploy)
                   ,"Crates" =>         b_to_ini($qmMap->crates)
