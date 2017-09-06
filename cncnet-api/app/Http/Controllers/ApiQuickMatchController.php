@@ -106,10 +106,13 @@ class ApiQuickMatchController extends Controller
             {
                 // Update the player info
                 $qmPlayer->chosen_side = $request->side;
+
+                $all_sides = $ladder_rules->all_sides();
                 $sides = $ladder_rules->allowed_sides();
+
                 if ($request->side == -1)
                 {
-                    $qmPlayer->actual_side = $sides[rand(0, count($sides) - 1)];
+                    $qmPlayer->actual_side = $sides[rand(0, count($all_sides) - 1)];
                 }
                 else if (in_array($request->side, $sides))
                 {
@@ -239,8 +242,11 @@ class ApiQuickMatchController extends Controller
                   ,"MapHash" =>        $map->hash
                   ,"GameSpeed" =>      $qmMap->speed
                   ,"Seed" =>           $qmMatch->seed
+                  ,"GameID" =>         $qmMatch->seed
+                  ,"WOLGameID" =>         $qmMatch->seed
                   ,"Credits" =>        $qmMap->credits
                   ,"UnitCount" =>      $qmMap->units
+                  ,"TechLevel" =>      $qmMap->tech
                   ,"Host" =>           "No"
                   ,"IsSpectator" =>    "No"
                   ,"AIPlayers" =>      0
@@ -254,9 +260,9 @@ class ApiQuickMatchController extends Controller
                   ,"MCVRedeploy" =>    b_to_ini($qmMap->redeploy)
                   ,"Crates" =>         b_to_ini($qmMap->crates)
                   ,"Bases" =>          b_to_ini($qmMap->bases)
-                  ,"HarvesterTruce" => b_to_ini($qmMap->harvester_truce)
+                  ,"HarvesterTruce" => b_to_ini($qmMap->harv_truce)
                   ,"AlliesAllowed" =>  b_to_ini($qmMap->allies)
-                  ,"BridgeDestroy" =>  b_to_ini($qmMap->bridge_destroy)
+                  ,"BridgeDestroy" =>  b_to_ini($qmMap->bridges)
                   ,"FogOfWar" =>       b_to_ini($qmMap->fog)
                   ,"BuildOffAlly" =>   b_to_ini($qmMap->build_ally)
                   ,"MultipleFactory"=> b_to_ini($qmMap->mutli_factory)
