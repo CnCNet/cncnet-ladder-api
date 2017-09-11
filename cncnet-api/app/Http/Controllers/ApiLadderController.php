@@ -89,10 +89,10 @@ class ApiLadderController extends Controller
         // Award ELO points
         if ($game->plrs == 2)
         {
-            $this->awardPoints($game->id, $history);
+            $status = $this->awardPoints($game->id, $history);
         }
 
-        return response()->json(['success'], 200);
+        return response()->json(['success' => $status], 200);
     }
 
     // TODO - should be middleware
@@ -117,42 +117,38 @@ class ApiLadderController extends Controller
         $players = [];
         $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
 
-        foreach($gamePlayers as $player)
+        // Don't award points multiple time
+        if ($gamePlayers->count() != 1)
         {
-            $plr = $this->playerService->findPlayerRatingByPid($player->player_id);
-            $opn = $this->playerService->findPlayerRatingByPid($player->opponent_id);
+            return 604;
+        }
+        $playerGame = $gamePlayers->first();
 
-            if ($player->result)
-            {
-                $players["won"] = $plr;
-                $players["lost"] = $opn;
-            }
-            else
-            {
-                $players["won"] = $opn;
-                $players["lost"] = $plr;
-            }
+        $plr = $this->playerService->findPlayerRatingByPid($playerGame->player_id);
+        $opn = $this->playerService->findPlayerRatingByPid($playerGame->opponent_id);
+
+        if ($playerGame->result)
+        {
+            $players["won"] = $plr;
+            $players["lost"] = $opn;
+        }
+        else
+        {
+            $players["won"] = $opn;
+            $players["lost"] = $plr;
         }
 
         $elo_k = $this->playerService->getEloKvalue($players);
 
-        $points = new PointService($elo_k, $players["lost"]["rating"], $players["won"]["rating"], 0, 1);
+        $points = new PointService($elo_k, $players["lost"]->rating, $players["won"]->rating, 0, 1);
         $results = $points->getNewRatings();
 
         // Tweak this number until things feel right
-        $gvcWon = ceil(($players["lost"]["rating"] * $players["won"]["rating"]) / 200000);
+        $gvcWon = ceil(($players["lost"]->rating * $players["won"]->rating) / 200000);
         $gvcLost = ceil($gvcWon/2);
 
         foreach ($players as $k => $player)
         {
-            $playerPointRecords = \App\PlayerPoint::where("game_id", "=", $gameId)->count();
-            
-            if ($playerPointRecords == 2)
-            {
-                // Points awarded already
-                break; 
-            }
-
             if ($k == "lost")
             {
                 $diff = $results["a"] - $player->rating;
@@ -169,6 +165,7 @@ class ApiLadderController extends Controller
 
         $this->playerService->updatePlayerRating($players["lost"], $results["a"]);
         $this->playerService->updatePlayerRating($players["won"], $results["b"]);
+        return 200;
     }
 
     public function getCurrentLadders(Request $request)

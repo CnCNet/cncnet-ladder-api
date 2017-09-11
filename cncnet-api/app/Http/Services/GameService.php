@@ -20,7 +20,7 @@ class GameService
 
         if ($gameStats != null)
         {
-            return;
+            return 600;
         }
 
         $stats = new \App\Stats();
@@ -36,10 +36,10 @@ class GameService
 
         if ($player == null)
         {
-            return;
+            return 601;
         }
 
-        $id = -1; // Player Index 
+        $id = -1; // Player Index
         foreach($result as $key => $value)
         {
             $property = substr($key, 0, -1);
@@ -63,7 +63,7 @@ class GameService
                 if ($cid == $id)
                 {
                     // Save Game Specific Stats like buildings bought, destroyed etc
-                    if (in_array(strtolower($property), $stats->gameStatsColumns)) 
+                    if (in_array(strtolower($property), $stats->gameStatsColumns))
                     {
                         $stats->{strtolower($property)} = json_encode($value);
                     }
@@ -91,7 +91,7 @@ class GameService
                         $stats->delete();
                         $gameStats->delete();
 
-                        return null;
+                        return 602;
                     }
 
                     if($playerGame == null && $property == "CMP")
@@ -106,7 +106,7 @@ class GameService
                             case $gameResult & GameResult::COMPLETION_NO_COMPLETION:
                             case $gameResult & GameResult::COMPLETION_QUIT:
                             case $gameResult & GameResult::COMPLETION_DEFEATED:
-                            default: 
+                            default:
                                 $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
                         }
                     }
@@ -117,10 +117,10 @@ class GameService
         $gameStats->save();
         $stats->save();
         $game->save();
-      
+
         return 200;
     }
-    
+
     public function saveRawStats($result, $gameId, $ladderId)
     {
         $raw = new \App\GameRaw();
@@ -140,34 +140,34 @@ class GameService
 
         $fh = fopen($file, "r");
         $data = fread($fh, 4);
- 
+
         if (!$data) {
            return "Error";
         }
- 
+
         $pad = 0;
         $result = [];
 
-        while (!feof($fh)) 
+        while (!feof($fh))
         {
             $data = fread($fh, 8);
-            if (!$data) 
+            if (!$data)
             {
                 break;
             }
- 
+
             $ttl = unpack("A4tag/ntype/nlength", $data);
             $pad = ($ttl["length"] % 4) ? 4 - ($ttl["length"] %  4) : 0;
-            
-            if ($ttl["length"] > 0) 
+
+            if ($ttl["length"] > 0)
             {
                 $data = fread($fh, $ttl["length"]);
- 
-                if ($pad > 0 ) 
+
+                if ($pad > 0 )
                 {
                     fread($fh, $pad);
                 }
-                
+
                 $fieldValueArr = $this->getFieldValue($ttl, $data);
                 $result[$ttl["tag"]] = ["tag" => $ttl["tag"], "length" => $ttl["length"], "raw" => base64_encode($fieldValueArr["raw"]), "value" => $fieldValueArr["val"]];
             }
@@ -176,27 +176,27 @@ class GameService
         $types = array ("CRA","BLC","BLK","PLK","UNK","INK","BLL","PLL","UNL","INL","BLB","PLB","UNB","INB");
         $gameUnitTypes = config("types." . strtoupper($cncnetGame));
 
-        foreach ($types as $tag) 
+        foreach ($types as $tag)
         {
             $lookup = $gameUnitTypes[substr($tag, 0, 2)];
 
-            for ($i = 0; $i < 8; $i++) 
+            for ($i = 0; $i < 8; $i++)
             {
-                if (isset($result["$tag$i"])) 
+                if (isset($result["$tag$i"]))
                 {
                     $raw = base64_decode($result["$tag$i"]["raw"]);
                     $length = $result["$tag$i"]["length"];
-                    
-                    for ($j = 0, $t = 0; $j < $length; $j += 4, $t++) 
+
+                    for ($j = 0, $t = 0; $j < $length; $j += 4, $t++)
                     {
                         $count = unpack("N", substr($raw, $j, 4))[1];
-                        if ($count >= 0) 
+                        if ($count >= 0)
                         {
-                            if ($lookup && $lookup[$t]) 
+                            if ($lookup && $lookup[$t])
                             {
                                 $result["$tag$i"]["counts"][$lookup[$t]] = $count;
                             }
-                            else 
+                            else
                             {
                                 $result["$tag$i"]["counts"][$t] = $count;
                             }
@@ -213,59 +213,59 @@ class GameService
     {
         $response = ["raw" => null, "val" => null];
 
-        switch ($ttl["type"]) 
+        switch ($ttl["type"])
         {
             //FIELDTYPE_BYTE
             case 1:
                 $v = unpack("C", $data);
                 $response["val"] = $v[1];
                 break;
- 
+
             //FIELDTYPE_BOOLEAN
             case 2:
                 $v = unpack("C", $data);
-                if ($v[1] == 0) 
+                if ($v[1] == 0)
                 {
                     $response["val"] = false;
                     break;
                 }
-                else 
+                else
                 {
                     $response["val"] = true;
                     break;
                 }
- 
+
             //FIELDTYPE_SHORT
             case 3:
                 $v = unpack("n", $data);
                 $response["val"] = $v[1];
                 break;
- 
+
             //FIELDTYPE_UNSIGNED_SHORT
             case 4:
                 $v = unpack("n", $data);
                 $response["val"] = $v[1];
                 break;
- 
+
             //FIELDTYPE_LONG
             case 5:
                 $v = unpack("N", $data);
                 $response["val"] = $v[1];
                 break;
- 
+
             //FIELDTYPE_UNSIGNED_LONG
             case 6:
                 $v = unpack("N", $data);
                 $response["val"] = $v[1];
                 break;
- 
+
             //FIELDTYPE_CHAR
             case 7:
                 $ttl["length"] -= 1;
                 $v = unpack("a$ttl[length]", $data);
                 $response["val"] = $v[1];
                 break;
- 
+
             //FIELDTYPE_CUSTOM_LENGTH
             case 20:
                 $response["val"] = null;
@@ -306,7 +306,7 @@ class GameService
             if(!is_numeric($gameProperty))
             {
                 // Save Game Details like average fps, out of sync errors etc
-                if (in_array(strtolower($key), $game->gameColumns)) 
+                if (in_array(strtolower($key), $game->gameColumns))
                 {
                     $game->{strtolower($key)} = $value["value"];
                 }

@@ -139,7 +139,7 @@ class PlayerService
         }
 
         $playerRating->rating = $newRating;
-        $playerRating->rated_games = $playerRating->rate_games + 1;
+        $playerRating->rated_games = $playerRating->rated_games + 1;
         $playerRating->save();
     }
 }

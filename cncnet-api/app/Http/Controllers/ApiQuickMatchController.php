@@ -156,7 +156,7 @@ class ApiQuickMatchController extends Controller
                                     ."qm_match_players.created_at as created_at"
                                     .", qm_match_players.updated_at as updated_at"
                                     .", ABS($rating - rating)"
-                                    ." - TIMESTAMPDIFF(SECOND, now(), qm_match_players.created_at) as importance")
+                                    ." - TIMESTAMPDIFF(SECOND, qm_match_players.created_at, now()) as importance")
                         ->having('importance', '<', $ladder_rules->max_difference)
                         ->orderBy('importance', 'asc')
                         ->get();
