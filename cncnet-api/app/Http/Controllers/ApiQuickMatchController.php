@@ -239,12 +239,12 @@ class ApiQuickMatchController extends Controller
 
             $spawnStruct["spawn"]["Settings"] = array_filter(
                 [  "UIGameMode" =>     $qmMap->game_mode
-                  ,"UIMapName" =>      $map->name
+                  ,"UIMapName" =>      $qmMap->description
                   ,"MapHash" =>        $map->hash
                   ,"GameSpeed" =>      $qmMap->speed
                   ,"Seed" =>           $qmMatch->seed
                   ,"GameID" =>         $qmMatch->seed
-                  ,"WOLGameID" =>         $qmMatch->seed
+                  ,"WOLGameID" =>      $qmMatch->seed
                   ,"Credits" =>        $qmMap->credits
                   ,"UnitCount" =>      $qmMap->units
                   ,"TechLevel" =>      $qmMap->tech

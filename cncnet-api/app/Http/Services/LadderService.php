@@ -16,6 +16,7 @@ class LadderService
         foreach ($ladders as $ladder)
         {
             $ladder["sides"] = $ladder->sides()->get();
+            $ladder["vetoes"] = $ladder->qmLadderRules()->first()->map_vetoes;
         }
         return $ladders;
     }
@@ -23,7 +24,7 @@ class LadderService
     public function getLatestLadders()
     {
         $date = Carbon::now();
-        
+
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
@@ -41,7 +42,7 @@ class LadderService
         $year = $date[1];
 
         $date = Carbon::create($year, $month, 01, 0);
-      
+
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
@@ -93,7 +94,7 @@ class LadderService
         {
             return [];
         }
-     
+
         return \App\Game::where("ladder_history_id", "=", $history->id)
         ->orderBy("games.id", "DESC")
         ->limit(4)
@@ -107,7 +108,7 @@ class LadderService
 
         $ladderGame = \App\LadderGame::where("ladder_history_id", "=", $history->id)
             ->where("game_id", "=", $gameId)->first();
-        
+
         if($ladderGame == null)
             return null;
 
