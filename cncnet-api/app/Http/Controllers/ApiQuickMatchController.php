@@ -149,6 +149,7 @@ class ApiQuickMatchController extends Controller
                 $qmOpns = \App\QmMatchPlayer::where('qm_match_players.id', '<>', $qmPlayer->id)
                         ->where('waiting', true)
                         ->where('ladder_id', $qmPlayer->ladder_id)
+                        ->whereRaw("map_bitfield & {$qmPlayer->map_bitfield} > 0")
                         ->whereNull('qm_match_id')
                         ->join('player_ratings', 'player_ratings.player_id', '=', 'qm_match_players.player_id')
                         ->selectRAW( "qm_match_players.id as id, waiting, qm_match_players.player_id as player_id,"
