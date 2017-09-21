@@ -17,6 +17,8 @@ class LadderService
         {
             $ladder["sides"] = $ladder->sides()->get();
             $ladder["vetoes"] = $ladder->qmLadderRules()->first()->map_vetoes;
+            $ladder["allowed_sides"] = array_map('intval',
+                                                 explode(',', $ladder->qmLadderRules()->first()->allowed_sides));
         }
         return $ladders;
     }
