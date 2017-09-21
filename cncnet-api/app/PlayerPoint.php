@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class PlayerPoint extends Model 
+class PlayerPoint extends Model
 {
     protected $table = 'player_points';
     public $timestamps = false;
@@ -10,5 +10,10 @@ class PlayerPoint extends Model
     public function player()
     {
         return $this->belongsTo("App\Player");
+    }
+
+    public function game()
+    {
+        return $this->belongsTo("App\Game");
     }
 }

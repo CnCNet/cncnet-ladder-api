@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Http\Controllers;
 
 use \Carbon\Carbon;
@@ -6,7 +6,7 @@ use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 
-class LadderController extends Controller 
+class LadderController extends Controller
 {
     private $ladderService;
 
@@ -14,10 +14,10 @@ class LadderController extends Controller
     {
         $this->ladderService = new LadderService();
     }
-    
+
     public function getLadders(Request $request)
     {
-        return view("ladders.index", 
+        return view("ladders.index",
         array
         (
             "ladders" => $this->ladderService->getLatestLadders()
@@ -26,7 +26,7 @@ class LadderController extends Controller
 
     public function getLadderIndex(Request $request)
     {
-        return view("ladders.listing", 
+        return view("ladders.listing",
         array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
@@ -50,16 +50,16 @@ class LadderController extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
-        
-        if ($game == null) 
+
+        if ($game == null)
             return "No game";
 
         $stats = $game->stats()->get();
 
-        return view('ladders.game-view', 
+        return view('ladders.game-view',
         array(
-            "game" => $game, 
-            "stats" => $stats, 
+            "game" => $game,
+            "stats" => $stats,
             "history" => $history,
             "ladders" => $this->ladderService->getLatestLadders(),
         ));
@@ -69,15 +69,15 @@ class LadderController extends Controller
     {
         $games = [];
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
-  
+
         $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
             ->where("username", "=", $username)->first();
-      
-        if ($player == null) 
+
+        if ($player == null)
             return "No Player";
 
-        $playerGames = \App\PlayerGame::where("player_id", "=", $player->id)
-            ->leftJoin("games as g", "g.id", "=", "player_games.game_id")
+        $playerGames = \App\PlayerPoint::where("player_id", $player->id)
+            ->leftJoin("games as g", "g.id", "=", "game_id")
             ->where("g.ladder_history_id", "=", $history->id)
             ->orderBy("g.id", "DESC")
             ->get();
@@ -92,9 +92,9 @@ class LadderController extends Controller
         }
 
         return view
-        ( 
-            "ladders.player-view", 
-            array 
+        (
+            "ladders.player-view",
+            array
             (
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "history" => $history,
