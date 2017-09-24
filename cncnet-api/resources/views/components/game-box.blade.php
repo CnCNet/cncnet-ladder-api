@@ -6,9 +6,16 @@
     <a href="{{ $url or ""}}" class="game-box-link">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
-            <?php $now = \Carbon\Carbon::now(); $days = $date->diffInDays($now); ?>
+            <?php $now = \Carbon\Carbon::now(); $days = $date->diffInDays($now); $hours = $date->diffInHours($now); $mins = $date->diffInMinutes($now);  ?>
+            @if($hours >= 24)
             <small class="status text-capitalize">{{ $status . " " . $days . " days ago"}}</small>
+            @elseif($hours <= 1)
+            <small class="status text-capitalize">{{ $status . " " . $mins . " minutes ago"}}</small>
+            @else
+            <small class="status text-capitalize">{{ $status . " " . $hours . " hours ago"}}</small>
+            @endif
         </div>
+        @if ($points != null)
         <div class="footer text-center">
             <?php $opponent = \App\PlayerPoint::where("game_id", "=", $points->game_id)->where("player_id", "!=", $points->player_id)->first(); ?>
             <h5 class="player {{ $status or "lost"}}">
@@ -21,5 +28,6 @@
             </h5>
             @endif
         </div>
+        @endif
     </a>
 </div>

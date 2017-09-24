@@ -3029,6 +3029,10 @@ h3.game-intro > span:first-child:after {
   background-position: center;
   margin-left: -5px; }
 
+.player-box .extra-stats {
+  font-size: 12px;
+  color: #777777; }
+
 .badge-2x {
   width: 209px;
   height: 200px;

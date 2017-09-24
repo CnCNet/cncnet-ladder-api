@@ -32,6 +32,17 @@
 @section('content')
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
+        <div class="feature">
+            <div class="row">
+                <div class="header">
+                    <div class="col-md-12">
+                        <h3><strong>1vs1</strong> Recent Games</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @include("components.global-recent-games", ["games" => $games])
 
         <div class="feature">
             <div class="row">
@@ -56,6 +67,8 @@
                                 "points" => $player->points,
                                 "badge" => $player->badge($player->points), 
                                 "rank" => $k + 1,
+                                "wins" => $player->wins(),
+                                "totalGames" => $player->totalGames(),
                                 "playerCard" => isset($player->card->short) ? $player->card->short : "", 
                                 "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username
                             ])

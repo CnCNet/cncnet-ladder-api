@@ -12,6 +12,16 @@ class Player extends Model
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
 
+    public function wins()
+    {
+        return $this->hasMany("App\PlayerGame")->where("result", "=", 1)->count();
+    }
+
+    public function totalGames()
+    {
+        return $this->hasMany("App\PlayerGame")->count();
+    }
+
     public function stats()
 	{
         return $this->hasMany('App\GameStats');

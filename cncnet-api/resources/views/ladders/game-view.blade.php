@@ -104,7 +104,7 @@
                                 <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points  }}</p>
                                 <p class="points">
                                     <?php $credits = json_decode($gameStats->crd); ?>
-                                    <strong>Funds Left: </strong> {{ $credits->value }} 
+                                    <strong>Funds Left: </strong> {{ $credits->value or "" }} 
                                 </p>
                                 <p class="colour player-panel-{{ $gameStats->colour($gameStats->col) }}" style="width:25px;height:25px;"></p>
                                 <div class="country">
