@@ -103,4 +103,34 @@ class LadderController extends Controller
             )
         );
     }
+
+    public function addLadder()
+    {
+        $ladder = \App\Ladder::where("name", "=", "Red Alert")->first();
+        for($times = 0; $times < 5; $times++)
+        {
+            $year = 2017 + $times;
+            for($month = 0; $month <= 12; $month++)
+            {
+                $date = Carbon::create($year, 01, 01, 0)->addMonth($month); 
+                $start = $date->startOfMonth()->toDateTimeString();
+                $ends = $date->endOfMonth()->toDateTimeString();
+
+                $ladderHistory = LadderHistory::where("starts", "=", $start)
+                    ->where("ends", "=", $ends)
+                    ->where("ladder_id", "=", $ladder->id)
+                    ->first();
+
+                if ($ladderHistory == null)
+                {
+                    $ladderHistory = new LadderHistory();
+                    $ladderHistory->ladder_id = $ladder->id;
+                    $ladderHistory->starts = $start;
+                    $ladderHistory->ends = $ends;
+                    $ladderHistory->short = $date->month . "-" . $date->year;
+                    $ladderHistory->save();
+                }
+            }
+        }
+    }
 }

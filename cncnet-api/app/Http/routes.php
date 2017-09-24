@@ -7,6 +7,8 @@ Route::get('/', function ()
     return redirect('ladder/');
 });
 
+//Route::get('/patch', 'LadderController@addLadder');
+
 Route::group(['prefix' => 'ladder/'], function()
 {
     Route::get('/', 'LadderController@getLadders');

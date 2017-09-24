@@ -11,7 +11,7 @@ class GameService
         $this->playerService = new PlayerService();
     }
 
-    public function saveGameStats($result, $gameId, $playerId, $ladderId)
+    public function saveGameStats($result, $gameId, $playerId, $ladderId, $cncnetGame)
     {
         $game = \App\Game::where("id", "=", $gameId)->first();
         $gameStats = \App\GameStats::where("player_id", "=", $playerId)
@@ -73,13 +73,27 @@ class GameService
                         ->first();
 
                     // Works for now
-                    if ($id == 0)
+                    if ($cncnetGame == "ra")
                     {
-                        $opponent = $result["NAM1"]["value"];
+                        if ($id == 1)
+                        {
+                            $opponent = $result["NAM2"]["value"];
+                        }
+                        else if ($id == 2)
+                        {
+                            $opponent = $result["NAM1"]["value"];
+                        }
                     }
-                    else if ($id == 1)
+                    else 
                     {
-                        $opponent = $result["NAM0"]["value"];
+                        if ($id == 0)
+                        {
+                            $opponent = $result["NAM1"]["value"];
+                        }
+                        else if ($id == 1)
+                        {
+                            $opponent = $result["NAM0"]["value"];
+                        }
                     }
 
                     $opponent = \App\Player::where("username", "=", $opponent)
@@ -94,7 +108,7 @@ class GameService
                         return 602;
                     }
 
-                    if($playerGame == null && $property == "CMP")
+                    if ($playerGame == null && $property == "CMP")
                     {
                         $gameResult = $value["value"];
                         switch($gameResult)
@@ -108,6 +122,18 @@ class GameService
                             case $gameResult & GameResult::COMPLETION_DEFEATED:
                             default:
                                 $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
+                        }
+                    }
+                    else if ($playerGame == null && $property == "DED" && $cncnetGame == "ra") // Just extra safety
+                    {
+                        $gameResult = $value["value"];
+                        if ($gameResult == 1)
+                        {
+                            $this->playerService->createPlayerGame($player, $opponent, $gameId, true);
+                        }
+                        else if ($gameResult == 0)
+                        {
+                            $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
                         }
                     }
                 }

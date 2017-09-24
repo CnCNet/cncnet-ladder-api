@@ -80,7 +80,7 @@ class ApiLadderController extends Controller
         $this->gameService->saveRawStats($result, $game->id, $history->id);
 
         // Now save the processed stats
-        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id, $history->ladder->id);
+        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id, $history->ladder->id, $cncnetGame);
         if ($gameStats != 200)
         {
             return response()->json(['Error' => $gameStats], 400);
@@ -88,6 +88,10 @@ class ApiLadderController extends Controller
 
         // Award ELO points
         if ($game->plrs == 2)
+        {
+            $status = $this->awardPoints($game->id, $history);
+        }
+        else if ($cncnetGame == "ra")
         {
             $status = $this->awardPoints($game->id, $history);
         }
@@ -122,6 +126,7 @@ class ApiLadderController extends Controller
         {
             return 604;
         }
+
         $playerGame = $gamePlayers->first();
 
         $plr = $this->playerService->findPlayerRatingByPid($playerGame->player_id);
