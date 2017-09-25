@@ -368,7 +368,7 @@
 
 
                                         <div class="form-group">
-                                        <label for="{{ $qmMap->id }}_fix_ai_ally"> spawn_preview </label>
+                                        <label for="{{ $qmMap->id }}_fix_ai_ally"> fix_ai_ally </label>
                                         <select id="{{ $qmMap->id }}_fix_ai_ally" name="fix_ai_ally">
                                            <option value="Null" @if(is_null($qmMap->fix_ai_ally)) selected @endif>Null</option>
                                            <option value="No" @if($qmMap->fix_ai_ally === 0) selected @endif>No</option>

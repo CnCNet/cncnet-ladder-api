@@ -272,7 +272,7 @@ class ApiQuickMatchController extends Controller
                   ,"AttackNeutralUnits" => b_to_ini($qmMap->attack_neutral)
                   ,"Superweapons" =>   b_to_ini($qmMap->supers)
                   ,"FixAIAlly"    =>   b_to_ini($qmMap->fix_ai_ally)
-                  ,"AllyReveal"=>   b_to_ini($qmMap->ally_reveal)
+                  ,"AllyReveal"=>      b_to_ini($qmMap->ally_reveal)
                   ,"AftermathFastBuildSpeed" =>   b_to_ini($qmMap->am_fast_build)
                   ,"ParabombsInMultiplayer" =>   b_to_ini($qmMap->parabombs)
                   ,"FixFormationSpeed" =>   b_to_ini($qmMap->fix_formation_speed)
@@ -284,14 +284,19 @@ class ApiQuickMatchController extends Controller
                   ,"NoScreenShake"   =>   b_to_ini($qmMap->no_screen_shake)
                   ,"NoTeslaZapEffectDelay"=>   b_to_ini($qmMap->no_tesla_delay)
                   ,"DeadPlayersRadar"=>   b_to_ini($qmMap->dead_player_radar)
-                  ,"CaptureTheFlag"  =>   b_to_ini($qmMap->capture_flag)
-                  ,"SlowUnitBuild"   =>   b_to_ini($qmMap->slow_unit_build)
-                  ,"ShroudRegrows"   =>   b_to_ini($qmMap->shroud_regrows)
+                  ,"CaptureTheFlag"  =>   $qmMap->capture_flag
+                  ,"SlowUnitBuild"   =>   $qmMap->slow_unit_build
+                  ,"ShroudRegrows"   =>   $qmMap->shroud_regrows
                   ,"AIPlayers"       =>   $qmMap->ai_player_count
 
                    // Filter null values
             ], function($var){return !is_null($var);} );
 
+
+            if ($ladder_rules->ladder()->first()->abbreviation == "ra")
+            {
+                $spawnStruct["spawn"]["Settings"]["Bases"] = $spawnStruct["spawn"]["Settings"]["Bases"] == "Yes" ? 1 : 0;
+            }
 
             // Write the Others sections
 
