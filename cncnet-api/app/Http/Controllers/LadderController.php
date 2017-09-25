@@ -30,6 +30,7 @@ class LadderController extends Controller
         array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
+            "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
             "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
             "players" => $this->ladderService->getLadderPlayers($request->date, $request->game)

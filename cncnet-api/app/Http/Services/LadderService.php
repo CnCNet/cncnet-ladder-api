@@ -37,6 +37,21 @@ class LadderService
             ->get();
     }
 
+    public function getPreviousLaddersByGame($cncnetGame, $limit = 5)
+    {
+        $date = Carbon::now();
+
+        $start = $date->startOfMonth()->subMonth($limit)->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+
+        $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
+        
+        return \App\LadderHistory::where("ladder_history.starts", ">=", $start)
+            ->where("ladder_history.ladder_id", "=", $ladder->id)
+            ->limit($limit)
+            ->get();
+    }
+
     public function getActiveLadderByDate($date, $cncnetGame = null)
     {
         $date = explode("-", $date);

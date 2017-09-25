@@ -15,6 +15,63 @@ a:hover, a:focus
     text-decoration: none;
 }
 
+.btn-transparent
+{
+    background: none;
+    border: none;
+    outline: 0;
+
+    &:hover, &:focus, &:active,
+    &:active:hover,
+    &:active:focus,
+    &:focus:hover
+    {
+        background: none;
+        border: none;
+        outline: 0;
+    }
+}
+
+.filter .btn 
+{
+    padding: 15px;
+}
+
+.filter li a,
+.filter .dropdown-menu 
+{
+    color: #afafaf;
+    
+    li a:hover,
+    &:hover 
+    {
+        color: #fff;
+        background-color: #000000;
+    }
+}
+
+.filter .dropdown-menu, 
+.filter .open 
+{
+    background-color: rgba(2, 2, 2, 0.96);
+    width: 100%;
+    border-radius: 0px;
+    border: 1px solid #000;
+    margin-top: -10px;
+    border-top: 1px solid #6200ff;
+}
+
+.btn-group.filter.open .btn 
+{
+    background-color: #000000;
+}
+
+.filter .btn-group.open .dropdown-toggle
+{
+    background: black;
+    padding: 15px;
+}
+
 .btn-primary 
 {
     font-size: 17px;

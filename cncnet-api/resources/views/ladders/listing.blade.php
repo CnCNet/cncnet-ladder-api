@@ -53,7 +53,20 @@
                                 <h3><strong>1vs1</strong> Battle Rankings</h3>
                             </div>
                             <div class="col-md-6 text-right">
-                                <h3>Filter by Month <span class="caret"></span></h3>
+                                <div class="btn-group filter">
+                                    <button type="button" class="btn btn-transparent dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Previous Month <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                    @foreach($ladders_previous as $previous)
+                                    <li>
+                                        <a href="/ladder/{{ $previous->short . "/" . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}">
+                                            {{ $previous->short }}
+                                        </a>
+                                    </li>
+                                    @endforeach
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
