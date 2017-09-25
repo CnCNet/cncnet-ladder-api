@@ -28,7 +28,7 @@
             <div class="row">
                 <div class="col-md-4">
                     <a href="/admin/users" class="profile-link">
-                        <div class="profile-listing">
+                        <div class="player-box player-card">
                             <h3>Users</h3>
                             <p>Manage everything to do with Users</p>
                         </div>
@@ -37,7 +37,7 @@
               
                 <div class="col-md-4">
                     <a href="/admin/setup" class="profile-link">
-                        <div class="profile-listing">
+                        <div class="player-box player-card">
                             <h3>Ladder Setup</h3>
                             <p>Manage maps, rules, and all things related to the ladder</p>
                         </div>
@@ -46,7 +46,7 @@
               
                 <div class="col-md-4">
                     <div class="profile-link">
-                        <div class="profile-listing">
+                        <div class="player-box player-card">
                             <h3>Games</h3>
                             <p>Manage maps, rules, and all things related to the ladder</p>
                             

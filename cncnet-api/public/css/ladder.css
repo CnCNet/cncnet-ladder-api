@@ -2479,24 +2479,40 @@
 .flag-icon-un.flag-icon-squared {
   background-image: url(../images/flags/1x1/un.svg); }
 
-footer a:hover, .btn:hover, a {
-  color: #007dff; }
+a {
+  color: #0068d2;
+  text-decoration: none; }
+  a:hover {
+    color: #0075ec; }
 
-.btn-primary {
-  color: #fff;
-  background-color: #0068d2;
+a:hover, a:focus {
+  text-decoration: none; }
+
+.btn-primary, .btn-secondary, .btn-tertiary {
+  font-size: 17px;
+  border-radius: 2px;
+  background: #0068d2;
   border-color: #0068d2; }
-  .btn-primary:focus, .btn-primary:active:hover, .btn-primary:active:focus, .btn-primary:hover, .btn-primary:active {
-    background-color: #004082;
-    border-color: #004082; }
+  .btn-primary:hover, .btn-secondary:hover, .btn-tertiary:hover, .btn-primary:focus, .btn-secondary:focus, .btn-tertiary:focus, .btn-primary:active, .btn-secondary:active, .btn-tertiary:active, .btn-primary:active:hover, .btn-secondary:active:hover, .btn-tertiary:active:hover, .btn-primary:active:focus, .btn-secondary:active:focus, .btn-tertiary:active:focus, .btn-primary:focus:hover, .btn-secondary:focus:hover, .btn-tertiary:focus:hover {
+    background: #0063c8;
+    border-color: #0063c8; }
 
-.btn-secondary:focus, .btn-secondary:active:hover, .btn-secondary:active:focus, .btn-secondary:hover, .btn-secondary:active {
-  background-color: #000;
-  border-color: #000; }
+.btn-secondary {
+  background: #000;
+  border-color: #000;
+  color: #fff; }
+  .btn-secondary:hover, .btn-secondary:focus, .btn-secondary:active, .btn-secondary:active:focus, .btn-secondary:active:hover, .btn-secondary:focus:hover {
+    background: black;
+    border-color: black; }
 
-.btn-tertiary:focus, .btn-tertiary:active:hover, .btn-tertiary:active:focus, .btn-tertiary:hover, .btn-tertiary:active {
-  border-color: #0068d2;
-  color: #0068d2; }
+.btn-tertiary {
+  background: transparent;
+  border-color: #fff;
+  color: #fff; }
+  .btn-tertiary:hover, .btn-tertiary:focus, .btn-tertiary:active, .btn-tertiary:active:focus, .btn-tertiary:active:hover, .btn-tertiary:focus:hover {
+    background: transparent;
+    border-color: #0068d2;
+    color: #0068d2; }
 
 .btn-transparent {
   color: white;

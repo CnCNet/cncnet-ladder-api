@@ -1,44 +1,73 @@
-﻿footer a:hover, .btn:hover, a
-{
-    color: #007dff;
+﻿$brand-primary: #0068d2;
+$brand-secondary: #000;
+
+a {
+    color: $brand-primary;
+    text-decoration: none;
+
+    &:hover {
+        color: lighten($brand-primary, 5%);
+    }
 }
 
-.btn-primary
+a:hover, a:focus 
 {
-    color: #fff;
-    background-color: #0068d2;
-    border-color: #0068d2;
+    text-decoration: none;
+}
 
-    &:focus,
+.btn-primary 
+{
+    font-size: 17px;
+    border-radius: 2px;
+
+    background: $brand-primary;
+    border-color: $brand-primary;
+
+    &:hover, &:focus, &:active,
     &:active:hover,
     &:active:focus,
-    &:hover, &:active {
-        background-color: #004082;
-        border-color: #004082;
+    &:focus:hover
+    {
+        background: darken($brand-primary, 2%);
+        border-color: darken($brand-primary, 2%);
     }
 }
 
 .btn-secondary 
 {
-    &:focus,
-    &:active:hover,
+    @extend .btn-primary;
+    background: $brand-secondary;
+    border-color: $brand-secondary;
+    color: #fff;
+
+    &:hover, &:focus, &:active,
     &:active:focus,
-    &:hover, &:active {
-        background-color: #000;
-        border-color: #000;
+    &:active:hover,
+    &:focus:hover
+    {
+        background: darken($brand-secondary, 10%);
+        border-color: darken($brand-secondary, 10%);
     }
 }
 
 .btn-tertiary 
 {
-    &:focus,
-    &:active:hover,
+    @extend .btn-primary;
+    background: transparent;
+    border-color: #fff;
+    color: #fff;
+
+    &:hover, &:focus, &:active,
     &:active:focus,
-    &:hover, &:active {
-        border-color: #0068d2;
-        color: #0068d2;
+    &:active:hover,
+    &:focus:hover
+    {
+        background: transparent;
+        border-color: $brand-primary;
+        color: $brand-primary;
     }
 }
+
 
 .btn-transparent 
 {
