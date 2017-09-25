@@ -138,14 +138,18 @@ class GameService
                 }
             }
             
-            if ($playerDead == 1)
+            if ($cncnetGame == "ra")
             {
-                $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
+                if ($playerDead == 1)
+                {
+                    $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
+                }
+                else if ($playerDead == 0)
+                {
+                    $this->playerService->createPlayerGame($player, $opponent, $gameId, true);
+                }
             }
-            else if ($playerDead == 0)
-            {
-                $this->playerService->createPlayerGame($player, $opponent, $gameId, true);
-            }
+
         }
 
         $gameStats->save();
