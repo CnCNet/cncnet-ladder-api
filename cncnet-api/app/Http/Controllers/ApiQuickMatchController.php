@@ -271,6 +271,8 @@ class ApiQuickMatchController extends Controller
                   ,"AimableSams" =>    b_to_ini($qmMap->aimable_sams)
                   ,"AttackNeutralUnits" => b_to_ini($qmMap->attack_neutral)
                   ,"Superweapons" =>   b_to_ini($qmMap->supers)
+                  ,"OreRegenerates" => b_to_ini($qmMap->ore_regenerates)
+                  ,"Aftermath" =>      b_to_ini($qmMap->aftermath)
                   ,"FixAIAlly"    =>   b_to_ini($qmMap->fix_ai_ally)
                   ,"AllyReveal"=>      b_to_ini($qmMap->ally_reveal)
                   ,"AftermathFastBuildSpeed" =>   b_to_ini($qmMap->am_fast_build)
@@ -296,6 +298,7 @@ class ApiQuickMatchController extends Controller
             if ($ladder_rules->ladder()->first()->abbreviation == "ra")
             {
                 $spawnStruct["spawn"]["Settings"]["Bases"] = $spawnStruct["spawn"]["Settings"]["Bases"] == "Yes" ? 1 : 0;
+                $spawnStruct["spawn"]["Settings"]["OreRegenerates"] = $spawnStruct["spawn"]["Settings"]["OreRegenerates"] == "Yes" ? 1 : 0;
             }
 
             // Write the Others sections
@@ -337,6 +340,6 @@ class ApiQuickMatchController extends Controller
 
 function b_to_ini($bool)
 {
-    if ($bool == null) return $bool;
+    if ($bool === null) return $bool;
     return $bool ? "Yes" : "No";
 }

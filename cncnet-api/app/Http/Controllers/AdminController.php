@@ -139,7 +139,25 @@ class AdminController extends Controller
         $qmMap->aimable_sams = ini_to_b($request->aimable_sams);
         $qmMap->attack_neutral = ini_to_b($request->attack_neutral);
         $qmMap->harv_truce = ini_to_b($request->harv_truce);
-
+        $qmMap->ore_regenerates = ini_to_b($request->ore_regenerates);
+        $qmMap->aftermath = ini_to_b($request->aftermath);
+        $qmMap->fix_ai_ally = ini_to_b($request->fix_ai_ally);
+        $qmMap->ally_reveal = ini_to_b($request->ally_reveal);
+        $qmMap->am_fast_build = ini_to_b($request->am_fast_build);
+        $qmMap->parabombs = ini_to_b($request->parabombs);
+        $qmMap->fix_formation_speed = ini_to_b($request->fix_formation_speed);
+        $qmMap->fix_magic_build = ini_to_b($request->fix_magic_build);
+        $qmMap->fix_range_exploit = ini_to_b($request->fix_range_exploit);
+        $qmMap->super_tesla_fix = ini_to_b($request->super_tesla_fix);
+        $qmMap->forced_alliances = ini_to_b($request->forced_alliances);
+        $qmMap->tech_center_fix = ini_to_b($request->tech_center_fix);
+        $qmMap->no_screen_shake = ini_to_b($request->no_screen_shake);
+        $qmMap->no_tesla_delay = ini_to_b($request->no_tesla_delay);
+        $qmMap->dead_player_radar = ini_to_b($request->dead_player_radar);
+        $qmMap->capture_flag = ini_to_b($request->capture_flag);
+        $qmMap->slow_unit_build = ini_to_b($request->slow_unit_build);
+        $qmMap->shroud_regrows = ini_to_b($request->shroud_regrows);
+        $qmMap->ai_player_count = $request->ai_player_count;
         $qmMap->save();
 
         $request->session()->flash('success', $message);

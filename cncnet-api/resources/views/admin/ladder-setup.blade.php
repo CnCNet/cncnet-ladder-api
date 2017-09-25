@@ -513,6 +513,24 @@
                                             </select>
                                         </div>
 
+                                        <div class="form-group">
+                                            <label for="{{ $qmMap->id }}_ore_regenerates"> ore_regenerates </label>
+                                            <select id="{{ $qmMap->id }}_ore_regenerates" name="ore_regenerates" class="form-control">
+                                               <option value="Null" @if(is_null($qmMap->ore_regenerates)) selected @endif>Null</option>
+                                               <option value="No" @if($qmMap->ore_regenerates === 0) selected @endif>No</option>
+                                               <option value="Yes" @if($qmMap->ore_regenerates === 1) selected @endif>Yes</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="{{ $qmMap->id }}_aftermath"> aftermath </label>
+                                            <select id="{{ $qmMap->id }}_aftermath" name="aftermath" class="form-control">
+                                               <option value="Null" @if(is_null($qmMap->aftermath)) selected @endif>Null</option>
+                                               <option value="No" @if($qmMap->aftermath === 0) selected @endif>No</option>
+                                               <option value="Yes" @if($qmMap->aftermath === 1) selected @endif>Yes</option>
+                                            </select>
+                                        </div>
+
                                         <button type="submit" class="btn btn-primary btn-lg">Save</button>
                                     </form>
                                     @endif

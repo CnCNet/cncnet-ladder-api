@@ -7,7 +7,7 @@ class QmLadderRules extends Model {
 	//
     public function ladder()
     {
-        return $this->belongsTo('ladders');
+        return $this->belongsTo('\App\Ladder');
     }
 
     public function all_sides()
