@@ -271,6 +271,23 @@ class ApiQuickMatchController extends Controller
                   ,"AimableSams" =>    b_to_ini($qmMap->aimable_sams)
                   ,"AttackNeutralUnits" => b_to_ini($qmMap->attack_neutral)
                   ,"Superweapons" =>   b_to_ini($qmMap->supers)
+                  ,"FixAIAlly"    =>   b_to_ini($qmMap->fix_ai_ally)
+                  ,"AllyReveal"=>   b_to_ini($qmMap->ally_reveal)
+                  ,"AftermathFastBuildSpeed" =>   b_to_ini($qmMap->am_fast_build)
+                  ,"ParabombsInMultiplayer" =>   b_to_ini($qmMap->parabombs)
+                  ,"FixFormationSpeed" =>   b_to_ini($qmMap->fix_formation_speed)
+                  ,"FixMagicBuild"   =>   b_to_ini($qmMap->fix_magic_build)
+                  ,"FixRangeExploit" =>   b_to_ini($qmMap->fix_range_exploit)
+                  ,"SuperTeslaFix"   =>   b_to_ini($qmMap->super_tesla_fix)
+                  ,"ForcedAlliances" =>   b_to_ini($qmMap->forced_alliances)
+                  ,"TechCenterBugFix"=>   b_to_ini($qmMap->tech_center_fix)
+                  ,"NoScreenShake"   =>   b_to_ini($qmMap->no_screen_shake)
+                  ,"NoTeslaZapEffectDelay"=>   b_to_ini($qmMap->no_tesla_delay)
+                  ,"DeadPlayersRadar"=>   b_to_ini($qmMap->dead_player_radar)
+                  ,"CaptureTheFlag"  =>   b_to_ini($qmMap->capture_flag)
+                  ,"SlowUnitBuild"   =>   b_to_ini($qmMap->slow_unit_build)
+                  ,"ShroudRegrows"   =>   b_to_ini($qmMap->shroud_regrows)
+                  ,"AIPlayers"       =>   $qmMap->ai_player_count
 
                    // Filter null values
             ], function($var){return !is_null($var);} );

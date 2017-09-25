@@ -152,9 +152,24 @@
                                      </div>
 
                                      <div class="form-group">
+                                         <label for="{{ $qmMap->id }}_team1_spawn_order">team1_spawn_order</label>
+                                         <input type="text" id="{{ $qmMap->id }}_team1_spawn_order" name="team1_spawn_order" value="{{ $qmMap->team1_spawn_order }}" />
+                                     </div>
+
+                                     <div class="form-group">
+                                         <label for="{{ $qmMap->id }}_team2_spawn_order">team2_spawn_order</label>
+                                         <input type="text" id="{{ $qmMap->id }}_team2_spawn_order" name="team2_spawn_order" value="{{ $qmMap->team2_spawn_order }}" />
+                                     </div>
+
+                                     <div class="form-group">
                                          <label for="{{ $qmMap->id }}_game_mode">game_mode</label>
                                          <input type="text" id="{{ $qmMap->id }}_game_mode" name="game_mode" value="{{ $qmMap->game_mode }}" />
                                      </div>
+
+                                     <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_ai_player_count"> ai_player_count </label>
+                                        <input id="{{ $qmMap->id }}_ai_player_count" name="ai_player_count" type="number" value="{{ $qmMap->ai_player_count }}" />
+                                       </div>
 
                                      <div class="form-group">
                                         <label for="{{ $qmMap->id }}_map"> map </label>
@@ -348,6 +363,151 @@
                                            <option value="Null" @if(is_null($qmMap->spawn_preview)) selected @endif>Null</option>
                                            <option value="No" @if($qmMap->spawn_preview === 0) selected @endif>No</option>
                                            <option value="Yes" @if($qmMap->spawn_preview === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_fix_ai_ally"> spawn_preview </label>
+                                        <select id="{{ $qmMap->id }}_fix_ai_ally" name="fix_ai_ally">
+                                           <option value="Null" @if(is_null($qmMap->fix_ai_ally)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->fix_ai_ally === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->fix_ai_ally === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_ally_reveal"> ally_reveal </label>
+                                        <select id="{{ $qmMap->id }}_ally_reveal" name="ally_reveal">
+                                           <option value="Null" @if(is_null($qmMap->ally_reveal)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->ally_reveal === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->ally_reveal === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_am_fast_build"> am_fast_build </label>
+                                        <select id="{{ $qmMap->id }}_am_fast_build" name="am_fast_build">
+                                           <option value="Null" @if(is_null($qmMap->am_fast_build)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->am_fast_build === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->am_fast_build === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_parabombs"> parabombs </label>
+                                        <select id="{{ $qmMap->id }}_parabombs" name="parabombs">
+                                           <option value="Null" @if(is_null($qmMap->parabombs)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->parabombs === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->parabombs === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_fix_formation_speed"> fix_formation_speed </label>
+                                        <select id="{{ $qmMap->id }}_fix_formation_speed" name="fix_formation_speed">
+                                           <option value="Null" @if(is_null($qmMap->fix_formation_speed)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->fix_formation_speed === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->fix_formation_speed === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_fix_magic_build"> fix_magic_build </label>
+                                        <select id="{{ $qmMap->id }}_fix_magic_build" name="fix_magic_build">
+                                           <option value="Null" @if(is_null($qmMap->fix_magic_build)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->fix_magic_build === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->fix_magic_build === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_fix_range_exploit"> fix_range_exploit </label>
+                                        <select id="{{ $qmMap->id }}_fix_range_exploit" name="fix_range_exploit">
+                                           <option value="Null" @if(is_null($qmMap->fix_range_exploit)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->fix_range_exploit === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->fix_range_exploit === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_super_tesla_fix"> super_tesla_fix </label>
+                                        <select id="{{ $qmMap->id }}_super_tesla_fix" name="super_tesla_fix">
+                                           <option value="Null" @if(is_null($qmMap->super_tesla_fix)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->super_tesla_fix === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->super_tesla_fix === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_forced_alliances"> forced_alliances </label>
+                                        <select id="{{ $qmMap->id }}_forced_alliances" name="forced_alliances">
+                                           <option value="Null" @if(is_null($qmMap->forced_alliances)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->forced_alliances === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->forced_alliances === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_tech_center_fix"> tech_center_fix </label>
+                                        <select id="{{ $qmMap->id }}_tech_center_fix" name="tech_center_fix">
+                                           <option value="Null" @if(is_null($qmMap->tech_center_fix)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->tech_center_fix === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->tech_center_fix === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_no_screen_shake"> no_screen_shake </label>
+                                        <select id="{{ $qmMap->id }}_no_screen_shake" name="no_screen_shake">
+                                           <option value="Null" @if(is_null($qmMap->no_screen_shake)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->no_screen_shake === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->no_screen_shake === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_no_tesla_delay"> no_tesla_delay </label>
+                                        <select id="{{ $qmMap->id }}_no_tesla_delay" name="no_tesla_delay">
+                                           <option value="Null" @if(is_null($qmMap->no_tesla_delay)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->no_tesla_delay === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->no_tesla_delay === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <Label for="{{ $qmMap->id }}_dead_player_radar"> dead_player_radar </label>
+                                        <select id="{{ $qmMap->id }}_dead_player_radar" name="dead_player_radar">
+                                           <option value="Null" @if(is_null($qmMap->dead_player_radar)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->dead_player_radar === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->dead_player_radar === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_capture_flag"> capture_flag </label>
+                                        <select id="{{ $qmMap->id }}_capture_flag" name="capture_flag">
+                                           <option value="Null" @if(is_null($qmMap->capture_flag)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->capture_flag === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->capture_flag === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_slow_unit_build"> slow_unit_build </label>
+                                        <select id="{{ $qmMap->id }}_slow_unit_build" name="slow_unit_build">
+                                           <option value="Null" @if(is_null($qmMap->slow_unit_build)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->slow_unit_build === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->slow_unit_build === 1) selected @endif>Yes</option>
+                                        </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                        <label for="{{ $qmMap->id }}_shroud_regrows"> shroud_regrows </label>
+                                        <select id="{{ $qmMap->id }}_shroud_regrows" name="shroud_regrows">
+                                           <option value="Null" @if(is_null($qmMap->shroud_regrows)) selected @endif>Null</option>
+                                           <option value="No" @if($qmMap->shroud_regrows === 0) selected @endif>No</option>
+                                           <option value="Yes" @if($qmMap->shroud_regrows === 1) selected @endif>Yes</option>
                                         </select>
                                         </div>
 
