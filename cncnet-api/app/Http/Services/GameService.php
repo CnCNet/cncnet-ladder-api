@@ -55,6 +55,9 @@ class GameService
 
         if ($id != -1)
         {
+            $playerDead = 0;
+            $opponent = '';
+            
             foreach($result as $key => $value)
             {
                 $cid = substr($key, -1); // Current Index
@@ -124,19 +127,24 @@ class GameService
                                 $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
                         }
                     }
-                    else if ($playerGame == null && $property == "DED" && $cncnetGame == "ra") // Just extra safety
+                    else if ($playerGame == null && $cncnetGame == "ra" && ($property == "DED" || $property == "RSG")) // Just extra safety
                     {
-                        $gameResult = $value["value"];
-                        if ($gameResult == 1)
+                        $isDead = $value["value"];
+                        if ($isDead == 1)
                         {
-                            $this->playerService->createPlayerGame($player, $opponent, $gameId, true);
-                        }
-                        else if ($gameResult == 0)
-                        {
-                            $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
+                            $playerDead = 1;
                         }
                     }
                 }
+            }
+            
+            if ($playerDead == 1)
+            {
+                $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
+            }
+            else if ($playerDead == 0)
+            {
+                $this->playerService->createPlayerGame($player, $opponent, $gameId, true);
             }
         }
 
