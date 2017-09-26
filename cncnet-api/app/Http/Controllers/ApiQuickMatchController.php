@@ -100,11 +100,7 @@ class ApiQuickMatchController extends Controller
 
                 $qmPlayer->ipv6_address = $request->ipv6_address;
                 $qmPlayer->ipv6_port = $request->ipv6_port;
-            }
 
-            if ($qmPlayer->qm_match_id == null)
-            {
-                // Update the player info
                 $qmPlayer->chosen_side = $request->side;
 
                 $all_sides = $ladder_rules->all_sides();
@@ -112,7 +108,7 @@ class ApiQuickMatchController extends Controller
 
                 if ($request->side == -1)
                 {
-                    $qmPlayer->actual_side = $sides[rand(0, count($all_sides) - 1)];
+                    $qmPlayer->actual_side = $all_sides[rand(0, count($all_sides) - 1)];
                 }
                 else if (in_array($request->side, $sides))
                 {
@@ -121,6 +117,11 @@ class ApiQuickMatchController extends Controller
                 else {
                     return array("type" => "error", "description" => "Side ({$request->side}) is not allowed");
                 }
+            }
+
+            if ($qmPlayer->qm_match_id === null)
+            {
+                // Update the player info
 
                 $qmPlayer->map_bitfield = $request->map_bitfield;
 
