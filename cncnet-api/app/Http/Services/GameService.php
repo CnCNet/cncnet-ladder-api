@@ -57,7 +57,7 @@ class GameService
         {
             $playerDead = 0;
             $opponent = '';
-            
+
             foreach($result as $key => $value)
             {
                 $cid = substr($key, -1); // Current Index
@@ -87,7 +87,7 @@ class GameService
                             $opponent = $result["NAM1"]["value"];
                         }
                     }
-                    else 
+                    else
                     {
                         if ($id == 0)
                         {
@@ -137,7 +137,7 @@ class GameService
                     }
                 }
             }
-            
+
             if ($cncnetGame == "ra")
             {
                 if ($playerDead == 1)
@@ -230,7 +230,7 @@ class GameService
                         $count = unpack("N", substr($raw, $j, 4))[1];
                         if ($count >= 0)
                         {
-                            if ($lookup && $lookup[$t])
+                            if ($lookup && count($lookup) > $t && $lookup[$t])
                             {
                                 $result["$tag$i"]["counts"][$lookup[$t]] = $count;
                             }
