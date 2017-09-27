@@ -140,6 +140,25 @@ class GameService
 
             if ($cncnetGame == "ra")
             {
+                /*
+                if ($result["CMPL"]["value"] == 64) //draw
+                {
+                    
+                }
+                else if ($result["sdfx"]["value"] == 1) //disconnect
+                {
+                    
+                }
+                else if ($result["oosy"]["value"] == 1) //out of sync
+                {
+                    
+                }
+                else if ($result["dura"]["value"] < 60) //game too short
+                {
+                    
+                }
+                else 
+                */
                 if ($playerDead == 1)
                 {
                     $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
