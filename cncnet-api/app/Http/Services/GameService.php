@@ -39,6 +39,11 @@ class GameService
             return 601;
         }
 
+        if ($result["dura"]["value"] < 60)
+        {
+            return 660;
+        }
+
         $id = -1; // Player Index
         foreach($result as $key => $value)
         {
