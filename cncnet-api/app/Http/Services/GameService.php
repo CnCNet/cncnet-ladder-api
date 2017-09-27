@@ -39,7 +39,7 @@ class GameService
             return 601;
         }
 
-        if ($result["dura"]["value"] < 60)
+        if ($result["DURA"]["value"] < 60)
         {
             return 660;
         }
@@ -148,21 +148,21 @@ class GameService
                 /*
                 if ($result["CMPL"]["value"] == 64) //draw
                 {
-                    
+
                 }
                 else if ($result["sdfx"]["value"] == 1) //disconnect
                 {
-                    
+
                 }
                 else if ($result["oosy"]["value"] == 1) //out of sync
                 {
-                    
+
                 }
                 else if ($result["dura"]["value"] < 60) //game too short
                 {
-                    
+
                 }
-                else 
+                else
                 */
                 if ($playerDead == 1)
                 {
