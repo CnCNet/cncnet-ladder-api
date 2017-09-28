@@ -39,7 +39,7 @@ class GameService
             return 601;
         }
 
-        if ($result["DURA"]["value"] < 60)
+        if ($result["DURA"]["value"] < 60 || $result["AFPS"]["value"] < 10)
         {
             return 660;
         }
