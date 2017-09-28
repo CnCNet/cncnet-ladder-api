@@ -7,6 +7,7 @@ use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
+use \Carbon\Carbon;
 
 class ApiQuickMatchController extends Controller
 {
@@ -147,6 +148,7 @@ class ApiQuickMatchController extends Controller
                  *
                  * The ratio of seconds to points should be tunable TODO.
                  */
+                $phpNow = Carbon::now()->toDateTimeString();
                 $qmOpns = \App\QmMatchPlayer::where('qm_match_players.id', '<>', $qmPlayer->id)
                         ->where('waiting', true)
                         ->where('ladder_id', $qmPlayer->ladder_id)
@@ -159,7 +161,7 @@ class ApiQuickMatchController extends Controller
                                     ."qm_match_players.created_at as created_at"
                                     .", qm_match_players.updated_at as updated_at"
                                     .", ABS($rating - rating)"
-                                    ." - ABS(TIMESTAMPDIFF(SECOND, qm_match_players.created_at, now())) as importance")
+                                    ." - ABS(TIMESTAMPDIFF(SECOND, qm_match_players.created_at, '{$phpNow}')) as importance")
                         ->having('importance', '<', $ladder_rules->max_difference)
                         ->orderBy('importance', 'asc')
                         ->get();
