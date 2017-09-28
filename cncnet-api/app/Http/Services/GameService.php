@@ -43,6 +43,11 @@ class GameService
         {
             return 660;
         }
+        
+        if ($cncnetGame == "ra" && ($result["CMPL"]["value"] == 64 || $result["OOSY"]["value"] == 1)) // draw || out of sync
+        {
+            return 660;
+        }
 
         $id = -1; // Player Index
         foreach($result as $key => $value)
