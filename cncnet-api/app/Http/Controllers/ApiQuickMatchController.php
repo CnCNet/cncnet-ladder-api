@@ -8,6 +8,7 @@ use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
 use \Carbon\Carbon;
+use DB;
 
 class ApiQuickMatchController extends Controller
 {
@@ -23,6 +24,11 @@ class ApiQuickMatchController extends Controller
         $this->gameService = new GameService();
         $this->playerService = new PlayerService();
         $this->authService = new AuthService();
+    }
+
+    public function clientVersion(Request $request, $platform = null)
+    {
+        return json_encode(DB::table("client_version")->where("platform", $platform)->first());
     }
 
     public function mapListRequest(Request $request, $ladderAbbrev = null)
@@ -68,6 +74,7 @@ class ApiQuickMatchController extends Controller
             }
             return array("type" => "quit");
             break;
+
         case "update":
             if ($qmPlayer != null)
             {
@@ -117,6 +124,12 @@ class ApiQuickMatchController extends Controller
                 }
                 else {
                     return array("type" => "error", "description" => "Side ({$request->side}) is not allowed");
+                }
+
+                if ($request->version && $request->platform)
+                {
+                    $qmPlayer->version = $request->version;
+                    $qmPlayer->platform = $request->platform;
                 }
             }
 

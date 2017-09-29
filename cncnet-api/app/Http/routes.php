@@ -75,6 +75,7 @@ Route::group(['prefix' => 'api/v1/'], function ()
     Route::get('/ladder/elo/{gameId}', 'ApiLadderController@awardPoints');
 
     // QuickMatch Endpoints
+    Route::get('/qm/version/{platform}', 'ApiQuickMatchController@clientVersion');
     Route::get('/qm/ladder/{ladderAbbrev}/maps', 'ApiQuickMatchController@mapListRequest');
     Route::post('/qm/{ladderAbbrev}/{playerName}', 'ApiQuickMatchController@matchRequest');
 });
