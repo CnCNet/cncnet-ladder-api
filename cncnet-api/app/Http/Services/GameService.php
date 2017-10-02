@@ -39,6 +39,16 @@ class GameService
             return 601;
         }
 
+        if ($result["DURA"]["value"] < 60 || $result["AFPS"]["value"] < 10)
+        {
+            return 660;
+        }
+        
+        if ($cncnetGame == "ra" && ($result["CMPL"]["value"] == 64 || $result["OOSY"]["value"] == 1)) // draw || out of sync
+        {
+            return 660;
+        }
+
         $id = -1; // Player Index
         foreach($result as $key => $value)
         {
@@ -140,6 +150,25 @@ class GameService
 
             if ($cncnetGame == "ra")
             {
+                /*
+                if ($result["CMPL"]["value"] == 64) //draw
+                {
+
+                }
+                else if ($result["sdfx"]["value"] == 1) //disconnect
+                {
+
+                }
+                else if ($result["oosy"]["value"] == 1) //out of sync
+                {
+
+                }
+                else if ($result["dura"]["value"] < 60) //game too short
+                {
+
+                }
+                else
+                */
                 if ($playerDead == 1)
                 {
                     $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
