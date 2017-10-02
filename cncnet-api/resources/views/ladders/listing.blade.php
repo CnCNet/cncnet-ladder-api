@@ -80,8 +80,8 @@
                                 "points" => $player->points,
                                 "badge" => $player->badge($player->points), 
                                 "rank" => $k + 1,
-                                "wins" => $player->wins(),
-                                "totalGames" => $player->totalGames(),
+                                "wins" => $player->wins($history),
+                                "totalGames" => $player->totalGames($history),
                                 "playerCard" => isset($player->card->short) ? $player->card->short : "", 
                                 "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username
                             ])

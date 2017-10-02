@@ -12,14 +12,41 @@ class Player extends Model
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
 
-    public function wins()
+    public function wins($history = null)
     {
-        return $this->hasMany("App\PlayerGame")->where("result", "=", 1)->count();
+        $result = 0;
+
+        if ($history == null)
+        {
+            $result = $this->hasMany("App\PlayerGame")->where("result", "=", 1)->count();
+        }
+        else 
+        {
+            $result = $this->hasMany("App\PlayerGame")
+                ->leftJoin("games as g", "g.id", "=", "player_games.game_id")
+                ->where("g.ladder_history_id", "=", $history->id)
+                ->where("result", "=", 1)
+                ->count();
+        }
+        return $result;
     }
 
-    public function totalGames()
+    public function totalGames($history = null)
     {
-        return $this->hasMany("App\PlayerGame")->count();
+        $result = 0;
+
+        if ($history == null)
+        {
+            $result = $this->hasMany("App\PlayerGame")->count();
+        }
+        else
+        {
+            $result = $this->hasMany("App\PlayerGame")
+                ->leftJoin("games as g", "g.id", "=", "player_games.game_id")
+                ->where("g.ladder_history_id", "=", $history->id)
+                ->count();
+        }
+        return $result;
     }
 
     public function stats()

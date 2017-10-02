@@ -141,10 +141,19 @@ class LadderService
             ->where("username", "=", $player)->first();
 
         $rank = $this->getLadderPlayerRank($history, $player->username);
-        $points = \App\PlayerPoint::where("player_id", "=", $player->id)->sum("points_awarded");
-        $games = \App\PlayerGame::where("player_id", "=", $player->id);
+        $points = \App\PlayerPoint::where("player_id", "=", $player->id)
+            ->where("ladder_history_id", "=", $history->id)
+            ->sum("points_awarded");
+
+        $games = \App\PlayerGame::where("player_id", "=", $player->id)
+                ->leftJoin("games as g", "g.id", "=", "player_games.game_id")
+                ->where("g.ladder_history_id", "=", $history->id);
+
         $gamesCount = $games->count();
-        $gamesWon = \App\PlayerGame::where("player_id", "=", $player->id)->where("result", "=", 1)->count();
+        $gamesWon = $games->where("player_id", "=", $player->id)
+                    ->where("result", "=", 1)
+                    ->count();
+
         $gamesLost = ($gamesCount - $gamesWon);
         $averageFps = $this->calculateAverageFPS($games);
         $badge = $player->badge($points);
