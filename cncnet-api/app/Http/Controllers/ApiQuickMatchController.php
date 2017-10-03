@@ -240,6 +240,7 @@ class ApiQuickMatchController extends Controller
                 }
                 else {
                     // We couldn't make a match
+                    $qmPlayer->touch();
                     return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5);
                 }
             }
