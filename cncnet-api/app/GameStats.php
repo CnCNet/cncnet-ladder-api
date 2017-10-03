@@ -8,7 +8,7 @@ class GameStats extends Model
 
 	protected $fillable = [
         'cmp', 'col', 'sid',
-        'spc',  'ipa', 'bamr', 'oosy', 'afps', 'sdfx',
+        'spc',  'ipa', 'bamr', 'oosy', 'afps',
         'plrs', 'unit', 'mode', 'supr', 'shrt', 'cred', 'dura',
         'fini', 'trny', 'gsku', 'idno', 'vers'
     ];
