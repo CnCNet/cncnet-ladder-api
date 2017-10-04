@@ -132,7 +132,8 @@
                         <li><strong>MCV Redeploy:</strong> {{ $game->bamr & 1 ? "On" : "Off" }}</li>                 
                         <li><strong>Build off Ally Conyard:</strong> {{ $game->bamr & 2 ? "On" : "Off" }}</li>
                         <li><strong>Average FPS:</strong> {{ $game->afps }}</li>
-                        <li><strong>Reconnection Error:</strong> {{ $game->oosy ? "Yes" : "No" }}</li>
+                        <li><strong>Reconnection Error (OOS):</strong> {{ $game->oosy ? "Yes" : "No" }}</li>
+                        <li><strong>Disconnect:</strong> {{ $game->sdfx ? "Yes" : "No" }}</li>
                         <li><strong>Unit Count Start:</strong> {{ $game->unit ? $game->unit : 0 }}</li>
                         <li><strong>Players in Game:</strong> {{ $game->plrs ? $game->plrs : 0 }}</li>
                     </ul>

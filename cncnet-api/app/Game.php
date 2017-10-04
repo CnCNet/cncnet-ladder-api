@@ -21,6 +21,7 @@ class Game extends Model
         'unit',
         'plrs',
         'scen',
+        'sdfx',
         'hash'
     ];
 
@@ -39,6 +40,7 @@ class Game extends Model
         'unit',
         'plrs',
         'scen',
+        'sdfx',
         'hash'
     ];
 
