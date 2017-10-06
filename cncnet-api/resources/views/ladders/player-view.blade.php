@@ -44,8 +44,8 @@
                 <div class="row">
                     <div class="col-md-8">
                         @include("components.dials", [
-                            "gamesCount" => $player->game_count, 
-                            "averageFps" => $player->average_fps,  
+                            "gamesCount" => $player->game_count,
+                            "averageFps" => $player->average_fps,
                             "gamesWon" => $player->games_won,
                             "gamesLost" => $player->games_lost,
                             "gamesCount" => $player->game_count
@@ -63,7 +63,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <h3>Recently played</h3>
-                    @include("components.recent-games", ["player" => $player, "games" => $games])
+                    @include("components.player-recent-games", ["player" => $player, "games" => $games])
                 </div>
             </div>
         </div>

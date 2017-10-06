@@ -45,7 +45,7 @@ class LadderService
         $end = $date->endOfMonth()->toDateTimeString();
 
         $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
-        
+
         return \App\LadderHistory::where("ladder_history.starts", ">=", $start)
             ->where("ladder_history.ladder_id", "=", $ladder->id)
             ->limit($limit)
@@ -123,13 +123,7 @@ class LadderService
         if($history == null || $gameId == null)
             return "Invalid parameters";
 
-        $ladderGame = \App\LadderGame::where("ladder_history_id", "=", $history->id)
-            ->where("game_id", "=", $gameId)->first();
-
-        if($ladderGame == null)
-            return null;
-
-        return \App\Game::where("id", "=", $ladderGame->game_id)->first();
+        return \App\Game::where("id", "=", $gameId)->where('ladder_history_id', $history->id)->first();
     }
 
     public function getLadderPlayer($history, $player)
@@ -141,21 +135,16 @@ class LadderService
             ->where("username", "=", $player)->first();
 
         $rank = $this->getLadderPlayerRank($history, $player->username);
-        $points = \App\PlayerPoint::where("player_id", "=", $player->id)
-            ->where("ladder_history_id", "=", $history->id)
-            ->sum("points_awarded");
 
-        $games = \App\PlayerGame::where("player_id", "=", $player->id)
-                ->leftJoin("games as g", "g.id", "=", "player_games.game_id")
-                ->where("g.ladder_history_id", "=", $history->id);
+        $playerQuery = $player->playerGames()->where("ladder_history_id", "=", $history->id);
 
-        $gamesCount = $games->count();
-        $gamesWon = $games->where("player_id", "=", $player->id)
-                    ->where("result", "=", 1)
-                    ->count();
-
+        $points = $playerQuery->sum("points");
+        $gamesCount = $playerQuery->count();
+        $gamesWon = $playerQuery->where('won', true)->count();
         $gamesLost = ($gamesCount - $gamesWon);
-        $averageFps = $this->calculateAverageFPS($games);
+
+        $averageFps = $gamesCount ? $playerQuery->sum('fps') / $gamesCount : 0;
+
         $badge = $player->badge($points);
         $playerRating = \App\PlayerRating::where("player_id", "=", $player->id)->first()->rating;
 
@@ -173,29 +162,6 @@ class LadderService
         ];
     }
 
-    private function calculateAverageFPS($games)
-    {
-        $afps = 0;
-        $count = $games->count();
-        $games = $games->get();
-
-        foreach($games as $game)
-        {
-            $g = $game->game()->first();
-            if ($g != null)
-            {
-                $afps += $g->afps;
-            }
-        }
-
-        if ($count > 0)
-        {
-            return round($afps / $count);
-        }
-
-        return $afps;
-    }
-
     public function getLadderPlayers($date, $cncnetGame)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
@@ -208,10 +174,7 @@ class LadderService
 
         foreach($ladderPlayers as $player)
         {
-            $player["points"] = \App\PlayerPoint::where("player_id", "=", $player->id)
-                ->where("ladder_history_id", "=", $history->id)
-                ->sum("points_awarded");
-
+            $player["points"] = $player->playerGames()->where('ladder_history_id', $history->id)->sum('points');
             $players->add($player);
         }
 

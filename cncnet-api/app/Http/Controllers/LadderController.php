@@ -77,7 +77,7 @@ class LadderController extends Controller
         if ($player == null)
             return "No Player";
 
-        $playerGames = \App\PlayerPoint::where("player_id", $player->id)
+        $playerGames = $player->playerGameReports()
             ->leftJoin("games as g", "g.id", "=", "game_id")
             ->where("g.ladder_history_id", "=", $history->id)
             ->orderBy("g.id", "DESC")
@@ -113,7 +113,7 @@ class LadderController extends Controller
             $year = 2017 + $times;
             for($month = 0; $month <= 12; $month++)
             {
-                $date = Carbon::create($year, 01, 01, 0)->addMonth($month); 
+                $date = Carbon::create($year, 01, 01, 0)->addMonth($month);
                 $start = $date->startOfMonth()->toDateTimeString();
                 $ends = $date->endOfMonth()->toDateTimeString();
 

@@ -14,14 +14,6 @@ class GameService
     public function saveGameStats($result, $gameId, $playerId, $ladderId, $cncnetGame)
     {
         $game = \App\Game::where("id", "=", $gameId)->first();
-        $gameStats = \App\GameStats::where("player_id", "=", $playerId)
-            ->where("game_id", "=", $gameId)
-            ->first();
-
-        if ($gameStats != null)
-        {
-            return 600;
-        }
 
         $stats = new \App\Stats();
         $stats->save();
@@ -36,156 +28,153 @@ class GameService
 
         if ($player == null)
         {
-            return 601;
+            return null;
         }
 
-        if ($result["DURA"]["value"] < 60 || $result["AFPS"]["value"] < 10)
-        {
-            return 660;
-        }
-        
-        if ($cncnetGame == "ra" && ($result["CMPL"]["value"] == 64 || $result["OOSY"]["value"] == 1)) // draw || out of sync
-        {
-            return 660;
-        }
+        $gameReport = new \App\GameReport;
+        $gameReport->game_id = $game->id;
+        $gameReport->player_id = $playerId;
+        $gameReport->best_report = false;
+        $gameReport->manual_report = false;
+        $gameReport->duration = 0;
+        $gameReport->valid = false;
+        $gameReport->fps = 0;
+        $gameReport->oos = false;
+        $gameReport->save();
 
-        $id = -1; // Player Index
+        if ($game->stats === null)
+        {
+            $game->stats = $gameReport->id;
+            $gameReport->best_report = true;
+        }
+        if ($game->game_report_id === null)
+        {
+            $gameReport->best_report = true;
+            $game->game_report_id = $gameReport->id;
+        }
+        $gameReport->save();
+        $game->save();
+
+        $playerGameReports = array();
+        $playerStats = array();
+
         foreach($result as $key => $value)
         {
             $property = substr($key, 0, -1);
 
             if ($property == "NAM")
             {
-                if (isset($value["value"]) && $value["value"] == $player->username)
-                {
-                    $id = substr($key, -1);
-                }
+                $id = substr($key, -1);
+                $playerGameReports[$id] = new \App\PlayerGameReport();
+                $playerGameReports[$id]->game_id = $game->id;
+                $playerGameReports[$id]->game_report_id = $gameReport->id;
+                $playerHere = \App\Player::where('ladder_id', $ladderId)->where('username', $value["value"])->first();
+
+                if ($playerHere === null)
+                    return null;
+
+                $playerGameReports[$id]->player_id = $playerHere->id;
+
+                $playerStats[$id] = new \App\Stats;
+                $playerStats[$id]->save();
+                $playerGameReports[$id]->stats_id = $playerStats[$id]->id;
             }
         }
 
-        if ($id != -1)
+        foreach($result as $key => $value)
         {
-            $playerDead = 0;
-            $opponent = '';
+            $cid = substr($key, -1); // Current Index
+            $property = substr($key, 0, -1); // Property without index
 
-            foreach($result as $key => $value)
+            if (is_numeric($cid) && $cid >= 0 && $cid < 8)
             {
-                $cid = substr($key, -1); // Current Index
-                $property = substr($key, 0, -1); // Property without index
-
-                if ($cid == $id)
+                // Save Game Specific Stats like buildings bought, destroyed etc
+                if (in_array(strtolower($property), $playerStats[$cid]->gameStatsColumns))
                 {
-                    // Save Game Specific Stats like buildings bought, destroyed etc
-                    if (in_array(strtolower($property), $stats->gameStatsColumns))
-                    {
-                        $stats->{strtolower($property)} = json_encode($value);
-                    }
+                    $playerStats[$cid]->{strtolower($property)} = json_encode($value);
+                }
+                $playerGameReports[$cid]->local_id = $cid;
+                $playerGameReports[$cid]->local_team_id = $cid;
 
-                    $playerGame = \App\PlayerGame::where("game_id", "=", $gameId)
-                        ->where("player_id", "=", $player->id)
-                        ->first();
-
-                    // Works for now
-                    if ($cncnetGame == "ra")
-                    {
-                        if ($id == 1)
-                        {
-                            $opponent = $result["NAM2"]["value"];
-                        }
-                        else if ($id == 2)
-                        {
-                            $opponent = $result["NAM1"]["value"];
-                        }
-                    }
-                    else
-                    {
-                        if ($id == 0)
-                        {
-                            $opponent = $result["NAM1"]["value"];
-                        }
-                        else if ($id == 1)
-                        {
-                            $opponent = $result["NAM0"]["value"];
-                        }
-                    }
-
-                    $opponent = \App\Player::where("username", "=", $opponent)
-                        ->where("ladder_id", "=", $ladderId)->first();
-
-                    if ($opponent == null)
-                    {
-                        $game->delete();
-                        $stats->delete();
-                        $gameStats->delete();
-
-                        return 602;
-                    }
-
-                    if ($playerGame == null && $property == "CMP")
-                    {
-                        $gameResult = $value["value"];
-                        switch($gameResult)
-                        {
-                            case $gameResult & GameResult::COMPLETION_WON:
-                                $this->playerService->createPlayerGame($player, $opponent, $gameId, true);
-                                break;
-                            case $gameResult & GameResult::COMPLETION_DISCONNECTED:
-                            case $gameResult & GameResult::COMPLETION_NO_COMPLETION:
-                            case $gameResult & GameResult::COMPLETION_QUIT:
-                            case $gameResult & GameResult::COMPLETION_DEFEATED:
-                            default:
-                                $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
-                        }
-                    }
-                    else if ($playerGame == null && $cncnetGame == "ra" && ($property == "DED" || $property == "RSG")) // Just extra safety
-                    {
-                        $isDead = $value["value"];
-                        if ($isDead == 1)
-                        {
-                            $playerDead = 1;
-                        }
-                    }
+                switch($property)
+                {
+                case "CMP":
+                    $gameResult = $value["value"];
+                    $playerGameReports[$cid]->disconnected =
+                        ($gameResult & GameResult::COMPLETION_DISCONNECTED)  ? true : false;
+                    $playerGameReports[$cid]->no_completion =
+                        ($gameResult & GameResult::COMPLETION_NO_COMPLETION) ? true : false;
+                    $playerGameReports[$cid]->quit = ($gameResult & GameResult::COMPLETION_QUIT) ? true : false;
+                    $playerGameReports[$cid]->won =  ($gameResult & GameResult::COMPLETION_WON)  ? true : false;
+                    $playerGameReports[$cid]->draw = ($gameResult & GameResult::COMPLETION_DRAW) ? true : false;
+                    $playerGameReports[$cid]->defeated =
+                        ($gameResult & GameResult::COMPLETION_DEFEATED) ? true : false;
+                    break;
+                case "RSG":
+                    $playerGameReports[$cid]->quit = true;
+                case "DED":
+                    $playerGameReports[$cid]->defeated = true;
+                    break;
+                case "ALY":
+                    // Unsupported ATM. My idea is that local_team_id should be the ID of the lowest ALLY -or-yourself
+                    // For now everyone is on his own team
+                    $playerGameReports[$cid]->local_team_id = $cid;
+                    break;
+                case "SPC":
+                    $playerGameReports[$cid]->spectator = true;
+                    break;
+                case "CON":
+                    $playerGameReports[$cid]->disconnected = true;
+                    break;
+                default:
                 }
             }
 
-            if ($cncnetGame == "ra")
+            switch($key)
             {
-                /*
-                if ($result["CMPL"]["value"] == 64) //draw
+            case "CMPL":
+                // Must be RA, not sure what to do though
+                $player->won = !$playerGameReports[$cid]->defeated;
+                $player->no_completion = false;
+                $player->draw = ($value["value"] & GameResult::COMPLETION_DRAW) ? true : false;
+                $player->defeated = false;
+                break;
+            case "OOSY":
+                $gameReport->oos = true;
+                break;
+            case "SDFX":
+                foreach ($playerGameReports as $playerGR)
                 {
-
+                    $playerGR->disconnected = $value["value"];
                 }
-                else if ($result["sdfx"]["value"] == 1) //disconnect
-                {
-
-                }
-                else if ($result["oosy"]["value"] == 1) //out of sync
-                {
-
-                }
-                else if ($result["dura"]["value"] < 60) //game too short
-                {
-
-                }
-                else
-                */
-                if ($playerDead == 1)
-                {
-                    $this->playerService->createPlayerGame($player, $opponent, $gameId, false);
-                }
-                else if ($playerDead == 0)
-                {
-                    $this->playerService->createPlayerGame($player, $opponent, $gameId, true);
-                }
+                break;
+            case "DURA":
+                $gameReport->duration = $value["value"];
+                $gameReport->valid = $gameReport->duration > 60;
+                break;
+            case "AFPS":
+                $gameReport->fps = $value["value"];
+                break;
+            case "QUIT":
+                $reporter->quit = true;
+                break;
+            default:
             }
-
         }
 
+        foreach ($playerGameReports as $playerGR)
+        {
+            $playerGR->save();
+        }
+        foreach ($playerStats as $pStats)
+        {
+            $pStats->save();
+        }
+        $gameReport->save();
         $gameStats->save();
-        $stats->save();
         $game->save();
 
-        return 200;
+        return $gameReport;
     }
 
     public function saveRawStats($result, $gameId, $ladderId)
@@ -349,22 +338,22 @@ class GameService
 
         $game = \App\Game::where("wol_game_id", "=", $id)->first();
 
-        if ($game == null)
+        if ($game === null)
         {
             $game = new \App\Game();
             $game->ladder_history_id = $ladder->id;
             $game->wol_game_id = $id;
-            $game->save();
+            //$game->save();
         }
 
-        $ladderGame = \App\LadderGame::where("game_id", "=", $game->id)->first();
-        if ($ladderGame == null)
-        {
-            $ladderGame = new \App\LadderGame();
-            $ladderGame->game_id = $game->id;
-            $ladderGame->ladder_history_id = $ladder->id;
-            $ladderGame->save();
-        }
+        //$ladderGame = \App\LadderGame::where("game_id", "=", $game->id)->first();
+        //if ($ladderGame == null)
+        //{
+        //    $ladderGame = new \App\LadderGame();
+        //    $ladderGame->game_id = $game->id;
+        //    $ladderGame->ladder_history_id = $ladder->id;
+        //    $ladderGame->save();
+        //}
 
         foreach($result as $key => $value)
         {
@@ -386,11 +375,8 @@ class GameService
 
     private function getUniqueGameIdentifier($result)
     {
-        foreach ($result as $k => $v)
-        {
-            if($k == "IDNO")
-                return $v["value"];
-        }
+        if ($result["IDNO"])
+            return $result["IDNO"]["value"] + 1 - 1;
         return null;
     }
 }

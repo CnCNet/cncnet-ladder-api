@@ -32,24 +32,6 @@ class PlayerService
         return null;
     }
 
-    public function createPlayerGame($player, $opponent, $gameId, $won)
-    {
-        $playerGame = \App\PlayerGame::where("player_id", "=", $player->id)
-            ->where("game_id", "=", $gameId)->first();
-
-        if ($playerGame == null)
-        {
-            $playerGame = new \App\PlayerGame();
-            $playerGame->game_id = $gameId;
-            $playerGame->player_id = $player->id;
-            $playerGame->opponent_id = $opponent->id;
-            $playerGame->result = $won;
-            $playerGame->save();
-        }
-
-        return $playerGame;
-    }
-
     public function updatePlayerCard($user, $card, $playerId)
     {
         if ($card == null)
@@ -88,17 +70,6 @@ class PlayerService
             ->where("ladder_id", "=", $ladder->id)->first();
     }
 
-    public function awardPlayerPoints($playerId, $gameId, $points, $won, $history)
-    {
-        $playerPoints = new \App\PlayerPoint();
-        $playerPoints->player_id = $playerId;
-        $playerPoints->game_id = $gameId;
-        $playerPoints->points_awarded = $points;
-        $playerPoints->game_won = $won;
-        $playerPoints->ladder_history_id = $history->id;
-        $playerPoints->save();
-    }
-
     public function updatePlayerStats($player, $points, $won = false)
     {
         $player->points = $points;
@@ -131,8 +102,9 @@ class PlayerService
         return 16;
     }
 
-    public function updatePlayerRating($playerRating, $newRating)
+    public function updatePlayerRating($playerID, $newRating)
     {
+        $playerRating = $this->findPlayerRatingByPid($playerID);
         if ($newRating > $playerRating->peak_rating)
         {
             $playerRating->peak_rating = $newRating;

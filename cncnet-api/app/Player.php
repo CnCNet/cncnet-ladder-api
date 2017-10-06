@@ -12,39 +12,52 @@ class Player extends Model
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
 
+    public function playerGameReports()
+    {
+        return $this->hasMany('App\PlayerGameReport');
+    }
+
     public function wins($history = null)
     {
         $result = 0;
 
         if ($history == null)
         {
-            $result = $this->hasMany("App\PlayerGame")->where("result", "=", 1)->count();
+            $result = $this->playerGames()->where('won', true)->count();
         }
-        else 
+        else
         {
-            $result = $this->hasMany("App\PlayerGame")
-                ->leftJoin("games as g", "g.id", "=", "player_games.game_id")
-                ->where("g.ladder_history_id", "=", $history->id)
-                ->where("result", "=", 1)
-                ->count();
+            $result = $this->playerGames()->where('won', true)->where('ladder_history_id', $history->id)->count();
         }
         return $result;
     }
 
+    public function playerGames()
+    {
+        return $this->playerGameReports()
+            ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+            ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->where('player_game_reports.player_id', $this->id)
+            ->where('game_reports.valid', true)
+            ->where('game_reports.best_report', true)
+            ->select('player_game_reports.id as player_game_report_id',
+                     'game_reports.id as game_report_id', 'games.ladder_history_id as ladder_history_id',
+                     'game_reports.game_id as game_id', 'duration', 'fps', 'oos',
+                     'local_id', 'local_team_id', 'points', 'stats_id', 'disconnected', 'no_completion', 'quit',
+                     'won', 'defeated', 'draw', 'spectator', 'game_reports.created_at', 'wol_game_id', 'bamr',
+                     'crat', 'cred', 'shrt', 'supr', 'supr', 'unit', 'plrs', 'scen', 'hash');
+    }
     public function totalGames($history = null)
     {
         $result = 0;
 
         if ($history == null)
         {
-            $result = $this->hasMany("App\PlayerGame")->count();
+            $result = $this->playerGames()->count();
         }
         else
         {
-            $result = $this->hasMany("App\PlayerGame")
-                ->leftJoin("games as g", "g.id", "=", "player_games.game_id")
-                ->where("g.ladder_history_id", "=", $history->id)
-                ->count();
+            $result = $this->playerGames()->where('ladder_history_id', $history->id)->count();
         }
         return $result;
     }
@@ -53,11 +66,6 @@ class Player extends Model
 	{
         return $this->hasMany('App\GameStats');
 	}
-
-    public function games()
-    {
-        return $this->hasMany("App\PlayerGame");
-    }
 
     public function rating()
     {
@@ -76,25 +84,19 @@ class Player extends Model
 
     public function rank($history, $username)
     {
-        $players = new Collection();
-        $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->get();
+        $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
+                             ->where('username', $username)->first();
 
-        foreach($ladderPlayers as $player)
+        $playerPoints = \App\Game::where("ladder_history_id", "=", $history->id)
+               ->join('player_game_reports as pgr', 'games.game_report_id', '=', 'pgr.game_report_id')
+               ->groupBy('pgr.player_id')
+               ->orderBy('points', 'ASC')
+               ->selectRaw('pgr.player_id, SUM(points) as points')->get();
+
+        for ($i = 0; $i < $playerPoints->count(); ++$i)
         {
-            $player["points"] = \App\PlayerPoint::where("player_id", "=", $player->id)
-            ->where("ladder_history_id", "=", $history->id)
-            ->sum("points_awarded");
-
-            $players->add($player);
-        }
-
-        $players = $players->sortByDesc('points')->values()->all();
-        foreach($players as $k => $p)
-        {
-            if ($p->username == $username)
-            {
-                return $k + 1;
-            }
+            if ($playerPoints[$i]->player_id = $player->id)
+                return $i + 1;
         }
         return -1;
     }
@@ -106,9 +108,7 @@ class Player extends Model
 
         if ($player == null) return "No player";
 
-        return \App\PlayerPoint::where("player_id", "=", $player->id)
-            ->where("ladder_history_id", "=", $history->id)
-            ->sum("points_awarded");
+        return $this->playerGames()->sum("points");
     }
 
     public function badge($points)

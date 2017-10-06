@@ -2,45 +2,38 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Game extends Model 
+class Game extends Model
 {
     protected $table = 'games';
 
-    protected $fillable = 
+    protected $fillable =
     [
         'ladder_id',
         'wol_game_id',
-        'afps',
-        'oosy',
+        'game_report_id',
         'bamr',
         'crat',
-        'dura',
         'cred',
         'shrt',
         'supr',
         'unit',
         'plrs',
         'scen',
-        'sdfx',
         'hash'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
-        
-    public $gameColumns = 
+
+    public $gameColumns =
     [
-        'afps',
-        'oosy',
         'bamr',
         'crat',
-        'dura',
         'cred',
         'shrt',
         'supr',
         'unit',
         'plrs',
         'scen',
-        'sdfx',
         'hash'
     ];
 
@@ -49,18 +42,18 @@ class Game extends Model
         return $this->hasMany('App\GameStats');
 	}
 
-    public function players()
-	{
-        return $this->hasMany('App\PlayerGame');
-	}
-
     public function map()
     {
         return $this->belongsTo('App\Map', 'hash');
     }
 
-    public function playerPoints()
+    public function gameReports()
     {
-        return $this->hasMany('App\PlayerPoint', 'game_id');
+        return $this->hasMany('App\GameReport');
+    }
+
+    public function playerGameReports()
+    {
+        return $this->hasMany('App\PlayerGameReport')->where('game_report_id', $this->game_report_id, 'game_report_id');
     }
 }

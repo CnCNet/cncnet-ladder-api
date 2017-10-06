@@ -7,13 +7,14 @@
 <div class="row recent-game">
     @foreach($games as $game)
         <div class="col-md-{{ $column }}">
-        @foreach($game->playerPoints as $pp)
+        @foreach($game->playerGameReports as $pp)
             @if ($pp->player_id == $player->id)
-                @include("components/game-box", 
+                @include("components/game-box",
                 [
                     "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->id,
                     "game" => $history->ladder->abbreviation,
-                    "status" => $pp->game_won ? "won" : "lost",
+                    "gamePlayers" => $game->playerGameReports(),
+                    "status" => $pp->won ? "won" : "lost",
                     "points" => $pp,
                     "map" => $game->hash,
                     "title" => $game->scen,

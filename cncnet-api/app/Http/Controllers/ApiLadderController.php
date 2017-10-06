@@ -8,6 +8,7 @@ use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
 use \Carbon\Carbon;
+use Log;
 
 class ApiLadderController extends Controller
 {
@@ -80,21 +81,14 @@ class ApiLadderController extends Controller
         $this->gameService->saveRawStats($result, $game->id, $history->id);
 
         // Now save the processed stats
-        $gameStats = $this->gameService->saveGameStats($result, $game->id, $player->id, $history->ladder->id, $cncnetGame);
-        if ($gameStats != 200)
+        $gameReport = $this->gameService->saveGameStats($result, $game->id, $player->id, $history->ladder->id, $cncnetGame);
+        if ($gameReport === null)
         {
             return response()->json(['Error' => $gameStats], 400);
         }
 
-        // Award ELO points
-        if ($game->plrs == 2)
-        {
-            $status = $this->awardPoints($game->id, $history);
-        }
-        else if ($cncnetGame == "ra")
-        {
-            $status = $this->awardPoints($game->id, $history);
-        }
+        // Award points
+        $status = $this->awardPoints($gameReport, $history);
 
         return response()->json(['success' => $status], 200);
     }
@@ -116,60 +110,72 @@ class ApiLadderController extends Controller
         return $player;
     }
 
-    public function awardPoints($gameId, $history)
+    public function awardPoints($gameReport, $history)
     {
         $players = [];
-        $gamePlayers = \App\PlayerGame::where("game_id", "=", $gameId)->get();
+        $playerGameReports = $gameReport->playerGameReports()->get();
 
-        // Don't award points multiple time
-        if ($gamePlayers->count() != 1)
+        // Oops we don't have any players
+        if ($playerGameReports->count() < 1)
         {
             return 604;
         }
 
-        $playerGame = $gamePlayers->first();
-
-        $plr = $this->playerService->findPlayerRatingByPid($playerGame->player_id);
-        $opn = $this->playerService->findPlayerRatingByPid($playerGame->opponent_id);
-
-        if ($playerGame->result)
+        foreach ($playerGameReports as $playerGR)
         {
-            $players["won"] = $plr;
-            $players["lost"] = $opn;
-        }
-        else
-        {
-            $players["won"] = $opn;
-            $players["lost"] = $plr;
-        }
+            $ally_average = 0;
+            $ally_count = 0;
+            $enemy_average = 0;
+            $enemy_count = 0;
 
-        $elo_k = $this->playerService->getEloKvalue($players);
-
-        $points = new PointService($elo_k, $players["lost"]->rating, $players["won"]->rating, 0, 1);
-        $results = $points->getNewRatings();
-
-        // Tweak this number until things feel right
-        $gvcWon = ceil(($players["lost"]->rating * $players["won"]->rating) / 200000);
-        $gvcLost = ceil($gvcWon/2);
-
-        foreach ($players as $k => $player)
-        {
-            if ($k == "lost")
+            foreach ($playerGameReports as $pgr)
             {
-                $diff = $results["a"] - $player->rating;
-                $newPoints = $gvcLost + ($diff > 0 ? $diff : 0);
-                $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints, false, $history);
+                $other = $this->playerService->findPlayerRatingByPid($pgr->player_id);
+                $players[] = $other;
+                if ($pgr->local_team_id == $playerGR->local_team_id)
+                {
+                    $ally_average += $other->rating;
+                    $ally_count++;
+                }
+                else {
+                    $enemy_average += $other->rating;
+                    $enemy_count++;
+                }
             }
-            else if ($k == "won")
-            {
-                $diff = $results["b"] - $player->rating;
-                $newPoints = $gvcWon + ($diff > 1 ? $diff : 1);
-                $this->playerService->awardPlayerPoints($player->player_id, $gameId, $newPoints, true, $history);
-            }
-        }
+            $ally_average /= $ally_count;
+            $enemy_average /= $enemy_count;
 
-        $this->playerService->updatePlayerRating($players["lost"], $results["a"]);
-        $this->playerService->updatePlayerRating($players["won"], $results["b"]);
+            $elo_k = $this->playerService->getEloKvalue($players);
+
+            $points = null;
+
+            $gvc = ceil(($ally_average * $enemy_average) / 200000);
+
+            if ($playerGR->won && !$playerGR->defeated && !$playerGR->draw)
+            {
+                $points = new PointService(16, $ally_average, $enemy_average, 1, 0);
+                $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
+            }
+            else if ($playerGR->defeated)
+            {
+                $points = new PointService(16, $ally_average, $enemy_average, 0, 1);
+                $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
+                $gvc /= 2;
+            }
+
+            if ($points !== null)
+            {
+                $eloResults = $points->getNewRatings();
+                $diff = $eloResults["a"] - $ally_average;
+                $playerGR->points = $gvc + ($diff > 0 ? $diff : 0);
+                $this->playerService->updatePlayerRating($pgr->player_id,$eloAdjust->getNewRatings()["a"]);
+            }
+            else
+            {
+                $playerGR->points = $gvc;
+            }
+            $playerGR->save();
+        }
         return 200;
     }
 

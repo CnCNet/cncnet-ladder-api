@@ -75,8 +75,8 @@ class AdminController extends Controller
             $pg->delete();
         }
 
-        $playerPoints = \App\PlayerPoint::where("game_id", "=", $game->id)->get();
-        foreach($playerPoints as $pp)
+        $playerGRs = \App\PlayerGameReport::where("game_id", "=", $game->id)->get();
+        foreach($playerGRs as $pp)
         {
             $pp->delete();
         }

@@ -41,39 +41,31 @@
                 <div class="row">
                     <div class="col-md-12">
 
-                        <h3 class="game-intro text-center"> 
+                        <h3 class="game-intro text-center">
                         @foreach($stats as $k => $stat)
                             <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
-                            <?php $points = \App\PlayerPoint::where("game_id", "=", $game->id)
-                                    ->where("player_id", "=", $player->id)
-                                    ->first();
-                            ?>
-                            @if ($points != null)
+                            <?php $playerGame = $player->playerGames()->having('game_id', '=', $stat->game_id)->first(); ?>
+                            @if ($playerGame != null)
                                 <span class="player">
-                                    {{ $player->username or "Unknown" }} <strong>+{{ $points->points_awarded or "" }}</strong>
-                                    @if($points->game_won) 
-                                        <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i> 
-                                    @else 
-                                        <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i> 
+                                    {{ $player->username or "Unknown" }} <strong>+{{ $playerGame->points or "" }}</strong>
+                                    @if($playerGame->won)
+                                        <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                                    @else
+                                        <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                     @endif
                                 </span>
-                        
+<!--
                                 @if (count($stats) == 1)
-                                    <?php $points = \App\PlayerPoint::where("game_id", "=", $game->id)
-                                        ->where("player_id", "!=", $player->id)
-                                        ->first();
-                                    ?>
-                                    @if ($points != null)
                                     <span class="player">
-                                        {{ $points->player()->first()->username or "Unknown" }} <strong>+{{ $points->points_awarded or "" }}</strong>
-                                        @if ($points->game_won) 
-                                            <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i> 
-                                        @else 
-                                            <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i> 
+                                        {{ $player->username or "Unknown" }} <strong>+{{ $playerGame->points or "" }}</strong>
+                                        @if ($points->game_won)
+                                            <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                                        @else
+                                            <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                         @endif
                                     </span>
-                                    @endif
                                 @endif
+-->
                             @endif
                         @endforeach
                         </h3>
@@ -97,14 +89,14 @@
                         <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                             <div class="profile-detail">
                                 <div class="rank">
-                                    <i class="rank {{ $player->badge($points) }}"></i> 
+                                    <i class="rank {{ $player->badge($points) }}"></i>
                                 </div>
-                                <h3>Rank  #{{ $rank }}</h3> 
+                                <h3>Rank  #{{ $rank }}</h3>
                                 <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
                                 <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points  }}</p>
                                 <p class="points">
                                     <?php $credits = json_decode($gameStats->crd); ?>
-                                    <strong>Funds Left: </strong> {{ $credits->value or "" }} 
+                                    <strong>Funds Left: </strong> {{ $credits->value or "" }}
                                 </p>
                                 <p class="colour player-panel-{{ $gameStats->colour($gameStats->col) }}" style="width:25px;height:25px;"></p>
                                 <div class="country">
@@ -129,7 +121,7 @@
                         <li><strong>Crates:</strong> {{ $game->crat ? "On" : "Off" }}</li>
                         <li><strong>Credits:</strong> {{ $game->cred }}</li>
                         <li><strong>Duration:</strong> {{ gmdate("H:i:s", $game->dura) }}</li>
-                        <li><strong>MCV Redeploy:</strong> {{ $game->bamr & 1 ? "On" : "Off" }}</li>                 
+                        <li><strong>MCV Redeploy:</strong> {{ $game->bamr & 1 ? "On" : "Off" }}</li>
                         <li><strong>Build off Ally Conyard:</strong> {{ $game->bamr & 2 ? "On" : "Off" }}</li>
                         <li><strong>Average FPS:</strong> {{ $game->afps }}</li>
                         <li><strong>Reconnection Error (OOS):</strong> {{ $game->oosy ? "Yes" : "No" }}</li>
