@@ -47,9 +47,14 @@ class Game extends Model
         return $this->belongsTo('App\Map', 'hash');
     }
 
-    public function gameReports()
+    public function allReports()
     {
         return $this->hasMany('App\GameReport');
+    }
+
+    public function report()
+    {
+        return $this->allReports()->where('id', $this->game_report_id);
     }
 
     public function playerGameReports()

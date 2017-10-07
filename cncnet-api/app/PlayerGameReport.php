@@ -9,7 +9,7 @@ class PlayerGameReport extends Model {
                            'game_report_id',
                            'player_id',
                            'points',
-                           'stats',
+                           'stats_id',
                            'local_id',
                            'local_team_id', // Local team id should be the id of the lowest player you are allied with or yourself if you are the lowest id
                            'disconnected',

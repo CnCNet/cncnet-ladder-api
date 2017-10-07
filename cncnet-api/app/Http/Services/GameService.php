@@ -15,14 +15,6 @@ class GameService
     {
         $game = \App\Game::where("id", "=", $gameId)->first();
 
-        $stats = new \App\Stats();
-        $stats->save();
-
-        $gameStats = new \App\GameStats();
-        $gameStats->player_id = $playerId;
-        $gameStats->stats_id = $stats->id;
-        $gameStats->game_id = $gameId;
-        $gameStats->save();
 
         $player = \App\Player::where("id", "=", $playerId)->first();
 
@@ -42,11 +34,6 @@ class GameService
         $gameReport->oos = false;
         $gameReport->save();
 
-        if ($game->stats === null)
-        {
-            $game->stats = $gameReport->id;
-            $gameReport->best_report = true;
-        }
         if ($game->game_report_id === null)
         {
             $gameReport->best_report = true;
@@ -111,9 +98,9 @@ class GameService
                         ($gameResult & GameResult::COMPLETION_DEFEATED) ? true : false;
                     break;
                 case "RSG":
-                    $playerGameReports[$cid]->quit = true;
+                    $playerGameReports[$cid]->quit = $value["value"];;
                 case "DED":
-                    $playerGameReports[$cid]->defeated = true;
+                    $playerGameReports[$cid]->defeated = $value["value"];;
                     break;
                 case "ALY":
                     // Unsupported ATM. My idea is that local_team_id should be the ID of the lowest ALLY -or-yourself
@@ -121,10 +108,12 @@ class GameService
                     $playerGameReports[$cid]->local_team_id = $cid;
                     break;
                 case "SPC":
-                    $playerGameReports[$cid]->spectator = true;
+                    $playerGameReports[$cid]->spectator = $value["value"];;
                     break;
+
+                case "LCN": //TS lost connection
                 case "CON":
-                    $playerGameReports[$cid]->disconnected = true;
+                    $playerGameReports[$cid]->disconnected = $value["value"];;
                     break;
                 default:
                 }
@@ -140,7 +129,7 @@ class GameService
                 $player->defeated = false;
                 break;
             case "OOSY":
-                $gameReport->oos = true;
+                $gameReport->oos = $value["value"];
                 break;
             case "SDFX":
                 foreach ($playerGameReports as $playerGR)
@@ -156,7 +145,10 @@ class GameService
                 $gameReport->fps = $value["value"];
                 break;
             case "QUIT":
-                $reporter->quit = true;
+                $reporter->quit = $value["value"];
+                break;
+            case "FINI":
+                $gameReport->finished = $value["value"];
                 break;
             default:
             }
@@ -171,7 +163,6 @@ class GameService
             $pStats->save();
         }
         $gameReport->save();
-        $gameStats->save();
         $game->save();
 
         return $gameReport;
@@ -346,15 +337,6 @@ class GameService
             //$game->save();
         }
 
-        //$ladderGame = \App\LadderGame::where("game_id", "=", $game->id)->first();
-        //if ($ladderGame == null)
-        //{
-        //    $ladderGame = new \App\LadderGame();
-        //    $ladderGame->game_id = $game->id;
-        //    $ladderGame->ladder_history_id = $ladder->id;
-        //    $ladderGame->save();
-        //}
-
         foreach($result as $key => $value)
         {
             $gameProperty = substr($key, -1);
@@ -376,7 +358,7 @@ class GameService
     private function getUniqueGameIdentifier($result)
     {
         if ($result["IDNO"])
-            return $result["IDNO"]["value"] + 1 - 1;
+            return $result["IDNO"]["value"];
         return null;
     }
 }

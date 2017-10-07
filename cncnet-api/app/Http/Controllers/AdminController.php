@@ -69,25 +69,9 @@ class AdminController extends Controller
         $game = \App\Game::find($request->game_id);
         if ($game == null) return "Game not found";
 
-        $playerGames = \App\PlayerGame::where("game_id", "=", $game->id)->get();
-        foreach($playerGames as $pg)
-        {
-            $pg->delete();
-        }
-
-        $playerGRs = \App\PlayerGameReport::where("game_id", "=", $game->id)->get();
-        foreach($playerGRs as $pp)
-        {
-            $pp->delete();
-        }
-
-        $ladderGames = \App\LadderGame::where("game_id", "=", $game->id)->get();
-        foreach($ladderGames as $lg)
-        {
-            $lg->delete();
-        }
-
-        $game->delete();
+        // Just remove the game_report_id linkage rather than actually delete anything
+        $game->game_report_id = null;
+        $game->save;
 
         return redirect()->back();
     }

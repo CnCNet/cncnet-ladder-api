@@ -168,7 +168,10 @@ class ApiLadderController extends Controller
                 $eloResults = $points->getNewRatings();
                 $diff = $eloResults["a"] - $ally_average;
                 $playerGR->points = $gvc + ($diff > 0 ? $diff : 0);
-                $this->playerService->updatePlayerRating($pgr->player_id,$eloAdjust->getNewRatings()["a"]);
+
+                // Only do a rating adjustment once per game
+                if ($gameReport->best_report)
+                    $this->playerService->updatePlayerRating($playerGR->player_id,$eloAdjust->getNewRatings()["a"]);
             }
             else
             {
@@ -194,9 +197,9 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderPlayer($game, $player);
     }
 
-    public function viewRawGame(Request $request, $rawId)
+    public function viewRawGame(Request $request, $gameId)
     {
-        $rawGame = \App\GameRaw::where("id", "=", $rawId)->first();
+        $rawGame = \App\GameRaw::where("game_id", "=", $gameId)->first();
 
         return response($rawGame->packet, 200)
                   ->header('Content-Type', 'application/json');

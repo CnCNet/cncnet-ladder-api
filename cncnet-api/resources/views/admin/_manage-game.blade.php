@@ -11,30 +11,27 @@
         <ul class="text-center list-unstyled">
         <li> Players: {{ $game->plrs }} </li>
         </ul>
-        <h3 class="text-center small"> 
+        <h3 class="text-center small">
         @foreach($game->stats as $k => $stat)
             <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
-            <?php $points = \App\PlayerPoint::where("game_id", "=", $game->id)
-                    ->where("player_id", "=", $player->id)
-                    ->first();
-            ?>
-                                            
-            @if ($points != null)
+            <?php $playerGame = $player->playerGames()->having("game_id", "=", $game->id)->first(); ?>
+
+            @if ($playerGame != null)
             <span class="player">
-                {{ $player->username or "Unknown" }} +{{ $points->points_awarded or "" }}
-                @if($points->game_won) 
-                    <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i> 
-                @else 
-                    <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i> 
+                {{ $player->username or "Unknown" }} +{{ $playerGame->points or "" }}
+                @if($playerGame->won)
+                    <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                @else
+                    <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                 @endif
             </span>
             @endif
         @endforeach
         </h3>
         <div class="text-center date">
-            <?php 
+            <?php
                 $now = \Carbon\Carbon::now();
-                $days = $game->created_at->diffInDays($now); 
+                $days = $game->created_at->diffInDays($now);
                 $hours = $game->created_at->diffInHours($now);
                 $minutes = $game->created_at->diffInMinutes($now);
             ?>

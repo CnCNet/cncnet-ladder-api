@@ -150,6 +150,7 @@ class LadderService
 
         return [
             "id" => $player->id,
+            "player" => $player,
             "username" => $player->username,
             "points" => $points,
             "rank" => $rank,

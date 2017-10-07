@@ -15,8 +15,8 @@ class ReformatGamesTable extends Migration {
         Schema::create('games_backup', function(Blueprint $table)
         {
             $table->increments('id');
-            $table->integer('ladder_history_id');
-            $table->integer('wol_game_id');
+            $table->integer('ladder_history_id')->unsigned();
+            $table->integer('wol_game_id')->unsigned();
             $table->integer('afps');
             $table->boolean('oosy');
             $table->integer('bamr');
@@ -41,7 +41,7 @@ class ReformatGamesTable extends Migration {
             $table->dropColumn('dura');
             $table->dropColumn('sdfx');
             $table->dropColumn('oosy');
-            $table->integer('game_report_id')->nullable();
+            $table->integer('game_report_id')->nullable()->unsigned();
         });
 
         $games = \App\Game::all();

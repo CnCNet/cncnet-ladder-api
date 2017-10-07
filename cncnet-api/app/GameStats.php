@@ -15,9 +15,9 @@ class GameStats extends Model
 
     public $playerStatsColumns = [
         'cmp', 'col', 'sid',
-        'ipa', 'bamr'     
+        'ipa', 'bamr'
     ];
-    
+
     public $timestamps = false;
 
     public function player()
@@ -28,5 +28,10 @@ class GameStats extends Model
     public function game()
     {
         return $this->belongsTo('App\Game');
+    }
+
+    public function stats()
+    {
+        return $this->belogsTo('App\Stat');
     }
 }

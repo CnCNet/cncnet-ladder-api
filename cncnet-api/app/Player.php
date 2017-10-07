@@ -32,6 +32,13 @@ class Player extends Model
         return $result;
     }
 
+    public function gameReports()
+    {
+        return $this->hasMany('App\GameReport')
+            ->join('games as g', 'g.id', '=', 'game_reports.game_id')
+            ->where('g.game_report_id', '=', 'game_reports.id');
+    }
+
     public function playerGames()
     {
         return $this->playerGameReports()
@@ -40,7 +47,7 @@ class Player extends Model
             ->where('player_game_reports.player_id', $this->id)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
-            ->select('player_game_reports.id as player_game_report_id',
+            ->select('player_game_reports.id as id', 'game_reports.player_id as player_id',
                      'game_reports.id as game_report_id', 'games.ladder_history_id as ladder_history_id',
                      'game_reports.game_id as game_id', 'duration', 'fps', 'oos',
                      'local_id', 'local_team_id', 'points', 'stats_id', 'disconnected', 'no_completion', 'quit',

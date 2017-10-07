@@ -19,55 +19,37 @@ class Stats extends Model
         'bll', 'unb', 'inb', 'plb', 'blb', 'unk', 'ink',
         'plk', 'blk', 'blc', 'cra', 'hrv'
     ];
-    
+
     public $timestamps = false;
 
-    public function faction($game, $val)
+    public function playerGameReport()
+    {
+        return $this->belogsTo('App\PlayerGameReport');
+    }
+
+    public function faction($game)
     {
         $ladder = \App\Ladder::where("abbreviation", "=", $game)->first();
-        $val = json_decode($val);
-        if ($val == null) return "";
 
-        switch($val->value)
+        $local_id = null;
+        if ($this->cty !== null)
         {
-            case 0:
-                return "america";
-            case 1:
-                return "korea";
-            case 2:
-                return "france";
-            case 3:
-                return "germany";
-            case 4:
-                return "britain";
-            case 5:
-                return "libya";
-            case 6:
-                return "iraq";
-            case 7:
-                return "cuba";
-            case 8: 
-                return "russia";
-            case 9:
-                return "yuri";
-            case 10:
-                return "gdi";
-            case 11:
-                return "nod";
-            case 12: 
-                return "neutral";
-            case 13: 
-                return "special";
-            case 14:
-            default: 
-                return "";
+            $local_id = json_decode($this->cty)->value;
+        }
+        else if ($this->sid !== null)
+        {
+            $local_id = json_decode($this->sid)->value;
         }
 
-        return -1;
+        if ($local_id === null) return "";
+
+        $side = $ladder->sides()->where('local_id', $local_id)->first();
+
+        return $side !== null ? strtolower($side->name) : "";
     }
 
     public function country($side)
-    {     
+    {
         $val = json_decode($side);
         if ($val == null) return "";
 
@@ -89,7 +71,7 @@ class Stats extends Model
                 return "iq";
             case 7:
                 return "cu";
-            case 8: 
+            case 8:
                 return "ru";
             case 9:
                 return "yuri";
@@ -98,7 +80,7 @@ class Stats extends Model
     }
 
     public function colour($colour)
-    {     
+    {
         $val = json_decode($colour);
         if ($val == null) return "";
 
@@ -110,7 +92,7 @@ class Stats extends Model
                 return "orange";
             case 11:
                 return "red";
-            case 15: 
+            case 15:
                 return "pink";
             case 17:
                 return "purple";

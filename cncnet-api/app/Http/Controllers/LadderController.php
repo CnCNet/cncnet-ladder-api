@@ -55,12 +55,12 @@ class LadderController extends Controller
         if ($game == null)
             return "No game";
 
-        $stats = $game->stats()->get();
-
+        $gameReport = $game->report->first();
         return view('ladders.game-view',
         array(
             "game" => $game,
-            "stats" => $stats,
+            "gameReport" => $gameReport,
+            "playerGameReports" => $gameReport->playerGameReports()->get(),
             "history" => $history,
             "ladders" => $this->ladderService->getLatestLadders(),
         ));
@@ -68,7 +68,6 @@ class LadderController extends Controller
 
     public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $username = null)
     {
-        $games = [];
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
 
         $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
@@ -77,20 +76,8 @@ class LadderController extends Controller
         if ($player == null)
             return "No Player";
 
-        $playerGames = $player->playerGameReports()
-            ->leftJoin("games as g", "g.id", "=", "game_id")
-            ->where("g.ladder_history_id", "=", $history->id)
-            ->orderBy("g.id", "DESC")
-            ->get();
-
-        foreach($playerGames as $cncnetGame)
-        {
-            $g = $cncnetGame->game()->first();
-            if ($g != null)
-            {
-                $games[] = $g;
-            }
-        }
+        $games = $player->playerGames()->having('ladder_history_id', '=', $history->id)
+               ->orderBy('created_at', 'DESC')->get();
 
         return view
         (

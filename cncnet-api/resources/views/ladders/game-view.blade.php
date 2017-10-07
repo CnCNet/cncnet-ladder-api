@@ -33,40 +33,38 @@
     <section class="game-statistics">
         <div class="game-details">
             <div class="container" style="position:relative;padding: 60px 0;">
-                @foreach($stats as $k => $stat)
-                <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
-                <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($k == 0)faction-left @else faction-right @endif"></div>
+                @foreach($playerGameReports as $pgr)
+                <?php $gameStats = $pgr->stats()->first(); ?>
+                    @if ($gameStats != null)
+                        <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($pgr->won)faction-left @else faction-right @endif"></div>
+                    @endif
                 @endforeach
 
                 <div class="row">
                     <div class="col-md-12">
 
                         <h3 class="game-intro text-center">
-                        @foreach($stats as $k => $stat)
-                            <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
-                            <?php $playerGame = $player->playerGames()->having('game_id', '=', $stat->game_id)->first(); ?>
-                            @if ($playerGame != null)
+                        @foreach($playerGameReports as $pgr)
+                            <?php $player = $pgr->player()->first(); ?>
                                 <span class="player">
-                                    {{ $player->username or "Unknown" }} <strong>+{{ $playerGame->points or "" }}</strong>
-                                    @if($playerGame->won)
+                                    {{ $player->username or "Unknown" }} <strong>+{{ $pgr->points or "" }}</strong>
+                                    @if($pgr->won)
                                         <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
                                     @else
                                         <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                     @endif
                                 </span>
-<!--
-                                @if (count($stats) == 1)
+
+                                @if ($playerGameReports->count() == 1)
                                     <span class="player">
-                                        {{ $player->username or "Unknown" }} <strong>+{{ $playerGame->points or "" }}</strong>
-                                        @if ($points->game_won)
+                                        {{ $player->username or "Unknown" }} <strong>+{{ $pgr->points or "" }}</strong>
+                                        @if ($pgr->won)
                                             <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
                                         @else
                                             <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                         @endif
                                     </span>
                                 @endif
--->
-                            @endif
                         @endforeach
                         </h3>
 
@@ -79,9 +77,9 @@
     <section class="dark-texture">
         <div class="container">
             <div class="row">
-                @foreach($stats as $k => $stat)
-                    <?php $gameStats = \App\Stats::where("id", "=", $stat->stats_id)->first(); ?>
-                    <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
+                @foreach($playerGameReports as $pgr)
+                    <?php $gameStats = $pgr->stats()->first(); ?>
+                    <?php $player = $pgr->player()->first() ?>
                     <?php $rank = $player->rank($history, $player->username); ?>
                     <?php $points = $player->playerPoints($history, $player->username); ?>
 
@@ -94,14 +92,14 @@
                                 <h3>Rank  #{{ $rank }}</h3>
                                 <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
                                 <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points  }}</p>
-                                <p class="points">
+                                @if($gameStats !== null)
                                     <?php $credits = json_decode($gameStats->crd); ?>
-                                    <strong>Funds Left: </strong> {{ $credits->value or "" }}
-                                </p>
-                                <p class="colour player-panel-{{ $gameStats->colour($gameStats->col) }}" style="width:25px;height:25px;"></p>
-                                <div class="country">
-                                    <span class="flag-icon flag-icon-{{ $gameStats->country($gameStats->cty) }}"></span>
-                                </div>
+                                    <p class="points"><strong>Funds Left: </strong> {{ $credits->value or "" }}</p>
+                                    <p class="colour player-panel-{{ $gameStats->colour($gameStats->col) }}" style="width:25px;height:25px;"></p>
+                                    <div class="country">
+                                        <span class="flag-icon flag-icon-{{ $gameStats->country($gameStats->cty) }}"></span>
+                                   </div>
+                                @endif
                             </div>
                         </a>
                     </div>
@@ -120,12 +118,12 @@
                         <li><strong>Superweapons:</strong> {{ $game->supr ? "On" : "Off" }}</li>
                         <li><strong>Crates:</strong> {{ $game->crat ? "On" : "Off" }}</li>
                         <li><strong>Credits:</strong> {{ $game->cred }}</li>
-                        <li><strong>Duration:</strong> {{ gmdate("H:i:s", $game->dura) }}</li>
+                        <li><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</li>
                         <li><strong>MCV Redeploy:</strong> {{ $game->bamr & 1 ? "On" : "Off" }}</li>
                         <li><strong>Build off Ally Conyard:</strong> {{ $game->bamr & 2 ? "On" : "Off" }}</li>
-                        <li><strong>Average FPS:</strong> {{ $game->afps }}</li>
-                        <li><strong>Reconnection Error (OOS):</strong> {{ $game->oosy ? "Yes" : "No" }}</li>
-                        <li><strong>Disconnect:</strong> {{ $game->sdfx ? "Yes" : "No" }}</li>
+                        <li><strong>Average FPS:</strong> {{ $gameReport->fps }}</li>
+                        <li><strong>Reconnection Error (OOS):</strong> {{ $gameReport->oos ? "Yes" : "No" }}</li>
+                        <li><strong>Disconnect:</strong> {{ $gameReport->sdfx ? "Yes" : "No" }}</li>
                         <li><strong>Unit Count Start:</strong> {{ $game->unit ? $game->unit : 0 }}</li>
                         <li><strong>Players in Game:</strong> {{ $game->plrs ? $game->plrs : 0 }}</li>
                     </ul>

@@ -15,9 +15,9 @@ class CreatePlayerGameReportsTable extends Migration {
         Schema::create('player_game_reports', function(Blueprint $table)
         {
 			$table->increments('id');
-            $table->integer('game_id');
-            $table->integer('game_report_id');
-            $table->integer('player_id');
+            $table->integer('game_id')->unsigned();
+            $table->integer('game_report_id')->unsigned();
+            $table->integer('player_id')->unsigned();
             $table->integer('local_id');
             $table->integer('local_team_id');
             $table->integer('points')->default(0);
@@ -71,11 +71,11 @@ class CreatePlayerGameReportsTable extends Migration {
             $playerGR->local_team_id = $local_id;
             $playerGR->points = $playerPoints->points_awarded;
 
-            $stats = $game->stats()->where('player_id', $playerGR->player_id)->get();;
+            $gameStats = $game->stats()->where('player_id', $playerGR->player_id)->first();
 
-            if ($stats->count() > 0)
+            if ($gameStats !== null)
             {
-                $playerGR->stats_id = $stats[0]->id;
+                $playerGR->stats_id = $gameStats->stats_id;
             }
 
             $playerGR->disconnected = $game->sdfx;
