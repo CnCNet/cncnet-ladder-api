@@ -33,10 +33,10 @@
     <section class="game-statistics">
         <div class="game-details">
             <div class="container" style="position:relative;padding: 60px 0;">
-                @foreach($playerGameReports as $pgr)
+                @foreach($playerGameReports as $k => $pgr)
                 <?php $gameStats = $pgr->stats()->first(); ?>
                     @if ($gameStats != null)
-                        <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($pgr->won)faction-left @else faction-right @endif"></div>
+                        <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif"></div>
                     @endif
                 @endforeach
 
@@ -118,14 +118,17 @@
                         <li><strong>Superweapons:</strong> {{ $game->supr ? "On" : "Off" }}</li>
                         <li><strong>Crates:</strong> {{ $game->crat ? "On" : "Off" }}</li>
                         <li><strong>Credits:</strong> {{ $game->cred }}</li>
-                        <li><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</li>
                         <li><strong>MCV Redeploy:</strong> {{ $game->bamr & 1 ? "On" : "Off" }}</li>
+                        <li><strong>Unit Count Start:</strong> {{ $game->unit ? $game->unit : 0 }}</li>
+                        <li><strong>Players in Game:</strong> {{ $game->plrs ? $game->plrs : 0 }}</li>
                         <li><strong>Build off Ally Conyard:</strong> {{ $game->bamr & 2 ? "On" : "Off" }}</li>
+
+                        @if($gameReport !== null)
+                        <li><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</li>
                         <li><strong>Average FPS:</strong> {{ $gameReport->fps }}</li>
                         <li><strong>Reconnection Error (OOS):</strong> {{ $gameReport->oos ? "Yes" : "No" }}</li>
                         <li><strong>Disconnect:</strong> {{ $gameReport->sdfx ? "Yes" : "No" }}</li>
-                        <li><strong>Unit Count Start:</strong> {{ $game->unit ? $game->unit : 0 }}</li>
-                        <li><strong>Players in Game:</strong> {{ $game->plrs ? $game->plrs : 0 }}</li>
+                        @endif
                     </ul>
                 </div>
 

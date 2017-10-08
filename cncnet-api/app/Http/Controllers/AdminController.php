@@ -76,6 +76,30 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    public function switchGameReport(Request $request)
+    {
+        $game = \App\Game::find($request->game_id);
+        if ($game === null) return "Game not found";
+
+        $gameReport = $game->allReports()->find($request->game_report_id);
+        if ($gameReport === null) return "Game Report not found";
+
+        $currentReport = $game->report()->first();
+        if ($currentReport !== null)
+        {
+            $currentReport->best_report = false;
+            $currentReport->save();
+        }
+
+        $game->game_report_id = $request->game_report_id;
+        $game->save();
+
+        $gameReport->best_report = true;
+        $gameReport->save();
+
+        return redirect()->back();
+    }
+
     public function postQuickMatchMap(Request $request)
     {
         if ($request->id == "new")

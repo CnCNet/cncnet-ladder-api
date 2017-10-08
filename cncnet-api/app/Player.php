@@ -69,11 +69,6 @@ class Player extends Model
         return $result;
     }
 
-    public function stats()
-	{
-        return $this->hasMany('App\GameStats');
-	}
-
     public function rating()
     {
         return $this->hasMany("App\PlayerRating");

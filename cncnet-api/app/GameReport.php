@@ -12,4 +12,12 @@ class GameReport extends Model {
     {
         return $this->hasMany('App\PlayerGameReport');
     }
+    public function game()
+    {
+        return $this->belongsTo('App\Game');
+    }
+    public function reporter()
+    {
+        return $this->hasOne('App\Player');
+    }
 }

@@ -60,7 +60,7 @@ class LadderController extends Controller
         array(
             "game" => $game,
             "gameReport" => $gameReport,
-            "playerGameReports" => $gameReport->playerGameReports()->get(),
+            "playerGameReports" => $gameReport !== null ? $gameReport->playerGameReports()->get() : [],
             "history" => $history,
             "ladders" => $this->ladderService->getLatestLadders(),
         ));

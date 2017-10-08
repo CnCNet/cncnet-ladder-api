@@ -90,6 +90,9 @@ class ApiLadderController extends Controller
         // Award points
         $status = $this->awardPoints($gameReport, $history);
 
+        // Dispute handling
+        $this->handleGameDispute($gameReport);
+
         return response()->json(['success' => $status], 200);
     }
 
@@ -110,6 +113,43 @@ class ApiLadderController extends Controller
         return $player;
     }
 
+    public function handleGameDispute($gameReport)
+    {
+        $game = $gameReport->game()->first();
+
+        if ($game->report_id == $gameReport->id)
+            return;
+
+        $allReports = $game->allReports()->get();
+
+        $bestReport = $game->report()->first();
+
+
+        // Prefer the report who saw the end of the game
+        if (!$bestReport->finished && $gameReport->finished)
+        {
+            $bestReport->best_report = false;
+            $gameReport->best_poret = true;
+            $game->report_id = $gameReport->id;
+            $game->save();
+            $gameReport->save();
+            $bestReport->save();
+            return;
+        }
+
+        // Prefer the longer game
+        if ($bestReport->duration + 5 < $gameReport->duration)
+        {
+            $bestReport->best_report = false;
+            $gameReport->best_report = true;
+            $game->report_id = $gameReport->id;
+            $game->save();
+            $gameReport->save();
+            $bestReport->save();
+            return;
+        }
+    }
+
     public function awardPoints($gameReport, $history)
     {
         $players = [];
@@ -120,6 +160,20 @@ class ApiLadderController extends Controller
         {
             return 604;
         }
+
+        if ($gameReport->fps < 30)
+        {
+            // FPS too low, no points awarded
+            return 630;
+        }
+
+        if ($gameReport->duration < 60)
+        {
+            // Duration too low, no points awarded
+            return 660;
+        }
+
+        $disconnected = 0;
 
         foreach ($playerGameReports as $playerGR)
         {
@@ -151,7 +205,7 @@ class ApiLadderController extends Controller
 
             $gvc = ceil(($ally_average * $enemy_average) / 200000);
 
-            if ($playerGR->won && !$playerGR->defeated && !$playerGR->draw)
+            if ($playerGR->won)
             {
                 $points = new PointService(16, $ally_average, $enemy_average, 1, 0);
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
@@ -173,12 +227,24 @@ class ApiLadderController extends Controller
                 if ($gameReport->best_report)
                     $this->playerService->updatePlayerRating($playerGR->player_id,$eloAdjust->getNewRatings()["a"]);
             }
-            else
+            else if ($playerGR->disconnected && $playerGR->player_id == $gameReport->player_id)
             {
-                $playerGR->points = $gvc;
+                // Give ourselves points on a disconnection, dispute resolution should handle this later
+                $points = new PointService(16, $ally_average, $enemy_average, 1, 0);
+                $gvc /= 2;
+
+                $eloResults = $points->getNewRatings();
+                $diff = $eloResults["a"] - $ally_average;
+                $playerGR->points = $gvc + ($diff > 0 ? $diff : 0);
             }
+            else {
+                // No winner found
+                $playerGR->points = 0;
+            }
+
             $playerGR->save();
         }
+
         return 200;
     }
 

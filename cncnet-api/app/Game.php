@@ -37,11 +37,6 @@ class Game extends Model
         'hash'
     ];
 
-    public function stats()
-	{
-        return $this->hasMany('App\GameStats');
-	}
-
     public function map()
     {
         return $this->belongsTo('App\Map', 'hash');

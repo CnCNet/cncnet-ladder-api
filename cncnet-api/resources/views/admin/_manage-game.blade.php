@@ -11,23 +11,6 @@
         <ul class="text-center list-unstyled">
         <li> Players: {{ $game->plrs }} </li>
         </ul>
-        <h3 class="text-center small">
-        @foreach($game->stats as $k => $stat)
-            <?php $player = \App\Player::where("id", "=", $stat->player_id)->first(); ?>
-            <?php $playerGame = $player->playerGames()->having("game_id", "=", $game->id)->first(); ?>
-
-            @if ($playerGame != null)
-            <span class="player">
-                {{ $player->username or "Unknown" }} +{{ $playerGame->points or "" }}
-                @if($playerGame->won)
-                    <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
-                @else
-                    <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
-                @endif
-            </span>
-            @endif
-        @endforeach
-        </h3>
         <div class="text-center date">
             <?php
                 $now = \Carbon\Carbon::now();
@@ -43,11 +26,28 @@
             {{ $minutes . " " . str_plural("minute", $minutes) . " ago" }}
             @endif
         </div>
+        <h3 class="text-center small">
+        @foreach($game->allReports()->get() as $gameReport)
+            <form action="/admin/games/switch" class="text-center" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                <input name="game_id" type="hidden" value="{{ $game->id }}"/>
+                <input name="game_report_id" type="hidden" value="{{ $gameReport->id }}" />
+                <button type="submit" class="btn btn-md btn-danger" @if($gameReport->best_report) disabled @endif>Switch</button>
+            </form>
 
-        <form action="/admin/games/delete" class="text-center" method="POST">
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <input name="game_id" type="hidden" value="{{ $game->id }}"/>
-            <button type="submit" class="btn btn-md btn-danger">Delete Game?</button>
-        </form>
+            @foreach($gameReport->playerGameReports()->get() as $pgr)
+            <?php $player = $pgr->player()->first() ?>
+
+            <span class="player">
+                {{ $player->username or "Unknown" }} +{{ $pgr->points or "" }}
+                @if($pgr->won)
+                    <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                @else
+                    <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
+                @endif
+            </span>
+            @endforeach
+        @endforeach
+        </h3>
     </div>
 </a>

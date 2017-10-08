@@ -98,9 +98,9 @@ class GameService
                         ($gameResult & GameResult::COMPLETION_DEFEATED) ? true : false;
                     break;
                 case "RSG":
-                    $playerGameReports[$cid]->quit = $value["value"];;
+                    $playerGameReports[$cid]->quit = $value["value"];
                 case "DED":
-                    $playerGameReports[$cid]->defeated = $value["value"];;
+                    $playerGameReports[$cid]->defeated = $value["value"];
                     break;
                 case "ALY":
                     // Unsupported ATM. My idea is that local_team_id should be the ID of the lowest ALLY -or-yourself
@@ -123,7 +123,7 @@ class GameService
             {
             case "CMPL":
                 // Must be RA, not sure what to do though
-                $player->won = !$playerGameReports[$cid]->defeated;
+                $player->won = !$playerGameReports[$cid]->defeated && !$playerGameReports[$cid]->quit;
                 $player->no_completion = false;
                 $player->draw = ($value["value"] & GameResult::COMPLETION_DRAW) ? true : false;
                 $player->defeated = false;

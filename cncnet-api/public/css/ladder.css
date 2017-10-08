@@ -2886,7 +2886,7 @@ h3.game-intro > span:first-child:after {
   background-position: center center;
   right: 30px; }
 
-.faction-britain,
+.faction-great,
 .faction-america,
 .faction-korea,
 .faction-france,
@@ -2913,7 +2913,7 @@ h3.game-intro > span:first-child:after {
 @media (min-width: 992px) {
   .faction {
     background-size: auto; }
-  .faction-britain,
+  .faction-great,
   .faction-america,
   .faction-korea,
   .faction-france,
