@@ -139,7 +139,16 @@ class GameService
                     }
                 }
                 else {
-                    $reporter->won = !$reporter->defeated && !$reporter->quit;
+                    $gameWon = !$reporter->defeated && !$reporter->quit;
+
+                    foreach ($playerGameReports as $playerGR)
+                    {
+                        $playerGR->won = !$gameWon;
+                        $playerGR->defeated = !$playerGR->won;
+                        $playerGR->no_completion = false;
+                    }
+
+                    $reporter->won = $gameWon;
                     $reporter->no_completion = false;
                     $reporter->defeated = !$reporter->won;
                 }

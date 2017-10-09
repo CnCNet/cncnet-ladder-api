@@ -307,9 +307,9 @@ class ApiLadderController extends Controller
 
     public function viewRawGame(Request $request, $gameId)
     {
-        $rawGame = \App\GameRaw::where("game_id", "=", $gameId)->first();
+        $rawGame = \App\GameRaw::where("game_id", "=", $gameId)->get();
 
-        return response($rawGame->packet, 200)
+        return response($rawGame, 200)
                   ->header('Content-Type', 'application/json');
     }
 }
