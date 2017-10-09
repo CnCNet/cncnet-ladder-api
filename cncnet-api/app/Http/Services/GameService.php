@@ -104,6 +104,7 @@ class GameService
                     break;
                 case "RSG":
                     $playerGameReports[$cid]->quit = $value["value"];
+                    break;
                 case "DED":
                     $playerGameReports[$cid]->defeated = $value["value"];
                     break;
