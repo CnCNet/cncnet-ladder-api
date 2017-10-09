@@ -47,7 +47,7 @@ class Player extends Model
             ->where('player_game_reports.player_id', $this->id)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
-            ->select('player_game_reports.id as id', 'game_reports.player_id as player_id',
+            ->select('player_game_reports.id as id', 'player_game_reports.player_id as player_id',
                      'game_reports.id as game_report_id', 'games.ladder_history_id as ladder_history_id',
                      'game_reports.game_id as game_id', 'duration', 'fps', 'oos',
                      'local_id', 'local_team_id', 'points', 'stats_id', 'disconnected', 'no_completion', 'quit',
@@ -84,20 +84,17 @@ class Player extends Model
         return $this->belongsTo("App\Card");
     }
 
-    public function rank($history, $username)
+    public function rank($history)
     {
-        $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
-                             ->where('username', $username)->first();
-
         $playerPoints = \App\Game::where("ladder_history_id", "=", $history->id)
                ->join('player_game_reports as pgr', 'games.game_report_id', '=', 'pgr.game_report_id')
                ->groupBy('pgr.player_id')
-               ->orderBy('points', 'ASC')
+               ->orderBy('points', 'DESC')
                ->selectRaw('pgr.player_id, SUM(points) as points')->get();
 
         for ($i = 0; $i < $playerPoints->count(); ++$i)
         {
-            if ($playerPoints[$i]->player_id = $player->id)
+            if ($playerPoints[$i]->player_id == $this->id)
                 return $i + 1;
         }
         return -1;

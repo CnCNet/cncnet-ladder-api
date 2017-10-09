@@ -127,7 +127,7 @@
                         <li><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</li>
                         <li><strong>Average FPS:</strong> {{ $gameReport->fps }}</li>
                         <li><strong>Reconnection Error (OOS):</strong> {{ $gameReport->oos ? "Yes" : "No" }}</li>
-                        <li><strong>Disconnect:</strong> {{ $gameReport->sdfx ? "Yes" : "No" }}</li>
+                        <li><strong>Disconnect:</strong> {{ $gameReport->disconnected() ? "Yes" : "No" }}</li>
                         @endif
                     </ul>
                 </div>

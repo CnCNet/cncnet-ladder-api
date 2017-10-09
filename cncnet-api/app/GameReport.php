@@ -20,4 +20,11 @@ class GameReport extends Model {
     {
         return $this->hasOne('App\Player');
     }
+
+    public function disconnected()
+    {
+        $pgrCount = $this->playerGameReports()->count();
+        $disCount = $this->playerGameReports()->where('disconnected', true)->count();
+        return $pgrCount == $disCount;
+    }
 }

@@ -71,7 +71,9 @@ class CreatePlayerGameReportsTable extends Migration {
             $playerGR->local_team_id = $local_id;
             $playerGR->points = $playerPoints->points_awarded;
 
-            $gameStats = $game->stats()->where('player_id', $playerGR->player_id)->first();
+            $gameStats = \App\GameStats::where('player_id', $playerGR->player_id)
+                                   ->where('game_id', $game->id)
+                                   ->first();
 
             if ($gameStats !== null)
             {

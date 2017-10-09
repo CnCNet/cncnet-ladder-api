@@ -117,20 +117,62 @@ class ApiLadderController extends Controller
     {
         $game = $gameReport->game()->first();
 
-        if ($game->report_id == $gameReport->id)
+        if ($game->game_report_id == $gameReport->id)
             return;
 
         $allReports = $game->allReports()->get();
 
         $bestReport = $game->report()->first();
 
+        // If we're not the best report and the best report is disconnected
+        // I'm disconnected then we wash the game
+        if ($bestReport->disconnected() && $gameReport->disconnected())
+        {
+            $wash = new \App\GameReport();
+            $wash->game_id = $gameReport->game_id;
+            $wash->player_id = $gameReport->player_id;
+            $wash->best_report = true;
+            $wash->manual_report = true;
+            $wash->duration = $gameReport->duration;
+            $wash->valid = true;
+            $wash->finished = false;
+            $wash->fps = $gameReport->fps;
+            $wash->oos = false;
+            $wash->save();
+
+            $game->game_report_id = $wash->id;
+            $game->save();
+
+            $bestReport->best_report = false;
+            $bestReport->save();
+
+            foreach ($gameReport->playerGameReports()->get() as $pgr)
+            {
+                $playerGR = new \App\PlayerGameReport;
+                $playerGR->game_report_id = $wash->id;
+                $playerGR->game_id = $pgr->game_id;
+                $playerGR->player_id = $pgr->player_id;
+                $playerGR->local_id = $pgr->local_team_id;
+                $playerGR->local_team_id = $pgr->local_team_id;
+                $playerGR->points = 0;
+                $playerGR->disconnected = true;
+                $playerGR->no_completion = false;
+                $playerGR->quit = false;
+                $playerGR->won = false;
+                $playerGR->defeated = false;
+                $playerGR->draw = true;
+                $playerGR->spectator = $pgr->spectator;
+                $playerGR->save();
+            }
+            return;
+        }
 
         // Prefer the report who saw the end of the game
-        if (!$bestReport->finished && $gameReport->finished)
+        if ($gameReport->finished && (!$bestReport->finished || $bestReport->quit))
         {
             $bestReport->best_report = false;
-            $gameReport->best_poret = true;
-            $game->report_id = $gameReport->id;
+            $gameReport->best_report = true;
+            $game->game_report_id = $gameReport->id;
             $game->save();
             $gameReport->save();
             $bestReport->save();
@@ -142,7 +184,7 @@ class ApiLadderController extends Controller
         {
             $bestReport->best_report = false;
             $gameReport->best_report = true;
-            $game->report_id = $gameReport->id;
+            $game->game_report_id = $gameReport->id;
             $game->save();
             $gameReport->save();
             $bestReport->save();

@@ -23,6 +23,8 @@ class GameService
             return null;
         }
 
+        $reporter = null;
+
         $gameReport = new \App\GameReport;
         $gameReport->game_id = $game->id;
         $gameReport->player_id = $playerId;
@@ -59,6 +61,9 @@ class GameService
 
                 if ($playerHere === null)
                     return null;
+
+                if ($playerHere->id == $playerId)
+                    $reporter = $playerGameReports[$id];
 
                 $playerGameReports[$id]->player_id = $playerHere->id;
 
@@ -123,10 +128,21 @@ class GameService
             {
             case "CMPL":
                 // Must be RA, not sure what to do though
-                $player->won = !$playerGameReports[$cid]->defeated && !$playerGameReports[$cid]->quit;
-                $player->no_completion = false;
-                $player->draw = ($value["value"] & GameResult::COMPLETION_DRAW) ? true : false;
-                $player->defeated = false;
+                if ($value["value"] & GameResult::COMPLETION_DRAW)
+                {
+                    foreach ($playerGameReports as $playerGR)
+                    {
+                        $playerGR->draw = true;
+                        $playerGR->won = false;
+                        $playerGR->defeated = false;
+                        $playerGR->no_completion = false;
+                    }
+                }
+                else {
+                    $reporter->won = !$reporter->defeated && !$reporter->quit;
+                    $reporter->no_completion = false;
+                    $reporter->defeated = !$reporter->won;
+                }
                 break;
             case "OOSY":
                 $gameReport->oos = $value["value"];
@@ -145,7 +161,11 @@ class GameService
                 $gameReport->fps = $value["value"];
                 break;
             case "QUIT":
-                $reporter->quit = $value["value"];
+                if ($reporter !== null)
+                {
+                    $reporter->quit = $value["value"];
+                }
+                $gameReport->finished = !$value["value"];
                 break;
             case "FINI":
                 $gameReport->finished = $value["value"];
@@ -162,6 +182,7 @@ class GameService
         {
             $pStats->save();
         }
+        $reporter->save();
         $gameReport->save();
         $game->save();
 
