@@ -50,6 +50,10 @@
                                     {{ $player->username or "Unknown" }} <strong>+{{ $pgr->points or "" }}</strong>
                                     @if($pgr->won)
                                         <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                                    @elseif($pgr->draw)
+                                        <i class="fa fa-handshake-o fa-fw" style="color: #e96b1e;"></i>
+                                    @elseif($pgr->disconnected)
+                                        <i class="fa fa-plug fa-fw" style="color: #E91E63;"></i>
                                     @else
                                         <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                     @endif
@@ -58,8 +62,12 @@
                                 @if ($playerGameReports->count() == 1)
                                     <span class="player">
                                         {{ $player->username or "Unknown" }} <strong>+{{ $pgr->points or "" }}</strong>
-                                        @if ($pgr->won)
+                                        @if($pgr->won)
                                             <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                                        @elseif($pgr->draw)
+                                            <i class="fa fa-handshake-o fa-fw" style="color: #e96b1e;"></i>
+                                        @elseif($pgr->disconnected)
+                                            <i class="fa fa-plug fa-fw" style="color: #E91E63;"></i>
                                         @else
                                             <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                         @endif
@@ -100,6 +108,24 @@
                                         <span class="flag-icon flag-icon-{{ $gameStats->country($gameStats->cty) }}"></span>
                                    </div>
                                 @endif
+                            </div>
+
+                            <div class="player-stats-panel">
+                                <pre style="background: black; color: silver; border: none;">
+                                Infantry Left: {{ $gameStats->inl or ""}}       
+                                Planes Left: {{ $gameStats->pll or ""}}        
+                                Buildings Left: {{ $gameStats->bll or "" }}      
+                                Units Bought: {{ $gameStats->unb or ""}}        
+                                Infantry Bought: {{ $gameStats->inb or ""}}     
+                                Planes Bought: {{ $gameStats->plb or "" }}       
+                                Buildings Bought: {{ $gameStats->blb or "" }}    
+                                Units Bought: {{ $gameStats->unk or "" }}        
+                                Infantry Bought: {{ $gameStats->ink or "" }}     
+                                Planes Killed: {{ $gameStats->plk or "" }}       
+                                Buildings Destroyed: {{ $gameStats->blk or "" }}  
+                                Buildings Captured: {{ $gameStats->blc or "" }}  
+                                Crates Found: {{ $gameStats->cra or "" }}        
+                                </pre>
                             </div>
                         </a>
                     </div>

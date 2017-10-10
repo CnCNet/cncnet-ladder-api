@@ -1,5 +1,7 @@
 ﻿$lostColour: #03bcd4;
 $wonColour: #00ec00;
+$drawColour: #e96b1e;
+$dcColour: #b50000;
 
 .game-box-link:hover 
 {
@@ -60,6 +62,18 @@ $wonColour: #00ec00;
 {
     content: "\f091";
     color: $wonColour;
+}
+
+.game-box .preview .status-draw:before
+{
+    content: "\f2b5";
+    color: $wonColour;
+}
+
+.game-box .preview .status-dc:before
+{
+    content: "\f1e6";
+    color: $dcColour;
 }
 
 .game-box .preview .status-live:before

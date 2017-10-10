@@ -25,10 +25,15 @@
 @section('content')
 <section class="light-texture game-detail supported-games">
     <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>CnCNet <strong>Quick Match</strong> </h3>
+            </div>
+        </div>
         <div class="feature">
             <div class="row">
                 @foreach($ladders as $history)
-                <div class="col-md-6" style="margin-bottom:20px">
+                <div class="col-xs-6 col-md-4" style="margin-bottom:20px">
                     <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
                         <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
                             <div class="details">
@@ -40,10 +45,7 @@
                             <div class="badge-cover">
                                 <ul class="list-inline">
                                     <li>
-                                        <small>{{ Carbon\Carbon::parse($history->starts)->format('F Y') }} Competition</small>
-                                    </li>
-                                    <li>
-                                        <img src="/images/ladder/badge-cover.png" alt="badge" />
+                                        <p>{{ Carbon\Carbon::parse($history->starts)->format('F Y') }} Competition</p>
                                     </li>
                                 </ul>
                             </div>
@@ -55,17 +57,17 @@
         </div>
     </div>
 </section>
-
-<section class="light-texture game-detail supported-games">
+{{--
+<section class="dark-texture game-detail supported-games">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <?php /*
-                <h3>Recentl played games</h3>
-                @include("components.recent-games", ["player" => [], "games" => $games])
-                */ ?>
+                <h3>Recently played games</h3>
             </div>
+        </div>
+        <div class="feature">
         </div>
     </div>
 </section>
+--}}
 @endsection

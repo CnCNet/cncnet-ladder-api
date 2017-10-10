@@ -2708,8 +2708,13 @@ h3.game-intro {
 
 .badge-cover {
   position: absolute;
-  right: 15px;
-  bottom: 15px; }
+  text-align: center;
+  bottom: 15px;
+  left: 0;
+  right: 0; }
+
+.badge-cover p {
+  color: #fff; }
 
 .ladder-cover .details {
   vertical-align: middle;
@@ -2719,7 +2724,7 @@ h3.game-intro {
   color: #fff; }
 
 .ladder-cover .type {
-  width: 50%;
+  width: 100%;
   margin-left: auto;
   text-align: center; }
 
@@ -3039,6 +3044,14 @@ h3.game-intro > span:first-child:after {
 .game-box .preview .status-won:before {
   content: "\f091";
   color: #00ec00; }
+
+.game-box .preview .status-draw:before {
+  content: "\f2b5";
+  color: #00ec00; }
+
+.game-box .preview .status-dc:before {
+  content: "\f1e6";
+  color: #b50000; }
 
 .game-box .preview .status-live:before {
   content: "\f1e8";
