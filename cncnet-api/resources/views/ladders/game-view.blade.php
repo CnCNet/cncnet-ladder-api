@@ -101,6 +101,24 @@
                                    </div>
                                 @endif
                             </div>
+
+                            <div class="player-stats-panel">
+                                <pre style="background: black; color: silver; border: none;">
+                                Infantry Left: {{ $gameStats->inl }}       
+                                Planes Left: {{ $gameStats->pll }}        
+                                Buildings Left: {{ $gameStats->bll }}      
+                                Units Bought: {{ $gameStats->unb }}        
+                                Infantry Bought: {{ $gameStats->inb }}     
+                                Planes Bought: {{ $gameStats->plb }}       
+                                Buildings Bought: {{ $gameStats->blb }}    
+                                Units Bought: {{ $gameStats->unk }}        
+                                Infantry Bought: {{ $gameStats->ink }}     
+                                Planes Killed: {{ $gameStats->plk }}       
+                                Buildings Destroyed: {{ $gameStats->blk }}  
+                                Buildings Captured: {{ $gameStats->blc }}  
+                                Crates Found: {{ $gameStats->cra }}        
+                                </pre>
+                            </div>
                         </a>
                     </div>
                 @endforeach
