@@ -7,12 +7,25 @@
 <div class="row recent-game">
     @foreach($games as $game)
         <div class="col-md-{{ $column }}">
+        
+        <?php
+        if($game->won){
+        $status = "won";
+        }else if($game->disconnected){
+        $status = "dc";
+        }else if($game->draw){
+        $status = "draw";
+        }else{
+        $status = "lost";
+        }
+        ?>
+
         @include("components/game-box",
         [
             "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->game_id,
             "game" => $history->ladder->abbreviation,
             "gamePlayers" => \App\PlayerGameReport::where('game_report_id', $game->game_report_id),
-            "status" => $game->won ? "won" : "lost",
+            "status" => $status,
             "points" => $game,
             "map" => $game->hash,
             "title" => $game->scen,

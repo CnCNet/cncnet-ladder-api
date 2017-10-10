@@ -3013,6 +3013,14 @@ h3.game-intro > span:first-child:after {
   content: "\f091";
   color: #00ec00; }
 
+.game-box .preview .status-draw:before {
+  content: "\f2b5";
+  color: #00ec00; }
+
+.game-box .preview .status-dc:before {
+  content: "\f1e6";
+  color: #b50000; }
+
 .game-box .preview .status-live:before {
   content: "\f1e8";
   color: #00ec00; }
