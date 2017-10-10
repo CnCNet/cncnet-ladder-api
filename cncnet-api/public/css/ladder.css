@@ -2913,54 +2913,52 @@ h3.game-intro > span:first-child:after {
 
 .faction-uss,
 .faction-ita {
-    background-image: url(../images/hud/ra_soviet.png);
-    width: 140px; }
+  background-image: url(../images/hud/ra_soviet.png);
+  width: 140px; }
 
 .faction-spa,
 .faction-eng,
 .faction-ger,
 .faction-fra,
 .faction-gre {
-     background-image: url(../images/hud/ra_allies.png);
-     width: 140px; }
+  background-image: url(../images/hud/ra_allies.png);
+  width: 140px; }
 
 .faction-gdi {
-     background-image: url(../images/hud/ts_gdi.png);
-     width: 150px; }
+  background-image: url(../images/hud/ts_gdi.png);
+  width: 150px; }
 
 .faction-nod {
-     background-image: url(../images/hud/ts_nod.png);
-     width: 150px; }
+  background-image: url(../images/hud/ts_nod.png);
+  width: 150px; }
 
 /* Extra small devices (phones, less than 768px) */
 /* No media query since this is the default in Bootstrap */
 /* Small devices (tablets, 768px and up) */
 /* Medium devices (desktops, 992px and up) */
-@media (min-width: 992px)
-{
-    .faction {
+@media (min-width: 992px) {
+  .faction {
     background-size: auto; }
-    .faction-great,
-    .faction-america,
-    .faction-korea,
-    .faction-france,
-    .faction-germany,
-    .faction-iraq,
-    .faction-cuba,
-    .faction-russia,
-    .faction-libya,
-    .faction-germany,
-    .faction-uss,
-    .faction-ita,
-    .faction-spa,
-    .faction-eng,
-    .faction-ger,
-    .faction-fra,
-    .faction-gre,
-    .faction-gdi,
-    .faction-nod  {
-    background-size: 100%; }
-}
+  .faction-great,
+  .faction-america,
+  .faction-korea,
+  .faction-france,
+  .faction-germany,
+  .faction-iraq,
+  .faction-cuba,
+  .faction-russia,
+  .faction-libya,
+  .faction-germany,
+  .faction-uss,
+  .faction-ita,
+  .faction-spa,
+  .faction-eng,
+  .faction-ger,
+  .faction-fra,
+  .faction-gre,
+  .faction-gdi,
+  .faction-nod {
+    background-size: 100%; } }
 
 .country {
   position: absolute;
