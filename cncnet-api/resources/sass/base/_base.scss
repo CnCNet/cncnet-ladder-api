@@ -359,8 +359,15 @@ h3.game-intro
 .badge-cover 
 {
     position: absolute;
-    right: 15px;
+    text-align: center;
     bottom: 15px;
+    left: 0;
+    right: 0;
+}
+
+.badge-cover p 
+{
+    color: #fff;
 }
 
 .ladder-cover .details 
@@ -374,7 +381,7 @@ h3.game-intro
 
 .ladder-cover .type 
 {
-    width: 50%;
+    width: 100%;
     margin-left: auto;
     text-align: center;
 } 
