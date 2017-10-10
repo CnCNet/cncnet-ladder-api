@@ -177,6 +177,33 @@ h3.game-intro > span:first-child:after
     width: 150px;
 }
 
+.faction-uss,
+.faction-ita
+{
+    background-image: url(../images/hud/ra_soviet.png);
+    width: 140px;
+}
+
+.faction-spa,
+.faction-eng,
+.faction-ger,
+.faction-fra,
+.faction-gre
+{
+     background-image: url(../images/hud/ra_allies.png);
+     width: 140px;
+}
+
+.faction-gdi {
+     background-image: url(../images/hud/ts_gdi.png);
+     width: 150px;
+}
+
+.faction-nod {
+     background-image: url(../images/hud/ts_nod.png);
+     width: 150px;
+}
+
 /* Extra small devices (phones, less than 768px) */
 /* No media query since this is the default in Bootstrap */
 /* Small devices (tablets, 768px and up) */
@@ -194,8 +221,18 @@ h3.game-intro > span:first-child:after
     .faction-cuba,
     .faction-russia,
     .faction-libya,
-    .faction-germany {
-    background-size: 100%; }
+    .faction-germany,
+    .faction-uss,
+    .faction-ita,
+    .faction-spa,
+    .faction-eng,
+    .faction-ger,
+    .faction-fra,
+    .faction-gre,
+    .faction-gdi,
+    .faction-nod  {
+        background-size: 100%;
+    }
 }
 
 .country {

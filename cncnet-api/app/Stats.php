@@ -32,16 +32,22 @@ class Stats extends Model
         $ladder = \App\Ladder::where("abbreviation", "=", $game)->first();
 
         $local_id = null;
-        if ($this->cty !== null)
+        if ($game == 'yr')
         {
             $local_id = json_decode($this->cty)->value;
         }
-        else if ($this->sid !== null)
+        else
         {
             $local_id = json_decode($this->sid)->value;
         }
 
         if ($local_id === null) return "";
+
+        if (!is_numeric($local_id))
+        {
+            // RA uses strings as side id's
+            return strtolower($local_id);
+        }
 
         $side = $ladder->sides()->where('local_id', $local_id)->first();
 
