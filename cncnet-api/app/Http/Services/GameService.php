@@ -251,7 +251,7 @@ class GameService
             }
         }
 
-        $types = array ("CRA","BLC","BLK","PLK","UNK","INK","BLL","PLL","UNL","INL","BLB","PLB","UNB","INB");
+        $types = array ("CRA","BLC","BLK","PLK","UNK","INK","BLL","PLL","UNL","INL","BLB","PLB","UNB","INB","VSK","VSL","VSB");
         $gameUnitTypes = config("types." . strtoupper($cncnetGame));
 
         foreach ($types as $tag)
