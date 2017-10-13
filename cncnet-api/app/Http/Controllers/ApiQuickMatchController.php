@@ -125,6 +125,8 @@ class ApiQuickMatchController extends Controller
                 else {
                     return array("type" => "error", "description" => "Side ({$request->side}) is not allowed");
                 }
+                if ($request->map_sides)
+                    $qmPlayer->map_sides = join(',', $request->map_sides);
 
                 if ($request->version && $request->platform)
                 {
@@ -226,11 +228,28 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer->location = $spawn_order[$qmPlayer->color] - 1;
                     $qmPlayer->qm_match_id = $qmMatch->id;
                     $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
+
+                    $psides = explode(',', $qmPlayer->map_sides);
+                    if (count($psides) > $qmMap->bit_idx)
+                        $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
+
+                    if ($qmPlayer->actual_side == -1)
+                    {
+                        $qmPlayer->actual_side = $ladder_rules->all_sides()[rand(0, count($ladder_rules->all_sides()) - 1)];
+                    }
                     $qmPlayer->save();
 
                     $color = 1;
                     foreach ($qmOpns as $opn)
                     {
+                        $osides = explode(',', $opn->map_sides);
+                        if (count($osides) > $qmMap->bit_idx)
+                            $opn->actual_side = $osides[$qmMap->bit_idx];
+
+                        if ($opn->actual_side == -1)
+                        {
+                            $opn->actual_side = $ladder_rules->all_sides()[rand(0, count($ladder_rules->all_sides()) - 1)];
+                        }
                         $opn->color = $color++;
                         $opn->location = $spawn_order[$opn->color] - 1;
                         $opn->qm_match_id = $qmMatch->id;
