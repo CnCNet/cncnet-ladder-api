@@ -256,7 +256,9 @@ class GameService
 
         foreach ($types as $tag)
         {
-            $lookup = $gameUnitTypes[substr($tag, 0, 2)];
+            $lookup = null;
+            if (array_key_exists(substr($tag, 0, 2), $gameUnitTypes))
+                $lookup = $gameUnitTypes[substr($tag, 0, 2)];
 
             for ($i = 0; $i < 8; $i++)
             {
@@ -270,7 +272,7 @@ class GameService
                         $count = unpack("N", substr($raw, $j, 4))[1];
                         if ($count >= 0)
                         {
-                            if ($lookup && count($lookup) > $t && $lookup[$t])
+                            if ($lookup && count($lookup) > $t && array_key_exists($t, $lookup))
                             {
                                 $result["$tag$i"]["counts"][$lookup[$t]] = $count;
                             }
