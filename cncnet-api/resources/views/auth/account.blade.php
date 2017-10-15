@@ -37,13 +37,19 @@
         </div>
     </div>
 </section>
-
+<style>
+.tutorial {     
+    background: #074b85;
+    padding: 15px;
+    color: white; 
+}
+</style>
 <section class="cncnet-features dark-texture">
     <div class="container">
 
         <div class="row">
-            <div class="col-md-4">
-                <h2>Add a new username?</h2>
+            <div class="col-md-4 @if(Input::get('tutorial'))tutorial @endif">
+                <h2>@if(Input::get('tutorial')) <strong>Step 2</strong> - @endif Add a new username?</h2>
 
                 @include("components.form-messages")
 

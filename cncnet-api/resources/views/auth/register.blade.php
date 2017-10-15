@@ -11,7 +11,7 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2">
                 <h1>
-                    Ladder Account Sign Up
+                    Alpha Ladder Account Sign Up
                 </h1>
                 <p class="text-uppercase">
                    Play. Compete. <strong>Conquer.</strong>
@@ -23,16 +23,25 @@
 @endsection
 
 @section('content')
-<section class="light-texture game-detail supported-games">
+<section class="light-texture game-detail supported-games" style="color: silver;">
     <div class="container">
 	    <div class="row">
 		    <div class="col-md-8 col-md-offset-2">
                 <h2>Create your CnCNet Ladder Account</h2>
-                <p>Note: This is different to your CnCNet Forum Account</p>
+                <p style="color:silver">
+                    <strong>Note: We are in an Alpha testing stage</strong>, bugs are likely to occur. The Quick Match Client and related sites are likely to change during development.  
+                    Report bugs in <a href="https://forums.cncnet.org/forum/66-cncnet-ladder/" target="_blank">our forums</a>.</p>
+                <h2>How to play</h2>
+                <ol style="font-size:15px;">
+                    <li>Create your Ladder Account below.</li>
+                    <li>Once complete, create a Nickname to play online with.</li>
+                    <li>Login to the CnCNet Quick Match client with your Ladder Account.</li>
+                    <li>Click Quick Match and wait to play ladder games!</li>
+                </ol>
                 <br/>
 
 			    <div class="panel panel-default">
-				    <div class="panel-heading">Register</div>
+				    <div class="panel-heading">Step 1 - Create your Ladder Account</div>
 				    <div class="panel-body">
 					    @if (count($errors) > 0)
 						    <div class="alert alert-danger">
@@ -81,6 +90,9 @@
 								    <button type="submit" class="btn btn-primary">
 									    Register
 								    </button>
+                                    <p>
+                                    <small>By registering and using the Quick Match software and related sites, you agree to the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></small> 
+                                    </p>
 							    </div>
 						    </div>
 					    </form>
