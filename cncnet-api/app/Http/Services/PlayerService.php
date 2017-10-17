@@ -12,6 +12,8 @@ class PlayerService
 
     public function addPlayerToUser($username, $user, $ladderId)
     {
+        $username = str_replace("=", "-"); // for now
+
         $player = \App\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladderId)->first();
 
