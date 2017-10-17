@@ -84,7 +84,7 @@ class ApiLadderController extends Controller
         $gameReport = $this->gameService->saveGameStats($result, $game->id, $player->id, $history->ladder->id, $cncnetGame);
         if ($gameReport === null)
         {
-            return response()->json(['Error' => $gameStats], 400);
+            return response()->json(['Error' => $gameReport], 400);
         }
 
         // Award points
