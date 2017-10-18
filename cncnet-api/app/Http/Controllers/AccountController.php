@@ -31,7 +31,7 @@ class AccountController extends Controller
     {
         $this->validate($request, [
             'ladder' => 'required|string|',
-            'username' => 'required|string|max:12',
+            'username' => 'required|string|alpha_dash|max:12',
         ]);
 
         $user = \Auth::user(); 
