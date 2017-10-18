@@ -255,7 +255,7 @@ class ApiLadderController extends Controller
             else if ($playerGR->defeated)
             {
                 $points = new PointService(16, $ally_average, $enemy_average, 0, 1);
-                $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
+                $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
                 $gvc /= 2;
             }
 
