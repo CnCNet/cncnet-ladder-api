@@ -31,6 +31,13 @@ class ApiQuickMatchController extends Controller
         return json_encode(DB::table("client_version")->where("platform", $platform)->first());
     }
 
+    public function statsRequest(Request $request, $ladderAbbrev = null)
+    {
+        $hourAgo = Carbon::now()->subHour()->toDateTimeString();
+        $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $hourAgo)->count();
+        return ['recentMatchedPlayers' => $recentMatchedPlayers ];
+    }
+
     public function mapListRequest(Request $request, $ladderAbbrev = null)
     {
         //$qmMaps = \App\QmMap::where('ladder_id', $this->ladderService->getLadderByGame($ladderAbbrev)->id)->get();
