@@ -31,7 +31,7 @@ class AccountController extends Controller
     {
         $this->validate($request, [
             'ladder' => 'required|string|',
-            'username' => 'required|string|max:12',
+            'username' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
         ]);
 
         $user = \Auth::user();
