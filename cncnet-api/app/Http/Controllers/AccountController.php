@@ -1,15 +1,15 @@
-<?php 
+<?php
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
 
-class AccountController extends Controller 
+class AccountController extends Controller
 {
     private $playerService;
     private $ladderService;
-    
+
     public function __construct()
     {
         $this->playerService = new PlayerService();
@@ -18,8 +18,8 @@ class AccountController extends Controller
 
     public function getAccountIndex(Request $request)
     {
-        $user = \Auth::user(); 
-        return view("auth.account", 
+        $user = \Auth::user();
+        return view("auth.account",
             array (
                 "user" => $user,
                 "ladders" => $this->ladderService->getLatestLadders()
@@ -31,10 +31,10 @@ class AccountController extends Controller
     {
         $this->validate($request, [
             'ladder' => 'required|string|',
-            'username' => 'required|string|alpha_dash|max:12',
+            'username' => 'required|string|max:12',
         ]);
 
-        $user = \Auth::user(); 
+        $user = \Auth::user();
         $username = $this->playerService->addPlayerToUser($request->username, $user, $request->ladder);
 
         if ($username == null)

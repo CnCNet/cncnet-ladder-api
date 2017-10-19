@@ -12,6 +12,8 @@ class PlayerService
 
     public function addPlayerToUser($username, $user, $ladderId)
     {
+        $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
+
         $player = \App\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladderId)->first();
 

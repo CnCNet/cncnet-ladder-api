@@ -20,7 +20,7 @@ class GameService
 
         if ($player == null)
         {
-            return null;
+            return ['error' => 'player not found', 'gameReport' => null ];
         }
 
         $reporter = null;
@@ -58,9 +58,9 @@ class GameService
                 $playerGameReports[$id]->game_id = $game->id;
                 $playerGameReports[$id]->game_report_id = $gameReport->id;
                 $playerHere = \App\Player::where('ladder_id', $ladderId)->where('username', $value["value"])->first();
-
                 if ($playerHere === null)
-                    return null;
+                    return ['error' => 'playerHere is null for username '.json_decode($value["value"])
+                           ,'gameReport' => null ];
 
                 if ($playerHere->id == $playerId)
                     $reporter = $playerGameReports[$id];
@@ -196,7 +196,7 @@ class GameService
         $gameReport->save();
         $game->save();
 
-        return $gameReport;
+        return ['gameReport' =>  $gameReport];
     }
 
     public function saveRawStats($result, $gameId, $ladderId)
