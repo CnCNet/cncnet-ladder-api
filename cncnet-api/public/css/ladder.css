@@ -2831,6 +2831,22 @@ h3.game-intro > span:first-child:after {
   margin: 15px 0;
   border: 1px solid #060606; }
 
+.profile-stats-breakdown {
+  position: relative;
+  background: #080808;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 15px 0; }
+
+.player-colour {
+  height: 15px;
+  margin-top: -20px;
+  margin-bottom: -20px; }
+
+.stats-row {
+  padding: 20px 0;
+  border-bottom: 1px solid #151515; }
+
 .profile-listing .rank, .profile-detail .rank {
   position: absolute;
   top: 15px;
@@ -3229,3 +3245,491 @@ h3.game-intro > span:first-child:after {
 
 .player-card.ra-missile {
   background-image: url(/images/cards/player-cards-ra-missile.png); }
+
+.cameo-tile {
+  position: relative;
+  display: table;
+  float: left; }
+
+.cameo-tile .number {
+  display: table-cell;
+  vertical-align: bottom;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.29);
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: 0px 1px black; }
+
+.ra2-cameo {
+  background-image: url(../images/cameos/ra2-cameo.png);
+  background-repeat: no-repeat;
+  background-position: top left;
+  width: 60px;
+  height: 48px; }
+
+.cameo-blank {
+  display: none; }
+
+.cameo-tile span.x {
+  position: absolute;
+  color: red;
+  font-weight: bold;
+  font-size: 10px;
+  right: 5px; }
+
+.ra2-cameo.cameo-adogicon {
+  background-position: 0 0; }
+
+.ra2-cameo.cameo-aengicon {
+  background-position: -60px 0; }
+
+.ra2-cameo.cameo-agisicon {
+  background-position: -120px 0; }
+
+.ra2-cameo.cameo-ahrvicon {
+  background-position: -180px 0; }
+
+.ra2-cameo.cameo-asaticon {
+  background-position: -240px 0; }
+
+.ra2-cameo.cameo-ayaricon {
+  background-position: -300px 0; }
+
+.ra2-cameo.cameo-beagicon {
+  background-position: -360px 0; }
+
+.ra2-cameo.cameo-bfrticon {
+  background-position: -420px 0; }
+
+.ra2-cameo.cameo-bnkricon {
+  background-position: -480px 0; }
+
+.ra2-cameo.cameo-bolticon {
+  background-position: -540px 0; }
+
+.ra2-cameo.cameo-bplnicon {
+  background-position: -600px 0; }
+
+.ra2-cameo.cameo-brckicon {
+  background-position: -660px 0; }
+
+.ra2-cameo.cameo-brisicon {
+  background-position: -720px 0; }
+
+.ra2-cameo.cameo-brrkicon {
+  background-position: -780px 0; }
+
+.ra2-cameo.cameo-brutuico {
+  background-position: -840px 0; }
+
+.ra2-cameo.cameo-bsubicon {
+  background-position: -900px 0; }
+
+.ra2-cameo.cameo-bsubuico {
+  background-position: -960px 0; }
+
+.ra2-cameo.cameo-caosicon {
+  background-position: -1020px 0; }
+
+.ra2-cameo.cameo-carricon {
+  background-position: -1080px 0; }
+
+.ra2-cameo.cameo-ccomicon {
+  background-position: -1140px 0; }
+
+.ra2-cameo.cameo-ccomuico {
+  background-position: -1200px 0; }
+
+.ra2-cameo.cameo-chroicon {
+  background-position: -1260px 0; }
+
+.ra2-cameo.cameo-citwlicon {
+  background-position: -1320px 0; }
+
+.ra2-cameo.cameo-clegicon {
+  background-position: -1380px 0; }
+
+.ra2-cameo.cameo-clonicon {
+  background-position: -1440px 0; }
+
+.ra2-cameo.cameo-csphicon {
+  background-position: -1500px 0; }
+
+.ra2-cameo.cameo-desoicon {
+  background-position: -1560px 0; }
+
+.ra2-cameo.cameo-desticon {
+  background-position: -1620px 0; }
+
+.ra2-cameo.cameo-diskicon {
+  background-position: -1680px 0; }
+
+.ra2-cameo.cameo-dlphicon {
+  background-position: -1740px 0; }
+
+.ra2-cameo.cameo-dogicon {
+  background-position: -1800px 0; }
+
+.ra2-cameo.cameo-doguico {
+  background-position: -1860px 0; }
+
+.ra2-cameo.cameo-dredicon {
+  background-position: -1920px 0; }
+
+.ra2-cameo.cameo-dronicon {
+  background-position: -1980px 0; }
+
+.ra2-cameo.cameo-e2icon {
+  background-position: -2040px 0; }
+
+.ra2-cameo.cameo-e2iconbeta {
+  background-position: -2100px 0; }
+
+.ra2-cameo.cameo-engnicon {
+  background-position: -2160px 0; }
+
+.ra2-cameo.cameo-falcicon {
+  background-position: -2220px 0; }
+
+.ra2-cameo.cameo-fixicon {
+  background-position: -2280px 0; }
+
+.ra2-cameo.cameo-flakicon {
+  background-position: -2340px 0; }
+
+.ra2-cameo.cameo-flkticon {
+  background-position: -2400px 0; }
+
+.ra2-cameo.cameo-forcicon {
+  background-position: -2460px 0; }
+
+.ra2-cameo.cameo-fvicon {
+  background-position: -2520px 0; }
+
+.ra2-cameo.cameo-gapicon {
+  background-position: -2580px 0; }
+
+.ra2-cameo.cameo-gcanicon {
+  background-position: -2640px 0; }
+
+.ra2-cameo.cameo-gdgiicon {
+  background-position: -2700px 0; }
+
+.ra2-cameo.cameo-ggunicon {
+  background-position: -2760px 0; }
+
+.ra2-cameo.cameo-giicon {
+  background-position: -2820px 0; }
+
+.ra2-cameo.cameo-gorep {
+  background-position: -2880px 0; }
+
+.ra2-cameo.cameo-grndicon {
+  background-position: -2940px 0; }
+
+.ra2-cameo.cameo-gtncicon {
+  background-position: -3000px 0; }
+
+.ra2-cameo.cameo-gtnkicon {
+  background-position: -3060px 0; }
+
+.ra2-cameo.cameo-gwepicon {
+  background-position: -3120px 0; }
+
+.ra2-cameo.cameo-handicon {
+  background-position: -3180px 0; }
+
+.ra2-cameo.cameo-harvicon {
+  background-position: -3240px 0; }
+
+.ra2-cameo.cameo-heliicon {
+  background-position: -3300px 0; }
+
+.ra2-cameo.cameo-hovricon {
+  background-position: -3360px 0; }
+
+.ra2-cameo.cameo-htkicon {
+  background-position: -3420px 0; }
+
+.ra2-cameo.cameo-htnkicon {
+  background-position: -3480px 0; }
+
+.ra2-cameo.cameo-indpicon {
+  background-position: -3540px 0; }
+
+.ra2-cameo.cameo-initicon {
+  background-position: -3600px 0; }
+
+.ra2-cameo.cameo-ircricon {
+  background-position: -3660px 0; }
+
+.ra2-cameo.cameo-ironicon {
+  background-position: -3720px 0; }
+
+.ra2-cameo.cameo-ivanicon {
+  background-position: -3780px 0; }
+
+.ra2-cameo.cameo-ivncicon {
+  background-position: -3840px 0; }
+
+.ra2-cameo.cameo-ivncuico {
+  background-position: -3900px 0; }
+
+.ra2-cameo.cameo-jjeticon {
+  background-position: -3960px 0; }
+
+.ra2-cameo.cameo-jjetuico {
+  background-position: -4020px 0; }
+
+.ra2-cameo.cameo-landicon {
+  background-position: -4080px 0; }
+
+.ra2-cameo.cameo-ltnkicon {
+  background-position: -4140px 0; }
+
+.ra2-cameo.cameo-lunricon {
+  background-position: -4200px 0; }
+
+.ra2-cameo.cameo-mcvicon {
+  background-position: -4260px 0; }
+
+.ra2-cameo.cameo-mindicon {
+  background-position: -4320px 0; }
+
+.ra2-cameo.cameo-msslicon {
+  background-position: -4380px 0; }
+
+.ra2-cameo.cameo-mtnkicon {
+  background-position: -4440px 0; }
+
+.ra2-cameo.cameo-muteicon {
+  background-position: -4500px 0; }
+
+.ra2-cameo.cameo-npwricon {
+  background-position: -4560px 0; }
+
+.ra2-cameo.cameo-nradicon {
+  background-position: -4620px 0; }
+
+.ra2-cameo.cameo-nrcticon {
+  background-position: -4680px 0; }
+
+.ra2-cameo.cameo-nreficon {
+  background-position: -4740px 0; }
+
+.ra2-cameo.cameo-ntchicon {
+  background-position: -4800px 0; }
+
+.ra2-cameo.cameo-nukeicon {
+  background-position: -4860px 0; }
+
+.ra2-cameo.cameo-nwalicon {
+  background-position: -4920px 0; }
+
+.ra2-cameo.cameo-nwepicon {
+  background-position: -4980px 0; }
+
+.ra2-cameo.cameo-paraicon {
+  background-position: -5040px 0; }
+
+.ra2-cameo.cameo-pdomicon {
+  background-position: -5100px 0; }
+
+.ra2-cameo.cameo-pillicon {
+  background-position: -5160px 0; }
+
+.ra2-cameo.cameo-plticon {
+  background-position: -5220px 0; }
+
+.ra2-cameo.cameo-powricon {
+  background-position: -5280px 0; }
+
+.ra2-cameo.cameo-prisicon {
+  background-position: -5340px 0; }
+
+.ra2-cameo.cameo-psicicon {
+  background-position: -5400px 0; }
+
+.ra2-cameo.cameo-psicuico {
+  background-position: -5460px 0; }
+
+.ra2-cameo.cameo-psisicon {
+  background-position: -5520px 0; }
+
+.ra2-cameo.cameo-psiticon {
+  background-position: -5580px 0; }
+
+.ra2-cameo.cameo-psituico {
+  background-position: -5640px 0; }
+
+.ra2-cameo.cameo-psyricon {
+  background-position: -5700px 0; }
+
+.ra2-cameo.cameo-psyticon {
+  background-position: -5760px 0; }
+
+.ra2-cameo.cameo-pupticon {
+  background-position: -5820px 0; }
+
+.ra2-cameo.cameo-rbccicon {
+  background-position: -5880px 0; }
+
+.ra2-cameo.cameo-reficon {
+  background-position: -5940px 0; }
+
+.ra2-cameo.cameo-rfixicon {
+  background-position: -6000px 0; }
+
+.ra2-cameo.cameo-robouico {
+  background-position: -6060px 0; }
+
+.ra2-cameo.cameo-rtnkicon {
+  background-position: -6120px 0; }
+
+.ra2-cameo.cameo-samicon {
+  background-position: -6180px 0; }
+
+.ra2-cameo.cameo-sapcicon {
+  background-position: -6240px 0; }
+
+.ra2-cameo.cameo-schpuico {
+  background-position: -6300px 0; }
+
+.ra2-cameo.cameo-sealicon {
+  background-position: -6360px 0; }
+
+.ra2-cameo.cameo-shadicon {
+  background-position: -6420px 0; }
+
+.ra2-cameo.cameo-shkicon {
+  background-position: -6480px 0; }
+
+.ra2-cameo.cameo-shkuico {
+  background-position: -6540px 0; }
+
+.ra2-cameo.cameo-smcvicon {
+  background-position: -6600px 0; }
+
+.ra2-cameo.cameo-sminicon {
+  background-position: -6660px 0; }
+
+.ra2-cameo.cameo-snipicon {
+  background-position: -6720px 0; }
+
+.ra2-cameo.cameo-snipuico {
+  background-position: -6780px 0; }
+
+.ra2-cameo.cameo-spyicon {
+  background-position: -6840px 0; }
+
+.ra2-cameo.cameo-spypicon {
+  background-position: -6900px 0; }
+
+.ra2-cameo.cameo-spyuico {
+  background-position: -6960px 0; }
+
+.ra2-cameo.cameo-sqdicon {
+  background-position: -7020px 0; }
+
+.ra2-cameo.cameo-sreficon {
+  background-position: -7080px 0; }
+
+.ra2-cameo.cameo-subicon {
+  background-position: -7140px 0; }
+
+.ra2-cameo.cameo-tanyicon {
+  background-position: -7200px 0; }
+
+.ra2-cameo.cameo-tanyuico {
+  background-position: -7260px 0; }
+
+.ra2-cameo.cameo-tbnkicon {
+  background-position: -7320px 0; }
+
+.ra2-cameo.cameo-techicon {
+  background-position: -7380px 0; }
+
+.ra2-cameo.cameo-teleicon {
+  background-position: -7440px 0; }
+
+.ra2-cameo.cameo-tnkdicon {
+  background-position: -7500px 0; }
+
+.ra2-cameo.cameo-trkaicon {
+  background-position: -7560px 0; }
+
+.ra2-cameo.cameo-trsticon {
+  background-position: -7620px 0; }
+
+.ra2-cameo.cameo-trstuico {
+  background-position: -7680px 0; }
+
+.ra2-cameo.cameo-tslaicon {
+  background-position: -7740px 0; }
+
+.ra2-cameo.cameo-ttnkicon {
+  background-position: -7800px 0; }
+
+.ra2-cameo.cameo-ttnkuico {
+  background-position: -7860px 0; }
+
+.ra2-cameo.cameo-v3icon {
+  background-position: -7920px 0; }
+
+.ra2-cameo.cameo-vrusicon {
+  background-position: -7980px 0; }
+
+.ra2-cameo.cameo-wallicon {
+  background-position: -8040px 0; }
+
+.ra2-cameo.cameo-wethicon {
+  background-position: -8100px 0; }
+
+.ra2-cameo.cameo-yardicon {
+  background-position: -8160px 0; }
+
+.ra2-cameo.cameo-yclnicon {
+  background-position: -8220px 0; }
+
+.ra2-cameo.cameo-yengicon {
+  background-position: -8280px 0; }
+
+.ra2-cameo.cameo-yhvricon {
+  background-position: -8340px 0; }
+
+.ra2-cameo.cameo-ypvicon {
+  background-position: -8400px 0; }
+
+.ra2-cameo.cameo-ypwricon {
+  background-position: -8460px 0; }
+
+.ra2-cameo.cameo-ytchicon {
+  background-position: -8520px 0; }
+
+.ra2-cameo.cameo-ytnkicon {
+  background-position: -8580px 0; }
+
+.ra2-cameo.cameo-yuriicon {
+  background-position: -8640px 0; }
+
+.ra2-cameo.cameo-yuriuico {
+  background-position: -8700px 0; }
+
+.ra2-cameo.cameo-yurpicon {
+  background-position: -8760px 0; }
+
+.ra2-cameo.cameo-ywepicon {
+  background-position: -8820px 0; }
+
+.ra2-cameo.cameo-yypricon {
+  background-position: -8880px 0; }
+
+.ra2-cameo.cameo-yyrdicon {
+  background-position: -8940px 0; }
+
+.ra2-cameo.cameo-zepicon {
+  background-position: -9000px 0; }
+
+.ra2-cameo.cameo-zepuico {
+  background-position: -9060px 0; }

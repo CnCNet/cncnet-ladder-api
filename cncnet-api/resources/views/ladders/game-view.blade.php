@@ -85,61 +85,20 @@
     <section class="dark-texture">
         <div class="container">
             <div class="row">
-                @foreach($playerGameReports as $pgr)
-                    <?php $gameStats = $pgr->stats()->first(); ?>
-                    <?php $player = $pgr->player()->first() ?>
-                    <?php $rank = $player->rank($history, $player->username); ?>
-                    <?php $points = $player->playerPoints($history, $player->username); ?>
-
-                    <div class="col-md-6">
-                        <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
-                            <div class="profile-detail">
-                                <div class="rank">
-                                    <i class="rank {{ $player->badge($points) }}"></i>
-                                </div>
-                                <h3>Rank  #{{ $rank }}</h3>
-                                <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
-                                <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points  }}</p>
-                                @if($gameStats !== null)
-                                    <?php $credits = json_decode($gameStats->crd); ?>
-                                    <p class="points"><strong>Funds Left: </strong> {{ $credits->value or "" }}</p>
-                                    <p class="colour player-panel-{{ $gameStats->colour($gameStats->col) }}" style="width:25px;height:25px;"></p>
-                                    <div class="country">
-                                        <span class="flag-icon flag-icon-{{ $gameStats->country($gameStats->cty) }}"></span>
-                                   </div>
-                                @endif
-                            </div>
-
-                            <div class="player-stats-panel">
-                                <pre style="background: black; color: silver; border: none;">
-                                Infantry Left: {{ $gameStats->inl or ""}}       
-                                Planes Left: {{ $gameStats->pll or ""}}        
-                                Buildings Left: {{ $gameStats->bll or "" }}      
-                                Units Bought: {{ $gameStats->unb or ""}}        
-                                Infantry Bought: {{ $gameStats->inb or ""}}     
-                                Planes Bought: {{ $gameStats->plb or "" }}       
-                                Buildings Bought: {{ $gameStats->blb or "" }}    
-                                Units Bought: {{ $gameStats->unk or "" }}        
-                                Infantry Bought: {{ $gameStats->ink or "" }}     
-                                Planes Killed: {{ $gameStats->plk or "" }}       
-                                Buildings Destroyed: {{ $gameStats->blk or "" }}  
-                                Buildings Captured: {{ $gameStats->blc or "" }}  
-                                Crates Found: {{ $gameStats->cra or "" }}        
-                                </pre>
-                            </div>
-                        </a>
+                <div class="col-md-8 col-md-offset-2 text-center">
+                    <h3>Map - {{ $game->scen }} </h3>
+                    <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
+                    @if ($map)
+                    <div class="feature-map">
+                        <img src="/images/maps/{{ $history->ladder->abbreviation}}/{{ $map->hash . ".png" }}">
                     </div>
-                @endforeach
+                    @endif
+                </div>
             </div>
-        </div>
-    </section>
-
-    <section class="dark-texture">
-        <div class="container">
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-8 col-md-offset-2 text-center">
                     <h3>Game details</h3>
-                    <ul class="list-unstyled">
+                    <ul class="list-inline">
                         <li><strong>Short Game:</strong> {{ $game->shrt ? "On" : "Off" }}</li>
                         <li><strong>Superweapons:</strong> {{ $game->supr ? "On" : "Off" }}</li>
                         <li><strong>Crates:</strong> {{ $game->crat ? "On" : "Off" }}</li>
@@ -157,17 +116,233 @@
                         @endif
                     </ul>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="dark-texture">
+        <div class="container">
+            <div class="row">
+                @foreach($playerGameReports as $pgr)
+                    <?php $gameStats = $pgr->stats()->first(); ?>
+                    <?php $player = $pgr->player()->first() ?>
+                    <?php $rank = $player->rank($history, $player->username); ?>
+                    <?php $points = $player->playerPoints($history, $player->username); ?>
 
                 <div class="col-md-6">
-                    <h3>Map - {{ $game->scen }} </h3>
-                    <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
-                    @if ($map)
-                    <div class="feature-map">
-                        <img src="/images/maps/{{ $history->ladder->abbreviation}}/{{ $map->hash . ".png" }}">
+                    <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
+                        <div class="profile-detail">
+                            <div class="rank">
+                                <i class="rank {{ $player->badge($points) }}"></i>
+                            </div>
+                            <h3>Rank  #{{ $rank }}</h3>
+                            <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
+                            <p class="points"><i class="fa fa-bolt fa-fw"></i> {{ $points  }}</p>
+                            @if($gameStats !== null)
+                                <?php $credits = json_decode($gameStats->crd); ?>
+                                <p class="points"><strong>Funds Left: </strong> {{ $credits->value or "" }}</p>
+                                <p class="colour player-panel-{{ $gameStats->colour($gameStats->col) }}" style="width:25px;height:25px;"></p>
+                                <div class="country">
+                                    <span class="flag-icon flag-icon-{{ $gameStats->country($gameStats->cty) }}"></span>
+                                </div>
+                            @endif
+                        </div>
+                    </a>
+
+                    @if ($gameStats !== null)
+                    <?php $cameos = config("cameos.YR"); ?>
+                    <div class="player-colour player-panel-{{ $gameStats->colour($gameStats->col) }}"></div>
+                    <div class="player-stats-panel profile-stats-breakdown clearfix">
+                    <div class="col-md-12">
+
+                        <div class="row stats-row">
+                            <div class="col-md-4">
+                                <h4>Infantry Left</h4>
+                                @if (isset($gameStats->inl))
+                                <div class="clearfix">
+                                    <?php $arr = (array)json_decode($gameStats->inl)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+                            <div class="col-md-4">
+                                <h4>Planes Left</h4>
+                                @if (isset($gameStats->pll))
+                                <div class="clearfix">
+                                    <?php $arr = (array)json_decode($gameStats->pll)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+                            <div class="col-md-4">
+                            <h4>Buildings Left</h4>
+                            @if (isset($gameStats->bll))
+                                <div class="clearfix">
+                                    <?php $arr = (array)json_decode($gameStats->bll)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            @endif
+                            </div>
+                        </div>
+
+                        <div class="row stats-row">
+                            <div class="col-md-4">
+                                <h4>Units Left</h4>
+                                @if (isset($gameStats->unl))
+                                <div class="clearfix">
+                                    <?php $arr = (array)json_decode($gameStats->unl)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+
+                            <div class="col-md-4">
+                                <h4>Units Bought</h4>
+                                @if (isset($gameStats->unb))
+                                <div class="clearfix">
+                                    <?php $arr = (array)json_decode($gameStats->unb)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+
+                            <div class="col-md-4">
+                                <h4>Infantry Bought</h4>
+                                @if (isset($gameStats->inb))
+                                <div class="clearfix">
+                                    <?php $arr = (array)json_decode($gameStats->inb)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="row stats-row">
+                            <div class="col-md-4">
+                                <h4>Planes Bought</h4>
+                                @if (isset($gameStats->plb))
+                                <div class="clearfix">
+                                <?php $arr = (array)json_decode($gameStats->plb)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+                            <div class="col-md-4">
+                                <h4>Buildings Bought</h4>
+                                @if (isset($gameStats->blb))
+                                <div class="clearfix">
+                                <?php $arr = (array)json_decode($gameStats->blb)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+                            <div class="col-md-4">
+                                <h4>Units Bought</h4>
+                                @if (isset($gameStats->unk))
+                                <div class="clearfix">
+                                <?php $arr = (array)json_decode($gameStats->unk)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+                        </div>    
+
+                        <div class="row stats-row">
+                            <div class="col-md-4">
+                                <h4>Infantry Killed</h4>
+                                @if (isset($gameStats->ink))
+                                <div class="clearfix">
+                                <?php $arr = (array)json_decode($gameStats->ink)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span><span class="x">X</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+
+                            <div class="col-md-4">
+                                <h4>Planes Killed</h4>
+                                @if (isset($gameStats->plk))
+                                <div class="clearfix">
+                                <?php $arr = (array)json_decode($gameStats->plk)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span><span class="x">X</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+
+                            <div class="col-md-4">
+                                <h4>Buildings Destroyed</h4>
+                                @if (isset($gameStats->blk))
+                                <div class="clearfix">
+                                <?php $arr = (array)json_decode($gameStats->blk)->counts; ?>
+                                    @foreach($arr as $k => $v)
+                                        @if ($v > 0)
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span><span class="x">X</span></div>
+                                        @endif
+                                    @endforeach
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="clearfix">
+                            <h4>Buildings Captured</h4>
+                            @if (isset($gameStats->blc))
+                                <?php $arr = (array)json_decode($gameStats->blc)->counts; ?>
+                                @foreach($arr as $k => $v)
+                                    @if ($v > 0)
+                                    <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                    @endif
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
                     </div>
                     @endif
                 </div>
-            </div>
+                @endforeach
         </div>
     </section>
 </div>

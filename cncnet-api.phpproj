@@ -4486,6 +4486,7 @@
     <Folder Include="cncnet-api\public\fonts\ranks\" />
     <Folder Include="cncnet-api\public\images\" />
     <Folder Include="cncnet-api\public\images\badges\" />
+    <Folder Include="cncnet-api\public\images\cameos\" />
     <Folder Include="cncnet-api\public\images\cards\" />
     <Folder Include="cncnet-api\public\images\favicon\" />
     <Folder Include="cncnet-api\public\images\feature\" />
@@ -5487,6 +5488,8 @@
     <Content Include="cncnet-api\public\images\badges\2000-points.png" />
     <Content Include="cncnet-api\public\images\badges\3000-points.png" />
     <Content Include="cncnet-api\public\images\badges\500-points.png" />
+    <Content Include="cncnet-api\public\images\cameos\cameo-ra2allied.png" />
+    <Content Include="cncnet-api\public\images\cameos\cameo-ra2soviet.png" />
     <Content Include="cncnet-api\public\images\cards\player-cards-ts-commander.jpg" />
     <Content Include="cncnet-api\public\images\cards\player-cards-ts-gdi.jpg" />
     <Content Include="cncnet-api\public\images\cards\player-cards-ts-kane.jpg" />
@@ -6075,7 +6078,9 @@
     <Content Include="cncnet-api\public\js\cncnet-game-detail.js" />
     <Content Include="cncnet-api\public\js\cncnet-online.js" />
     <Content Include="cncnet-api\public\js\cncnet-status.js" />
+    <Content Include="cncnet-api\resources\sass\base\_game.scss" />
     <Content Include="cncnet-api\resources\sass\base\_player.scss" />
+    <Content Include="cncnet-api\resources\sass\components\_cameos.scss" />
     <Content Include="cncnet-api\resources\sass\components\_game-box.scss" />
     <Content Include="cncnet-api\resources\sass\components\_player-box.scss" />
     <Content Include="cncnet-api\resources\sass\ladder.scss" />
@@ -6084,6 +6089,5 @@
     <Content Include="cncnet-api\resources\sass\vendor\_dials.scss" />
     <Content Include="cncnet-api\resources\sass\vendor\_flags.scss" />
     <Content Include="cncnet-api\resources\sass\base\_base.scss" />
-    <Content Include="cncnet-api\resources\sass\vendor\_ranks.scss" />
   </ItemGroup>
 </Project>

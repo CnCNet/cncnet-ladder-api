@@ -1,6 +1,5 @@
 <ul class="list-inline">
     <li>
-
     @if ($gamesWon > 0 && $gamesLost > 0)
     <?php $winPercent = number_format($gamesWon / ($gamesWon + $gamesLost) * 100); ?>
     <div class="c100 p{{ $winPercent }} center big green">
@@ -13,7 +12,7 @@
     <li>
         <div class="c100 p100 center big purple">
             <p class="title">Games</p>
-            <p class="value"> {{ $gamesCount }}   <i class="fa fa-diamond fa-fw"></i></p>
+            <p class="value"> {{ $gamesCount }} <i class="fa fa-diamond fa-fw"></i></p>
             <div class="slice"><div class="bar"></div><div class="fill"></div></div>
         </div>
     </li>

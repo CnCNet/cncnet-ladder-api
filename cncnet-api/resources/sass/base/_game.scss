@@ -62,6 +62,28 @@ h3.game-intro > span:first-child:after
     border: 1px solid #060606;
 }
 
+.profile-stats-breakdown
+{
+    position: relative;
+    background: #080808;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+
+.player-colour
+{
+    height: 15px;
+    margin-top: -20px;
+    margin-bottom: -20px;
+}
+
+.stats-row 
+{
+    padding: 20px 0;
+    border-bottom: 1px solid #151515;
+}
+
 .profile-listing .rank, .profile-detail .rank
 {
     position: absolute;
