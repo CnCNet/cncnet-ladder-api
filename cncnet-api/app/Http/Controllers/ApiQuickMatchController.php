@@ -226,7 +226,7 @@ class ApiQuickMatchController extends Controller
                     $qmMatch->seed = rand(-2147483647, 2147483647);
                     $qmMatch->save();
 
-                    $qmMap = $qmMatch->map()->first();
+                    $qmMap = $qmMatch->map;
                     $spawn_order = explode(',', $qmMap->spawn_order);
 
                     // Set up player specific information

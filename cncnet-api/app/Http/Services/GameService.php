@@ -156,6 +156,15 @@ class GameService
                 break;
             case "OOSY":
                 $gameReport->oos = $value["value"];
+                if ($gameReport->oos)
+                {
+                    // If the game recons then the reporter marks himself as winner, admin will sort it out later
+                    foreach ($playerGameReports as $playerGR)
+                    {
+                        $playerGR->won = false;
+                    }
+                    $reporter->won = true;
+                }
                 break;
             case "SDFX":
                 foreach ($playerGameReports as $playerGR)
