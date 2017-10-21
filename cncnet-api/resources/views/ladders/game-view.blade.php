@@ -150,7 +150,9 @@
                     </a>
 
                     @if ($gameStats !== null)
-                    <?php $cameos = config("cameos.YR"); ?>
+                    <?php $g = $history->ladder()->first()->game; ?>
+                    <?php $cameos = config("cameos.".strtoupper($g)); ?>
+  
                     <div class="player-colour player-panel-{{ $gameStats->colour($gameStats->col) }}"></div>
                     <div class="player-stats-panel profile-stats-breakdown clearfix">
                     <div class="col-md-12">
@@ -163,7 +165,7 @@
                                     <?php $arr = (array)json_decode($gameStats->inl)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -176,7 +178,7 @@
                                     <?php $arr = (array)json_decode($gameStats->pll)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -189,7 +191,7 @@
                                     <?php $arr = (array)json_decode($gameStats->bll)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -205,7 +207,7 @@
                                     <?php $arr = (array)json_decode($gameStats->unl)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -219,7 +221,7 @@
                                     <?php $arr = (array)json_decode($gameStats->unb)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -233,7 +235,7 @@
                                     <?php $arr = (array)json_decode($gameStats->inb)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -249,7 +251,7 @@
                                 <?php $arr = (array)json_decode($gameStats->plb)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -262,7 +264,7 @@
                                 <?php $arr = (array)json_decode($gameStats->blb)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -275,7 +277,7 @@
                                 <?php $arr = (array)json_decode($gameStats->unk)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -291,7 +293,7 @@
                                 <?php $arr = (array)json_decode($gameStats->ink)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -305,7 +307,7 @@
                                 <?php $arr = (array)json_decode($gameStats->plk)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -319,7 +321,7 @@
                                 <?php $arr = (array)json_decode($gameStats->blk)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                        <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -335,15 +337,13 @@
                                         <?php $arr = (array)json_decode($gameStats->blc)->counts; ?>
                                         @foreach($arr as $k => $v)
                                             @if ($v > 0)
-                                            <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                            <div class="{{ $g }}-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                             @endif
                                         @endforeach
                                     @endif
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
                     </div>
                     @endif
