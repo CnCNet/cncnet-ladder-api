@@ -1,6 +1,10 @@
 <?php 
 return
 [
+    "RA" => 
+    [
+        
+    ],
     "TS" => 
     [
         "NGDPT"=>"ngdpticon",
@@ -123,7 +127,7 @@ return
         "ENGINEER"=>"engnicon",
         "ART2"=>"artyicon",
         "WEED"=>"weedicon",
-        "HARV"=>"harvicon",
+        "HARV"=>"nod_harvicon",
         "REPAIR"=>"rboticon",
         "LPST"=>"lpsticon",
         "MCV"=>"mcvicon",
@@ -148,8 +152,8 @@ return
         "GATECH"=>"techicon",
         "GAWEAP"=>"weapicon",
         "NAWEAP"=>"nwepicon",
-        "NAREFN"=>"reficon",
-        "GASILO"=>"siloicon",
+        "NAREFN"=>"nod_reficon",
+        "GASILO"=>"gdi_siloicon",
         "GAHPAD"=>"heliicon",
         "NAHPAD"=>"nhpdicon",
         "NARADR"=>"nradicon",
@@ -168,7 +172,7 @@ return
         "GASAND"=>"sbagicon",
         "GAWALL"=>"wallicon",
         "NAWALL"=>"nwalicon",
-        "NAPULS"=>"empicon",
+        "NAPULS"=>"gdi_empicon",
         "GACTWR"=>"towricon",
         "GAGATE_A"=>"gateicon",
         "GAGATE_B"=>"gat2icon",
