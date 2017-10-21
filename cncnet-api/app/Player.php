@@ -74,6 +74,28 @@ class Player extends Model
         return $this->hasMany("App\PlayerRating");
     }
 
+    public function percentile()
+    {
+        $playerRatings = \App\PlayerRating::join('players as p', 'p.id', '=', 'player_id')
+                                         ->where("ladder_id", "=", $this->ladder_id)
+                                         ->where('rated_games', '>', 10)
+                                       ->orderBy('rating', 'DESC');
+
+        $ratingsCount = $playerRatings->count();
+        $count = 1;
+        foreach ($playerRatings->get() as $playerRating)
+        {
+            if($playerRating->player_id == $this->id)
+            {
+                break;
+            }
+            $count++;
+        }
+        $ptile = ((($ratingsCount - $count)/$ratingsCount) * 100) - 1;
+        return $ptile >= 0 ? $ptile : 0;
+
+    }
+
     public function ladder()
     {
         return $this->belongsTo("App\Ladder");
