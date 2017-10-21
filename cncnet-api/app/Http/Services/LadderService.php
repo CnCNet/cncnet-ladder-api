@@ -177,7 +177,7 @@ class LadderService
             return "No ladder found";
 
         $players = new Collection();
-        $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->limit(100)->get();
+        $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->get();
 
         foreach($ladderPlayers as $player)
         {
