@@ -899,6 +899,7 @@ return
                 "Submarines",
                 "Destroyers",
                 "Cruisers",
+                "Transports",
                 "Gunboats",
                 "MissileSubs",
                 "HeliCarriers"
