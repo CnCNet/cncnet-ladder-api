@@ -291,7 +291,7 @@
                                 <?php $arr = (array)json_decode($gameStats->ink)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span><span class="x">X</span></div>
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -305,7 +305,7 @@
                                 <?php $arr = (array)json_decode($gameStats->plk)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span><span class="x">X</span></div>
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
@@ -319,7 +319,7 @@
                                 <?php $arr = (array)json_decode($gameStats->blk)->counts; ?>
                                     @foreach($arr as $k => $v)
                                         @if ($v > 0)
-                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span><span class="x">X</span></div>
+                                        <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>

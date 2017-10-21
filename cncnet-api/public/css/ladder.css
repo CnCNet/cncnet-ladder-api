@@ -2749,6 +2749,31 @@ h3.game-intro {
 .recent-game {
   margin-bottom: 15px; }
 
+.pagination > li > a, .pagination > li > span {
+  position: relative;
+  float: left;
+  padding: 15px;
+  line-height: 1.6;
+  text-decoration: none;
+  color: #0068d2;
+  background-color: #000;
+  border: 1px solid #131313;
+  margin-left: -1px; }
+
+.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus,
+.pagination > li > a:hover, .pagination > li > a:focus, .pagination > li > span:hover, .pagination > li > span:focus {
+  z-index: 2;
+  color: #c5c5c5;
+  background-color: #0a0a0a;
+  border-color: #0a0a0a; }
+
+.pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
+  z-index: 3;
+  color: #fff;
+  background-color: #0068d2;
+  border-color: #0068d2;
+  cursor: default; }
+
 /* Player Detail */
 .player .player-statistics {
   padding: 0; }
@@ -2846,6 +2871,9 @@ h3.game-intro > span:first-child:after {
 .stats-row {
   padding: 20px 0;
   border-bottom: 1px solid #151515; }
+
+.row.stats-row h4 {
+  color: #a2a2a2; }
 
 .profile-listing .rank, .profile-detail .rank {
   position: absolute;
@@ -3255,7 +3283,7 @@ h3.game-intro > span:first-child:after {
   background: rgba(0, 0, 0, 0.6);
   color: #fff;
   font-weight: bold;
-  font-size: 10px;
+  font-size: 12px;
   text-shadow: 0px 1px black;
   display: block;
   position: absolute;

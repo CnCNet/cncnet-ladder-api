@@ -2,6 +2,7 @@
 
 use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
+use \Illuminate\Pagination\LengthAwarePaginator;
 
 class LadderService
 {
@@ -168,7 +169,7 @@ class LadderService
         ];
     }
 
-    public function getLadderPlayers($date, $cncnetGame)
+    public function getLadderPlayers($url, $query, $page, $date, $cncnetGame)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
 
@@ -176,7 +177,7 @@ class LadderService
             return "No ladder found";
 
         $players = new Collection();
-        $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->get();
+        $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->limit(100)->get();
 
         foreach($ladderPlayers as $player)
         {
@@ -184,6 +185,17 @@ class LadderService
             $players->add($player);
         }
 
-        return $players->sortByDesc('points')->values()->all();
+        // Pagination on a Collection
+        $perPage = 51;
+        $offset = ($page * $perPage) - $perPage;
+        $result = $players->sortByDesc('points')->values();
+        return new LengthAwarePaginator
+        (
+            array_slice($result->all(), $offset, $perPage, true),
+            count($result->all()),
+            $perPage,
+            $page,
+            ['path' => $url, 'query' => $query]
+        );
     }
 }

@@ -76,6 +76,7 @@
     <Compile Include="cncnet-api\config\app.php" />
     <Compile Include="cncnet-api\config\auth.php" />
     <Compile Include="cncnet-api\config\cache.php" />
+    <Compile Include="cncnet-api\config\cameos.php" />
     <Compile Include="cncnet-api\config\compile.php" />
     <Compile Include="cncnet-api\config\database.php" />
     <Compile Include="cncnet-api\config\filesystems.php" />
@@ -5488,8 +5489,7 @@
     <Content Include="cncnet-api\public\images\badges\2000-points.png" />
     <Content Include="cncnet-api\public\images\badges\3000-points.png" />
     <Content Include="cncnet-api\public\images\badges\500-points.png" />
-    <Content Include="cncnet-api\public\images\cameos\cameo-ra2allied.png" />
-    <Content Include="cncnet-api\public\images\cameos\cameo-ra2soviet.png" />
+    <Content Include="cncnet-api\public\images\cameos\ra2-cameo.png" />
     <Content Include="cncnet-api\public\images\cards\player-cards-ts-commander.jpg" />
     <Content Include="cncnet-api\public\images\cards\player-cards-ts-gdi.jpg" />
     <Content Include="cncnet-api\public\images\cards\player-cards-ts-kane.jpg" />
