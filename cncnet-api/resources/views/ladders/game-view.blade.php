@@ -152,7 +152,7 @@
                     @if ($gameStats !== null)
                     <?php $g = $history->ladder()->first()->game; ?>
                     <?php $cameos = config("cameos.".strtoupper($g)); ?>
-  
+
                     <div class="player-colour player-panel-{{ $gameStats->colour($gameStats->col) }}"></div>
                     <div class="player-stats-panel profile-stats-breakdown clearfix">
                     <div class="col-md-12">
