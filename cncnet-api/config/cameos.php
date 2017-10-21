@@ -148,7 +148,7 @@ return
         "Submarines"=>"ssicon",
         "Destroyers"=>"ddicon",
         "Cruisers"=>"caicon",
-        "Transport"=>"lsticon",
+        "Transports"=>"lsticon",
         "Gunboats"=>"pticon",
         "MissileSubs"=>"msubicon",
         "HeliCarriers"=>"carricon",
