@@ -269,7 +269,7 @@
                                 @endif
                             </div>
                             <div class="col-md-4">
-                                <h4>Units Bought</h4>
+                                <h4>Units Killed</h4>
                                 @if (isset($gameStats->unk))
                                 <div class="clearfix">
                                 <?php $arr = (array)json_decode($gameStats->unk)->counts; ?>
@@ -327,17 +327,23 @@
                             </div>
                         </div>
 
-                        <div class="clearfix">
-                            <h4>Buildings Captured</h4>
-                            @if (isset($gameStats->blc))
-                                <?php $arr = (array)json_decode($gameStats->blc)->counts; ?>
-                                @foreach($arr as $k => $v)
-                                    @if ($v > 0)
-                                    <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                        <div class="row stats-row">
+                            <div class="col-md-12">
+                                <div class="clearfix">
+                                    <h4>Buildings Captured</h4>
+                                    @if (isset($gameStats->blc))
+                                        <?php $arr = (array)json_decode($gameStats->blc)->counts; ?>
+                                        @foreach($arr as $k => $v)
+                                            @if ($v > 0)
+                                            <div class="ra2-cameo cameo-tile cameo-{{ $cameos[$k] or "blank " . $k }}"><span class="number">{{ $v }}</span></div>
+                                            @endif
+                                        @endforeach
                                     @endif
-                                @endforeach
-                            @endif
+                                </div>
+                            </div>
                         </div>
+
+
                     </div>
                     </div>
                     @endif
