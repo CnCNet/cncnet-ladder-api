@@ -1,25 +1,27 @@
 ﻿.cameo-tile 
 {
-    position: relative;
-    display: table;
     float: left;
+    width: 64px;
+    height: 48px;
+    margin-bottom: 15px;
+    margin-right: 5px;
+    position: relative;
 }
 
 .cameo-tile .number 
 {
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
+    background: rgb(0, 0, 0);
+    color: #b7b7b7;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
     text-shadow: 0px 1px black;
+    text-align: center;
+    line-height: normal;
     display: block;
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    text-align: center;
-    line-height: 1;
-    padding-top: 2px;
+    width: 100%;
+    bottom: -15px;
+    height: 15px;
 }
 
 .yr-cameo
@@ -29,8 +31,6 @@
     background-position: top left;
     width: 60px;
     height: 48px;
-    padding: 1px;
-    border: 2px solid #080808;
 }
 
 .cameo-blank 
@@ -51,22 +51,18 @@
 {
     background-image: url(../images/cameos/ts-cameo.png);
     background-repeat: no-repeat;
-    background-position: top left;
+    background-position: -5888px 0; // MISSING ICON
     width: 60px;
     height: 48px;
-    padding: 1px;
-    border: 2px solid #080808;
 }
 
 .ra-cameo
 {
     background-image: url(../images/cameos/ra-cameo.png);
     background-repeat: no-repeat;
-    background-position: top left;
+    background-position: -5888px 0; // MISSING ICON
     width: 64px; 
     height: 48px;
-    padding: 1px;
-    border: 2px solid #080808;
 }
 
 // RA 

@@ -89,6 +89,11 @@ h3.game-intro > span:first-child:after
     color: #a2a2a2;
 }
 
+.stats-box
+{
+    min-height: 63px;
+}
+
 .profile-listing .rank, .profile-detail .rank
 {
     position: absolute;
