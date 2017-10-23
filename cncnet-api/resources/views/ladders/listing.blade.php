@@ -40,9 +40,9 @@
                 </div>
             </div>
         </div>
-        {{--
+
         @include("components.global-recent-games", ["games" => $games])
-        --}}
+
         <div class="feature">
             <div class="row">
                 <div class="col-md-12">
