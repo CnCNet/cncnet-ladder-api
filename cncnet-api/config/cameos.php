@@ -415,7 +415,7 @@ return
         "FV" =>	"fvicon",
         "HTK" =>	"htkicon",
         "HTNK" =>	"htnkicon",
-        "MTNK" =>	"mtnkicon",
+        "MTNK" =>	"gtnkicon",
         "TTNK" =>	"ttnkicon",
         "TNKD" =>	"tnkdicon",
         "GTNK" =>	"gtnkicon",
