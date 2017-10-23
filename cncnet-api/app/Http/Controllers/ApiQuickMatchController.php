@@ -180,7 +180,7 @@ class ApiQuickMatchController extends Controller
                         ->selectRAW( "qm_match_players.id as id, waiting, qm_match_players.player_id as player_id,"
                                     ."ladder_id, map_bitfield, chosen_side, actual_side, ip_address, port, lan_ip"
                                     .",lan_port, ipv6_address, ipv6_port, color, location, qm_match_id, tunnel_id,"
-                                    ."qm_match_players.created_at as created_at"
+                                    ."map_sides, qm_match_players.created_at as created_at"
                                     .", qm_match_players.updated_at as updated_at"
                                     .", ABS($rating - rating)"
                                     ." - ABS(TIMESTAMPDIFF(SECOND, qm_match_players.created_at, '{$phpNow}')) as importance")
@@ -237,6 +237,7 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
 
                     $psides = explode(',', $qmPlayer->map_sides);
+
                     if (count($psides) > $qmMap->bit_idx)
                         $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
 
@@ -250,6 +251,7 @@ class ApiQuickMatchController extends Controller
                     foreach ($qmOpns as $opn)
                     {
                         $osides = explode(',', $opn->map_sides);
+
                         if (count($osides) > $qmMap->bit_idx)
                             $opn->actual_side = $osides[$qmMap->bit_idx];
 
@@ -275,8 +277,8 @@ class ApiQuickMatchController extends Controller
             $spawnStruct = array("type" => "spawn");
             $qmPlayer->waiting = false;
             $qmMatch = \App\QmMatch::find($qmPlayer->qm_match_id);
-            $qmMap = $qmMatch->map()->first();
-            $map = $qmMap->map()->first();
+            $qmMap = $qmMatch->map;
+            $map = $qmMap->map;
 
             $spawnStruct["spawn"]["SpawnLocations"] = array();
 

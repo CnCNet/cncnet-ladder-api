@@ -129,15 +129,16 @@ class LadderService
         return \App\Game::where("id", "=", $gameId)->where('ladder_history_id', $history->id)->first();
     }
 
-    public function getLadderPlayer($history, $player)
+    public function getLadderPlayer($history, $username)
     {
         if($history == null)
             return "No ladder found";
 
         $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
-            ->where("username", "=", $player)->first();
+            ->where("username", "=", $username)->first();
 
         $rank = $player->rank($history);
+        $percentile = $player->percentile();
 
         $playerQuery = $player->playerGames()->where("ladder_history_id", "=", $history->id);
 
@@ -165,7 +166,8 @@ class LadderService
             "games_lost" => $gamesLost,
             "average_fps" => $averageFps,
             "badge" => $badge,
-            "rating" => $playerRating
+            "rating" => $playerRating,
+            "percentile" => $percentile
         ];
     }
 
