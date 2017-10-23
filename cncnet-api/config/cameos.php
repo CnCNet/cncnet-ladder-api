@@ -1,7 +1,7 @@
-<?php 
+<?php
 return
 [
-    "RA" => 
+    "RA" =>
     [
         "Chinooks"=>"tranicon",
         //"BadgeBombers"=>"badricon",
@@ -153,8 +153,9 @@ return
         "MissileSubs"=>"msubicon",
         "HeliCarriers"=>"carricon",
     ],
-    "TS" => 
+    "TS" =>
     [
+        "GACNST"=>"facticon",
         "NGDPT"=>"ngdpticon",
         "GASPY"=>"gaspyicon",
         "CYBASS"=>"cybassicon",
@@ -263,7 +264,7 @@ return
         "JUMPJET"=>"jjeticon",
         "CYC2"=>"cybcicon",
         "CHAMSPY"=>"chamicon",
-        "E1"=>"weaticon",
+        "E1"=>"gdi_e1icon",
         "E2"=>"e2icon",
         "E3"=>"e4icon",
         "WEEDGUY"=>"weaticon",
@@ -278,7 +279,7 @@ return
         "HARV"=>"nod_harvicon",
         "REPAIR"=>"rboticon",
         "LPST"=>"lpsticon",
-        "MCV"=>"mcvicon",
+        "MCV"=>"gdi_mcvicon",
         "HVR"=>"hovricon",
         "APC"=>"apcicon",
         "MMCH"=>"mmchicon",
@@ -301,6 +302,7 @@ return
         "GAWEAP"=>"weapicon",
         "NAWEAP"=>"nwepicon",
         "NAREFN"=>"nod_reficon",
+        "PROC"=>"nod_reficon",
         "GASILO"=>"gdi_siloicon",
         "GAHPAD"=>"heliicon",
         "NAHPAD"=>"nhpdicon",
@@ -320,7 +322,7 @@ return
         "GASAND"=>"sbagicon",
         "GAWALL"=>"wallicon",
         "NAWALL"=>"nwalicon",
-        "NAPULS"=>"gdi_empicon",
+        "NAPULS"=>"nod_empicon",
         "GACTWR"=>"towricon",
         "GAGATE_A"=>"gateicon",
         "GAGATE_B"=>"gat2icon",
@@ -344,7 +346,7 @@ return
         "GAPLUG_E"=>"rad2icon",
         "GAPLUG_F"=>"rad3icon",
     ],
-     "YR" => 
+     "YR" =>
     [
         "YAPOWR" => "ypwricon",
         "YABRCK" => "brckicon",
