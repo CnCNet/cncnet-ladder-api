@@ -109,8 +109,9 @@
                         <li><strong>Unit Count Start:</strong> {{ $game->unit ? $game->unit : 0 }}</li>
                         <li><strong>Players in Game:</strong> {{ $game->plrs ? $game->plrs : 0 }}</li>
                         <li><strong>Build off Ally Conyard:</strong> {{ $game->bamr & 2 ? "On" : "Off" }}</li>
-                        @endif
                         <li><strong>Credits:</strong> {{ $game->cred }}</li>
+                        @endif
+
                         @if($gameReport !== null)
                         <li><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</li>
                         <li><strong>Average FPS:</strong> {{ $gameReport->fps }}</li>
