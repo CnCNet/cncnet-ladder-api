@@ -104,7 +104,7 @@ return
                 "BUS",
                 "WINI",
                 "PICK",
-                "MTNK",
+                "GTNK",
                 "HORV",
                 "TRUCKA",
                 "TRUCKB",
