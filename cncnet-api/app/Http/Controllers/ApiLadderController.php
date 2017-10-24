@@ -246,7 +246,7 @@ class ApiLadderController extends Controller
 
             $points = null;
 
-            $gvc = ceil(($ally_average * $enemy_average) / 200000);
+            $gvc = ceil(($ally_average * $enemy_average) / 140000);
 
             if ($playerGR->won)
             {
@@ -257,7 +257,7 @@ class ApiLadderController extends Controller
             {
                 $points = new PointService(16, $ally_average, $enemy_average, 0, 1);
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
-                $gvc /= 2;
+                $gvc /= 3
             }
 
             if ($points !== null)
