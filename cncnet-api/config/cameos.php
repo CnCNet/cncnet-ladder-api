@@ -383,7 +383,7 @@ return
         "CLEG" =>	"clegicon",
         "GI" =>		"giicon",
         "SNIPE" =>	"snipicon",
-        "YURI" =>	"yuriicon",
+        "YURI" =>	"yclnicon",
         "YURIPR" =>	"yurpicon",
         "PTROOP" =>	"psicicon",
         "IVAN" =>	"ivanicon",
