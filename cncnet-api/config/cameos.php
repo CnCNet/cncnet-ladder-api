@@ -376,7 +376,7 @@ return
         "SPY" =>	"spyicon",
         "CONS" =>	"e2icon",
         "FLAKT" =>	"flkticon",
-        "TRST" =>	"trsticon",
+        "TERROR" =>	"trsticon",
         "CIVAN" =>	"ivncicon",
         "SHK" =>	"shkicon",
         "DESO" =>	"desoicon",
@@ -430,7 +430,7 @@ return
         "LCRF" =>	"landicon",
         "SHAD" =>	"shadicon",
         "HIND" =>	"hindicon",
-        "PDPLANE" =>	"obmbicon",
+        //"PDPLANE" =>	"obmbicon",//keeping just in case we want to track paradrop counts
         "ZEP" =>	"zepicon",
         "HORNET" =>	"proicon",
         "ASW" =>	"proicon",
