@@ -3,7 +3,7 @@
         <a href="{{ $url or ""}}" class="status status-{{ $status }}"></a>
     </div>
 
-    <a href="{{ $url or ""}}" class="game-box-link">
+    <a href="{{ $url or ""}}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
             <?php $now = \Carbon\Carbon::now(); $days = $date->diffInDays($now); $hours = $date->diffInHours($now); $mins = $date->diffInMinutes($now);  ?>
