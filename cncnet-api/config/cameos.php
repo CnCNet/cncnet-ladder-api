@@ -387,5 +387,6 @@ return
         "NATBNK" =>	"tbnkicon",
         "YAGGUN" =>	"ggunicon",
         "YENGINEER" =>	"yengicon",
+        "BORIS" =>	"brisicon",
     ]
 ];
