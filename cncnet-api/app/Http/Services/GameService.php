@@ -129,7 +129,7 @@ class GameService
             {
             case "CMPL":
                 // Must be RA, not sure what to do though
-                if ($value["value"] & GameResult::COMPLETION_DRAW)
+                if ($value["value"] == GameResult::COMPLETION_DRAW)
                 {
                     foreach ($playerGameReports as $playerGR)
                     {

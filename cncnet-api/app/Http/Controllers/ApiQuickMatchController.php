@@ -34,7 +34,10 @@ class ApiQuickMatchController extends Controller
     public function statsRequest(Request $request, $ladderAbbrev = null)
     {
         $hourAgo = Carbon::now()->subHour()->toDateTimeString();
-        $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $hourAgo)->count();
+        $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
+        $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $hourAgo)
+                                                  ->where('ladder_id', '=', $ladder_id)
+                                                  ->count();
         return ['recentMatchedPlayers' => $recentMatchedPlayers ];
     }
 
