@@ -136,8 +136,9 @@
                 <div class="col-md-6">
                     <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                         <div class="profile-detail">
-                            <div class="rank">
-                                <i class="rank {{ $player->badge($points) }}"></i>
+                            <?php $badge = $player->badge(); ?>
+                            <div class="player-badge badge-1x">
+                                <img src="/images/badges/{{ $badge["badge"] . ".png" }}" style="max-width:100%">
                             </div>
                             <h3>Rank  #{{ $rank }}</h3>
                             <p class="username"><i class="fa fa-user fa-fw"></i> {{ $player->username }}</p>
