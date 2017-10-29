@@ -77,7 +77,9 @@ class LadderController extends Controller
             return "No Player";
 
         $games = $player->playerGames()->having('ladder_history_id', '=', $history->id)
-               ->orderBy('created_at', 'DESC')->get();
+                    ->orderBy('created_at', 'DESC')
+                    ->limit(24)
+                    ->get();
 
         return view
         (

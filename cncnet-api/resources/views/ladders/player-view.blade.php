@@ -27,9 +27,12 @@
                 </div>
                 <div class="col-md-6 text-right">
                     <h1 class="rank"><span class="text-uppercase">Rank</span> #{{ $player->rank == -1 ? "Unranked" : $player->rank }}</h1>
+                    <?php $badge = $player->badge; ?>
                     <div class="player-badge badge-2x" style="margin: 0 auto;">
-                        <img src="/images/badges/{{ $player->badge->badge . ".png" }}">
+                        @if (strlen($badge->badge) > 0)
+                        <img src="/images/badges/{{ $badge->badge . ".png" }}">
                         <p class="lead text-center" style="margin-top: 15px;">{{ $player->badge->type }}</p>
+                        @endif
                     </div>
                 </div>
             </div>
