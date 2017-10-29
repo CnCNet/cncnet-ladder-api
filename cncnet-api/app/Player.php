@@ -132,41 +132,52 @@ class Player extends Model
         return $this->playerGames()->sum("points");
     }
 
-    public function badge($points)
+    public function badge($percentile = null)
     {
-        $points = ceil($points);
+        if ($percentile == null)
+        {
+            $percentile = $this->percentile();
+        }
 
-        if ($points >= 3000)
+        if ($percentile > 0 && $percentile <= 15)
         {
-            return "badge-3000";
+            return ["badge" => "badge-t1", "type" => "Officer Cadet"];
         }
-        else if ($points >= 2000)
+        else if ($percentile > 15 && $percentile <= 25)
         {
-            return "badge-2000";
+            return ["badge" => "badge-t2", "type" => "Second Lieutenant"];
         }
-        else if ($points >= 1500)
+        else if ($percentile > 25 && $percentile <= 45)
         {
-            return "badge-1500";
+            return ["badge" => "badge-t3", "type" => "Lieutenant"];
         }
-        else if ($points >= 1000)
+        else if ($percentile > 45 && $percentile <= 55)
         {
-            return "badge-1000";
+            return ["badge" => "badge-t4", "type" => "Captain"];
         }
-        else if ($points >= 500)
+        else if ($percentile > 55 && $percentile <= 65)
         {
-            return "badge-500";
+            return ["badge" => "badge-t5", "type" => "Major"];
         }
-        else if ($points >= 250)
+        else if ($percentile > 65 && $percentile <= 75)
         {
-            return "badge-250";
+            return ["badge" => "badge-t6", "type" => "Lieutenant Colonel"];
         }
-        else if ($points >= 100)
+        else if ($percentile > 75 && $percentile <= 85)
         {
-            return "badge-100";
+            return ["badge" => "badge-t7", "type" => "Colonel"];
         }
-        else
+        else if ($percentile > 85 && $percentile <= 90)
         {
-            return "";
+            return ["badge" => "badge-t8", "type" => "Brigadier"];
+        }
+        else if ($percentile > 90 && $percentile <= 100)
+        {
+            return ["badge" => "badge-t9", "type" => "Major General"];
+        }
+        else 
+        {
+            return ["badge" => "badge-default", "type" => "Recruit"];
         }
     }
 }

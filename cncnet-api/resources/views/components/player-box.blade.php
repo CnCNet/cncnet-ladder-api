@@ -1,7 +1,9 @@
 <a href="{{ $url or "/404"}}" class="player-box-link">
     <div class="player-box player-card {{ $playerCard or "carville"}}">
         <div class="details text-left">
-            <div class="player-badge {{ $badge or "" }}"></div>
+            <div class="player-badge badge-1x">
+                <img src="/images/badges/{{ $badge["badge"]. ".png"}}" style="max-width:100%">
+            </div>
             <h1 class="rank">Rank #{{ $rank or "Unranked" }}</h1>
             <p class="username">{{ $username or "" }}</p>
             <p class="points">Points {{ $points or "-1" }}</p>

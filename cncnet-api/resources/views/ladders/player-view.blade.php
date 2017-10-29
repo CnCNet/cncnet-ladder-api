@@ -27,7 +27,10 @@
                 </div>
                 <div class="col-md-6 text-right">
                     <h1 class="rank"><span class="text-uppercase">Rank</span> #{{ $player->rank == -1 ? "Unranked" : $player->rank }}</h1>
-                    <div class="player-badge badge-2x {{ $player->badge }}-x2"></div>
+                    <div class="player-badge badge-2x" style="margin: 0 auto;">
+                        <img src="/images/badges/{{ $player->badge->badge . ".png" }}">
+                        <p class="lead text-center" style="margin-top: 15px;">{{ $player->badge->type }}</p>
+                    </div>
                 </div>
             </div>
         </div>

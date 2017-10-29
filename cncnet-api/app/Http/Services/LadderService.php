@@ -152,7 +152,7 @@ class LadderService
                                           ->where('won', true)->count();
         $gamesLost = ($gamesCount - $gamesWon);
 
-        $badge = $player->badge($points);
+        $badge = $player->badge();
         $playerRating = \App\PlayerRating::where("player_id", "=", $player->id)->first()->rating;
 
         return [

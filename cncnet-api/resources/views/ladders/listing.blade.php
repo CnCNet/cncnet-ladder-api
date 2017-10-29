@@ -50,6 +50,9 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h3><strong>1vs1</strong> Battle Rankings</h3>
+                                <button class="btn btn-secondary btn-lg text-uppercase" data-toggle="modal" data-target="#battleRanks">
+                                    <i class="fa fa-trophy fa-lg fa-fw" aria-hidden="true"></i> Battle Ranks
+                                </button>
                             </div>
                             <div class="col-md-6 text-right">
                                 <div class="btn-group filter">
@@ -77,7 +80,7 @@
                             [
                                 "username" => $player->username,
                                 "points" => $player->points,
-                                "badge" => $player->badge($player->points), 
+                                "badge" => $player->badge(), 
                                 "rank" => $k + 1,
                                 "wins" => $player->wins($history),
                                 "totalGames" => $player->totalGames($history),
@@ -98,4 +101,31 @@
         </div>
     </div>
 </section>
+
+<!-- Battle Ranks -->
+<div class="modal fade" id="battleRanks" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Battle Ranks <small>What rank am I?</small></h3>
+            </div>
+            <div class="modal-body clearfix text-center">
+            <?php $pecentiles = [15, 25, 45, 55, 65, 75, 85, 90, 100]; ?>
+            <?php $player = new \App\Player(); ?>
+            @foreach($pecentiles as $percentile)
+                <?php $badge = $player->badge($percentile); ?>
+                <p class="lead">{{ $badge["type"] }}</p>
+                <div class="player-badge badge-2x" style="margin: 0 auto;">
+                    <img src="/images/badges/{{ $badge["badge"] . ".png" }}">
+                </div>
+                <hr>
+            @endforeach
+            </div>
+            <div class="modal-footer" style="border:none;">
+                <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection

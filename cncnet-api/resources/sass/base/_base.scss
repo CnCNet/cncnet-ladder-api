@@ -447,3 +447,20 @@ h3.game-intro
     border-color: #0068d2;
     cursor: default;
 }
+
+.modal-content 
+{
+    background: #000;
+    box-shadow: 0 5px 15px rgba(0, 132, 239, 0.26);
+    border: 1px solid rgba(0, 140, 255, 0.39);
+}
+
+.modal-header
+{
+    border-color: #004077;
+}
+
+hr 
+{
+    border-top: 1px solid #004077;
+}
