@@ -54,6 +54,7 @@ class Player extends Model
                      'won', 'defeated', 'draw', 'spectator', 'game_reports.created_at', 'wol_game_id', 'bamr',
                      'crat', 'cred', 'shrt', 'supr', 'supr', 'unit', 'plrs', 'scen', 'hash');
     }
+
     public function totalGames($history = null)
     {
         $result = 0;
@@ -77,9 +78,9 @@ class Player extends Model
     public function percentile()
     {
         $playerRatings = \App\PlayerRating::join('players as p', 'p.id', '=', 'player_id')
-                                         ->where("ladder_id", "=", $this->ladder_id)
-                                         ->where('rated_games', '>', 10)
-                                       ->orderBy('rating', 'DESC');
+                            ->where("ladder_id", "=", $this->ladder_id)
+                            ->where('rated_games', '>', 10)
+                            ->orderBy('rating', 'DESC');
 
         $ratingsCount = $playerRatings->count();
         $count = 1;
@@ -92,8 +93,8 @@ class Player extends Model
             $count++;
         }
         $ptile = ((($ratingsCount - $count)/$ratingsCount) * 100) - 1;
-        return $ptile >= 0 ? $ptile : 0;
 
+        return $ptile >= 0 ? $ptile : 0;
     }
 
     public function ladder()

@@ -171,33 +171,27 @@ class LadderService
         ];
     }
 
-    public function getLadderPlayers($url, $query, $page, $date, $cncnetGame)
+    public function getLadderPlayers($date, $cncnetGame)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
 
         if($history == null)
             return "No ladder found";
 
-        $players = new Collection();
-        $ladderPlayers = \App\Player::where("ladder_id", "=", $history->ladder->id)->get();
-
-        foreach($ladderPlayers as $player)
-        {
-            $player["points"] = $player->playerGames()->where('ladder_history_id', $history->id)->sum('points');
-            $players->add($player);
-        }
-
-        // Pagination on a Collection
-        $perPage = 51;
-        $offset = ($page * $perPage) - $perPage;
-        $result = $players->sortByDesc('points')->values();
-        return new LengthAwarePaginator
-        (
-            array_slice($result->all(), $offset, $perPage, true),
-            count($result->all()),
-            $perPage,
-            $page,
-            ['path' => $url, 'query' => $query]
-        );
+        return \App\Player::where("ladder_id", "=", $history->ladder->id)
+            ->join('player_game_reports as pgr', 'pgr.player_id', '=', 'players.id')
+            ->join('game_reports', 'game_reports.id', '=', 'pgr.game_report_id')
+            ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->where("games.ladder_history_id", "=", $history->id)
+            ->where('game_reports.valid', true)
+            ->where('game_reports.best_report', true)
+            ->groupBy("players.id")
+            ->select(
+                \DB::raw("SUM(pgr.points) as points"), 
+                \DB::raw("COUNT(games.id) as total_games"), 
+                \DB::raw("SUM(pgr.won) as total_wins"), // TODO 
+                "players.*")
+            ->orderBy("points", "DESC")
+            ->paginate(45);
     }
 }

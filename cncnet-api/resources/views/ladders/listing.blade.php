@@ -73,27 +73,29 @@
                         </div>
                     </div>
 
+                    <?php $perPage = $players->perPage(); $rankOffset = ($players->currentPage() * $perPage) - $perPage; ?>
+
                     <div class="row">
-                    @foreach($players as $k => $player)
+                        @foreach($players as $k => $player)
                         <div class="col-md-4">
                             @include("components/player-box", 
                             [
                                 "username" => $player->username,
                                 "points" => $player->points,
                                 "badge" => $player->badge(), 
-                                "rank" => $k + 1,
-                                "wins" => $player->wins($history),
-                                "totalGames" => $player->totalGames($history),
+                                "rank" => ($rankOffset + $k) + 1,
+                                "wins" => $player->total_wins,
+                                "totalGames" => $player->total_games,
                                 "playerCard" => isset($player->card->short) ? $player->card->short : "", 
                                 "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username
                             ])
                         </div>
-                    @endforeach
+                        @endforeach
                     </div>
 
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            {!! $players->render() !!}
+                        {!! $players->render() !!}
                         </div>
                     </div>
                 </div>
