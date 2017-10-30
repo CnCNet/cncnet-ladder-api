@@ -180,7 +180,7 @@ class GameService
                 $gameReport->fps = $value["value"];
                 break;
             case "QUIT":
-                if ($reporter !== null)
+                if ($reporter !== null && $cncnetGame != "ra")
                 {
                     $reporter->quit = $value["value"];
                 }
