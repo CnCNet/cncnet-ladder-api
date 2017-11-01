@@ -32,11 +32,6 @@ a:hover, a:focus
     }
 }
 
-.filter .btn 
-{
-    padding: 15px;
-}
-
 .filter li a,
 .filter .dropdown-menu 
 {
@@ -64,6 +59,7 @@ a:hover, a:focus
 .btn-group.filter.open .btn 
 {
     background-color: #000000;
+    border-color: #000000;
 }
 
 .filter .btn-group.open .dropdown-toggle

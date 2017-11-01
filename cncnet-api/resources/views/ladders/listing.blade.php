@@ -50,25 +50,29 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <h3><strong>1vs1</strong> Battle Rankings</h3>
-                                <button class="btn btn-secondary btn-lg text-uppercase" data-toggle="modal" data-target="#battleRanks">
-                                    <i class="fa fa-trophy fa-lg fa-fw" aria-hidden="true"></i> Battle Ranks
-                                </button>
-                            </div>
-                            <div class="col-md-6 text-right">
-                                <div class="btn-group filter">
-                                    <button type="button" class="btn btn-transparent dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Previous Month <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                    @foreach($ladders_previous as $previous)
+                                <ul class="list-inline">
                                     <li>
-                                        <a href="/ladder/{{ $previous->short . "/" . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}">
-                                            {{ $previous->short }}
-                                        </a>
+                                        <button class="btn btn-secondary btn-lg text-uppercase" data-toggle="modal" data-target="#battleRanks">
+                                            <i class="fa fa-trophy fa-lg fa-fw" aria-hidden="true" style="margin-right: 5px;"></i> Battle Ranks
+                                        </button>
                                     </li>
-                                    @endforeach
-                                    </ul>
-                                </div>
+                                    <li>
+                                        <div class="btn-group filter">
+                                            <button type="button" class="btn btn-secondary btn-lg text-uppercase dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fa fa-industry fa-fw" aria-hidden="true" style="margin-right: 5px;"></i> Previous Month <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                            @foreach($ladders_previous as $previous)
+                                            <li>
+                                                <a href="/ladder/{{ $previous->short . "/" . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}">
+                                                    Rankings - {{ $previous->short }}
+                                                </a>
+                                            </li>
+                                            @endforeach
+                                            </ul>
+                                        </div>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>

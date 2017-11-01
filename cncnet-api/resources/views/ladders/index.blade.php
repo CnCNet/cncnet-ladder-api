@@ -33,7 +33,7 @@
         <div class="feature">
             <div class="row">
                 @foreach($ladders as $history)
-                <div class="col-xs-6 col-md-4" style="margin-bottom:20px">
+                <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
                     <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
                         <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
                             <div class="details">

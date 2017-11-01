@@ -2497,9 +2497,6 @@ a:hover, a:focus {
     border: none;
     outline: 0; }
 
-.filter .btn {
-  padding: 15px; }
-
 .filter li a,
 .filter .dropdown-menu {
   color: #afafaf; }
@@ -2519,7 +2516,8 @@ a:hover, a:focus {
   border-top: 1px solid #6200ff; }
 
 .btn-group.filter.open .btn {
-  background-color: #000000; }
+  background-color: #000000;
+  border-color: #000000; }
 
 .filter .btn-group.open .dropdown-toggle {
   background: black;
