@@ -246,7 +246,7 @@ class ApiLadderController extends Controller
 
             $points = null;
 
-            $gvc = ceil(($ally_average * $enemy_average) / 140000);
+            $gvc = ceil(($ally_average * $enemy_average) / 120000);
 
             if ($playerGR->won)
             {
@@ -257,7 +257,7 @@ class ApiLadderController extends Controller
             {
                 $points = new PointService(16, $ally_average, $enemy_average, 0, 1);
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
-                $gvc /= 3;
+                $gvc = 0;
             }
 
             if ($points !== null)
@@ -274,7 +274,6 @@ class ApiLadderController extends Controller
             {
                 // Give ourselves points on a disconnection, dispute resolution should handle this later
                 $points = new PointService(16, $ally_average, $enemy_average, 1, 0);
-                $gvc /= 2;
 
                 $eloResults = $points->getNewRatings();
                 $diff = $eloResults["a"] - $ally_average;
