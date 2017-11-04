@@ -144,6 +144,8 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer->platform = $request->platform;
                 }
             }
+            if ($request->ai_dat)
+                $qmPlayer->ai_dat = $request->ai_dat;
 
             if ($qmPlayer->qm_match_id === null)
             {
