@@ -66,6 +66,14 @@ class ApiQuickMatchController extends Controller
         $ladder_rules = $ladder->qmLadderRules()->first();
         $player = $this->playerService->findPlayerByUsername($playerName, $ladder);
 
+        // Deprecate older versions
+        if ($request->version != "1.29" && $request->version != "1.30")
+        {
+            return array("type" => "fatal",
+                         "message" => "Quick Match Version {$request->version} is no longer supported.\n".
+                                          "Please restart the client to get the latest updates.");
+        }
+
         if ($player == null)
         {
             return array("type"=>"fail", "description" => "$playerName is not registered in $ladderAbbrev");
