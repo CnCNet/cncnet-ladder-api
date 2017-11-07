@@ -66,14 +66,6 @@ class ApiQuickMatchController extends Controller
         $ladder_rules = $ladder->qmLadderRules()->first();
         $player = $this->playerService->findPlayerByUsername($playerName, $ladder);
 
-        // Deprecate older versions
-        if ($request->version != "1.29" && $request->version != "1.30")
-        {
-            return array("type" => "fatal",
-                         "message" => "Quick Match Version {$request->version} is no longer supported.\n".
-                                          "Please restart the client to get the latest updates.");
-        }
-
         if ($player == null)
         {
             return array("type"=>"fail", "description" => "$playerName is not registered in $ladderAbbrev");
@@ -82,7 +74,6 @@ class ApiQuickMatchController extends Controller
 
         $qmPlayer = \App\QmMatchPlayer::where('player_id', $player->id)
                                       ->where('waiting', true)->first();
-
 
         switch ($request->type ) {
         case "quit":
@@ -100,6 +91,14 @@ class ApiQuickMatchController extends Controller
             break;
 
         case "match me up":
+            // Deprecate older versions
+            if ($request->version  < 1.30)
+            {
+                return array("type" => "fatal",
+                             "message" => "Quick Match Version {$request->version} is no longer supported.\n".
+                                          "Please restart the client to get the latest updates.");
+            }
+
             /* This matchup system is restful, a player will have to check in to see if there
              * is a matchup waitin.
              * If there is already a matchup then all these top level ifs will fall through
