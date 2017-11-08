@@ -182,6 +182,17 @@
                                             </select>
                                          </div>
 
+                                         <div class="form-group">
+                                            <label for="{{ $rule->ladder_id }}_allowed_sides">Allowed Sides</label>
+
+                                            <?php $sideIdsAllowed = array_map('intval', explode(',', $qmMap->allowed_sides)); ?>
+                                            <select id="{{ $qmMap->id }}_allowed_sides" name="allowed_sides[]" class="form-control" multiple>
+                                            @foreach($sides as $side)
+                                                <option value="{{ $side->local_id }}" @if(in_array($side->local_id, $sideIdsAllowed)) selected @endif > {{ $side->name }} </option>
+                                            @endforeach
+                                            </select>
+                                        </div>
+
                                         <div class="form-group">
                                             <label for="{{ $qmMap->id }}_speed"> speed </label>
                                             <select id="{{ $qmMap->id }}_speed" name="speed" class="form-control" >

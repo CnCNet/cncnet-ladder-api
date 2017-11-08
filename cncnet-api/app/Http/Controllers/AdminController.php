@@ -123,6 +123,7 @@ class AdminController extends Controller
         $qmMap->description = $request->description;
         $qmMap->bit_idx = $request->bit_idx;
         $qmMap->valid = $request->valid;
+        $qmMap->allowed_sides = implode(",", $request->allowed_sides);
         $qmMap->game_mode = $request->game_mode;
         $qmMap->spawn_order = $request->spawn_order;
         $qmMap->speed = $request->speed;

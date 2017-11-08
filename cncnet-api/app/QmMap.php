@@ -27,6 +27,7 @@ class QmMap extends Model {
         return $qmMaps->map( function($qmMap)
         {
             $qmMap["hash"] = $qmMap->map()->first()->hash;
+            $qmMap["allowed_sides"] = array_map('intval', explode(',', $qmMap->allowed_sides));
             return $qmMap;
         });
     }
