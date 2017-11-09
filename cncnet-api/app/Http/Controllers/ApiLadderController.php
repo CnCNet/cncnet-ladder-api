@@ -38,7 +38,7 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    public function postLadder(Request $request, $cncnetGame = null, $username = null)
+    public function postLadder(Request $request, $cncnetGame = null, $username = null, $pingSent = 0, $pingReceived = 0)
     {
         // Game stats result
         $result = $this->gameService->processStatsDmp($request->file('file'), $cncnetGame);
@@ -87,6 +87,9 @@ class ApiLadderController extends Controller
         {
             return response()->json(['Error' => $result['error']], 400);
         }
+        $gameReport->pings_sent = $pingSent;
+        $gameReport->pings_received = $pingReceived;
+        $gameReport->save();
 
         // Award points
         $status = $this->awardPoints($gameReport, $history);
@@ -127,7 +130,9 @@ class ApiLadderController extends Controller
 
         // If we're not the best report and the best report is disconnected
         // I'm disconnected then we wash the game
-        if ($bestReport->disconnected() && $gameReport->disconnected())
+        if (($bestReport->disconnected() && $gameReport->disconnected())
+            ||
+            ($bestReport->oos && $gameReport->oos))
         {
             $wash = new \App\GameReport();
             $wash->game_id = $gameReport->game_id;
@@ -182,6 +187,18 @@ class ApiLadderController extends Controller
 
         // Prefer the longer game
         if ($bestReport->duration + 5 < $gameReport->duration)
+        {
+            $bestReport->best_report = false;
+            $gameReport->best_report = true;
+            $game->game_report_id = $gameReport->id;
+            $game->save();
+            $gameReport->save();
+            $bestReport->save();
+            return;
+        }
+        else if ($gameReport->pings_sent - $gameReport->pings_received
+                 <
+                 $bestReport->pings_sent - $bestReport->pings_received)
         {
             $bestReport->best_report = false;
             $gameReport->best_report = true;
