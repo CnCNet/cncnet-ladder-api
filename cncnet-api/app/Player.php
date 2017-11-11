@@ -72,7 +72,7 @@ class Player extends Model
 
     public function rating()
     {
-        return $this->hasMany("App\PlayerRating");
+        return $this->hasOne("App\PlayerRating");
     }
 
     public function percentile()
@@ -176,7 +176,7 @@ class Player extends Model
         {
             return ["badge" => "badge-t9", "type" => "Major General"];
         }
-        else 
+        else
         {
             return ["badge" => "badge-default", "type" => "Recruit"];
         }

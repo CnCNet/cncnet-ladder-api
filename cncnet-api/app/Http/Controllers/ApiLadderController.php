@@ -221,13 +221,13 @@ class ApiLadderController extends Controller
             return 604;
         }
 
-        if ($gameReport->fps < 30)
+        if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
         {
             // FPS too low, no points awarded
             return 630;
         }
 
-        if ($gameReport->duration < 60)
+        if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
         {
             // Duration too low, no points awarded
             return 660;
@@ -303,7 +303,7 @@ class ApiLadderController extends Controller
                 // No winner found
                 $playerGR->points = 0;
             }
-
+            $playerGR->player->rating->doTierStuff($history);
             $playerGR->save();
         }
 

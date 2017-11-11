@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Services;
 
@@ -21,10 +21,13 @@ class AdminService
             $request->session()->flash('error', 'Error no ladder rules found');
             return redirect()->back();
         }
-        
+
         $ladderRule->player_count = $request->player_count;
         $ladderRule->map_vetoes = $request->map_vetoes;
         $ladderRule->max_difference = $request->max_difference;
+        $ladderRule->bail_time = $request->bail_time;
+        $ladderRule->bail_fps = $request->bail_fps;
+        $ladderRule->tier2_rating = $request->tier2_rating;
         $ladderRule->all_sides = implode(",", $request->all_sides);
         $ladderRule->allowed_sides = implode(",", $request->allowed_sides);
         $ladderRule->save();

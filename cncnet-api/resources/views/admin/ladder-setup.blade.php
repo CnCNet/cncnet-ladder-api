@@ -73,6 +73,16 @@
                                     <input id="{{ $rule->ladder_id }}_point_difference" type="number" name="max_difference" class="form-control" value="{{ $rule->max_difference }}" />
                                 </div>
 
+                                <div class="form-group">
+                                    <label for="{{ $rule->ladder_id }}_bail_time">Bail Time</label>
+                                    <input id="{{ $rule->ladder_id }}_bail_time" type="number" name="bail_time" class="form-control" value="{{ $rule->bail_time }}" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ $rule->ladder_id }}_tier2_rating">Tier 2 If Rating Below</label>
+                                    <input id="{{ $rule->ladder_id }}_tier2_rating" type="number" name="tier2_rating" class="form-control" value="{{ $rule->tier2_rating }}" />
+                                </div>
+
                                 <?php $sides = \App\Side::where("ladder_id", "=", $rule->ladder_id)->orderby('local_id', 'ASC')->get(); ?>
 
                                 <div class="form-group">
