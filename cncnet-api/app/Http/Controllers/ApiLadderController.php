@@ -263,7 +263,10 @@ class ApiLadderController extends Controller
 
             $points = null;
 
-            $gvc = ceil(($ally_average * $enemy_average) / 120000);
+            $base_rating = $enemy_average > $ally_average ? $enemy_average : $ally_average;
+            $gvc = ceil(($base_rating * $enemy_average) / 30000) - 34;
+
+            $gvc = $gvc > 8 ? $gvc : 8;
 
             if ($playerGR->won)
             {
@@ -281,7 +284,7 @@ class ApiLadderController extends Controller
             {
                 $eloResults = $points->getNewRatings();
                 $diff = $eloResults["a"] - $ally_average;
-                $playerGR->points = $gvc + ($diff > 0 ? $diff : 0);
+                $playerGR->points = $gvc;
 
                 // Only do a rating adjustment once per game
                 if ($gameReport->best_report)
@@ -294,7 +297,7 @@ class ApiLadderController extends Controller
 
                 $eloResults = $points->getNewRatings();
                 $diff = $eloResults["a"] - $ally_average;
-                $playerGR->points = $gvc + ($diff > 0 ? $diff : 0);
+                $playerGR->points = $gvc;
             }
             else {
                 // No winner found
