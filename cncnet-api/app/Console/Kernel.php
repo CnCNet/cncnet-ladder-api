@@ -11,7 +11,7 @@ class Kernel extends ConsoleKernel {
 	 * @var array
 	 */
 	protected $commands = [
-		'App\Console\Commands\Inspire',
+		'App\Console\Commands\PruneRawLogs',
 	];
 
 	/**
@@ -22,8 +22,8 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected function schedule(Schedule $schedule)
 	{
-		$schedule->command('inspire')
-				 ->hourly();
+		$schedule->command('prune_logs')
+				 ->daily();
 	}
 
 }
