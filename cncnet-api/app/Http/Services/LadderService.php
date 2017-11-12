@@ -175,6 +175,9 @@ class LadderService
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
 
+        if ($tier === null)
+            $tier = 1;
+
         if($history == null)
             return "No ladder found";
 
