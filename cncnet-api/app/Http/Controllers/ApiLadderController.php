@@ -297,7 +297,7 @@ class ApiLadderController extends Controller
                 // No winner found
                 $playerGR->points = 0;
             }
-            $playerGR->player->rating->doTierStuff($history);
+            $playerGR->player->doTierStuff($history);
             $playerGR->save();
         }
 

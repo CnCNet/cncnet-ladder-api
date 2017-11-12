@@ -181,4 +181,42 @@ class Player extends Model
             return ["badge" => "badge-default", "type" => "Recruit"];
         }
     }
+
+    public function playerRating()
+    {
+        return $this->hasOne("App\PlayerRating");
+    }
+    public function playerHistory()
+    {
+        return $this->hasMany("App\PlayerHistory");
+    }
+
+    public function doTierStuff($history)
+    {
+        $gameCount = $this->playerGameReports()->count();
+        $pHist = $this->playerHistory()->where('ladder_history_id', '=', $history->id)->get()->first();
+
+        if ($pHist === null)
+        {
+            $pHist = new \App\PlayerHistory;
+            $pHist->ladder_history_id = $history->id;
+            $pHist->player_id = $this->id;
+
+            $pHist->tier = 1;
+            if ($this->playerRating->rating <= $history->ladder->qmLadderRules->tier2_rating)
+            {
+                $pHist->tier = 2;
+            }
+            $pHist->save();
+        }
+        // If it's the first game of the month  or the 20th game we'll do ladder tier placement.
+        else if ($gameCount == 20)
+        {
+            if ($this->rating > $history->ladder->qmLadderRules->tier2_rating)
+                $pHist->tier = 1;
+            else
+                $pHist->tier = 2;
+            $pHist->save();
+        }
+    }
 }

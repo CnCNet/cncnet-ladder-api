@@ -171,7 +171,7 @@ class LadderService
         ];
     }
 
-    public function getLadderPlayers($date, $cncnetGame)
+    public function getLadderPlayers($date, $cncnetGame, $tier = 1)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
 
@@ -182,14 +182,17 @@ class LadderService
             ->join('player_game_reports as pgr', 'pgr.player_id', '=', 'players.id')
             ->join('game_reports', 'game_reports.id', '=', 'pgr.game_report_id')
             ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->join('player_histories as ph', 'ph.player_id', '=', 'players.id')
             ->where("games.ladder_history_id", "=", $history->id)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
+            ->where('ph.ladder_history_id', '=', $history->id)
+            ->where('ph.tier', '=', $tier)
             ->groupBy("players.id")
             ->select(
-                \DB::raw("SUM(pgr.points) as points"), 
-                \DB::raw("COUNT(games.id) as total_games"), 
-                \DB::raw("SUM(pgr.won) as total_wins"), // TODO 
+                \DB::raw("SUM(pgr.points) as points"),
+                \DB::raw("COUNT(games.id) as total_games"),
+                \DB::raw("SUM(pgr.won) as total_wins"), // TODO
                 "players.*")
             ->orderBy("points", "DESC")
             ->paginate(45);
