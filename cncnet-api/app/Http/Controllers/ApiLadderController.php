@@ -137,7 +137,7 @@ class ApiLadderController extends Controller
             $wash = new \App\GameReport();
             $wash->game_id = $gameReport->game_id;
             $wash->player_id = $gameReport->player_id;
-            $wash->best_report = true;
+            $wash->best_report = false;
             $wash->manual_report = true;
             $wash->duration = $gameReport->duration;
             $wash->valid = true;
@@ -145,12 +145,6 @@ class ApiLadderController extends Controller
             $wash->fps = $gameReport->fps;
             $wash->oos = false;
             $wash->save();
-
-            $game->game_report_id = $wash->id;
-            $game->save();
-
-            $bestReport->best_report = false;
-            $bestReport->save();
 
             foreach ($gameReport->playerGameReports()->get() as $pgr)
             {
