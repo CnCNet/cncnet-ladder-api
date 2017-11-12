@@ -45,38 +45,10 @@
 
         <div class="feature">
             <div class="row">
-                <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                    <a href="/ladder/{{ $history->short . "/1/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                        <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
-                            <div class="details">
-                                <div class="type">
-                                    <h1>Masters League</h1>
-                                    <p class="lead">1<strong>vs</strong>1</p>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                    <a href="/ladder/{{ $history->short . "/2/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                        <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
-                            <div class="details">
-                                <div class="type">
-                                    <h1>Contenders <br> <strong>League</strong></h1>
-                                    <p class="lead">1<strong>vs</strong>1</p>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-
-            <div class="row">
                 <div class="col-md-12">
                     <div class="header">
                         <div class="row">
                             <div class="col-md-6">
-                                <h3><strong>1vs1</strong> Battle Rankings</h3>
                                 <ul class="list-inline">
                                     <li>
                                         <button class="btn btn-secondary btn-lg text-uppercase" data-toggle="modal" data-target="#battleRanks">
@@ -104,7 +76,46 @@
                         </div>
                     </div>
 
+                    @if($history->ladder->abbreviation == "yr")
+                    <div class="feature" style="margin-top: -25px;">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
+                                <a href="/ladder/{{ $history->short . "/1/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
+                                    <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover-masters.png" }}')">
+                                        <div class="details tier-league-cards">
+                                            <div class="type">
+                                                <h1>Masters <strong>League</strong></h1>
+                                                <p class="lead">1<strong>vs</strong>1</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
+                                <a href="/ladder/{{ $history->short . "/2/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
+                                    <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover-contenders.png" }}')">
+                                        <div class="details tier-league-cards">
+                                            <div class="type">
+                                                <h1>Contenders <strong>League</strong></h1>
+                                                <p class="lead">1<strong>vs</strong>1</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <?php $perPage = $players->perPage(); $rankOffset = ($players->currentPage() * $perPage) - $perPage; ?>
+
+                    <div class="header">
+                        @if($history->ladder->abbreviation == "yr")
+                        <h3><strong>1vs1</strong> Master League Rankings</h3>
+                        @else
+                        <h3><strong>1vs1</strong> Battle Rankings</h3>
+                        @endif
+                    </div>
 
                     <div class="row">
                         @foreach($players as $k => $player)
