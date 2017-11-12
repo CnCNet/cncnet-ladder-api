@@ -76,7 +76,7 @@
                         </div>
                     </div>
 
-                    @if($history->ladder->abbreviation == "yr")
+                    @if($history->ladder->qmLadderRules->tier2_rating > 0)
                     <div class="feature" style="margin-top: -25px;">
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
@@ -110,10 +110,10 @@
                     <?php $perPage = $players->perPage(); $rankOffset = ($players->currentPage() * $perPage) - $perPage; ?>
 
                     <div class="header">
-                    @if($history->ladder->abbreviation == "yr")
-                        @if($history->ladder->qmLadderRules->tier2_rating == 1)
-                            <h3><strong>1vs1</strong> Master League Rankings</h3>
-                        @else
+                    @if($history->ladder->qmLadderRules->tier2_rating > 0)
+                        @if($tier == 1 || $tier === null)
+                            <h3><strong>1vs1</strong> Masters League Rankings</h3>
+                        @elseif($tier == 2)
                             <h3><strong>1vs1</strong> Contenders League Rankings</h3>
                         @endif
                     @else
