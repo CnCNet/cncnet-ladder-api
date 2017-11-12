@@ -110,11 +110,15 @@
                     <?php $perPage = $players->perPage(); $rankOffset = ($players->currentPage() * $perPage) - $perPage; ?>
 
                     <div class="header">
-                        @if($history->ladder->abbreviation == "yr")
-                        <h3><strong>1vs1</strong> Master League Rankings</h3>
+                    @if($history->ladder->abbreviation == "yr")
+                        @if($history->ladder->qmLadderRules->tier2_rating == 1)
+                            <h3><strong>1vs1</strong> Master League Rankings</h3>
                         @else
-                        <h3><strong>1vs1</strong> Battle Rankings</h3>
+                            <h3><strong>1vs1</strong> Contenders League Rankings</h3>
                         @endif
+                    @else
+                        <h3><strong>1vs1</strong> Battle Rankings</h3>
+                    @endif
                     </div>
 
                     <div class="row">
