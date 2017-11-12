@@ -45,6 +45,33 @@
 
         <div class="feature">
             <div class="row">
+                <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
+                    <a href="/ladder/{{ $history->short . "/1/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
+                        <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
+                            <div class="details">
+                                <div class="type">
+                                    <h1>Masters League</h1>
+                                    <p class="lead">1<strong>vs</strong>1</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
+                    <a href="/ladder/{{ $history->short . "/2/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
+                        <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
+                            <div class="details">
+                                <div class="type">
+                                    <h1>Contenders <br> <strong>League</strong></h1>
+                                    <p class="lead">1<strong>vs</strong>1</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-md-12">
                     <div class="header">
                         <div class="row">
@@ -82,15 +109,15 @@
                     <div class="row">
                         @foreach($players as $k => $player)
                         <div class="col-md-4">
-                            @include("components/player-box", 
+                            @include("components/player-box",
                             [
                                 "username" => $player->username,
                                 "points" => $player->points,
-                                "badge" => $player->badge(), 
+                                "badge" => $player->badge(),
                                 "rank" => ($rankOffset + $k) + 1,
                                 "wins" => $player->total_wins,
                                 "totalGames" => $player->total_games,
-                                "playerCard" => isset($player->card->short) ? $player->card->short : "", 
+                                "playerCard" => isset($player->card->short) ? $player->card->short : "",
                                 "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username
                             ])
                         </div>
