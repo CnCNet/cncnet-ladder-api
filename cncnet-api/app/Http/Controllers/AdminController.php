@@ -121,6 +121,7 @@ class AdminController extends Controller
         $qmMap->ladder_id = $request->ladder_id;
         $qmMap->map_id = $request->map_id;
         $qmMap->description = $request->description;
+        $qmMap->admin_description = $request->admin_description;
         $qmMap->bit_idx = $request->bit_idx;
         $qmMap->valid = $request->valid;
         $qmMap->allowed_sides = implode(",", $request->allowed_sides);

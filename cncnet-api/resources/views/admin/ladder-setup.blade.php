@@ -125,7 +125,7 @@
                                     ?>
                                     @foreach($qmMaps as $qmMap)
                                         @if($qmMap->ladder_id == $rule->ladder_id && $qmMap->valid)
-                                            <option value="{{ $qmMap->id }}" onclick="showMapEdit(this, 'map_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}')"> {{ $qmMap->bit_idx }} : {{ $qmMap->description }} </option>
+                                            <option value="{{ $qmMap->id }}" onclick="showMapEdit(this, 'map_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}')"> {{ $qmMap->bit_idx }} : {{ $qmMap->admin_description }} </option>
                                             <?php $new_map = $qmMap; ?>
                                         @endif
                                     @endforeach
@@ -135,6 +135,7 @@
                                               $new_map->bit_idx++;
                                               $new_map->id = 'new';
                                               $new_map->description = "Copy of " . $new_map->description;
+                                              $new_map->admin_description = $new_map->admin_descrioption;
                                               $qmMaps->push($new_map);
                                         ?>
                                         <option value="{{ $new_map->bit_idx }}" onclick="showMapEdit(this,'map_{{ $new_map->ladder_id }}_new')"> {{ $new_map->bit_idx }} : &lt;new> </option>
@@ -156,6 +157,11 @@
                                         <div class="form-group">
                                             <label for="{{ $qmMap->id }}_description"> Description </label>
                                             <input type="text" id="{{ $qmMap->id }}_description" name="description" value="{{ $qmMap->description }}" class="form-control" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="{{ $qmMap->id }}_admin_description"> Admin Description </label>
+                                            <input type="text" id="{{ $qmMap->id }}_admin_description" name="admin_description" value="{{ $qmMap->admin_description }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group">
@@ -202,6 +208,8 @@
                                             @endforeach
                                             </select>
                                         </div>
+
+                                        <button type="submit" class="btn btn-primary btn-lg">Save</button>
 
                                         <div class="form-group">
                                             <label for="{{ $qmMap->id }}_speed"> speed </label>
