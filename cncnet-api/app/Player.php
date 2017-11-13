@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
+use Log;
 
 class Player extends Model
 {
@@ -109,11 +110,16 @@ class Player extends Model
 
     public function rank($history)
     {
-        $playerPoints = \App\Game::where("ladder_history_id", "=", $history->id)
-               ->join('player_game_reports as pgr', 'games.game_report_id', '=', 'pgr.game_report_id')
-               ->groupBy('pgr.player_id')
-               ->orderBy('points', 'DESC')
-               ->selectRaw('pgr.player_id, SUM(points) as points')->get();
+        $ppQuery = \App\PlayerHistory::join('player_game_reports as pgr', 'pgr.player_id', '=', 'player_histories.player_id')
+                                      ->join('games', 'pgr.game_report_id', '=', 'games.game_report_id')
+                                      ->where('games.ladder_history_id', '=', $history->id)
+                                      ->where("player_histories.ladder_history_id", '=', $history->id)
+                                      ->where('player_histories.tier', '=', $this->playerHistory($history)->tier)
+                                      ->groupBy('pgr.player_id')
+                                      ->orderBy('points', 'DESC')
+                                      ->selectRaw('pgr.player_id, SUM(points) as points');
+
+        $playerPoints = $ppQuery->get();
 
         for ($i = 0; $i < $playerPoints->count(); ++$i)
         {
@@ -186,15 +192,21 @@ class Player extends Model
     {
         return $this->hasOne("App\PlayerRating");
     }
-    public function playerHistory()
+
+    public function playerHistories()
     {
         return $this->hasMany("App\PlayerHistory");
+    }
+
+    public function playerHistory($history)
+    {
+        return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
     }
 
     public function doTierStuff($history)
     {
         $gameCount = $this->playerGameReports()->count();
-        $pHist = $this->playerHistory()->where('ladder_history_id', '=', $history->id)->get()->first();
+        $pHist = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
 
         if ($pHist === null)
         {
