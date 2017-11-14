@@ -20,9 +20,14 @@ class QmMap extends Model {
         return $this->belongsTo('App\Map');
     }
 
+    public function scopeValid($query)
+    {
+        return $query->where('valid', true);
+    }
+
     public static function findMapsByLadder($id)
     {
-        $qmMaps = \App\QmMap::where('ladder_id', $id)->get();
+        $qmMaps = \App\QmMap::valid()->where('ladder_id', $id)->get();
 
         return $qmMaps->map( function($qmMap)
         {

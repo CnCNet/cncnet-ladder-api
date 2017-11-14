@@ -27,13 +27,15 @@
 
 @section('content')
 <script>
-   function showMapEdit(e, id, c) {
+   function showMapEdit(e, distinguisher, c) {
        document.querySelectorAll('form.qmMap').forEach(function(element) { element.style.display = 'none' });
        document.querySelectorAll('select.qmPool').forEach(function(element) { if (element.selectedIndex >= 0) element.options[element.selectedIndex].selected = false });
-       if (e !== null && id !== '')
+       if (e !== null && distinguisher !== '')
        {
            e.selected = true;
-           document.getElementById(id).style.display = 'block';
+           document.getElementById("mapu_" + distinguisher).style.display = 'block';
+           document.getElementById("mapd_" + distinguisher).style.display = 'block';
+           document.getElementById("map_" + distinguisher).style.display = 'block';
        }
    }
 </script>
@@ -125,7 +127,7 @@
                                     ?>
                                     @foreach($qmMaps as $qmMap)
                                         @if($qmMap->ladder_id == $rule->ladder_id && $qmMap->valid)
-                                            <option value="{{ $qmMap->id }}" onclick="showMapEdit(this, 'map_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}')"> {{ $qmMap->bit_idx }} : {{ $qmMap->admin_description }} </option>
+                                            <option value="{{ $qmMap->id }}" onclick="showMapEdit(this, '{{ $qmMap->ladder_id }}_{{ $qmMap->id }}')"> {{ $qmMap->bit_idx }} : {{ $qmMap->admin_description }} </option>
                                             <?php $new_map = $qmMap; ?>
                                         @endif
                                     @endforeach
@@ -147,6 +149,14 @@
 
                              @foreach($qmMaps as $qmMap)
                                  @if($qmMap->ladder_id == $rule->ladder_id && $qmMap->valid)
+                                 <form method="GET" action="/admin/setup/upmap/{{$qmMap->id}}" class="qmMap" id="mapu_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
+                                     <button type="submit" class="btn btn-secondary">Move Up</button>
+                                 </form>
+
+                                 <form method="GET" action="/admin/setup/downmap/{{$qmMap->id}}" class="qmMap" id="mapd_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
+                                     <button type="submit" class="btn btn-secondary">Move Down</button>
+                                 </form>
+
                                  <form method="POST" action="/admin/setup/qmmap" class="qmMap" id="map_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                         <input type="hidden" name="id" value="{{ $qmMap->id }}" />

@@ -25,7 +25,7 @@ class AdminController extends Controller
     public function getLadderSetupIndex(Request $request)
     {
         $ladderRules = \App\QmLadderRules::all();
-        $qmMaps = \App\QmMap::orderby('bit_idx', 'ASC')->get();
+        $qmMaps = \App\QmMap::valid()->orderby('bit_idx', 'ASC')->get();
         $ladderMaps = \App\Map::orderby('name', 'ASC')->get();
 
         return view("admin.ladder-setup", ["ladders" => $this->ladderService->getLatestLadders(),
@@ -176,17 +176,63 @@ class AdminController extends Controller
 
     public function removeQuickMatchMap(Request $request)
     {
-        $qmMap = \App\QmMap::where('id', '=', $request->map_id)->first();
+        $qmMap = \App\QmMap::find($request->map_id);
 
         if ($qmMap !== null)
         {
-            \App\QmMap::where('ladder_id', '=', $request->ladder_id)
+            \App\QmMap::valid()
+                      ->where('ladder_id', '=', $request->ladder_id)
                       ->where('bit_idx', '>', $qmMap->bit_idx)
                       ->decrement('bit_idx');
-            $qmMap->delete();
+            $qmMap->valid = false;
+            $qmMap->save();
         }
 
         $request->session()->flash('success', "Map Deleted");
+        return redirect()->back();
+    }
+
+    public function moveDownQuickMatchMap(Request $request, $mapId)
+    {
+        $qmMap = \App\QmMap::find($mapId);
+        if ($qmMap !== null)
+        {
+            if ($qmMap->bit_idx < 31)
+            {
+                $mapBelow = \App\QmMap::valid()
+                                      ->where('ladder_id', '=', $qmMap->ladder_id)
+                                      ->where('bit_idx', '=', $qmMap->bit_idx + 1)
+                                      ->first();
+                $mapBelow->bit_idx--;
+                $mapBelow->save();
+
+                $qmMap->bit_idx++;
+                $qmMap->save();
+            }
+        }
+        $request->session()->flash('success', "Map Moved");
+        return redirect()->back();
+    }
+
+    public function moveUpQuickMatchMap(Request $request, $mapId)
+    {
+        $qmMap = \App\QmMap::find($mapId);
+        if ($qmMap !== null)
+        {
+            if ($qmMap->bit_idx > 0)
+            {
+                $mapAbove = \App\QmMap::where('valid', true)
+                                      ->where('ladder_id', '=', $qmMap->ladder_id)
+                                      ->where('bit_idx', '=', $qmMap->bit_idx - 1)
+                                      ->first();
+                $mapAbove->bit_idx++;
+                $mapAbove->save();
+
+                $qmMap->bit_idx--;
+                $qmMap->save();
+            }
+        }
+        $request->session()->flash('success', "Map Moved");
         return redirect()->back();
     }
 }

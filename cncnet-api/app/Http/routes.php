@@ -34,6 +34,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth', 'group' => [User::Adm
     Route::post('/setup/rules', 'AdminController@postLadderSetupRules');
     Route::post('/setup/qmmap', 'AdminController@postQuickMatchMap');
     Route::post('/setup/remqmap', 'AdminController@removeQuickMatchMap');
+    Route::get('/setup/downmap/{mapId}', 'AdminController@moveDownQuickMatchMap');
+    Route::get('/setup/upmap/{mapId}', 'AdminController@moveUpQuickMatchMap');
 
     Route::get('/games/{cncnetGame}', 'AdminController@getManageGameIndex');
     Route::post('/games/{cncnetGame}/delete', 'AdminController@deleteGame');
