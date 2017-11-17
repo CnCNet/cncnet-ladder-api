@@ -33,6 +33,6 @@ class PlayerGameReport extends Model {
 
     public function stats()
     {
-        return $this->belongsTo("App\Stats");
+        return $this->hasOne("App\Stats2");
     }
 }

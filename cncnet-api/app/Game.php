@@ -56,4 +56,8 @@ class Game extends Model
     {
         return $this->hasMany('App\PlayerGameReport')->where('game_report_id', $this->game_report_id, 'game_report_id');
     }
+    public function ladderHistory()
+    {
+        return $this->belongsTo('App\LadderHistory');
+    }
 }

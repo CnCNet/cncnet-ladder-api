@@ -64,6 +64,7 @@ class LadderController extends Controller
             "playerGameReports" => $gameReport !== null ? $gameReport->playerGameReports()->get() : [],
             "history" => $history,
             "ladders" => $this->ladderService->getLatestLadders(),
+            "heaps" => \App\CountableObjectHeap::all()
         ));
     }
 

@@ -11,4 +11,9 @@ class LadderHistory extends Model
     {
         return $this->belongsTo('App\Ladder');
     }
+
+    public function games()
+    {
+        return $this->hasMany('App\Games');
+    }
 }
