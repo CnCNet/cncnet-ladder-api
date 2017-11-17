@@ -7,6 +7,8 @@ class Stats2 extends Model
     //
     protected $table = 'stats2';
     public $timestamps = false;
+    public $gameStatsColumns = ['sid', 'col', 'cty', 'crd', 'hrv'];
+
     public function playerGameReport()
     {
         return $this->belogsTo('App\PlayerGameReport');

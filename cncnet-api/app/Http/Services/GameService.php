@@ -66,10 +66,33 @@ class GameService
                     $reporter = $playerGameReports[$id];
 
                 $playerGameReports[$id]->player_id = $playerHere->id;
+                $playerGameReports[$id]->save();
 
-                $playerStats[$id] = new \App\Stats;
+                $playerStats[$id] = new \App\Stats2;
+                $playerStats[$id]->player_game_report_id = $playerGameReports[$id]->id;
                 $playerStats[$id]->save();
                 $playerGameReports[$id]->stats_id = $playerStats[$id]->id;
+            }
+        }
+
+        // Save Game Specific Stats like buildings bought, destroyed etc
+        foreach (\App\CountableGameObject::where('ladder_id', '=', $ladderId)->get() as $countable)
+        {
+            foreach ($playerStats as $k => $value)
+            {
+                if (array_key_exists($countable->heap_name."$k", $result))
+                {
+                    $objects = $result[$countable->heap_name."$k"]["counts"];
+
+                    if (array_key_exists($countable->heap_id, $objects))
+                    {
+                        $goc = new \App\GameObjectCounts;
+                        $goc->stats_id = $value->id;
+                        $goc->countable_game_objects_id = $countable->id;
+                        $goc->count = $objects[$countable->heap_id];
+                        $goc->save();
+                    }
+                }
             }
         }
 
@@ -80,10 +103,9 @@ class GameService
 
             if (is_numeric($cid) && $cid >= 0 && $cid < 8)
             {
-                // Save Game Specific Stats like buildings bought, destroyed etc
-                if (in_array(strtolower($property), $playerStats[$cid]->gameStatsColumns))
+                if (in_array(strtolower($property),  $playerStats[$cid]->gameStatsColumns))
                 {
-                    $playerStats[$cid]->{strtolower($property)} = json_encode($value);
+                    $playerStats[$cid]->{strtolower($property)} = $value["value"];
                 }
                 $playerGameReports[$cid]->local_id = $cid;
                 $playerGameReports[$cid]->local_team_id = $cid;
@@ -220,7 +242,7 @@ class GameService
     }
 
     // Credit: https://github.com/dkeetonx
-    public function processStatsDmp($file, $cncnetGame)
+    public function processStatsDmp($file, $cncnetGame, $ladderId)
     {
         if($file == null)
             return null;
@@ -260,14 +282,11 @@ class GameService
             }
         }
 
-        $types = array ("CRA","BLC","BLK","PLK","UNK","INK","BLL","PLL","UNL","INL","BLB","PLB","UNB","INB","VSK","VSL","VSB");
-        $gameUnitTypes = config("types." . strtoupper($cncnetGame));
+        $types = \App\CountableGameObject::where('ladder_id', '=', $ladderId)->groupBy("heap_name")->get();
 
-        foreach ($types as $tag)
+        foreach ($types as $type)
         {
-            $lookup = null;
-            if (array_key_exists(substr($tag, 0, 2), $gameUnitTypes))
-                $lookup = $gameUnitTypes[substr($tag, 0, 2)];
+            $tag = $type->heap_name;
 
             for ($i = 0; $i < 8; $i++)
             {
@@ -276,19 +295,12 @@ class GameService
                     $raw = base64_decode($result["$tag$i"]["raw"]);
                     $length = $result["$tag$i"]["length"];
 
-                    for ($j = 0, $t = 0; $j < $length; $j += 4, $t++)
+                    for ($j = 0, $t = 0; $j < $length; $j += 4, ++$t)
                     {
                         $count = unpack("N", substr($raw, $j, 4))[1];
-                        if ($count >= 0)
+                        if ($count > 0)
                         {
-                            if ($lookup && count($lookup) > $t && array_key_exists($t, $lookup))
-                            {
-                                $result["$tag$i"]["counts"][$lookup[$t]] = $count;
-                            }
-                            else
-                            {
-                                $result["$tag$i"]["counts"][$t] = $count;
-                            }
+                            $result["$tag$i"]["counts"][$t] = $count;
                         }
                     }
                 }

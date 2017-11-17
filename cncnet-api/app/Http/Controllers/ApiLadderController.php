@@ -40,18 +40,18 @@ class ApiLadderController extends Controller
 
     public function postLadder(Request $request, $cncnetGame = null, $username = null, $pingSent = 0, $pingReceived = 0)
     {
-        // Game stats result
-        $result = $this->gameService->processStatsDmp($request->file('file'), $cncnetGame);
-        if (count($result) == 0 || $result == null)
-        {
-            return response()->json(['No data'], 400);
-        }
-
         // Ladder exists
         $ladder = $this->ladderService->getLadderByGame($cncnetGame);
         if ($ladder == null)
         {
             return response()->json(['Ladder does not exist'], 400);
+        }
+
+        // Game stats result
+        $result = $this->gameService->processStatsDmp($request->file('file'), $cncnetGame, $ladder->id);
+        if (count($result) == 0 || $result == null)
+        {
+            return response()->json(['No data'], 400);
         }
 
         // Get Active Ladder
