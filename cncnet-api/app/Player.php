@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
 use Log;
+use \Carbon\Carbon;
 
 class Player extends Model
 {
@@ -81,10 +82,11 @@ class Player extends Model
         $playerRatings = \App\PlayerRating::join('players as p', 'p.id', '=', 'player_id')
                             ->where("ladder_id", "=", $this->ladder_id)
                             ->where('rated_games', '>', 10)
-                            ->orderBy('rating', 'DESC');
+                            ->where('player_ratings.updated_at', '>', Carbon::now()->subMonths(2))
+                            ->orderBy('rating', 'ASC');
 
         $ratingsCount = $playerRatings->count();
-        $count = 1;
+        $count = 0;
         foreach ($playerRatings->get() as $playerRating)
         {
             if($playerRating->player_id == $this->id)
@@ -93,7 +95,7 @@ class Player extends Model
             }
             $count++;
         }
-        $ptile = ((($ratingsCount - $count)/$ratingsCount) * 100) - 1;
+        $ptile = (($count/$ratingsCount) * 100) - 1;
 
         return $ptile >= 0 ? $ptile : 0;
     }
@@ -200,6 +202,11 @@ class Player extends Model
 
     public function playerHistory($history)
     {
+        $pHist = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
+        if ($pHist === null)
+        {
+            $this->doTierStuff($history);
+        }
         return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
     }
 

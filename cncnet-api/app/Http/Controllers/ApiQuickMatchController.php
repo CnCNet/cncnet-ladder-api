@@ -226,7 +226,7 @@ class ApiQuickMatchController extends Controller
                             $common_maps[] = $i;
                         }
                     }
-                    $map_idx = rand(0, count($common_maps) - 1);
+                    $map_idx = mt_rand(0, count($common_maps) - 1);
 
 
                     // Create the qm_matches db entry
@@ -235,7 +235,7 @@ class ApiQuickMatchController extends Controller
                     $qmMatch->ladder_id = $qmPlayer->ladder_id;
                     $qmMatch->qm_map_id = \App\QmMap::where('bit_idx', $common_maps[$map_idx])
                                                     ->where('ladder_id', $qmMatch->ladder_id)->first()->id;
-                    $qmMatch->seed = rand(-2147483647, 2147483647);
+                    $qmMatch->seed = mt_rand(-2147483647, 2147483647);
                     $qmMatch->save();
 
                     $qmMap = $qmMatch->map;
@@ -255,7 +255,7 @@ class ApiQuickMatchController extends Controller
 
                     if ($qmPlayer->actual_side == -1)
                     {
-                        $qmPlayer->actual_side = $ladder_rules->all_sides()[rand(0, count($ladder_rules->all_sides()) - 1)];
+                        $qmPlayer->actual_side = $ladder_rules->all_sides()[mt_rand(0, count($ladder_rules->all_sides()) - 1)];
                     }
                     $qmPlayer->save();
 
@@ -269,7 +269,7 @@ class ApiQuickMatchController extends Controller
 
                         if ($opn->actual_side == -1)
                         {
-                            $opn->actual_side = $ladder_rules->all_sides()[rand(0, count($ladder_rules->all_sides()) - 1)];
+                            $opn->actual_side = $ladder_rules->all_sides()[mt_rand(0, count($ladder_rules->all_sides()) - 1)];
                         }
                         $opn->color = $color++;
                         $opn->location = $spawn_order[$opn->color] - 1;
