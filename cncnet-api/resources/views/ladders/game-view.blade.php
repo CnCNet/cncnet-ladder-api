@@ -168,8 +168,8 @@
                                 <h4>{{ $heap->description }}</h4>
                                 <div class="clearfix stats-box">
                                     @foreach($gameStats->gameObjectCounts as $goc)
-                                        @if ($goc->countableGameObject->heap_name == $heap->name)
-                                            <div class="{{ $g }}-cameo cameo-tile cameo-{{ $goc->countableGameObject->cameo }} or "blank " .  }}"><span class="number">{{ $goc->count }}</span></div>
+                                        @if ($goc->countableGameObject->heap_name == $heap->name && $goc->countableGameObject->cameo != "")
+                                            <div class="{{ $g }}-cameo cameo-tile cameo-{{ $goc->countableGameObject->cameo }}"><span class="number">{{ $goc->count }}</span></div>
                                         @endif
                                     @endforeach
                                 </div>
