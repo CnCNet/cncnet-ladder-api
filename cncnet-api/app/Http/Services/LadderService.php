@@ -20,6 +20,8 @@ class LadderService
             $ladder["vetoes"] = $ladder->qmLadderRules()->first()->map_vetoes;
             $ladder["allowed_sides"] = array_map('intval',
                                                  explode(',', $ladder->qmLadderRules()->first()->allowed_sides));
+            $ladder["current"] = $this->getActiveLadderByDate(Carbon::now()->format('m-Y'),
+                                                              $ladder->abbreviation)->short;
         }
         return $ladders;
     }
@@ -61,7 +63,7 @@ class LadderService
         $month = $date[0];
         $year = $date[1];
 
-        $date = Carbon::create($year, $month, 01, 0);
+        $date = Carbon::create($year, $month, 1, 0);
 
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
