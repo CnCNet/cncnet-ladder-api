@@ -80,7 +80,9 @@ class GameService
         {
             foreach ($playerStats as $k => $value)
             {
-                if (array_key_exists($countable->heap_name."$k", $result))
+                if (array_key_exists($countable->heap_name."$k", $result)
+                    &&
+                    array_key_exists("counts", $result[$countable->heap_name."$k"]))
                 {
                     $objects = $result[$countable->heap_name."$k"]["counts"];
 
