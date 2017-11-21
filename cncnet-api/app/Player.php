@@ -79,6 +79,9 @@ class Player extends Model
 
     public function percentile()
     {
+        if ($this->rating->rated_games < 10)
+            return 0;
+
         $playerRatings = \App\PlayerRating::join('players as p', 'p.id', '=', 'player_id')
                             ->where("ladder_id", "=", $this->ladder_id)
                             ->where('rated_games', '>', 10)
