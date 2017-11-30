@@ -31,13 +31,14 @@
                 <p style="color:silver">
                     <strong>Note: We are in an Alpha testing stage</strong>, bugs are likely to occur. The Quick Match Client and related sites are likely to change during development.  
                     Report bugs in <a href="https://forums.cncnet.org/forum/66-cncnet-ladder/" target="_blank">our forums</a>.</p>
-                <h2>How to play</h2>
-                <ol style="font-size:15px;">
-                    <li>Create your Ladder Account below.</li>
-                    <li>Once complete, create a Nickname to play online with.</li>
-                    <li>Login to the CnCNet Quick Match client with your Ladder Account.</li>
-                    <li>Click Quick Match and wait to play ladder games!</li>
-                </ol>
+                    
+                    <h2>How to play</h2>
+                    <ol style="font-size:15px;">
+                        <li>Create your Ladder Account below.</li>
+                        <li>Once complete, create a Nickname to play online with.</li>
+                        <li>Login to the CnCNet Quick Match client with your Ladder Account.</li>
+                        <li>Click Quick Match and wait to play ladder games!</li>
+                    </ol>
                 <br/>
 
 			    <div class="panel panel-default">
@@ -65,7 +66,7 @@
 						    </div>
 
 						    <div class="form-group">
-							    <label class="col-md-4 control-label">E-Mail Address</label>
+							    <label class="col-md-4 control-label">E-mail Address</label>
 							    <div class="col-md-6">
 								    <input type="email" class="form-control" name="email" value="{{ old('email') }}">
 							    </div>
@@ -84,6 +85,8 @@
 								    <input type="password" class="form-control" name="password_confirmation">
 							    </div>
 						    </div>
+
+                            <input type="hidden" name="play_nay" />
 
 						    <div class="form-group">
 							    <div class="col-md-6 col-md-offset-4">
