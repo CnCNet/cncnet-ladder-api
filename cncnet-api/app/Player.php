@@ -144,6 +144,14 @@ class Player extends Model
         return $this->playerGames()->sum("points");
     }
 
+    public function points($history)
+    {
+        return \App\PlayerGameReport::where('player_game_reports.player_id', $this->id)
+                    ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
+                    ->where("g.ladder_history_id", "=", $history->id)
+                    ->sum('player_game_reports.points');
+    }
+
     public function badge($percentile = null)
     {
         if ($percentile == null)
@@ -234,7 +242,7 @@ class Player extends Model
         // If it's the first game of the month  or the 20th game we'll do ladder tier placement.
         else if ($gameCount == 20)
         {
-            if ($this->rating > $history->ladder->qmLadderRules->tier2_rating)
+            if ($this->rating->rating > $history->ladder->qmLadderRules->tier2_rating)
                 $pHist->tier = 1;
             else
                 $pHist->tier = 2;

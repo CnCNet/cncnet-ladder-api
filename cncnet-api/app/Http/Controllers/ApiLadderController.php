@@ -232,9 +232,12 @@ class ApiLadderController extends Controller
         foreach ($playerGameReports as $playerGR)
         {
             $ally_average = 0;
+            $ally_points = 0;
             $ally_count = 0;
             $enemy_average = 0;
+            $enemy_points = 0;
             $enemy_count = 0;
+            $enemy_games = 0;
 
             foreach ($playerGameReports as $pgr)
             {
@@ -243,11 +246,14 @@ class ApiLadderController extends Controller
                 if ($pgr->local_team_id == $playerGR->local_team_id)
                 {
                     $ally_average += $other->rating;
+                    $ally_points += $pgr->player->points($history);
                     $ally_count++;
                 }
                 else {
                     $enemy_average += $other->rating;
+                    $enemy_points += $pgr->player->points($history);
                     $enemy_count++;
+                    $enemy_games += $pgr->player->totalGames($history);
                 }
             }
             $ally_average /= $ally_count;
@@ -258,47 +264,50 @@ class ApiLadderController extends Controller
             $points = null;
 
             $base_rating = $enemy_average > $ally_average ? $enemy_average : $ally_average;
-            $gvc = ceil(($base_rating * $enemy_average) / 30000) - 34;
+            $gvc = ceil(($base_rating * $enemy_average) / 230000);
 
-            $gvc = $gvc > 8 ? $gvc : 8;
+            $diff = $enemy_points - $ally_points;
+            $we = 1/(pow(10, abs($diff)/600)+1);
+            $we = $diff > 0 && $playerGR->won ? 1 - $we : ($diff < 0 && !$playerGR->won ? 1 - $we : $we);
+            $wol = (int)(64 * $we);
 
-            if ($playerGR->won)
+            $eloAdjust = 0;
+            if ($playerGR->won || ($playerGR->disconnected && $playerGR->player_id == $gameReport->player_id))
             {
-                $points = new PointService(16, $ally_average, $enemy_average, 1, 0);
+                $points = (new PointService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
+                $diff = (int)($points - $ally_average);
+                $playerGR->points = $gvc + $diff + $wol;
+
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
-            }
-            else if ($playerGR->defeated)
-            {
-                $points = new PointService(16, $ally_average, $enemy_average, 0, 1);
-                $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
-                $gvc = 0;
-            }
-
-            if ($points !== null)
-            {
-                $eloResults = $points->getNewRatings();
-                $diff = $eloResults["a"] - $ally_average;
-                $playerGR->points = $gvc;
-
-                // Only do a rating adjustment once per game
                 if ($gameReport->best_report)
                     $this->playerService->updatePlayerRating($playerGR->player_id,$eloAdjust->getNewRatings()["a"]);
             }
-            else if ($playerGR->disconnected && $playerGR->player_id == $gameReport->player_id)
+            else
             {
-                // Give ourselves points on a disconnection, dispute resolution should handle this later
-                $points = new PointService(16, $ally_average, $enemy_average, 1, 0);
+                if ($enemy_games < 10)
+                {
+                    $wol = (int)($wol * ($enemy_games/10));
+                }
+                if ($ally_points  < $wol * 10)
+                {
+                    $wol = (int)($ally_points/10);
+                }
 
-                $eloResults = $points->getNewRatings();
-                $diff = $eloResults["a"] - $ally_average;
-                $playerGR->points = $gvc;
+                $playerGR->points = -1 * ($wol + $gvc);
+
+                $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
+                if ($gameReport->best_report)
+                    $this->playerService->updatePlayerRating($playerGR->player_id,$eloAdjust->getNewRatings()["a"]);
+
             }
-            else {
-                // No winner found
-                $playerGR->points = 0;
-            }
+
             $playerGR->player->doTierStuff($history);
             $playerGR->save();
+            if ($playerGR->player->points($history) < 0)
+            {
+                $playerGR->points = 0;
+                $playerGR->save();
+            }
         }
 
         return 200;
