@@ -137,10 +137,10 @@
                                               $new_map->bit_idx++;
                                               $new_map->id = 'new';
                                               $new_map->description = "Copy of " . $new_map->description;
-                                              $new_map->admin_description = $new_map->admin_descrioption;
+                                              $new_map->admin_description = "Copy of " . $new_map->admin_description;
                                               $qmMaps->push($new_map);
                                         ?>
-                                        <option value="{{ $new_map->bit_idx }}" onclick="showMapEdit(this,'map_{{ $new_map->ladder_id }}_new')"> {{ $new_map->bit_idx }} : &lt;new> </option>
+                                        <option value="{{ $new_map->bit_idx }}" onclick="showMapEdit(this,'{{ $new_map->ladder_id }}_new')"> {{ $new_map->bit_idx }} : &lt;new> </option>
                                     @endif
                                 </select>
                                 <button type="submit" class="btn btn-danger btn-lg">Remove Map</button>
@@ -181,7 +181,7 @@
 
                                         <div class="form-group">
                                             <label for="{{ $qmMap->id }}_team1_spawn_order">team1_spawn_order</label>
-                                            <input type="text" id="{{ $qmMap->id }}_team1_spawn_order" name="team1_spawn_order" value="{{ $qmMap->team1_spawn_order }} "class="form-control"  />
+                                            <input type="text" id="{{ $qmMap->id }}_team1_spawn_order" name="team1_spawn_order" value="{{ $qmMap->team1_spawn_order }} " class="form-control"  />
                                         </div>
 
                                         <div class="form-group">
