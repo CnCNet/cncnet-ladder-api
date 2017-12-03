@@ -288,12 +288,13 @@ class ApiLadderController extends Controller
                 {
                     $wol = (int)($wol * ($enemy_games/10));
                 }
-                if ($ally_points  < $wol * 10)
+                if ($ally_points  < ($wol + $gvc) * 10)
                 {
-                    $wol = (int)($ally_points/10);
+                     $playerGR->points = -1 * (int)($ally_points/10);
                 }
-
-                $playerGR->points = -1 * ($wol + $gvc);
+                else {
+                    $playerGR->points = -1 * ($wol + $gvc);
+                }
 
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
                 if ($gameReport->best_report)
