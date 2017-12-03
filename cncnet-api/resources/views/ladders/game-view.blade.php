@@ -49,7 +49,7 @@
                         @foreach($playerGameReports as $pgr)
                             <?php $player = $pgr->player()->first(); ?>
                                 <span class="player">
-                                    {{ $player->username or "Unknown" }} <strong>+{{ $pgr->points or "" }}</strong>
+                                    {{ $player->username or "Unknown" }} <strong>@if($pgr->points >= 0) +@endif{{ $pgr->points or "" }}</strong>
                                     @if($pgr->won)
                                         <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
                                     @elseif($pgr->draw)
@@ -63,7 +63,7 @@
 
                                 @if ($playerGameReports->count() == 1)
                                     <span class="player">
-                                        {{ $player->username or "Unknown" }} <strong>+{{ $pgr->points or "" }}</strong>
+                                        {{ $player->username or "Unknown" }} <strong>@if($pgr->points >= 0) +@endif{{ $pgr->points or "" }}</strong>
                                         @if($pgr->won)
                                             <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
                                         @elseif($pgr->draw)

@@ -146,10 +146,11 @@ class Player extends Model
 
     public function points($history)
     {
-        return \App\PlayerGameReport::where('player_game_reports.player_id', $this->id)
+        $points = \App\PlayerGameReport::where('player_game_reports.player_id', $this->id)
                     ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
                     ->where("g.ladder_history_id", "=", $history->id)
                     ->sum('player_game_reports.points');
+        return $points !== null ? $points : 0;
     }
 
     public function badge($percentile = null)

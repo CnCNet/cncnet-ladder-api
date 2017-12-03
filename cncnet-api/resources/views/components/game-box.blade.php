@@ -19,12 +19,12 @@
         <div class="footer text-center">
             <?php $opponent = $gamePlayers->where("player_id", "!=", $points->player_id)->first(); ?>
             <h5 class="player {{ $status or "lost"}}">
-                {{ $points->player->username }} <span class="points">+{{ $points->points }}</span>
+                {{ $points->player->username }} <span class="points">@if($points->points >= 0) +@endif{{ $points->points }}</span>
             </h5>
             <p class="vs">vs</p>
             @if ($opponent)
             <h5 class="player {{ $opponent->won ? "won" : "lost " }}">
-                {{ $opponent->player->username }} <span class="points">+{{ $opponent->points }}</span>
+                {{ $opponent->player->username }} <span class="points">@if($opponent->points >= 0) +@endif{{ $opponent->points }}</span>
             </h5>
             @endif
         </div>
