@@ -118,9 +118,22 @@ class LadderService
         }
 
         return \App\Game::where("ladder_history_id", "=", $history->id)
-        ->orderBy("games.id", "DESC")
-        ->limit(4)
-        ->get();
+            ->orderBy("games.id", "DESC")
+            ->limit($limit)
+            ->get();
+    }
+
+    public function getRecentLadderGamesPaginated($date, $cncnetGame)
+    {
+        $history = $this->getActiveLadderByDate($date, $cncnetGame);
+        if ($history == null)
+        {
+            return [];
+        }
+
+        return \App\Game::where("ladder_history_id", "=", $history->id)
+            ->orderBy("games.id", "DESC")
+            ->paginate(45);
     }
 
     public function getLadderGameById($history, $gameId)

@@ -38,6 +38,16 @@ class LadderController extends Controller
         ));
     }
 
+    public function getLadderGames(Request $request)
+    {
+        return view("ladders.games",
+        array
+        (
+            "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
+            "games" => $this->ladderService->getRecentLadderGamesPaginated($request->date, $request->game)
+        ));
+    }
+
     public function getLaddersByGame(Request $request)
     {
         return view("ladders.listing");

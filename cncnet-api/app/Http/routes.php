@@ -13,6 +13,7 @@ Route::group(['prefix' => 'ladder/'], function()
 {
     Route::get('/', 'LadderController@getLadders');
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
+    Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
     Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/player/', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/player/{player}', 'LadderController@getLadderPlayer');
