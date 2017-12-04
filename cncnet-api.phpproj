@@ -27,6 +27,7 @@
     <Compile Include="cncnet-api\app\Http\Controllers\AccountController.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\AdminController.php" />
     <Compile Include="cncnet-api\app\Http\Controllers\ApiQuickMatchController.php" />
+    <Compile Include="cncnet-api\app\Http\Controllers\PruneController.php" />
     <Compile Include="cncnet-api\app\Http\Services\AdminService.php" />
     <Compile Include="cncnet-api\app\Http\Services\GameResult.php" />
     <Compile Include="cncnet-api\app\Http\Services\GameService.php" />
