@@ -43,6 +43,7 @@ class LadderController extends Controller
         return view("ladders.games",
         array
         (
+            "ladders" => $this->ladderService->getLatestLadders(),
             "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
             "games" => $this->ladderService->getRecentLadderGamesPaginated($request->date, $request->game)
         ));
