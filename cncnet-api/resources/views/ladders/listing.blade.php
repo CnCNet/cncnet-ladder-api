@@ -40,7 +40,11 @@
 
                 <div class="header">
                     <div class="col-md-12">
-                        <h3><strong>1vs1</strong> Recent Games <small><a href="{{ $history->ladder->abbreviation  . "/games" }}">View All Games</a></small></h3>
+                        <h3><strong>1vs1</strong> Recent Games 
+                            <small>
+                                <a href="{{"/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games"}}">View All Games</a>
+                            </small>
+                        </h3>
                     </div>
                 </div>
             </div>
