@@ -14,7 +14,7 @@
                     {{ $history->ladder->name }}
                 </h1>
                 <p>
-                    CnCNet Ladders <strong>1vs1</strong>
+                    Games Played <strong>1vs1</strong>
                 </p>
                 <p>
                     <a href="/ladder" class="previous-link">
