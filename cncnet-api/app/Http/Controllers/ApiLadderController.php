@@ -336,4 +336,16 @@ class ApiLadderController extends Controller
         return response($rawGame, 200)
                   ->header('Content-Type', 'application/json');
     }
+
+    public function getLadderTopList(Request $request, $cncnetGame = null, $count = 10)
+    {
+        $players = $this->ladderService->getLadderPlayers(Carbon::now()->format('m-Y'), $cncnetGame, 1);
+
+        $top = [];
+        foreach ($players as $player)
+        {
+            $top[] = ["name" => $player->username, "points" => $player->points];
+        }
+        return array_slice($top, 0, $count);
+    }
 }

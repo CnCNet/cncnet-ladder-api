@@ -75,6 +75,7 @@ Route::group(['prefix' => 'api/v1/'], function ()
     Route::get('/ladder/{game}', 'ApiLadderController@getLadder');
     Route::get('/ladder/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');
     Route::get('/ladder/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
+    Route::get('/ladder/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
 
     // Debug
     Route::get('/ladder/raw/{gameId}', 'ApiLadderController@viewRawGame');
