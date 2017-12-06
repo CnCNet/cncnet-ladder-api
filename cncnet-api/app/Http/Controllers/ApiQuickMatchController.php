@@ -33,12 +33,19 @@ class ApiQuickMatchController extends Controller
 
     public function statsRequest(Request $request, $ladderAbbrev = null)
     {
-        $hourAgo = Carbon::now()->subHour()->toDateTimeString();
+        $timediff = Carbon::now()->subHour()->toDateTimeString();
         $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
-        $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $hourAgo)
+        $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $timediff)
                                                   ->where('ladder_id', '=', $ladder_id)
                                                   ->count();
-        return ['recentMatchedPlayers' => $recentMatchedPlayers ];
+        $queuedPlayers = \App\QmMatchPlayer::where('ladder_id', '=', $ladder_id)->whereNull('qm_match_id')->count();
+        $recentMatches = \App\QmMatch::where('created_at', '>', $timediff)
+                                     ->where('ladder_id', '=', $ladder_id)
+                                     ->count();
+
+        return ['recentMatchedPlayers' => $recentMatchedPlayers,
+                'queuedPlayers' => $queuedPlayers,
+                'recentMatches' => $recentMatches ];
     }
 
     public function mapListRequest(Request $request, $ladderAbbrev = null)
@@ -281,7 +288,7 @@ class ApiQuickMatchController extends Controller
                 else {
                     // We couldn't make a match
                     $qmPlayer->touch();
-                    return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5);
+                    return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1);
                 }
             }
             // If we've made it this far, lets send the spawn details
