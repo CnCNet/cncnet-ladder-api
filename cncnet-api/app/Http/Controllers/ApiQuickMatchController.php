@@ -99,7 +99,7 @@ class ApiQuickMatchController extends Controller
 
         case "match me up":
             // Deprecate older versions
-            if ($request->version  < 1.32)
+            if ($request->version  < 1.39)
             {
                 return array("type" => "fatal",
                              "message" => "Quick Match Version {$request->version} is no longer supported.\n".
