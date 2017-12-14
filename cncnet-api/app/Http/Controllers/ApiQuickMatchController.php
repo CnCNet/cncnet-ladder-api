@@ -354,7 +354,7 @@ class ApiQuickMatchController extends Controller
                   ,"SlowUnitBuild"   =>   $qmMap->slow_unit_build
                   ,"ShroudRegrows"   =>   $qmMap->shroud_regrows
                   ,"AIPlayers"       =>   $qmMap->ai_player_count
-                  ,"Tournament"      =>   "Yes"
+                  ,"Tournament"      =>   1
                    // Filter null values
             ], function($var){return !is_null($var);} );
 
