@@ -27,7 +27,7 @@ class QmMap extends Model {
 
     public static function findMapsByLadder($id)
     {
-        $qmMaps = \App\QmMap::valid()->where('ladder_id', $id)->get();
+        $qmMaps = \App\QmMap::valid()->where('ladder_id', $id)->orderby('bit_idx', 'ASC')->get();
 
         return $qmMaps->map( function($qmMap)
         {
