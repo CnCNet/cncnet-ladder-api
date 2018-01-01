@@ -34,8 +34,7 @@
         <div class="feature">
             <div class="row">
                 <div class="col-md-12">
-                    <h3><strong>Psst...</strong> Points system has been updated for December Ladders!</h3>
-                    <p class="lead">Read more about the changes <a href="https://forums.cncnet.org/topic/7847-some-changes-to-the-ladder-for-december-2017/">in our forums</a></p>
+                    <h3><strong>Follow all Ladder Changes</strong> <a href="https://forums.cncnet.org/forum/66-cncnet-ladder/">in our forum</a></h3>
                 </div>
 
                 <div class="header">
