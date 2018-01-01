@@ -260,10 +260,17 @@ class ApiQuickMatchController extends Controller
                     if (count($psides) > $qmMap->bit_idx)
                         $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
 
+
+                    if ($qmPlayer->actual_side < -1)
+                    {
+                        $qmPlayer->actual_side = $qmPlayer->chosen_side;
+                    }
+
                     if ($qmPlayer->actual_side == -1)
                     {
                         $qmPlayer->actual_side = $ladder_rules->all_sides()[mt_rand(0, count($ladder_rules->all_sides()) - 1)];
                     }
+
                     $qmPlayer->save();
 
                     $color = 1;
@@ -273,6 +280,11 @@ class ApiQuickMatchController extends Controller
 
                         if (count($osides) > $qmMap->bit_idx)
                             $opn->actual_side = $osides[$qmMap->bit_idx];
+
+                        if ($opn->actual_side  < -1)
+                        {
+                            $opn->actual_side = $opn->chosen_side;
+                        }
 
                         if ($opn->actual_side == -1)
                         {
