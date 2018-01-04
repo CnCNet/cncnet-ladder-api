@@ -224,7 +224,7 @@ class ApiQuickMatchController extends Controller
                         $common_bits &= $opn->map_bitfield;
                     }
 
-                    $map_count = \App\QmMap::where('ladder_id', $qmPlayer->ladder_id)->get()->count();
+                    $map_count = \App\QmMap::valid()->where('ladder_id', $qmPlayer->ladder_id)->get()->count();
                     for ($i = 0; $i < $map_count; $i++)
                     {
                         $bit = 1 << $i;
@@ -240,7 +240,8 @@ class ApiQuickMatchController extends Controller
                     $qmMatch = new \App\QmMatch();
                     $qmMatch->status = "Started";
                     $qmMatch->ladder_id = $qmPlayer->ladder_id;
-                    $qmMatch->qm_map_id = \App\QmMap::where('bit_idx', $common_maps[$map_idx])
+                    $qmMatch->qm_map_id = \App\QmMap::valid()
+                                                    ->where('bit_idx', $common_maps[$map_idx])
                                                     ->where('ladder_id', $qmMatch->ladder_id)->first()->id;
                     $qmMatch->seed = mt_rand(-2147483647, 2147483647);
                     $qmMatch->save();
