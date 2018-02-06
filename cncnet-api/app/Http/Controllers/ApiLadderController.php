@@ -339,6 +339,8 @@ class ApiLadderController extends Controller
 
     public function getLadderTopList(Request $request, $cncnetGame = null, $count = 10)
     {
+        if ($count > 100) return;
+
         $players = $this->ladderService->getLadderPlayers(Carbon::now()->format('m-Y'), $cncnetGame, 1);
 
         $top = [];
@@ -347,5 +349,26 @@ class ApiLadderController extends Controller
             $top[] = ["name" => $player->username, "points" => $player->points];
         }
         return array_slice($top, 0, $count);
+    }
+
+    public function getLadderRecentGamesList(Request $request, $cncnetGame = null, $count = 10)
+    {
+        if ($count > 100) return;
+
+        $recentGames = $this->ladderService->getRecentLadderGames(Carbon::now()->format('m-Y'), $request->game, $count);
+
+        foreach($recentGames as $rg)
+        {
+            $rg["players"] = $rg->playerGameReports()
+                ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
+                ->get();
+
+            foreach($rg["players"] as $p)
+            {
+                $p["username"] = $p->player()->first()->username;
+            }
+        }
+
+        return $recentGames;
     }
 }
