@@ -272,7 +272,12 @@ class ApiLadderController extends Controller
             $wol = (int)(64 * $we);
 
             $eloAdjust = 0;
-            if ($playerGR->won || ($playerGR->disconnected && $playerGR->player_id == $gameReport->player_id))
+            
+            if ($playerGR->draw)
+            {
+                $playerGR->points = 0;
+            }
+            else if ($playerGR->won || ($playerGR->disconnected && $playerGR->player_id == $gameReport->player_id))
             {
                 $points = (new PointService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
                 $diff = (int)($points - $ally_average);
