@@ -2979,8 +2979,8 @@ h3.game-intro > span:first-child:after {
   background-image: url(../images/hud/yuri.png);
   width: 150px; }
 
-.ra .faction-uss,
-.ra .faction-ita {
+.ra .faction-russia,
+.ra .faction-italy {
   background-image: url(../images/hud/ra_soviet.png);
   width: 140px; }
 
