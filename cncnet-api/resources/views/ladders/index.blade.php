@@ -75,7 +75,7 @@
                 <?php $url = "/ladder/". $ladderWinners["short"] . "/" . $ladderWinners["abbreviation"] . "/player/" . $player->username; ?>
                 
                 <div class="col-xs-12 col-md-6">
-                    <a href="{{ $url }}" title="View {{$player->username}} 's profile">
+                    <a href="{{ $url }}" title="View {{$player->username}}'s profile">
                         <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $ladderWinners["game"]}}-cover-masters.png">
                             <div class="details tier-league-cards">
                                 <div class="type">
