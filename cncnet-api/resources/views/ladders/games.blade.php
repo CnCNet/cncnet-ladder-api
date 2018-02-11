@@ -33,11 +33,6 @@
     <div class="container">
         <div class="feature">
             <div class="row">
-                <div class="col-md-12">
-                    <h3><strong>Psst...</strong> Points system has been updated for December Ladders!</h3>
-                    <p class="lead">Read more about the changes <a href="https://forums.cncnet.org/topic/7847-some-changes-to-the-ladder-for-december-2017/">in our forums</a></p>
-                </div>
-
                 <div class="header">
                     <div class="col-md-12">
                         <h3><strong>1vs1</strong> Games</h3>
@@ -55,5 +50,4 @@
         </div>
     </div>
 </section>
-
 @endsection
