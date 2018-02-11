@@ -30,7 +30,7 @@
 @section('content')
 <?php $g = $history->ladder()->first()->game; ?>
 
-<div class="game">
+<div class="game {{ $g }}">
 
     <section class="game-statistics">
         <div class="game-details">

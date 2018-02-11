@@ -160,7 +160,6 @@ h3.game-intro > span:first-child:after
     border: 1px solid #e900f3;
 }
 
-
 .faction
 {
     position: absolute;
@@ -209,29 +208,32 @@ h3.game-intro > span:first-child:after
     width: 150px;
 }
 
-.faction-uss,
-.faction-ita
+// TODO - what are these non abbreviated?
+.ra .faction-uss,
+.ra .faction-ita
 {
     background-image: url(../images/hud/ra_soviet.png);
     width: 140px;
 }
 
-.faction-spa,
-.faction-eng,
-.faction-ger,
-.faction-fra,
-.faction-gre
+.ra .faction-spain,
+.ra .faction-england,
+.ra .faction-germany,
+.ra .faction-france,
+.ra .faction-greece
 {
      background-image: url(../images/hud/ra_allies.png);
-     width: 140px;
+     width: 187px;
 }
 
-.faction-gdi {
+.faction-gdi 
+{
      background-image: url(../images/hud/ts_gdi.png);
      width: 150px;
 }
 
-.faction-nod {
+.faction-nod 
+{
      background-image: url(../images/hud/ts_nod.png);
      width: 150px;
 }
@@ -242,8 +244,10 @@ h3.game-intro > span:first-child:after
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 992px)
 {
-    .faction {
-    background-size: auto; }
+    .faction 
+    {
+        background-size: auto; 
+    }
     .faction-great,
     .faction-america,
     .faction-korea,
@@ -262,12 +266,14 @@ h3.game-intro > span:first-child:after
     .faction-fra,
     .faction-gre,
     .faction-gdi,
-    .faction-nod  {
+    .faction-nod  
+    {
         background-size: 100%;
     }
 }
 
-.country {
+.country 
+{
   position: absolute;
   right: 30px;
   bottom: 25px;

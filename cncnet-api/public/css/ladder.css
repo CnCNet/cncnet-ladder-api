@@ -2974,18 +2974,18 @@ h3.game-intro > span:first-child:after {
   background-image: url(../images/hud/yuri.png);
   width: 150px; }
 
-.faction-uss,
-.faction-ita {
+.ra .faction-uss,
+.ra .faction-ita {
   background-image: url(../images/hud/ra_soviet.png);
   width: 140px; }
 
-.faction-spa,
-.faction-eng,
-.faction-ger,
-.faction-fra,
-.faction-gre {
+.ra .faction-spain,
+.ra .faction-england,
+.ra .faction-germany,
+.ra .faction-france,
+.ra .faction-greece {
   background-image: url(../images/hud/ra_allies.png);
-  width: 140px; }
+  width: 187px; }
 
 .faction-gdi {
   background-image: url(../images/hud/ts_gdi.png);
