@@ -48,6 +48,8 @@
                         <h3 class="game-intro text-center">
                         @foreach($playerGameReports as $pgr)
                             <?php $player = $pgr->player()->first(); ?>
+                            <?php $url = "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username; ?>
+                                <a href="{{ $url }}" title="View {{ $player->username }}'s profile">
                                 <span class="player">
                                     {{ $player->username or "Unknown" }} <strong>@if($pgr->points >= 0) +@endif{{ $pgr->points or "" }}</strong>
                                     @if($pgr->won)
@@ -60,8 +62,10 @@
                                         <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                     @endif
                                 </span>
+                                </a>
 
                                 @if ($playerGameReports->count() == 1)
+                                <a href="{{ $url }}" title="View {{ $player->username }}'s profile">
                                     <span class="player">
                                         {{ $player->username or "Unknown" }} <strong>@if($pgr->points >= 0) +@endif{{ $pgr->points or "" }}</strong>
                                         @if($pgr->won)
@@ -74,6 +78,7 @@
                                             <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                         @endif
                                     </span>
+                                </a>
                                 @endif
                         @endforeach
                         </h3>

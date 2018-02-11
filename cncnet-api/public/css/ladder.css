@@ -2852,6 +2852,11 @@ hr {
 .game .dark-texture:before {
   background: none; }
 
+h3.game-intro a {
+  color: #fff; }
+  h3.game-intro a:hover {
+    color: #0068d2; }
+
 h3.game-intro > span:first-child:after {
   content: " vs ";
   font-size: 42px;
