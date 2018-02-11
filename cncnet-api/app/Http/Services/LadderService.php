@@ -54,7 +54,8 @@ class LadderService
         return \App\LadderHistory::where("ladder_history.starts", ">=", $start)
             ->where("ladder_history.ladder_id", "=", $ladder->id)
             ->limit($limit)
-            ->get();
+            ->get()
+            ->reverse();
     }
 
     public function getActiveLadderByDate($date, $cncnetGame = null)
@@ -186,7 +187,7 @@ class LadderService
         ];
     }
 
-    public function getLadderPlayers($date, $cncnetGame, $tier = 1)
+    public function getLadderPlayers($date, $cncnetGame, $tier = 1, $paginate = true)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
 
@@ -196,7 +197,7 @@ class LadderService
         if($history == null)
             return "No ladder found";
 
-        return \App\Player::where("ladder_id", "=", $history->ladder->id)
+        $query = \App\Player::where("ladder_id", "=", $history->ladder->id)
             ->join('player_game_reports as pgr', 'pgr.player_id', '=', 'players.id')
             ->join('game_reports', 'game_reports.id', '=', 'pgr.game_report_id')
             ->join('games', 'games.id', '=', 'game_reports.game_id')
@@ -212,7 +213,13 @@ class LadderService
                 \DB::raw("COUNT(games.id) as total_games"),
                 \DB::raw("SUM(pgr.won) as total_wins"), // TODO
                 "players.*")
-            ->orderBy("points", "DESC")
-            ->paginate(45);
+            ->orderBy("points", "DESC");
+
+        if ($paginate)
+        {
+            return $query->paginate(45);
+        }
+
+        return $query->get();
     }
 }
