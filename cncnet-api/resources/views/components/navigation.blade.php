@@ -29,20 +29,20 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Downloads <span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li role="separator" class="nav-title">C&amp;C Originals</li>
-                        <li><a href="command-and-conquer">Command &amp; Conquer</a></li>
-                        <li><a href="red-alert">Red Alert</a></li>
-                        <li><a href="dune-2000">Dune 2000</a></li>
-                        <li><a href="tiberian-sun">Tiberian Sun</a></li>
-                        <li><a href="red-alert-2">Red Alert 2</a></li>
-                        <li><a href="yuris-revenge">Yuri's Revenge</a></li>
-                        <li><a href="renegade">Renegade</a></li>
+                        <li><a href="//cncnet.org/command-and-conquer">Command &amp; Conquer</a></li>
+                        <li><a href="//cncnet.org/red-alert">Red Alert</a></li>
+                        <li><a href="//cncnet.org/dune-2000">Dune 2000</a></li>
+                        <li><a href="//cncnet.org/tiberian-sun">Tiberian Sun</a></li>
+                        <li><a href="//cncnet.org/red-alert-2">Red Alert 2</a></li>
+                        <li><a href="//cncnet.org/yuris-revenge">Yuri's Revenge</a></li>
+                        <li><a href="//cncnet.org/renegade">Renegade</a></li>
                         <li role="separator" class="divider"></li>
                         <li role="separator" class="nav-title">C&amp;C Mods</li>
-                        <li><a href="dawn-of-the-tiberium-age">Dawn of the Tiberium Age</a></li>
-                        <li><a href="mental-omega">Mental Omega</a></li>
-                        <li><a href="twisted-insurrection">Twisted Insurrection</a></li>
+                        <li><a href="//cncnet.org/dawn-of-the-tiberium-age">Dawn of the Tiberium Age</a></li>
+                        <li><a href="//cncnet.org/mental-omega">Mental Omega</a></li>
+                        <li><a href="//cncnet.org/twisted-insurrection">Twisted Insurrection</a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="download">View All Downloads</a></li>
+                        <li><a href="//cncnet.org/download">View All Downloads</a></li>
                     </ul>
                 </li>
                 <li><a href="//forums.cncnet.org">Forums</a></li>
