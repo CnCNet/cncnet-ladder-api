@@ -2979,18 +2979,18 @@ h3.game-intro > span:first-child:after {
   background-image: url(../images/hud/yuri.png);
   width: 150px; }
 
-.ra .faction-russia,
-.ra .faction-italy {
+.ra .faction-uss,
+.ra .faction-ita {
   background-image: url(../images/hud/ra_soviet.png);
   width: 140px; }
 
-.ra .faction-spain,
-.ra .faction-england,
-.ra .faction-germany,
-.ra .faction-france,
-.ra .faction-greece {
+.ra .faction-spa,
+.ra .faction-eng,
+.ra .faction-ger,
+.ra .faction-fra,
+.ra .faction-gre {
   background-image: url(../images/hud/ra_allies.png);
-  width: 187px; }
+  width: 140px; }
 
 .faction-gdi {
   background-image: url(../images/hud/ts_gdi.png);
@@ -3399,7 +3399,7 @@ h3.game-intro > span:first-child:after {
 .ra-cameo.cameo-barricon {
   background-position: -960px 0; }
 
-.ra-cameo.cameo-boaticnh {
+.ra-cameo.cameo-pticon {
   background-position: -1024px 0; }
 
 .ra-cameo.cameo-brikicon {
