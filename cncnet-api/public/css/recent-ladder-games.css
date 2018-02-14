@@ -1,0 +1,49 @@
+.game-box 
+{
+    background: #1c1d1f;
+    padding: 0;
+    font-size: 16px;
+    clear: both;
+}
+
+.game-box h4.title 
+{
+    text-align: center;
+    padding: 15px 0;
+    margin: 0;
+    font-weight: bold;
+}
+
+.game-box .players 
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    margin-bottom: 8px;
+    padding-bottom: 10px;
+}
+
+.game-box .player 
+{
+    float: left;
+    padding: 15px;
+    margin: 0;
+}
+
+.game-box .player.lost 
+{
+    color: #03bcd4;
+}
+
+.game-box .player.won 
+{
+    color: #24f900;
+}
+
+.game-box .points 
+{
+    padding: 0 6px;
+    font-weight: bold;
+    font-size: 14px;
+}
