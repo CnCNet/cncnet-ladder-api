@@ -360,7 +360,7 @@ class ApiLadderController extends Controller
     {
         if ($count > 100) return;
 
-        $recentGames = $this->ladderService->getRecentLadderGames(Carbon::now()->format('m-Y'), $request->game, $count);
+        $recentGames = $this->ladderService->getRecentValidLadderGames(Carbon::now()->format('m-Y'), $request->game, $count);
 
         foreach($recentGames as $rg)
         {
@@ -373,7 +373,6 @@ class ApiLadderController extends Controller
                 $p["username"] = $p->player()->first()->username;
             }
         }
-
         return $recentGames;
     }
 }

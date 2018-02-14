@@ -124,6 +124,24 @@ class LadderService
             ->get();
     }
 
+    public function getRecentValidLadderGames($date, $cncnetGame, $limit = 4)
+    {
+        $history = $this->getActiveLadderByDate($date, $cncnetGame);
+        if ($history == null)
+        {
+            return [];
+        }
+
+        return \App\Game::where("ladder_history_id", "=", $history->id)
+            ->join("game_reports as gr", "gr.game_id", "=", "games.id")
+            ->where("gr.valid", "=", true)
+            ->where("gr.best_report", "=", true)
+            ->select("games.*")
+            ->orderBy("games.id", "DESC")
+            ->limit($limit)
+            ->get();
+    }
+
     public function getRecentLadderGamesPaginated($date, $cncnetGame)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);

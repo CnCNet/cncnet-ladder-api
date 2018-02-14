@@ -66,6 +66,7 @@ Route::group(['prefix' => 'api/v1/'], function ()
 
     // General Endpoints
     Route::get('/ping', 'ApiLadderController@pingLadder');
+    Route::get('/ladder/{game}/games/recent/{count}', 'ApiLadderController@getLadderRecentGamesList');
 
     // Player Endpoints
     Route::post('/player/{username}', 'ApiPlayerController@createPlayer');
@@ -76,7 +77,6 @@ Route::group(['prefix' => 'api/v1/'], function ()
     Route::get('/ladder/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');
     Route::get('/ladder/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
     Route::get('/ladder/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
-    Route::get('/ladder/{game}/games/recent/{count}', 'ApiLadderController@getLadderRecentGamesList');
 
     // Debug
     Route::get('/ladder/raw/{gameId}', 'ApiLadderController@viewRawGame');
