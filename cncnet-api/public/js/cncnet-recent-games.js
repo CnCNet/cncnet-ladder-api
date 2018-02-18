@@ -18,6 +18,8 @@
 
     function onFilterChanged(e)
     {
+        e.preventDefault();
+
         var index = e.target.options.selectedIndex;
         var option = e.target.options[e.target.options.selectedIndex];
         filteredGame = option.value;
@@ -35,7 +37,7 @@
     {
         if (filteredGame == null)
         {
-            filteredGame = "yr";
+            filteredGame = "ra"; // First in list
         }
 
         var gamesList = document.getElementById("recent-games-list");
@@ -43,7 +45,11 @@
 
         var url = baseApiUrl + filteredGame + recentGamesEndpoint;
 
-        $.ajax({ url: url, dataType: "json", crossDomain: true })
+        $.ajax(
+            { 
+                url: url, 
+                dataType: "json"
+            })
             .done((games) => onRecentGamesReceived(games))
             .fail((error) => onRecentGamesError(error));
     }

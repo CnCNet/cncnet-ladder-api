@@ -19,7 +19,7 @@ class CorsMiddleware
         $headers = [
             'Access-Control-Allow-Origin' => 'https://forums.cncnet.org',
             'Access-Control-Allow-Methods' => 'GET, POST, PUT, DELETE, OPTIONS',
-            'Access-Control-Allow-Headers' => 'Content-Type, Accept, Authorization, X-Requested-With, Application'
+            'Access-Control-Allow-Headers' => 'Content-Type, Accept, Authorization, X-Requested-With, Application, Client-ID'
 		];
 		
         if($response instanceof $IlluminateResponse)
