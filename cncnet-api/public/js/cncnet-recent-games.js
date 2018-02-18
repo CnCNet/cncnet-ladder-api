@@ -65,7 +65,12 @@
         render(games);
         
         // IPB Specific
-        document.querySelector(".ipsLayout_sidebarUsed .ladderWidget").classList.remove("hidden");
+        var ipbSidebar = document.querySelector(".ipsLayout_sidebarUsed .ladderWidget");
+        if (ipbSidebar == null) 
+        {
+            return;
+        }
+        ipbSidebar.classList.remove("hidden");
     }
 
     function onRecentGamesError(error)
