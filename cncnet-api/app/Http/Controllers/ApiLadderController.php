@@ -360,17 +360,21 @@ class ApiLadderController extends Controller
     {
         if ($count > 100) return;
 
-        $recentGames = $this->ladderService->getRecentValidLadderGames(Carbon::now()->format('m-Y'), $request->game, $count);
+        $date = Carbon::now()->format('m-Y');
+        $recentGames = $this->ladderService->getRecentValidLadderGames($date, $request->game, $count);
 
         foreach($recentGames as $rg)
         {
+            $rg["url"] = "/ladder/" . $date . "/" . $request->game . "/games/" . $rg->id;
+            $rg["map_url"] = "/images/maps/". $request->game . "/" . $rg->hash . ".png";
             $rg["players"] = $rg->playerGameReports()
                 ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
                 ->get();
-
+            
             foreach($rg["players"] as $p)
             {
                 $p["username"] = $p->player()->first()->username;
+                $p["url"] = "/ladder/" . $date . "/" . $request->game . "/player/" . $p->username;
             }
         }
         return $recentGames;

@@ -1,78 +1,113 @@
 // Fetch Recent Ladder Games Example
 (function ()
 {
-    var baseUrl = "//staging.cnc-comm.com/api/v1/ladder/yr/games/recent/5";
+    var filteredGame = null;
 
-    function onGetRecentGames($game)
+    // Endpoints
+    var baseLadderUrl = "//ladder.cncnet.org/";
+    var baseApiUrl = "//ladder.cncnet.org/api/v1/ladder/";
+    var recentGamesEndpoint = "/games/recent/5";
+
+    // Filters
+    var ladderGameSelector = document.getElementById("ladder-game-selector");
+    var ladderGameContainer = document.querySelector(".ladderWidget .dropdown-list");
+    ladderGameSelector.addEventListener("click", (e) => onToggleFilter(e), false);
+
+    var filterChange = document.querySelector(".ladderWidget .dropdown-list select");
+    filterChange.addEventListener("change", (e) => onFilterChanged(e), false);
+
+    function onFilterChanged(e)
     {
-        $.ajax({ url: baseUrl, dataType: "json", crossDomain: true })
+        var index = e.target.options.selectedIndex;
+        var option = e.target.options[e.target.options.selectedIndex];
+        filteredGame = option.value;
+
+        getRecentGames();
+    }
+
+    function onToggleFilter(e)
+    {
+        ladderGameContainer.classList.toggle("hidden")
+    }
+
+    function getRecentGames()
+    {
+        if (filteredGame == null)
+        {
+            filteredGame = "yr";
+        }
+
+        var gamesList = document.getElementById("recent-games-list");
+        gamesList.innerHTML = "";
+
+        var url = baseApiUrl + filteredGame + recentGamesEndpoint;
+
+        $.ajax({ url: url, dataType: "json", crossDomain: true })
             .done((games) => onRecentGamesReceived(games))
-            .fail((error) => onRecentGamesErrorReceived(error));
+            .fail((error) => onRecentGamesError(error));
     }
 
     function onRecentGamesReceived(response)
     {
         var games = response;
+        if (games == null)
+        {
+            return;
+        }
+        render(games);
+        
+        // IPB Specific
+        document.querySelector(".ipsLayout_sidebarUsed .ladderWidget").classList.remove("hidden");
+    }
+
+    function onRecentGamesError(error)
+    {
+        console.log("Error - ", error);
+    }
+
+    function render(games)
+    {
         var gamesList = document.getElementById("recent-games-list");
 
         for (var i = 0; i < games.length; i++)
         {
             var game = games[i];
+            var item = "";
 
-            // Create list item
-            var gameBoxContainer = document.createElement("li");
-            gameBoxContainer.classList.add("game-box");
-            
-            // Create players container
-            var playersContainer = document.createElement("div");
-            playersContainer.classList.add("players");
-            
-            updateGamesList(gameBoxContainer, game.scen, "h4", "title");
+            // List container & Link
+            item += "<li class='game-box'><a href='" + baseLadderUrl + game.url + "'>";
+            item += "<div class='preview' style='background-image:url(" + baseLadderUrl + game.map_url + ")'>";
+            item += "</div>";
 
+            // Map
+            item += "<h4>" + game.scen + "</h4>";
+
+            // Players won/lost & points
+            item += "<div class='players'>";
             for (var j = 0; j < game.players.length; j++)
             {
                 var player = game.players[j];
-                var pointsContainer;
-
+            
                 if (player.won)
                 {
-                    var points = updateGamesList(gameBoxContainer, "+" + player.points, "span", "points");
-                    pointsContainer = updateGamesList(gameBoxContainer, player.username, "h5", "player won");
+                    item += "<h5 class='player won'>";
+                    item += player.username + "<span class='points'>" + player.points + "</span>";
+                    item += "</h5>";
                 }
                 else
                 {
-                    var points = updateGamesList(gameBoxContainer, player.points, "span", "points");
-                    pointsContainer = updateGamesList(gameBoxContainer, player.username, "h5", "player lost");
+                    item += "<h5 class='player lost'>";
+                    item += player.username + "<span class='points'>" + player.points + "</span>";
+                    item += "</h5>";
                 }
 
-                pointsContainer.appendChild(points);
-                playersContainer.appendChild(pointsContainer);
             }
+            item += "</div>";
 
-            gameBoxContainer.appendChild(playersContainer);
-            gamesList.appendChild(gameBoxContainer);
+            item += "</a></li>";
+            gamesList.innerHTML += item;
         }
     }
 
-    function onRecentGamesErrorReceived(error)
-    {
-        console.log("Error - ", error);
-    }
-
-    function updateGamesList(gameListElement, text, type, className)
-    {
-        var gamesList = document.createElement(type);
-        if (text != null)
-        {
-            gamesList.innerText = text;
-            if (className != null)
-            {
-                gamesList.className = className;
-            }
-            gameListElement.appendChild(gamesList);
-        }
-        return gamesList;
-    }
-
-    onGetRecentGames();
+    getRecentGames();
 })();
