@@ -5,7 +5,7 @@
 
     // Endpoints
     var baseLadderUrl = "//ladder.cncnet.org/";
-    var baseApiUrl = "//ladder.cncnet.org/api/v1/ladder/";
+    var baseApiUrl = "//staging.cnc-comm.com/api/v1/ladder/";
     var recentGamesEndpoint = "/games/recent/5";
 
     // Filters
@@ -27,6 +27,7 @@
 
     function onToggleFilter(e)
     {
+        e.preventDefault();
         ladderGameContainer.classList.toggle("hidden")
     }
 
@@ -91,7 +92,7 @@
                 if (player.won)
                 {
                     item += "<h5 class='player won'>";
-                    item += player.username + "<span class='points'>" + player.points + "</span>";
+                    item += player.username + "<span class='points'> +" + player.points + "</span>";
                     item += "</h5>";
                 }
                 else
@@ -101,6 +102,10 @@
                     item += "</h5>";
                 }
 
+                if (j == 0)
+                {
+                    item += "<span class='vs'>VS</span>";
+                }
             }
             item += "</div>";
 
