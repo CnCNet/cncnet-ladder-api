@@ -24,6 +24,7 @@
         var option = e.target.options[e.target.options.selectedIndex];
         filteredGame = option.value;
 
+        setLadderGamePref(filteredGame);
         getRecentGames();
     }
 
@@ -120,5 +121,18 @@
         }
     }
 
+    function getLadderGamePref()
+    {
+        var ladderGamePref = Cookies.get("ladder_game_pref");
+        return ladderGamePref != undefined ? ladderGamePref : null;
+    }
+
+    function setLadderGamePref(game)
+    {
+        var ladderGamePref = Cookies.set("ladder_game_pref",game);
+        console.log("setLadderGamePref ** ladderGamePref", ladderGamePref);
+    }
+
+    filteredGame = getLadderGamePref();
     getRecentGames();
 })();
