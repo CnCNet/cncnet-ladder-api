@@ -164,6 +164,30 @@ class ApiLadderController extends Controller
                 $playerGR->spectator = $pgr->spectator;
                 $playerGR->save();
             }
+
+            if (($gameReport->pings_sent - $gameReport->pings_received + 5)
+                <
+                $bestReport->pings_sent - $bestReport->pings_received)
+            {
+                $bestReport->best_report = false;
+                $gameReport->best_report = true;
+                $game->game_report_id = $gameReport->id;
+                $game->save();
+                $gameReport->save();
+                $bestReport->save();
+                return;
+            }
+            else if ($gameReport->pings_sent - $gameReport->pings_received < 7)
+            {
+                $bestReport->best_report = false;
+                $wash->best_report = true;
+                $game->game_report_id = $wash->id;
+                $game->save();
+                $wash->save();
+                $bestReport->save();
+                return;
+            }
+
             return;
         }
 
@@ -181,18 +205,6 @@ class ApiLadderController extends Controller
 
         // Prefer the longer game
         if ($bestReport->duration + 5 < $gameReport->duration)
-        {
-            $bestReport->best_report = false;
-            $gameReport->best_report = true;
-            $game->game_report_id = $gameReport->id;
-            $game->save();
-            $gameReport->save();
-            $bestReport->save();
-            return;
-        }
-        else if ($gameReport->pings_sent - $gameReport->pings_received
-                 <
-                 $bestReport->pings_sent - $bestReport->pings_received)
         {
             $bestReport->best_report = false;
             $gameReport->best_report = true;
@@ -272,7 +284,7 @@ class ApiLadderController extends Controller
             $wol = (int)(64 * $we);
 
             $eloAdjust = 0;
-            
+
             if ($playerGR->draw)
             {
                 $playerGR->points = 0;
