@@ -1,73 +1,143 @@
 // Fetch Recent Ladder Games Example
 (function ()
 {
-    var baseUrl = "http://ladder.cncnet.org/api/v1/ladder/yr/games/recent/5";
+    var filteredGame = null;
 
-    function onGetRecentGames($game)
+    // Endpoints
+    var baseLadderUrl = "//ladder.cncnet.org/";
+    var baseApiUrl = "//staging.cnc-comm.com/api/v1/ladder/";
+    var recentGamesEndpoint = "/games/recent/5";
+
+    // Filters
+    var ladderGameSelector = document.getElementById("ladder-game-selector");
+    var ladderGameContainer = document.querySelector(".ladderWidget .dropdown-list");
+    ladderGameSelector.addEventListener("click", (e) => onToggleFilter(e), false);
+
+    var filterChange = document.querySelector(".ladderWidget .dropdown-list select");
+    filterChange.addEventListener("change", (e) => onFilterChanged(e), false);
+
+    function onFilterChanged(e)
     {
-        $.ajax
-        ({ 
-            url: baseUrl 
-        })
-        .complete((response) => onRecentGamesReceived(response))
-        .error((err) => onRecentGamesErrorReceived(err));
+        e.preventDefault();
+
+        var index = e.target.options.selectedIndex;
+        var option = e.target.options[e.target.options.selectedIndex];
+        filteredGame = option.value;
+
+        setLadderGamePref(filteredGame);
+        getRecentGames();
+    }
+
+    function onToggleFilter(e)
+    {
+        e.preventDefault();
+        ladderGameContainer.classList.toggle("hidden")
+    }
+
+    function getRecentGames()
+    {
+        if (filteredGame == null)
+        {
+            filteredGame = "ra"; // First in list
+        }
+
+        var gamesList = document.getElementById("recent-games-list");
+        gamesList.innerHTML = "";
+
+        var url = baseApiUrl + filteredGame + recentGamesEndpoint;
+
+        $.ajax(
+            { 
+                url: url, 
+                dataType: "json"
+            })
+            .done((games) => onRecentGamesReceived(games))
+            .fail((error) => onRecentGamesError(error));
     }
 
     function onRecentGamesReceived(response)
     {
         var games = response;
-        var el = document.getElementById("recent-games");
-
-        for (var i = 0; i < games.length; i++)
+        if (games == null)
         {
-            var game = games[i];
-            var li = document.createElement("li");
-            li.classList.add("game-box");
-
-            updateList(li, game.scen, "h4", "title");
-
-            for (var j = 0; j < game.players.length; j++)
-            {
-                var player = game.players[j];
-                var pElement;
-
-                if (player.won)
-                {
-                    var points = updateList(li, "+" + player.points, "span", "points");
-                    pElement = updateList(li, player.username, "h5", "player won");
-                }
-                else
-                {
-                    var points = updateList(li, player.points, "span", "points");
-                    pElement = updateList(li, player.username, "h5", "player lost");
-                }
-
-                pElement.appendChild(points);
-            }
-
-            el.appendChild(li);
+            return;
         }
+        render(games);
+        
+        // IPB Specific
+        var ipbSidebar = document.querySelector(".ipsLayout_sidebarUsed .ladderWidget");
+        if (ipbSidebar == null) 
+        {
+            return;
+        }
+        ipbSidebar.classList.remove("hidden");
     }
 
-    function onRecentGamesErrorReceived(error)
+    function onRecentGamesError(error)
     {
         console.log("Error - ", error);
     }
 
-    function updateList(element, text, type, className)
+    function render(games)
     {
-        var el = document.createElement(type);
-        if (text != null)
+        var gamesList = document.getElementById("recent-games-list");
+
+        for (var i = 0; i < games.length; i++)
         {
-            el.innerText = text;
-            if (className != null)
+            var game = games[i];
+            var item = "";
+
+            // List container & Link
+            item += "<li class='game-box'><a href='" + baseLadderUrl + game.url + "'>";
+            item += "<div class='preview' style='background-image:url(" + baseLadderUrl + game.map_url + ")'>";
+            item += "</div>";
+
+            // Map
+            item += "<h4>" + game.scen + "</h4>";
+
+            // Players won/lost & points
+            item += "<div class='players'>";
+            for (var j = 0; j < game.players.length; j++)
             {
-                el.className = className;
+                var player = game.players[j];
+            
+                if (player.won)
+                {
+                    item += "<h5 class='player won'>";
+                    item += player.username + "<span class='points'> +" + player.points + "</span>";
+                    item += "</h5>";
+                }
+                else
+                {
+                    item += "<h5 class='player lost'>";
+                    item += player.username + "<span class='points'>" + player.points + "</span>";
+                    item += "</h5>";
+                }
+
+                if (j == 0)
+                {
+                    item += "<span class='vs'>VS</span>";
+                }
             }
-            element.appendChild(el);
+            item += "</div>";
+
+            item += "</a></li>";
+            gamesList.innerHTML += item;
         }
-        return el;
     }
 
-    onGetRecentGames();
+    function getLadderGamePref()
+    {
+        var ladderGamePref = Cookies.get("ladder_game_pref");
+        return ladderGamePref != undefined ? ladderGamePref : null;
+    }
+
+    function setLadderGamePref(game)
+    {
+        var ladderGamePref = Cookies.set("ladder_game_pref",game);
+        console.log("setLadderGamePref ** ladderGamePref", ladderGamePref);
+    }
+
+    filteredGame = getLadderGamePref();
+    getRecentGames();
 })();

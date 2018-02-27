@@ -1,0 +1,100 @@
+.game-box 
+{
+    background: #1c1d1f;
+    padding: 0;
+    font-size: 16px;
+    clear: both;
+    text-align: center;
+}
+
+.game-box h4.title 
+{
+    text-align: center;
+    padding: 15px 0;
+    margin: 0!important;
+    font-weight: bold;
+}
+
+.game-box .players 
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    margin-bottom: 8px;
+    padding-bottom: 10px;
+}
+
+.game-box .player 
+{
+    float: left;
+    padding: 15px;
+    margin: 0;
+}
+
+.game-box .player.lost 
+{
+    color: #03bcd4;
+}
+
+.game-box .player.won 
+{
+    color: #24f900;
+}
+
+.game-box .points 
+{
+    margin-left: 5px;
+    margin-right: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.game-box .vs 
+{
+    color: #fff!important;
+    font-weight: bold;
+}
+
+.game-box .preview 
+{
+    position: relative;
+    height: 180px;
+    background-repeat: no-repeat;
+    background-color: #000;
+    border-radius: 5px 5px 0 0;
+    transition: all 4s;
+    transition-delay: 0.1s;
+}
+
+.game-box .preview:hover 
+{
+    background-position: 50% 100%;
+}
+
+/* IPB */
+.ladderWidget i 
+{
+    float: right;
+} 
+
+.ladderWidget .dropdown-list select 
+{
+    text-align: center;
+    color: #fff;
+    font-weight: bold;
+    outline: 0;
+}
+
+.ladderWidget .dropdown-list label 
+{
+    margin-right: 2px;
+}
+
+.ladderWidget .dropdown-list
+{
+    margin-bottom: 5px;
+    text-align: center;
+    color: #c0c0c0;
+    font-weight: bold;
+}
