@@ -34,4 +34,8 @@ return [
 		'secret' => '',
 	],
 
+    'sparkpost' => [
+        'secret' => env('SPARKPOST_SECRET'),
+    ],
+
 ];
