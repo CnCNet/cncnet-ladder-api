@@ -1,7 +1,27 @@
-@extends('app')
+@extends('layouts.app')
+@section('title', 'Ladder Login')
+
+@section('cover')
+/images/feature/feature-td.jpg
+@endsection
+
+@section('feature')
+<div class="feature-background sub-feature-background">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-8 col-md-offset-2">
+                <h1>
+                    Ladder Password Reset
+                </h1>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
 
 @section('content')
-<div class="container-fluid">
+<section>
+<div class="container">
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
 			<div class="panel panel-default">
@@ -47,4 +67,6 @@
 		</div>
 	</div>
 </div>
+</section>
 @endsection
+
