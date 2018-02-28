@@ -391,4 +391,29 @@ class ApiLadderController extends Controller
         }
         return $recentGames;
     }
+
+    public function getLadderWinners(Request $request, $cncnetGame)
+    {
+        $prevWinners = [];
+        $prevLadders = [];
+  
+        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($cncnetGame, 5)->splice(0,1);
+
+        foreach ($prevLadders as $h)
+        {
+            foreach($h as $history)
+            {
+                $prevWinners[] = [
+                    "game" => $history->ladder->game,
+                    "short" => $history->short,
+                    "full" => $history->ladder->name,
+                    "abbreviation" => $history->ladder->abbreviation,
+                    "ends" => $history->ends,
+                    "players" => $this->ladderService->getLadderPlayers($history->short, $history->ladder->game, 1, false)->splice(0,2)
+                ];
+            }
+        }
+
+        return $prevWinners;
+    }
 }
