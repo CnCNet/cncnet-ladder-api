@@ -146,7 +146,7 @@ return [
 		'App\Providers\RouteServiceProvider',
 
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
-        'Clarification\MailDrivers\Sparkpost\SparkpostServiceProvider'
+        'Clarification\MailDrivers\Sparkpost\SparkpostServiceProvider',
 
 	],
 
