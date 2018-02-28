@@ -24,4 +24,14 @@ class QmMatchPlayer extends Model {
     {
         return DB::where('App\Ladder');
     }
+
+    protected $_map_side_array = null;
+    public function map_side_array()
+    {
+        if ($this->_map_side_array === null)
+        {
+            $this->_map_side_array = explode(',', $this->map_sides);
+        }
+        return $this->_map_side_array;
+    }
 }

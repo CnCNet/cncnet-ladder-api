@@ -217,22 +217,39 @@ class ApiQuickMatchController extends Controller
 
                     // Randomly select a map
                     $common_maps = array();
-                    $common_bits = $qmPlayer->map_bitfield;
-
-                    foreach ($qmOpns as $opn)
-                    {
-                        $common_bits &= $opn->map_bitfield;
-                    }
 
                     $map_count = \App\QmMap::valid()->where('ladder_id', $qmPlayer->ladder_id)->get()->count();
                     for ($i = 0; $i < $map_count; $i++)
                     {
-                        $bit = 1 << $i;
-                        if ($bit & $common_bits)
+                        $match = true;
+                        if (array_key_exists($i, $qmPlayer->map_side_array())
+                            &&
+                            $qmPlayer->map_side_array()[$i] > -2)
                         {
-                            $common_maps[] = $i;
+                            foreach ($qmOpns as $opn)
+                            {
+                                if (array_key_exists($i, $opn->map_side_array())
+                                    &&
+                                    $opn->map_side_array()[$i] < -1)
+                                {
+                                        $match = false;
+                                }
+                            }
                         }
+                        else
+                            $match = false;
+
+                        if ($match)
+                            $common_maps[] = $i;
+
                     }
+                    if (count($common_maps) < 1)
+                    {
+                        $qmPlayer->touch();
+                        return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1,
+                                     "message" => "Didn't have any maps in common with opponent");
+                    }
+
                     $map_idx = mt_rand(0, count($common_maps) - 1);
 
 
@@ -314,6 +331,7 @@ class ApiQuickMatchController extends Controller
 
             $spawnStruct["spawn"]["SpawnLocations"] = array();
 
+            srand($qmMatch->seed); // Seed the RNG for possibly random boolean options
 
             $spawnStruct["spawn"]["Settings"] = array_filter(
                 [  "UIGameMode" =>     $qmMap->game_mode
@@ -334,6 +352,7 @@ class ApiQuickMatchController extends Controller
                   ,"Side" =>           $qmPlayer->actual_side
                   ,"Color" =>          $qmPlayer->color
                   ,"Firestorm" =>      b_to_ini($qmMap->firestorm)
+                  ,"Ra2Mode" =>        b_to_ini($qmMap->ra2_mode)
                   ,"ShortGame" =>      b_to_ini($qmMap->short_game)
                   ,"MultiEngineer" =>  b_to_ini($qmMap->multi_eng)
                   ,"MCVRedeploy" =>    b_to_ini($qmMap->redeploy)
@@ -418,5 +437,6 @@ class ApiQuickMatchController extends Controller
 function b_to_ini($bool)
 {
     if ($bool === null) return $bool;
+    if ($bool == -1) return rand(0,1) ? "Yes" : "No"; // Pray the seed was set earlier or this will cause recons
     return $bool ? "Yes" : "No";
 }

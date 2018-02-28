@@ -240,5 +240,6 @@ class AdminController extends Controller
 function ini_to_b($string)
 {
     if ($string == "Null") return null;
+    if ($string == "Random") return -1;
     return $string == "Yes" ? true : false;
 }
