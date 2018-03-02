@@ -36,4 +36,14 @@ class QmMap extends Model {
             return $qmMap;
         });
     }
+
+    protected $_map_side_array = null;
+    public function sides_array()
+    {
+        if ($this->_map_side_array === null)
+        {
+            $this->_map_side_array = explode(',', $this->allowed_sides);
+        }
+        return $this->_map_side_array;
+    }
 }

@@ -99,7 +99,7 @@ class ApiQuickMatchController extends Controller
 
         case "match me up":
             // Deprecate older versions
-            if ($request->version  < 1.39)
+            if ($request->version  < 1.41)
             {
                 return array("type" => "fatal",
                              "message" => "Quick Match Version {$request->version} is no longer supported.\n".
@@ -218,19 +218,23 @@ class ApiQuickMatchController extends Controller
                     // Randomly select a map
                     $common_maps = array();
 
-                    $map_count = \App\QmMap::valid()->where('ladder_id', $qmPlayer->ladder_id)->get()->count();
-                    for ($i = 0; $i < $map_count; $i++)
+                    $qmMaps = \App\QmMap::valid()->where('ladder_id', $qmPlayer->ladder_id)->get();
+                    foreach ($qmMaps as $qmMap)
                     {
                         $match = true;
-                        if (array_key_exists($i, $qmPlayer->map_side_array())
+                        if (array_key_exists($qmMap->bit_idx, $qmPlayer->map_side_array())
                             &&
-                            $qmPlayer->map_side_array()[$i] > -2)
+                            $qmPlayer->map_side_array()[$qmMap->bit_idx] > -2
+                            &&
+                            in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
                         {
                             foreach ($qmOpns as $opn)
                             {
-                                if (array_key_exists($i, $opn->map_side_array())
+                                if (array_key_exists($qmMap->bit_idx, $opn->map_side_array())
                                     &&
-                                    $opn->map_side_array()[$i] < -1)
+                                    $opn->map_side_array()[$qmMap->bit_idx] < -1
+                                    &&
+                                    in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
                                 {
                                         $match = false;
                                 }
@@ -240,7 +244,7 @@ class ApiQuickMatchController extends Controller
                             $match = false;
 
                         if ($match)
-                            $common_maps[] = $i;
+                            $common_maps[] = $qmMap;
 
                     }
                     if (count($common_maps) < 1)
@@ -257,9 +261,7 @@ class ApiQuickMatchController extends Controller
                     $qmMatch = new \App\QmMatch();
                     $qmMatch->status = "Started";
                     $qmMatch->ladder_id = $qmPlayer->ladder_id;
-                    $qmMatch->qm_map_id = \App\QmMap::valid()
-                                                    ->where('bit_idx', $common_maps[$map_idx])
-                                                    ->where('ladder_id', $qmMatch->ladder_id)->first()->id;
+                    $qmMatch->qm_map_id = $common_maps[$map_idx]->id;
                     $qmMatch->seed = mt_rand(-2147483647, 2147483647);
                     $qmMatch->save();
 
