@@ -31,7 +31,7 @@ class GameService
         $gameReport->best_report = false;
         $gameReport->manual_report = false;
         $gameReport->duration = 0;
-        $gameReport->valid = false;
+        $gameReport->valid = true;
         $gameReport->fps = 0;
         $gameReport->oos = false;
         $gameReport->save();
@@ -198,7 +198,6 @@ class GameService
                 break;
             case "DURA":
                 $gameReport->duration = $value["value"];
-                $gameReport->valid = $gameReport->duration > 60;
                 break;
             case "AFPS":
                 $gameReport->fps = $value["value"];
