@@ -70,6 +70,12 @@
                 <div class="col-md-12">
                     <h3>Recently played</h3>
                     @include("components.player-recent-games", ["player" => $player, "games" => $games])
+
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                        {!! $games->render() !!}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
