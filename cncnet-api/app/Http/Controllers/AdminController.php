@@ -60,7 +60,7 @@ class AdminController extends Controller
             ->where("ladder_id", "=", $ladder->id)
             ->first();
 
-        $games = \App\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC");
+        $games = \App\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC")->limit(100);
         return view("admin.manage-games", ["games" => $games, "ladder" => $ladder]);
     }
 
