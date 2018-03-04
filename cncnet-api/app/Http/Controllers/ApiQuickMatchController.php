@@ -230,11 +230,11 @@ class ApiQuickMatchController extends Controller
                         {
                             foreach ($qmOpns as $opn)
                             {
-                                if ((array_key_exists($qmMap->bit_idx, $opn->map_side_array())
+                                if (array_key_exists($qmMap->bit_idx, $opn->map_side_array())
                                     &&
-                                    $opn->map_side_array()[$qmMap->bit_idx] < -1)
+                                    ($opn->map_side_array()[$qmMap->bit_idx] < -1
                                     ||
-                                    !in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
+                                    !in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array())))
                                 {
                                         $match = false;
                                 }
