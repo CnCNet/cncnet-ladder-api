@@ -89,7 +89,13 @@ Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'],
     Route::get('/{game}/games/recent/{count}', 'ApiLadderController@getLadderRecentGamesList');
     Route::get('/{game}', 'ApiLadderController@getLadder');
     Route::get('/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');
-    Route::get('/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
-    Route::get('/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
     Route::get('/{game}/winners/', 'ApiLadderController@getLadderWinners');
+    Route::get('/{game}/games/recent/{count}', 'ApiLadderController@getLadderRecentGamesList');
+});
+
+// Short cache ladder endpoints
+Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.public'], function()
+{
+    Route::get('/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
+    Route::get('/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
 });
