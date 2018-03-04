@@ -99,7 +99,7 @@ class ApiQuickMatchController extends Controller
 
         case "match me up":
             // Deprecate older versions
-            if ($request->version  < 1.39)
+            if ($request->version  < 1.41)
             {
                 return array("type" => "fatal",
                              "message" => "Quick Match Version {$request->version} is no longer supported.\n".
@@ -217,22 +217,43 @@ class ApiQuickMatchController extends Controller
 
                     // Randomly select a map
                     $common_maps = array();
-                    $common_bits = $qmPlayer->map_bitfield;
 
-                    foreach ($qmOpns as $opn)
+                    $qmMaps = \App\QmMap::valid()->where('ladder_id', $qmPlayer->ladder_id)->get();
+                    foreach ($qmMaps as $qmMap)
                     {
-                        $common_bits &= $opn->map_bitfield;
-                    }
-
-                    $map_count = \App\QmMap::valid()->where('ladder_id', $qmPlayer->ladder_id)->get()->count();
-                    for ($i = 0; $i < $map_count; $i++)
-                    {
-                        $bit = 1 << $i;
-                        if ($bit & $common_bits)
+                        $match = true;
+                        if (array_key_exists($qmMap->bit_idx, $qmPlayer->map_side_array())
+                            &&
+                            $qmPlayer->map_side_array()[$qmMap->bit_idx] > -2
+                            &&
+                            in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
                         {
-                            $common_maps[] = $i;
+                            foreach ($qmOpns as $opn)
+                            {
+                                if (array_key_exists($qmMap->bit_idx, $opn->map_side_array())
+                                    &&
+                                    ($opn->map_side_array()[$qmMap->bit_idx] < -1
+                                    ||
+                                    !in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array())))
+                                {
+                                        $match = false;
+                                }
+                            }
                         }
+                        else
+                            $match = false;
+
+                        if ($match)
+                            $common_maps[] = $qmMap;
+
                     }
+                    if (count($common_maps) < 1)
+                    {
+                        $qmPlayer->touch();
+                        return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1,
+                                     "message" => "Didn't have any maps in common with opponent");
+                    }
+
                     $map_idx = mt_rand(0, count($common_maps) - 1);
 
 
@@ -240,9 +261,7 @@ class ApiQuickMatchController extends Controller
                     $qmMatch = new \App\QmMatch();
                     $qmMatch->status = "Started";
                     $qmMatch->ladder_id = $qmPlayer->ladder_id;
-                    $qmMatch->qm_map_id = \App\QmMap::valid()
-                                                    ->where('bit_idx', $common_maps[$map_idx])
-                                                    ->where('ladder_id', $qmMatch->ladder_id)->first()->id;
+                    $qmMatch->qm_map_id = $common_maps[$map_idx]->id;
                     $qmMatch->seed = mt_rand(-2147483647, 2147483647);
                     $qmMatch->save();
 
@@ -314,6 +333,7 @@ class ApiQuickMatchController extends Controller
 
             $spawnStruct["spawn"]["SpawnLocations"] = array();
 
+            srand($qmMatch->seed); // Seed the RNG for possibly random boolean options
 
             $spawnStruct["spawn"]["Settings"] = array_filter(
                 [  "UIGameMode" =>     $qmMap->game_mode
@@ -334,6 +354,7 @@ class ApiQuickMatchController extends Controller
                   ,"Side" =>           $qmPlayer->actual_side
                   ,"Color" =>          $qmPlayer->color
                   ,"Firestorm" =>      b_to_ini($qmMap->firestorm)
+                  ,"Ra2Mode" =>        b_to_ini($qmMap->ra2_mode)
                   ,"ShortGame" =>      b_to_ini($qmMap->short_game)
                   ,"MultiEngineer" =>  b_to_ini($qmMap->multi_eng)
                   ,"MCVRedeploy" =>    b_to_ini($qmMap->redeploy)
@@ -418,5 +439,6 @@ class ApiQuickMatchController extends Controller
 function b_to_ini($bool)
 {
     if ($bool === null) return $bool;
+    if ($bool == -1) return rand(0,1) ? "Yes" : "No"; // Pray the seed was set earlier or this will cause recons
     return $bool ? "Yes" : "No";
 }

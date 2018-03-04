@@ -27,12 +27,17 @@
             @endif
         </div>
         <h3 class="text-center small">
+        <?php $hasWash = false ?>
         @foreach($game->allReports()->get() as $gameReport)
+            <?php $count = $gameReport->playerGameReports()->count(); if ($count < 1) $hasWash = true; ?>
             <form action="/admin/games/switch" class="text-center" method="POST">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <input name="game_id" type="hidden" value="{{ $game->id }}"/>
                 <input name="game_report_id" type="hidden" value="{{ $gameReport->id }}" />
-                <button type="submit" class="btn btn-md btn-danger" @if($gameReport->best_report) disabled @endif>Switch</button>
+                <button type="submit" class="btn btn-md btn-danger"
+                        @if($gameReport->best_report) disabled>@if($count < 1) Wash @else Current @endif
+                        @else >@if($count < 1) Wash @else Switch @endif
+                        @endif</button>
             </form>
 
             @foreach($gameReport->playerGameReports()->get() as $pgr)
@@ -48,6 +53,14 @@
             </span>
             @endforeach
         @endforeach
+        @if(!$hasWash)
+        <form action="/admin/games/wash" class="text-center" method="POST">
+            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+            <input name="game_id" type="hidden" value="{{ $game->id }}"/>
+            <button type="submit" class="btn btn-md btn-danger">Wash</button>
+        </form>
+        @endif
+
         </h3>
     </div>
 </a>

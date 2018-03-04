@@ -132,16 +132,14 @@
                                         @endif
                                     @endforeach
 
-                                    @if($new_map->bit_idx < 31)
-                                        <?php $new_map = $new_map->replicate();
-                                              $new_map->bit_idx++;
-                                              $new_map->id = 'new';
-                                              $new_map->description = "Copy of " . $new_map->description;
-                                              $new_map->admin_description = "Copy of " . $new_map->admin_description;
-                                              $qmMaps->push($new_map);
-                                        ?>
-                                        <option value="{{ $new_map->bit_idx }}" onclick="showMapEdit(this,'{{ $new_map->ladder_id }}_new')"> {{ $new_map->bit_idx }} : &lt;new> </option>
-                                    @endif
+                                    <?php $new_map = $new_map->replicate();
+                                          $new_map->bit_idx++;
+                                          $new_map->id = 'new';
+                                          $new_map->description = "Copy of " . $new_map->description;
+                                          $new_map->admin_description = "Copy of " . $new_map->admin_description;
+                                          $qmMaps->push($new_map);
+                                    ?>
+                                    <option value="{{ $new_map->bit_idx }}" onclick="showMapEdit(this,'{{ $new_map->ladder_id }}_new')"> {{ $new_map->bit_idx }} : &lt;new> </option>
                                 </select>
                                 <button type="submit" class="btn btn-danger btn-lg">Remove Map</button>
                               </form>
@@ -260,6 +258,7 @@
                                                 <option value="Null" @if(is_null($qmMap->ra2_mode)) selected @endif>Null</option>
                                                 <option value="No" @if($qmMap->ra2_mode === 0) selected @endif>No</option>
                                                 <option value="Yes" @if($qmMap->ra2_mode === 1) selected @endif>Yes</option>
+                                                <option value="Random" @if($qmMap->ra2_mode === -1) selected @endif>Random</option>
                                             </select>
                                         </div>
 
@@ -278,6 +277,7 @@
                                                 <option value="Null" @if(is_null($qmMap->multi_eng)) selected @endif>Null</option>
                                                 <option value="No" @if($qmMap->multi_eng === 0) selected @endif>No</option>
                                                 <option value="Yes" @if($qmMap->multi_eng === 1) selected @endif>Yes</option>
+                                                <option value="Random" @if($qmMap->multi_eng === -1) selected @endif>Random</option>
                                             </select>
                                         </div>
 
@@ -287,6 +287,7 @@
                                                 <option value="Null" @if(is_null($qmMap->dog_kill)) selected @endif>Null</option>
                                                 <option value="No" @if($qmMap->dog_kill === 0) selected @endif>No</option>
                                                 <option value="Yes" @if($qmMap->dog_kill === 1) selected @endif>Yes</option>
+                                                <option value="Random" @if($qmMap->dog_kill === -1) selected @endif>Random</option>
                                             </select>
                                         </div>
 
@@ -341,6 +342,7 @@
                                                 <option value="Null" @if(is_null($qmMap->bridges)) selected @endif>Null</option>
                                                 <option value="No" @if($qmMap->bridges === 0) selected @endif>No</option>
                                                 <option value="Yes" @if($qmMap->bridges === 1) selected @endif>Yes</option>
+                                                <option value="Random" @if($qmMap->bridges === -1) selected @endif>Random</option>
                                             </select>
                                         </div>
 
@@ -395,6 +397,7 @@
                                                 <option value="Null" @if(is_null($qmMap->supers)) selected @endif>Null</option>
                                                 <option value="No" @if($qmMap->supers === 0) selected @endif>No</option>
                                                 <option value="Yes" @if($qmMap->supers === 1) selected @endif>Yes</option>
+                                                <option value="Random" @if($qmMap->supers === -1) selected @endif>Random</option>
                                             </select>
                                         </div>
 
