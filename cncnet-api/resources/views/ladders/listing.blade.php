@@ -165,6 +165,12 @@
                     </div>
 
                     <div class="row">
+                        <div class="col-md-12 text-center">
+                        {!! $players->render() !!}
+                        </div>
+                    </div>
+
+                    <div class="row">
                         @foreach($players as $k => $player)
                         <div class="col-md-4">
                             @include("components/player-box",
