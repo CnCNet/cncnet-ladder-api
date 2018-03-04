@@ -9,7 +9,7 @@ Route::get('/', function ()
 
 //Route::get('/patch', 'LadderController@addLadder');
 
-Route::group(['prefix' => 'ladder/'], function()
+Route::group(['prefix' => 'ladder/', 'middleware' => 'cache.public'], function()
 {
     Route::get('/', 'LadderController@getLadders');
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
@@ -71,14 +71,6 @@ Route::group(['prefix' => 'api/v1/'], function ()
     // Player Endpoints
     Route::post('/player/{username}', 'ApiPlayerController@createPlayer');
 
-    // Ladder Endpoints
-    Route::get('/ladder', 'ApiLadderController@getCurrentLadders');
-    Route::get('/ladder/{game}', 'ApiLadderController@getLadder');
-    Route::get('/ladder/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');
-    Route::get('/ladder/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
-    Route::get('/ladder/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
-    Route::get('/ladder/{game}/winners/', 'ApiLadderController@getLadderWinners');
-
     // Debug
     Route::get('/ladder/raw/{gameId}', 'ApiLadderController@viewRawGame');
     Route::get('/ladder/elo/{gameId}', 'ApiLadderController@awardPoints');
@@ -88,4 +80,15 @@ Route::group(['prefix' => 'api/v1/'], function ()
     Route::get('/qm/ladder/{ladderAbbrev}/stats', 'ApiQuickMatchController@statsRequest');
     Route::get('/qm/ladder/{ladderAbbrev}/maps', 'ApiQuickMatchController@mapListRequest');
     Route::post('/qm/{ladderAbbrev}/{playerName}', 'ApiQuickMatchController@matchRequest');
+});
+
+// Ladder Endpoints
+Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'], function()
+{
+    Route::get('/', 'ApiLadderController@getCurrentLadders');
+    Route::get('/{game}', 'ApiLadderController@getLadder');
+    Route::get('/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');
+    Route::get('/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
+    Route::get('/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
+    Route::get('/{game}/winners/', 'ApiLadderController@getLadderWinners');
 });
