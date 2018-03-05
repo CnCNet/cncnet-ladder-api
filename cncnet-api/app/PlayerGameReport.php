@@ -31,8 +31,18 @@ class PlayerGameReport extends Model {
         return $this->belongsTo("App\Game");
     }
 
+    public function gameReport()
+    {
+        return $this->belongsTo("App\GameReport");
+    }
+
     public function stats()
     {
         return $this->hasOne("App\Stats2");
+    }
+
+    public function wonOrDisco()
+    {
+        return $this->won || ($this->disconnected && $this->player_id == $this->gameReport->player_id);
     }
 }

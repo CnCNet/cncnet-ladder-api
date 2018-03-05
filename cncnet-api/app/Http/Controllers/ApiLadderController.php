@@ -258,12 +258,12 @@ class ApiLadderController extends Controller
                 if ($pgr->local_team_id == $playerGR->local_team_id)
                 {
                     $ally_average += $other->rating;
-                    $ally_points += $pgr->player->points($history);
+                    $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
                     $ally_count++;
                 }
                 else {
                     $enemy_average += $other->rating;
-                    $enemy_points += $pgr->player->points($history);
+                    $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
                     $enemy_count++;
                     $enemy_games += $pgr->player->totalGames($history);
                 }
@@ -280,7 +280,7 @@ class ApiLadderController extends Controller
 
             $diff = $enemy_points - $ally_points;
             $we = 1/(pow(10, abs($diff)/600)+1);
-            $we = $diff > 0 && $playerGR->won ? 1 - $we : ($diff < 0 && !$playerGR->won ? 1 - $we : $we);
+            $we = $diff > 0 && $playerGR->wonOrDisco() ? 1 - $we : ($diff < 0 && !$playerGR->wonOrDisco() ? 1 - $we : $we);
             $wol = (int)(64 * $we);
 
             $eloAdjust = 0;
@@ -289,7 +289,7 @@ class ApiLadderController extends Controller
             {
                 $playerGR->points = 0;
             }
-            else if ($playerGR->won || ($playerGR->disconnected && $playerGR->player_id == $gameReport->player_id))
+            else if ($playerGR->wonOrDisco())
             {
                 $points = (new PointService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
                 $diff = (int)($points - $ally_average);
@@ -382,7 +382,7 @@ class ApiLadderController extends Controller
             $rg["players"] = $rg->playerGameReports()
                 ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
                 ->get();
-            
+
             foreach($rg["players"] as $p)
             {
                 $p["username"] = $p->player()->first()->username;
@@ -396,7 +396,7 @@ class ApiLadderController extends Controller
     {
         $prevWinners = [];
         $prevLadders = [];
-  
+
         $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($cncnetGame, 5)->splice(0,1);
 
         foreach ($prevLadders as $h)
@@ -415,5 +415,19 @@ class ApiLadderController extends Controller
         }
 
         return $prevWinners;
+    }
+
+    public function reRunDisconnectionPoints()
+    {
+        $grs = \App\GameReport::where('game_reports.created_at','>','2018-03-01 00:00:00')
+              ->where('disconnected','=',true)->where('points','>',0)
+              ->join('player_game_reports', 'player_game_reports.game_report_id', '=', 'game_reports.id')
+              ->orderBy('game_reports.id','ASC')->select('game_reports.*')->get();
+
+        foreach ($grs as $gr)
+        {
+            error_log("{$gr->game_id}, {$gr->player_id}");
+            $this->awardPoints($gr, $gr->game->ladderHistory);
+        }
     }
 }
