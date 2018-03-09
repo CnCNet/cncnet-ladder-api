@@ -17,6 +17,13 @@
         </div>
         @if ($points != null)
         <div class="footer text-center">
+            @foreach($gamePlayers->get() as $k => $pgr)
+            <?php $gameStats = $pgr->stats; ?>
+                @if ($gameStats != null)
+                    <div class="recent-games-faction hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif"></div>
+                @endif
+            @endforeach
+
             <?php $opponent = $gamePlayers->where("player_id", "!=", $points->player_id)->first(); ?>
             <h5 class="player {{ $status or "lost"}}">
                 {{ $points->player->username }} <span class="points">@if($points->points >= 0) +@endif{{ $points->points }}</span>

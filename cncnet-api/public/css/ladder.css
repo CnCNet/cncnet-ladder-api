@@ -3144,8 +3144,10 @@ h3.game-intro > span:first-child:after {
   color: #00ec00; }
 
 .game-box .footer {
+  position: relative;
   background: #000;
-  padding: 10px;
+  padding-top: 40px;
+  padding-bottom: 40px;
   border-radius: 0 0 5px 5px; }
 
 .game-box .footer .won .points {
@@ -3161,6 +3163,22 @@ h3.game-intro > span:first-child:after {
   color: #fff;
   font-weight: 600;
   font-style: italic; }
+
+.game-box .faction-right.recent-games-faction {
+  position: absolute;
+  background-size: 35%;
+  background-position: bottom right;
+  right: 10px;
+  bottom: 10px;
+  top: auto; }
+
+.game-box .faction-left.recent-games-faction {
+  float: left;
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  background-size: 35%;
+  background-position: left top; }
 
 .player-box {
   background: #000;
