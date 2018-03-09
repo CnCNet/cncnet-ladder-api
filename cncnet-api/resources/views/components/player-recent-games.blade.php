@@ -20,11 +20,14 @@
         }
         ?>
 
+
+        <?php $report = \App\PlayerGameReport::where('game_report_id', $game->game_report_id); ?>
         @include("components/game-box",
         [
             "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->game_id,
             "game" => $history->ladder->abbreviation,
-            "gamePlayers" => \App\PlayerGameReport::where('game_report_id', $game->game_report_id),
+            "gamePlayers" => $report,
+            "gameReport" => $report->first(),
             "status" => $status,
             "points" => $game,
             "map" => $game->hash,

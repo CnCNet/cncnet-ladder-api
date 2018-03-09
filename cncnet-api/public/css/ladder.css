@@ -3166,7 +3166,7 @@ h3.game-intro > span:first-child:after {
 
 .game-box .faction-right.recent-games-faction {
   position: absolute;
-  background-size: 35%;
+  background-size: 25%;
   background-position: bottom right;
   right: 10px;
   bottom: 10px;
@@ -3177,7 +3177,7 @@ h3.game-intro > span:first-child:after {
   position: absolute;
   left: 10px;
   top: 10px;
-  background-size: 35%;
+  background-size: 25%;
   background-position: left top; }
 
 .player-box {

@@ -13,6 +13,7 @@
                 "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->id,
                 "game" => $history->ladder->abbreviation,
                 "gamePlayers" => $game->playerGameReports(),
+                "gameReport" => $game->report()->first(),
                 "status" => isset($pp) ? $pp->won ? "won" : "lost" : "",
                 "points" => $pp,
                 "map" => $game->hash,

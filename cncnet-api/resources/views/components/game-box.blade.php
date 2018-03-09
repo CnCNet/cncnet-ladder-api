@@ -14,13 +14,19 @@
             @else
             <small class="status text-capitalize">{{ $status . " " . $hours . " hours ago"}}</small>
             @endif
+
+            @if($gameReport !== null)
+            <div><small class="status text-capitalize"><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</small></div>
+            <div><small class="status text-capitalize"><strong>Average FPS:</strong> {{ $gameReport->fps }}</small></div>
+            @endif
         </div>
         @if ($points != null)
         <div class="footer text-center">
             @foreach($gamePlayers->get() as $k => $pgr)
             <?php $gameStats = $pgr->stats; ?>
                 @if ($gameStats != null)
-                    <div class="recent-games-faction hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif"></div>
+                    <div class="recent-games-faction hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} 
+                        @if($k&1) faction-right @else faction-left @endif"></div>
                 @endif
             @endforeach
 
