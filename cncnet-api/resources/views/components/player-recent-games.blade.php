@@ -20,14 +20,15 @@
         }
         ?>
 
+        <?php $pgr = \App\PlayerGameReport::where('game_report_id', $game->game_report_id); ?>
+        <?php $gr = \App\GameReport::where('id', $game->game_report_id)->first(); ?>
 
-        <?php $report = \App\PlayerGameReport::where('game_report_id', $game->game_report_id); ?>
         @include("components/game-box",
         [
             "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->game_id,
             "game" => $history->ladder->abbreviation,
-            "gamePlayers" => $report,
-            "gameReport" => $report->first(),
+            "gamePlayers" => $pgr,
+            "gameReport" => $gr,
             "status" => $status,
             "points" => $game,
             "map" => $game->hash,
