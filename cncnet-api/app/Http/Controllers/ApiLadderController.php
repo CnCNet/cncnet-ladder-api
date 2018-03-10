@@ -356,6 +356,7 @@ class ApiLadderController extends Controller
 
     public function getLadderTopList(Request $request, $cncnetGame = null, $count = 10)
     {
+        return [];
         if ($count > 100) return;
 
         $players = $this->ladderService->getLadderPlayers(Carbon::now()->format('m-Y'), $cncnetGame, 1);
@@ -370,6 +371,7 @@ class ApiLadderController extends Controller
 
     public function getLadderRecentGamesList(Request $request, $cncnetGame = null, $count = 10)
     {
+        return [];
         if ($count > 100) return;
 
         $date = Carbon::now()->format('m-Y');

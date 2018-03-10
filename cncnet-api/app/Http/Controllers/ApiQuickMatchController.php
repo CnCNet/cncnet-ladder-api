@@ -99,7 +99,7 @@ class ApiQuickMatchController extends Controller
 
         case "match me up":
             // Deprecate older versions
-            if ($request->version  < 1.41)
+            if ($request->version  < 1.44)
             {
                 return array("type" => "fatal",
                              "message" => "Quick Match Version {$request->version} is no longer supported.\n".
@@ -286,13 +286,9 @@ class ApiQuickMatchController extends Controller
                         $qmPlayer->actual_side = $qmPlayer->chosen_side;
                     }
 
-                    if ($qmPlayer->actual_side == -1)
-                    {
-                        $qmPlayer->actual_side = $ladder_rules->all_sides()[mt_rand(0, count($ladder_rules->all_sides()) - 1)];
-                    }
-
                     $qmPlayer->save();
 
+                    $perMS = array_filter($qmMap->sides_array(), function($s) { return $s >= 0; });
                     $color = 1;
                     foreach ($qmOpns as $opn)
                     {
@@ -308,7 +304,7 @@ class ApiQuickMatchController extends Controller
 
                         if ($opn->actual_side == -1)
                         {
-                            $opn->actual_side = $ladder_rules->all_sides()[mt_rand(0, count($ladder_rules->all_sides()) - 1)];
+                            $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
                         }
                         $opn->color = $color++;
                         $opn->location = $spawn_order[$opn->color] - 1;
@@ -316,6 +312,13 @@ class ApiQuickMatchController extends Controller
                         $opn->tunnel_id = $qmMatch->seed + $opn->color;
                         $opn->save();
                     }
+
+                    if ($qmPlayer->actual_side == -1)
+                    {
+                        $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+                    }
+
+
                 }
                 else {
                     // We couldn't make a match
