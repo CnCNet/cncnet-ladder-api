@@ -12,6 +12,7 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected $commands = [
 		'App\Console\Commands\PruneRawLogs',
+        'App\Console\Commands\UpdatePlayerCache'
 	];
 
 	/**
@@ -24,6 +25,8 @@ class Kernel extends ConsoleKernel {
 	{
 		$schedule->command('prune_logs')
 				 ->daily();
+        $schedule->command('update_player_cache')
+                 ->everyFiveMinutes();
 	}
 
 }

@@ -356,17 +356,17 @@ class ApiLadderController extends Controller
 
     public function getLadderTopList(Request $request, $cncnetGame = null, $count = 10)
     {
-        return [];
-        if ($count > 100) return;
+        if ($count > 100) $count = 100;
 
-        $players = $this->ladderService->getLadderPlayers(Carbon::now()->format('m-Y'), $cncnetGame, 1);
-
+        $date = Carbon::now()->format('m-Y');
+        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+        $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
         $top = [];
         foreach ($players as $player)
         {
-            $top[] = ["name" => $player->username, "points" => $player->points];
+            $top[] = ["name" => $player->player_name, "points" => $player->points];
         }
-        return array_slice($top, 0, $count);
+        return $top;
     }
 
     public function getLadderRecentGamesList(Request $request, $cncnetGame = null, $count = 10)
