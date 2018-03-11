@@ -27,6 +27,7 @@ class CreatePlayerCachesTable extends Migration {
             $table->integer("fps");
 
             $table->index(["ladder_history_id", "player_id"]);
+            $table->index(["ladder_history_id", "points"]);
 		});
 	}
 
