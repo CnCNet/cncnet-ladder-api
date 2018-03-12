@@ -49,7 +49,7 @@ class LadderService
 
         $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
 
-        if ($ladder === null) return null;
+        if ($ladder === null) return [];
 
         return \App\LadderHistory::where("ladder_history.starts", ">=", $start)
             ->where("ladder_history.ladder_id", "=", $ladder->id)
@@ -77,6 +77,9 @@ class LadderService
         else
         {
             $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
+            if ($ladder === null)
+                return null;
+
             return \App\LadderHistory::where("starts", "=", $start)
                 ->where("ends", "=", $end)
                 ->where("ladder_id", "=", $ladder->id)
@@ -213,7 +216,7 @@ class LadderService
             $tier = 1;
 
         if($history == null)
-            return "No ladder found";
+            return [];
 
         $query = \App\Player::where("ladder_id", "=", $history->ladder->id)
             ->join('player_game_reports as pgr', 'pgr.player_id', '=', 'players.id')

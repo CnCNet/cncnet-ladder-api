@@ -51,8 +51,7 @@ class LadderController extends Controller
 
     public function getLadderIndex(Request $request)
     {
-        return view("ladders.listing",
-        array
+        $data = array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
@@ -60,8 +59,14 @@ class LadderController extends Controller
             "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
             "players" => $this->ladderService->getLadderPlayers($request->date, $request->game, $request->tier),
             "tier" => $request->tier
-        ));
+        );
+
+        if ($data["history"] === null)
+            abort(404);
+
+        return view("ladders.listing", $data);
     }
+
 
     public function getLadderGames(Request $request)
     {
