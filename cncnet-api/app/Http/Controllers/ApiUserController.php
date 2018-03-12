@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -7,7 +7,7 @@ use \App\Http\Services\PlayerService;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
-class ApiUserController extends Controller 
+class ApiUserController extends Controller
 {
     private $authService;
 
@@ -18,9 +18,12 @@ class ApiUserController extends Controller
 
     public function getAccount(Request $request)
     {
-        $user = $this->authService->getUser();
+        $auth = $this->authService->getUser();
 
-        return $user->usernames;
+        if ($auth["user"] === null)
+            return $auth["response"];
+
+        return $auth["user"]->usernames;
     }
 
     public function createUser(Request $request)
@@ -30,7 +33,7 @@ class ApiUserController extends Controller
         if ($request->email == null && $request->password == null)
         {
             return response()->json(['bad_parameters'], 400);
-        } 
+        }
 
         if($token == null)
         {

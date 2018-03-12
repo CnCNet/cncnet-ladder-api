@@ -12,27 +12,35 @@ class AuthService
 
     public function getUser()
     {
-        try 
+        try
         {
-            if (! $user = JWTAuth::parseToken()->authenticate()) 
+            if (! $user = JWTAuth::parseToken()->authenticate())
             {
-                return response()->json(['user_not_found'], 404);
+                return response()->json(['error' => 'user_not_found'], 404);
             }
-        } 
-        catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) 
+        }
+        catch (TokenExpiredException $e)
         {
-            return response()->json(['token_expired'], $e->getStatusCode());
-        } 
-        catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) 
+            // Using fatal as a work-around for the qm client
+            return [ "response" => response()->json(['type' => 'fatal', 'error' => 'token_expired',
+                                                     'message' => 'Authentication has expired, Please restart Quick Match'],
+                                                    $e->getStatusCode()),
+                     "user" => null];
+        }
+        catch (TokenInvalidException $e)
         {
-            return response()->json(['token_invalid'], $e->getStatusCode());
-        } 
-        catch (Tymon\JWTAuth\Exceptions\JWTException $e) 
+            return [ "response" => response()->json(['type' => 'fatal', 'error' => 'token_invalid',
+                                                     'message' => "Authentication failed token_invalid"], $e->getStatusCode()),
+                     "user" => null];
+        }
+        catch (JWTException $e)
         {
-            return response()->json(['token_absent'], $e->getStatusCode());
+            return [ "response" => response()->json(['type' => 'fatal', 'error' => 'token_absent',
+                                                     'message' => 'Authentication failed token_absent'], $e->getStatusCode()),
+                     "user" => null];
         }
 
         // the token is valid and we have found the user via the sub claim
-        return $user;
+        return [ "user" => $user, "response" => null];
     }
 }

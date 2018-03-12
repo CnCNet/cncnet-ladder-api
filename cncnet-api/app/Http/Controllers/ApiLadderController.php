@@ -64,11 +64,12 @@ class ApiLadderController extends Controller
             ->first();
 
         // Player checks
-        $player = $this->checkPlayer($request, $username, $ladder);
-        if($player == null)
+        $check = $this->ladderService->checkPlayer($request, $username, $ladder);
+        if($check !== null)
         {
-            return response()->json(['Player error'], 400);
+            return $check;
         }
+        $player = $this->playerService->findPlayerByUsername($username, $ladder);
 
         // Game creation
         $game = $this->gameService->findOrCreateGame($result, $history);
@@ -98,23 +99,6 @@ class ApiLadderController extends Controller
         $this->handleGameDispute($gameReport);
 
         return response()->json(['success' => $status], 200);
-    }
-
-    // TODO - should be middleware
-    private function checkPlayer($request, $username, $ladder)
-    {
-        $player = $this->playerService->findPlayerByUsername($username, $ladder);
-        $authUser = $this->authService->getUser($request);
-        /*
-        // TODO
-        // Add back when no longer testing
-        if ($player == null || $authUser == null)
-            return null;
-
-        if ($authUser->id != $player->user_id)
-            return null;
-        */
-        return $player;
     }
 
     public function handleGameDispute($gameReport)

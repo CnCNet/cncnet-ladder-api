@@ -16,14 +16,12 @@ class ApiQuickMatchController extends Controller
     private $gameService;
     private $playerService;
     private $pointService;
-    private $authService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
         $this->gameService = new GameService();
         $this->playerService = new PlayerService();
-        $this->authService = new AuthService();
     }
 
     public function clientVersion(Request $request, $platform = null)
@@ -71,6 +69,12 @@ class ApiQuickMatchController extends Controller
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
         $ladder_rules = $ladder->qmLadderRules()->first();
+
+        $check = $this->ladderService->checkPlayer($request, $playerName, $ladder);
+        if($check !== null)
+        {
+            return $check;
+        }
         $player = $this->playerService->findPlayerByUsername($playerName, $ladder);
 
         if ($player == null)

@@ -6,9 +6,11 @@ use \Illuminate\Pagination\LengthAwarePaginator;
 
 class LadderService
 {
+    private $authService;
+
     public function __construct()
     {
-
+        $this->authService = new AuthService();
     }
 
     public function getLadders()
@@ -242,5 +244,16 @@ class LadderService
         }
 
         return $query->get();
+    }
+
+    // TODO - should be middleware
+    public function checkPlayer($request, $username, $ladder)
+    {
+        $authUser = $this->authService->getUser($request);
+
+        if ($authUser["user"] === null)
+            return $authUser["response"];
+        else
+            return null;
     }
 }
