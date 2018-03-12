@@ -48,8 +48,10 @@ class Stats2 extends Model
 
     public function country($side)
     {
-        if ($side == null)
+        if ($side === null)
+        {
             return "";
+        }
 
         switch($side)
         {
