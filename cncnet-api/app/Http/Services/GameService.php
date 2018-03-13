@@ -138,13 +138,47 @@ class GameService
                     $playerGameReports[$cid]->local_team_id = $cid;
                     break;
                 case "SPC":
-                    $playerGameReports[$cid]->spectator = $value["value"];;
+                    $playerGameReports[$cid]->spectator = $value["value"];
                     break;
 
                 case "LCN": //TS lost connection
                 case "CON":
-                    $playerGameReports[$cid]->disconnected = $value["value"];;
+                    $playerGameReports[$cid]->disconnected = $value["value"];
                     break;
+
+                case "SID": // hack for Red Alert
+                    if (!is_numeric($value["value"]))
+                    {
+                        switch ($value["value"])
+                        {
+                        case "SPA":
+                            $playerStats[$cid]->sid = 0;
+                            break;
+                        case "GRE":
+                            $playerStats[$cid]->sid = 1;
+                            break;
+                        case "USS":
+                            $playerStats[$cid]->sid = 2;
+                            break;
+                        case "ENG":
+                            $playerStats[$cid]->sid = 3;
+                            break;
+                        case "ITA":
+                            $playerStats[$cid]->sid = 4;
+                            break;
+                        case "GER":
+                            $playerStats[$cid]->sid = 5;
+                            break;
+                        case "FRA":
+                            $playerStats[$cid]->sid = 6;
+                            break;
+                        case "TKY":
+                            $playerStats[$cid]->sid = 7;
+                            break;
+                        default:
+                            break;
+                        }
+                    }
                 default:
                 }
             }
