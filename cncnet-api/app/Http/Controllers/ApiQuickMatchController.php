@@ -292,7 +292,7 @@ class ApiQuickMatchController extends Controller
 
                     $qmPlayer->save();
 
-                    $perMS = array_filter($qmMap->sides_array(), function($s) { return $s >= 0; });
+                    $perMS = array_values(array_filter($qmMap->sides_array(), function($s) { return $s >= 0; }));
                     $color = 1;
                     foreach ($qmOpns as $opn)
                     {
