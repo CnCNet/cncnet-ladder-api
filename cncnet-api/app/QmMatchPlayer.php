@@ -5,14 +5,9 @@ use Illuminate\Database\Eloquent\Model;
 class QmMatchPlayer extends Model {
 
 	//
-    public function matches()
+    public function qmMatch()
     {
         return $this->belongsTo('App\QmMatch');
-    }
-
-    public function readyMatch()
-    {
-        return $this->matches()->where('status', 'ready')->get();;
     }
 
     public function player()
