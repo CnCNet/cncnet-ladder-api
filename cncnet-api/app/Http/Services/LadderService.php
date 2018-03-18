@@ -63,6 +63,10 @@ class LadderService
     public function getActiveLadderByDate($date, $cncnetGame = null)
     {
         $date = explode("-", $date);
+
+        if (count($date) < 2)
+            return null;
+
         $month = $date[0];
         $year = $date[1];
 
