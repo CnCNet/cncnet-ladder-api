@@ -9,6 +9,7 @@ use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
 use \Carbon\Carbon;
 use Log;
+use Illuminate\Support\Facades\Cache;
 
 class ApiLadderController extends Controller
 {
@@ -342,40 +343,47 @@ class ApiLadderController extends Controller
     {
         if ($count > 100) $count = 100;
 
-        $date = Carbon::now()->format('m-Y');
-        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
-        $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
-        $top = [];
-        foreach ($players as $player)
+        return Cache::remember("$cncnetGame/top/$count", 5,
+        function() use (&$cncnetGame, &$count)
         {
-            $top[] = ["name" => $player->player_name, "points" => $player->points];
-        }
-        return $top;
+            $date = Carbon::now()->format('m-Y');
+            $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+            $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
+            $top = [];
+            foreach ($players as $player)
+            {
+                $top[] = ["name" => $player->player_name, "points" => $player->points];
+            }
+            return $top;
+        });
     }
 
     public function getLadderRecentGamesList(Request $request, $cncnetGame = null, $count = 10)
     {
-        return [];
-        if ($count > 100) return;
+        if ($count > 100) $count = 100;
 
-        $date = Carbon::now()->format('m-Y');
-        $recentGames = $this->ladderService->getRecentValidLadderGames($date, $request->game, $count);
-
-        foreach($recentGames as $rg)
+        return Cache::remember("$cncnetGame/games/recent/$count", 5,
+        function() use (&$request, &$cncnetGame, &$count)
         {
-            $rg["url"] = "/ladder/" . $date . "/" . $request->game . "/games/" . $rg->id;
-            $rg["map_url"] = "/images/maps/". $request->game . "/" . $rg->hash . ".png";
-            $rg["players"] = $rg->playerGameReports()
-                ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
-                ->get();
+            $date = Carbon::now()->format('m-Y');
+            $recentGames = $this->ladderService->getRecentValidLadderGames($date, $request->game, $count);
 
-            foreach($rg["players"] as $p)
+            foreach($recentGames as $rg)
             {
-                $p["username"] = $p->player()->first()->username;
-                $p["url"] = "/ladder/" . $date . "/" . $request->game . "/player/" . $p->username;
+                $rg["url"] = "/ladder/" . $date . "/" . $request->game . "/games/" . $rg->id;
+                $rg["map_url"] = "/images/maps/". $request->game . "/" . $rg->hash . ".png";
+                $rg["players"] = $rg->playerGameReports()
+                               ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
+                               ->get();
+
+                foreach($rg["players"] as $p)
+                {
+                    $p["username"] = $p->player()->first()->username;
+                    $p["url"] = "/ladder/" . $date . "/" . $request->game . "/player/" . $p->username;
+                }
             }
-        }
-        return $recentGames;
+            return $recentGames;
+        });
     }
 
     public function getLadderWinners(Request $request, $cncnetGame)
