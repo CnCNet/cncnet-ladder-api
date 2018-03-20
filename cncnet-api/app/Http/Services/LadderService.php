@@ -19,11 +19,17 @@ class LadderService
         foreach ($ladders as $ladder)
         {
             $ladder["sides"] = $ladder->sides()->get();
-            $ladder["vetoes"] = $ladder->qmLadderRules()->first()->map_vetoes;
-            $ladder["allowed_sides"] = array_map('intval',
-                                                 explode(',', $ladder->qmLadderRules()->first()->allowed_sides));
-            $ladder["current"] = $this->getActiveLadderByDate(Carbon::now()->format('m-Y'),
-                                                              $ladder->abbreviation)->short;
+            $rules = $ladder->qmLadderRule;
+            if ($rules !== null)
+            {
+                $ladder["vetoes"] = $rules->map_vetoes;
+                $ladder["allowed_sides"] = array_map('intval', explode(',', $rules->allowed_sides));
+
+            }
+            $current = $this->getActiveLadderByDate(Carbon::now()->format('m-Y'), $ladder->abbreviation);
+            if ($current !== null)
+                $ladder["current"] = $current->short;
+
         }
         return $ladders;
     }

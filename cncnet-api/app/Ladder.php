@@ -22,4 +22,9 @@ class Ladder extends Model
     {
         return $this->hasMany('App\QmMap');
     }
+
+    public function players()
+    {
+        return $this->hasMany('App\Player');
+    }
 }

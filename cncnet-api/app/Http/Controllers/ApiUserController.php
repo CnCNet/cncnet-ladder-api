@@ -20,10 +20,37 @@ class ApiUserController extends Controller
     {
         $auth = $this->authService->getUser();
 
+        $playerService = new \App\Http\Services\PlayerService;
+
+        $user = $auth["user"];
+        foreach (\App\Ladder::all() as $ladder)
+        {
+            $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
+            if ($players->count() < 1)
+            {
+                // Auto-register a player for each ladder if there isn't already a player registered for this user
+
+                $playerCreated = false;
+                $oLadders = \App\Ladder::where('game', '=', $ladder->game)->where('id', '<>', $ladder->id)->get();
+                foreach ($oLadders as $other)
+                {
+                    $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
+                    foreach ($oPlayers as $op)
+                    {
+                        $playerService->addPlayerToUser($op->username, $user, $ladder->id);
+                        $playerCreated = true;
+                    }
+                }
+                if (!$playerCreated)
+                {
+                    $playerService->addPlayerToUser($user->name, $user, $ladder->id);
+                }
+            }
+        }
         if ($auth["user"] === null)
             return $auth["response"];
 
-        return $auth["user"]->usernames;
+        return \App\Player::where('user_id', '=', $auth["user"]->id)->get();
     }
 
     public function createUser(Request $request)
