@@ -19,7 +19,8 @@ class LadderService
         foreach ($ladders as $ladder)
         {
             $ladder["sides"] = $ladder->sides()->get();
-            $rules = $ladder->qmLadderRule;
+            $rules = $ladder->qmLadderRules;
+
             if ($rules !== null)
             {
                 $ladder["vetoes"] = $rules->map_vetoes;
