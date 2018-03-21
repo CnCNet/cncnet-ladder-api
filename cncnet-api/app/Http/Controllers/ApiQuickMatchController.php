@@ -83,6 +83,12 @@ class ApiQuickMatchController extends Controller
         {
             return array("type"=>"fail", "description" => "$playerName is not registered in $ladderAbbrev");
         }
+
+        $ban = $player->user->getBan();
+        if ($ban !== null)
+        {
+            return ['type' => 'fatal', 'message' => "You are BANNED!\nYour ban will expire in {$ban->timeTill()}" ];
+        }
         $rating = $player->rating()->first()->rating;
 
         $qmPlayer = \App\QmMatchPlayer::where('player_id', $player->id)

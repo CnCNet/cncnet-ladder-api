@@ -5,8 +5,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Carbon\Carbon;
 
-class User extends Model implements AuthenticatableContract, CanResetPasswordContract 
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
 	use Authenticatable, CanResetPassword;
 
@@ -25,7 +26,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 	{
 		return $this->hasMany('App\Player');
 	}
-    
+
     public function isAdmin()
     {
         return in_array(\Auth::user()->group, [self::God, self::Admin]);
@@ -39,5 +40,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function isModerator()
     {
         return in_array(\Auth::user()->group, [self::God, self::Admin, self::Moderator]);
+    }
+
+    public function bans()
+    {
+        return $this->hasMany("\App\Ban");
+    }
+
+    public function getBan()
+    {
+        return $this->bans()->where('expires', '>', Carbon::now())->first();
     }
 }
