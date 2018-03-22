@@ -89,7 +89,7 @@ class LadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    public function getLadderGame(Request $request, $date = null, $cncnetGame = null, $gameId = null)
+    public function getLadderGame(Request $request, $date = null, $cncnetGame = null, $gameId = null, $reportId = null)
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
@@ -97,7 +97,10 @@ class LadderController extends Controller
         if ($game == null)
             return "No game";
 
-        $gameReport = $game->report->first();
+        if ($reportId !== null && $game->allReports->count() > $reportId)
+            $gameReport = $game->allReports[$reportId];
+        else
+            $gameReport = $game->report->first();
         return view('ladders.game-view',
         array(
             "game" => $game,

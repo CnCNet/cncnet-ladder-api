@@ -18,6 +18,7 @@ Route::group(['prefix' => 'ladder/', 'middleware' => 'cache.public'], function()
     Route::get('{date}/{game}/player/', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/player/{player}', 'LadderController@getLadderPlayer');
     Route::get('{date}/{game}/games/{gameId}', 'LadderController@getLadderGame');
+    Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
     Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
 });
 
