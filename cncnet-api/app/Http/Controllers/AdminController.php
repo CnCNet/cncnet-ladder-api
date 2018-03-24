@@ -61,7 +61,7 @@ class AdminController extends Controller
             ->first();
 
         $games = \App\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC")->limit(100);
-        return view("admin.manage-games", ["games" => $games, "ladder" => $ladder]);
+        return view("admin.manage-games", ["games" => $games, "ladder" => $ladder, "history" => $history]);
     }
 
     public function deleteGame(Request $request)

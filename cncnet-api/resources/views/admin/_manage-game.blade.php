@@ -1,4 +1,4 @@
-<a href="/ladder/{{$ladder->abbreviation . "/games/" . $game->id }}" class="profile-link">
+<a href="/ladder/{{$history->short ."/". $ladder->abbreviation . "/games/" . $game->id }}" class="profile-link">
     <div class="profile-listing">
         <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
         @if ($map != null)
