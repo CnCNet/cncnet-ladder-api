@@ -74,10 +74,8 @@
                 
                 <div class="col-md-4">
                     <h3>{{ trans('footer.footer_donations') }}</h3>
-                    <p>{{ trans('footer.footer_donations_description') }}</p>
-                    <a class="btn btn-tertiary btn-md" href="https://www.paypal.com/ua/cgi-bin/webscr?cmd=_flow&SESSION=I7908uFEO96aok1UVLzKOmG8oxfW4PD2BKYpI67VyQyVniDU9lvxJk2AC3K&dispatch=5885d80a13c0db1f8e263663d3faee8d94717bd303200c3af9aadd01a5f55080" target="_blank">
-                        {{ trans('footer.footer_donations_cta_primary') }}
-                    </a>
+                    <p>If you wish to support a specific CnCNet project, please ask in our support forums.</p>
+                    <a href="//forums.cncnet.org/forum/11-support/" class="btn btn-tertiary btn-md">Forums</a>
                 </div>
 
                 <div class="col-md-4">
