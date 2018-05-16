@@ -11,7 +11,7 @@
         <div class="row text-center">
             <div class="col-md-8 col-md-offset-2">
                 <h1>
-                    Alpha Ladder Account Sign Up
+                    Ladder Account Sign Up
                 </h1>
                 <p class="text-uppercase">
                    Play. Compete. <strong>Conquer.</strong>
@@ -29,7 +29,7 @@
 		    <div class="col-md-8 col-md-offset-2">
                 <h2>Create your CnCNet Ladder Account</h2>
                 <p style="color:silver">
-                    <strong>Note: We are in an Alpha testing stage</strong>, bugs are likely to occur. The Quick Match Client and related sites are likely to change during development.  
+                    <strong>Note: We are in an Beta testing stage</strong>, bugs are likely to occur. The Quick Match Client and related sites are likely to change during development.  
                     Report bugs in <a href="https://forums.cncnet.org/forum/66-cncnet-ladder/" target="_blank">our forums</a>.</p>
                     
                     <h2>How to play</h2>
