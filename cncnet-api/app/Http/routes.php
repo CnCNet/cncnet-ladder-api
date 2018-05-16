@@ -9,6 +9,8 @@ Route::get('/', function ()
 
 //Route::get('/patch', 'LadderController@addLadder');
 
+Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
+
 Route::group(['prefix' => 'ladder/', 'middleware' => 'cache.public'], function()
 {
     Route::get('/', 'LadderController@getLadders');

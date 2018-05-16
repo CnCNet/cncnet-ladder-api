@@ -62,7 +62,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <h3>Recent <strong>League Champions</strong></h3>
+                <h3>Recent <strong>Ladder Champions</strong></h3>
             </div>
         </div>
 
@@ -75,6 +75,7 @@
                 <?php $url = "/ladder/". $ladderWinners["short"] . "/" . $ladderWinners["abbreviation"] . "/player/" . $player->username; ?>
                 
                 <div class="col-xs-12 col-md-6">
+                    <h4><a href="/ladder-champions/{{ $ladderWinners['abbreviation']}}">View All</a> <strong>Past Ladder Champions</strong></h4>
                     <a href="{{ $url }}" title="View {{$player->username}}'s profile">
                         <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $ladderWinners["game"]}}-cover-masters.png">
                             <div class="details tier-league-cards">
@@ -96,7 +97,7 @@
                                     @else
                                     <small>Champion of the 
                                     @endif
-                                    <strong>{{ $date->format("m/Y") }}</strong> {{ $ladderWinners["full"] }} League</small>
+                                    <strong>{{ $date->format("m/Y") }}</strong> {{ $ladderWinners["full"] }} Ladder</small>
                                 </div>
                             </div>
                         </div>
