@@ -11,33 +11,6 @@
         </div>
         <div class="collapse navbar-collapse" id="navigation-links">
             <ul class="nav navbar-nav">
-                @if(isset($ladders))
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ladders <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        @foreach($ladders as $history)
-                        <li>
-                            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}">
-                                {{ $history->ladder->name }}
-                            </a>
-                        </li>
-                        @endforeach
-                    </ul>
-                </li>                
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Past Champions <span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li role="separator" class="nav-title">C&amp;C Legends</li>
-                        @foreach($ladders as $history)
-                        <li>
-                            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}">
-                                {{ $history->ladder->name }}
-                            </a>
-                        </li>
-                        @endforeach
-                    </ul>
-                </li>
-                @endif
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Downloads <span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -59,6 +32,53 @@
                     </ul>
                 </li>
                 <li><a href="//forums.cncnet.org">Forums</a></li>
+
+                @if(isset($ladders))
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Ladders <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="min-width:250px">
+                        <li role="separator" class="nav-title">C&amp;C Live Ladders</li>
+                        @foreach($ladders as $history)
+                        <li>
+                            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}">
+                                {{ $history->ladder->name }}
+                            </a>
+                        </li>
+                        @endforeach
+
+                        <li role="separator" class="divider"></li>
+                        <li role="separator" class="nav-title">C&amp;C Ladder Champions</li>
+
+                        @foreach($ladders as $history)
+                        <li>
+                            <a href="/ladder-champions/{{ $history->abbreviation }}/" title="{{ $history->ladder->name }}">
+                                {{ $history->ladder->name }} Winners
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                </li>
+                @endif
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Community <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="min-width:200px">
+                        <li role="separator" class="nav-title">CnCNet Community</li>
+                        <li><a href="//cncnet.org/community">News</a></li>
+                        <li><a href="//cncnet.org/developers">Developers</a></li>
+                        <li><a href="//facebook.com/cncnet" target="_blank">Facebook</a></li>
+                        <li><a href="//twitter.com/cncnetofficial" target="_blank">Twitter</a></li>
+                        <li><a href="//www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" target="_blank">YouTube</a></li>
+                        <li><a href="//discord.gg/aJRJFe5" target="_blank">Discord</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li role="separator" class="nav-title">C&amp;C Community</li>
+                        <li><a href="//cncnz.com" rel="nofollow" target="_blank">CNCNZ.com <small>(C&amp;C News)</small></a></li>
+                        <li><a href="//ppmforums.com/" rel="nofollow" target="_blank">Project Perfect Mod <small>(C&amp;C Modding)</small></a></li>
+                        <li><a href="//cnc-comm.com/" rel="nofollow" target="_blank">CNC-COMM <small>(C&amp;C Nostalgia)</small></a></li>
+                        <li role="separator" class="divider"></li>
+                        <li role="separator" class="nav-title">C&amp;C Generals and beyond</li>
+                        <li><a href="//cnc-online.net" rel="nofollow" target="_blank">C&amp;C:Online <small>(Gamespy Replacement)</small></a></li>
+                    </ul>
+                </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
