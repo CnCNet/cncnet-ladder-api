@@ -23,6 +23,19 @@
                         </li>
                         @endforeach
                     </ul>
+                </li>                
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Past Champions <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li role="separator" class="nav-title">C&amp;C Legends</li>
+                        @foreach($ladders as $history)
+                        <li>
+                            <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}">
+                                {{ $history->ladder->name }}
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
                 </li>
                 @endif
                 <li class="dropdown">
