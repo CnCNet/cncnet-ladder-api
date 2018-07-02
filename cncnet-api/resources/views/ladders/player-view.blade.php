@@ -36,6 +36,21 @@
                     </div>
                 </div>
             </div>
+
+            @if ($player->game_count >= 200)
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="achievements">
+                        <ul class="list-inline">
+                            <li style="text-align: center; margin-top: 15px;">
+                                <img src="/images/badges/achievement-games.png" style="height:50px"/>
+                                <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>200+ Games</h5>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>
