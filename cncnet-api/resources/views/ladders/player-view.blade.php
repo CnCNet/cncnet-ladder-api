@@ -37,20 +37,32 @@
                 </div>
             </div>
 
-            @if ($player->game_count >= 200)
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="achievements">
-                        <ul class="list-inline">
-                            <li style="text-align: center; margin-top: 15px;">
-                                <img src="/images/badges/achievement-games.png" style="height:50px"/>
-                                <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>200+ Games</h5>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="achievements">
+                <ul class="list-inline">
+                    @if ($player->game_count >= 200)
+                    <li style="text-align: center; margin-top: 15px;">
+                        <img src="/images/badges/achievement-games.png" style="height:50px"/>
+                        <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>200+ Games</h5>
+                    </li>
+                    @endif
+    
+                    @if ($player->rank <= 10)
+                    <li style="text-align: center; margin-top: 15px;">
+                        @if ($player->rank == 1)
+                            <img src="/images/badges/achievement-rank1.png" style="height:50px"/>
+                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Rank #1 <br/>Player</h5>
+                        @elseif($player->rank > 1 && $player->rank <=5)
+                            <img src="/images/badges/achievement-top5.png" style="height:50px"/>
+                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Top 5 <br/>Player</h5>
+                        @elseif($player->rank > 5 && $player->rank <=10)
+                            <img src="/images/badges/achievement-top10.png" style="height:50px"/>
+                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Top 10 <br/>Player</h5>
+                        @endif
+                    </li>
+                    @endif
+                </ul>
             </div>
-            @endif
+       
         </div>
     </div>
 </div>
