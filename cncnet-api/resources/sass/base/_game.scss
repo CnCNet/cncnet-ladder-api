@@ -18,13 +18,13 @@
     margin: 0 auto;
 }
 
-.player .rank
+.game .rank
 {
     font-size: 70px;
     font-weight: 600;
 }
 
-.player .rank span
+.game .rank span
 {
     font-size: 65%;
     letter-spacing: -1px;
@@ -286,4 +286,107 @@ h3.game-intro > span:first-child:after
   right: 30px;
   bottom: 25px;
   font-size: 45px;
+}
+
+.game .game-intro 
+{
+    position: relative;
+}
+
+.game .player-vs 
+{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.game .player-vs h3 
+{
+    margin: 0;
+}
+
+.game .player-vs .game-intro
+{
+    width: 100%;
+}
+
+.game .player-vs .vs 
+{
+    width: 100%;
+    text-align: center;
+    color: #4e4e4e;
+    font-size: 31px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.game .game-status-icon
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    i { font-size: 35px;}
+}
+
+.game .faction-left,
+.game .faction-right
+{
+    width: 13%;
+}
+
+.game .game-intro 
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.game .vs 
+{
+    animation: vs-flash 6s forwards infinite;
+}
+
+// #dunno bored
+@keyframes vs-flash 
+{
+    0%{ opacity: 0.3;}
+    50% { opacity: 1; color: #fff;}
+    100% {  opacity: 0.3;}
+}
+
+@media(min-width: 768px)
+{
+    .game .player-vs
+    {
+        display: flex;
+        justify-content: space-evenly;
+        flex-direction: row;
+        width: 70%;
+        margin: 0 auto;
+        max-width: 100%;                  
+    }
+
+    .game .player-vs .game-intro 
+    {
+        width: 50%;
+    }
+
+    .game .player-vs .vs 
+    {
+        width: 5%;
+    }
+}
+
+.game-details-list
+{
+    margin-top: 20px;
+    font-size: 17px;
+}
+
+.game-details-list li 
+{
+    padding: 4px 0;
 }

@@ -2797,34 +2797,106 @@ hr {
 .player .dark-texture:before {
   background: none; }
 
-.player .player-badge {
-  margin-right: 0;
-  margin-left: auto; }
-
-/* Medium devices (desktops, 992px and up) */
-@media (min-width: 992px) {
-  .player .player-badge {
-    position: absolute;
-    right: 25px; } }
-
 .player .feature-background {
-  padding-bottom: 0;
+  background: #000000;
+  padding-bottom: 25px;
   color: #fff;
-  font-size: 15px; }
+  font-size: 15px;
+  background-repeat: no-repeat;
+  background-position: top right; }
+
+.player .feature-footer-background {
+  background: #060606; }
 
 .profile {
   background: url(../images/textures/dark-pattern.jpg);
   padding: 15px;
   margin: 0 auto; }
 
+.player .badge-2x {
+  margin: 0 auto; }
+
 .player .rank {
-  font-size: 70px;
+  margin-top: 0;
+  font-size: 48px;
   font-weight: 600; }
 
 .player .rank span {
   font-size: 65%;
   letter-spacing: -1px;
   font-weight: 500; }
+
+.player .player-badge img {
+  height: 80%;
+  margin: 0 auto;
+  text-align: center;
+  justify-content: center;
+  display: flex; }
+
+.player .username {
+  font-size: 48px; }
+
+.player-header {
+  display: flex;
+  flex-direction: column; }
+
+.player-header .player-stats {
+  order: 1;
+  width: 100%;
+  text-align: center; }
+
+.player-header .player-rank {
+  order: 0;
+  width: 100%; }
+
+.player-footer .player-achievements h5 {
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: #7d7d7d; }
+
+.player-achievements .achievement {
+  width: 20%;
+  text-align: center; }
+
+.player-achievements .title {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-align: center;
+  color: silver;
+  text-transform: uppercase;
+  font-weight: 600; }
+
+.player-header .player-stats,
+.player-header .player-badges {
+  margin-top: 22px; }
+
+.player-badges .player-badge p.lead {
+  color: #565656;
+  font-size: 16px;
+  text-transform: uppercase;
+  padding: 15px 0; }
+
+@media (min-width: 768px) {
+  .player-header {
+    flex-direction: row; }
+  .player-header .player-stats {
+    order: 0;
+    width: 80%;
+    align-self: center;
+    text-align: left; }
+  .player-header .player-badges {
+    order: 1;
+    width: 20%; }
+  .player-footer {
+    display: flex; }
+  .player-footer .player-dials {
+    width: 60%; }
+  .player-footer .player-achievements {
+    width: 40%;
+    justify-content: center;
+    align-self: center; } }
 
 /* Game Detail */
 .game .game-statistics {
@@ -2840,11 +2912,11 @@ hr {
   background: url(../images/textures/dark-pattern.jpg);
   margin: 0 auto; }
 
-.player .rank {
+.game .rank {
   font-size: 70px;
   font-weight: 600; }
 
-.player .rank span {
+.game .rank span {
   font-size: 65%;
   letter-spacing: -1px;
   font-weight: 500; }
@@ -3034,6 +3106,79 @@ h3.game-intro > span:first-child:after {
   bottom: 25px;
   font-size: 45px; }
 
+.game .game-intro {
+  position: relative; }
+
+.game .player-vs {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  align-items: center; }
+
+.game .player-vs h3 {
+  margin: 0; }
+
+.game .player-vs .game-intro {
+  width: 100%; }
+
+.game .player-vs .vs {
+  width: 100%;
+  text-align: center;
+  color: #4e4e4e;
+  font-size: 31px;
+  font-weight: bold;
+  font-style: italic; }
+
+.game .game-status-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+  .game .game-status-icon i {
+    font-size: 35px; }
+
+.game .faction-left,
+.game .faction-right {
+  width: 13%; }
+
+.game .game-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly; }
+
+.game .vs {
+  animation: vs-flash 6s forwards infinite; }
+
+@keyframes vs-flash {
+  0% {
+    opacity: 0.3; }
+  50% {
+    opacity: 1;
+    color: #fff; }
+  100% {
+    opacity: 0.3; } }
+
+@media (min-width: 768px) {
+  .game .player-vs {
+    display: flex;
+    justify-content: space-evenly;
+    flex-direction: row;
+    width: 70%;
+    margin: 0 auto;
+    max-width: 100%; }
+  .game .player-vs .game-intro {
+    width: 50%; }
+  .game .player-vs .vs {
+    width: 5%; } }
+
+.game-details-list {
+  margin-top: 20px;
+  font-size: 17px; }
+
+.game-details-list li {
+  padding: 4px 0; }
+
 .feature-component {
   background-repeat: no-repeat;
   background-size: cover; }
@@ -3134,7 +3279,9 @@ h3.game-intro > span:first-child:after {
 .game-box .details .title,
 .game-box .details .status {
   font-weight: 600;
-  margin-bottom: 0; }
+  margin-bottom: 0;
+  line-height: 1.5;
+  font-size: 14px; }
 
 .game-box .details .status {
   font-size: 12px;

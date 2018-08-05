@@ -6,12 +6,41 @@
 @endsection
 
 @section('feature')
+<div class="game">
+<div class="feature-background sub-feature-background">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-8 col-md-offset-2">
+                <h1>
+                    {{ $history->ladder->name }}
+                </h1>
+                <p>
+                    CnCNet Ladders <strong>1vs1</strong>
+                </p>
+                <p>
+                    <a href="{{ "/ladder/". $history->short . "/" . $history->ladder->abbreviation }}" class="previous-link">
+                        <i class="fa fa-caret-left" aria-hidden="true"></i>
+                        <i class="fa fa-caret-left" aria-hidden="true"></i>
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+@endsection
+
+@section('content')
+<?php $card = \App\Card::find($player->player->card_id); ?>
+
 <div class="player">
-    <div class="feature-background">
+    <div class="feature-background player-card {{ $card->short or "no-card" }}">
         <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <h1>
+
+            <div class="player-header">
+                <div class="player-stats">
+
+                    <h1 class="username">
                         {{ $player->username }}
                     </h1>
                     <ul class="list-inline text-uppercase">
@@ -25,72 +54,68 @@
                         </li>
                     </ul>
                 </div>
-                <div class="col-md-6 text-right">
-                    <h1 class="rank"><span class="text-uppercase">Rank</span> #{{ $player->rank == -1 ? "Unranked" : $player->rank }}</h1>
+
+                <div class="player-badges">
+                    <h1 class="rank text-center">
+                        <span class="text-uppercase">Rank</span> 
+                        #{{ $player->rank == -1 ? "Unranked" : $player->rank }}
+                    </h1>
                     <?php $badge = $player->badge; ?>
-                    <div class="player-badge badge-2x" style="margin: 0 auto;">
+                    <div class="player-badge badge-2x">
                         @if (strlen($badge->badge) > 0)
                         <img src="/images/badges/{{ $badge->badge . ".png" }}">
-                        <p class="lead text-center" style="margin-top: 15px;">{{ $player->badge->type }}</p>
+                        <p class="lead text-center">{{ $player->badge->type }}</p>
                         @endif
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="feature-footer-background">
+        <div class="container">
+            <div class="player-footer">
+                <div class="player-dials">
 
-            <div class="achievements">
-                <ul class="list-inline">
+                @include("components.dials", [
+                    "gamesCount" => $player->game_count,
+                    "averageFps" => $player->average_fps,
+                    "gamesWon" => $player->games_won,
+                    "gamesLost" => $player->games_lost,
+                    "gamesCount" => $player->game_count
+                ])
+                </div>
+                <div class="player-achievements">
+                    <h3 class="title">Achievements</h3>
+
                     @if ($player->game_count >= 200)
-                    <li style="text-align: center; margin-top: 15px;">
+                    <div>
                         <img src="/images/badges/achievement-games.png" style="height:50px"/>
                         <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>200+ Games</h5>
-                    </li>
+                    </div>
                     @endif
-    
+
                     @if ($player->rank <= 10)
-                    <li style="text-align: center; margin-top: 15px;">
+                    <div class="achievement">
                         @if ($player->rank == 1)
                             <img src="/images/badges/achievement-rank1.png" style="height:50px"/>
-                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Rank #1 <br/>Player</h5>
+                            <h5 class="gold">Rank #1 Player</h5>
                         @elseif($player->rank > 1 && $player->rank <=5)
                             <img src="/images/badges/achievement-top5.png" style="height:50px"/>
-                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Top 5 <br/>Player</h5>
+                            <h5 class="silver">Top 5 Player</h5>
                         @elseif($player->rank > 5 && $player->rank <=10)
                             <img src="/images/badges/achievement-top10.png" style="height:50px"/>
-                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Top 10 <br/>Player</h5>
+                            <h5 class="bronze">Top 10 Player</h5>
                         @endif
-                    </li>
+                    </div>
                     @endif
-                </ul>
+                </div>
             </div>
-       
         </div>
     </div>
 </div>
-@endsection
 
-@section('content')
+
 <div class="player">
-
-    <section class="player-statistics">
-        <div class="profile">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8">
-                        @include("components.dials", [
-                            "gamesCount" => $player->game_count,
-                            "averageFps" => $player->average_fps,
-                            "gamesWon" => $player->games_won,
-                            "gamesLost" => $player->games_lost,
-                            "gamesCount" => $player->game_count
-                        ])
-                    </div>
-                    <div class="col-md-4">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section class="dark-texture">
         <div class="container">
             <div class="row">

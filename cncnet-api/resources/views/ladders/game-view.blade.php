@@ -15,6 +15,9 @@
                         {{ $history->ladder->name }}
                     </h1>
                     <p>
+                        CnCNet Ladders <strong>1vs1</strong>
+                    </p>
+                    <p>
                         <a href="/ladder" class="previous-link">
                             <i class="fa fa-caret-left" aria-hidden="true"></i>
                             <i class="fa fa-caret-left" aria-hidden="true"></i>
@@ -35,21 +38,39 @@
     <section class="game-statistics">
         <div class="game-details">
             <div class="container" style="position:relative;padding: 60px 0;">
-                @foreach($playerGameReports as $k => $pgr)
-                <?php $gameStats = $pgr->stats; ?>
-                    @if ($gameStats != null)
-                        <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif"></div>
-                    @endif
-                @endforeach
 
-                <div class="row">
-                    <div class="col-md-12">
+                <div class="player-vs">
+                    @foreach($playerGameReports as $k => $pgr)
 
-                        <h3 class="game-intro text-center">
-                        @foreach($playerGameReports as $pgr)
-                            <?php $player = $pgr->player()->first(); ?>
-                            <?php $url = "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username; ?>
-                                <a href="{{ $url }}" title="View {{ $player->username }}'s profile">
+                        <?php $gameStats = $pgr->stats; ?>
+                        @if ($gameStats != null)
+                            <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif"></div>
+                        @endif
+
+                        <?php $player = $pgr->player()->first(); ?>
+                        <?php $url = "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username; ?>
+                        
+                        <h3 class="game-intro">
+                            <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if($k == 0)order:0; @else order: 1; @endif">
+                                <span class="player">
+                                    {{ $player->username or "Unknown" }} <strong>@if($pgr->points >= 0) +@endif{{ $pgr->points or "" }}</strong>
+                                </span>
+                            </a>
+
+                            <div class="game-status-icon" style="@if($k == 0)order:0; @endif">
+                                @if($pgr->won)
+                                <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                                @elseif($pgr->draw)
+                                <i class="fa fa-handshake-o fa-fw" style="color: #e96b1e;"></i>
+                                @elseif($pgr->disconnected)
+                                <i class="fa fa-plug fa-fw" style="color: #E91E63;"></i>
+                                @else
+                                <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
+                                @endif
+                            </div>
+
+                            @if ($playerGameReports->count() == 1)
+                            <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if($k == 0)order:1; @endif">
                                 <span class="player">
                                     {{ $player->username or "Unknown" }} <strong>@if($pgr->points >= 0) +@endif{{ $pgr->points or "" }}</strong>
                                     @if($pgr->won)
@@ -62,27 +83,24 @@
                                         <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
                                     @endif
                                 </span>
-                                </a>
-
-                                @if ($playerGameReports->count() == 1)
-                                <a href="{{ $url }}" title="View {{ $player->username }}'s profile">
-                                    <span class="player">
-                                        {{ $player->username or "Unknown" }} <strong>@if($pgr->points >= 0) +@endif{{ $pgr->points or "" }}</strong>
-                                        @if($pgr->won)
-                                            <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
-                                        @elseif($pgr->draw)
-                                            <i class="fa fa-handshake-o fa-fw" style="color: #e96b1e;"></i>
-                                        @elseif($pgr->disconnected)
-                                            <i class="fa fa-plug fa-fw" style="color: #E91E63;"></i>
-                                        @else
-                                            <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
-                                        @endif
-                                    </span>
-                                </a>
-                                @endif
-                        @endforeach
+                            </a>
+                            @endif
                         </h3>
+                        
+                        @if($k == 0)
+                        <div class="vs">
+                            VS
+                        </div>
+                        @endif
+                    @endforeach
+                </div>
 
+                <div class="game-details text-center">
+                    <div>
+                        <strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}
+                    </div>
+                    <div>
+                        <strong>Average FPS:</strong> {{ $gameReport->fps }}
                     </div>
                 </div>
             </div>
@@ -92,7 +110,7 @@
     <section class="dark-texture">
         <div class="container">
             <div class="row">
-                <div class="col-md-8 col-md-offset-2 text-center">
+                <div class="col-md-6">
                     <h3>Map - {{ $game->scen }} </h3>
                     <?php $map = \App\Map::where("hash", "=", $game->hash)->first(); ?>
                     @if ($map)
@@ -101,11 +119,9 @@
                     </div>
                     @endif
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-8 col-md-offset-2 text-center">
-                    <h3>Game details</h3>
-                    <ul class="list-inline">
+                <div class="col-md-6">
+                    <h3>Match Setup</h3>
+                    <ul class="list-unstyled game-details-list">
                         @if ($g !== "ra")
                         <li><strong>Short Game:</strong> {{ $game->shrt ? "On" : "Off" }}</li>
                         <li><strong>Superweapons:</strong> {{ $game->supr ? "On" : "Off" }}</li>
@@ -118,10 +134,8 @@
                         @endif
 
                         @if($gameReport !== null)
-                        <li><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</li>
-                        <li><strong>Average FPS:</strong> {{ $gameReport->fps }}</li>
                         <li><strong>Reconnection Error (OOS):</strong> {{ $gameReport->oos ? "Yes" : "No" }}</li>
-                        <li><strong>Disconnect:</strong> {{ $gameReport->disconnected() ? "Yes" : "No" }}</li>
+                        <li><strong>Disconnection:</strong> {{ $gameReport->disconnected() ? "Yes" : "No" }}</li>
                         @endif
                     </ul>
                 </div>
