@@ -36,7 +36,7 @@ class LadderController extends Controller
                     "full" => $history->ladder->name,
                     "abbreviation" => $history->ladder->abbreviation,
                     "ends" => $history->ends,
-                    "players" => $this->ladderService->getLadderPlayers($history->short, $history->ladder->game, 1, false)->splice(0,2)
+                    "players" => $this->ladderService->getLadderPlayers($history->short, $history->ladder->game, 1, false, $request->search)->splice(0,2)
                 ];
             }
         }
