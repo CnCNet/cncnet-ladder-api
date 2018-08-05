@@ -221,7 +221,7 @@ class LadderService
         ];
     }
 
-    public function getLadderPlayers($date, $cncnetGame, $tier = 1, $paginate = true)
+    public function getLadderPlayers($date, $cncnetGame, $tier = 1, $paginate, $search)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
 
@@ -235,8 +235,14 @@ class LadderService
             ->join('player_game_reports as pgr', 'pgr.player_id', '=', 'players.id')
             ->join('game_reports', 'game_reports.id', '=', 'pgr.game_report_id')
             ->join('games', 'games.id', '=', 'game_reports.game_id')
-            ->join('player_histories as ph', 'ph.player_id', '=', 'players.id')
-            ->where("games.ladder_history_id", "=", $history->id)
+            ->join('player_histories as ph', 'ph.player_id', '=', 'players.id');
+
+        if ($search)
+        {
+            $query->where('players.username','LIKE',"%{$search}%");
+        }
+
+        $query->where("games.ladder_history_id", "=", $history->id)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
             ->where('ph.ladder_history_id', '=', $history->id)

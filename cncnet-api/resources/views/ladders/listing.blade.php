@@ -91,16 +91,28 @@
                 <div class="col-md-12">
                     <div class="header">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-4">
+                                @if($history->ladder->qmLadderRules->tier2_rating > 0)
+                                    @if($tier == 1 || $tier === null)
+                                        <h3><strong>1vs1</strong> Masters League Rankings</h3>
+                                    @elseif($tier == 2)
+                                        <h3><strong>1vs1</strong> Contenders League Rankings</h3>
+                                    @endif
+                                @else
+                                    <h3><strong>1vs1</strong> Battle Rankings</h3>
+                                @endif
+                            </div>
+
+                            <div class="col-md-8 text-right">
                                 <ul class="list-inline">
                                     <li>
-                                        <button class="btn btn-secondary btn-lg text-uppercase" data-toggle="modal" data-target="#battleRanks">
+                                        <button class="btn btn-secondary text-uppercase" data-toggle="modal" data-target="#battleRanks" style="font-size: 15px;">
                                             <i class="fa fa-trophy fa-lg fa-fw" aria-hidden="true" style="margin-right: 5px;"></i> Battle Ranks
                                         </button>
                                     </li>
                                     <li>
                                         <div class="btn-group filter">
-                                            <button type="button" class="btn btn-secondary btn-lg text-uppercase dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <button type="button" class="btn btn-secondary dropdown-toggle text-uppercase" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 15px;">
                                                 <i class="fa fa-industry fa-fw" aria-hidden="true" style="margin-right: 5px;"></i> Previous Month <span class="caret"></span>
                                             </button>
                                             <ul class="dropdown-menu">
@@ -114,7 +126,27 @@
                                             </ul>
                                         </div>
                                     </li>
+                                    <li>
+                                        <form>
+                                            <div class="form-group" method="GET">
+                                                <div class="search" style="position:relative;">
+                                                    <label for="search-input" style="position: absolute;left: 12px;top: 7px;">
+                                                        <i class="fa fa-search" aria-hidden="true"></i>
+                                                    </label>
+                                                    <input class="form-control" name="search" value="{{ $search }}" placeholder="Player username..." style="padding-left:40px;"/>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </li>
                                 </ul>
+                                <div class="text-right">
+                                    @if ($search)
+                                        <small>
+                                            Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results 
+                                            <a href="?search=">Clear?</a>
+                                        </small>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -152,18 +184,6 @@
 
                     <?php $perPage = $players->perPage(); $rankOffset = ($players->currentPage() * $perPage) - $perPage; ?>
 
-                    <div class="header">
-                    @if($history->ladder->qmLadderRules->tier2_rating > 0)
-                        @if($tier == 1 || $tier === null)
-                            <h3><strong>1vs1</strong> Masters League Rankings</h3>
-                        @elseif($tier == 2)
-                            <h3><strong>1vs1</strong> Contenders League Rankings</h3>
-                        @endif
-                    @else
-                        <h3><strong>1vs1</strong> Battle Rankings</h3>
-                    @endif
-                    </div>
-
                     <div class="row">
                         <div class="col-md-12 text-center">
                         {!! $players->render() !!}
@@ -172,13 +192,19 @@
 
                     <div class="row">
                         @foreach($players as $k => $player)
+                        <?php 
+                            $rank = ($rankOffset + $k) + 1;
+                            if ($search) 
+                                $rank = null;
+                        ?>
+
                         <div class="col-md-4">
                             @include("components/player-box",
                             [
                                 "username" => $player->username,
                                 "points" => $player->points,
                                 "badge" => $player->badge(),
-                                "rank" => ($rankOffset + $k) + 1,
+                                "rank" => $rank,
                                 "wins" => $player->total_wins,
                                 "totalGames" => $player->total_games,
                                 "playerCard" => isset($player->card->short) ? $player->card->short : "",
@@ -201,11 +227,11 @@
 
 <!-- Battle Ranks -->
 <div class="modal fade" id="battleRanks" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title">Battle Ranks <small>What rank am I?</small></h3>
+                <h3 class="modal-title">Battle Ranks <small class="text-uppercase">What rank am I?</small></h3>
             </div>
             <div class="modal-body clearfix text-center">
             <?php $pecentiles = [15, 25, 45, 55, 65, 75, 85, 90, 100]; ?>
@@ -213,8 +239,8 @@
             @foreach($pecentiles as $percentile)
                 <?php $badge = $player->badge($percentile); ?>
                 <p class="lead">{{ $badge["type"] }}</p>
-                <div class="player-badge badge-2x" style="margin: 0 auto;">
-                    <img src="/images/badges/{{ $badge["badge"] . ".png" }}">
+                <div class="player-badge badge-2x" style="margin: 0 auto; height: 150px;">
+                    <img src="/images/badges/{{ $badge["badge"] . ".png" }}" style="height:150px;">
                 </div>
                 <hr>
             @endforeach
