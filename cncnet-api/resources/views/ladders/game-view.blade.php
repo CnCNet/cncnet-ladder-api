@@ -18,7 +18,7 @@
                         CnCNet Ladders <strong>1vs1</strong>
                     </p>
                     <p>
-                        <a href="/ladder" class="previous-link">
+                        <a href="{{ "/ladder/". $history->short . "/" . $history->ladder->abbreviation }}" class="previous-link">
                             <i class="fa fa-caret-left" aria-hidden="true"></i>
                             <i class="fa fa-caret-left" aria-hidden="true"></i>
                         </a>
@@ -59,7 +59,7 @@
 
                             <div class="game-status-icon" style="@if($k == 0)order:0; @endif">
                                 @if($pgr->won)
-                                <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                                <i class="fa fa-trophy fa-fw" style="color: #32e91e;"></i>
                                 @elseif($pgr->draw)
                                 <i class="fa fa-handshake-o fa-fw" style="color: #e96b1e;"></i>
                                 @elseif($pgr->disconnected)
