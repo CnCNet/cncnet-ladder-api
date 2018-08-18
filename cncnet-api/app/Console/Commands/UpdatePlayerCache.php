@@ -39,7 +39,7 @@ class UpdatePlayerCache extends Command
         foreach ($ladders as $ladder)
         {
             $history = $this->ladderService->getActiveLadderByDate($date, $ladder->abbreviation);
-            $players = $this->ladderService->getLadderPlayers($date, $ladder->abbreviation, null, false);
+            $players = $this->ladderService->getLadderPlayers($date, $ladder->abbreviation, null, false, false);
 
             foreach ($players as $player)
             {
