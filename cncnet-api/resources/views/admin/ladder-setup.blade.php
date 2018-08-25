@@ -51,12 +51,139 @@
                     @include("components.form-messages")
 
                     <div class="row">
-                        @foreach($rules as $rule)
-                        <div class="col-md-4">
-                            <div class="player-box player-card">
-                            <p style="color: #fff">{{ \App\Ladder::find($rule->ladder_id)->name }}</p>
+                        <div class="col-md-3">
+                            <div class="player-box player-card" style="margin-bottom: 8px">
 
-                            <form method="POST" action="/admin/setup/rules">
+                                <p style="color: #fff" >Admins</p>
+                                @foreach($ladder->admins()->where('admin', '=', true)->get() as $admin)
+                                    <form method="POST" action="remove/admin" >
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" id="ladder_admin_id" name="ladder_admin_id" value="{{$admin->id}}" >
+                                        {{$admin->user->name}} {{$admin->user->email}}
+                                        @if($user->isGod())
+                                            <button type="submit" id="remove_admin_{{$admin->id}}" style="margin: 0 0" class="btn btn-link btn-sm">Remove</button>
+                                        @endif
+                                    </form>
+                                @endforeach
+                                @if($user->isGod())
+                                <form method="POST" action="add/admin">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="text" id="email" name="email" placeholder="newAdmin@email.com" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                                </form>
+                                @endif
+                            </div>
+
+                            <div class="player-box player-card" style="margin-bottom: 8px">
+
+                                <p style="color: #fff">Moderators</p>
+                                @foreach($ladder->moderators()->where('moderator', '=', true)->where('admin', '=', false)->get() as $mod)
+                                    <form method="POST" action="remove/moderator">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" id="ladder_admin_id" name="ladder_admin_id" value="{{$mod->id}}" >
+                                        {{$mod->user->name}} {{$mod->user->email}}
+                                        @if($user->isGod() || $user->isLadderAdmin($ladder))
+                                        <button type="submit" id="remove_mod_{{$mod->id}}" style="margin: 0 0" class="btn btn-link btn-sm">Remove</button>
+                                        @endif
+                                    </form>
+                                @endforeach
+                                @if($user->isGod() || $user->isLadderAdmin($ladder))
+                                <form method="POST" action="add/moderator">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="text" id="email" name="email" placeholder="newMod@email.com" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                                </form>
+                                @endif
+                            </div>
+
+                            <div class="player-box player-card" style="margin-bottom: 8px">
+                                <p style="color: #fff">Testers</p>
+                                @foreach($ladder->testers()->where('tester', '=', true)->where('admin','=',false)->where('moderator', '=', false)->get() as $tester)
+                                    <form method="POST" action="remove/tester">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                        <input type="hidden" id="ladder_admin_id" name="ladder_admin_id" value="{{$tester->id}}" >
+                                        {{$tester->user->name}} {{$tester->user->email}}
+                                        @if($user->isGod() || $user->isLadderAdmin($ladder) || $user->isLadderMod($ladder))
+                                        <button type="submit" id="remove_tester_{{$tester->id}}" style="margin: 0 0" class="btn btn-link btn-sm">Remove</button>
+                                        @endif
+                                    </form>
+                                @endforeach
+                                @if($user->isGod() || $user->isLadderAdmin($ladder) || $user->isLadderMod($ladder))
+                                <form method="POST" action="add/tester">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="text" id="email" name="email" placeholder="newTester@email.com" />
+                                    <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                                </form>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="player-box player-card" style="margin-bottom: 8px">
+                                <p style="color: #fff">{{ $ladder->name }}</p>
+
+                                <form method="POST" action="ladder">
+                                    <input type="hidden"  name="_token" value="{{ csrf_token() }}">
+
+                                    <div class="form-group">
+                                        <label for="ladder_name">Ladder Name</label>
+                                        <input id="ladder_name" name="name" type="text" class="form-control" value="{{$ladder->name}}" />
+                                    </div>
+
+                                    <div class="form-group col-md-6" style="padding-left: 0;">
+                                        <label for="abbreviation">Abbreviation</label>
+                                        <input id="ladder_abbreviation" name="abbreviation" type="text" class="form-control" value="{{$ladder->abbreviation}}" />
+                                    </div>
+
+                                    <div class="form-group col-md-6" style="padding-right: 0;">
+                                        <label for="ladder_game">Game</label>
+                                        <input id="ladder_game" name="game" type="text" class="form-control" value="{{$ladder->game}}" />
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                                </form>
+                            </div>
+
+                            <div class="player-box player-card" style="margin-bottom: 8px">
+                                <p style="color: #fff">Add Side/Faction</p>
+
+                                <form method="POST" action="addSide">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <div class="form-group col-md-4" style="padding-left: 0;">
+                                        <label for="local_id">Index</label>
+                                        <input id="local_id" name="local_id"  type="number" maxlength="3" size="3" class="form-control" style="font-size: 8px" value="{{ $ladder->sides()->max('local_id') + 1}}" />
+                                    </div>
+                                    <div class="form-group col-md-8" style="padding-right: 0;">
+                                        <label for="name">Side Name</label>
+                                        <input id="name" name="name" type="text" class="form-control" value="">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">Add Side</button>
+                                </form>
+
+                            </div>
+                            <div class="player-box player-card" style="margin-bottom: 8px">
+                                <p style="color: #fff">Remove Side/Faction</p>
+
+                                <form method="POST" action="remSide">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+                                    <div class="form-group">
+                                        <label for="sides">Ladder Sides</label>
+
+                                        <select id="sides" name="local_id" class="form-control">
+                                            @foreach($ladder->sides()->orderBy('local_id', 'ASC')->get() as $side)
+                                                <option value="{{ $side->local_id }}"> {{ $side->local_id }}, {{ $side->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-danger btn-sm">Remove Side</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="col-md-3" >
+                            <div class="player-box player-card">
+                                <p style="color: #fff">Quick Match</p>
+
+                            <form method="POST" action="rules">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 <input type="hidden" name="id" value="{{ $rule->id }}">
 
@@ -71,7 +198,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_point_difference">Max Point Difference</label>
+                                    <label for="{{ $rule->ladder_id }}_point_difference">Initial Max Rating Difference</label>
                                     <input id="{{ $rule->ladder_id }}_point_difference" type="number" name="max_difference" class="form-control" value="{{ $rule->max_difference }}" />
                                 </div>
 
@@ -88,14 +215,8 @@
                                 <?php $sides = \App\Side::where("ladder_id", "=", $rule->ladder_id)->orderby('local_id', 'ASC')->get(); ?>
 
                                 <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_sides">All Sides</label>
-
-                                    <?php $sideIds = explode(',', $rule->all_sides); ?>
-                                    <select id="{{ $rule->ladder_id }}_sides" name="all_sides[]" class="form-control" multiple>
-                                        @foreach($sides as $side)
-                                        <option value="{{ $side->local_id }}" @if(in_array($side->local_id, $sideIds)) selected @endif > {{ $side->name }} </option>
-                                        @endforeach
-                                    </select>
+                                    <label for="{{ $rule->ladder_id }}_sides">Random Sides</label>
+                                    <input id="{{ $rule->ladder_id }}_sides" name="all_sides" type="text" class="form-control" value="{{$rule->all_sides}}" />
                                 </div>
 
                                 <div class="form-group">
@@ -111,13 +232,17 @@
 
                                 <button type="submit" class="btn btn-primary btn-lg">Save</button>
                             </form>
+                            </div>
+                        </div>
 
+                        <div class="col-md-3">
+                            <div class="player-box player-card">
                             <div class="form-group">
-                              <form method="POST" action="/admin/setup/remqmap">
+                              <form method="POST" action="remqmap">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                 <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
 
-                                <label for="{{ $rule->ladder_id }}_ladder_id">QuickMatch Map Pool</label>
+                                <p style="color: #fff" >QuickMatch Map Pool</p>
                                 <select id ="{{ $rule->ladder_id }}_ladder_id" name="map_id" size="6" class="form-control qmPool">
                                     <?php $last_idx  = -1;
                                           $new_map = new \App\QmMap();
@@ -141,21 +266,21 @@
                                     ?>
                                     <option value="{{ $new_map->bit_idx }}" onclick="showMapEdit(this,'{{ $new_map->ladder_id }}_new')"> {{ $new_map->bit_idx }} : &lt;new> </option>
                                 </select>
-                                <button type="submit" class="btn btn-danger btn-lg">Remove Map</button>
+                                <button type="submit" class="btn btn-danger">Remove Map</button>
                               </form>
                             </div>
 
                              @foreach($qmMaps as $qmMap)
                                  @if($qmMap->ladder_id == $rule->ladder_id && $qmMap->valid)
-                                 <form method="GET" action="/admin/setup/upmap/{{$qmMap->id}}" class="qmMap" id="mapu_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
-                                     <button type="submit" class="btn btn-secondary">Move Up</button>
+                                 <form method="GET" action="upmap/{{$qmMap->id}}" class="qmMap" id="mapu_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
+                                     <button type="submit" class="btn btn-primary">Move Up</button>
                                  </form>
 
-                                 <form method="GET" action="/admin/setup/downmap/{{$qmMap->id}}" class="qmMap" id="mapd_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
-                                     <button type="submit" class="btn btn-secondary">Move Down</button>
+                                 <form method="GET" action="downmap/{{$qmMap->id}}" class="qmMap" id="mapd_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
+                                     <button type="submit" class="btn btn-primary">Move Down</button>
                                  </form>
 
-                                 <form method="POST" action="/admin/setup/qmmap" class="qmMap" id="map_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
+                                 <form method="POST" action="qmmap" class="qmMap" id="map_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                         <input type="hidden" name="id" value="{{ $qmMap->id }}" />
                                         <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
@@ -580,7 +705,6 @@
                             </div>
                             <script> showMapEdit(null,'') </script>
                         </div>
-                        @endforeach
                     </div>
                 </div>
             </div>

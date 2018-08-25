@@ -33,27 +33,29 @@
                             <p>Manage everything to do with Users</p>
                         </div>
                     </a>
-                </div>  
-              
-                <div class="col-md-4">
-                    <a href="/admin/setup" class="profile-link">
-                        <div class="player-box player-card">
-                            <h3>Ladder Setup</h3>
-                            <p>Manage maps, rules, and all things related to the ladder</p>
-                        </div>
-                    </a>
                 </div>
-              
+
                 <div class="col-md-4">
                     <div class="profile-link">
                         <div class="player-box player-card">
                             <h3>Games</h3>
                             <p>Manage maps, rules, and all things related to the ladder</p>
-                            
+
                             <ul class="list-unstyled">
-                            @foreach($ladders as $history)
-                            <li><a href="/admin/games/{{ $history->ladder->abbreviation }}">{{ $history->ladder->name }}</a></li>
-                            @endforeach
+                                @foreach($all_ladders as $ladder)
+                                    <li><a href="/admin/setup/{{$ladder->id}}/edit">{{$ladder->name}}</a></li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="profile-link">
+                        <div class="player-box player-card">
+                            <h3>Games</h3>
+                            <p>Manage maps, rules, and all things related to the ladder</p>
+
+                            <ul class="list-unstyled">
                             </ul>
                         </div>
                     </div>
@@ -64,7 +66,3 @@
     </div>
 </section>
 @endsection
-
-
-
-

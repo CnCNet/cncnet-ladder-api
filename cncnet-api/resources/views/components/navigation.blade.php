@@ -100,7 +100,7 @@
                 </li>
                 <li class="dropdown">
                     <?php $user = \Auth::user(); ?>
-                  
+
                     <a href="status" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                         <div class="user-profile">
                         <ul class="list-inline">
@@ -119,7 +119,7 @@
 
                     @if(isset($user))
                     <ul class="dropdown-menu">
-                        @if($user->isModerator())
+                        @if($user->canEditAnyLadders())
                         <li>
                             <a href="/admin/">Admin</a>
                         </li>

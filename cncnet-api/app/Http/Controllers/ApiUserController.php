@@ -18,7 +18,7 @@ class ApiUserController extends Controller
 
     public function getAccount(Request $request)
     {
-        $auth = $this->authService->getUser();
+        $auth = $this->authService->getUser($request);
 
         $playerService = new \App\Http\Services\PlayerService;
 
@@ -83,7 +83,7 @@ class ApiUserController extends Controller
         }
         else
         {
-            $user = $this->authService->getUser();
+            $user = $this->authService->getUser($request);
             if($user)
             {
                 return response()->json(['account_present'], 400);

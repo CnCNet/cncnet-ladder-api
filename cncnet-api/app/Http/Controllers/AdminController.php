@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
+use \App\User;
 
 class AdminController extends Controller
 {
@@ -19,19 +20,24 @@ class AdminController extends Controller
 
     public function getAdminIndex(Request $request)
     {
-        return view("admin.index", ["ladders" => $this->ladderService->getLatestLadders()]);
+        return view("admin.index", ["ladders" => $this->ladderService->getLatestLadders(),
+                                    "all_ladders" => \App\Ladder::all()]);
     }
 
-    public function getLadderSetupIndex(Request $request)
+    public function getLadderSetupIndex(Request $request, $ladderId = null)
     {
-        $ladderRules = \App\QmLadderRules::all();
-        $qmMaps = \App\QmMap::valid()->orderby('bit_idx', 'ASC')->get();
-        $ladderMaps = \App\Map::orderby('name', 'ASC')->get();
+        $ladder = \App\Ladder::find($ladderId);
 
-        return view("admin.ladder-setup", ["ladders" => $this->ladderService->getLatestLadders(),
-                                           "rules" => $ladderRules,
-                                           "qmMaps" => $qmMaps,
-                                           "maps" => $ladderMaps]);
+        if ($ladder === null)
+            return null;
+
+        $ladders = $this->ladderService->getLatestLadders();
+        $rule = $ladder->qmLadderRules;
+        $qmMaps = $ladder->qmMaps()->valid()->orderby('bit_idx', 'ASC')->get();
+        $maps = \App\Map::orderby('name', 'ASC')->get();
+        $user = $request->user();
+
+        return view("admin.ladder-setup", compact('ladders', 'ladder', 'rule', 'qmMaps', 'maps', 'user'));
     }
 
     public function postLadderSetupRules(Request $request)
@@ -202,6 +208,52 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    public function remSide(Request $request, $ladderId = null)
+    {
+        $ladder = \App\Ladder::find($ladderId);
+
+        if ($ladder === null || $ladderId === null)
+        {
+            $request->session()->flash('error', "Ladder not found");
+            return redirect()->back();
+        }
+
+        $side = $ladder->sides()->where('local_id', '=', $request->local_id)->first();
+        if ($side === null)
+        {
+            $request->session()->flash('error', 'Side not found');
+            return redirect()->back();
+        }
+        $side->delete();
+
+        $request->session()->flash('success', 'Side deleted');
+        return redirect()->back();
+    }
+
+    public function addSide(Request $request, $ladderId = null)
+    {
+        $ladder = \App\Ladder::find($ladderId);
+
+        if ($ladder === null || $ladderId === null)
+        {
+            $request->session()->flash('error', "Ladder not found");
+            return redirect()->back();
+        }
+
+        $side = $ladder->sides()->where('local_id', '=', $request->local_id)->first();
+        if ($side === null)
+        {
+            $side = new \App\Side;
+            $side->ladder_id = $ladder->id;
+            $side->local_id = $request->local_id;
+        }
+        $side->name = $request->name;
+        $side->save();
+        $request->session()->flash('success', "Side has been added or updated");
+
+        return redirect()->back();
+    }
+
     public function removeQuickMatchMap(Request $request)
     {
         $qmMap = \App\QmMap::find($request->map_id);
@@ -262,6 +314,310 @@ class AdminController extends Controller
         }
         $request->session()->flash('success', "Map Moved");
         return redirect()->back();
+    }
+
+    public function addAdmin(Request $request, $ladderId = null)
+    {
+        if ($ladderId === null)
+        {
+            $request->session()->flash('error', "No ladder specified");
+        }
+
+        $user = \App\User::where('email', '=', $request->email)->first();
+        if ($request->email === null || $user == null)
+        {
+            $request->session()->flash('error', "Unable to add the user as admin");
+            return redirect()->back();
+        }
+
+        $ladderAdmin = \App\LadderAdmin::findOrCreate($user->id, $ladderId);
+
+        $ladderAdmin->admin = true;
+        $ladderAdmin->moderator = true;
+        $ladderAdmin->tester = true;
+        $ladderAdmin->save();
+
+        $request->session()->flash('success', "The user {$user->email} has been made promoted to admin");
+        return redirect()->back();
+    }
+
+    public function removeAdmin(Request $request, $ladderId = null)
+    {
+        if ($ladderId === null)
+        {
+            $request->session()->flash('error', "No ladder specified");
+        }
+
+        if ($request->ladder_admin_id === null)
+        {
+            $request->session()->flash('error', "Unable to remove the user");
+            return redirect()->back();
+        }
+
+        $ladderAdmin = \App\LadderAdmin::find($request->ladder_admin_id);
+        if ($ladderAdmin === null)
+        {
+            $request->session()->flash('error', "Unable to find the requested admin");
+            return redirect()->back();
+        }
+
+        $ladderAdmin->admin = false;
+        $ladderAdmin->moderator = false;
+        $ladderAdmin->tester = false;
+        $ladderAdmin->save();
+
+        $request->session()->flash('success', "The admin {$ladderAdmin->user->email} has been removed");
+        return redirect()->back();
+    }
+
+    public function addModerator(Request $request, $ladderId = null)
+    {
+        if ($ladderId === null)
+        {
+            $request->session()->flash('error', "No ladder specified");
+        }
+
+        $user = \App\User::where('email', '=', $request->email)->first();
+        if ($request->email === null || $user == null)
+        {
+            $request->session()->flash('error', "Unable to add the user as moderator");
+            return redirect()->back();
+        }
+
+        $ladderAdmin = \App\LadderAdmin::findOrCreate($user->id, $ladderId);
+
+        $ladderAdmin->admin = false;
+        $ladderAdmin->moderator = true;
+        $ladderAdmin->tester = true;
+        $ladderAdmin->save();
+
+        $request->session()->flash('success', "The user {$user->email} has been made promoted to moderator");
+        return redirect()->back();
+    }
+
+    public function removeModerator(Request $request, $ladderId = null)
+    {
+        if ($ladderId === null)
+        {
+            $request->session()->flash('error', "No ladder specified");
+        }
+
+        if ($request->ladder_admin_id === null)
+        {
+            $request->session()->flash('error', "Unable to remove the user");
+            return redirect()->back();
+        }
+
+        $ladderAdmin = \App\LadderAdmin::find($request->ladder_admin_id);
+        if ($ladderAdmin === null)
+        {
+            $request->session()->flash('error', "Unable to find the requested moderator");
+            return redirect()->back();
+        }
+
+        $ladderAdmin->admin = false;
+        $ladderAdmin->moderator = false;
+        $ladderAdmin->tester = false;
+        $ladderAdmin->save();
+
+        $request->session()->flash('success', "The moderator {$ladderAdmin->user->email} has been removed");
+        return redirect()->back();
+    }
+
+    public function addTester(Request $request, $ladderId = null)
+    {
+        if ($ladderId === null)
+        {
+            $request->session()->flash('error', "No ladder specified");
+        }
+
+        $user = \App\User::where('email', '=', $request->email)->first();
+        if ($request->email === null || $user == null)
+        {
+            $request->session()->flash('error', "Unable to add the user as tester");
+            return redirect()->back();
+        }
+
+        $ladderAdmin = \App\LadderAdmin::findOrCreate($user->id, $ladderId);
+
+        $ladderAdmin->admin = false;
+        $ladderAdmin->moderator = false;
+        $ladderAdmin->tester = true;
+        $ladderAdmin->save();
+
+        $request->session()->flash('success', "The user {$user->email} has been made promoted to tester");
+        return redirect()->back();
+    }
+
+    public function removeTester(Request $request, $ladderId = null)
+    {
+        if ($ladderId === null)
+        {
+            $request->session()->flash('error', "No ladder specified");
+        }
+
+        if ($request->ladder_admin_id === null)
+        {
+            $request->session()->flash('error', "Unable to remove the user");
+            return redirect()->back();
+        }
+
+        $ladderAdmin = \App\LadderAdmin::find($request->ladder_admin_id);
+        if ($ladderAdmin === null)
+        {
+            $request->session()->flash('error', "Unable to find the requested tester");
+            return redirect()->back();
+        }
+
+        $ladderAdmin->admin = false;
+        $ladderAdmin->moderator = false;
+        $ladderAdmin->tester = false;
+        $ladderAdmin->save();
+
+        $request->session()->flash('success', "The tester {$ladderAdmin->user->email} has been removed");
+        return redirect()->back();
+    }
+
+    public function getLadderPlayer(Request $request, $ladderId = null, $playerId = null)
+    {
+        $mod = $request->user();
+        if ($playerId === null)
+            return;
+
+        $player = \App\Player::find($playerId);
+
+        if ($player === null || !$mod->isLadderMod($player->ladder))
+            return;
+
+        $user = $player->user;
+
+        $ladderService = new LadderService;
+        $history = $ladderService->getActiveLadderByDate(Carbon::now()->format('m-Y'), $player->ladder->game);
+
+        return view("admin.moderate-player",
+                    [ "mod"    => $mod,
+                      "player" => $player,
+                      "user"   => $user,
+                      "bans"   => $user->bans()->orderBy('created_at', 'DESC')->get(),
+                      "ladder" => $player->ladder,
+                      "history" => $history
+                    ]);
+    }
+
+    public function getUserBan(Request $request, $ladderId = null, $playerId = null, $banType = 0)
+    {
+        $mod = $request->user();
+        if ($playerId === null)
+            return;
+
+        $player = \App\Player::find($playerId);
+
+        if ($player === null || !$mod->isLadderMod($player->ladder))
+            return;
+
+        $user = $player->user;
+
+        return view("admin.edit-ban",
+                    [ "mod"    => $mod,
+                      "player" => $player,
+                      "user"   => $user,
+                      "ladder" => $player->ladder,
+                      "id" => null,
+                      "expires" => null,
+                      "admin_id" => $mod->id,
+                      "user_id" => $user->id,
+                      "ban_type" => $banType,
+                      "internal_note" => "",
+                      "plubic_reason" => "",
+                      "ip_address_id" => $user->ip->id,
+                      "start_or_end" => false,
+                      "banDesc" => \App\Ban::typeToDescription($banType) ." - ". \App\Ban::banStyle($banType)
+                    ]);
+    }
+
+    public function editUserBan(Request $request, $ladderId = null, $playerId = null, $banId = null)
+    {
+        $mod = $request->user();
+        if ($playerId === null)
+            return;
+
+        $player = \App\Player::find($playerId);
+
+        if ($player === null || !$mod->isLadderMod($player->ladder))
+            return;
+
+        $ban = \App\Ban::find($banId);
+        if ($player === null)
+            return;
+
+        $user = $player->user;
+
+        return view("admin.edit-ban",
+                    [ "mod"    => $mod,
+                      "player" => $player,
+                      "user"   => $user,
+                      "ladder" => $player->ladder,
+                      "id" => $ban->id,
+                      "expires" => $ban->expires->eq(\App\Ban::unstartedBanTime()) ? null : $ban->expires,
+                      "admin_id" => $mod->id,
+                      "user_id" => $user->id,
+                      "ban_type" => $ban->ban_type,
+                      "internal_note" => $ban->internal_note,
+                      "plubic_reason" => $ban->plubic_reason,
+                      "ip_address_id" => $ban->ip_address_id,
+                      "start_or_end" => false,
+                      "banDesc" => \App\Ban::typeToDescription($ban->ban_type) ." - ". \App\Ban::banStyle($ban->ban_type)
+                    ]);
+    }
+
+    public function saveUserBan(Request $request, $ladderId = null, $playerId = null, $banId = null)
+    {
+        $mod = $request->user();
+        if ($playerId === null)
+            return;
+        $player = \App\Player::find($playerId);
+
+        if ($player === null || !$mod->isLadderMod($player->ladder))
+            return;
+
+        if ($player === null)
+            return;
+
+        $user = $player->user;
+
+        $ban = \App\Ban::find($banId);
+        if ($ban === null)
+        {
+            $ban = new \App\Ban;
+        }
+
+        foreach ($ban->fillable as $col)
+        {
+            if ($request->has($col))
+            {
+                $ban[$col] = $request[$col];
+            }
+        }
+
+        $banFlash = \App\Ban::banStyle($request->ban_type);
+
+        if ($request->start_or_end)
+        {
+            if ($ban->expires !== null && $ban->expires->gt(Carbon::now()))
+            {
+                $ban->expires = Carbon::now();
+                $banFlash = "has ended.";
+            }
+            else if ($ban->expires === null || $ban->expires->eq(\App\Ban::unstartedBanTime()))
+            {
+                $ban->checkStartBan(true);
+                $banFlash = "has started.";
+            }
+        }
+        $ban->save();
+
+        $request->session()->flash('success', "Ban ". $banFlash);
+        return redirect()->action('AdminController@getLadderPlayer', ['ladderId' => $ladderId, 'playerId' => $playerId]);
     }
 }
 

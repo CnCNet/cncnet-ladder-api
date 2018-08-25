@@ -10,7 +10,7 @@ class AuthService
 
     }
 
-    public function getUser()
+    public function getUser($request)
     {
         try
         {
@@ -39,6 +39,9 @@ class AuthService
                                                      'message' => 'Authentication failed token_absent'], $e->getStatusCode()),
                      "user" => null];
         }
+
+        $user->ip_address_id = \App\IpAddress::getID($request->getClientIp());
+        $user->save();
 
         // the token is valid and we have found the user via the sub claim
         return [ "user" => $user, "response" => null];

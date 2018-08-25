@@ -27,4 +27,24 @@ class Ladder extends Model
     {
         return $this->hasMany('App\Player');
     }
+
+    public function allAdmins()
+    {
+        return $this->hasMany('App\LadderAdmin');
+    }
+
+    public function admins()
+    {
+        return $this->allAdmins()->where('admin', '=', true);
+    }
+
+    public function moderators()
+    {
+        return $this->allAdmins()->where('moderator', '=', true);
+    }
+
+    public function testers()
+    {
+        return $this->allAdmins()->where('tester', '=', true);
+    }
 }

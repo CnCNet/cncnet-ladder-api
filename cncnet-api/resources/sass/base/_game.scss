@@ -36,7 +36,7 @@
     background: none;
 }
 
-h3.game-intro a 
+h3.game-intro a
 {
     color: #fff;
 
@@ -87,13 +87,13 @@ h3.game-intro > span:first-child:after
     margin-bottom: -20px;
 }
 
-.stats-row 
+.stats-row
 {
     padding: 20px 0;
     border-bottom: 1px solid #151515;
 }
 
-.row.stats-row h4 
+.row.stats-row h4
 {
     color: #a2a2a2;
 }
@@ -195,7 +195,8 @@ h3.game-intro > span:first-child:after
 .faction-america,
 .faction-korea,
 .faction-france,
-.faction-germany
+.faction-germany,
+.faction-great-britain
 {
     background-image: url(../images/hud/allied.png);
     width: 200px;
@@ -204,8 +205,7 @@ h3.game-intro > span:first-child:after
 .faction-iraq,
 .faction-cuba,
 .faction-russia,
-.faction-libya,
-.faction-germany
+.faction-libya
 {
     background-image: url(../images/hud/soviet.png);
     width: 150px;
@@ -234,13 +234,13 @@ h3.game-intro > span:first-child:after
      width: 140px;
 }
 
-.faction-gdi 
+.faction-gdi
 {
      background-image: url(../images/hud/ts_gdi.png);
      width: 150px;
 }
 
-.faction-nod 
+.faction-nod
 {
      background-image: url(../images/hud/ts_nod.png);
      width: 150px;
@@ -252,9 +252,9 @@ h3.game-intro > span:first-child:after
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 992px)
 {
-    .faction 
+    .faction
     {
-        background-size: auto; 
+        background-size: auto;
     }
     .faction-great,
     .faction-america,
@@ -274,13 +274,13 @@ h3.game-intro > span:first-child:after
     .faction-fra,
     .faction-gre,
     .faction-gdi,
-    .faction-nod  
+    .faction-nod
     {
         background-size: 100%;
     }
 }
 
-.country 
+.country
 {
   position: absolute;
   right: 30px;
@@ -288,12 +288,12 @@ h3.game-intro > span:first-child:after
   font-size: 45px;
 }
 
-.game .game-intro 
+.game .game-intro
 {
     position: relative;
 }
 
-.game .player-vs 
+.game .player-vs
 {
     display: flex;
     width: 100%;
@@ -303,7 +303,7 @@ h3.game-intro > span:first-child:after
     align-items: center;
 }
 
-.game .player-vs h3 
+.game .player-vs h3
 {
     margin: 0;
 }
@@ -313,7 +313,7 @@ h3.game-intro > span:first-child:after
     width: 100%;
 }
 
-.game .player-vs .vs 
+.game .player-vs .vs
 {
     width: 100%;
     text-align: center;
@@ -337,20 +337,20 @@ h3.game-intro > span:first-child:after
     width: 13%;
 }
 
-.game .game-intro 
+.game .game-intro
 {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
 }
 
-.game .vs 
+.game .vs
 {
     animation: vs-flash 6s forwards infinite;
 }
 
 // #dunno bored
-@keyframes vs-flash 
+@keyframes vs-flash
 {
     0%{ opacity: 0.3;}
     50% { opacity: 1; color: #fff;}
@@ -366,15 +366,15 @@ h3.game-intro > span:first-child:after
         flex-direction: row;
         width: 70%;
         margin: 0 auto;
-        max-width: 100%;                  
+        max-width: 100%;
     }
 
-    .game .player-vs .game-intro 
+    .game .player-vs .game-intro
     {
         width: 50%;
     }
 
-    .game .player-vs .vs 
+    .game .player-vs .vs
     {
         width: 5%;
     }
@@ -386,7 +386,7 @@ h3.game-intro > span:first-child:after
     font-size: 17px;
 }
 
-.game-details-list li 
+.game-details-list li
 {
     padding: 4px 0;
 }

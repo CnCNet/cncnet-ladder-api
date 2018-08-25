@@ -1,11 +1,11 @@
-<?php 
+<?php
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
 
-class ApiPlayerController extends Controller 
+class ApiPlayerController extends Controller
 {
     private $authService;
     private $playerService;
@@ -18,7 +18,7 @@ class ApiPlayerController extends Controller
 
     public function createPlayer(Request $request, $username = null)
     {
-        $user = $this->authService->getUser();
+        $user = $this->authService->getUser($request);
 
         if($username == null)
             return response()->json(['username_required'], 400);

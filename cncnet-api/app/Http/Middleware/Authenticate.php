@@ -32,28 +32,68 @@ class Authenticate {
 	 */
 	public function handle($request, Closure $next)
 	{
+        $route = $request->route();
+        $actions = $route->getAction();
+
 		if ($this->auth->guest())
 		{
 			if ($request->ajax() || $request->wantsJson())
 			{
 				return response('Unauthorized.', 401);
 			}
+            else if (isset($actions["guestsAllowed"]))
+            {
+                return $next($request);
+            }
 			else
 			{
 				return redirect()->guest('auth/login');
 			}
 		}
 
-        $route = $request->route();
-        $actions = $route->getAction();
-
-        if (isset($actions["group"]))
+        if (!$this->auth->user()->isGod())
         {
-            $group = $actions["group"];
-
-            if (!in_array ($this->auth->user()->group, $group ))
+            $response = null;
+            if (isset($actions["canEditAnyLadders"]))
             {
-				return redirect()->guest('auth/login');
+                if ($this->auth->user()->canEditAnyLadders() != $actions["canEditAnyLadders"])
+                {
+                    $response = response('Unauthorized.', 401);
+                }
+            }
+
+            if ($request->ladderId !== null)
+            {
+                $ladder = \App\Ladder::find($request->ladderId);
+
+                if (isset($actions["canAdminLadder"]))
+                {
+                    if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
+                    {
+                        $response = response('Unauthorized.', 401);
+                    }
+                }
+
+                if (isset($actions["canModLadder"]))
+                {
+                    if ($actions["canModLadder"] != $this->auth->user()->isLadderMod($ladder))
+                    {
+                        $response = response('Unauthorized.', 401);
+                    }
+                }
+
+                if (isset($actions["canTestLadder"]))
+                {
+                    if ($actions["canTestLadder"] != $this->auth->user()->isLadderTester($ladder))
+                    {
+                        $response = response('Unauthorized.', 401);
+                    }
+                }
+            }
+
+            if ($response !== null)
+            {
+                return $response;
             }
         }
 

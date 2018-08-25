@@ -22,10 +22,26 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	protected $hidden = ['password', 'remember_token'];
 
+    public function canEditAnyLadders()
+    {
+        $la = $this->ladderAdmins()->where(
+            function($query)
+            {
+                $query->where('admin', '=', true)->orWhere('moderator', '=', true);
+            });
+
+        return $la->count() > 0;
+    }
+
     public function usernames()
 	{
 		return $this->hasMany('App\Player');
 	}
+
+    public function ip()
+    {
+        return $this->belongsTo('App\IpAddress','ip_address_id');
+    }
 
     public function isAdmin()
     {
@@ -47,8 +63,55 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany("\App\Ban");
     }
 
-    public function getBan()
+    public function bansGiven()
     {
-        return $this->bans()->where('expires', '>', Carbon::now())->first();
+        return $this->hasMany("\App\Ban", "admin_id");
+    }
+
+    public function getBan($start = false)
+    {
+        $bestBan = null;
+        foreach ($this->bans as $ban)
+        {
+            $ban->checkStartBan($start);
+        }
+        $bestBan = $this->bans()->where('expires', '>', Carbon::now())->orderBy('expires', 'ASC')->first();
+
+        if ($bestBan !== null)
+            return $bestBan->checkStartBan($start);
+
+        return null;
+    }
+
+    public function ladderAdmins()
+    {
+        return $this->hasMany('App\LadderAdmin');
+    }
+
+    public function isLadderAdmin($ladder)
+    {
+        $la = $this->ladderAdmins()->where('ladder_id', '=', $ladder->id)->first();
+        if ($la === null)
+            return false;
+
+        return $la->admin;
+    }
+
+    public function isLadderMod($ladder)
+    {
+        $la = $this->ladderAdmins()->where('ladder_id', '=', $ladder->id)->first();
+        if ($la === null)
+            return false;
+
+        return $la->moderator;
+    }
+
+    public function isLadderTester($ladder)
+    {
+        $la = $this->ladderAdmins()->where('ladder_id', '=', $ladder->id)->first();
+        if ($la === null)
+            return false;
+
+        return $la->tester;
     }
 }

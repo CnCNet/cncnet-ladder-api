@@ -52,12 +52,20 @@
                             Wins <strong>{{ $player->games_won }}</strong>
                             <i class="fa fa-level-up fa-fw fa-lg"></i>
                         </li>
+                        @if($userIsMod)
+                            <li>
+                                <a href="/admin/moderate/{{ $ladderId }}/player/{{ $player->id }}" class="btn btn-sm btn-danger">Moderation Actions</a>
+                            </li>
+                        @endif
                     </ul>
+                   @if($userIsMod)
+                       {{ $playerUser->getBan() }}
+                   @endif
                 </div>
 
                 <div class="player-badges">
                     <h1 class="rank text-center">
-                        <span class="text-uppercase">Rank</span> 
+                        <span class="text-uppercase">Rank</span>
                         #{{ $player->rank == -1 ? "Unranked" : $player->rank }}
                     </h1>
                     <?php $badge = $player->badge; ?>

@@ -39,8 +39,22 @@
         <div class="game-details">
             <div class="container" style="position:relative;padding: 60px 0;">
 
-                <div class="player-vs">
-                    @foreach($playerGameReports as $k => $pgr)
+                <? $hasWash = false; ?>
+                @if($gameReport !== null)
+                @foreach($allGameReports as $thisGameReport)
+                    @if ($userIsMod && $thisGameReport->best_report && $thisGameReport->id != $gameReport->id)
+                    <div class="player-vs" style="border: 2px solid blue;">
+                    @elseif ($userIsMod && $thisGameReport->best_report)
+                    <div class="player-vs" style="border: 6px solid green;" href="#">
+                    @elseif ($userIsMod && $thisGameReport->id == $gameReport->id)
+                    <div class="player-vs" style="border: 6px solid yellow;" >
+                    @elseif ($userIsMod)
+                    <div class="player-vs" style="border: 2px solid gray;">
+                    @else
+                    <div class="player-vs">
+                    @endif
+                    <?php $thesePlayerGameReports = $thisGameReport !== null ? $thisGameReport->playerGameReports()->get() : []; ?>
+                    @foreach($thesePlayerGameReports as $k => $pgr)
 
                         <?php $gameStats = $pgr->stats; ?>
                         @if ($gameStats != null)
@@ -49,7 +63,7 @@
 
                         <?php $player = $pgr->player()->first(); ?>
                         <?php $url = "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username; ?>
-                        
+
                         <h3 class="game-intro">
                             <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if($k == 0)order:0; @else order: 1; @endif">
                                 <span class="player">
@@ -86,14 +100,48 @@
                             </a>
                             @endif
                         </h3>
-                        
+
                         @if($k == 0)
-                        <div class="vs">
-                            VS
-                        </div>
+                            @if ($userIsMod && $thisGameReport->id != $gameReport->id)
+                                <a class="btn btn-sm btn-primary" href="{{ action("LadderController@getLadderGame", ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}" >View</a>
+                            @elseif ($userIsMod && $thisGameReport->id == $gameReport->id && !$thisGameReport->best_report)
+                                <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input name="game_id" type="hidden" value="{{ $game->id }}"/>
+                                    <input name="game_report_id" type="hidden" value="{{ $thisGameReport->id }}" />
+                                    <button type="submit" class="btn btn-md btn-danger">Use This One</button>
+                                </form>
+                            @else
+                            <div class="vs">
+                                VS
+                            </div>
+                            @endif
                         @endif
                     @endforeach
+
+                    @if ($thesePlayerGameReports->count() < 1)
+                        <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <input name="game_id" type="hidden" value="{{ $game->id }}"/>
+                            <input name="game_report_id" type="hidden" value="{{ $thisGameReport->id }}" />
+                            @if ($thisGameReport->best_report)
+                                <button type="submit" class="btn btn-md btn-danger" disabled>Washed</button>
+                            @else
+                                <button type="submit" class="btn btn-md btn-danger">Wash</button>
+                            @endif
+                        </form>
+                        <?php $hasWash = true; ?>
+                    @endif
                 </div>
+                @endforeach
+
+                @if (!$hasWash && $userIsMod)
+                    <form action="/admin/moderate/{{ $history->ladder->id }}/games/wash" class="text-center" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input name="game_id" type="hidden" value="{{ $game->id }}"/>
+                        <button type="submit" class="btn btn-md btn-danger">Wash</button>
+                    </form>
+                @endif
 
                 <div class="game-details text-center">
                     <div>
@@ -103,6 +151,7 @@
                         <strong>Average FPS:</strong> {{ $gameReport->fps }}
                     </div>
                 </div>
+                @endif
             </div>
         </div>
     </section>

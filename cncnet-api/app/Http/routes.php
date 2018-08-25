@@ -11,7 +11,7 @@ Route::get('/', function ()
 
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
 
-Route::group(['prefix' => 'ladder/', 'middleware' => 'cache.public'], function()
+Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function()
 {
     Route::get('/', 'LadderController@getLadders');
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
@@ -30,21 +30,46 @@ Route::controllers
 	'password' => 'Auth\PasswordController',
 ]);
 
-Route::group(['prefix' => 'admin', 'middleware' => 'auth', 'group' => [User::Admin, User::God]], function ()
-{
-    Route::get('/', 'AdminController@getAdminIndex');
-    Route::get('/users', 'AdminController@getManageUsersIndex');
-    Route::get('/setup', 'AdminController@getLadderSetupIndex');
-    Route::post('/setup/rules', 'AdminController@postLadderSetupRules');
-    Route::post('/setup/qmmap', 'AdminController@postQuickMatchMap');
-    Route::post('/setup/remqmap', 'AdminController@removeQuickMatchMap');
-    Route::get('/setup/downmap/{mapId}', 'AdminController@moveDownQuickMatchMap');
-    Route::get('/setup/upmap/{mapId}', 'AdminController@moveUpQuickMatchMap');
+Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
 
+Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
+{
+    Route::get('users', 'AdminController@getManageUsersIndex');
+    Route::get('edit', 'AdminController@getLadderSetupIndex');
+    Route::post('ladder', 'LadderController@saveLadder');
+
+    Route::post('addSide', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@addSide']);
+    Route::post('remSide', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@remSide']);
+
+    Route::post('rules', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@postLadderSetupRules']);
+    Route::post('qmmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@postQuickMatchMap']);
+    Route::post('remqmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@removeQuickMatchMap']);
+    Route::get('downmap/{mapId}', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@moveDownQuickMatchMap']);
+    Route::get('upmap/{mapId}', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@moveUpQuickMatchMap']);
+
+
+    Route::post('add/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@addAdmin']);
+    Route::post('remove/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@removeAdmin']);
+
+    Route::post('add/moderator', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@addModerator']);
+    Route::post('remove/moderator', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@removeModerator']);
+
+    Route::post('add/tester', 'AdminController@addTester');
+    Route::post('remove/tester', 'AdminController@removeTester');
+});
+
+Route::group(['prefix' => 'admin/moderate/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
+{
     Route::get('/games/{cncnetGame}', 'AdminController@getManageGameIndex');
     Route::post('/games/{cncnetGame}/delete', 'AdminController@deleteGame');
     Route::post('/games/switch', 'AdminController@switchGameReport');
     Route::post('/games/wash', 'AdminController@washGame');
+
+    Route::get('/player/{playerId}', 'AdminController@getLadderPlayer');
+    Route::get('/player/{playerId}/newban/{banType}', 'AdminController@getUserBan');
+    Route::get('/player/{playerId}/editban/{banId}', 'AdminController@editUserBan');
+    Route::post('/player/{playerId}/editban/{banId}', 'AdminController@saveUserBan');
+    Route::post('/player/{playerId}/editban', 'AdminController@saveUserBan');
 });
 
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()

@@ -28,7 +28,7 @@ class AdminService
         $ladderRule->bail_time = $request->bail_time;
         $ladderRule->bail_fps = $request->bail_fps;
         $ladderRule->tier2_rating = $request->tier2_rating;
-        $ladderRule->all_sides = implode(",", $request->all_sides);
+        $ladderRule->all_sides = $request->all_sides;
         $ladderRule->allowed_sides = implode(",", $request->allowed_sides);
         $ladderRule->save();
 

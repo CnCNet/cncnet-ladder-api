@@ -103,7 +103,10 @@ class Player extends Model
             }
             $count++;
         }
-        $ptile = (($count/$ratingsCount) * 100) - 1;
+        if ($ratingsCount != 0)
+            $ptile = (($count/$ratingsCount) * 100) - 1;
+        else
+            $ptile = 0;
 
         return $ptile >= 0 ? $ptile : 0;
     }

@@ -95,21 +95,40 @@ class LadderController extends Controller
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
 
+        $user = $request->user();
+
         if ($game == null)
             return "No game";
 
-        if ($reportId !== null && $game->allReports->count() > $reportId)
-            $gameReport = $game->allReports[$reportId];
+        if ($user !== null && $user->isLadderMod($history->ladder))
+        {
+            $allGameReports = $game->allReports;
+            $userIsMod = true;
+        }
+        else
+        {
+            $allGameReports = $game->report()->get();
+            $userIsMod = false;
+        }
+
+        if ($reportId !== null)
+            $gameReport = $game->allReports()->where('game_reports.id', '=', $reportId)->first();
         else
             $gameReport = $game->report->first();
+
         return view('ladders.game-view',
         array(
             "game" => $game,
             "gameReport" => $gameReport,
+            "allGameReports" => $allGameReports,
             "playerGameReports" => $gameReport !== null ? $gameReport->playerGameReports()->get() : [],
             "history" => $history,
             "ladders" => $this->ladderService->getLatestLadders(),
-            "heaps" => \App\CountableObjectHeap::all()
+            "heaps" => \App\CountableObjectHeap::all(),
+            "user" => $user,
+            "userIsMod" => $userIsMod,
+            "date" => $date,
+            "cncnetGame" => $cncnetGame,
         ));
     }
 
@@ -123,10 +142,17 @@ class LadderController extends Controller
         if ($player == null)
             return "No Player";
 
+        $user = $request->user();
+
+        $userIsMod = false;
+        if ($user !== null && $user->isLadderMod($player->ladder))
+            $userIsMod = true;
+
         $games = $player->playerGames()
                 ->where("ladder_history_id", "=", $history->id)
                 ->orderBy('created_at', 'DESC')
                 ->paginate(24);
+        $playerUser = $player->user;
 
         return view
         (
@@ -137,6 +163,9 @@ class LadderController extends Controller
                 "history" => $history,
                 "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($history, $player->username))),
                 "games" => $games,
+                "userIsMod" => $userIsMod,
+                "playerUser" => $playerUser,
+                "ladderId" => $player->ladder->id,
             )
         );
     }
@@ -169,5 +198,25 @@ class LadderController extends Controller
                 }
             }
         }
+    }
+
+    public function saveLadder(Request $request, $ladderId = null)
+    {
+        $ladder = \App\Ladder::find($ladderId);
+
+        if ($ladderId === null || $ladder === null)
+        {
+            $request->session()->flash('error', 'Unabled to find ladder');
+            return redirect()->back();
+        }
+
+        $ladder->name = $request->name;
+        $ladder->abbreviation = $request->abbreviation;
+        $ladder->game = $request->game;
+        $ladder->save();
+
+        $request->session()->flash('success', 'Ladder information saved.');
+
+        return redirect()->back();
     }
 }
