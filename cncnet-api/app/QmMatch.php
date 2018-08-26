@@ -19,4 +19,9 @@ class QmMatch extends Model {
     {
         return $this->belongsTo('App\Ladder');
     }
+
+    public function states()
+    {
+        return $this->hasMany('App\QmMatchState');
+    }
 }

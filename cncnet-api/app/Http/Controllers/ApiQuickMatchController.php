@@ -107,7 +107,6 @@ class ApiQuickMatchController extends Controller
             {
                 if ($qmPlayer->qm_match_id !== null)
                 {
-                    $qmPlayer->qmMatch->status .= " {$player->username}:quit";
                     $qmPlayer->qmMatch->save();
                 }
                 $qmPlayer->delete();
@@ -131,11 +130,15 @@ class ApiQuickMatchController extends Controller
                         $qmMatch->touch();
                         break;
                     default:
-                        $qmMatch->status .= " {$player->username}:{$request->status}";
+                        $qmState = new \App\QmMatchState;
+                        $qmState->player_id = $player->id;
+                        $qmState->qm_match_id = $qmMatch->id;
+                        $qmState->state_type_id = \App\StateType::findByName($request->status)->id;
+                        $qmState->save();
                         break;
                     }
                     $qmMatch->save();
-                    return ["message"  => "update qm match: ".$qmMatch->status ];
+                    return ["message"  => "update qm match: ".$request->status ];
                 }
             }
             return ["type" => "update"];
@@ -303,7 +306,6 @@ class ApiQuickMatchController extends Controller
 
                     // Create the qm_matches db entry
                     $qmMatch = new \App\QmMatch();
-                    $qmMatch->status = "Matched";
                     $qmMatch->ladder_id = $qmPlayer->ladder_id;
                     $qmMatch->qm_map_id = $common_maps[$map_idx]->id;
                     $qmMatch->seed = mt_rand(-2147483647, 2147483647);
