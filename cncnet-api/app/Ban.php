@@ -50,21 +50,35 @@ class Ban extends Model {
 
     public function timeTill()
     {
-        $days = $this->expires->diffInDays(Carbon::now());
-        $hours = $this->expires->subDays($days)->diffInHours();
-        if ($days > 0)
-            return "{$days} days {$hours} hours from now";
-        else if ($hours > 0)
-            return "{$hours} hours from now";
+        if ($this->started())
+        {
+            $days = $this->expires->diffInDays(Carbon::now());
+            $hours = $this->expires->subDays($days)->diffInHours();
+            if ($days > 0)
+                return "{$days} days {$hours} hours from now";
+            else if ($hours > 0)
+                return "{$hours} hours from now";
+            else
+                return $this->expires->diffForHumans();
+        }
         else
-            return $this->expires->diffForHumans();
+            return "(Ban has not started)\n";
+    }
+
+    public function started()
+    {
+        if ($this->expires === null || $this->expires->eq(Ban::unstartedBanTime()))
+        {
+            return false;
+        }
+        return true;
     }
 
     public function checkStartBan($start = false)
     {
         $banned = false;
         $cooldown = false;
-        if (!$start)
+        if (!$start && !($this->ban_type >= \App\Ban::START_NOW_BEGIN && $this->ban_type <= \App\Ban::START_NOW_END))
         {
             if ($this->ban_type == Ban::PERMBAN)
                 return "You are permanently banned!";
@@ -79,7 +93,7 @@ class Ban extends Model {
             switch ($this->ban_type)
             {
             case Ban::BAN48H:
-                if ($this->expires->eq(Ban::unstartedBanTime()))
+                if (!$this->started())
                 {
                     $this->expires = Carbon::now()->addHours(48);
                     $this->save();
@@ -90,7 +104,7 @@ class Ban extends Model {
                 break;
 
             case Ban::BAN1WEEK:
-                if ($this->expires->eq(Ban::unstartedBanTime()))
+                if (!$this->started())
                 {
                     $this->expires = Carbon::now()->addWeek(1);
                     $this->save();
@@ -101,7 +115,7 @@ class Ban extends Model {
                 break;
 
             case Ban::BAN2WEEK:
-                if ($this->expires->eq(Ban::unstartedBanTime()))
+                if (!$this->started())
                 {
                     $this->expires = Carbon::now()->addWeek(2);
                     $this->save();
@@ -116,7 +130,7 @@ class Ban extends Model {
                 break;
 
             case Ban::COOLDOWN1H:
-                if ($this->expires->eq(Ban::unstartedBanTime()))
+                if (!$this->started())
                 {
                     $this->expires = Carbon::now()->addHours(1);
                     $this->save();
@@ -127,7 +141,7 @@ class Ban extends Model {
                 break;
 
             case Ban::COOLDOWN2H:
-                if ($this->expires->eq(Ban::unstartedBanTime()))
+                if (!$this->started())
                 {
                     $this->expires = Carbon::now()->addHours(2);
                     $this->save();
@@ -138,7 +152,7 @@ class Ban extends Model {
                 break;
 
             case Ban::COOLDOWN4H:
-                if ($this->expires->eq(Ban::unstartedBanTime()))
+                if (!$this->started())
                 {
                     $this->expires = Carbon::now()->addHours(4);
                     $this->save();
@@ -149,7 +163,7 @@ class Ban extends Model {
                 break;
 
             case Ban::COOLDOWN12H:
-                if ($this->expires->eq(Ban::unstartedBanTime()))
+                if (!$this->started())
                 {
                     $this->expires = Carbon::now()->addHours(12);
                     $this->save();

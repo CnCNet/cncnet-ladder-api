@@ -598,6 +598,7 @@ class AdminController extends Controller
                 $ban[$col] = $request[$col];
             }
         }
+        $ban->save();
 
         $banFlash = \App\Ban::banStyle($request->ban_type);
 
@@ -613,7 +614,14 @@ class AdminController extends Controller
                 $ban->checkStartBan(true);
                 $banFlash = "has started.";
             }
+            else
+            {
+                $ban->checkStartBan(false);
+            }
         }
+        else
+            $ban->checkStartBan(false);
+
         $ban->save();
 
         $request->session()->flash('success', "Ban ". $banFlash);
