@@ -24,6 +24,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function canEditAnyLadders()
     {
+        if ($this->isGod())
+            return true;
+
         $la = $this->ladderAdmins()->where(
             function($query)
             {

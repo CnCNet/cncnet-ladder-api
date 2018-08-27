@@ -40,7 +40,9 @@ class AuthService
                      "user" => null];
         }
 
-        $user->ip_address_id = \App\IpAddress::getID($request->getClientIp());
+        $user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+                                                     ? $_SERVER["HTTP_CF_CONNECTING_IP"]
+                                                     : $request->getClientIp());
         $user->save();
 
         // the token is valid and we have found the user via the sub claim
