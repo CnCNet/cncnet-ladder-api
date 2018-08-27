@@ -90,6 +90,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function isLadderAdmin($ladder)
     {
+        if ($this->isGod())
+            return true;
+
         $la = $this->ladderAdmins()->where('ladder_id', '=', $ladder->id)->first();
         if ($la === null)
             return false;
@@ -99,6 +102,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function isLadderMod($ladder)
     {
+        if ($this->isGod())
+            return true;
+
         $la = $this->ladderAdmins()->where('ladder_id', '=', $ladder->id)->first();
         if ($la === null)
             return false;
