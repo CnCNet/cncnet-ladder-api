@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Ladder extends Model
 {
@@ -46,5 +47,16 @@ class Ladder extends Model
     public function testers()
     {
         return $this->allAdmins()->where('tester', '=', true);
+    }
+
+    public function currentHistory()
+    {
+        $date = Carbon::now();
+        $start = $date->startOfMonth()->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+
+        return \App\LadderHistory::where('ladder_id', '=', $this->id)
+                                 ->where('ladder_history.starts', '=', $start)
+                                 ->where('ladder_history.ends', '=', $end)->first();
     }
 }

@@ -135,6 +135,7 @@ class LadderService
         }
 
         return \App\Game::where("ladder_history_id", "=", $history->id)
+            ->whereNotNull('game_report_id')
             ->orderBy("games.id", "DESC")
             ->limit($limit)
             ->get();
@@ -150,6 +151,7 @@ class LadderService
 
         return \App\Game::where("ladder_history_id", "=", $history->id)
             ->join("game_reports as gr", "gr.game_id", "=", "games.id")
+            ->whereNotNull('game_report_id')
             ->where("gr.valid", "=", true)
             ->where("gr.best_report", "=", true)
             ->select("games.*")
@@ -167,6 +169,7 @@ class LadderService
         }
 
         return \App\Game::where("ladder_history_id", "=", $history->id)
+            ->whereNotNull('game_report_id')
             ->orderBy("games.id", "DESC")
             ->paginate(45);
     }

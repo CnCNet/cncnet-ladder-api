@@ -261,7 +261,6 @@ class ApiQuickMatchController extends Controller
                     // Randomly choose the opponents from the best matches. To prevent
                     // long runs of identical matchups.
                     $qmOpns = $qmOpns->shuffle()->take($ladder_rules->player_count - 1);
-
                     // Randomly select a map
                     $common_maps = array();
 
@@ -296,6 +295,7 @@ class ApiQuickMatchController extends Controller
                     }
                     if (count($common_maps) < 1)
                     {
+
                         $qmPlayer->touch();
                         return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1,
                                      "message" => "Didn't have any maps in common with opponent");
@@ -303,13 +303,19 @@ class ApiQuickMatchController extends Controller
 
                     $map_idx = mt_rand(0, count($common_maps) - 1);
 
-
                     // Create the qm_matches db entry
                     $qmMatch = new \App\QmMatch();
                     $qmMatch->ladder_id = $qmPlayer->ladder_id;
                     $qmMatch->qm_map_id = $common_maps[$map_idx]->id;
                     $qmMatch->seed = mt_rand(-2147483647, 2147483647);
+
+                    // Create the Game
+                    $game = \App\Game::genQmEntry($qmMatch);
+                    $qmMatch->game_id = $game->id;
                     $qmMatch->save();
+
+                    $game->qm_match_id = $qmMatch->id;
+                    $game->save();
 
                     $qmMap = $qmMatch->map;
                     $spawn_order = explode(',', $qmMap->spawn_order);
@@ -377,6 +383,7 @@ class ApiQuickMatchController extends Controller
             $spawnStruct = array("type" => "spawn");
             $qmPlayer->waiting = false;
             $qmMatch = \App\QmMatch::find($qmPlayer->qm_match_id);
+            $spawnStruct["gameID"] = $qmMatch->game_id;
             $qmMap = $qmMatch->map;
             $map = $qmMap->map;
 

@@ -10,6 +10,7 @@ use \App\Http\Services\AuthService;
 use \Carbon\Carbon;
 use Log;
 use Illuminate\Support\Facades\Cache;
+use \App;
 
 class ApiLadderController extends Controller
 {
@@ -37,6 +38,51 @@ class ApiLadderController extends Controller
     public function getLadder(Request $request, $game = null)
     {
         return $this->ladderService->getLadderByGameAbbreviation($game);
+    }
+
+    public function newPostLadder(Request $request, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
+    {
+        $ladder = App\Ladder::find($ladderId);
+        $player = App\Player::find($playerId);
+        $game = App\Game::find($gameId);
+        // Game stats result
+        $result = $this->gameService->processStatsDmp($request->file('file'), $ladder->game, $ladder->id);
+        if (count($result) == 0 || $result == null)
+        {
+            return response()->json(['No data'], 400);
+        }
+
+        // Player checks
+        $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
+        if($check !== null)
+        {
+            return $check;
+        }
+        $history = $game->ladderHistory;
+
+        // Keep a record of the raw stats sent in
+        $this->gameService->saveRawStats($result, $game->id, $history->id);
+
+        $this->gameService->fillGameCols($game, $result);
+
+        // Now save the processed stats
+        $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder->id, $ladder->game);
+        $gameReport = $result['gameReport'];
+        if ($gameReport === null)
+        {
+            return response()->json(['Error' => $result['error']], 400);
+        }
+        $gameReport->pings_sent = $pingSent;
+        $gameReport->pings_received = $pingReceived;
+        $gameReport->save();
+
+        // Award points
+        $status = $this->awardPoints($gameReport, $history);
+
+        // Dispute handling
+        $this->handleGameDispute($gameReport);
+
+        return response()->json(['success' => $status], 200);
     }
 
     public function postLadder(Request $request, $cncnetGame = null, $username = null, $pingSent = 0, $pingReceived = 0)

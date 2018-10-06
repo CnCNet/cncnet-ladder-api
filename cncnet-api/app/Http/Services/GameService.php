@@ -422,10 +422,15 @@ class GameService
         {
             $game = new \App\Game();
             $game->ladder_history_id = $ladder->id;
-            $game->wol_game_id = $id;
             //$game->save();
         }
+        $this->fillGameCols($game, $result);
+        return $game;
+    }
 
+    public function fillGameCols($game, $result)
+    {
+        $game->wol_game_id = $this->getUniqueGameIdentifier($result);
         foreach($result as $key => $value)
         {
             $gameProperty = substr($key, -1);
@@ -433,15 +438,13 @@ class GameService
             if(!is_numeric($gameProperty))
             {
                 // Save Game Details like average fps, out of sync errors etc
-                if (in_array(strtolower($key), $game->gameColumns))
+                if (in_array(strtolower($key), \App\Game::$gameColumns))
                 {
                     $game->{strtolower($key)} = $value["value"];
                 }
             }
         }
-
         $game->save();
-        return $game;
     }
 
     private function getUniqueGameIdentifier($result)

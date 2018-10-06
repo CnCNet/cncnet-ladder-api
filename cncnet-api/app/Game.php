@@ -1,4 +1,5 @@
 <?php namespace App;
+use App\QmMatch;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,7 +25,7 @@ class Game extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public $gameColumns =
+    public static $gameColumns =
     [
         'bamr',
         'crat',
@@ -59,5 +60,19 @@ class Game extends Model
     public function ladderHistory()
     {
         return $this->belongsTo('App\LadderHistory');
+    }
+
+    public static function genQmEntry(QmMatch $qmMatch)
+    {
+        $game = new Game;
+        $game->ladder_history_id = $qmMatch->ladder->currentHistory()->id;
+        foreach (Game::$gameColumns as $col)
+        {
+            $game[$col] = 0;
+        }
+        $game->hash = $qmMatch->map->hash;
+        $game->game_report_id = null;
+        $game->save();
+        return $game;
     }
 }
