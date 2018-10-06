@@ -39,6 +39,8 @@ class AuthController extends Controller {
 
     public function postRegister(Request $request)
 	{
+        $this->validate($request, [ 'name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11' ] );
+
 		$validator = $this->registrar->validator($request->all());
 
         if ($request->play_nay != null) return redirect()->back();
