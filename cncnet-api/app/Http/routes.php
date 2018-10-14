@@ -84,6 +84,12 @@ Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], fu
     Route::get('/token', 'ApiAuthController@getAuth');
 });
 
+Route::group(['prefix' => 'api/v1/auth/'], function()
+{
+    Route::get('/refresh', 'ApiAuthController@refresh');
+    Route::post('/login', 'ApiAuthController@login');
+});
+
 Route::group(['prefix' => 'api/v1/'], function ()
 {
     Route::get('/user/account', 'ApiUserController@getAccount');
