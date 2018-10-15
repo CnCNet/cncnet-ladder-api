@@ -10,6 +10,7 @@ use \App\Http\Services\AuthService;
 use \Carbon\Carbon;
 use DB;
 use Log;
+use \App\Commands\FindOpponent;
 
 class ApiQuickMatchController extends Controller
 {
@@ -205,178 +206,19 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer->platform = $request->platform;
                 }
             }
+
             if ($request->ai_dat)
                 $qmPlayer->ai_dat = $request->ai_dat;
 
+            $qmPlayer->save();
+
             if ($qmPlayer->qm_match_id === null)
             {
-                // Update the player info
+                // Push a job to find an opponent
+                 $this->dispatch(new FindOpponent($qmPlayer->id));
 
-                $qmPlayer->map_bitfield = $request->map_bitfield;
-
-                try
-                {
-                    // This will error out when a not null field is null
-                    $qmPlayer->save();
-                }
-                catch (Exception $e)
-                {
-                    return array("type" => "error", "description" => "null or missing field");
-                }
-
-                /* Try to find a matchup
-                 * Matchups are based on the player's rating,
-                 * The absolute value of the difference of me and every other player is calculated.
-                 * Any players whose difference is greater 100 is thrown out with some exceptions
-                 * If a player has been waiting a long time for a matchup he should get some special
-                 * treatment.  To allow for this, the player rating difference gets wait time, in
-                 * seconds, subtracted from it.
-                 * If 2 players rated 1200, and 1400 are the only players a match won't be made
-                 * until one player has been waiting for 100 seconds 1400-1200-100seconds = 100
-                 *
-                 * The ratio of seconds to points should be tunable TODO.
-                 */
-                $phpNow = Carbon::now()->toDateTimeString();
-                $qmOpns = \App\QmMatchPlayer::where('qm_match_players.id', '<>', $qmPlayer->id)
-                        ->where('waiting', true)
-                        ->where('ladder_id', $qmPlayer->ladder_id)
-                        ->whereRaw("map_bitfield & {$qmPlayer->map_bitfield} > 0")
-                        ->whereNull('qm_match_id')
-                        ->join('player_ratings', 'player_ratings.player_id', '=', 'qm_match_players.player_id')
-                        ->selectRAW( "qm_match_players.id as id, waiting, qm_match_players.player_id as player_id,"
-                                    ."ladder_id, map_bitfield, chosen_side, actual_side, ip_address, port, lan_ip"
-                                    .",lan_port, ipv6_address, ipv6_port, color, location, qm_match_id, tunnel_id,"
-                                    ."map_sides, qm_match_players.created_at as created_at"
-                                    .", qm_match_players.updated_at as updated_at"
-                                    .", ABS($rating - rating)"
-                                    ." - ABS(TIMESTAMPDIFF(SECOND, qm_match_players.created_at, '{$phpNow}')) as importance")
-                        ->having('importance', '<', $ladder_rules->max_difference)
-                        ->orderBy('importance', 'asc')
-                        ->get();
-
-                $qmOpns = $qmOpns->shuffle();
-
-                if ($qmOpns->count() >= $ladder_rules->player_count - 1)
-                {
-                    // Randomly choose the opponents from the best matches. To prevent
-                    // long runs of identical matchups.
-                    $qmOpns = $qmOpns->shuffle()->take($ladder_rules->player_count - 1);
-                    // Randomly select a map
-                    $common_maps = array();
-
-                    $qmMaps = \App\QmMap::valid()->where('ladder_id', $qmPlayer->ladder_id)->get();
-                    foreach ($qmMaps as $qmMap)
-                    {
-                        $match = true;
-                        if (array_key_exists($qmMap->bit_idx, $qmPlayer->map_side_array())
-                            &&
-                            $qmPlayer->map_side_array()[$qmMap->bit_idx] > -2
-                            &&
-                            in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
-                        {
-                            foreach ($qmOpns as $opn)
-                            {
-                                if (array_key_exists($qmMap->bit_idx, $opn->map_side_array())
-                                    &&
-                                    ($opn->map_side_array()[$qmMap->bit_idx] < -1
-                                    ||
-                                    !in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array())))
-                                {
-                                        $match = false;
-                                }
-                            }
-                        }
-                        else
-                            $match = false;
-
-                        if ($match)
-                            $common_maps[] = $qmMap;
-
-                    }
-                    if (count($common_maps) < 1)
-                    {
-
-                        $qmPlayer->touch();
-                        return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1,
-                                     "message" => "Didn't have any maps in common with opponent");
-                    }
-
-                    $map_idx = mt_rand(0, count($common_maps) - 1);
-
-                    // Create the qm_matches db entry
-                    $qmMatch = new \App\QmMatch();
-                    $qmMatch->ladder_id = $qmPlayer->ladder_id;
-                    $qmMatch->qm_map_id = $common_maps[$map_idx]->id;
-                    $qmMatch->seed = mt_rand(-2147483647, 2147483647);
-
-                    // Create the Game
-                    $game = \App\Game::genQmEntry($qmMatch);
-                    $qmMatch->game_id = $game->id;
-                    $qmMatch->save();
-
-                    $game->qm_match_id = $qmMatch->id;
-                    $game->save();
-
-                    $qmMap = $qmMatch->map;
-                    $spawn_order = explode(',', $qmMap->spawn_order);
-
-                    // Set up player specific information
-                    // Color will be used for spawn location
-                    $qmPlayer->color = 0;
-                    $qmPlayer->location = $spawn_order[$qmPlayer->color] - 1;
-                    $qmPlayer->qm_match_id = $qmMatch->id;
-                    $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
-
-                    $psides = explode(',', $qmPlayer->map_sides);
-
-                    if (count($psides) > $qmMap->bit_idx)
-                        $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
-
-
-                    if ($qmPlayer->actual_side < -1)
-                    {
-                        $qmPlayer->actual_side = $qmPlayer->chosen_side;
-                    }
-
-                    $qmPlayer->save();
-
-                    $perMS = array_values(array_filter($qmMap->sides_array(), function($s) { return $s >= 0; }));
-                    $color = 1;
-                    foreach ($qmOpns as $opn)
-                    {
-                        $osides = explode(',', $opn->map_sides);
-
-                        if (count($osides) > $qmMap->bit_idx)
-                            $opn->actual_side = $osides[$qmMap->bit_idx];
-
-                        if ($opn->actual_side  < -1)
-                        {
-                            $opn->actual_side = $opn->chosen_side;
-                        }
-
-                        if ($opn->actual_side == -1)
-                        {
-                            $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
-                        }
-                        $opn->color = $color++;
-                        $opn->location = $spawn_order[$opn->color] - 1;
-                        $opn->qm_match_id = $qmMatch->id;
-                        $opn->tunnel_id = $qmMatch->seed + $opn->color;
-                        $opn->save();
-                    }
-
-                    if ($qmPlayer->actual_side == -1)
-                    {
-                        $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
-                    }
-
-
-                }
-                else {
-                    // We couldn't make a match
-                    $qmPlayer->touch();
-                    return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1);
-                }
+                $qmPlayer->touch();
+                return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1);
             }
             // If we've made it this far, lets send the spawn details
 

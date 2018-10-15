@@ -17,7 +17,7 @@ class QmMatchPlayer extends Model {
 
     public function ladder()
     {
-        return DB::where('App\Ladder');
+        return $this->belongsTo('App\Ladder');
     }
 
     protected $_map_side_array = null;
