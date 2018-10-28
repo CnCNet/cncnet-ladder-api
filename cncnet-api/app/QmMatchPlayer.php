@@ -29,4 +29,9 @@ class QmMatchPlayer extends Model {
         }
         return $this->_map_side_array;
     }
+
+    public function qEntry()
+    {
+        return $this->hasOne('App\QmQueueEntry');
+    }
 }

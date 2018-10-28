@@ -198,13 +198,33 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_point_difference">Initial Max Rating Difference</label>
-                                    <input id="{{ $rule->ladder_id }}_point_difference" type="number" name="max_difference" class="form-control" value="{{ $rule->max_difference }}" />
+                                    <label for="{{ $rule->ladder_id }}_difference">Matchup rating filter</label>
+                                    <input id="{{ $rule->ladder_id }}_difference" type="number" name="max_difference" class="form-control" value="{{ $rule->max_difference }}" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ $rule->ladder_id }}_rating_per_second">Filter - rating per q-second</label>
+                                    <input id="{{ $rule->ladder_id }}_rating_per_second" type="number" step="0.05" name="rating_per_second" class="form-control" value="{{ $rule->rating_per_second }}" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ $rule->ladder_id }}_point_difference">Matchup points filter</label>
+                                    <input id="{{ $rule->ladder_id }}_point_difference" type="number" name="max_points_difference" class="form-control" value="{{ $rule->max_points_difference }}" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ $rule->ladder_id }}_points_per_second">Filter - points per q-second</label>
+                                    <input id="{{ $rule->ladder_id }}_points_per_second" type="number" step="0.05" name="points_per_second" class="form-control" value="{{ $rule->points_per_second }}" />
                                 </div>
 
                                 <div class="form-group">
                                     <label for="{{ $rule->ladder_id }}_bail_time">Bail Time</label>
                                     <input id="{{ $rule->ladder_id }}_bail_time" type="number" name="bail_time" class="form-control" value="{{ $rule->bail_time }}" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="{{ $rule->ladder_id }}_bail_fps">Bail FPS</label>
+                                    <input id="{{ $rule->ladder_id }}_bail_fps" type="number" name="bail_fps" class="form-control" value="{{ $rule->bail_fps }}" />
                                 </div>
 
                                 <div class="form-group">

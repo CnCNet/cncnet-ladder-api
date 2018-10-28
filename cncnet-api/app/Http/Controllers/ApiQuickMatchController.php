@@ -11,6 +11,7 @@ use \Carbon\Carbon;
 use DB;
 use Log;
 use \App\Commands\FindOpponent;
+use \App\QmQueueEntry;
 
 class ApiQuickMatchController extends Controller
 {
@@ -110,6 +111,9 @@ class ApiQuickMatchController extends Controller
                 {
                     $qmPlayer->qmMatch->save();
                 }
+                if ($qmPlayer->qEntry !== null)
+                    $qmPlayer->qEntry->delete();
+
                 $qmPlayer->delete();
             }
             return array("type" => "quit");
@@ -205,6 +209,7 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer->version = $request->version;
                     $qmPlayer->platform = $request->platform;
                 }
+
             }
 
             if ($request->ai_dat)
@@ -214,8 +219,22 @@ class ApiQuickMatchController extends Controller
 
             if ($qmPlayer->qm_match_id === null)
             {
+                $history = $ladder->currentHistory();
+                if ($qmPlayer->qEntry !== null)
+                {
+                    $qEntry = $qmPlayer->qEntry;
+                }
+                else {
+                    $qEntry = new QmQueueEntry;
+                }
+                $qEntry->qm_match_player_id = $qmPlayer->id;
+                $qEntry->ladder_history_id = $history->id;
+                $qEntry->rating = $player->rating->rating;
+                $qEntry->points = $player->points($history);
+                $qEntry->save();
+
                 // Push a job to find an opponent
-                 $this->dispatch(new FindOpponent($qmPlayer->id));
+                $this->dispatch(new FindOpponent($qEntry->id));
 
                 $qmPlayer->touch();
                 return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1);

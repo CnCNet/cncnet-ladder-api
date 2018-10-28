@@ -8,14 +8,21 @@ then
    PHP=php
 fi
 
+queue=$1
+
+if [ "${queue}x" = "x" ]
+then
+    queue=default
+fi
+
 PIDDIR=storage/pids/
-PIDFILE=$PIDDIR/queue_runner.pid
+PIDFILE=$PIDDIR/queue_$queue.pid
 
 PID=$(cat $PIDFILE)
 
 if ! kill -0 $PID
 then
-    $PHP artisan queue:work database --daemon &
+    $PHP artisan queue:work database --daemon --queue=$queue &
     PID=$!
 fi
 

@@ -6,15 +6,18 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldBeQueued;
+use DB;
 use Carbon\Carbon;
 use App\QmMatch;
 use App\QmMatchPlayer;
+use App\QmQueueEntry;
 
 class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
 
 	use InteractsWithQueue, SerializesModels;
 
-    public $qmPlayerId = null;
+    public $qEntryId = null;
+
 	/**
 	 * Create a new command instance.
 	 *
@@ -23,8 +26,13 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
 	public function __construct($id)
 	{
 		//
-        $this->qmPlayerId = $id;
+        $this->qEntryId = $id;
 	}
+
+    public function queue($queue, $arguments)
+    {
+        $queue->pushOn('findmatch', $arguments);
+    }
 
 	/**
 	 * Execute the command.
@@ -34,13 +42,23 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
 	public function handle()
 	{
         $this->delete();
-		//
-        $qmPlayer = QmMatchPlayer::find($this->qmPlayerId);
+        $qEntry = QmQueueEntry::find($this->qEntryId);
+
+        if($qEntry === null)
+        {
+            //error_log("qEntry is null\n");
+            return;
+        }
+
+        $qEntry->touch();
+
+        $qmPlayer = $qEntry->qmPlayer;
 
         // A player could cancel out of queue before this function runs
         if ($qmPlayer === null)
         {
             //error_log("qmPlayer is null");
+            $qEntry->delete();
             return;
         }
 
@@ -48,13 +66,37 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
         if ($qmPlayer->qm_match_id !== null)
         {
             //error_log("qmPlayer->qm_match_id is not null");
+            $qEntry->delete();
+            return;
+        }
+
+        $history = $qEntry->ladderHistory;
+
+        if ($history === null)
+        {
+            //error_log("history is null");
+            $qEntry->delete();
+            return;
+        }
+
+        $ladder = $history->ladder;
+
+        if ($ladder === null)
+        {
+            //error_log("ladder is null");
+            $qEntry->delete();
             return;
         }
 
         $player = $qmPlayer->player;
 
+        if ($player === null)
+        {
+            //error_log("player is null");
+            $qEntry->delete();
+            return;
+        }
         $rating = $player->rating->rating;
-
         // map_bitfield is an old and unused bit of code
         $qmPlayer->map_bitfield = 0xffffffff;
 
@@ -74,30 +116,27 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
          * If 2 players rated 1200, and 1400 are the only players a match won't be made
          * until one player has been waiting for 100 seconds 1400-1200-100seconds = 100
          *
-         * The ratio of seconds to points should be tunable TODO.
+         * The ratio of seconds is tunable per ladder
          */
-        $phpNow = Carbon::now()->toDateTimeString();
-        $qmOpns = QmMatchPlayer::where('qm_match_players.id', '<>', $qmPlayer->id)
-                               ->where('waiting', true)
-                               ->where('ladder_id', $qmPlayer->ladder_id)
-                               ->whereRaw("map_bitfield & {$qmPlayer->map_bitfield} > 0")
-                               ->whereNull('qm_match_id')
-                               ->join('player_ratings', 'player_ratings.player_id', '=', 'qm_match_players.player_id')
-                               ->selectRAW( "qm_match_players.id as id, waiting, qm_match_players.player_id as player_id,"
-                                           ."ladder_id, map_bitfield, chosen_side, actual_side, ip_address, port, lan_ip"
-                                           .",lan_port, ipv6_address, ipv6_port, color, location, qm_match_id, tunnel_id,"
-                                           ."map_sides, qm_match_players.created_at as created_at"
-                                           .", qm_match_players.updated_at as updated_at"
-                                           .", ABS({$rating} - rating)"
-                                           ." - ABS(TIMESTAMPDIFF(SECOND, qm_match_players.created_at, '{$phpNow}')) as importance")
-                               ->having('importance', '<', $ladder_rules->max_difference)
-                               ->orderBy('importance', 'asc')
-                               ->get();
 
+        $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
+                              ->where('ladder_history_id', '=', $history->id)
+                              ->select(DB::raw("*,"
+                                       ."TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->rating_per_second} as rating_time,"
+                                       ."TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
+                              ->havingRAW("rating_time + {$ladder_rules->max_difference} > ABS(rating - {$rating})"
+                                     ."AND points_time + {$ladder_rules->max_points_difference} > ABS(points - {$qEntry->points})");
+
+        //error_log($query->toSql());
+        $qmOpns = $query->get();
+
+        //var_dump($qmOpns);
+        //error_log("Queried QmQueueEntry\n");
         $qmOpns = $qmOpns->shuffle();
 
         if ($qmOpns->count() >= $ladder_rules->player_count - 1)
         {
+            //error_log("checking qmOpns\n");
             // Randomly choose the opponents from the best matches. To prevent
             // long runs of identical matchups.
             $qmOpns = $qmOpns->shuffle()->take($ladder_rules->player_count - 1);
@@ -114,8 +153,16 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
                 &&
                 in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
                 {
-                    foreach ($qmOpns as $opn)
+                    foreach ($qmOpns as $qOpn)
                     {
+                        //error_log("qOpn->rating_time = {$qOpn->rating_time}");
+                        $opn = $qOpn->qmPlayer;
+                        if ($opn === null)
+                        {
+                            $qOpn->delete();
+                            $qEntry->delete();
+                            return;
+                        }
                         if (array_key_exists($qmMap->bit_idx, $opn->map_side_array())
                         &&
                         ($opn->map_side_array()[$qmMap->bit_idx] < -1
@@ -138,6 +185,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
                 $qmPlayer->touch();
                 return;
             }
+
+            $qEntry->delete();
 
             $map_idx = mt_rand(0, count($common_maps) - 1);
 
@@ -180,8 +229,17 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
 
             $perMS = array_values(array_filter($qmMap->sides_array(), function($s) { return $s >= 0; }));
             $color = 1;
-            foreach ($qmOpns as $opn)
+            foreach ($qmOpns as $qOpn)
             {
+                $opn = $qOpn->qmPlayer;
+                $qOpn->delete();
+
+                if ($opn === null)
+                {
+                    $qEntry->delete();
+                    return;
+                }
+
                 $osides = explode(',', $opn->map_sides);
 
                 if (count($osides) > $qmMap->bit_idx)

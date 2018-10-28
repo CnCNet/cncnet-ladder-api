@@ -25,6 +25,10 @@ class AdminService
         $ladderRule->player_count = $request->player_count;
         $ladderRule->map_vetoes = $request->map_vetoes;
         $ladderRule->max_difference = $request->max_difference;
+        $ladderRule->rating_per_second = $request->rating_per_second;
+        $ladderRule->max_points_difference = $request->max_points_difference;
+        $ladderRule->points_per_second = $request->points_per_second;
+
         $ladderRule->bail_time = $request->bail_time;
         $ladderRule->bail_fps = $request->bail_fps;
         $ladderRule->tier2_rating = $request->tier2_rating;
