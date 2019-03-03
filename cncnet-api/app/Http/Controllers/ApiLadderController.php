@@ -352,7 +352,7 @@ class ApiLadderController extends Controller
 
             $playerGR->player->doTierStuff($history);
             $playerGR->save();
-            if ($playerGR->player->points($history) < 1)
+            if ($playerGR->player->points($history) < 0)
             {
                 $playerGR->points = 0;
                 $playerGR->save();
