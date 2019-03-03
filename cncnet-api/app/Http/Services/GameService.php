@@ -268,7 +268,41 @@ class GameService
     public function saveRawStats($result, $gameId, $ladderId)
     {
         $raw = new \App\GameRaw();
-        $raw->packet = json_encode($result);
+        try
+        {
+            $raw->packet = json_encode($result);
+        }
+        catch (Exception $e)
+        {
+            $raw->packet = false;
+        }
+        if ($raw->packet == false)
+        {
+            switch (json_last_error()) {
+            case JSON_ERROR_NONE:
+                error_log('saveRawStats - No errors');
+                break;
+            case JSON_ERROR_DEPTH:
+                error_log('saveRawStats - Maximum stack depth exceeded');
+                break;
+            case JSON_ERROR_STATE_MISMATCH:
+                error_log('saveRawStats - Underflow or the modes mismatch');
+                break;
+            case JSON_ERROR_CTRL_CHAR:
+                error_log('saveRawStats - Unexpected control character found');
+                break;
+            case JSON_ERROR_SYNTAX:
+                error_log('saveRawStats - Syntax error, malformed JSON');
+                break;
+            case JSON_ERROR_UTF8:
+                error_log('saveRawStats - Malformed UTF-8 characters, possibly incorrectly encoded');
+                break;
+            default:
+                error_log('saveRawStats - Unknown error');
+                break;
+            }
+        }
+
         $raw->game_id = $gameId;
         $raw->ladder_id = $ladderId;
         $raw->save();
@@ -399,7 +433,8 @@ class GameService
             case 7:
                 $ttl["length"] -= 1;
                 $v = unpack("a$ttl[length]", $data);
-                $response["val"] = $v[1];
+                //Make sure we only allow visual ascii characters and replace bad chars with ?
+                $response["val"] = preg_replace('/[^\x20-\x7e]/', '?', $v[1]);
                 break;
 
             //FIELDTYPE_CUSTOM_LENGTH
