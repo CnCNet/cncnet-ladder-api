@@ -470,4 +470,80 @@ class ApiLadderController extends Controller
             $this->awardPoints($gr, $gr->game->ladderHistory);
         }
     }
+
+    public function countMapVetos($ladderId)
+    {
+        $ladder = \App\Ladder::find($ladderId);
+        $qmMapSides = \App\QmMatchPlayer::select('map_sides')
+            ->where('ladder_id', '=', $ladderId)
+            ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
+            ->get();
+
+        $map_vetos_raw = [];
+        foreach ($qmMapSides as $ms)
+        {
+            $map_sides = explode(',', $ms->map_sides);
+            $index = 0;
+            foreach ($map_sides as $side)
+            {
+                if ($side == -2)
+                {
+                    if (!array_key_exists($index, $map_vetos_raw))
+                        $map_vetos_raw[$index] = 1;
+                    else
+                        $map_vetos_raw[$index]++;
+                }
+                $index++;
+            }
+        }
+        $map_vetos = [];
+        foreach ($map_vetos_raw as $index => $count)
+        {
+            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid','=', true)->first();
+            if ($map !== null)
+                $map_vetos[$map->admin_description] = $count;
+            else
+                $map_vetos[$index] = $count;
+        }
+        return $map_vetos;
+    }
+
+    public function countUniqueMapVetos($ladderId)
+    {
+        $ladder = \App\Ladder::find($ladderId);
+        $qmMapSides = \App\QmMatchPlayer::select('map_sides')
+            ->where('ladder_id', '=', $ladderId)
+            ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
+            ->groupBy('player_id')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $map_vetos_raw = [];
+        foreach ($qmMapSides as $ms)
+        {
+            $map_sides = explode(',', $ms->map_sides);
+            $index = 0;
+            foreach ($map_sides as $side)
+            {
+                if ($side == -2)
+                {
+                    if (!array_key_exists($index, $map_vetos_raw))
+                        $map_vetos_raw[$index] = 1;
+                    else
+                        $map_vetos_raw[$index]++;
+                }
+                $index++;
+            }
+        }
+        $map_vetos = [];
+        foreach ($map_vetos_raw as $index => $count)
+        {
+            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid','=', true)->first();
+            if ($map !== null)
+                $map_vetos[$map->admin_description] = $count;
+            else
+                $map_vetos[$index] = $count;
+        }
+        return $map_vetos;
+    }
 }
