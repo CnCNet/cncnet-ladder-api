@@ -91,19 +91,21 @@ class Player extends Model
                             ->where("ladder_id", "=", $this->ladder_id)
                             ->where('rated_games', '>', 10)
                             ->where('player_ratings.updated_at', '>', Carbon::now()->subMonths(2))
-                            ->orderBy('rating', 'ASC');
+                            ->orderBy('rating', 'ASC')
+                            ->get();
 
         $ratingsCount = $playerRatings->count();
         $count = 0;
-        foreach ($playerRatings->get() as $playerRating)
+        foreach ($playerRatings as $playerRating)
         {
+            $count++;
             if($playerRating->player_id == $this->id)
             {
+                $count--;
                 break;
             }
-            $count++;
         }
-        if ($ratingsCount != 0)
+        if ($ratingsCount != 0 && $count < $ratingsCount && $count > 0)
             $ptile = (($count/$ratingsCount) * 100) - 1;
         else
             $ptile = 0;
