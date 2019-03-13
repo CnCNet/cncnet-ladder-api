@@ -8,6 +8,9 @@ class IpAddress extends Model {
 
     public static function findByIP($address)
     {
+        if ($address === null || $address == '')
+            return null;
+
         $ip = IpAddress::where('address', '=', $address)->first();
         if ($ip === null)
         {

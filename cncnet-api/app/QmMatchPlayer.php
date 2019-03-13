@@ -25,7 +25,7 @@ class QmMatchPlayer extends Model {
     {
         if ($this->_map_side_array === null)
         {
-            $this->_map_side_array = explode(',', $this->map_sides);
+            $this->_map_side_array = explode(',', $this->mapSides->value);
         }
         return $this->_map_side_array;
     }
@@ -33,5 +33,40 @@ class QmMatchPlayer extends Model {
     public function qEntry()
     {
         return $this->hasOne('App\QmQueueEntry');
+    }
+
+    public function ipAddress()
+    {
+        return $this->belongsTo('App\IpAddress');
+    }
+
+    public function ipv6Address()
+    {
+        return $this->belongsTo('App\IpAddress', 'ipv6_address');
+    }
+
+    public function lanAddress()
+    {
+        return $this->belongsTo('App\IpAddress', 'lan_ip');
+    }
+
+    public function version()
+    {
+        return $this->belongsTo('App\PlayerDataString', 'version_id');
+    }
+
+    public function platform()
+    {
+        return $this->belongsTo('App\PlayerDataString', 'platform_id');
+    }
+
+    public function ddraw()
+    {
+        return $this->belongsTo('App\PlayerDataString', 'ddraw_id');
+    }
+
+    public function mapSides()
+    {
+        return $this->belongsTo('App\MapSideString', 'map_sides_id');
     }
 }

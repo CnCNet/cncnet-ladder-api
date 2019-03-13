@@ -214,7 +214,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
             $qmPlayer->qm_match_id = $qmMatch->id;
             $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
 
-            $psides = explode(',', $qmPlayer->map_sides);
+            $psides = explode(',', $qmPlayer->mapSides->value);
 
             if (count($psides) > $qmMap->bit_idx)
                 $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
@@ -240,7 +240,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
                     return;
                 }
 
-                $osides = explode(',', $opn->map_sides);
+                $osides = explode(',', $opn->mapSides->value);
 
                 if (count($osides) > $qmMap->bit_idx)
                     $opn->actual_side = $osides[$qmMap->bit_idx];

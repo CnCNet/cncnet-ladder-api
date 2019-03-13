@@ -176,13 +176,16 @@ class ApiQuickMatchController extends Controller
                 $qmPlayer->qm_match_id = null;
                 $qmPlayer->tunnel_id = null;
 
-                $qmPlayer->ip_address = $request->ip_address;
+                $addr = \App\IpAddress::findByIP($request->ip_address);
+                $qmPlayer->ip_address_id = $addr ? $addr->id : null;
                 $qmPlayer->port = $request->ip_port;
 
-                $qmPlayer->lan_ip = $request->lan_ip;
+                $addr = \App\IpAddress::findByIP($request->lan_ip);
+                $qmPlayer->lan_address_id = $addr ? $addr->id : null;
                 $qmPlayer->lan_port = $request->lan_port;
 
-                $qmPlayer->ipv6_address = $request->ipv6_address;
+                $addr = \App\IpAddress::findByIP($request->ipv6_address);
+                $qmPlayer->ipv6_address_id = $addr ? $addr->id : null;
                 $qmPlayer->ipv6_port = $request->ipv6_port;
 
                 $qmPlayer->chosen_side = $request->side;
@@ -202,13 +205,16 @@ class ApiQuickMatchController extends Controller
                     return array("type" => "error", "description" => "Side ({$request->side}) is not allowed");
                 }
                 if ($request->map_sides)
-                    $qmPlayer->map_sides = join(',', $request->map_sides);
+                    $qmPlayer->map_sides_id = \App\MapSideString::findValue(join(',', $request->map_sides))->id;
 
                 if ($request->version && $request->platform)
                 {
-                    $qmPlayer->version = $request->version;
-                    $qmPlayer->platform = $request->platform;
+                    $qmPlayer->version_id  = \App\PlayerDataString::findValue($request->version)->id;
+                    $qmPlayer->platform_id = \App\PlayerDataString::findValue($request->platform)->id;
                 }
+
+                if ($request->draw)
+                    $qmPlayer->ddraw_id = \App\PlayerDataString::findValue($request->ddraw);
 
             }
 
@@ -330,11 +336,11 @@ class ApiQuickMatchController extends Controller
                     "Name" => $opn->player()->first()->username,
                     "Side" => $opn->actual_side,
                     "Color" => $opn->color,
-                    "Ip" => $opn->ip_address,
+                    "Ip" =>   $opn->ipAddress ? $opn->ipAddress->address : "",
                     "Port" => $opn->port,
-                    "IPv6" => $opn->ipv6_address,
+                    "IPv6" => $opn->ipv6Address ? $opn->ipv6Address->address : "",
                     "PortV6" => $opn->ipv6_port,
-                    "LanIP" => $opn->lan_ip,
+                    "LanIP" => $opn->lan_address ? $opn->lan_address->address : "",
                     "LanPort" => $opn->lan_port
                 ];
                 $multi_idx = $opn->color + 1;
