@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
 use Log;
 use \Carbon\Carbon;
+use DB;
 
 class Player extends Model
 {
@@ -51,12 +52,13 @@ class Player extends Model
         return $this->playerGameReports()
             ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
             ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->join('stats2', 'player_game_reports.stats_id', '=', 'stats2.id')
             ->where('player_game_reports.player_id', $this->id)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
             ->select('player_game_reports.id as id', 'player_game_reports.player_id as player_id',
                      'game_reports.id as game_report_id', 'games.ladder_history_id as ladder_history_id',
-                     'game_reports.game_id as game_id', 'duration', 'fps', 'oos',
+                     'game_reports.game_id as game_id', 'duration', 'fps', 'oos', 'sid', 'cty',
                      'local_id', 'local_team_id', 'points', 'stats_id', 'disconnected', 'no_completion', 'quit',
                      'won', 'defeated', 'draw', 'spectator', 'game_reports.created_at', 'wol_game_id', 'bamr',
                      'crat', 'cred', 'shrt', 'supr', 'supr', 'unit', 'plrs', 'scen', 'hash');
@@ -111,6 +113,27 @@ class Player extends Model
             $ptile = 0;
 
         return $ptile >= 0 ? $ptile : 0;
+    }
+
+    public function averageFPS($history)
+    {
+        $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
+        $total = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->sum('fps');
+        return $total/$count;
+    }
+
+    public function sideUsage($history)
+    {
+        $pq = $this->playerGames()->where('ladder_history_id', '=', $history->id);
+        $total = $pq->count();
+        return $pq->select('sid', DB::raw('count(*) / '. $total.' * 100 as count'))->groupBy('sid')->orderBy('count', 'desc')->get();
+    }
+
+    public function countryUsage($history)
+    {
+        $pq = $this->playerGames()->where('ladder_history_id', '=', $history->id);
+        $total = $pq->count();
+        return $pq->select('cty', DB::raw('count(*) / '. $total.' * 100 as count'))->groupBy('cty')->orderBy('count', 'desc')->get();
     }
 
     public function ladder()

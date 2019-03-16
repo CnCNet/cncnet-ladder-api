@@ -276,4 +276,37 @@ class LadderService
         else
             return null;
     }
+
+    public function updatePlayerCache($gameReport)
+    {
+        $history = $gameReport->game->ladderHistory;
+
+        foreach ($gameReport->playerGameReports as $playerGR)
+        {
+            $player = $playerGR->player;
+            $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
+                                  ->where('player_id', '=', $player->id)->first();
+
+            if ($pc === null)
+                $pc = new \App\PlayerCache;
+
+            $pc->ladder_history_id = $history->id;
+            $pc->player_id = $player->id;
+            $pc->player_name = $player->username;
+            $pc->card = $player->card;
+            $pc->points = $player->points($history);
+            $pc->wins = $player->wins($history);
+            $pc->games = $player->totalGames($history);
+            $pc->percentile = $player->percentile();
+
+            $v = $player->sideUsage($history)->first();
+            $pc->side = $v !== null ? $v->sid : null;
+
+            $v = $player->countryUsage($history)->first();
+            $pc->country = $v !== null ? $v->cty : null;
+            $pc->fps = $player->averageFPS($history);
+            $pc->save();
+        }
+    }
+
 }

@@ -103,6 +103,7 @@ class AdminController extends Controller
         $gameReport->best_report = true;
         $gameReport->save();
 
+        $this->ladderService->updatePlayerCache($gameReport);
         return redirect()->back();
     }
     public function washGame(Request $request)
@@ -130,6 +131,7 @@ class AdminController extends Controller
         $game->game_report_id = $wash->id;
         $game->save();
         $gameReport->save();
+        $this->ladderService->updatePlayerCache($gameReport);
 
         return redirect()->back();
     }

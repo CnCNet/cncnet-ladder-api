@@ -91,22 +91,22 @@ class RemoveStringsQmMatchPlayers extends Migration {
         Schema::table('qm_match_players', function(Blueprint $table)
 		{
 			//
-            $table->string('ip_address');
-            $table->string('ipv6_address');
-            $table->string('lan_ip');
-            $table->string('version');
-            $table->string('platform');
-            $table->text('map_sides');
+            $table->string('ip_address')->nullable();
+            $table->string('ipv6_address')->nullable();
+            $table->string('lan_ip')->nullable();
+            $table->string('version')->nullable();
+            $table->string('platform')->nullable();
+            $table->text('map_sides')->nullable();
 		});
 
         $qmPlayers = \App\QmMatchPlayer::all();
         foreach ($qmPlayers as $qp)
         {
-            $qp->ip_address = $qp->ipAddress->address;
-            $qp->ipv6_address = $qp->ipv6Address->address;
-            $qp->lan_ip = $qp->lanAddress->address;
-            $qp->version = $qp->version->value;
-            $qp->platform = $qp->platform->value;
+            $qp->ip_address = $qp->ipAddress ? $qp->ipAddress->address : "";
+            $qp->ipv6_address = $qp->ipv6Address ? $qp->ipv6Address->address : "";
+            $qp->lan_ip = $qp->lanAddress ? $qp->lanAddress->address : "";
+            $qp->version = $qp->version()->first()->value;
+            $qp->platform = $qp->platform()->first()->value;
             $qp->map_sides = $qp->mapSides->value;
 
             $qp->save();
