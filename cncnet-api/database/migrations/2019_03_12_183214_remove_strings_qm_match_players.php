@@ -39,35 +39,36 @@ class RemoveStringsQmMatchPlayers extends Migration {
             $table->integer('ddraw_id')->unsigned()->nullable();
 
 		});
-        $qmPlayers = \App\QmMatchPlayer::all();
-        foreach ($qmPlayers as $qp)
-        {
-            $ip = \App\IpAddress::findByIp($qp->ip_address);
-            if ($ip !== null)
-                $qp->ip_address_id = $ip->id;
+        \App\QmMatchPlayer::chunk(500, function($qmPlayers) {
+            foreach ($qmPlayers as $qp)
+            {
+                $ip = \App\IpAddress::findByIp($qp->ip_address);
+                if ($ip !== null)
+                    $qp->ip_address_id = $ip->id;
 
-            $ip = \App\IpAddress::findByIp($qp->ipv6_address);
-            if ($ip !== null)
-                $qp->ipv6_address_id = $ip->id;
+                $ip = \App\IpAddress::findByIp($qp->ipv6_address);
+                if ($ip !== null)
+                    $qp->ipv6_address_id = $ip->id;
 
-            $ip = \App\IpAddress::findByIp($qp->lan_ip);
-            if ($ip !== null)
-                $qp->lan_address_id = $ip->id;
+                $ip = \App\IpAddress::findByIp($qp->lan_ip);
+                if ($ip !== null)
+                    $qp->lan_address_id = $ip->id;
 
-            $v = \App\PlayerDataString::findValue($qp->version);
-            if ($v !== null)
-                $qp->version_id = $v->id;
+                $v = \App\PlayerDataString::findValue($qp->version);
+                if ($v !== null)
+                    $qp->version_id = $v->id;
 
-            $v = \App\PlayerDataString::findValue($qp->platform);
-            if ($v !== null)
-                $qp->platform_id = $v->id;
+                $v = \App\PlayerDataString::findValue($qp->platform);
+                if ($v !== null)
+                    $qp->platform_id = $v->id;
 
-            $ms = \App\MapSideString::findValue($qp->map_sides);
-            if ($ms !== null)
-                $qp->map_sides_id = $ms->id;
+                $ms = \App\MapSideString::findValue($qp->map_sides);
+                if ($ms !== null)
+                    $qp->map_sides_id = $ms->id;
 
-            $qp->save();
-        }
+                $qp->save();
+            }
+        });
 
         Schema::table('qm_match_players', function(Blueprint $table)
 		{

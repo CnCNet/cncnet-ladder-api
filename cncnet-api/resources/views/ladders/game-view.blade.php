@@ -135,7 +135,7 @@
                 </div>
                 @endforeach
 
-                @if ((isset($hasWash) && !$hasWash) && $userIsMod)
+                @if (!(isset($hasWash) && $hasWash) && $userIsMod)
                     <form action="/admin/moderate/{{ $history->ladder->id }}/games/wash" class="text-center" method="POST">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input name="game_id" type="hidden" value="{{ $game->id }}"/>

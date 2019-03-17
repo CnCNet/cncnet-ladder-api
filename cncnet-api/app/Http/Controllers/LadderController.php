@@ -62,7 +62,7 @@ class LadderController extends Controller
                                          ->where('tier', $request->tier?'=':'>', $request->tier+0)
                                          ->where('player_name', 'like', '%'.$request->search.'%')
                                          ->orderBy('points', 'desc')->paginate(45),
-            "cards" => \App\Card::lists('short'),
+            "cards" => \App\Card::orderBy('id', 'asc')->lists('short'),
             "tier" => $request->tier,
             "search" => $request->search,
             "sides" => \App\Side::where('ladder_id', '=', $history->ladder_id)

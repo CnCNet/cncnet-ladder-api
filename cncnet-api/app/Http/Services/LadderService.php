@@ -297,7 +297,7 @@ class LadderService
             $pHist = $player->playerHistory($history);
             $pc->tier = $pHist ? $pHist->tier : 1;
 
-            $pc->card = $player->card;
+            $pc->card = $player->card_id;
             $pc->points = $player->points($history);
             $pc->wins = $player->wins($history);
             $pc->games = $player->totalGames($history);

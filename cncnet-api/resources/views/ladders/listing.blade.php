@@ -207,7 +207,7 @@
                                 "rank" => $rank,
                                 "wins" => $player->wins,
                                 "totalGames" => $player->games,
-                                "playerCard" => $cards[$player->card + 1],
+                                "playerCard" => $player->card !== null ? $cards[$player->card + 0] : "",
                                 "side" => $player->side !== null ? $sides[$player->side] : null,
                                 "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name
                                 ])
