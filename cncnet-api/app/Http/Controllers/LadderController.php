@@ -51,15 +51,23 @@ class LadderController extends Controller
 
     public function getLadderIndex(Request $request)
     {
+        $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
         $data = array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
-            "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
-            "players" => $this->ladderService->getLadderPlayers($request->date, $request->game, $request->tier, true, $request->search),
+            "history" => $history,
+            "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)
+                                         ->where('tier', $request->tier?'=':'>', $request->tier+0)
+                                         ->where('player_name', 'like', '%'.$request->search.'%')
+                                         ->orderBy('points', 'desc')->paginate(45),
+            "cards" => \App\Card::lists('short'),
             "tier" => $request->tier,
-            "search" => $request->search
+            "search" => $request->search,
+            "sides" => \App\Side::where('ladder_id', '=', $history->ladder_id)
+                                ->where('local_id', '>=', 0)
+                                ->orderBy('local_id', 'asc')->lists('name')
         );
 
         if ($data["history"] === null)

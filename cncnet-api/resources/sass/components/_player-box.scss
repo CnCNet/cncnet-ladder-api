@@ -4,7 +4,7 @@
     border-radius: 5px;
     padding: 30px;
 }
-.player-box-link 
+.player-box-link
 {
     display: block;
     color: #fff;
@@ -12,25 +12,25 @@
     &:hover, &:focus { text-decoration: none; }
 }
 
-.player-box .rank 
+.player-box .rank
 {
     font-weight: 100;
     font-size: 38px;
     margin-top: 10px;
 }
 
-.player-box .username 
+.player-box .username
 {
     color: #fff;
     margin-bottom: 0;
 }
 
-.player-box .points 
+.player-box .points
 {
     font-size: 12px;
 }
 
-.player-badge 
+.player-badge
 {
     width: 90px;
     height: 86px;
@@ -128,7 +128,7 @@
     background: url(/images/badges/3500x2-points.png);
 }
 
-.player-card 
+.player-card
 {
     background-size: auto;
     background-repeat: no-repeat;
@@ -180,17 +180,28 @@
     background-image: url(/images/cards/player-cards-yr-closeup.png);
 }
 
-.player-card.ra-allied 
+.player-card.ra-allied
 {
     background-image: url(/images/cards/player-cards-ra-allied.png);
 }
 
-.player-card.ra-soviet 
+.player-card.ra-soviet
 {
     background-image: url(/images/cards/player-cards-ra-soviet.png);
 }
 
-.player-card.ra-missile 
+.player-card.ra-missile
 {
     background-image: url(/images/cards/player-cards-ra-missile.png);
+}
+
+.player-box .player-box-faction
+{
+    position: absolute;
+    background-size: 33%;
+    background-position: bottom right;
+    right: 10px;
+    bottom: 10px;
+    top: auto;
+    margin: 30px;
 }

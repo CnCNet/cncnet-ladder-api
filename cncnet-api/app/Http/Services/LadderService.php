@@ -293,6 +293,10 @@ class LadderService
             $pc->ladder_history_id = $history->id;
             $pc->player_id = $player->id;
             $pc->player_name = $player->username;
+
+            $pHist = $player->playerHistory($history);
+            $pc->tier = $pHist ? $pHist->tier : 1;
+
             $pc->card = $player->card;
             $pc->points = $player->points($history);
             $pc->wins = $player->wins($history);

@@ -33,7 +33,7 @@
     <div class="container">
         <?php $date = \Carbon\Carbon::parse($history->ends); ?>
 
-        @if ($date->isPast())
+        @if ($date->isPast() && ($search === null || $search == ""))
         <h2><strong>{{ $date->format("m/Y") }}</strong> League Champions!</h2>
         <div class="feature">
             <div class="row">
@@ -43,22 +43,22 @@
                     <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover-masters.png" }}')">
                         <div class="details tier-league-cards">
                             <div class="type">
-                                <h1 class="lead"><strong>{{ $winner->username }}</strong></h1>
+                                <h1 class="lead"><strong>{{ $winner->player_name }}</strong></h1>
                                 <h2><strong>Rank #{{ $k+1 }}</strong></h2>
                                 <ul class="list-inline" style="font-size: 14px;">
                                     <li>
-                                        Wins 
-                                        <i class="fa fa-level-up"></i> {{ $winner->total_wins }}
+                                        Wins
+                                        <i class="fa fa-level-up"></i> {{ $winner->wins }}
                                     </li>
                                     <li>
-                                        Games 
-                                        <i class="fa fa-diamond"></i> {{ $winner->total_games }}
+                                        Games
+                                        <i class="fa fa-diamond"></i> {{ $winner->games }}
                                     </li>
                                 </ul>
                                 @if ($k>0)
-                                <small>Runner up of the 
+                                <small>Runner up of the
                                 @else
-                                <small>Champion of the 
+                                <small>Champion of the
                                 @endif
                                 <strong>{{ $date->format("m/Y") }}</strong> {{ $history->game }} League</small>
                             </div>
@@ -74,7 +74,7 @@
             <div class="row">
                 <div class="header">
                     <div class="col-md-12">
-                        <h3><strong>1vs1</strong> Recent Games 
+                        <h3><strong>1vs1</strong> Recent Games
                             <small>
                                 <a href="{{"/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games"}}">View All Games</a>
                             </small>
@@ -142,7 +142,7 @@
                                 <div class="text-right">
                                     @if ($search)
                                         <small>
-                                            Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results 
+                                            Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
                                             <a href="?search=">Clear?</a>
                                         </small>
                                     @endif
@@ -192,25 +192,26 @@
 
                     <div class="row">
                         @foreach($players as $k => $player)
-                        <?php 
+                        <?php
                             $rank = ($rankOffset + $k) + 1;
-                            if ($search) 
+                            if ($search)
                                 $rank = null;
                         ?>
 
-                        <div class="col-md-4">
-                            @include("components/player-box",
-                            [
-                                "username" => $player->username,
+                            <div class="col-md-4">
+                                @include("components/player-box",
+                                [
+                                "username" => $player->player_name,
                                 "points" => $player->points,
-                                "badge" => $player->badge(),
+                                "badge" => \App\Player::getBadge($player->percentile),
                                 "rank" => $rank,
-                                "wins" => $player->total_wins,
-                                "totalGames" => $player->total_games,
-                                "playerCard" => isset($player->card->short) ? $player->card->short : "",
-                                "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->username
-                            ])
-                        </div>
+                                "wins" => $player->wins,
+                                "totalGames" => $player->games,
+                                "playerCard" => $cards[$player->card + 1],
+                                "side" => $player->side !== null ? $sides[$player->side] : null,
+                                "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name
+                                ])
+                            </div>
                         @endforeach
                     </div>
 

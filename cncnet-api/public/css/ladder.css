@@ -3035,15 +3035,15 @@ h3.game-intro > span:first-child:after {
 .faction-america,
 .faction-korea,
 .faction-france,
-.faction-germany {
+.faction-germany,
+.faction-great-britain {
   background-image: url(../images/hud/allied.png);
   width: 200px; }
 
 .faction-iraq,
 .faction-cuba,
 .faction-russia,
-.faction-libya,
-.faction-germany {
+.faction-libya {
   background-image: url(../images/hud/soviet.png);
   width: 150px; }
 
@@ -3462,6 +3462,15 @@ h3.game-intro > span:first-child:after {
 
 .player-card.ra-missile {
   background-image: url(/images/cards/player-cards-ra-missile.png); }
+
+.player-box .player-box-faction {
+  position: absolute;
+  background-size: 33%;
+  background-position: bottom right;
+  right: 10px;
+  bottom: 10px;
+  top: auto;
+  margin: 30px; }
 
 .cameo-tile {
   float: left;

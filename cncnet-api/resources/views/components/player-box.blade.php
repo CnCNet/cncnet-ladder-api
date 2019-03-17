@@ -16,9 +16,10 @@
                     Wins <i class="fa fa-level-up fa-fw fa-lg"></i> {{ $wins }}
                 </li>
                 <li>
-                   Games <i class="fa fa-diamond fa-fw fa-lg"></i> {{ $totalGames }}
+                    Games <i class="fa fa-diamond fa-fw fa-lg"></i> {{ $totalGames }}
                 </li>
             </ul>
+            <div class="player-box-faction hidden-xs faction faction-{{ strtolower($side) }}"></div>
         </div>
     </div>
 </a>

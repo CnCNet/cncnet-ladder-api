@@ -202,7 +202,11 @@ class Player extends Model
         {
             $percentile = $this->percentile();
         }
+        return static::getBadge($percentile);
+    }
 
+    public static function getBadge($percentile)
+    {
         if ($percentile > 0 && $percentile <= 15)
         {
             return ["badge" => "badge-t1", "type" => "Officer Cadet"];
