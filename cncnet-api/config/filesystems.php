@@ -67,5 +67,5 @@ return [
 		],
 
 	],
-
+    'dmp' => public_path().'/dmp',
 ];

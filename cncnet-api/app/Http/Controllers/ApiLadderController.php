@@ -44,13 +44,6 @@ class ApiLadderController extends Controller
     {
         $ladder = App\Ladder::find($ladderId);
         $player = App\Player::find($playerId);
-        $game = App\Game::find($gameId);
-        // Game stats result
-        $result = $this->gameService->processStatsDmp($request->file('file'), $ladder->game, $ladder->id);
-        if (count($result) == 0 || $result == null)
-        {
-            return response()->json(['No data'], 400);
-        }
 
         // Player checks
         $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
@@ -58,6 +51,30 @@ class ApiLadderController extends Controller
         {
             return $check;
         }
+
+        $filePath = config('filesystems')['dmp'];
+        $fileName = $gameId.'.'.$ladderId.'.'.$playerId.'.dmp';
+        $file = $request->file('file')->move($filePath, $fileName);
+
+        $this->dispatch(new App\Commands\SaveLadderResult($filePath.'/'.$fileName, $ladderId, $gameId, $playerId, $pingSent, $pingReceived));
+
+        return response()->json(['success' => 'Queued for processing.'], 200);
+    }
+
+    public function saveLadderResult($file, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
+    {
+        $ladder = App\Ladder::find($ladderId);
+        $player = App\Player::find($playerId);
+        $game = App\Game::find($gameId);
+
+        // Game stats result
+        $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder->id);
+
+        if (count($result) == 0 || $result == null)
+        {
+            return response()->json(['No data'], 400);
+        }
+
         $history = $game->ladderHistory;
 
         // Keep a record of the raw stats sent in
@@ -67,69 +84,6 @@ class ApiLadderController extends Controller
 
         // Now save the processed stats
         $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder->id, $ladder->game);
-        $gameReport = $result['gameReport'];
-        if ($gameReport === null)
-        {
-            return response()->json(['Error' => $result['error']], 400);
-        }
-        $gameReport->pings_sent = $pingSent;
-        $gameReport->pings_received = $pingReceived;
-        $gameReport->save();
-
-        // Award points
-        $status = $this->awardPoints($gameReport, $history);
-
-        // Dispute handling
-        $this->handleGameDispute($gameReport);
-
-        return response()->json(['success' => $status], 200);
-    }
-
-    public function postLadder(Request $request, $cncnetGame = null, $username = null, $pingSent = 0, $pingReceived = 0)
-    {
-        // Ladder exists
-        $ladder = $this->ladderService->getLadderByGame($cncnetGame);
-        if ($ladder == null)
-        {
-            return response()->json(['Ladder does not exist'], 400);
-        }
-
-        // Game stats result
-        $result = $this->gameService->processStatsDmp($request->file('file'), $cncnetGame, $ladder->id);
-        if (count($result) == 0 || $result == null)
-        {
-            return response()->json(['No data'], 400);
-        }
-
-        // Get Active Ladder
-        $start = Carbon::now()->startOfMonth();
-        $end = Carbon::now()->endOfMonth();
-
-        $history = \App\LadderHistory::where("starts", "=", $start)
-            ->where("ends", "=", $end)
-            ->where("ladder_id", "=", $ladder->id)
-            ->first();
-
-        // Player checks
-        $check = $this->ladderService->checkPlayer($request, $username, $ladder);
-        if($check !== null)
-        {
-            return $check;
-        }
-        $player = $this->playerService->findPlayerByUsername($username, $ladder);
-
-        // Game creation
-        $game = $this->gameService->findOrCreateGame($result, $history);
-        if ($game == null)
-        {
-            return response()->json(['Error creating game'], 400);
-        }
-
-        // Keep a record of the raw stats sent in
-        $this->gameService->saveRawStats($result, $game->id, $history->id);
-
-        // Now save the processed stats
-        $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $history->ladder->id, $cncnetGame);
         $gameReport = $result['gameReport'];
         if ($gameReport === null)
         {

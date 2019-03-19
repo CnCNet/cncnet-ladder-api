@@ -12,6 +12,7 @@ class Kernel extends ConsoleKernel {
 	 */
 	protected $commands = [
 		'App\Console\Commands\PruneRawLogs',
+        'App\Console\Commands\PruneOldStats'
 	];
 
 	/**
@@ -24,6 +25,8 @@ class Kernel extends ConsoleKernel {
 	{
 		$schedule->command('prune_logs')
 				 ->daily();
+        $schedule->command('prune_stats')
+                 ->daily();
 	}
 
 }
