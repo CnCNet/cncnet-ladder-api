@@ -12,6 +12,7 @@ use DB;
 use Log;
 use \App\Commands\FindOpponent;
 use \App\QmQueueEntry;
+use Illuminate\Support\Facades\Cache;
 
 class ApiQuickMatchController extends Controller
 {
@@ -34,20 +35,24 @@ class ApiQuickMatchController extends Controller
 
     public function statsRequest(Request $request, $ladderAbbrev = null)
     {
-        $timediff = Carbon::now()->subHour()->toDateTimeString();
-        $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
-        $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $timediff)
-                                                  ->where('ladder_id', '=', $ladder_id)
-                                                  ->count();
-        $queuedPlayers = \App\QmMatchPlayer::where('ladder_id', '=', $ladder_id)->whereNull('qm_match_id')->count();
-        $recentMatches = \App\QmMatch::where('created_at', '>', $timediff)
-                                     ->where('ladder_id', '=', $ladder_id)
-                                     //->where('status', 'like', '%GameSpawned%')
-                                     ->count();
+        return Cache::remember("statsRequest/$ladderAbbrev", 1, function() use ($ladderAbbrev)
+        {
+            $timediff = Carbon::now()->subHour()->toDateTimeString();
+            $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
+            $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $timediff)
+                                                      ->where('ladder_id', '=', $ladder_id)
+                                                      ->count();
+            $queuedPlayers = \App\QmMatchPlayer::where('ladder_id', '=', $ladder_id)->whereNull('qm_match_id')->count();
+            $recentMatches = \App\QmMatch::where('created_at', '>', $timediff)
+                                         ->where('ladder_id', '=', $ladder_id)
+                                       //->where('status', 'like', '%GameSpawned%')
+                                         ->count();
 
-        return ['recentMatchedPlayers' => $recentMatchedPlayers,
-                'queuedPlayers' => $queuedPlayers,
-                'recentMatches' => $recentMatches ];
+            return ['recentMatchedPlayers' => $recentMatchedPlayers,
+                    'queuedPlayers' => $queuedPlayers,
+                    'recentMatches' => $recentMatches ];
+                    //'time' => Carbon::now() ];
+        });
     }
 
     public function mapListRequest(Request $request, $ladderAbbrev = null)
