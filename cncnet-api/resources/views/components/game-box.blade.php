@@ -6,14 +6,7 @@
     <a href="{{ $url or ""}}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
-            <?php $now = \Carbon\Carbon::now(); $days = $date->diffInDays($now); $hours = $date->diffInHours($now); $mins = $date->diffInMinutes($now);  ?>
-            @if($hours >= 24)
-            <small class="status text-capitalize">{{ $status . " " . $days . " days ago"}}</small>
-            @elseif($hours <= 1)
-            <small class="status text-capitalize">{{ $status . " " . $mins . " minutes ago"}}</small>
-            @else
-            <small class="status text-capitalize">{{ $status . " " . $hours . " hours ago"}}</small>
-            @endif
+            <small class="status text-capitalize">{{ $status . " " . $date->diffForHumans() }}</small>
 
             @if($gameReport !== null)
             <div><small class="status text-capitalize"><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</small></div>
