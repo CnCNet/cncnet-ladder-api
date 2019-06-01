@@ -1,6 +1,11 @@
-@extends('app')
+@extends('layouts.app')
+@section('title', 'Ladder Password Reset')
 
-@section('content')
+@section('cover')
+/images/feature/feature-td.jpg
+@endsection
+
+@section('feature')
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-8 col-md-offset-2">

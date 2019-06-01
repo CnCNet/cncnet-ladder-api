@@ -15,7 +15,8 @@ return [
 	|
 	*/
 
-	'driver' => env('MAIL_DRIVER', 'smtp'),
+	'driver' => env('MAIL_DRIVER', 'sendgrid'),
+	'api_key' => env('MAIL_API_KEY', 'faaake'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -54,7 +55,7 @@ return [
 	|
 	*/
 
-	'from' => ['address' => null, 'name' => null],
+	'from' => ['address' => 'ladder@cncnet.org', 'name' => 'CnCNet Ladder'],
 
 	/*
 	|--------------------------------------------------------------------------

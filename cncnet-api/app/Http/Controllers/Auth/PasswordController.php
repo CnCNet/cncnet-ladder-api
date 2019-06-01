@@ -20,6 +20,8 @@ class PasswordController extends Controller {
 
 	use ResetsPasswords;
 
+    protected $subject = 'Your CnCNet Ladder Password Reset Link';
+    protected $redirectTo = '/';
 	/**
 	 * Create a new password controller instance.
 	 *
@@ -34,5 +36,4 @@ class PasswordController extends Controller {
 
 		$this->middleware('guest');
 	}
-
 }
