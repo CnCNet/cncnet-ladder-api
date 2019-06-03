@@ -77,6 +77,9 @@ Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
     Route::get('/', 'AccountController@getAccountIndex');
     Route::post('/username', 'AccountController@createUsername');
     Route::post('/card', 'AccountController@updatePlayerCard');
+    Route::get('/verify', 'AccountController@getNewVerification');
+    Route::post('/verify', 'AccountController@createNewVerification');
+    Route::get('/verify/{verify_token}', 'AccountController@verifyEmail');
 });
 
 Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], function()

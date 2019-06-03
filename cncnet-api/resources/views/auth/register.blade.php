@@ -29,9 +29,9 @@
 		    <div class="col-md-8 col-md-offset-2">
                 <h2>Create your CnCNet Ladder Account</h2>
                 <p style="color:silver">
-                    <strong>Note: We are in an Beta testing stage</strong>, bugs are likely to occur. The Quick Match Client and related sites are likely to change during development.  
+                    <strong>Note: We are in an Beta testing stage</strong>, bugs are likely to occur. The Quick Match Client and related sites are likely to change during development.
                     Report bugs in <a href="https://forums.cncnet.org/forum/66-cncnet-ladder/" target="_blank">our forums</a>.</p>
-                    
+
                     <h2>How to play</h2>
                     <ol style="font-size:15px;">
                         <li>Create your Ladder Account below.</li>
@@ -59,7 +59,7 @@
 						    <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 						    <div class="form-group">
-							    <label class="col-md-4 control-label">Name</label>
+							    <label class="col-md-4 control-label">User Name</label>
 							    <div class="col-md-6">
 								    <input type="text" class="form-control" name="name" value="{{ old('name') }}">
 							    </div>
@@ -94,7 +94,7 @@
 									    Register
 								    </button>
                                     <p>
-                                    <small>By registering and using the Quick Match software and related sites, you agree to the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></small> 
+                                    <small>By registering and using the Quick Match software and related sites, you agree to the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></small>
                                     </p>
 							    </div>
 						    </div>

@@ -21,7 +21,7 @@ class AuthController extends Controller {
 
 	use AuthenticatesAndRegistersUsers;
 
-    protected $redirectTo = '/account?tutorial=true';
+    protected $redirectTo = '/account';
 	/**
 	 * Create a new authentication controller instance.
 	 *
@@ -54,6 +54,6 @@ class AuthController extends Controller {
 
 		$this->auth->login($this->registrar->create($request->all()));
 
-		return redirect($this->redirectPath());
+		return redirect('/account/verify');
 	}
 }

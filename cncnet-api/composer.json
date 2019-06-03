@@ -8,7 +8,8 @@
     "laravel/framework": "5.0.*",   
     "tymon/jwt-auth": "0.5.*",
 		"doctrine/dbal": "^2.5",
-		"guzzlehttp/guzzle": "^5.3"
+		"guzzlehttp/guzzle": "^5.3",
+		"namshi/jose": "5.0.2"
 	},
 	"require-dev": {
 		"phpspec/phpspec": "~2.1"

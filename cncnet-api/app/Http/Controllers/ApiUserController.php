@@ -6,6 +6,7 @@ use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Log;
 
 class ApiUserController extends Controller
 {
@@ -23,6 +24,10 @@ class ApiUserController extends Controller
         $playerService = new \App\Http\Services\PlayerService;
 
         $user = $auth["user"];
+
+        if ($auth["user"] === null)
+            return response($auth["response"], $auth['status']);
+
         foreach (\App\Ladder::all() as $ladder)
         {
             $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
@@ -47,8 +52,6 @@ class ApiUserController extends Controller
                 }
             }
         }
-        if ($auth["user"] === null)
-            return $auth["response"];
 
         return \App\Player::where('user_id', '=', $auth["user"]->id)->get();
     }

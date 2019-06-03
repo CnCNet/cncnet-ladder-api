@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="C&amp;C, Command and Conquer, C&amp;C95, C&quot;C1, RA, RA95, CnCNet, Online, C&amp;C95 Online, 
-        C&amp;C GLE, LANmate, Tiberian, Sun, Tiberium, Red Alert, Red, Alert, Kane, Stalin, Classics, Forums, website, online, 
+    <meta name="keywords" content="C&amp;C, Command and Conquer, C&amp;C95, C&quot;C1, RA, RA95, CnCNet, Online, C&amp;C95 Online,
+        C&amp;C GLE, LANmate, Tiberian, Sun, Tiberium, Red Alert, Red, Alert, Kane, Stalin, Classics, Forums, website, online,
         chat, GDI, Nod, The Brotherhood of Nod, The Global Defense Initiative, Allies, Soviets, Covert Operations, Firestorm, Aftermath, Gallery, Counterstrike" />
     <meta name="author" content="CnCNet">
     <meta name="google-site-verification" content="UACqC83TaSFSDZsv31UMLMgzDKasIAdB7IEGP9IUSEM"/>
@@ -31,7 +31,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body>
+<body onload="@yield('body_onload')">
     <div class="navigation-component">
         @include('components.navigation')
     </div>
@@ -62,7 +62,7 @@
                         <li><a href="//cncnet.org/twisted-insurrection">Twisted Insurrection</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="col-md-2">
                     <h3>{{ trans('footer.footer_support') }}</h3>
                     <ul class="list-unstyled">
@@ -71,7 +71,7 @@
                         <li><a href="https://discord.gg/aJRJFe5" title="{{ trans('footer.footer_discord') }}" target="_blank">{{ trans('footer.footer_discord') }}</a></li>
                     </ul>
                 </div>
-                
+
                 <div class="col-md-4">
                     <h3>{{ trans('footer.footer_donations') }}</h3>
                     <p>If you wish to support a specific CnCNet project, please ask in our support forums.</p>
@@ -81,7 +81,7 @@
                 <div class="col-md-4">
                     <h3>{{ trans('footer.footer_support_us') }}</h3>
                     <p>{{ trans('footer.footer_support_us_description') }}</p>
-                    
+
                     <ul class="list-inline">
                         <li><a href="http://facebook.com/cncnet" title="Follow CnCNet on Facebook" target="_blank"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
                         <li><a href="http://twitter.com/cncnetofficial" title="Follow CnCNet on Twitter" target="_blank"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>

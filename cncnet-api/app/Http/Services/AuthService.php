@@ -2,6 +2,7 @@
 
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use Tymon\JWTAuth\Exceptions\Exceptions;
 
 class AuthService
 {
@@ -16,27 +17,29 @@ class AuthService
         {
             if (! $user = JWTAuth::parseToken()->authenticate())
             {
-                return response()->json(['error' => 'user_not_found'], 404);
+                return ['response' => ['error' => 'user_not_found'], 'status' => 404];
             }
         }
-        catch (TokenExpiredException $e)
+        catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e)
         {
             // Using fatal as a work-around for the qm client
-            return [ "response" => response()->json(['type' => 'fatal', 'error' => 'token_expired',
-                                                     'message' => 'Authentication has expired, Please restart Quick Match'],
-                                                    $e->getStatusCode()),
+            return [ "response" => ['type' => 'fatal', 'error' => 'token_expired',
+                                     'message' => 'Authentication has expired, Please restart Quick Match'],
+                     "status" => $e->getStatusCode(),
                      "user" => null];
         }
-        catch (TokenInvalidException $e)
+        catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e)
         {
-            return [ "response" => response()->json(['type' => 'fatal', 'error' => 'token_invalid',
-                                                     'message' => "Authentication failed token_invalid"], $e->getStatusCode()),
+            return [ "response" => ['type' => 'fatal', 'error' => 'token_invalid',
+                                    'message' => "Authentication failed token_invalid"],
+                     "status" => $e->getStatusCode(),
                      "user" => null];
         }
         catch (JWTException $e)
         {
-            return [ "response" => response()->json(['type' => 'fatal', 'error' => 'token_absent',
-                                                     'message' => 'Authentication failed token_absent'], $e->getStatusCode()),
+            return [ "response" => ['type' => 'fatal', 'error' => 'token_absent',
+                                    'message' => 'Authentication failed token_absent'],
+                     "status" => $e->getStatusCode(),
                      "user" => null];
         }
 

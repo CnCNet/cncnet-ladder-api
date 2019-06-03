@@ -38,20 +38,28 @@
     </div>
 </section>
 <style>
-.tutorial {     
-    background: #074b85;
+.tutorial {
     padding: 15px;
-    color: white; 
+    color: white;
 }
 </style>
 <section class="cncnet-features dark-texture">
     <div class="container">
 
         <div class="row">
-            <div class="col-md-4 @if(Input::get('tutorial'))tutorial @endif">
-                <h2>@if(Input::get('tutorial')) <strong>Step 2</strong> - @endif Add a new username?</h2>
-
+            <div class="col-md-12">
                 @include("components.form-messages")
+            </div>
+
+            @if(!$user->email_verified)<div class="col-md-12 tutorial">
+                <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
+                <div class="text-center">
+                    <a href="{{ url("/account/verify") }}">Click Here to Send a New Code</a>
+                </div>
+            @endif</div>
+
+            <div class="col-md-4">
+                <h2>Add a new username?</h2>
 
                 <form method="POST" action="account/username">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -117,4 +125,3 @@
     </div>
 </section>
 @endsection
-

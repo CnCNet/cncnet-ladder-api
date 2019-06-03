@@ -103,6 +103,15 @@ class ApiQuickMatchController extends Controller
             return ['type' => 'fatal', 'message' => $ban ];
         }
 
+        /*
+        // Require a verified email address on file
+        if (!$player->user->email_verified)
+        {
+            return array("type" => "fatal",
+                         "message" => "Quick Match now requires a verified email address to play.\n".
+                                      "Use the link below to send a verification code to your email.\n".
+                                      '<a href="'.url('/account/verfiy').'">Verify Email</a>');
+        }*/
         $rating = $player->rating()->first()->rating;
 
         $qmPlayer = \App\QmMatchPlayer::where('player_id', $player->id)
