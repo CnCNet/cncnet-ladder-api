@@ -72,25 +72,7 @@ class AccountController extends Controller
             return redirect('/account');
         }
 
-        // Delete old verification table entry
-        $old = EmailVerification::where('user_id', '=', $user->id)->get();
-        foreach ($old as $v)
-        {
-            $v->delete();
-        }
-
-        // Create a new confirmation entry
-        $ev = new EmailVerification;
-        $ev->user_id = $user->id;
-        $ev->token = hash('sha256', rand(0, getrandmax()).$user->email);
-        $ev->save();
-
-        $email = $user->email;
-        // Email new confirmation
-        Mail::send('emails.verification', ['token' => $ev->token ], function($message) use ($email)
-        {
-            $message->to($email)->subject('Email verification for CnCNet Ladder');
-        });
+        $user->sendNewVerification();
 
         $request->session()->flash('success', 'Email Verification Code Sent to '.$user->email);
         return redirect('/account');

@@ -6,6 +6,7 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Carbon\Carbon;
+use Mail;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
@@ -122,5 +123,34 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
 
         return $la->tester;
+    }
+
+    public function verificationSent()
+    {
+        return EmailVerification::where('user_id', '=', $this->id)->count() > 0;
+    }
+
+    public function sendNewVerification()
+    {
+        // Delete old verification table entry
+        $old = EmailVerification::where('user_id', '=', $this->id)->get();
+        foreach ($old as $v)
+        {
+            $v->delete();
+        }
+
+        // Create a new confirmation entry
+        $ev = new EmailVerification;
+        $ev->user_id = $this->id;
+        $ev->token = hash('sha256', rand(0, getrandmax()).$this->email);
+        $ev->save();
+
+        $email = $this->email;
+        // Email new confirmation
+        Mail::send('emails.verification', ['token' => $ev->token ], function($message) use ($email)
+        {
+            $message->to($email)->subject('Email verification for CnCNet Ladder');
+        });
+        return true;
     }
 }
