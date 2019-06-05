@@ -336,7 +336,13 @@ class ApiLadderController extends Controller
 
     public function getLadderPlayer(Request $request, $game = null, $player = null)
     {
-        return $this->ladderService->getLadderPlayer($game, $player);
+        $date = Carbon::now()->format('m-Y');
+        $ladderService = $this->ladderService;
+        return Cache::remember("$date/$game/$player", 5, function() use ($ladderService, $date, $game, $player)
+        {
+            $history = $ladderService->getActiveLadderByDate($date, $game);
+            return $ladderService->getLadderPlayer($history, $player);
+        });
     }
 
     public function viewRawGame(Request $request, $gameId)

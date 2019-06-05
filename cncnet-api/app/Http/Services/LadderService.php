@@ -184,11 +184,14 @@ class LadderService
 
     public function getLadderPlayer($history, $username)
     {
-        if($history == null)
-            return "No ladder found";
+        if($history === null)
+            return [ "error" => "Incorrect Ladder" ];
 
         $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
             ->where("username", "=", $username)->first();
+
+        if ($player === null)
+            return [ "error" => "No such player" ];
 
         $rank = $player->rank($history);
         $percentile = $player->percentile();

@@ -35,7 +35,7 @@ class ApiQuickMatchController extends Controller
 
     public function statsRequest(Request $request, $ladderAbbrev = null)
     {
-        return Cache::remember("statsRequest/$ladderAbbrev", 1, function() use ($ladderAbbrev)
+        return Cache::remember("statsRequest/$ladderAbbrev", 5, function() use ($ladderAbbrev)
         {
             $timediff = Carbon::now()->subHour()->toDateTimeString();
             $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
@@ -262,7 +262,7 @@ class ApiQuickMatchController extends Controller
                 $this->dispatch(new FindOpponent($qEntry->id));
 
                 $qmPlayer->touch();
-                return array("type" => "please wait", "checkback" => 5, "no_sooner_than" => 1);
+                return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5);
             }
             // If we've made it this far, lets send the spawn details
 
