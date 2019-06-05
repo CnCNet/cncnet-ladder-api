@@ -207,8 +207,8 @@
                                 "rank" => $rank,
                                 "wins" => $player->wins,
                                 "totalGames" => $player->games,
-                                "playerCard" => $player->card !== null ? $cards[$player->card + 0] : "",
-                                "side" => $player->side !== null ? $sides[$player->side] : null,
+                                "playerCard" => $player->card !== null ? (array_key_exists($player->card, $cards) ? $cards[$player->card + 0] : "") : "",
+                                "side" => $player->side !== null ? (array_key_exists($player->side, $sides) ? $sides[$player->side] : null) : null,
                                 "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name
                                 ])
                             </div>
