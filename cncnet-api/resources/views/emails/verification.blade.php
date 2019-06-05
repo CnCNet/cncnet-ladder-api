@@ -1,1 +1,1 @@
-Here is your email verification link: {{ url("/account/verify/$token") }}
+Here is your email verification link: {{ secure_url("/account/verify/$token") }}
