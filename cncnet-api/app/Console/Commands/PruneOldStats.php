@@ -11,7 +11,7 @@ class PruneOldStats extends Command {
 	 *
 	 * @var string
 	 */
-	protected $name = 'command:prune_stats';
+	protected $name = 'prune_stats';
 
 	/**
 	 * The console command description.
