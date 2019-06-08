@@ -198,7 +198,10 @@
 .player-card.tesla-trooper
 {
     background-image: url(/images/cards/player-cards-yr-tesla-trooper.png);
+    background-size: cover;
 }
+
+.player-card.tesla-trooper .extra-stats { color: #fff; }
 
 .player-box .player-box-faction
 {
