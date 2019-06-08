@@ -3463,6 +3463,9 @@ h3.game-intro > span:first-child:after {
 .player-card.ra-missile {
   background-image: url(/images/cards/player-cards-ra-missile.png); }
 
+.player-card.tesla-trooper {
+  background-image: url(/images/cards/player-cards-yr-tesla-trooper.png); }
+
 .player-box .player-box-faction {
   position: absolute;
   background-size: 33%;
