@@ -45,13 +45,20 @@ class ApiQuickMatchController extends Controller
             $queuedPlayers = \App\QmMatchPlayer::where('ladder_id', '=', $ladder_id)->whereNull('qm_match_id')->count();
             $recentMatches = \App\QmMatch::where('created_at', '>', $timediff)
                                          ->where('ladder_id', '=', $ladder_id)
-                                       //->where('status', 'like', '%GameSpawned%')
                                          ->count();
+
+            $activeGames = \App\QmMatch::where('updated_at', '>', Carbon::now()->subMinute(2))
+                                       ->where('ladder_id', '=', $ladder_id)->count();
+
+            $past24hMatches = \App\QmMatch::where('updated_at', '>', Carbon::now()->subDay(1))
+                                          ->where('ladder_id', '=', $ladder_id)->count();
 
             return ['recentMatchedPlayers' => $recentMatchedPlayers,
                     'queuedPlayers' => $queuedPlayers,
-                    'recentMatches' => $recentMatches ];
-                    //'time' => Carbon::now() ];
+                    'past24hMatches' => $past24hMatches,
+                    'recentMatches' => $recentMatches,
+                    'activeMatches'   => $activeGames,
+                    'time'          => Carbon::now() ];
         });
     }
 
