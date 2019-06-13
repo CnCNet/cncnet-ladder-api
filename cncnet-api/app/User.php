@@ -153,4 +153,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         });
         return true;
     }
+
+    public function ipHistory()
+    {
+        return $this->hasMany('App\IpAddressHistory');
+    }
 }

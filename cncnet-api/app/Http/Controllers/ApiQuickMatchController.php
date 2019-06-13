@@ -242,6 +242,19 @@ class ApiQuickMatchController extends Controller
                 if ($request->draw)
                     $qmPlayer->ddraw_id = \App\PlayerDataString::findValue($request->ddraw);
 
+
+                // Save user IP Address
+                $player->user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+                                                     ? $_SERVER["HTTP_CF_CONNECTING_IP"]
+                                                     : $request->getClientIp());
+
+                \App\IpAddressHistory::addHistory($player->user->id, $player->user->ip_address_id);
+
+                \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ip_address_id);
+
+                \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ipv6_address_id);
+
+                $player->user->save();
             }
 
             if ($request->ai_dat)

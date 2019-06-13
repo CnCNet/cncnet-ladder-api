@@ -122,4 +122,8 @@ return [
 
 	],
 
+    /* Maxmind GeoIP Database */
+    'mmdb' => [
+        'file' => database_path() . '/GeoLite2-City/GeoLite2-City.mmdb'
+    ],
 ];
