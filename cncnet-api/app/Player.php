@@ -119,7 +119,9 @@ class Player extends Model
     {
         $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
         $total = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->sum('fps');
-        return $total/$count;
+        if ($count != 0)
+            return $total/$count;
+        return 0;
     }
 
     public function sideUsage($history)
