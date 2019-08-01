@@ -14,7 +14,7 @@
             @endif
         </div>
         @if ($points != null)
-        <div class="footer text-center">
+        <div class="footer text-center {{ $history->ladder->abbreviation }}">
             @foreach($gamePlayers->get() as $k => $pgr)
             <?php $gameStats = $pgr->stats; ?>
                 @if ($gameStats != null)

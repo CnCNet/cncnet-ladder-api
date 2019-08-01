@@ -217,18 +217,20 @@ h3.game-intro > span:first-child:after
     width: 150px;
 }
 
+.ra .faction-russia,
 .ra .faction-uss,
-.ra .faction-ita
+.ra .faction-ita,
+.ra .faction-ukraine
 {
     background-image: url(../images/hud/ra_soviet.png);
     width: 140px;
 }
 
-.ra .faction-spa,
-.ra .faction-eng,
-.ra .faction-ger,
-.ra .faction-fra,
-.ra .faction-gre
+.ra .faction-spain,
+.ra .faction-england,
+.ra .faction-germany,
+.ra .faction-france,
+.ra .faction-greece
 {
      background-image: url(../images/hud/ra_allies.png);
      width: 140px;
