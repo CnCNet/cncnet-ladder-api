@@ -94,9 +94,17 @@
     color: #7d7d7d;
 }
 
+.player-achievements .achievements-list
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+}
+
 .player-achievements .achievement
 {
-    width: 20%;
+    width: 100px;
     text-align: center;
 }
 

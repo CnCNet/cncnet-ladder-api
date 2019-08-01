@@ -95,27 +95,35 @@
                 <div class="player-achievements">
                     <h3 class="title">Achievements</h3>
 
-                    @if ($player->game_count >= 200)
-                    <div>
-                        <img src="/images/badges/achievement-games.png" style="height:50px"/>
-                        <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>200+ Games</h5>
-                    </div>
-                    @endif
+                    <div class="achievements-list">
+                        @if ($player->game_count >= 200)
+                        <div class="achievement">
+                            <img src="/images/badges/achievement-games.png" style="height:50px"/>
+                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>200+ Games</h5>
+                        </div>
+                        @endif
+                        @if ($player->game_count >= 300)
+                        <div class="achievement">
+                            <img src="/images/badges/achievement-games.png" style="height:50px"/>
+                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>300+ Games</h5>
+                        </div>
+                        @endif
 
-                    @if ($player->rank <= 10)
-                    <div class="achievement">
-                        @if ($player->rank == 1)
-                            <img src="/images/badges/achievement-rank1.png" style="height:50px"/>
-                            <h5 class="gold">Rank #1 Player</h5>
-                        @elseif($player->rank > 1 && $player->rank <=5)
-                            <img src="/images/badges/achievement-top5.png" style="height:50px"/>
-                            <h5 class="silver">Top 5 Player</h5>
-                        @elseif($player->rank > 5 && $player->rank <=10)
-                            <img src="/images/badges/achievement-top10.png" style="height:50px"/>
-                            <h5 class="bronze">Top 10 Player</h5>
+                        @if ($player->rank <= 10)
+                        <div class="achievement">
+                            @if ($player->rank == 1)
+                                <img src="/images/badges/achievement-rank1.png" style="height:50px"/>
+                                <h5 class="gold">Rank #1 Player</h5>
+                            @elseif($player->rank > 1 && $player->rank <=5)
+                                <img src="/images/badges/achievement-top5.png" style="height:50px"/>
+                                <h5 class="silver">Top 5 Player</h5>
+                            @elseif($player->rank > 5 && $player->rank <=10)
+                                <img src="/images/badges/achievement-top10.png" style="height:50px"/>
+                                <h5 class="bronze">Top 10 Player</h5>
+                            @endif
+                        </div>
                         @endif
                     </div>
-                    @endif
                 </div>
             </div>
         </div>
