@@ -1,11 +1,12 @@
-﻿@import "vendor/_dials";
-@import "vendor/_flags";
+﻿@import "vendor/_dials",
+        "vendor/_flags";
 
-@import "base/_base";
-@import "base/_player";
-@import "base/_game";
-@import "components/_feature";
-@import "components/_navigation";
-@import "components/_game-box";
-@import "components/_player-box";
-@import "components/_cameos";
+@import "base/_base",
+        "base/_player",
+        "base/_game";
+
+@import "components/_feature",
+        "components/_navigation",
+        "components/_game-box",
+        "components/_player-box",
+        "components/_cameos";

@@ -1,18 +1,26 @@
 'use strict';
 
-var gulp = require('gulp');
-var sass = require('gulp-sass');
+const gulp = require("gulp");
+const sass = require("gulp-sass");
+const autoprefixer = require("gulp-autoprefixer");
 
-gulp.task('sass', function () {
-    return gulp.src('./resources/sass/ladder.scss')
-      .pipe(sass().on('error', sass.logError))
-      .pipe(gulp.dest('./public/css/'));
-});
+// Watch files
+function watchFiles() 
+{
+    gulp.watch(["./resources/sass/**/*"], css);
+}
 
-gulp.task('sass:watch', function () {
-    gulp.watch([
-        './resources/sass/**/**/*.scss',
-        './resources/sass/**/*.scss',
-        './resources/sass/*.scss',
-    ], ['sass']);
-});
+function css()
+{
+    return gulp
+        .src("./resources/sass/ladder.scss")
+        .pipe(sass({
+            outputStyle: "compressed"
+        }).on("error", sass.logError))
+        .pipe(autoprefixer())
+        .pipe(gulp.dest("./public/css/"));
+}
+
+const watch = gulp.parallel(css, watchFiles);
+
+exports.default = watch;
