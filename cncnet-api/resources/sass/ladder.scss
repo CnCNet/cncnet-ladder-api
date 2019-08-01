@@ -1,10 +1,16 @@
-﻿@import "vendor/_dials",
+﻿// 
+// Vendor 
+@import "vendor/_dials",
         "vendor/_flags";
 
+// 
+// Base styles
 @import "base/_base",
         "base/_player",
         "base/_game";
 
+// 
+// Components
 @import "components/_feature",
         "components/_navigation",
         "components/_game-box",
@@ -12,3 +18,4 @@
         "components/_cameos";
 
 @import "countries";
+@import "global";
