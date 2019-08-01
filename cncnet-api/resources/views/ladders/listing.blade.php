@@ -199,9 +199,28 @@
                         ?>
 
                             <?php 
+
                                 $countryName = "";
-                                $side = \App\Side::where("local_id", $player->country)->first(); 
-                                if ($side != null)
+                                $side = null;
+                                
+                                if ( $history->ladder->abbreviation == "yr")
+                                {
+                                    $side = \App\Side::where("local_id", $player->country)
+                                    ->where("ladder_id", $history->ladder->id)
+                                    ->first(); 
+                                }
+                                else
+                                {
+                                    if ($player->side !== null)
+                                    {
+                                        if(array_key_exists($player->side, $sides))
+                                        {
+                                            $countryName = $sides[$player->side];
+                                        }
+                                    }
+                                }
+
+                                if ($side !== null)
                                 {
                                     $countryName = $side->name; 
                                 }
