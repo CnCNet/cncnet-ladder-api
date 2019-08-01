@@ -1,6 +1,7 @@
 <?php namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use MaxMind\Db\Reader;
 
 class IpAddress extends Model {
 
@@ -14,9 +15,28 @@ class IpAddress extends Model {
         $ip = IpAddress::where('address', '=', $address)->first();
         if ($ip === null)
         {
+            $reader = new Reader(config('database.mmdb.file'));
+            $mmData = $reader->get($address);
+
             $ip = new IpAddress;
             $ip->address = $address;
+            if ($mmData !== null)
+            {
+                try
+                {
+                    if (array_key_exists("country", $mmData))
+                        $ip->country = $mmData["country"]["iso_code"];
+
+                    if (array_key_exists("city", $mmData))
+                        $ip->city = $mmData["city"]["names"]["en"];
+                }
+                catch (Exception $e)
+                {
+                    error_log($e->getMessage());
+                }
+            }
             $ip->save();
+            $reader->close();
         }
         return $ip;
     }
@@ -44,5 +64,10 @@ class IpAddress extends Model {
             $ret = $user->getBan($start);
         }
         return $ret;
+    }
+
+    public function ipHistory()
+    {
+        return $this->hasMany('App\IpAddressHistory');
     }
 }

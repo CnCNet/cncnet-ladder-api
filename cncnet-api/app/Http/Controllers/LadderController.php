@@ -52,6 +52,10 @@ class LadderController extends Controller
     public function getLadderIndex(Request $request)
     {
         $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
+
+        if ($history === null)
+            abort(404);
+
         $data = array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
@@ -69,9 +73,6 @@ class LadderController extends Controller
                                 ->where('local_id', '>=', 0)
                                 ->orderBy('local_id', 'asc')->lists('name')
         );
-
-        if ($data["history"] === null)
-            abort(404);
 
         return view("ladders.listing", $data);
     }

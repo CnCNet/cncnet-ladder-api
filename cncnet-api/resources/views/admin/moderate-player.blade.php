@@ -118,7 +118,7 @@
                             <td>{{ $ban->typeDescription() }}</td>
                             <td>{{ $ban->internal_note }}</td>
                             <td>{{ $ban->plubic_reason }}</td>
-                            <td>@if($ban->ip && $mod->isGod()){{ $ban->ip->address }}@else Hidden @endif</td>
+                            <td>@if($ban->ip && $mod->isLadderAdmin($player->ladder)){{ $ban->ip->address }}@else Hidden @endif</td>
                             @if ($ban->expires === null || $ban->expires->eq(\App\Ban::unstartedBanTime()))
                                 <td>Not Started</td>
                                 <td>

@@ -81,7 +81,7 @@ class Ban extends Model {
         if (!$start && !($this->ban_type >= \App\Ban::START_NOW_BEGIN && $this->ban_type <= \App\Ban::START_NOW_END))
         {
             if ($this->ban_type == Ban::PERMBAN)
-                return "You are permanently banned!";
+                return "You are permanently banned!\n{$this->plubic_reason}";
 
             if ($this->ban_type <= Ban::BAN_END && $this->ban_type >= Ban::BAN_BEGIN)
                 $banned = true;
@@ -126,7 +126,12 @@ class Ban extends Model {
                 break;
 
             case Ban::PERMBAN:
-                return "You are permanently banned!";
+                if (!$this->started())
+                {
+                    $this->expires = Carbon::create(2038,1,1,0,0,0,'UTC');
+                    $this->save();
+                }
+                $banned = true;
                 break;
 
             case Ban::COOLDOWN1H:
@@ -180,7 +185,7 @@ class Ban extends Model {
 
         if ($banned)
         {
-            return "You are BANNED!\nYour ban will expire in {$this->timeTill()}";
+            return "You are BANNED!\n{$this->plubic_reason}\nYour ban will expire in {$this->timeTill()}";
         }
 
         if ($cooldown)

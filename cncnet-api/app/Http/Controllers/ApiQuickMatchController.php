@@ -45,13 +45,20 @@ class ApiQuickMatchController extends Controller
             $queuedPlayers = \App\QmMatchPlayer::where('ladder_id', '=', $ladder_id)->whereNull('qm_match_id')->count();
             $recentMatches = \App\QmMatch::where('created_at', '>', $timediff)
                                          ->where('ladder_id', '=', $ladder_id)
-                                       //->where('status', 'like', '%GameSpawned%')
                                          ->count();
+
+            $activeGames = \App\QmMatch::where('updated_at', '>', Carbon::now()->subMinute(2))
+                                       ->where('ladder_id', '=', $ladder_id)->count();
+
+            $past24hMatches = \App\QmMatch::where('updated_at', '>', Carbon::now()->subDay(1))
+                                          ->where('ladder_id', '=', $ladder_id)->count();
 
             return ['recentMatchedPlayers' => $recentMatchedPlayers,
                     'queuedPlayers' => $queuedPlayers,
-                    'recentMatches' => $recentMatches ];
-                    //'time' => Carbon::now() ];
+                    'past24hMatches' => $past24hMatches,
+                    'recentMatches' => $recentMatches,
+                    'activeMatches'   => $activeGames,
+                    'time'          => Carbon::now() ];
         });
     }
 
@@ -105,7 +112,7 @@ class ApiQuickMatchController extends Controller
 
 
         // Require a verified email address on file
-        if (!$player->user->email_verified)
+        /*if (!$player->user->email_verified)
         {
             if (!$player->user->verificationSent())
             {
@@ -116,7 +123,7 @@ class ApiQuickMatchController extends Controller
                          "message" => "Quick Match now requires a verified email address to play.\n".
                                       "A verification code has been sent to {$player->user->email}.\n");
 
-        }
+        }*/
         $rating = $player->rating()->first()->rating;
 
         $qmPlayer = \App\QmMatchPlayer::where('player_id', $player->id)
@@ -235,6 +242,19 @@ class ApiQuickMatchController extends Controller
                 if ($request->draw)
                     $qmPlayer->ddraw_id = \App\PlayerDataString::findValue($request->ddraw);
 
+
+                // Save user IP Address
+                $player->user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+                                                     ? $_SERVER["HTTP_CF_CONNECTING_IP"]
+                                                     : $request->getClientIp());
+
+                \App\IpAddressHistory::addHistory($player->user->id, $player->user->ip_address_id);
+
+                \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ip_address_id);
+
+                \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ipv6_address_id);
+
+                $player->user->save();
             }
 
             if ($request->ai_dat)

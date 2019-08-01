@@ -9,7 +9,8 @@
     "tymon/jwt-auth": "0.5.*",
 		"doctrine/dbal": "^2.5",
 		"guzzlehttp/guzzle": "^5.3",
-		"namshi/jose": "5.0.2"
+		"namshi/jose": "5.0.2",
+		"maxmind-db/reader": "~1.0"
 	},
 	"require-dev": {
 		"phpspec/phpspec": "~2.1"

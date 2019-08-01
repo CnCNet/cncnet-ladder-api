@@ -77,6 +77,11 @@ class LadderService
         $month = $date[0];
         $year = $date[1];
 
+        if ($month > 12 || $month < 0)
+        {
+            return null;
+        }
+
         $date = Carbon::create($year, $month, 1, 0);
 
         $start = $date->startOfMonth()->toDateTimeString();
