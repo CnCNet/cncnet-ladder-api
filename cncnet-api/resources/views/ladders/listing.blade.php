@@ -198,6 +198,15 @@
                                 $rank = null;
                         ?>
 
+                            <?php 
+                                $countryName = "";
+                                $side = \App\Side::where("local_id", $player->country)->first(); 
+                                if ($side != null)
+                                {
+                                    $countryName = $side->name; 
+                                }
+                            ?>
+
                             <div class="col-md-4">
                                 @include("components/player-box",
                                 [
@@ -208,7 +217,7 @@
                                     "wins" => $player->wins,
                                     "totalGames" => $player->games,
                                     "playerCard" => $player->card !== null ? (array_key_exists($player->card, $cards) ? $cards[$player->card + 0] : "") : "",
-                                    "side" => $player->side !== null ? (array_key_exists($player->side, $sides) ? $sides[$player->side] : null) : null,
+                                    "side" => $countryName,
                                     "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name,
                                     "game" => $history->ladder->abbreviation
                                 ])
