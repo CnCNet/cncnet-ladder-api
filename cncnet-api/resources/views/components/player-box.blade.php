@@ -19,7 +19,9 @@
                     Games <i class="fa fa-diamond fa-fw fa-lg"></i> {{ $totalGames }}
                 </li>
             </ul>
-            <div class="player-box-faction hidden-xs"></div>
+            @if($side)
+            <div class="most-used-country country-{{ $game }}-{{strtolower($side)}}"></div>
+            @endif
         </div>
     </div>
 </a>

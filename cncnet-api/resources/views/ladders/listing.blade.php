@@ -201,15 +201,16 @@
                             <div class="col-md-4">
                                 @include("components/player-box",
                                 [
-                                "username" => $player->player_name,
-                                "points" => $player->points,
-                                "badge" => \App\Player::getBadge($player->percentile),
-                                "rank" => $rank,
-                                "wins" => $player->wins,
-                                "totalGames" => $player->games,
-                                "playerCard" => $player->card !== null ? (array_key_exists($player->card, $cards) ? $cards[$player->card + 0] : "") : "",
-                                "side" => $player->side !== null ? (array_key_exists($player->side, $sides) ? $sides[$player->side] : null) : null,
-                                "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name
+                                    "username" => $player->player_name,
+                                    "points" => $player->points,
+                                    "badge" => \App\Player::getBadge($player->percentile),
+                                    "rank" => $rank,
+                                    "wins" => $player->wins,
+                                    "totalGames" => $player->games,
+                                    "playerCard" => $player->card !== null ? (array_key_exists($player->card, $cards) ? $cards[$player->card + 0] : "") : "",
+                                    "side" => $player->side !== null ? (array_key_exists($player->side, $sides) ? $sides[$player->side] : null) : null,
+                                    "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name,
+                                    "game" => $history->ladder->abbreviation
                                 ])
                             </div>
                         @endforeach

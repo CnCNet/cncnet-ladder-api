@@ -1,0 +1,156 @@
+// 
+// Tiberian sun countries
+.country-ts-nod
+{
+    animation: nod-animation;
+    animation-duration: 3s;
+    animation-iteration-count: 5;
+}
+
+.country-ts-gdi
+{
+    animation: gdi-animation;
+    animation-duration: 3s;
+    animation-iteration-count: 5;
+}
+
+.country-ts-nod:before
+{
+    background-image: url(../images/game-icons/nod.png);
+}
+
+.country-ts-gdi:before
+{
+    background-image: url(../images/game-icons/gdi.png);
+}
+
+
+// 
+// TS Animations
+@keyframes nod-animation
+{
+    0% { 
+        border-color: #250000;
+    }
+    50% {
+        border-color: #800000;
+    }
+    100% {
+        border-color: #250000;
+    }
+}
+
+@keyframes gdi-animation
+{
+    0% { 
+        border-color: #250000;
+    }
+    50% {
+        border-color: #805400;
+
+    }
+    100% {
+        border-color: #250000;
+    }
+}
+
+
+// 
+// Yuri's Revenge countries
+.country-yr-korea:before
+{
+    background-image: url(../images/game-icons/korea.png);
+}
+
+.country-yr-america:before
+{
+    background-image: url(../images/game-icons/america.png);
+}
+
+.country-yr-cuba:before
+{
+    background-image: url(../images/game-icons/cuba.png);
+}
+
+.country-yr-france:before
+{
+    background-image: url(../images/game-icons/france.png);
+}
+
+.country-yr-yuri:before
+{
+    background-image: url(../images/game-icons/yuri.png);
+}
+
+.country-yr-germany:before
+{
+    background-image: url(../images/game-icons/germany.png);
+}
+
+.country-yr-great-britain:before
+{
+    background-image: url(../images/game-icons/great_britain.png);
+}
+
+.country-yr-libya:before
+{
+    background-image: url(../images/game-icons/libya.png);
+}
+
+// 
+// Red Alert countries
+.player-box .most-used-country.country-ra-ukraine:before
+{
+    background-image: url(../images/flags/4x3/ua.svg);
+    background-size: 100%;
+    width: 60%;
+    height: 60%;
+}
+
+.player-box .most-used-country.country-ra-germany:before
+{
+    background-image: url(../images/flags/4x3/de.svg);
+    background-size: 100%;
+    width: 60%;
+    height: 60%;
+}
+
+.player-box .most-used-country.country-ra-spain:before
+{
+    background-image: url(../images/flags/4x3/es.svg);
+    background-size: 100%;
+    width: 60%;
+    height: 60%;
+}
+
+.player-box .most-used-country.country-ra-england:before
+{
+    background-image: url(../images/flags/4x3/gb.svg);
+    background-size: 100%;
+    width: 60%;
+    height: 60%;
+}
+
+.player-box .most-used-country.country-ra-france:before
+{
+    background-image: url(../images/flags/4x3/fr.svg);
+    background-size: 100%;
+    width: 60%;
+    height: 60%;
+}
+
+.player-box .most-used-country.country-ra-ussr:before
+{
+    background-image: url(../images/flags/4x3/ru.svg);
+    background-size: 100%;
+    width: 60%;
+    height: 60%;
+}
+
+.player-box .most-used-country.country-ra-greece:before
+{
+    background-image: url(../images/flags/4x3/gr.svg);
+    background-size: 100%;
+    width: 60%;
+    height: 60%;
+}
