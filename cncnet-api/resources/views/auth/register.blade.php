@@ -55,7 +55,7 @@
 						    </div>
 					    @endif
 
-					    <form class="form-horizontal" role="form" method="POST" action="/auth/register">
+					    <form id="signUpForm" class="form-horizontal" role="form" method="POST" action="/auth/register">
 						    <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 						    <div class="form-group">
@@ -90,13 +90,14 @@
 
 						    <div class="form-group">
 							    <div class="col-md-6 col-md-offset-4">
+									<div class="g-recaptcha" data-sitekey="6Lei3bAUAAAAAN20U0DHaEYCTqdlolsAThtjPtr-"></div>
 								    <button type="submit" class="btn btn-primary">
 									    Register
 								    </button>
                                     <p>
                                     <small>By registering and using the Quick Match software and related sites, you agree to the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></small>
                                     </p>
-							    </div>
+								</div>
 						    </div>
 					    </form>
 				    </div>
@@ -105,4 +106,20 @@
 		</div>
 	</div>
 </div>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script type="text/javascript">
+var form = document.getElementById("signUpForm");
+form.addEventListener("submit", function(e)
+{
+	e.preventDefault();
+	var response = grecaptcha.getResponse();
+	if (response != null && response.length == 0)
+	{
+		// captcha not checked
+		return;
+	}
+	form.submit();
+});
+
+</script>
 @endsection
