@@ -111,6 +111,7 @@ Route::group(['prefix' => 'api/v1/auth/'], function()
 
 Route::group(['prefix' => 'api/v1/'], function ()
 {
+    Route::get('/tests', 'ApiQuickMatchController@createIdentTest');
     Route::get('/user/account', 'ApiUserController@getAccount');
     Route::post('/user/create', 'ApiUserController@createUser');
 

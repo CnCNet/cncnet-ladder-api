@@ -2,6 +2,8 @@
 
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Ident;
+use App\UserIdent;
 
 class PlayerService
 {
@@ -115,5 +117,33 @@ class PlayerService
         $playerRating->rating = $newRating;
         $playerRating->rated_games = $playerRating->rated_games + 1;
         $playerRating->save();
+    }
+
+    /**
+     * Add a players ident
+     */
+    public function addIdent($player, $identString)
+    {
+        if ($player == null) { return; }
+        
+        $ident = \App\Ident::where("ident", $identString)->first();
+        if ($ident == null)
+        {
+            $ident = new \App\Ident();
+            $ident->ident = $identString;
+            $ident->save();
+        }
+
+        $userIdent = \App\UserIdent::where("user_id", $player->user_id)
+            ->where("ident_id", $ident->id)
+            ->first();
+
+        if ($userIdent == null)
+        {
+            $userIdent = new \App\UserIdent();
+            $userIdent->user_id = $player->user_id;
+            $userIdent->ident_id = $ident->id;
+            $userIdent->save();
+        }
     }
 }

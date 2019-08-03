@@ -28,6 +28,16 @@ class ApiQuickMatchController extends Controller
         $this->playerService = new PlayerService();
     }
 
+    public function createIdentTest(Request $request)
+    {
+        $ladder = $this->ladderService->getLadderByGame("yr");
+        $player = $this->playerService->findPlayerByUsername("neo", $ladder);
+        
+        $this->playerService->addIdent($player, "YR.664c90");
+        
+        return \App\UserIdent::where("user_id", $player->user_id)->get();
+    }
+
     public function clientVersion(Request $request, $platform = null)
     {
         return json_encode(DB::table("client_version")->where("platform", $platform)->first());
