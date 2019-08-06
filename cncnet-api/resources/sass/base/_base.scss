@@ -1,6 +1,22 @@
 ﻿$brand-primary: #0068d2;
 $brand-secondary: #000;
 
+//
+// Breakpoints
+// Example use
+// @media (min-width: $sm-width) { }
+
+$sm-width: 567px;
+$md-width: 768px;
+$lg-width: 992px;
+$xl-width: 1200px;
+
+$sm-height: 568px;
+$md-height: 731px;
+$lg-height: 812px;
+$xl-height: 1024px;
+
+
 a {
     color: $brand-primary;
     text-decoration: none;
@@ -216,21 +232,16 @@ h1 small
 
 .panel.panel-default 
 {
-    background: #000;
+    background: #151515;
 }
 
 .panel-default > .panel-heading 
 {
-    background-color: #000000;
+    background-color: #151515;
     padding: 15px;
     color: white;
     font-weight: 500;
     font-size: 18px;
-}
-
-input.form-control
-{
-    color: #232323;
 }
 
 .game-detail 

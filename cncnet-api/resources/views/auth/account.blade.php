@@ -46,79 +46,124 @@
 <section class="cncnet-features dark-texture">
     <div class="container">
 
-        <div class="row">
-            <div class="col-md-12">
+            <div class="row">
+                @if(!$user->email_verified)<div class="col-md-12 tutorial">
+                    <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
+                    <div class="text-center">
+                        <a href="{{ url("/account/verify") }}">Click Here to Send a New Code</a>
+                    </div>
+                @endif
+            </div>
+            <div class="row">
+                <div class="col-md-12">
                 @include("components.form-messages")
-            </div>
-
-            @if(!$user->email_verified)<div class="col-md-12 tutorial">
-                <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
-                <div class="text-center">
-                    <a href="{{ url("/account/verify") }}">Click Here to Send a New Code</a>
                 </div>
-            @endif</div>
-
-            <div class="col-md-4">
-                <h2>Add a new username?</h2>
-
-                <form method="POST" action="account/username">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <div class="form-group">
-                        <p>Usernames will be the name shown when you login to CnCNet clients and play games.</p>
-                        <label for="username">Username</label>
-                        <input type="text" name="username" class="form-control" id="username" placeholder="Username">
-                    </div>
-                    <div class="form-group">
-                        <label for="ladder">Ladder</label>
-                        <select name="ladder" id="ladder" class="form-control">
-                        @foreach($ladders as $history)
-                        <option value="{{ $history->ladder->id }}">{{ $history->ladder->name }}</option>
-                        @endforeach
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg">Create</button>
-                </form>
             </div>
-            <div class="col-md-6 col-md-offset-2">
-                <h2>Your Usernames</h2>
 
-                <div class="table-responsive">
-                    <table class="table table-hover player-games">
-                        <thead>
-                            <tr>
-                                <th>Username <i class="fa fa-user-o fa-fw"></i></th>
-                                <th>Ladder <i class="fa fa-trophy fa-fw"></i></th>
-                                <th>Player Card</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $cards = \App\Card::all(); ?>
-                            @foreach($user->usernames()->get() as $u)
-                            <tr>
-                                <td>{{ $u->username }}</td>
-                                <td>
-                                @if(isset($u->ladder()->first()->abbreviation))
-                                    {{ $u->ladder()->first()->name }}
-                                @endif
-                                </td>
-                                <td>
-                                    <form class="form-inline" method="POST" action="account/card">
-                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                        <input type="hidden" name="playerId" value="{{ $u->id }}">
-                                        <select class="form-control" name="cardId">
-                                            @foreach($cards as $card)
-                                                <option value="{{ $card->id }}" @if($card->id == $u->card_id) selected @endif>
-                                                {{ $card->name }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <button type="submit" class="btn btn-secondary">Save</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="account-box">
+                        <h2>Add a new username?</h2>
+                        <form method="POST" action="account/username">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <p>Usernames will be the name shown when you login to CnCNet clients and play games.</p>
+                            
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                <input type="text" name="username" class="form-control" id="username" placeholder="Username">
+                            </div>
+                            <div class="form-group">
+                                <label for="ladder">Ladder</label>
+                                <select name="ladder" id="ladder" class="form-control">
+                                @foreach($ladders as $history)
+                                <option value="{{ $history->ladder->id }}">{{ $history->ladder->name }}</option>
+                                @endforeach
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create username</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <?php $cards = \App\Card::all(); ?>
+                    <div class="account-box">
+                    <h2>Your Usernames</h2>
+                    <p>
+                        New rules everyone! You are only allowed:<br/>
+                    </p>
+                    <ul>
+                        <li>To play on one nickname per month. </li>
+                    <li>One user account, having multiple accounts are not allowed. </li>
+                    </ul>
+                    <p>
+                        To use your nickname, activate it and it will appear in your Quick Match client.
+                    </p>
+
+                    <div class="account-player-listings">
+                    @foreach($user->usernames()
+                        ->orderBy("ladder_id", "DESC")
+                        ->orderBy("id", "DESC")
+                        ->get() as $u)
+                        <div class="player-listing">
+                            <div class="username">
+                                <i class="icon icon-game icon-{{ $u->ladder()->first()->abbreviation }}"></i>  
+                                <div>
+                                    {{ $u->username }}
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <p>Ladder player card</p>
+                                <form id="playerCard" class="form-inline" method="POST" action="account/card">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                    <input type="hidden" name="playerId" value="{{ $u->id }}" />
+                                    
+                                    <select class="form-control" name="cardId">
+                                        @foreach($cards as $card)
+                                            <option value="{{ $card->id }}" @if($card->id == $u->card_id) selected @endif>
+                                            {{ $card->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <button type="submit" class="btn btn-submit">Save</button>
+                                </form>
+                            </div>
+
+                            <?php 
+                                $player = \App\Player::where("username", $u->username)
+                                    ->where("ladder_id", $u->ladder_id)
+                                    ->first();
+
+                                $activeHandle = \App\PlayerActiveHandle::where("ladder_id", $u->ladder_id)
+                                ->where("player_id", $player->id)
+                                ->first();
+                            ?>
+
+                            <div class="username-status">
+                                <p>
+                                    {{ 
+                                        $activeHandle 
+                                        ? 
+                                            "This username will appear in your Quick Match client. " 
+                                        : 
+                                        "Click Play to add this username to your Quick Match client"
+                                    }}
+                                </p>
+                                <form id="usernameStatus" class="form-inline" method="POST" action="account/username-status">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                    <input type="hidden" name="username" value="{{ $u->username }}" />
+                                    <input type="hidden" name="ladderId" value="{{ $u->ladder_id}}" />
+
+                                    <button type="submit" class="btn btn-activate">
+                                        {{ $activeHandle ? "Deactivate": "Play with username"}}
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+                    </div>
+                    </div>
                 </div>
             </div>
         </div>

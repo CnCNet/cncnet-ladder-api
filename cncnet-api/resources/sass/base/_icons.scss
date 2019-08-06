@@ -1,0 +1,19 @@
+.icon-game
+{
+    position: relative;
+}
+
+.icon-game:before
+{
+    content: "";
+    display: block;
+    background-image: url(../images/games/icons.png);
+    background-repeat: no-repeat;
+    width: 25px;
+    height: 25px;
+}
+
+.icon-yr:before
+{
+    background-position: calc(-25px * 3);
+}

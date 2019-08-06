@@ -7,7 +7,8 @@
 // Base styles
 @import "base/_base",
         "base/_player",
-        "base/_game";
+        "base/_game",
+        "base/_icons";
 
 // 
 // Components
@@ -16,6 +17,12 @@
         "components/_game-box",
         "components/_player-box",
         "components/_cameos";
+
+
+// 
+// Screens
+
+@import "screens/_account";
 
 @import "countries";
 @import "global";
