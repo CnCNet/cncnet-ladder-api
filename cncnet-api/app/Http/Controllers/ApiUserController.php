@@ -7,6 +7,7 @@ use \App\Http\Services\PlayerService;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Log;
+use Carbon\Carbon;
 
 class ApiUserController extends Controller
 {
@@ -53,7 +54,72 @@ class ApiUserController extends Controller
             }
         }
 
-        return \App\Player::where('user_id', '=', $auth["user"]->id)->get();
+        return \App\Player::where('user_id', '=', $auth["user"]->id)
+            ->get();
+    }
+
+    public function tests()
+    {
+        // Current month
+        // if they did choose a nick for a month 
+        // then use this nick as the default for next month
+
+        // $auth = $this->authService->getUser($request);
+        $user = \App\User::find(19);
+        if ($user == null)
+        {
+            return [];
+        }
+
+        // Current handle
+        $activeHandles = \App\PlayerActiveHandle::where("user_id", $user->id)->get();
+        $players = [];
+        foreach($activeHandles as $activeHandle)
+        {
+            $players[] = $activeHandle->player;
+        }
+
+        // If they haven't selected a nickname
+        // Get their last created
+        if (count($players) == 0)
+        {
+            return $this->getTempNicks();
+        }
+
+        return $players;
+    }
+
+    /**
+     * Returns a SINGLE nickname for all 3 ladder types
+     */
+    private function getTempNicks()
+    {
+        $tempNicks = [];
+        foreach (\App\Ladder::all() as $ladder)
+        {
+            $tempNick = $this->getTempNickByLadderType($ladder->id);
+            if ($tempNick != null)
+            {
+                $tempNicks[] = $tempNick;
+            }
+        }
+        return $tempNicks;
+    }
+
+    /**
+     * Limit nicknames to the expired date, one per ladder type
+     */
+    private function getTempNickByLadderType($ladderId)
+    {
+        $limitLatestNickByDate = Carbon::create("2019", "08", "06");
+
+        $tempNick = \App\Player::where('user_id', '=', 1)
+            ->where("created_at", "<=", $limitLatestNickByDate)
+            ->where("ladder_id", $ladderId)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        return $tempNick;
     }
 
     public function createUser(Request $request)

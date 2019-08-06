@@ -91,6 +91,7 @@ Route::group(['prefix' => 'admin/moderate/{ladderId}', 'middleware' => 'auth', '
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
 {
     Route::get('/', 'AccountController@getAccountIndex');
+    Route::post('/username-status', 'AccountController@toggleUsernameStatus');
     Route::post('/username', 'AccountController@createUsername');
     Route::post('/card', 'AccountController@updatePlayerCard');
     Route::get('/verify', 'AccountController@getNewVerification');
@@ -113,6 +114,7 @@ Route::group(['prefix' => 'api/v1/'], function ()
 {
     Route::get('/user/account', 'ApiUserController@getAccount');
     Route::post('/user/create', 'ApiUserController@createUser');
+    Route::get('/tests', 'APiUserController@tests');
 
     // Result Endpoints
     Route::post('/result/{game}/{username}', 'ApiLadderController@postLadder');

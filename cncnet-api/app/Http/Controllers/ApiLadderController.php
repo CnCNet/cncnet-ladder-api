@@ -32,7 +32,7 @@ class ApiLadderController extends Controller
 
     public function pingLadder(Request $request)
     {
-        return "pong";
+        return "pongest";
     }
 
     public function getLadder(Request $request, $game = null)
