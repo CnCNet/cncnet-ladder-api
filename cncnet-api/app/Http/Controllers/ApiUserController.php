@@ -53,10 +53,6 @@ class ApiUserController extends Controller
                 }
             }
         }
-
-        return \App\Player::where('user_id', '=', $auth["user"]->id)
-            ->get();
-
         return $this->getActivePlayerList($auth["user"]->id);
     }
 
@@ -72,9 +68,10 @@ class ApiUserController extends Controller
 
         // If they haven't selected a nickname yet
         // Get their last created
+
         if (count($players) == 0)
         {
-            return $this->getTempNicks();
+            return $this->getTempNicks($userId);
         }
 
         return $players;
@@ -83,12 +80,12 @@ class ApiUserController extends Controller
     /**
      * Returns a SINGLE nickname for all 3 ladder types
      */
-    private function getTempNicks()
+    private function getTempNicks($userId)
     {
         $tempNicks = [];
         foreach (\App\Ladder::all() as $ladder)
         {
-            $tempNick = $this->getTempNickByLadderType($ladder->id);
+            $tempNick = $this->getTempNickByLadderType($ladder->id, $userId);
             if ($tempNick != null)
             {
                 $tempNicks[] = $tempNick;
@@ -100,14 +97,14 @@ class ApiUserController extends Controller
     /**
      * Limit nicknames to the expired date, one per ladder type
      */
-    private function getTempNickByLadderType($ladderId)
+    private function getTempNickByLadderType($ladderId, $userId)
     {
         $limitLatestNickByDate = Carbon::create("2019", "08", "06");
 
-        $tempNick = \App\Player::where('user_id', '=', 1)
+        $tempNick = \App\Player::where("user_id", $userId)
             ->where("created_at", "<=", $limitLatestNickByDate)
-            ->where("ladder_id", $ladderId)
-            ->orderBy('id', 'desc')
+            ->where('ladder_id', $ladderId)
+            ->orderBy("id", "desc")
             ->first();
 
         return $tempNick;
