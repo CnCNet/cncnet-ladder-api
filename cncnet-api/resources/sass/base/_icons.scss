@@ -13,7 +13,17 @@
     height: 25px;
 }
 
+.icon-ra:before
+{
+    background-position: calc(0px);
+}
+
 .icon-yr:before
 {
     background-position: calc(-25px * 3);
+}
+
+.icon-ts:before
+{
+    background-position: calc(-25px * 1);
 }
