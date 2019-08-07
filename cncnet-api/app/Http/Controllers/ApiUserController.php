@@ -56,30 +56,21 @@ class ApiUserController extends Controller
 
         return \App\Player::where('user_id', '=', $auth["user"]->id)
             ->get();
+
+        return $this->getActivePlayerList($auth["user"]->id);
     }
 
-    public function tests()
+    private function getActivePlayerList($userId)
     {
-        // Current month
-        // if they did choose a nick for a month 
-        // then use this nick as the default for next month
-
-        // $auth = $this->authService->getUser($request);
-        $user = \App\User::find(19);
-        if ($user == null)
-        {
-            return [];
-        }
-
-        // Current handle
-        $activeHandles = \App\PlayerActiveHandle::where("user_id", $user->id)->get();
+        $activeHandles = \App\PlayerActiveHandle::where("user_id", $userId)->get();
+        
         $players = [];
         foreach($activeHandles as $activeHandle)
         {
             $players[] = $activeHandle->player;
         }
 
-        // If they haven't selected a nickname
+        // If they haven't selected a nickname yet
         // Get their last created
         if (count($players) == 0)
         {

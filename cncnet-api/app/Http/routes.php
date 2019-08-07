@@ -24,22 +24,6 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
     Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
 });
 
-Route::get('/badges', function()
-{
-    $badges = [];
-
-    // Tests
-    for ($i = 0; $i < 5; $i++)
-    {
-        $test = new \stdClass();
-        $test->ident = 'YR.664c9' . $i;
-        $test->badge = 'badge-t1';
-        $badges[] = $test;
-    }
-
-    return $badges;
-});
-
 Route::controllers
 ([
 	'auth' => 'Auth\AuthController',
@@ -114,7 +98,6 @@ Route::group(['prefix' => 'api/v1/'], function ()
 {
     Route::get('/user/account', 'ApiUserController@getAccount');
     Route::post('/user/create', 'ApiUserController@createUser');
-    Route::get('/tests', 'APiUserController@tests');
 
     // Result Endpoints
     Route::post('/result/{game}/{username}', 'ApiLadderController@postLadder');
