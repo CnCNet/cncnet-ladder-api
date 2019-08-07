@@ -140,7 +140,7 @@
 	request.send(null);
 </script>
 
-
+<noscript><?php die("Sorry you need JavaScript enabled"); ?></noscript>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 <script type="text/javascript">
 var form = document.getElementById("signUpForm");
