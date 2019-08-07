@@ -127,7 +127,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function verificationSent()
     {
-        return EmailVerification::where('user_id', '=', $this->id)->count() > 0;
+        $nextUpdate = Carbon::now()->subHour(1);
+        return EmailVerification::where('user_id', '=', $this->id)->where('created_at', '>', $nextUpdate)->count() > 0;
     }
 
     public function sendNewVerification()

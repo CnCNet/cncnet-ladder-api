@@ -112,7 +112,7 @@ class ApiQuickMatchController extends Controller
 
 
         // Require a verified email address on file
-        /*if (!$player->user->email_verified)
+        if (!$player->user->email_verified)
         {
             if (!$player->user->verificationSent())
             {
@@ -123,7 +123,7 @@ class ApiQuickMatchController extends Controller
                          "message" => "Quick Match now requires a verified email address to play.\n".
                                       "A verification code has been sent to {$player->user->email}.\n");
 
-        }*/
+        }
         $rating = $player->rating()->first()->rating;
 
         $qmPlayer = \App\QmMatchPlayer::where('player_id', $player->id)
