@@ -28,6 +28,13 @@ class PlayerService
             $prating = new \App\PlayerRating();
             $prating->player_id = $player['id'];
             $prating->save();
+
+            $activeHandle = new \App\PlayerActiveHandle();
+            $activeHandle->ladder_id = $ladderId;
+            $activeHandle->player_id = $player->id;
+            $activeHandle->user_id = $user->id;
+            $activeHandle->save();
+
             return $player;
         }
 
