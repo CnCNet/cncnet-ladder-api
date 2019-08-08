@@ -99,8 +99,34 @@ class ApiUserController extends Controller
      */
     private function getTempNickByLadderType($ladderId, $userId)
     {
+        // Get this months ladder
+        $date = Carbon::now();
+        $start = $date->startOfMonth()->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+        
+        $ladderHistory = \App\LadderHistory::where("starts", "=", $start)
+            ->where("ends", "=", $end)
+            ->first();
+
+        // Detect if the player is active in the this months ladder already
+        $tempNick = \App\PlayerHistory::join('players as p', 'p.id', '=', 'player_histories.player_id')
+            ->where("player_histories.ladder_history_id", "=", $ladderHistory->id)
+            ->where("user_id", $userId)
+            ->where('ladder_id', $ladderId)
+            ->select(["p.id", "p.username", "p.ladder_id", "p.card_id"])
+            ->orderBy("id", "desc")
+            ->first();
+
+        // If they are, set their nick as the active handle
+        if ($tempNick != null)
+        {
+            $this->setActiveHandle($ladderId, $tempNick->id, $userId);
+            return $tempNick;
+        }
+        
         $limitLatestNickByDate = Carbon::create("2019", "08", "06");
 
+        // Get nick last created limited by this new 1 nick rule
         $tempNick = \App\Player::where("user_id", $userId)
             ->where("created_at", "<=", $limitLatestNickByDate)
             ->where('ladder_id', $ladderId)
@@ -108,6 +134,15 @@ class ApiUserController extends Controller
             ->first();
 
         return $tempNick;
+    }
+
+    private function setActiveHandle($ladderId, $playerId, $userId)
+    {
+        $activeHandle = new \App\PlayerActiveHandle();
+        $activeHandle->ladder_id = $ladderId;
+        $activeHandle->player_id = $playerId;
+        $activeHandle->user_id = $userId;
+        $activeHandle->save();
     }
 
     public function createUser(Request $request)
