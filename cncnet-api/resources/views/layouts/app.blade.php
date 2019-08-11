@@ -86,7 +86,7 @@
                         <li><a href="http://facebook.com/cncnet" title="Follow CnCNet on Facebook" target="_blank"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
                         <li><a href="http://twitter.com/cncnetofficial" title="Follow CnCNet on Twitter" target="_blank"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
                         <li><a href="https://www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" title="Subscribe to CnCNet on YouTube" target="_blank"><i class="fa fa-youtube fa-2x fa-fw"></i></a></li>
-                        <li><a href="http://google.com/+CncnetOrgOfficial" title="Add CnCNet to your Circles" target="_blank"><i class="fa fa-google-plus fa-2x fa-fw"></i></a></li>
+                        <li><a href="https://reddit.com/r/cncnet" title="Subscribe to CnCNet on Reddit" target="_blank"><i class="fa fa-reddit fa-2x fa-fw"></i></a>                        </li>
                         <li><a href="https://www.twitch.tv/cncnetofficial" title="Subscribe to CnCNet on Twitch" target="_blank"><i class="fa fa-twitch fa-2x fa-fw"></i></a></li>
                         <li><a href="https://github.com/cncnet" title="Follow and Star us on GitHub" target="_blank"><i class="fa fa-github fa-2x fa-fw"></i></a></li>
                     </ul>
