@@ -8,7 +8,9 @@
     $now = \Carbon\Carbon::now();
     $start = $now->startOfMonth()->toDateTimeString();
     $end = $now->endOfMonth()->toDateTimeString();
-    $history = \App\LadderHistory::where("starts", $start)->where("ends", $end)->first();
+    $history = \App\LadderHistory::where("starts", $start)->where("ends", $end)
+        ->where("ladder_id", $ladderId)
+        ->first();
 ?>
 <h5>Player nicknames:</h5> 
 <ul>
@@ -17,7 +19,7 @@
         <a href="/ladder/{{ $history->short }}/{{ $history->ladder->game }}/player/{{ $otherName->username}}">
             {{ $otherName->username }}
         </a>
-            -- {{ $otherName->created_at->toDateString()}}
+        -- {{ $otherName->created_at->toDateString()}}
     </li>
     <?php endforeach; ?>
 </ul>

@@ -42,6 +42,9 @@
 
                             <div class="search" style="margin-bottom: 15px">
                                 <form>
+                                    <input type="hidden" name="userId" value="{{ $userId }}" />
+                                    <input type="hidden" name="hostname" value="{{ $hostname}}" />
+                                    
                                     <input class="form-control" 
                                         name="search" 
                                         placeholder="Search by player username" 
@@ -104,7 +107,7 @@
                                 Created: {{ $user->created_at->toDateString()}}
                                 </div>
 
-                                @include("admin._duplicates", [$user])
+                                @include("admin._duplicates", [$user, $hostname])
                                 @include("admin._bans", [$user])
                                 @include("admin._nicknames")
                             </div>

@@ -47,9 +47,10 @@ class AdminController extends Controller
 
     public function getManageUsersIndex(Request $request)
     {
+        $hostname = $request->hostname;
+        $userId = $request->userId;
         $search = $request->search;
         $ladderId = $request->ladderId;
-        $userId = $request->userId;
         $players = null;
 
         if ($search)
@@ -66,12 +67,13 @@ class AdminController extends Controller
             $users = \App\User::orderBy("id", "DESC");
         }
 
-
         return view("admin.manage-users", [
             "users" => $users->paginate(50), 
             "players" => $players != null ? $players->paginate(50): [],
             "search" => $search,
-            "ladderId" => $ladderId
+            "ladderId" => $ladderId,
+            "userId" => $userId,
+            "hostname" => $hostname
         ]);
     }
 
