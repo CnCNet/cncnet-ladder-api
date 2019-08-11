@@ -232,7 +232,7 @@ class LadderService
         ];
     }
 
-    public function getLadderPlayers($date, $cncnetGame, $tier = 1, $paginate, $search)
+    public function getLadderPlayers($date, $cncnetGame, $tier = 1, $paginate = null, $search = null)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
 

@@ -1,0 +1,15 @@
+.admin-users .users
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.user-info
+{
+    background: black;
+    padding: 15px;
+    width: 30%;
+    border-radius: 10px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+}
