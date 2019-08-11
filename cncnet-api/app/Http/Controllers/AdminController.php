@@ -50,7 +50,6 @@ class AdminController extends Controller
         $hostname = $request->hostname;
         $userId = $request->userId;
         $search = $request->search;
-        $ladderId = $request->ladderId;
         $players = null;
 
         if ($search)
@@ -71,7 +70,6 @@ class AdminController extends Controller
             "users" => $users->paginate(50), 
             "players" => $players != null ? $players->paginate(50): [],
             "search" => $search,
-            "ladderId" => $ladderId,
             "userId" => $userId,
             "hostname" => $hostname
         ]);

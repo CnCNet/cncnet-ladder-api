@@ -23,7 +23,9 @@
     <?php foreach($user->ipHistory as $ipHistory): ?>
         <li>
             <div>
-                @if($hostname == "true")<strong>Hostname: {{ gethostbyaddr ($ipHistory->ipaddress->address) }}</strong>@endif
+                @if($hostname == "true")
+                <strong>Hostname: {{ gethostbyaddr ($ipHistory->ipaddress->address) }}</strong>
+                @endif
             </div> 
             <a href="https://www.whoismyisp.org/ip/{{ $ipHistory->ipaddress->address }}" target="_blank">
                 {{ $ipHistory->ipaddress->address }}
