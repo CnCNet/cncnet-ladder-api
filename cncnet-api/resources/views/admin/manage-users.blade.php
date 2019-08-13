@@ -25,21 +25,101 @@
 @endsection
 
 @section('content')
+<div class="admin-users">
 <section class="light-texture game-detail supported-games">
     <div class="container">
         <div class="feature">
 
             <div class="row">
-                <div class="col-md-4">
-                    <h3>Users</h3>
-                    <form>
+                <div class="col-md-12">
+                        <div class="players">
+                            <h2>Filter by player username</h2> 
+                            <p class="lead">
+                            <?php if($search) : ?>
+                            Searching for {{ $search }}
+                            <?php endif; ?>
+                            </p>
 
-                    </form>
+                            <div class="search" style="margin-bottom: 15px">
+                                <form>
+                                    <input type="hidden" name="userId" value="{{ $userId }}" />
+                                    <input type="hidden" name="hostname" value="{{ $hostname}}" />
+                                    
+                                    <input class="form-control" 
+                                        name="search" 
+                                        placeholder="Search by player username" 
+                                        value="{{ $search }}"
+                                        style="height: 50px; max-width: 50%" 
+                                    />
+                                    <a href="?" style="color: silver;padding: 5px; margin-top: 5px;margin-bottom: 5px; display: block;">
+                                    Clear search
+                                    </a>
+                                </form>
+                            </div>
+
+                            <div class="users">
+                            <?php $unique = []; ?>
+                            <?php foreach($players as $pResult): ?>
+
+                                <?php 
+                                    $user = $pResult->user()->first();
+                                    if ($user == null)
+                                    {
+                                        continue;
+                                    }
+                           
+                                    if (in_array($user->id, $unique)) 
+                                    {
+                                        continue;
+                                    }
+                                    $unique[] = $user->id;
+                                ?>
+
+                                <div class="user-info">
+                                    <h4><a href="?userId={{$user->id}}">{{ $user->name }}</a></h4>
+                                    <h5>User id: <strong>{{ $user->id }}</strong></h5>
+
+                                    <div class="base-info">
+                                    Created: {{ $user->created_at->toDateString()}}
+                                    </div>
+
+                                    @include("admin._duplicates", [$user])
+                                    @include("admin._bans", [$user])
+                                    @include("admin._nicknames")
+                                </div>
+                            <?php endforeach; ?>
+                            </div>
+                            
+                            <?php if($players): ?>
+                            {!! $players->render() !!}
+                            <?php endif; ?>
+                        </div>
+                        
+                        <h2>Users</h2>
+                        
+                        <div class="users">
+                            <?php foreach($users as $user): ?>
+                            <div class="user-info">
+                                <h4><a href="?userId={{$user->id}}">{{ $user->name }}</a></h4>
+                                <h5>User id: <strong>{{ $user->id }}</strong></h5>
+
+                                <div class="base-info">
+                                Created: {{ $user->created_at->toDateString()}}
+                                </div>
+
+                                @include("admin._duplicates", [$user, $hostname])
+                                @include("admin._bans", [$user])
+                                @include("admin._nicknames")
+                            </div>
+                            <?php endforeach; ?>
+                        </div>
+                    {!! $users->render() !!}
                 </div>  
             </div>
         </div>
     </div>
 </section>
+</div>
 @endsection
 
 

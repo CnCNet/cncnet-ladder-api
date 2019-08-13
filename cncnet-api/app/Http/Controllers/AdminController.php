@@ -47,7 +47,32 @@ class AdminController extends Controller
 
     public function getManageUsersIndex(Request $request)
     {
-        return view("admin.manage-users", ["ladders" => $this->ladderService->getLatestLadders()]);
+        $hostname = $request->hostname;
+        $userId = $request->userId;
+        $search = $request->search;
+        $players = null;
+
+        if ($search)
+        {
+            $players = \App\Player::where("username", "LIKE", "%{$search}%");
+        }
+
+        if ($userId)
+        {
+            $users = \App\User::where("id", $userId);
+        }
+        else
+        {
+            $users = \App\User::orderBy("id", "DESC");
+        }
+
+        return view("admin.manage-users", [
+            "users" => $users->paginate(50), 
+            "players" => $players != null ? $players->paginate(50): [],
+            "search" => $search,
+            "userId" => $userId,
+            "hostname" => $hostname
+        ]);
     }
 
     public function getManageGameIndex(Request $request, $cncnetGame = null)

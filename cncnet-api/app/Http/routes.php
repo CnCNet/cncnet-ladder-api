@@ -32,9 +32,14 @@ Route::controllers
 
 Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
 
+
+Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
+{
+    Route::get('users/', 'AdminController@getManageUsersIndex');
+});
+
 Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
 {
-    Route::get('users', 'AdminController@getManageUsersIndex');
     Route::get('edit', 'AdminController@getLadderSetupIndex');
     Route::post('ladder', 'LadderController@saveLadder');
 
