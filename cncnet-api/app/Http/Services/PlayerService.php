@@ -10,6 +10,9 @@ class PlayerService
 
     }
 
+    /**
+     * Strictly QM call only
+     */
     public function addPlayerToUser($username, $user, $ladderId)
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
@@ -34,6 +37,31 @@ class PlayerService
             $activeHandle->player_id = $player->id;
             $activeHandle->user_id = $user->id;
             $activeHandle->save();
+
+            return $player;
+        }
+
+        return null;
+    }
+
+    public function addPlayerToUserAccount($username, $user, $ladderId)
+    {
+        $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
+
+        $player = \App\Player::where("username", "=", $username)
+            ->where("ladder_id", "=", $ladderId)->first();
+
+        if ($player == null)
+        {
+            $player = new \App\Player();
+            $player->username = $username;
+            $player->user_id = $user->id;
+            $player->ladder_id = $ladderId;
+            $player->save();
+
+            $prating = new \App\PlayerRating();
+            $prating->player_id = $player['id'];
+            $prating->save();
 
             return $player;
         }

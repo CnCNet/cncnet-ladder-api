@@ -46,11 +46,11 @@ class AccountController extends Controller
         
         $ladderId = $request->ladder;
         $user = \Auth::user();
-        $player = $this->playerService->addPlayerToUser($request->username, $user, $ladderId);
+        $player = $this->playerService->addPlayerToUserAccount($request->username, $user, $ladderId);
 
         if ($player == null)
         {
-             $request->session()->flash('error', 'This username has been taken');
+            $request->session()->flash('error', 'This username has been taken');
             return redirect("/account");
         }
 
@@ -114,7 +114,7 @@ class AccountController extends Controller
         $hasActiveHandles = \App\PlayerActiveHandle::where("ladder_id", $ladderId)
             ->where("user_id", $user->id)
             ->where("created_at", "<=", $endOfMonth)
-            ->first();
+            ->count();
 
         if ($hasActiveHandles)
         {
