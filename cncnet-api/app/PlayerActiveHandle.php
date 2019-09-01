@@ -14,9 +14,4 @@ class PlayerActiveHandle extends Model
     {
         return $this->belongsTo('App\Player');
     }
-
-    public function ladder()
-    {
-        return $this->belongsTo('App\Ladder');
-    }
 }

@@ -87,17 +87,18 @@ class AccountController extends Controller
         ]);
         
         $user = \Auth::user();
-        if ($user == null)
+        $ladder = \App\Ladder::where("id", $request->ladderId)->first();
+
+        if ($user == null || $ladder == null)
         {
             return redirect("/account");
         }
 
-        $ladderId = $request->ladderId;
         $username = $request->username;
         
         // Check request is linked to the auth'd user
         $player = \App\Player::where("username", "=", $username)
-            ->where("ladder_id", "=", $ladderId)
+            ->where("ladder_id", "=", $ladder->id)
             ->where("user_id", "=", $user->id)
             ->first();
             
@@ -111,23 +112,31 @@ class AccountController extends Controller
         $endOfMonth = $date->endOfMonth()->toDateTimeString();
 
         // Check if there are active handles within this month 
-        $hasActiveHandles = \App\PlayerActiveHandle::where("ladder_id", $ladderId)
+        $hasActiveHandles = \App\PlayerActiveHandle::where("ladder_id", $ladder->id)
             ->where("user_id", $user->id)
             ->where("created_at", "<=", $endOfMonth)
             ->count();
 
-        if ($hasActiveHandles)
+        // Allow TS players to have 3 nicks as opposed to just 1
+        // Other games are still restricted to 1
+        if ($ladder->game == "ts" && $hasActiveHandles == 3)
+        {
+            $request->session()->flash('error', 'You have ' . $hasActiveHandles . ' active nicks for this month and ladder already. 
+                If you are trying to make a username inactive, 
+                the month we are in has to complete first.');
+            return redirect("/account");
+        }
+        else if ($ladder->game != "ts" && $hasActiveHandles >= 1)
         {
             $request->session()->flash('error', 'You have a username active for this month and ladder already. 
                 If you are trying to make a username inactive, 
                 the month we are in has to complete first.');
             return redirect("/account");
         }
-        
 
         // Get the player thats being requested to change
         $activeHandle = \App\PlayerActiveHandle::where("player_id", $player->id)
-            ->where("ladder_id", $ladderId)
+            ->where("ladder_id", $ladder->id)
             ->first();
 
 
@@ -135,7 +144,7 @@ class AccountController extends Controller
         if ($activeHandle == null)
         {
             $activeHandle = new \App\PlayerActiveHandle();
-            $activeHandle->ladder_id = $ladderId;
+            $activeHandle->ladder_id = $ladder->id;
             $activeHandle->player_id = $player->id;
             $activeHandle->user_id = $user->id;
             $activeHandle->save();
