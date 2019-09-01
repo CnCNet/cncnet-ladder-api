@@ -58,7 +58,11 @@ class ApiUserController extends Controller
 
     private function getActivePlayerList($userId)
     {
-        $activeHandles = PlayerActiveHandle::where("user_id", $userId)->get();
+        $date = Carbon::now();
+        $startOfMonth = $date->startOfMonth()->toDateTimeString();
+        $endOfMonth = $date->endOfMonth()->toDateTimeString();
+
+        $activeHandles = PlayerActiveHandle::getUserActiveHandles($userId, $startOfMonth, $endOfMonth);
         
         $players = [];
         foreach($activeHandles as $activeHandle)

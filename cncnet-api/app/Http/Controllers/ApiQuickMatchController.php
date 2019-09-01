@@ -7,6 +7,7 @@ use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
+use \App\PlayerActiveHandle;
 use \Carbon\Carbon;
 use DB;
 use Log;
@@ -91,6 +92,7 @@ class ApiQuickMatchController extends Controller
         {
             return $check;
         }
+
         $player = $this->playerService->findPlayerByUsername($playerName, $ladder);
 
         if ($player == null)
@@ -98,8 +100,17 @@ class ApiQuickMatchController extends Controller
             return array("type"=>"fail", "description" => "$playerName is not registered in $ladderAbbrev");
         }
 
+        $date = Carbon::now();
+        $startOfMonth = $date->startOfMonth()->toDateTimeString();
+        $endOfMonth = $date->endOfMonth()->toDateTimeString();
+
         // Player checks - ensure nick is registered as an active handle
-        
+        $hasActiveHandle = PlayerActiveHandle::getPlayerActiveHandle($player->id, $ladder->id, $startOfMonth, $endOfMonth);
+        if ($hasActiveHandle == null)
+        {
+            PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $player->user->id);
+        }
+
 
         $ban = $player->user->getBan(true);
         if ($ban !== null)

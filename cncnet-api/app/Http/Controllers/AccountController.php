@@ -105,10 +105,11 @@ class AccountController extends Controller
         }
 
         $date = Carbon::now();
+        $startOfMonth = $date->startOfMonth()->toDateTimeString();
         $endOfMonth = $date->endOfMonth()->toDateTimeString();
 
         // Check if there are active handles within this month 
-        $hasActiveHandles = PlayerActiveHandle::getUserActiveHandleCount($user->id, $ladder->id, $endOfMonth);
+        $hasActiveHandles = PlayerActiveHandle::getUserActiveHandleCount($user->id, $ladder->id, $startOfMonth, $endOfMonth);
 
         // Allow TS players to have 3 nicks as opposed to just 1
         // Other games are still restricted to 1
@@ -124,12 +125,12 @@ class AccountController extends Controller
         {
             $request->session()->flash('error', 'You have a username active for this month and ladder already. 
                 If you are trying to make a username inactive, the month we are in has to complete first.');
-                
+
             return redirect("/account");
         }
 
         // Get the player thats being requested to change
-        $activeHandle = PlayerActiveHandle::getPlayerActiveHandle($player->id, $ladder->id);
+        $activeHandle = PlayerActiveHandle::getPlayerActiveHandle($player->id, $ladder->id, $startOfMonth, $endOfMonth);
 
         // If it's not an active handle make it one
         if ($activeHandle == null)

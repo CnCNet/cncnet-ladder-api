@@ -26,20 +26,33 @@ class PlayerActiveHandle extends Model
         return $activeHandle;
     }
 
-    public static function getPlayerActiveHandle($playerId, $ladderId)
+    public static function getPlayerActiveHandle($playerId, $ladderId, $dateStart, $dateEnd)
     {
         $activeHandle = PlayerActiveHandle::where("player_id", $playerId)
             ->where("ladder_id", $ladderId)
+            ->where("created_at", ">=", $dateStart)
+            ->where("created_at", "<=", $dateEnd)
             ->first();
 
         return $activeHandle;
     }
+    
+    public static function getUserActiveHandles($userId, $dateStart, $dateEnd)
+    {
+        $hasActiveHandles = PlayerActiveHandle::where("user_id", $userId)
+            ->where("created_at", ">=", $dateStart)
+            ->where("created_at", "<=", $dateEnd)
+            ->get();
+
+        return $hasActiveHandles;
+    }
 
     public static function getUserActiveHandleCount($userId, $ladderId,
-        $dateEnd)
+        $dateStart, $dateEnd)
     {
         $hasActiveHandles = PlayerActiveHandle::where("ladder_id", $ladderId)
             ->where("user_id", $userId)
+            ->where("created_at", ">=", $dateStart)
             ->where("created_at", "<=", $dateEnd)
             ->count();
 

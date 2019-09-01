@@ -135,9 +135,12 @@
                                     ->where("ladder_id", $u->ladder_id)
                                     ->first();
 
-                                $activeHandle = \App\PlayerActiveHandle::where("ladder_id", $u->ladder_id)
-                                ->where("player_id", $player->id)
-                                ->first();
+                                $date = \Carbon\Carbon::now();
+                                $startOfMonth = $date->startOfMonth()->toDateTimeString();
+                                $endOfMonth = $date->endOfMonth()->toDateTimeString();
+
+                                $activeHandle = \App\PlayerActiveHandle::getPlayerActiveHandle($player->id, $u->ladder_id, 
+                                    $startOfMonth, $endOfMonth);
                             ?>
 
                             <div class="username-status">
