@@ -78,6 +78,11 @@
     padding: 5px 0;
 }
 
+.player-listing.active 
+{
+    border: 2px solid rgba(0, 104, 210, 0.7);
+}
+
 .player-listing .card .form-control
 {
     width: 65%;

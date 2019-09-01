@@ -106,7 +106,21 @@
                         ->orderBy("ladder_id", "DESC")
                         ->orderBy("id", "DESC")
                         ->get() as $u)
-                        <div class="player-listing">
+
+                        <?php 
+                            $player = \App\Player::where("username", $u->username)
+                                ->where("ladder_id", $u->ladder_id)
+                                ->first();
+
+                            $date = \Carbon\Carbon::now();
+                            $startOfMonth = $date->startOfMonth()->toDateTimeString();
+                            $endOfMonth = $date->endOfMonth()->toDateTimeString();
+
+                            $activeHandle = \App\PlayerActiveHandle::getPlayerActiveHandle($player->id, $u->ladder_id, 
+                                $startOfMonth, $endOfMonth);
+                        ?>
+
+                        <div class="player-listing {{$activeHandle ? 'active': ''}}">
                             <div class="username">
                                 <i class="icon icon-game icon-{{ $u->ladder()->first()->abbreviation }}"></i>  
                                 <div>
@@ -131,18 +145,6 @@
                                 </form>
                             </div>
 
-                            <?php 
-                                $player = \App\Player::where("username", $u->username)
-                                    ->where("ladder_id", $u->ladder_id)
-                                    ->first();
-
-                                $date = \Carbon\Carbon::now();
-                                $startOfMonth = $date->startOfMonth()->toDateTimeString();
-                                $endOfMonth = $date->endOfMonth()->toDateTimeString();
-
-                                $activeHandle = \App\PlayerActiveHandle::getPlayerActiveHandle($player->id, $u->ladder_id, 
-                                    $startOfMonth, $endOfMonth);
-                            ?>
 
                             <div class="username-status">
                                 <p>
