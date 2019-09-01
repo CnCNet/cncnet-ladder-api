@@ -93,8 +93,9 @@
                         New rules everyone! You are only allowed:<br/>
                     </p>
                     <ul>
-                        <li>To play on one nickname per month. </li>
-                    <li>One user account, having multiple accounts are not allowed. </li>
+                        <li>Tiberian Sun players are now allowed up to 3 nicknames per month.</li>
+                        <li>Red Alert &amp; Yuri's Revenge players are only allowed 1 nickname per month.</li>
+                        <li>One user account, having multiple accounts are not allowed. </li>
                     </ul>
                     <p>
                         To use your nickname, activate it and it will appear in your Quick Match client.
