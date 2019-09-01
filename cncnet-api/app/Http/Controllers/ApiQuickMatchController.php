@@ -98,6 +98,9 @@ class ApiQuickMatchController extends Controller
             return array("type"=>"fail", "description" => "$playerName is not registered in $ladderAbbrev");
         }
 
+        // Player checks - ensure nick is registered as an active handle
+        
+
         $ban = $player->user->getBan(true);
         if ($ban !== null)
         {

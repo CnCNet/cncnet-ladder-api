@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
+use \App\PlayerActiveHandle;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Log;
@@ -35,7 +36,6 @@ class ApiUserController extends Controller
             if ($players->count() < 1)
             {
                 // Auto-register a player for each ladder if there isn't already a player registered for this user
-
                 $playerCreated = false;
                 $oLadders = \App\Ladder::where('game', '=', $ladder->game)->where('id', '<>', $ladder->id)->get();
                 foreach ($oLadders as $other)
@@ -58,7 +58,7 @@ class ApiUserController extends Controller
 
     private function getActivePlayerList($userId)
     {
-        $activeHandles = \App\PlayerActiveHandle::where("user_id", $userId)->get();
+        $activeHandles = PlayerActiveHandle::where("user_id", $userId)->get();
         
         $players = [];
         foreach($activeHandles as $activeHandle)
@@ -120,11 +120,11 @@ class ApiUserController extends Controller
         // If they are, set their nick as the active handle
         if ($tempNick != null)
         {
-            $this->setActiveHandle($ladderId, $tempNick->id, $userId);
+            PlayerActiveHandle::setPlayerActiveHandle($ladderId, $tempNick->id, $userId);
             return $tempNick;
         }
         
-        $limitLatestNickByDate = Carbon::create("2019", "08", "06");
+        $limitLatestNickByDate = Carbon::create("2019", "09", "01");
 
         // Get nick last created limited by this new 1 nick rule
         $tempNick = \App\Player::where("user_id", $userId)
@@ -134,15 +134,6 @@ class ApiUserController extends Controller
             ->first();
 
         return $tempNick;
-    }
-
-    private function setActiveHandle($ladderId, $playerId, $userId)
-    {
-        $activeHandle = new \App\PlayerActiveHandle();
-        $activeHandle->ladder_id = $ladderId;
-        $activeHandle->player_id = $playerId;
-        $activeHandle->user_id = $userId;
-        $activeHandle->save();
     }
 
     public function createUser(Request $request)
