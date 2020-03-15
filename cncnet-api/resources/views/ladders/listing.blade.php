@@ -31,6 +31,8 @@
 @section('content')
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
+        @include("components.stats", [$stats])
+
         <?php $date = \Carbon\Carbon::parse($history->ends); ?>
 
         @if ($date->isPast() && ($search === null || $search == ""))

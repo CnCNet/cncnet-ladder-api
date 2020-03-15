@@ -5,14 +5,18 @@ use \Carbon\Carbon;
 use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
+use \App\Http\Services\StatsService;
+use Illuminate\Support\Facades\Cache;
 
 class LadderController extends Controller
 {
     private $ladderService;
+    private $statsService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
+        $this->statsService = new StatsService();
     }
 
     public function getLadders(Request $request)
@@ -58,6 +62,7 @@ class LadderController extends Controller
 
         $data = array
         (
+            "stats" => $this->statsService->getQmStats($request->game),
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
