@@ -365,6 +365,7 @@ class ApiQuickMatchController extends Controller
                   ,"ShroudRegrows"   =>   $qmMap->shroud_regrows
                   ,"AIPlayers"       =>   $qmMap->ai_player_count
                   ,"Tournament"      =>   1
+                  ,"FrameSendRate"   =>   $ladder_rules->frame_send_rate > 1 ? $ladder_rules->frame_send_rate : null
                    // Filter null values
             ], function($var){return !is_null($var);} );
 

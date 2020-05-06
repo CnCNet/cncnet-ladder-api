@@ -223,6 +223,11 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="{{ $rule->frame_send_rate }}_frame_send_rate">Frame Send Rate</label>
+                                    <input id="{{ $rule->frame_send_rate }}_frame_send_rate" type="number" name="frame_send_rate" class="form-control" value="{{ $rule->frame_send_rate }}" />
+                                </div>
+
+                                <div class="form-group">
                                     <label for="{{ $rule->ladder_id }}_bail_fps">Bail FPS</label>
                                     <input id="{{ $rule->ladder_id }}_bail_fps" type="number" name="bail_fps" class="form-control" value="{{ $rule->bail_fps }}" />
                                 </div>
