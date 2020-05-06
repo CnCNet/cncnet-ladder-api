@@ -132,7 +132,7 @@
 			if (request.status == 200)
 			{
 				domains = JSON.parse(request.responseText);
-				signUpForm.style.display = "block"; 
+				signUpForm.style.display = "block";
 			}
 		}
 	});
@@ -141,7 +141,7 @@
 </script>
 
 <noscript><meta http-equiv="refresh" content="0; URL=/"></noscript>
-<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+<script src="https://www.recaptcha.net/recaptcha/api.js" async defer></script>
 <script type="text/javascript">
 var form = document.getElementById("signUpForm");
 var checks = window.localStorage.getItem("checks");
@@ -156,7 +156,7 @@ form.addEventListener("submit", function(e)
 	var response = grecaptcha.getResponse();
 	var email = emailAddress.value;
 
-	if (email == null) 
+	if (email == null)
 		return;
 
 	var domain = email.substring(email.lastIndexOf("@") +1);
