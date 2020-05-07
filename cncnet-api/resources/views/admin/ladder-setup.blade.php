@@ -239,6 +239,11 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="{{ $rule->use_elo_points }}_use_elo_points">Use Elo for Points</label>
+                                    <input id="{{ $rule->use_elo_points }}_use_elo_points" type="number" min="0" max="1" name="use_elo_points" class="form-control" value="{{ $rule->use_elo_points }}" />
+                                </div>
+
+                                <div class="form-group">
                                     <label for="{{ $rule->ladder_id }}_bail_fps">Bail FPS</label>
                                     <input id="{{ $rule->ladder_id }}_bail_fps" type="number" name="bail_fps" class="form-control" value="{{ $rule->bail_fps }}" />
                                 </div>

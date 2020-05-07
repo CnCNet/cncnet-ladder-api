@@ -30,6 +30,7 @@ class AdminService
         $ladderRule->points_per_second = $request->points_per_second;
 
         $ladderRule->frame_send_rate = $request->frame_send_rate;
+        $ladderRule->use_elo_points = $request->use_elo_points;
         $ladderRule->bail_time = $request->bail_time;
         $ladderRule->bail_fps = $request->bail_fps;
         $ladderRule->tier2_rating = $request->tier2_rating;

@@ -269,7 +269,10 @@ class ApiLadderController extends Controller
             $points = null;
 
             $base_rating = $enemy_average > $ally_average ? $enemy_average : $ally_average;
-            $gvc = ceil(($base_rating * $enemy_average) / 230000);
+
+            $gvc = 0;
+            if ($history->ladder->qmLadderRules->use_elo_points)
+                $gvc = ceil(($base_rating * $enemy_average) / 230000);
 
             $diff = $enemy_points - $ally_points;
             $we = 1/(pow(10, abs($diff)/600)+1);
