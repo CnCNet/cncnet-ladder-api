@@ -51,7 +51,7 @@ Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'can
     Route::post('remqmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@removeQuickMatchMap']);
     Route::get('downmap/{mapId}', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@moveDownQuickMatchMap']);
     Route::get('upmap/{mapId}', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@moveUpQuickMatchMap']);
-
+    Route::post('editmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editMap']);
 
     Route::post('add/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@addAdmin']);
     Route::post('remove/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@removeAdmin']);

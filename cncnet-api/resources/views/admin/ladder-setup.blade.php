@@ -27,17 +27,28 @@
 
 @section('content')
 <script>
-   function showMapEdit(e, distinguisher, c) {
+   function showQMapEdit(e, distinguisher, c) {
        document.querySelectorAll('form.qmMap').forEach(function(element) { element.style.display = 'none' });
        document.querySelectorAll('select.qmPool').forEach(function(element) { if (element.selectedIndex >= 0) element.options[element.selectedIndex].selected = false });
        if (e !== null && distinguisher !== '')
        {
            e.selected = true;
-           document.getElementById("mapu_" + distinguisher).style.display = 'block';
-           document.getElementById("mapd_" + distinguisher).style.display = 'block';
+           document.getElementById("qmapu_" + distinguisher).style.display = 'block';
+           document.getElementById("qmapd_" + distinguisher).style.display = 'block';
+           document.getElementById("qmap_" + distinguisher).style.display = 'block';
+       }
+   }
+
+   function showMapEdit(e, distinguisher, c) {
+       document.querySelectorAll('form.map').forEach(function(element) { element.style.display = 'none' });
+       document.querySelectorAll('select.map_pool').forEach(function(element) { if (element.selectedIndex >= 0) element.options[element.selectedIndex].selected = false });
+       if (e !== null && distinguisher !== '')
+       {
+           e.selected = true;
            document.getElementById("map_" + distinguisher).style.display = 'block';
        }
    }
+
 </script>
 
 <section class="general-texture">
@@ -261,51 +272,118 @@
                         </div>
 
                         <div class="col-md-3">
-                            <div class="player-box player-card">
-                            <div class="form-group">
-                              <form method="POST" action="remqmap">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
+                            <div class="player-box player-card" style="margin-bottom: 8px">
+                                <div class="form-group">
+                                    <form method="POST" action="remmap">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                        <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
 
-                                <p style="color: #fff" >QuickMatch Map Pool</p>
-                                <select id ="{{ $rule->ladder_id }}_ladder_id" name="map_id" size="6" class="form-control qmPool">
-                                    <?php $last_idx  = -1;
-                                          $new_map = new \App\QmMap();
-                                          $new_map->bit_idx = -1;
-                                          $new_map->ladder_id = $rule->ladder_id;
-                                          $new_map->valid = true;
-                                    ?>
-                                    @foreach($qmMaps as $qmMap)
-                                        @if($qmMap->ladder_id == $rule->ladder_id && $qmMap->valid)
-                                            <option value="{{ $qmMap->id }}" onclick="showMapEdit(this, '{{ $qmMap->ladder_id }}_{{ $qmMap->id }}')"> {{ $qmMap->bit_idx }} : {{ $qmMap->admin_description }} </option>
-                                            <?php $new_map = $qmMap; ?>
-                                        @endif
+                                        <p style="color: #fff" >Map Hashes</p>
+
+                                        <select id="{{ $rule->ladder_id }}_maps" name="map_id" size="6" class="form-control map_pool" >
+                                            <option value="new" onclick="showMapEdit(this, '{{ $rule->ladder_id }}_new')">&lt;new></option>
+                                            @foreach($maps as $map)
+                                                <option value="{{ $map->id }}" onclick="showMapEdit(this, '{{ $map->ladder_id }}_{{ $map->id }}')"> {{ $map->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </form>
+
+                                    <form method="POST" action="editmap" class="map" id="map_{{ $rule->ladder_id }}_new" enctype="multipart/form-data">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                        <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
+                                        <input type="hidden" name="map_id" value="new" />
+
+                                        <div class="form-group">
+                                            <label for="text_map_new_name"> Name </label>
+                                            <input type="text" id="text_map_new_name" name="name" value="" class="form-control" />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="text_map_new_hash"> SHA1 Hash </label>
+                                            <textarea id="text_map_new_hash" rows=2 name="hash" class="form-control"></textarea>
+                                        </div>
+
+                                        <input type="file" name="mapImage" id="mapIamge_new" />
+                                        <button type="submi" class="btn btn-primary">Add</button>
+                                    </form>
+
+                                    @foreach($maps as $map)
+                                        <form method="POST" action="editmap" class="map" id="map_{{ $map->ladder_id }}_{{ $map->id }}" enctype="multipart/form-data">
+                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                            <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
+                                            <input type="hidden" name="map_id" value="{{ $map->id }}" />
+
+                                            <div class="form-group">
+                                                <label for="text_map_{{ $map->id }}_name"> Name </label>
+                                                <input type="text" id="text_map_{{ $map->id }}_name" name="name" value="{{ $map->name }}" class="form-control" />
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="text_map_{{ $map->id }}_hash"> SHA1 Hash </label>
+                                                <textarea id="text_map_{{ $map->id }}_hash" rows=2 name="hash" class="form-control">{{ $map->hash }}</textarea>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label for="mapImage_{{ $map->id }}"> Upload Image </label>
+                                                <input type="file" name="mapImage" id="mapIamge_{{ $map->id }}" />
+                                            </div>
+
+                                            <button type="submi" class="btn btn-primary">Save</button>
+
+                                            <div class="player-card">
+                                                <img class="img-fluid img-thumbnail" alt="Missing" src="/images/maps/{{ $ladder->abbreviation }}/{{ $map->hash }}.png">
+                                            </div>
+
+                                        </form>
+
                                     @endforeach
-
-                                    <?php $new_map = $new_map->replicate();
-                                          $new_map->bit_idx++;
-                                          $new_map->id = 'new';
-                                          $new_map->description = "Copy of " . $new_map->description;
-                                          $new_map->admin_description = "Copy of " . $new_map->admin_description;
-                                          $qmMaps->push($new_map);
-                                    ?>
-                                    <option value="{{ $new_map->bit_idx }}" onclick="showMapEdit(this,'{{ $new_map->ladder_id }}_new')"> {{ $new_map->bit_idx }} : &lt;new> </option>
-                                </select>
-                                <button type="submit" class="btn btn-danger">Remove Map</button>
-                              </form>
+                                </div>
                             </div>
+
+                            <div class="player-box player-card">
+                                <div class="form-group">
+                                    <form method="POST" action="remqmap">
+                                        <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+
+                                        <p style="color: #fff" >QuickMatch Map Pool</p>
+                                        <select id ="{{ $rule->ladder_id }}_ladder_id" name="map_id" size="6" class="form-control qmPool">
+                                            <?php $last_idx  = -1;
+                                                  $new_map = new \App\QmMap();
+                                                  $new_map->bit_idx = -1;
+                                                  $new_map->ladder_id = $rule->ladder_id;
+                                                  $new_map->valid = true;
+                                            ?>
+                                            @foreach($qmMaps as $qmMap)
+                                                @if($qmMap->ladder_id == $rule->ladder_id && $qmMap->valid)
+                                                    <option value="{{ $qmMap->id }}" onclick="showQMapEdit(this, '{{ $qmMap->ladder_id }}_{{ $qmMap->id }}')"> {{ $qmMap->bit_idx }} : {{ $qmMap->admin_description }} </option>
+                                                    <?php $new_map = $qmMap; ?>
+                                                @endif
+                                            @endforeach
+
+                                            <?php $new_map = $new_map->replicate();
+                                                  $new_map->bit_idx++;
+                                                  $new_map->id = 'new';
+                                                  $new_map->description = "Copy of " . $new_map->description;
+                                                  $new_map->admin_description = "Copy of " . $new_map->admin_description;
+                                                  $qmMaps->push($new_map);
+                                            ?>
+                                            <option value="{{ $new_map->bit_idx }}" onclick="showQMapEdit(this,'{{ $new_map->ladder_id }}_new')"> {{ $new_map->bit_idx }} : &lt;new> </option>
+                                        </select>
+                                        <button type="submit" class="btn btn-danger">Remove Map</button>
+                                    </form>
+                                </div>
 
                              @foreach($qmMaps as $qmMap)
                                  @if($qmMap->ladder_id == $rule->ladder_id && $qmMap->valid)
-                                 <form method="GET" action="upmap/{{$qmMap->id}}" class="qmMap" id="mapu_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
+                                 <form method="GET" action="upmap/{{$qmMap->id}}" class="qmMap" id="qmapu_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
                                      <button type="submit" class="btn btn-primary">Move Up</button>
                                  </form>
 
-                                 <form method="GET" action="downmap/{{$qmMap->id}}" class="qmMap" id="mapd_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
+                                 <form method="GET" action="downmap/{{$qmMap->id}}" class="qmMap" id="qmapd_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
                                      <button type="submit" class="btn btn-primary">Move Down</button>
                                  </form>
 
-                                 <form method="POST" action="qmmap" class="qmMap" id="map_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
+                                 <form method="POST" action="qmmap" class="qmMap" id="qmap_{{ $qmMap->ladder_id }}_{{ $qmMap->id }}">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                         <input type="hidden" name="id" value="{{ $qmMap->id }}" />
                                         <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
@@ -728,7 +806,7 @@
                                     @endif
                                 @endforeach
                             </div>
-                            <script> showMapEdit(null,'') </script>
+                            <script> showQMapEdit(null, ''); showMapEdit(null,'') </script>
                         </div>
                     </div>
                 </div>

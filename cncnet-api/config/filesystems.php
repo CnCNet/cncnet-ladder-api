@@ -68,4 +68,5 @@ return [
 
 	],
     'dmp' => public_path().'/dmp',
+    'map_images' => public_path().'/images/maps',
 ];

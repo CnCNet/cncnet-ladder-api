@@ -34,7 +34,7 @@ class AdminController extends Controller
         $ladders = $this->ladderService->getLatestLadders();
         $rule = $ladder->qmLadderRules;
         $qmMaps = $ladder->qmMaps()->valid()->orderby('bit_idx', 'ASC')->get();
-        $maps = \App\Map::orderby('name', 'ASC')->get();
+        $maps = \App\Map::where('ladder_id', '=', $ladder->id)->orderby('name', 'ASC')->get();
         $user = $request->user();
 
         return view("admin.ladder-setup", compact('ladders', 'ladder', 'rule', 'qmMaps', 'maps', 'user'));
@@ -67,7 +67,7 @@ class AdminController extends Controller
         }
 
         return view("admin.manage-users", [
-            "users" => $users->paginate(50), 
+            "users" => $users->paginate(50),
             "players" => $players != null ? $players->paginate(50): [],
             "search" => $search,
             "userId" => $userId,
@@ -87,9 +87,9 @@ class AdminController extends Controller
         $end = $date->endOfMonth()->toDateTimeString();
 
         $history = \App\LadderHistory::where("starts", "=", $start)
-            ->where("ends", "=", $end)
-            ->where("ladder_id", "=", $ladder->id)
-            ->first();
+                                     ->where("ends", "=", $end)
+                                     ->where("ladder_id", "=", $ladder->id)
+                                     ->first();
 
         $games = \App\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC")->limit(100);
         return view("admin.manage-games", ["games" => $games, "ladder" => $ladder, "history" => $history]);
@@ -277,6 +277,44 @@ class AdminController extends Controller
         $side->name = $request->name;
         $side->save();
         $request->session()->flash('success', "Side has been added or updated");
+
+        return redirect()->back();
+    }
+
+    public function editMap(Request $request)
+    {
+        $this->validate($request, ['map_id' => 'required',
+                                   'hash'   => 'required|min:40|max:40',
+                                   'name'   => 'string',
+                                   'mapImage' => 'image']);
+
+        if ($request->map_id == 'new')
+        {
+            $map = new \App\Map;
+        }
+        else
+        {
+            $map = \App\Map::find($request->map_id);
+            if ($map === null)
+            {
+                $request->session()->flash('error', "Map Not found");
+                return redirect()->back();
+            }
+        }
+
+        $map->ladder_id = $request->ladder_id;
+        $map->hash = $request->hash;
+        $map->name = $request->name;
+        $map->save();
+        $request->session()->flash('success', "Map Saved");
+
+        if ($request->hasFile('mapImage'))
+        {
+            $filename = $map->hash . ".png";
+            $filepath = config('filesystems')['map_images'] . "/" . $map->ladder->abbreviation;
+
+            $request->file('mapImage')->move($filepath, $filename);
+        }
 
         return redirect()->back();
     }
