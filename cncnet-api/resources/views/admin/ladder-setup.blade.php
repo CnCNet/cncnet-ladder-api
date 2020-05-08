@@ -244,6 +244,11 @@
                                 </div>
 
                                 <div class="form-group">
+                                    <label for="{{ $rule->wol_k }}_use_elo_points">WOL Points K Value</label>
+                                    <input id="{{ $rule->wol_k }}_use_elo_points" type="number" min="0" name="wol_k" class="form-control" value="{{ $rule->wol_k }}" />
+                                </div>
+
+                                <div class="form-group">
                                     <label for="{{ $rule->ladder_id }}_bail_fps">Bail FPS</label>
                                     <input id="{{ $rule->ladder_id }}_bail_fps" type="number" name="bail_fps" class="form-control" value="{{ $rule->bail_fps }}" />
                                 </div>
@@ -308,7 +313,11 @@
                                             <textarea id="text_map_new_hash" rows=2 name="hash" class="form-control"></textarea>
                                         </div>
 
-                                        <input type="file" name="mapImage" id="mapIamge_new" />
+                                        <div class="form-group">
+                                            <label for="mapImage_{{ $map->id }}"> Upload Image </label>
+                                            <input type="file" name="mapImage" id="mapIamge_{{ $map->id }}" />
+                                        </div>
+
                                         <button type="submi" class="btn btn-primary">Add</button>
                                     </form>
 

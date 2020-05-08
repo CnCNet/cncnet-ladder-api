@@ -270,14 +270,16 @@ class ApiLadderController extends Controller
 
             $base_rating = $enemy_average > $ally_average ? $enemy_average : $ally_average;
 
-            $gvc = 0;
+            $gvc = 8;
             if ($history->ladder->qmLadderRules->use_elo_points)
                 $gvc = ceil(($base_rating * $enemy_average) / 230000);
+
+            $wol_k = $history->ladder->qmLadderRules->wol_k;
 
             $diff = $enemy_points - $ally_points;
             $we = 1/(pow(10, abs($diff)/600)+1);
             $we = $diff > 0 && $playerGR->wonOrDisco() ? 1 - $we : ($diff < 0 && !$playerGR->wonOrDisco() ? 1 - $we : $we);
-            $wol = (int)(64 * $we);
+            $wol = (int)($wol_k * $we);
 
             $eloAdjust = 0;
 
@@ -289,6 +291,8 @@ class ApiLadderController extends Controller
             {
                 $points = (new PointService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
                 $diff = (int)($points - $ally_average);
+                if (!$history->ladder->qmLadderRules->use_elo_points)
+                    $diff = 0;
                 $playerGR->points = $gvc + $diff + $wol;
 
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
