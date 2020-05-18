@@ -36,7 +36,7 @@ class ApiQuickMatchController extends Controller
 
     public function statsRequest(Request $request, $ladderAbbrev = null)
     {
-        return Cache::remember("statsRequest/$ladderAbbrev", 5, function() use ($ladderAbbrev)
+        return Cache::remember("statsRequest/$ladderAbbrev", 1, function() use ($ladderAbbrev)
         {
             $timediff = Carbon::now()->subHour()->toDateTimeString();
             $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;

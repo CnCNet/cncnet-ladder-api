@@ -26,15 +26,16 @@ class Kernel extends HttpKernel {
 	 * @var array
 	 */
 	protected $routeMiddleware = [
-		'auth' => 'App\Http\Middleware\Authenticate',
-		'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
-        'auth.basic.once' => 'App\Http\Middleware\AuthenticateOnceWithBasicAuth',
-		'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
-        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
-		'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
-        'cache.public' => 'App\Http\Middleware\CachePublicMiddleware',
-        'cache.private' => 'App\Http\Middleware\CachePrivateMiddleware',
-        'cache.long.public' => 'App\Http\Middleware\CacheLongPublicMiddleware',
-        'cache.long.private' => 'App\Http\Middleware\CacheLongPrivateMiddleware',
+	    'auth' => 'App\Http\Middleware\Authenticate',
+	    'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
+            'auth.basic.once' => 'App\Http\Middleware\AuthenticateOnceWithBasicAuth',
+	    'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
+            'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+	    'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+            'cache.public' => 'App\Http\Middleware\CachePublicMiddleware',
+            'cache.private' => 'App\Http\Middleware\CachePrivateMiddleware',
+            'cache.long.public' => 'App\Http\Middleware\CacheLongPublicMiddleware',
+            'cache.long.private' => 'App\Http\Middleware\CacheLongPrivateMiddleware',
+            'cache.short.public' => 'App\Http\Middleware\CacheShortPublic'
 	];
 }

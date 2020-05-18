@@ -121,9 +121,13 @@ Route::group(['prefix' => 'api/v1/'], function ()
 
     // QuickMatch Endpoints
     Route::get('/qm/version/{platform}', 'ApiQuickMatchController@clientVersion');
-    Route::get('/qm/ladder/{ladderAbbrev}/stats', 'ApiQuickMatchController@statsRequest');
     Route::get('/qm/ladder/{ladderAbbrev}/maps', 'ApiQuickMatchController@mapListRequest');
     Route::post('/qm/{ladderAbbrev}/{playerName}', 'ApiQuickMatchController@matchRequest');
+});
+
+Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], function ()
+{
+    Route::get('/qm/ladder/{ladderAbbrev}/stats', 'ApiQuickMatchController@statsRequest');
 });
 
 // Ladder Endpoints
