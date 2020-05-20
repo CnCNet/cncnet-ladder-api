@@ -163,7 +163,8 @@ class ApiLadderController extends Controller
                 $game->save();
                 $gameReport->save();
                 $bestReport->save();
-                $this->ladderService->updatePlayerCache($bestReport);
+                $this->ladderService->undoPlayerCache($bestReport);
+                $this->ladderService->updatePlayerCache($gameReport);
                 return;
             }
             else if ($gameReport->pings_sent - $gameReport->pings_received < 7)
@@ -174,7 +175,8 @@ class ApiLadderController extends Controller
                 $game->save();
                 $wash->save();
                 $bestReport->save();
-                $this->ladderService->updatePlayerCache($bestReport);
+                $this->ladderService->undoPlayerCache($bestReport);
+                $this->ladderService->updatePlayerCache($gameReport);
                 return;
             }
 
@@ -190,7 +192,8 @@ class ApiLadderController extends Controller
             $game->save();
             $gameReport->save();
             $bestReport->save();
-            $this->ladderService->updatePlayerCache($bestReport);
+            $this->ladderService->undoPlayerCache($bestReport);
+            $this->ladderService->updatePlayerCache($gameReport);
             return;
         }
 
@@ -203,7 +206,8 @@ class ApiLadderController extends Controller
             $game->save();
             $gameReport->save();
             $bestReport->save();
-            $this->ladderService->updatePlayerCache($bestReport);
+            $this->ladderService->undoPlayerCache($bestReport);
+            $this->ladderService->updatePlayerCache($gameReport);
             return;
         }
 

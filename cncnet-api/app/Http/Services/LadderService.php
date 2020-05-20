@@ -284,6 +284,22 @@ class LadderService
         else
             return null;
     }
+    public function undoPlayerCache($gameReport)
+    {
+        foreach ($gameReport->playerGameReports as $playerGR)
+        {
+            $player = $playerGR->player;
+            $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
+                                  ->where('player_id', '=', $player->id)->first();
+            $pc->mark();
+            $pc->points -= $playerGR->points;
+            $pc->games--;
+            if ($playerGR->won)
+                $pc->wins--;
+
+            $pc->save();
+        }
+    }
 
     public function updatePlayerCache($gameReport)
     {
@@ -296,29 +312,22 @@ class LadderService
                                   ->where('player_id', '=', $player->id)->first();
 
             if ($pc === null)
+            {
                 $pc = new \App\PlayerCache;
+                $pc->ladder_history_id = $history->id;
+                $pc->player_id = $player->id;
+                $pc->player_name = $player->username;
+                $pc->save();
+            }
 
-            $pc->ladder_history_id = $history->id;
-            $pc->player_id = $player->id;
-            $pc->player_name = $player->username;
+            $pc->mark();
 
-            $pHist = $player->playerHistory($history);
-            $pc->tier = $pHist ? $pHist->tier : 1;
+            $pc->points += $playerGR->points;
+            $pc->games++;
+            if ($playerGR->won)
+                $pc->wins++;
 
-            $pc->card = $player->card_id;
-            $pc->points = $player->points($history);
-            $pc->wins = $player->wins($history);
-            $pc->games = $player->totalGames($history);
-            $pc->percentile = $player->percentile();
-
-            $v = $player->sideUsage($history)->first();
-            $pc->side = $v !== null ? $v->sid : null;
-
-            $v = $player->countryUsage($history)->first();
-            $pc->country = $v !== null ? $v->cty : null;
-            $pc->fps = $player->averageFPS($history);
             $pc->save();
         }
     }
-
 }
