@@ -286,6 +286,8 @@ class LadderService
     }
     public function undoPlayerCache($gameReport)
     {
+        $history = $gameReport->game->ladderHistory;
+
         foreach ($gameReport->playerGameReports as $playerGR)
         {
             $player = $playerGR->player;
