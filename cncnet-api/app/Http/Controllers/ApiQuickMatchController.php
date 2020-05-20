@@ -282,15 +282,25 @@ class ApiQuickMatchController extends Controller
                 if ($qmPlayer->qEntry !== null)
                 {
                     $qEntry = $qmPlayer->qEntry;
+                    $qEntry->touch();
+
+                    if ($qEntry->ladder_history_id != $history->id)
+                    {
+                        $qEntry->qm_match_player_id = $qmPlayer->id;
+                        $qEntry->ladder_history_id = $history->id;
+                        $qEntry->rating = $player->rating->rating;
+                        $qEntry->points = $player->points($history);
+                        $qEntry->save();
+                    }
                 }
                 else {
                     $qEntry = new QmQueueEntry;
+                    $qEntry->qm_match_player_id = $qmPlayer->id;
+                    $qEntry->ladder_history_id = $history->id;
+                    $qEntry->rating = $player->rating->rating;
+                    $qEntry->points = $player->points($history);
+                    $qEntry->save();
                 }
-                $qEntry->qm_match_player_id = $qmPlayer->id;
-                $qEntry->ladder_history_id = $history->id;
-                $qEntry->rating = $player->rating->rating;
-                $qEntry->points = $player->points($history);
-                $qEntry->save();
 
                 // Push a job to find an opponent
                 $this->dispatch(new FindOpponent($qEntry->id));
