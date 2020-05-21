@@ -198,13 +198,14 @@
                 @foreach($playerGameReports as $pgr)
                     <?php $gameStats = $pgr->stats; ?>
                     <?php $player = $pgr->player()->first() ?>
-                    <?php $rank =  $player->playerCache($history->id) ?  $player->playerCache($history->id)->rank() : 0 ?>
-                    <?php $points = $player->playerCache($history->id) ?  $player->playerCache($history->id)->points : 0 ?>
+                    <?php $playerCache = $player->playerCache($history->id) ?>
+                    <?php $rank =  $playerCache ?  $playerCache->rank() : 0 ?>
+                    <?php $points = $playerCache ?  $playerCache->points : 0 ?>
 
                 <div class="col-md-6">
                     <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">
                         <div class="profile-detail">
-                            <?php $badge = $player->badge(); ?>
+                            <?php $badge =  \App\Player::getBadge($playerCache ? $playerCache->percentile : 0) ?>
                             <div class="player-badge badge-1x">
                                 <img src="/images/badges/{{ $badge["badge"] . ".png" }}" style="max-width:100%">
                             </div>

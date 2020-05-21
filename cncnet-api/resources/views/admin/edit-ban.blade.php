@@ -41,16 +41,6 @@
                     </h1>
                        {{ $user->getBan() }}
                 </div>
-
-                <div class="player-badges">
-                    <?php $badge = $player->badge(); ?>
-                    <div class="player-badge badge-2x">
-                        @if (strlen($badge['badge']) > 0)
-                        <img src="/images/badges/{{ $badge['badge'] . ".png" }}">
-                        <p class="lead text-center">{{ $badge['type'] }}</p>
-                        @endif
-                    </div>
-                </div>
             </div>
         </div>
     </div>

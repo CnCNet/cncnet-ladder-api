@@ -19,12 +19,12 @@ class PlayerCache extends Model {
 
     public function rank()
     {
-        $players = PlayerCache::where('ladder_history_id', '=', $this->history->id)->orderBy('points', 'asc')->get();
+        $players = PlayerCache::where('ladder_history_id', '=', $this->history->id)->orderBy('points', 'desc')->get();
         $count = 1;
 
         foreach ($players as $player)
         {
-            if ($player->id = $this->id)
+            if ($player->id == $this->id)
                 return $count;
             $count++;
         }

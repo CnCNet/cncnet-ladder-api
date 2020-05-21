@@ -200,16 +200,16 @@
                                 $rank = null;
                         ?>
 
-                            <?php 
+                            <?php
 
                                 $countryName = "";
                                 $side = null;
-                                
+
                                 if ( $history->ladder->abbreviation == "yr")
                                 {
                                     $side = \App\Side::where("local_id", $player->country)
                                     ->where("ladder_id", $history->ladder->id)
-                                    ->first(); 
+                                    ->first();
                                 }
                                 else
                                 {
@@ -224,7 +224,7 @@
 
                                 if ($side !== null)
                                 {
-                                    $countryName = $side->name; 
+                                    $countryName = $side->name;
                                 }
                             ?>
 
@@ -267,9 +267,8 @@
             </div>
             <div class="modal-body clearfix text-center">
             <?php $pecentiles = [15, 25, 45, 55, 65, 75, 85, 90, 100]; ?>
-            <?php $player = new \App\Player(); ?>
             @foreach($pecentiles as $percentile)
-                <?php $badge = $player->badge($percentile); ?>
+                <?php $badge = \App\Player::getBadge($percentile); ?>
                 <p class="lead">{{ $badge["type"] }}</p>
                 <div class="player-badge badge-2x" style="margin: 0 auto; height: 150px;">
                     <img src="/images/badges/{{ $badge["badge"] . ".png" }}" style="height:150px;">
