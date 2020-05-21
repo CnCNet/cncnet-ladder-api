@@ -69,33 +69,33 @@
             @foreach($ladders_winners as $ladderWinners)
             <?php $date = \Carbon\Carbon::parse($ladderWinners["ends"]); ?>
             <div class="feature">
-                
+
                 <div class="row">
                 @foreach($ladderWinners["players"] as $k => $player)
-                <?php $url = "/ladder/". $ladderWinners["short"] . "/" . $ladderWinners["abbreviation"] . "/player/" . $player->username; ?>
-                
+                <?php $url = "/ladder/". $ladderWinners["short"] . "/" . $ladderWinners["abbreviation"] . "/player/" . $player->player_name; ?>
+
                 <div class="col-xs-12 col-md-6">
                     <h4><a href="/ladder-champions/{{ $ladderWinners['abbreviation']}}">View All</a> <strong>Past Ladder Champions</strong></h4>
-                    <a href="{{ $url }}" title="View {{$player->username}}'s profile">
+                    <a href="{{ $url }}" title="View {{$player->player_name}}'s profile">
                         <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $ladderWinners["game"]}}-cover-masters.png">
                             <div class="details tier-league-cards">
                                 <div class="type">
-                                    <h1 class="lead"><strong>{{ $player->username }}</strong></h1>
+                                    <h1 class="lead"><strong>{{ $player->player_name }}</strong></h1>
                                     <h2><strong>Rank #{{ $k+1 }}</strong></h2>
                                     <ul class="list-inline" style="font-size: 14px;">
                                         <li>
-                                            Wins 
-                                            <i class="fa fa-level-up"></i> {{ $player->total_wins }}
+                                            Wins
+                                            <i class="fa fa-level-up"></i> {{ $player->wins }}
                                         </li>
                                         <li>
-                                            Games 
-                                            <i class="fa fa-diamond"></i> {{ $player->total_games }}
+                                            Games
+                                            <i class="fa fa-diamond"></i> {{ $player->games }}
                                         </li>
                                     </ul>
                                     @if ($k>0)
-                                    <small>Runner up of the 
+                                    <small>Runner up of the
                                     @else
-                                    <small>Champion of the 
+                                    <small>Champion of the
                                     @endif
                                     <strong>{{ $date->format("m/Y") }}</strong> {{ $ladderWinners["full"] }} Ladder</small>
                                 </div>

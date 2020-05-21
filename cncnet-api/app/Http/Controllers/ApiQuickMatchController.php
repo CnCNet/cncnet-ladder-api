@@ -279,17 +279,23 @@ class ApiQuickMatchController extends Controller
             if ($qmPlayer->qm_match_id === null)
             {
                 $history = $ladder->currentHistory();
+                $pc = $player->playerCache($history->id);
+                if ($pc !== null)
+                    $points = $pc->points;
+
                 if ($qmPlayer->qEntry !== null)
                 {
                     $qEntry = $qmPlayer->qEntry;
                     $qEntry->touch();
+
+                    $points = 0;
 
                     if ($qEntry->ladder_history_id != $history->id)
                     {
                         $qEntry->qm_match_player_id = $qmPlayer->id;
                         $qEntry->ladder_history_id = $history->id;
                         $qEntry->rating = $player->rating->rating;
-                        $qEntry->points = $player->points($history);
+                        $qEntry->points = $points;
                         $qEntry->save();
                     }
                 }
@@ -298,7 +304,7 @@ class ApiQuickMatchController extends Controller
                     $qEntry->qm_match_player_id = $qmPlayer->id;
                     $qEntry->ladder_history_id = $history->id;
                     $qEntry->rating = $player->rating->rating;
-                    $qEntry->points = $player->points($history);
+                    $qEntry->points = $points;
                     $qEntry->save();
                 }
 

@@ -299,4 +299,9 @@ class Player extends Model
             $pHist->save();
         }
     }
+
+    public function playerCache($history_id)
+    {
+        return \App\PlayerCache::where('player_id', '=', $this->id)->where("ladder_history_id", '=', $history_id)->first();
+    }
 }

@@ -27,13 +27,13 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12 text-center">
-            <?php 
+            <?php
                 $img = "";
                 switch($ladders_winners[0]["abbreviation"])
                 {
                     case "yr":
                         $img = "//cncnet.org/images/games/yuris-revenge/logo.png";
-                        break;     
+                        break;
                     case "ts":
                         $img = "//cncnet.org/images/games/tiberian-sun/logo.png";
                         break;
@@ -54,7 +54,7 @@
                 <?php $date = \Carbon\Carbon::parse($ladderWinners["ends"]); ?>
                 <div>
                     <h3>{{ $date->format("F Y") }} <strong>Ladder Champions</strong></h3>
-                
+
                     <table class="table">
                         <thead>
                             <tr>
@@ -68,18 +68,18 @@
                         </thead>
                         <tbody>
                             @foreach($ladderWinners["players"] as $k => $player)
-                            <?php $url = "/ladder/". $ladderWinners["short"] . "/" . $ladderWinners["abbreviation"] . "/player/" . $player->username; ?>
+                            <?php $url = "/ladder/". $ladderWinners["short"] . "/" . $ladderWinners["abbreviation"] . "/player/" . $player->player_name; ?>
                             <tr>
                                 <th scope="row">{{ $k + 1 }}</th>
                                 <td>
                                 <a href="{{ $url}}" target="_blank">
-                                {{ $player->username }}
+                                {{ $player->player_name }}
                                 </a>
                                 </td>
                                 <td>{{ $player->points }}</td>
-                                <td>{{ $player->total_wins }}</td>
-                                <td>{{ $player->total_games-$player->total_wins }}</td>
-                                <td>{{ $player->total_games }}</td>
+                                <td>{{ $player->wins }}</td>
+                                <td>{{ $player->games - $player->wins }}</td>
+                                <td>{{ $player->games }}</td>
                             </tr>
                             @endforeach
                         </tbody>

@@ -32,7 +32,7 @@ class LeagueChampionsController extends Controller
                     "full" => $history->ladder->name,
                     "abbreviation" => $history->ladder->abbreviation,
                     "ends" => $history->ends,
-                    "players" => $this->ladderService->getLadderPlayers($history->short, $history->ladder->game, 1, false, false)->splice(0,10)
+                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0,10)
                 ];
             }
         }

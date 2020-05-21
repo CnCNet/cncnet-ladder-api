@@ -311,7 +311,7 @@ class ApiLadderController extends Controller
                 }
                 if ($ally_points  < ($wol + $gvc) * 10)
                 {
-                     $playerGR->points = -1 * (int)($ally_points/10);
+                    $playerGR->points = -1 * (int)($ally_points/10);
                 }
                 else {
                     $playerGR->points = -1 * ($wol + $gvc);
@@ -325,7 +325,8 @@ class ApiLadderController extends Controller
 
             $playerGR->player->doTierStuff($history);
             $playerGR->save();
-            if ($playerGR->player->points($history) < 0)
+            $pc = $playerGR->player->playerCache($history);
+            if ($pc === null || $pc->points < 0)
             {
                 $playerGR->points = 0;
                 $playerGR->save();
@@ -398,8 +399,8 @@ class ApiLadderController extends Controller
                 $rg["url"] = "/ladder/" . $date . "/" . $request->game . "/games/" . $rg->id;
                 $rg["map_url"] = "/images/maps/". $request->game . "/" . $rg->hash . ".png";
                 $rg["players"] = $rg->playerGameReports()
-                               ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
-                               ->get();
+                                    ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
+                                    ->get();
 
                 foreach($rg["players"] as $p)
                 {
@@ -428,7 +429,7 @@ class ApiLadderController extends Controller
                     "full" => $history->ladder->name,
                     "abbreviation" => $history->ladder->abbreviation,
                     "ends" => $history->ends,
-                    "players" => $this->ladderService->getLadderPlayers($history->short, $history->ladder->game, 1, false)->splice(0,2)
+                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0,2)
                 ];
             }
         }
@@ -439,9 +440,9 @@ class ApiLadderController extends Controller
     public function reRunDisconnectionPoints()
     {
         $grs = \App\GameReport::where('game_reports.created_at','>','2018-03-01 00:00:00')
-              ->where('disconnected','=',true)->where('points','>',0)
-              ->join('player_game_reports', 'player_game_reports.game_report_id', '=', 'game_reports.id')
-              ->orderBy('game_reports.id','ASC')->select('game_reports.*')->get();
+                              ->where('disconnected','=',true)->where('points','>',0)
+                              ->join('player_game_reports', 'player_game_reports.game_report_id', '=', 'game_reports.id')
+                              ->orderBy('game_reports.id','ASC')->select('game_reports.*')->get();
 
         foreach ($grs as $gr)
         {
@@ -454,9 +455,9 @@ class ApiLadderController extends Controller
     {
         $ladder = \App\Ladder::find($ladderId);
         $qmMapSides = \App\QmMatchPlayer::select('map_sides')
-            ->where('ladder_id', '=', $ladderId)
-            ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
-            ->get();
+                                        ->where('ladder_id', '=', $ladderId)
+                                        ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
+                                        ->get();
 
         $map_vetos_raw = [];
         foreach ($qmMapSides as $ms)
@@ -491,11 +492,11 @@ class ApiLadderController extends Controller
     {
         $ladder = \App\Ladder::find($ladderId);
         $qmMapSides = \App\QmMatchPlayer::select('map_sides')
-            ->where('ladder_id', '=', $ladderId)
-            ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
-            ->groupBy('player_id')
-            ->orderBy('id', 'desc')
-            ->get();
+                                        ->where('ladder_id', '=', $ladderId)
+                                        ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
+                                        ->groupBy('player_id')
+                                        ->orderBy('id', 'desc')
+                                        ->get();
 
         $map_vetos_raw = [];
         foreach ($qmMapSides as $ms)
