@@ -280,6 +280,8 @@ class ApiQuickMatchController extends Controller
             {
                 $history = $ladder->currentHistory();
                 $pc = $player->playerCache($history->id);
+                $points = 0;
+
                 if ($pc !== null)
                     $points = $pc->points;
 
@@ -288,7 +290,6 @@ class ApiQuickMatchController extends Controller
                     $qEntry = $qmPlayer->qEntry;
                     $qEntry->touch();
 
-                    $points = 0;
 
                     if ($qEntry->ladder_history_id != $history->id)
                     {

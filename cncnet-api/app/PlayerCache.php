@@ -17,6 +17,20 @@ class PlayerCache extends Model {
         return $this->belongsTo('App\Player');
     }
 
+    public function rank()
+    {
+        $players = PlayerCache::where('ladder_history_id', '=', $this->history->id)->orderBy('points', 'asc')->get();
+        $count = 1;
+
+        foreach ($players as $player)
+        {
+            if ($player->id = $this->id)
+                return $count;
+            $count++;
+        }
+        return 0;
+    }
+
     public function mark()
     {
         $pcu = \App\PlayerCacheUpdate::where('player_cache_id', '=', $this->id)->first();

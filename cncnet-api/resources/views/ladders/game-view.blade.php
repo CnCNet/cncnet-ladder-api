@@ -198,8 +198,8 @@
                 @foreach($playerGameReports as $pgr)
                     <?php $gameStats = $pgr->stats; ?>
                     <?php $player = $pgr->player()->first() ?>
-                    <?php $rank = $player->rank($history, $player->username); ?>
-                    <?php $points = $player->playerPoints($history, $player->username); ?>
+                    <?php $rank =  $player->playerCache($history->id) ?  $player->playerCache($history->id)->rank() : 0 ?>
+                    <?php $points = $player->playerCache($history->id) ?  $player->playerCache($history->id)->points : 0 ?>
 
                 <div class="col-md-6">
                     <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/player/{{ $player->username }}" class="profile-link">

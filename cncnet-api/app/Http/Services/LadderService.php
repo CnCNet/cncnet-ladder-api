@@ -198,37 +198,39 @@ class LadderService
         if ($player === null)
             return [ "error" => "No such player" ];
 
-        $rank = $player->rank($history);
-        $percentile = $player->percentile();
+        $playerCache = $player->playerCache($history->id);
 
-        $playerQuery = $player->playerGames()->where("ladder_history_id", "=", $history->id);
-
-        $points = $playerQuery->sum("points");
-        $gamesCount = $playerQuery->count();
-
-        $fpsCount = $playerQuery->where('fps', '>', 25)->count();
-        $averageFps = floor($fpsCount ? $playerQuery->where('fps', '>', 25)->sum('fps') / $fpsCount : 0);
-
-        $gamesWon = $player->playerGames()->where("ladder_history_id", "=", $history->id)
-                                          ->where('won', true)->count();
-        $gamesLost = ($gamesCount - $gamesWon);
-
-        $badge = $player->badge();
-        $playerRating = \App\PlayerRating::where("player_id", "=", $player->id)->first()->rating;
+        if ($playerCache == null)
+        {
+            return [
+                "id" => $player->id,
+                "player" => $player,
+                "username" => $player->username,
+                "points" => 0,
+                "rank" => 0,
+                "game_count" => 0,
+                "games_won" => 0,
+                "games_lost" => 0,
+                "average_fps" => 0,
+                "badge" => \App\Player::getBadge(0),
+                "rating" => 1200,
+                "percentile" => 0
+            ];
+        }
 
         return [
-            "id" => $player->id,
+            "id" => $playerCache->player_id,
             "player" => $player,
             "username" => $player->username,
-            "points" => $points,
-            "rank" => $rank,
-            "game_count" => $gamesCount,
-            "games_won" => $gamesWon,
-            "games_lost" => $gamesLost,
-            "average_fps" => $averageFps,
-            "badge" => $badge,
-            "rating" => $playerRating,
-            "percentile" => $percentile
+            "points" => $playerCache->points,
+            "rank" => $playerCache->rank(),
+            "games_won" => $playerCache->wins,
+            "game_count" => $playerCache->games,
+            "games_lost" => $playerCache->games - $playerCache->wins,
+            "average_fps" => $playerCache->fps,
+            "badge" => \App\Player::getBadge($playerCache->percentile),
+            "rating" => $playerCache->rating,
+            "percentile" => $playerCache->percentile,
         ];
     }
 
