@@ -176,7 +176,7 @@ class ApiLadderController extends Controller
                 $wash->save();
                 $bestReport->save();
                 $this->ladderService->undoPlayerCache($bestReport);
-                $this->ladderService->updatePlayerCache($gameReport);
+                $this->ladderService->updatePlayerCache($washReport);
                 return;
             }
 
