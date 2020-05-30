@@ -328,12 +328,12 @@
                         </div>
                         <div class="row">
                             @foreach($playerGameReports as $pgr)
-                                <div class="col-md-6">
-                                    <h5>{{ $pgr->player->username }}</h5>
+                                <div class="col-md-6 admin-data">
+                                    <h4>{{ $pgr->player->username }}</h5>
 
                                     @foreach($qmConnectionStats as $qmStat)
                                         @if($pgr->player_id == $qmStat->player_id)
-                                            <h5>{{ $qmStat->ipAddress->address }}:{{ $qmStat->port }} {{ $qmStat->rtt }}ms</h5>
+                                            <h5>{{ $qmStat->ipAddress->address }}:{{ $qmStat->port }} <strong>{{ $qmStat->rtt }}ms</strong></h5>
                                         @endif
                                     @endforeach
                                     <hr>
@@ -347,7 +347,7 @@
                                         @if($qmp->player_id == $pgr->player_id)
                                             <h5>Version: {{ $qmp->version->value }} {{ $qmp->platform->value }}</h5>
                                             <h5>Queue Time: {{ $game->qmMatch->created_at->diffInMinutes($qmp->created_at) }} Minutes</h5>
-                                            <h5>DDraw Hash: @if($qmp->ddraw){{ $qmp->ddraw->value }}@endif </h5>
+                                            <h5 style="overflow-wrap: break-word;">DDraw Hash: @if($qmp->ddraw){{ $qmp->ddraw->value }}@endif </h5>
                                         @endif
                                     @endforeach
                                 </div>
