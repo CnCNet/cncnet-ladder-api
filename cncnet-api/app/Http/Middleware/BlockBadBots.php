@@ -14,7 +14,8 @@ class BlockBadBots {
     public function handle($request, Closure $next)
     {
         if (preg_match('/Seekport Crawler/', $request->header('User-Agent'))
-            || preg_match('/SemrushBot/', $request->header('User-Agent')))
+            || preg_match('/SemrushBot/', $request->header('User-Agent'))
+            || preg_match('/MJ12bot/', $request->header('User-Agent')))
         {
             return response('Unauthorized', 401);
         }
