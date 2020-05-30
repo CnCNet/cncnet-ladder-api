@@ -117,7 +117,6 @@ Route::group(['prefix' => 'api/v1/'], function ()
 
     // Debug
     Route::get('/ladder/raw/{gameId}', 'ApiLadderController@viewRawGame');
-    Route::get('/ladder/elo/{gameId}', 'ApiLadderController@awardPoints');
 
     // QuickMatch Endpoints
     Route::get('/qm/version/{platform}', 'ApiQuickMatchController@clientVersion');
