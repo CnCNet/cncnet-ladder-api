@@ -306,7 +306,7 @@
                                     </h5>
                                 </div>
                                 <div class="col-md-2  admin-data">
-                                    <h5>{{ $thisGameReport->pings_sent }}/{{ $thisGameReport->pings_received }}</h5>
+                                    <h5>{{ $thisGameReport->pings_received }}/{{ $thisGameReport->pings_sent }}</h5>
                                 </div>
                                 <div class="col-md-2  admin-data">
                                     <h5>@if($thisGameReport->oos) Yes @else No @endif</h5>
@@ -330,14 +330,24 @@
                             @foreach($playerGameReports as $pgr)
                                 <div class="col-md-6">
                                     <h5>{{ $pgr->player->username }}</h5>
+
                                     @foreach($qmConnectionStats as $qmStat)
                                         @if($pgr->player_id == $qmStat->player_id)
                                             <h5>{{ $qmStat->ipAddress->address }}:{{ $qmStat->port }} {{ $qmStat->rtt }}ms</h5>
                                         @endif
                                     @endforeach
+                                    <hr>
                                     @foreach($qmMatchStates as $qmState)
                                         @if ($qmState->player_id == $pgr->player_id)
                                             <h5>{{ $qmState->created_at }} <strong>{{ $qmState->state->name }}</strong></h5>
+                                        @endif
+                                    @endforeach
+                                    <hr>
+                                    @foreach($qmMatchPlayers as $qmp)
+                                        @if($qmp->player_id == $pgr->player_id)
+                                            <h5>Version: {{ $qmp->version->value }} {{ $qmp->platform->value }}</h5>
+                                            <h5>Queue Time: {{ $game->qmMatch->created_at->diffInMinutes($qmp->created_at) }} Minutes</h5>
+                                            <h5>DDraw Hash: @if($qmp->ddraw){{ $qmp->ddraw->value }}@endif </h5>
                                         @endif
                                     @endforeach
                                 </div>

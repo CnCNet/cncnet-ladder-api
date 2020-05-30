@@ -269,7 +269,7 @@ class ApiQuickMatchController extends Controller
                 }
 
                 if ($request->ddraw)
-                    $qmPlayer->ddraw_id = \App\PlayerDataString::findValue($request->ddraw);
+                    $qmPlayer->ddraw_id = \App\PlayerDataString::findValue($request->ddraw)->id;
 
 
                 // Save user IP Address

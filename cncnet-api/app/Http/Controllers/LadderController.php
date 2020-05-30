@@ -130,6 +130,16 @@ class LadderController extends Controller
         else
             $gameReport = $game->report->first();
 
+        $qmMatchStates = [];
+        $qmConnectionStats = [];
+        $qmMatchPlayers = [];
+        if ($userIsMod)
+        {
+            $qmMatchStates = $game->qmMatch ? $game->qmMatch->states : [];
+            $qmMatchPlayers = $game->qmMatch ? $game->qmMatch->players : [];
+            $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
+        }
+
         return view('ladders.game-view',
         array(
             "game" => $game,
@@ -143,8 +153,9 @@ class LadderController extends Controller
             "userIsMod" => $userIsMod,
             "date" => $date,
             "cncnetGame" => $cncnetGame,
-            "qmMatchStates" => $game->qmMatch ? $game->qmMatch->states : [],
-            "qmConnectionStats" => $game->qmMatch ? $game->qmMatch->qmConnectionStats : [],
+            "qmMatchStates" => $qmMatchStates,
+            "qmConnectionStats" => $qmConnectionStats,
+            "qmMatchPlayers" => $qmMatchPlayers,
         ));
     }
 
