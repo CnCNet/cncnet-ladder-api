@@ -18,8 +18,14 @@ class GameReport extends Model {
     }
     public function reporter()
     {
-        return $this->hasOne('App\Player');
+        return $this->belongsTo('App\Player', 'player_id');
     }
+
+    public function player()
+    {
+        return $this->belongsTo('App\Player');
+    }
+
 
     public function disconnected()
     {

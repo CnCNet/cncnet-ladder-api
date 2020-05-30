@@ -38,7 +38,6 @@
     <section class="game-statistics">
         <div class="game-details">
             <div class="container" style="position:relative;padding: 60px 0;">
-
                 <? $hasWash = false; ?>
                 @if($gameReport !== null)
                 @foreach($allGameReports as $thisGameReport)
@@ -150,6 +149,11 @@
                     <div>
                         <strong>Average FPS:</strong> {{ $gameReport->fps }}
                     </div>
+                    @if($userIsMod)
+                        <div>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#adminData">Admin Data</button>
+                        </div>
+                    @endif
                 </div>
                 @endif
             </div>
@@ -253,4 +257,100 @@
         </div>
     </section>
 </div>
+
+@if($userIsMod)
+<div class="modal fade" id="adminData" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Admin Data</h3>
+            </div>
+            <div class="modal-body clearfix">
+                <div class="container-fluid">
+                    @if($gameReport !== null)
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <h4>Game Reports</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-1 admin-data">
+                            </div>
+                            <div class="col-md-3 admin-data">
+                            </div>
+                            <div class="col-md-2 admin-data">
+                                <h5>Pings</h5>
+                            </div>
+                            <div class="col-md-2 admin-data">
+                                <h5>Recon</h5>
+                            </div>
+                            <div class="col-md-2 admin-data">
+                                <h5>Finished</h5>
+                            </div>
+                        </div>
+                        @foreach($allGameReports as $thisGameReport)
+                            <div class="row">
+                                <div class="col-md-1 admin-data">
+                                    @if($thisGameReport->best_report)
+                                        <h5><i class="fa fa-check-square fa-fw" style="color: #fff;"></i></h5>
+                                    @else
+                                        <h5><i class="fa fa-square fa-fw" style="color: #fff;"></i></h5>
+                                    @endif
+                                </div>
+                                <div class="col-md-3 admin-data">
+                                    <h5>@if($thisGameReport->player){{ $thisGameReport->reporter->username }}@endif
+                                        @if($thisGameReport->manual_report)
+                                            <i class="fa fa-align-justify fa-fw" style="color: #fff;"></i>
+                                        @endif
+                                    </h5>
+                                </div>
+                                <div class="col-md-2  admin-data">
+                                    <h5>{{ $thisGameReport->pings_sent }}/{{ $thisGameReport->pings_received }}</h5>
+                                </div>
+                                <div class="col-md-2  admin-data">
+                                    <h5>@if($thisGameReport->oos) Yes @else No @endif</h5>
+                                </div>
+                                <div class="col-md-2  admin-data">
+                                    <h5>@if($thisGameReport->finished)Yes @else No @endif</h5>
+                                </div>
+                                <div class="col-md-2 admin-data">
+                                    <h5><a href="/dmp/{{ $game->id }}.{{ $history->ladder->id }}.{{ $thisGameReport->player_id }}.dmp">dmp</a></h5>
+                                </div>
+                            </div>
+                        @endforeach
+                        <hr>
+
+                        <div class="row">
+                            <div class="col-md-12 text-center">
+                                <h4>Connection Stats</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @foreach($playerGameReports as $pgr)
+                                <div class="col-md-6">
+                                    <h5>{{ $pgr->player->username }}</h5>
+                                    @foreach($qmConnectionStats as $qmStat)
+                                        @if($pgr->player_id == $qmStat->player_id)
+                                            <h5>{{ $qmStat->ipAddress->address }}:{{ $qmStat->port }} {{ $qmStat->rtt }}ms</h5>
+                                        @endif
+                                    @endforeach
+                                    @foreach($qmMatchStates as $qmState)
+                                        @if ($qmState->player_id == $pgr->player_id)
+                                            <h5>{{ $qmState->created_at }} <strong>{{ $qmState->state->name }}</strong></h5>
+                                        @endif
+                                    @endforeach
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+            <div class="modal-footer" style="border:none;">
+                <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 @endsection

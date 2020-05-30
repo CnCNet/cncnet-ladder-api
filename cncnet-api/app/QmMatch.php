@@ -24,4 +24,9 @@ class QmMatch extends Model {
     {
         return $this->hasMany('App\QmMatchState');
     }
+
+    public function qmConnectionStats()
+    {
+        return $this->hasMany('\App\QmConnectionStats');
+    }
 }

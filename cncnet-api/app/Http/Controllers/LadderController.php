@@ -143,6 +143,8 @@ class LadderController extends Controller
             "userIsMod" => $userIsMod,
             "date" => $date,
             "cncnetGame" => $cncnetGame,
+            "qmMatchStates" => $game->qmMatch ? $game->qmMatch->states : [],
+            "qmConnectionStats" => $game->qmMatch ? $game->qmMatch->qmConnectionStats : [],
         ));
     }
 

@@ -75,4 +75,9 @@ class Game extends Model
         $game->save();
         return $game;
     }
+
+    public function qmMatch()
+    {
+        return $this->belongsTo('\App\QmMatch');
+    }
 }

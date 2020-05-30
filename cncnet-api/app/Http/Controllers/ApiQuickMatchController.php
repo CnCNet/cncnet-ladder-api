@@ -180,6 +180,21 @@ class ApiQuickMatchController extends Controller
                         $qmState->qm_match_id = $qmMatch->id;
                         $qmState->state_type_id = \App\StateType::findByName($request->status)->id;
                         $qmState->save();
+
+                        if ($request->peers !== null)
+                        {
+                            foreach($request->peers as $peer)
+                            {
+                                $con = new \App\QmConnectionStats;
+                                $con->qm_match_id = $qmMatch->id;
+                                $con->player_id = $player->id;
+                                $con->peer_id = $peer['id'];
+                                $con->ip_address_id = \App\IpAddress::getID($peer['address']);
+                                $con->port = $peer['port'];
+                                $con->rtt = $peer['rtt'];
+                                $con->save();
+                            }
+                        }
                         break;
                     }
                     $qmMatch->save();
@@ -253,7 +268,7 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer->platform_id = \App\PlayerDataString::findValue($request->platform)->id;
                 }
 
-                if ($request->draw)
+                if ($request->ddraw)
                     $qmPlayer->ddraw_id = \App\PlayerDataString::findValue($request->ddraw);
 
 
