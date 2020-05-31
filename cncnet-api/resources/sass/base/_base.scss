@@ -482,7 +482,76 @@ hr
 {
     display: block;
 }
-.countdown {
-    background-color: red;
+
+@keyframes animateCountDown
+{
+    0%{
+        background-color: #002982f5;
+    }
+    25% {
+        background-color: #530082f5;
+    }
+    50%{
+        background-color: #821b00f5;
+    }
+    75%{
+        background-color: #ff00c8bf;
+    }
+    100%{
+        background-color: #002982f5;
+    }
+}
+
+.countdown 
+{
+    transition: ease-in 350ms;
+    animation: animateCountDown 10s forwards infinite;
+    background-color: #002982f5;
     padding: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    @media(min-width: $md-width)
+    {
+        flex-direction: row;
+    }
+
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+}
+
+.countdown-hidden 
+{
+    opacity: 0;
+    height: 0;
+    visibility: hidden;
+}
+
+.countdown h1 
+{
+    @media(min-width: $md-width)
+    {
+        margin: 0;
+    }
+
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+.countdown .close-countdown 
+{
+    display: flex;
+    width: 100px;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+}
+
+.countdown .close-countdown i 
+{
+    margin: 0;
 }
