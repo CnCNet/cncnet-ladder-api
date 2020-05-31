@@ -40,6 +40,7 @@ class LeagueChampionsController extends Controller
         return view("champions.index",
         array
         (
+            "abbreviation" => $game,
             "ladders_winners" => $prevWinners,
             "ladders" => $this->ladderService->getLatestLadders()
         ));

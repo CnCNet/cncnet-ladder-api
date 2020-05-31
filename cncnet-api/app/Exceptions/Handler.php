@@ -2,6 +2,7 @@
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
 
 class Handler extends ExceptionHandler {
 
@@ -24,6 +25,11 @@ class Handler extends ExceptionHandler {
 	 */
 	public function report(Exception $e)
 	{
+        if ($e instanceof TokenMismatchException)
+        {
+            return;
+        }
+
 		return parent::report($e);
 	}
 
@@ -36,6 +42,11 @@ class Handler extends ExceptionHandler {
 	 */
 	public function render($request, Exception $e)
 	{
+        if ($e instanceof TokenMismatchException)
+        {
+            return redirect($request->fullUrl())->with('csrf_error',"Oops! Seems you couldn't submit form for a long time. Please try again.");
+        }
+
 		return parent::render($request, $e);
 	}
 

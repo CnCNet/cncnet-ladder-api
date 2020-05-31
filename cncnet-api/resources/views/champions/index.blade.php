@@ -29,7 +29,7 @@
             <div class="col-md-12 text-center">
             <?php
                 $img = "";
-                switch($ladders_winners[0]["abbreviation"])
+                switch($abbreviation)
                 {
                     case "yr":
                         $img = "//cncnet.org/images/games/yuris-revenge/logo.png";

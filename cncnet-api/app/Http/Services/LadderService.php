@@ -58,7 +58,7 @@ class LadderService
 
         $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
 
-        if ($ladder === null) return [];
+        if ($ladder === null) return collect();
 
         return \App\LadderHistory::where("ladder_history.starts", ">=", $start)
             ->where("ladder_history.ladder_id", "=", $ladder->id)
