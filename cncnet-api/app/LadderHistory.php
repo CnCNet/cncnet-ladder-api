@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class LadderHistory extends Model
 {
 	protected $table = 'ladder_history';
+    protected $dates = [ 'starts', 'ends' ];
     public $timestamps = false;
 
     public function ladder()

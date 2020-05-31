@@ -110,6 +110,7 @@
         </div>
     </footer>
 
+    @yield('footer')
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="/js/cncnet-online.js"></script>

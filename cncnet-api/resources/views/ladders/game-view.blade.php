@@ -346,7 +346,7 @@
                                     @foreach($qmMatchPlayers as $qmp)
                                         @if($qmp->player_id == $pgr->player_id)
                                             <h5>Version: {{ $qmp->version->value }} {{ $qmp->platform->value }}</h5>
-                                            <h5>Queue Time: {{ $game->qmMatch->created_at->diffInMinutes($qmp->created_at) }} Minutes</h5>
+                                            <h5>Queue Time: {{ $game->qmMatch->created_at->diff($qmp->created_at)->format('%i') }} Minutes</h5>
                                             <h5 style="overflow-wrap: break-word;">DDraw Hash: @if($qmp->ddraw){{ $qmp->ddraw->value }}@endif </h5>
                                         @endif
                                     @endforeach
@@ -364,3 +364,7 @@
 </div>
 @endif
 @endsection
+
+@if ($history->ends > Carbon\Carbon::now())
+@include('components.countdown', ['target' => $history->ends ])
+@endif
