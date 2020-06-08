@@ -11,9 +11,10 @@ class Kernel extends ConsoleKernel {
      * @var array
      */
     protected $commands = [
-	'App\Console\Commands\PruneRawLogs',
+        'App\Console\Commands\PruneRawLogs',
         'App\Console\Commands\PruneOldStats',
         'App\Console\Commands\UpdatePlayerCache',
+        'App\Console\Commands\GenerateBulkRecords'
     ];
 
     /**

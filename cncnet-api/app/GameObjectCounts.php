@@ -14,6 +14,6 @@ class GameObjectCounts extends Model {
 
     public function countableGameObject()
     {
-        return $this->hasOne('App\CountableGameObject', 'id', 'countable_game_objects_id');
+        return $this->belongsTo('App\CountableGameObject', 'countable_game_objects_id');
     }
 }

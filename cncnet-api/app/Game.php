@@ -40,7 +40,7 @@ class Game extends Model
 
     public function map()
     {
-        return $this->belongsTo('App\Map', 'hash');
+        return $this->belongsTo('App\Map', 'hash', 'hash');
     }
 
     public function allReports()
@@ -50,7 +50,7 @@ class Game extends Model
 
     public function report()
     {
-        return $this->allReports()->where('id', $this->game_report_id);
+        return $this->belongsTo('App\GameReport', 'game_report_id');
     }
 
     public function playerGameReports()
