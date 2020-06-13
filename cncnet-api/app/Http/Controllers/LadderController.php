@@ -128,7 +128,7 @@ class LadderController extends Controller
         if ($reportId !== null)
             $gameReport = $game->allReports()->where('game_reports.id', '=', $reportId)->first();
         else
-            $gameReport = $game->report->first();
+            $gameReport = $game->report;
 
         $qmMatchStates = [];
         $qmConnectionStats = [];
