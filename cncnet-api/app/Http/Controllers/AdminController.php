@@ -6,6 +6,8 @@ use \App\Http\Services\LadderService;
 use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
 use \App\User;
+use \App\MapPool;
+use \App\Ladder;
 
 class AdminController extends Controller
 {
@@ -33,11 +35,12 @@ class AdminController extends Controller
 
         $ladders = $this->ladderService->getLatestLadders();
         $rule = $ladder->qmLadderRules;
-        $qmMaps = $ladder->qmMaps()->valid()->orderby('bit_idx', 'ASC')->get();
-        $maps = \App\Map::where('ladder_id', '=', $ladder->id)->orderby('name', 'ASC')->get();
+        $mapPools = $rule->mapPools;
+        $qmMaps = $ladder->qmLadderRules->mapPool->maps;
+        $maps = $ladder->maps;
         $user = $request->user();
 
-        return view("admin.ladder-setup", compact('ladders', 'ladder', 'rule', 'qmMaps', 'maps', 'user'));
+        return view("admin.ladder-setup", compact('ladders', 'ladder', 'rule', 'mapPools', 'qmMaps', 'maps', 'user'));
     }
 
     public function postLadderSetupRules(Request $request)
@@ -180,7 +183,7 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
-        $qmMap->ladder_id = $request->ladder_id;
+        $qmMap->map_pool_id = $request->map_pool_id;
         $qmMap->map_id = $request->map_id;
         $qmMap->description = $request->description;
         $qmMap->admin_description = $request->admin_description;
@@ -317,17 +320,96 @@ class AdminController extends Controller
             $request->file('mapImage')->move($filepath, $filename);
         }
 
+        return redirect()->back()->withInput();
+    }
+
+    public function removeMapPool(Request $request, $ladderId, $mapPoolId)
+    {
+        $ladder = Ladder::find($ladderId);
+        $mapPool = MapPool::find($mapPoolId);
+
+        $mapPool->delete();
+        $request->session()->flash('success', "Map Pool Deleted");
+        return redirect("/admin/setup/{$ladder->id}/edit");
+    }
+
+    public function editMapPool(Request $request, $ladderId, $mapPoolId)
+    {
+        $ladder = Ladder::find($ladderId);
+        $mapPool = MapPool::find($mapPoolId);
+
+        return view("admin.edit-map-pool",
+                    [ 'ladderUrl' => "/admin/setup/{$ladder->id}/edit",
+                      'mapPool' => $mapPool,
+                      'ladderAbbrev' => $ladder->abbreviation,
+                      'maps' => $mapPool->maps()->orderBy('bit_idx')->get(),
+                      'rule' => $ladder->qmLadderRules,
+                      'sides' => $ladder->sides,
+                      'ladderMaps' => $ladder->maps
+                    ]);
+    }
+
+    public function cloneMapPool(Request $request, $ladderId)
+    {
+        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
+        $mapPool = new MapPool;
+        $mapPool->name = $request->name;
+        $mapPool->qm_ladder_rules_id = $qmLadderRules->id;
+        $mapPool->save();
+
+        $prototype = MapPool::find($request->map_pool_id);
+
+        foreach ($prototype->maps as $map)
+        {
+            $new_map = $map->replicate();
+            $new_map->map_pool_id = $mapPool->id;
+            $new_map->save();
+        }
+        $request->session()->flash('success', "Map Pool Cloned");
+        return redirect("/admin/setup/{$ladderId}/mappool/{$mapPool->id}/edit");
+    }
+
+    public function newMapPool(Request $request, $ladderId)
+    {
+        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
+        $mapPool = new MapPool;
+        $mapPool->name = $request->name;
+        $mapPool->qm_ladder_rules_id = $qmLadderRules->id;
+        $mapPool->save();
+
+        return redirect("/admin/setup/{$ladderId}/mappool/{$mapPool->id}/edit");
+    }
+
+    public function changeMapPool(Request $request, $ladderId)
+    {
+        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
+
+        $qmLadderRules->map_pool_id = $request->map_pool_id;
+        $qmLadderRules->save();
+
+        $request->session()->flash('success', "Map Pool Changed");
         return redirect()->back();
     }
 
-    public function removeQuickMatchMap(Request $request)
+    public function renameMapPool(Request $request, $ladderId, $mapPoolId)
+    {
+        $mapPool = MapPool::find($mapPoolId);
+        $mapPool->name = $request->name;
+        $mapPool->save();
+
+        $request->session()->flash('success', "Map Pool Renamed");
+        return redirect()->back();
+    }
+
+    public function removeQuickMatchMap(Request $request, $ladderId, $mapPoolId)
     {
         $qmMap = \App\QmMap::find($request->map_id);
+        $mapPool = MapPool::find($mapPoolId);
 
         if ($qmMap !== null)
         {
             \App\QmMap::valid()
-                      ->where('ladder_id', '=', $request->ladder_id)
+                      ->where('map_pool_id', '=', $request->map_pool_id)
                       ->where('bit_idx', '>', $qmMap->bit_idx)
                       ->decrement('bit_idx');
             $qmMap->valid = false;
@@ -338,45 +420,49 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function moveDownQuickMatchMap(Request $request, $mapId)
+    public function moveDownQuickMatchMap(Request $request, $ladderId, $mapPoolId)
     {
-        $qmMap = \App\QmMap::find($mapId);
+        $qmMap = \App\QmMap::find($request->id);
+        $mapPool = MapPool::find($mapPoolId);
+
         if ($qmMap !== null)
         {
-            if ($qmMap->bit_idx < 31)
+            $mapBelow = $mapPool->maps()->where('bit_idx', $qmMap->bit_idx + 1)->first();
+            if ($mapBelow === null)
             {
-                $mapBelow = \App\QmMap::valid()
-                                      ->where('ladder_id', '=', $qmMap->ladder_id)
-                                      ->where('bit_idx', '=', $qmMap->bit_idx + 1)
-                                      ->first();
-                $mapBelow->bit_idx--;
-                $mapBelow->save();
-
-                $qmMap->bit_idx++;
-                $qmMap->save();
+                $request->session()->flash('error', "Can't move map that direction");
+                return redirect()->back();
             }
+
+            $mapBelow->bit_idx--;
+            $mapBelow->save();
+
+            $qmMap->bit_idx++;
+            $qmMap->save();
         }
         $request->session()->flash('success', "Map Moved");
         return redirect()->back();
     }
 
-    public function moveUpQuickMatchMap(Request $request, $mapId)
+    public function moveUpQuickMatchMap(Request $request, $ladderId, $mapPoolId)
     {
-        $qmMap = \App\QmMap::find($mapId);
+        $qmMap = \App\QmMap::find($request->id);
+        $mapPool = MapPool::find($mapPoolId);
+
         if ($qmMap !== null)
         {
-            if ($qmMap->bit_idx > 0)
+            $mapAbove = $mapPool->maps()->where('bit_idx', $qmMap->bit_idx - 1)->first();
+            if ($mapAbove === null)
             {
-                $mapAbove = \App\QmMap::where('valid', true)
-                                      ->where('ladder_id', '=', $qmMap->ladder_id)
-                                      ->where('bit_idx', '=', $qmMap->bit_idx - 1)
-                                      ->first();
-                $mapAbove->bit_idx++;
-                $mapAbove->save();
-
-                $qmMap->bit_idx--;
-                $qmMap->save();
+                $request->session()->flash('error', "Can't move map that direction");
+                return redirect()->back();
             }
+
+            $mapAbove->bit_idx++;
+            $mapAbove->save();
+
+            $qmMap->bit_idx--;
+            $qmMap->save();
         }
         $request->session()->flash('success', "Map Moved");
         return redirect()->back();

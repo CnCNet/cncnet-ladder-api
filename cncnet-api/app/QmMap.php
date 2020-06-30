@@ -27,11 +27,11 @@ class QmMap extends Model {
 
     public static function findMapsByLadder($id)
     {
-        $qmMaps = \App\QmMap::valid()->where('ladder_id', $id)->orderby('bit_idx', 'ASC')->get();
-
+        $ladder = \App\Ladder::find($id);
+        $qmMaps = $ladder->qmLadderRules->mapPool->maps;
         return $qmMaps->map( function($qmMap)
         {
-            $qmMap["hash"] = $qmMap->map()->first()->hash;
+            $qmMap["hash"] = $qmMap->map->hash;
             $qmMap["allowed_sides"] = array_map('intval', explode(',', $qmMap->allowed_sides));
             return $qmMap;
         });

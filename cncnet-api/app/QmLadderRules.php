@@ -10,6 +10,16 @@ class QmLadderRules extends Model {
         return $this->belongsTo('\App\Ladder');
     }
 
+    public function mapPool()
+    {
+        return $this->belongsTo('\App\MapPool');
+    }
+
+    public function mapPools()
+    {
+        return $this->hasMany('\App\MapPool');
+    }
+
     public function all_sides()
     {
         return explode(',', $this->all_sides);

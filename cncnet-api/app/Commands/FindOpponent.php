@@ -143,7 +143,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
             // Randomly select a map
             $common_maps = array();
 
-            $qmMaps = \App\QmMap::valid()->where('ladder_id', $qmPlayer->ladder_id)->get();
+            $qmMaps = $ladder_rules->mapPool->maps;
             foreach ($qmMaps as $qmMap)
             {
                 $match = true;
