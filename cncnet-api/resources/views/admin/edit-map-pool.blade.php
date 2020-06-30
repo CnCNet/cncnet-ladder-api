@@ -42,7 +42,7 @@
                             <select id="mapPoolSelector" name="map_id" size="12" class="form-control">
                                 <?php $lastmap=null ?>
                                 @foreach($maps as $map)
-                                    <option value="{{ $map->id }}">
+                                    <option value="{{ $map->id }}" {{ old('map_selected') == $map->id ? "selected" : "" }}>
                                         {{ $map->admin_description }}
                                     </option>
                                     <?php $lastmap = $map ?>
@@ -132,7 +132,7 @@
                                     <div class="form-group col-md-4">
                                         <label for="{{ $map->id }}_map"> map </label>
                                         <select id="{{ $map->id }}_map" name="map_id" class="form-control map-selector"></select>
-                                        <button type="button" class="btn btn-primary btn-md" id="editMaps" data-toggle="modal" data-target="#editLadderMap"> New </button>
+                                        <button type="button" class="btn btn-primary btn-md" id="editMaps" data-toggle="modal" data-target="#editLadderMap"> Edit/New </button>
                                     </div>
 
                                     <div class="form-group col-md-4">
@@ -561,20 +561,20 @@
                             <form method="POST" action="remmap">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                 <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
-
                                 <p style="color: #fff" >Map Hashes</p>
 
                                 <select id="ladderMapSelector" name="map_id" size="6" class="form-control map_pool">
-                                    <option value="new">&lt;new></option>
                                     @foreach($ladderMaps as $map)
                                         <option value="{{ $map->id }}"> {{ $map->name }} </option>
                                     @endforeach
+                                    <option value="new">&lt;new></option>
                                 </select>
                             </form>
                             <form method="POST" action="../../editmap" class="map" id="ladderMapEdit" enctype="multipart/form-data">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                 <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
                                 <input type="hidden" id="ladderMapId" name="map_id" value="new" />
+                                <input type="hidden" id="mapSelected" name="map_selected" value="" />
 
                                 <div class="form-group">
                                     <label for="text_map_new_name"> Name </label>
@@ -612,33 +612,44 @@
     <script type="text/javascript">
 
      let maps = {
-        "new": { "map_id": "new" },
-        @foreach($maps as $map)
-            @if ($map->id != "new")
-                "{{ $map->id }}": { "map_id": "{{$map->map_id}}" },
-            @endif
-        @endforeach
+         "new": { "map_id": "new" },
+         @foreach($maps as $map)
+         @if ($map->id != "new")
+         "{{ $map->id }}": { "map_id": "{{$map->map_id}}" },
+         @endif
+         @endforeach
      };
      let ladderMaps = {
-        "new": { "ladder_id": "{{$rule->ladder_id}}", "name": "new map", "hash": "" },
-        @foreach($ladderMaps as $mph)
-            "{{$mph->id}}": { "ladder_id": "{{$mph->ladder_id}}", "name": {!!json_encode($mph->name)!!}, "hash": {!! json_encode($mph->hash)!!} },
-        @endforeach
-        };
+         @foreach($ladderMaps as $mph)
+         "{{$mph->id}}": { "ladder_id": "{{$mph->ladder_id}}", "name": {!!json_encode($mph->name)!!}, "hash": {!! json_encode($mph->hash)!!} },
+         @endforeach
+         "new": { "ladder_id": "{{$rule->ladder_id}}", "name": "new map", "hash": "" },
+     };
 
      (function () {
-        let mapSels = document.querySelectorAll(".map-selector")
-        for (let i = 0; i < mapSels.length; i++)
-        {
-             mapSels[i].onchange = function ()
+         let mapSels = document.querySelectorAll(".map-selector")
+         for (let i = 0; i < mapSels.length; i++)
              {
-                document.getElementById("mapThumbnail").src = "/images/maps/{{$ladderAbbrev}}/" + ladderMaps[this.value].hash + ".png";
+                 mapSels[i].onchange = function ()
+                 {
+                     document.getElementById("mapThumbnail").src = "/images/maps/{{$ladderAbbrev}}/" + ladderMaps[this.value].hash + ".png";
+                 }
              }
-        }
      })();
 
      (function () {
-         document.getElementById("mapPoolSelector").onchange = function ()
+         document.getElementById("ladderMapSelector").onchange = function () {
+             let ladderMap = ladderMaps[this.value];
+             document.getElementById("ladderMapId").value = this.value;
+             document.getElementById("ladderMapName").value = ladderMap.name;
+             document.getElementById("ladderMapHash").value = ladderMap.hash;
+             document.getElementById("ladderMapThumbnail").src = "/images/maps/{{$ladderAbbrev}}/" + ladderMap.hash +".png"
+         };
+     })();
+
+     (function () {
+         let mps = document.getElementById("mapPoolSelector");
+         mps.onchange = function ()
          {
              document.getElementById("mapThumbnail").src = "/images/maps/{{$ladderAbbrev}}/" + ladderMaps[maps[this.value].map_id].hash + ".png";
              let hideList = document.querySelectorAll("div.map");
@@ -663,18 +674,16 @@
                      mapSel.add(option);
                  }
              }
+             document.getElementById("ladderMapSelector").selectedIndex = document.getElementById(this.value + "_map").selectedIndex;
+             document.getElementById("ladderMapSelector").onchange();
+
              mapSel.value = maps[this.value].map_id;
+             document.getElementById("mapSelected").value = this.value;
          };
+         if (mps.selectedIndex < 0)
+             mps.selectedIndex = 0;
+         mps.onchange();
      })();
 
-     (function () {
-         document.getElementById("ladderMapSelector").onchange = function () {
-             let ladderMap = ladderMaps[this.value];
-             document.getElementById("ladderMapId").value = this.value;
-             document.getElementById("ladderMapName").value = ladderMap.name;
-             document.getElementById("ladderMapHash").value = ladderMap.hash;
-             document.getElementById("ladderMapThumbnail").src = "/images/maps/{{$ladderAbbrev}}/" + ladderMap.hash +".png"
-         };
-     })();
     </script>
 @endsection

@@ -345,7 +345,7 @@ class AdminController extends Controller
                       'maps' => $mapPool->maps()->orderBy('bit_idx')->get(),
                       'rule' => $ladder->qmLadderRules,
                       'sides' => $ladder->sides,
-                      'ladderMaps' => $ladder->maps
+                      'ladderMaps' => $ladder->maps,
                     ]);
     }
 
