@@ -8,6 +8,7 @@ use \Carbon\Carbon;
 use \App\User;
 use \App\MapPool;
 use \App\Ladder;
+use \App\SpawnOptionString;
 
 class AdminController extends Controller
 {
@@ -39,13 +40,39 @@ class AdminController extends Controller
         $qmMaps = $ladder->qmLadderRules->mapPool->maps;
         $maps = $ladder->maps;
         $user = $request->user();
+        $spawnOptions = \App\SpawnOption::all();
 
-        return view("admin.ladder-setup", compact('ladders', 'ladder', 'rule', 'mapPools', 'qmMaps', 'maps', 'user'));
+        return view("admin.ladder-setup", compact('ladders', 'ladder', 'rule', 'mapPools', 'qmMaps', 'maps', 'user', 'spawnOptions'));
     }
 
     public function postLadderSetupRules(Request $request)
     {
         return $this->adminService->saveQMLadderRulesRequest($request);
+    }
+
+    public function editSpawnOptionValue(Request $request)
+    {
+        if ($request->id == "new")
+            $sov = new \App\SpawnOptionValue;
+        else
+            $sov = \App\SpawnOptionValue::find($request->id);
+
+        if ($request->update !== null && $request->update == 2)
+        {
+            $sov->delete();
+            $request->session()->flash('success', "Option has been deleted.");
+        }
+        else
+        {
+            $sov->qm_ladder_rules_id = $request->qm_ladder_rules_id;
+            $sov->qm_map_id = $request->qm_map_id;
+            $sov->spawn_option_id = $request->spawn_option_id;
+            $sov->value_id = SpawnOptionString::findOrCreate($request->value)->id;
+            $sov->save();
+            $request->session()->flash('success', "Option has been updated.");
+        }
+
+        return redirect()->back();
     }
 
     public function getManageUsersIndex(Request $request)
@@ -165,80 +192,6 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function postQuickMatchMap(Request $request)
-    {
-        if ($request->id == "new")
-        {
-            $qmMap = new \App\QmMap;
-            $message = "Successfully created new map";
-        }
-        else {
-            $qmMap = \App\QmMap::where('id', $request->id)->first();
-            $message = "Sucessfully updated map";
-        }
-
-        if ($qmMap == null)
-        {
-            $request->session()->flash('error', 'Unable to update Map');
-            return redirect()->back();
-        }
-
-        $qmMap->map_pool_id = $request->map_pool_id;
-        $qmMap->map_id = $request->map_id;
-        $qmMap->description = $request->description;
-        $qmMap->admin_description = $request->admin_description;
-        $qmMap->bit_idx = $request->bit_idx;
-        $qmMap->valid = $request->valid;
-        $qmMap->allowed_sides = implode(",", $request->allowed_sides);
-        $qmMap->game_mode = $request->game_mode;
-        $qmMap->spawn_order = $request->spawn_order;
-        $qmMap->speed = $request->speed;
-        $qmMap->credits = $request->credits;
-        $qmMap->units = $request->units;
-        $qmMap->tech = $request->tech;
-        $qmMap->bases = ini_to_b($request->bases);
-        $qmMap->short_game = ini_to_b($request->short_game);
-        $qmMap->fog = ini_to_b($request->fog);
-        $qmMap->redeploy = ini_to_b($request->redeploy);
-        $qmMap->crates = ini_to_b($request->crates);
-        $qmMap->multi_eng = ini_to_b($request->multi_eng);
-        $qmMap->multi_factory = ini_to_b($request->multi_factory);
-        $qmMap->allies = ini_to_b($request->allies);
-        $qmMap->dog_kill = ini_to_b($request->dog_kill);
-        $qmMap->bridges = ini_to_b($request->bridges);
-        $qmMap->supers = ini_to_b($request->supers);
-        $qmMap->build_ally = ini_to_b($request->build_ally);
-        $qmMap->spawn_preview = ini_to_b($request->spawn_preview);
-        $qmMap->firestorm = ini_to_b($request->firestorm);
-        $qmMap->ra2_mode = ini_to_b($request->ra2_mode);
-        $qmMap->aimable_sams = ini_to_b($request->aimable_sams);
-        $qmMap->attack_neutral = ini_to_b($request->attack_neutral);
-        $qmMap->harv_truce = ini_to_b($request->harv_truce);
-        $qmMap->ore_regenerates = ini_to_b($request->ore_regenerates);
-        $qmMap->aftermath = ini_to_b($request->aftermath);
-        $qmMap->fix_ai_ally = ini_to_b($request->fix_ai_ally);
-        $qmMap->ally_reveal = ini_to_b($request->ally_reveal);
-        $qmMap->am_fast_build = ini_to_b($request->am_fast_build);
-        $qmMap->parabombs = ini_to_b($request->parabombs);
-        $qmMap->fix_formation_speed = ini_to_b($request->fix_formation_speed);
-        $qmMap->fix_magic_build = ini_to_b($request->fix_magic_build);
-        $qmMap->fix_range_exploit = ini_to_b($request->fix_range_exploit);
-        $qmMap->super_tesla_fix = ini_to_b($request->super_tesla_fix);
-        $qmMap->forced_alliances = ini_to_b($request->forced_alliances);
-        $qmMap->tech_center_fix = ini_to_b($request->tech_center_fix);
-        $qmMap->no_screen_shake = ini_to_b($request->no_screen_shake);
-        $qmMap->no_tesla_delay = ini_to_b($request->no_tesla_delay);
-        $qmMap->dead_player_radar = ini_to_b($request->dead_player_radar);
-        $qmMap->capture_flag = ini_to_b($request->capture_flag);
-        $qmMap->slow_unit_build = ini_to_b($request->slow_unit_build);
-        $qmMap->shroud_regrows = ini_to_b($request->shroud_regrows);
-        $qmMap->ai_player_count = $request->ai_player_count;
-        $qmMap->save();
-
-        $request->session()->flash('success', $message);
-        return redirect()->back();
-    }
-
     public function remSide(Request $request, $ladderId = null)
     {
         $ladder = \App\Ladder::find($ladderId);
@@ -285,188 +238,6 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function editMap(Request $request)
-    {
-        $this->validate($request, ['map_id' => 'required',
-                                   'hash'   => 'required|min:40|max:40',
-                                   'name'   => 'string',
-                                   'mapImage' => 'image']);
-
-        if ($request->map_id == 'new')
-        {
-            $map = new \App\Map;
-        }
-        else
-        {
-            $map = \App\Map::find($request->map_id);
-            if ($map === null)
-            {
-                $request->session()->flash('error', "Map Not found");
-                return redirect()->back();
-            }
-        }
-
-        $map->ladder_id = $request->ladder_id;
-        $map->hash = $request->hash;
-        $map->name = $request->name;
-        $map->save();
-        $request->session()->flash('success', "Map Saved");
-
-        if ($request->hasFile('mapImage'))
-        {
-            $filename = $map->hash . ".png";
-            $filepath = config('filesystems')['map_images'] . "/" . $map->ladder->abbreviation;
-
-            $request->file('mapImage')->move($filepath, $filename);
-        }
-
-        return redirect()->back()->withInput();
-    }
-
-    public function removeMapPool(Request $request, $ladderId, $mapPoolId)
-    {
-        $ladder = Ladder::find($ladderId);
-        $mapPool = MapPool::find($mapPoolId);
-
-        $mapPool->delete();
-        $request->session()->flash('success', "Map Pool Deleted");
-        return redirect("/admin/setup/{$ladder->id}/edit");
-    }
-
-    public function editMapPool(Request $request, $ladderId, $mapPoolId)
-    {
-        $ladder = Ladder::find($ladderId);
-        $mapPool = MapPool::find($mapPoolId);
-
-        return view("admin.edit-map-pool",
-                    [ 'ladderUrl' => "/admin/setup/{$ladder->id}/edit",
-                      'mapPool' => $mapPool,
-                      'ladderAbbrev' => $ladder->abbreviation,
-                      'maps' => $mapPool->maps()->orderBy('bit_idx')->get(),
-                      'rule' => $ladder->qmLadderRules,
-                      'sides' => $ladder->sides,
-                      'ladderMaps' => $ladder->maps,
-                    ]);
-    }
-
-    public function cloneMapPool(Request $request, $ladderId)
-    {
-        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
-        $mapPool = new MapPool;
-        $mapPool->name = $request->name;
-        $mapPool->qm_ladder_rules_id = $qmLadderRules->id;
-        $mapPool->save();
-
-        $prototype = MapPool::find($request->map_pool_id);
-
-        foreach ($prototype->maps as $map)
-        {
-            $new_map = $map->replicate();
-            $new_map->map_pool_id = $mapPool->id;
-            $new_map->save();
-        }
-        $request->session()->flash('success', "Map Pool Cloned");
-        return redirect("/admin/setup/{$ladderId}/mappool/{$mapPool->id}/edit");
-    }
-
-    public function newMapPool(Request $request, $ladderId)
-    {
-        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
-        $mapPool = new MapPool;
-        $mapPool->name = $request->name;
-        $mapPool->qm_ladder_rules_id = $qmLadderRules->id;
-        $mapPool->save();
-
-        return redirect("/admin/setup/{$ladderId}/mappool/{$mapPool->id}/edit");
-    }
-
-    public function changeMapPool(Request $request, $ladderId)
-    {
-        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
-
-        $qmLadderRules->map_pool_id = $request->map_pool_id;
-        $qmLadderRules->save();
-
-        $request->session()->flash('success', "Map Pool Changed");
-        return redirect()->back();
-    }
-
-    public function renameMapPool(Request $request, $ladderId, $mapPoolId)
-    {
-        $mapPool = MapPool::find($mapPoolId);
-        $mapPool->name = $request->name;
-        $mapPool->save();
-
-        $request->session()->flash('success', "Map Pool Renamed");
-        return redirect()->back();
-    }
-
-    public function removeQuickMatchMap(Request $request, $ladderId, $mapPoolId)
-    {
-        $qmMap = \App\QmMap::find($request->map_id);
-        $mapPool = MapPool::find($mapPoolId);
-
-        if ($qmMap !== null)
-        {
-            \App\QmMap::valid()
-                      ->where('map_pool_id', '=', $request->map_pool_id)
-                      ->where('bit_idx', '>', $qmMap->bit_idx)
-                      ->decrement('bit_idx');
-            $qmMap->valid = false;
-            $qmMap->save();
-        }
-
-        $request->session()->flash('success', "Map Deleted");
-        return redirect()->back();
-    }
-
-    public function moveDownQuickMatchMap(Request $request, $ladderId, $mapPoolId)
-    {
-        $qmMap = \App\QmMap::find($request->id);
-        $mapPool = MapPool::find($mapPoolId);
-
-        if ($qmMap !== null)
-        {
-            $mapBelow = $mapPool->maps()->where('bit_idx', $qmMap->bit_idx + 1)->first();
-            if ($mapBelow === null)
-            {
-                $request->session()->flash('error', "Can't move map that direction");
-                return redirect()->back();
-            }
-
-            $mapBelow->bit_idx--;
-            $mapBelow->save();
-
-            $qmMap->bit_idx++;
-            $qmMap->save();
-        }
-        $request->session()->flash('success', "Map Moved");
-        return redirect()->back();
-    }
-
-    public function moveUpQuickMatchMap(Request $request, $ladderId, $mapPoolId)
-    {
-        $qmMap = \App\QmMap::find($request->id);
-        $mapPool = MapPool::find($mapPoolId);
-
-        if ($qmMap !== null)
-        {
-            $mapAbove = $mapPool->maps()->where('bit_idx', $qmMap->bit_idx - 1)->first();
-            if ($mapAbove === null)
-            {
-                $request->session()->flash('error', "Can't move map that direction");
-                return redirect()->back();
-            }
-
-            $mapAbove->bit_idx++;
-            $mapAbove->save();
-
-            $qmMap->bit_idx--;
-            $qmMap->save();
-        }
-        $request->session()->flash('success', "Map Moved");
-        return redirect()->back();
-    }
 
     public function addAdmin(Request $request, $ladderId = null)
     {

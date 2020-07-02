@@ -46,4 +46,9 @@ class QmMap extends Model {
         }
         return $this->_map_side_array;
     }
+
+    public function spawnOptionValues()
+    {
+        return $this->hasMany('App\SpawnOptionValue');
+    }
 }

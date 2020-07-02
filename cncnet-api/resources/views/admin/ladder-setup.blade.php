@@ -273,12 +273,24 @@
                                              @endforeach
                                          </select>
                                      </div>
-                                     <button type="submit" class="btn btn-primary btn-md">Change</button>
+                                     <button type="submit" class="btn btn-primary btn-md">Set</button>
                                      <a type="button" class="btn btn-primary btn-md" id="editMapPool" href="mappool/{{$rule->map_pool_id}}/edit">Edit</a>
                                 </form>
                                 <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#newMapPool"> New </button>
                                 <button type="button" class="btn btn-primary btn-md" id="doClone" data-toggle="modal" data-target="#cloneMapPool"> Clone </button>
                             </div>
+                            <select id="optionList" size=12" class="form-control" style="margin-bottom: 8px">
+                                @foreach($rule->spawnOptionValues as $sov)
+                                    <option value="{{$sov->id}}">{{$sov->spawnOption->name->string}} : {{$sov->value->string}}</option>
+                                @endforeach
+                            </select>
+                            @foreach($rule->spawnOptionValues as $sov)
+                                @include('admin.spawn-option', [ 'sov' => $sov, 'rulesId' => $rule->id, 'qmMapId' => "", 'spawnOptions' => $spawnOptions,
+                                                                 "button" => "Update", "hidden" => true])
+                            @endforeach
+                            <?php $new_sov = new \App\SpawnOptionValue; $new_sov->id = "new"; $new_sov->value = ""; ?>
+                            @include('admin.spawn-option', [ 'sov' => $new_sov, 'rulesId' => $rule->id, 'qmMapId' => "", 'spawnOptions' => $spawnOptions,
+                                                             "button" => "Add", "hidden" => false])
                         </div>
                     </div>
                 </div>
@@ -364,6 +376,19 @@
              let map_pool_id = document.getElementById("mapPoolSelector").value;
              document.getElementById("cloneMapPoolId").value = map_pool_id;
          }
+     })();
+
+     (function () {
+         document.getElementById("optionList").onchange = function ()
+         {
+             let optList = document.querySelectorAll(".option");
+             for (let i = 0; i < optList.length; i++)
+             {
+                 if (!optList[i].classList.contains('hidden') && !optList[i].classList.contains('new'))
+                     optList[i].classList.add("hidden");
+             }
+             document.getElementById("option_" + this.value).classList.remove("hidden");
+         };
      })();
 
     </script>

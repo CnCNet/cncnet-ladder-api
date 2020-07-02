@@ -14,6 +14,7 @@ use Log;
 use \App\Commands\FindOpponent;
 use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
+use \App\SpawnOptionType;
 
 class ApiQuickMatchController extends Controller
 {
@@ -347,65 +348,58 @@ class ApiQuickMatchController extends Controller
                 [  "UIGameMode" =>     $qmMap->game_mode
                   ,"UIMapName" =>      $qmMap->description
                   ,"MapHash" =>        $map->hash
-                  ,"GameSpeed" =>      $qmMap->speed
                   ,"Seed" =>           $qmMatch->seed
                   ,"GameID" =>         $qmMatch->seed
                   ,"WOLGameID" =>      $qmMatch->seed
-                  ,"Credits" =>        $qmMap->credits
-                  ,"UnitCount" =>      $qmMap->units
-                  ,"TechLevel" =>      $qmMap->tech
                   ,"Host" =>           "No"
                   ,"IsSpectator" =>    "No"
-                  ,"AIPlayers" =>      0
                   ,"Name" =>           $qmPlayer->player()->first()->username
                   ,"Port" =>           $qmPlayer->port
                   ,"Side" =>           $qmPlayer->actual_side
                   ,"Color" =>          $qmPlayer->color
-                  ,"Firestorm" =>      b_to_ini($qmMap->firestorm)
-                  ,"Ra2Mode" =>        b_to_ini($qmMap->ra2_mode)
-                  ,"ShortGame" =>      b_to_ini($qmMap->short_game)
-                  ,"MultiEngineer" =>  b_to_ini($qmMap->multi_eng)
-                  ,"MCVRedeploy" =>    b_to_ini($qmMap->redeploy)
-                  ,"Crates" =>         b_to_ini($qmMap->crates)
-                  ,"Bases" =>          b_to_ini($qmMap->bases)
-                  ,"HarvesterTruce" => b_to_ini($qmMap->harv_truce)
-                  ,"AlliesAllowed" =>  b_to_ini($qmMap->allies)
-                  ,"BridgeDestroy" =>  b_to_ini($qmMap->bridges)
-                  ,"FogOfWar" =>       b_to_ini($qmMap->fog)
-                  ,"BuildOffAlly" =>   b_to_ini($qmMap->build_ally)
-                  ,"MultipleFactory"=> b_to_ini($qmMap->mutli_factory)
-                  ,"AimableSams" =>    b_to_ini($qmMap->aimable_sams)
-                  ,"AttackNeutralUnits" => b_to_ini($qmMap->attack_neutral)
-                  ,"Superweapons" =>   b_to_ini($qmMap->supers)
-                  ,"OreRegenerates" => b_to_ini($qmMap->ore_regenerates)
-                  ,"Aftermath" =>      b_to_ini($qmMap->aftermath)
-                  ,"FixAIAlly"    =>   b_to_ini($qmMap->fix_ai_ally)
-                  ,"AllyReveal"=>      b_to_ini($qmMap->ally_reveal)
-                  ,"AftermathFastBuildSpeed" =>   b_to_ini($qmMap->am_fast_build)
-                  ,"ParabombsInMultiplayer" =>   b_to_ini($qmMap->parabombs)
-                  ,"FixFormationSpeed" =>   b_to_ini($qmMap->fix_formation_speed)
-                  ,"FixMagicBuild"   =>   b_to_ini($qmMap->fix_magic_build)
-                  ,"FixRangeExploit" =>   b_to_ini($qmMap->fix_range_exploit)
-                  ,"SuperTeslaFix"   =>   b_to_ini($qmMap->super_tesla_fix)
-                  ,"ForcedAlliances" =>   b_to_ini($qmMap->forced_alliances)
-                  ,"TechCenterBugFix"=>   b_to_ini($qmMap->tech_center_fix)
-                  ,"NoScreenShake"   =>   b_to_ini($qmMap->no_screen_shake)
-                  ,"NoTeslaZapEffectDelay"=>   b_to_ini($qmMap->no_tesla_delay)
-                  ,"DeadPlayersRadar"=>   b_to_ini($qmMap->dead_player_radar)
-                  ,"CaptureTheFlag"  =>   $qmMap->capture_flag
-                  ,"SlowUnitBuild"   =>   $qmMap->slow_unit_build
-                  ,"ShroudRegrows"   =>   $qmMap->shroud_regrows
-                  ,"AIPlayers"       =>   $qmMap->ai_player_count
-                  ,"Tournament"      =>   1
-                  ,"FrameSendRate"   =>   $ladder_rules->frame_send_rate > 1 ? $ladder_rules->frame_send_rate : null
                    // Filter null values
-            ], function($var){return !is_null($var);} );
+                ], function($var){return !is_null($var);} );
 
-
-            if ($ladder_rules->ladder()->first()->abbreviation == "ra")
+            foreach($ladder_rules->spawnOptionValues as $sov)
             {
-                $spawnStruct["spawn"]["Settings"]["Bases"] = $spawnStruct["spawn"]["Settings"]["Bases"] == "Yes" ? 1 : 0;
-                $spawnStruct["spawn"]["Settings"]["OreRegenerates"] = $spawnStruct["spawn"]["Settings"]["OreRegenerates"] == "Yes" ? 1 : 0;
+                switch ($sov->spawnOption->type->id)
+                {
+                case SpawnOptionType::SPAWN_INI:
+                    $spawnStruct["spawn"][$sov->spawnOption->string1->string][$sov->spawnOption->string2->string] = $sov->value->string;
+                    break;
+                case SpawnOptionType::SPAWNMAP_INI:
+                    $spawnStruct["spawnmap"][$sov->spawnOption->string1->string][$sov->spawnOption->string2->string] = $sov->value->string;
+                    break;
+                case SpawnOptionType::PREPEND_FILE:
+                    $spawnStruct["appends"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
+                    break;
+                case SpawnOptionType::COPY_FILE:
+                    $spawnStruct["copies"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
+                    break;
+                default:
+                    break;
+                }
+            }
+
+            foreach ($qmMap->spawnOptionValues as $sov)
+            {
+                switch ($sov->spawnOption->type->id)
+                {
+                case SpawnOptionType::SPAWN_INI:
+                    $spawnStruct["spawn"][$sov->spawnOption->string1->string][$sov->spawnOption->string2->string] = $sov->value->string;
+                    break;
+                case SpawnOptionType::SPAWNMAP_INI:
+                    $spawnStruct["spawnmap"][$sov->spawnOption->string1->string][$sov->spawnOption->string2->string] = $sov->value->string;
+                    break;
+                case SpawnOptionType::PREPEND_FILE:
+                    $spawnStruct["appends"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
+                    break;
+                case SpawnOptionType::COPY_FILE:
+                    $spawnStruct["copies"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
+                    break;
+                default:
+                    break;
+                }
             }
 
             // Write the Others sections

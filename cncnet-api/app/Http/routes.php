@@ -50,16 +50,18 @@ Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'can
 
     Route::post('editmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editMap']);
 
-    Route::post('mappool/{mapPoolId}/rempoolmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@removeQuickMatchMap']);
-    Route::post('mappool/{mapPoolId}/downmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@moveDownQuickMatchMap']);
-    Route::post('mappool/{mapPoolId}/upmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@moveUpQuickMatchMap']);
-    Route::get('mappool/{mapPoolId}/edit', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editMapPool']);
-    Route::post('mappool/{mapPoolId}/edit', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@postQuickMatchMap']);
-    Route::post('mappool/{mapPoolId}/rename',  ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@renameMapPool' ]);
-    Route::post('mappool', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@changeMapPool' ]);
-    Route::post('mappool/new', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@newMapPool' ]);
-    Route::post('mappool/{mapPoolId}/remove', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@removeMapPool' ]);
-    Route::post('mappool/clone', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@cloneMapPool' ]);
+    Route::post('optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue' ]);
+    Route::post('mappool/{mapPoolId}/optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue' ]);
+
+    Route::post('mappool/{mapPoolId}/rempoolmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@removeQuickMatchMap']);
+    Route::post('mappool/{mapPoolId}/movemap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@moveMap']);
+    Route::get('mappool/{mapPoolId}/edit', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMapPool']);
+    Route::post('mappool/{mapPoolId}/edit', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@postQuickMatchMap']);
+    Route::post('mappool/{mapPoolId}/rename',  ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@renameMapPool' ]);
+    Route::post('mappool', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@changeMapPool' ]);
+    Route::post('mappool/new', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@newMapPool' ]);
+    Route::post('mappool/{mapPoolId}/remove', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@removeMapPool' ]);
+    Route::post('mappool/clone', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@cloneMapPool' ]);
 
     Route::post('add/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@addAdmin']);
     Route::post('remove/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@removeAdmin']);

@@ -29,4 +29,9 @@ class QmLadderRules extends Model {
     {
         return explode(',', $this->allowed_sides);
     }
+
+    public function spawnOptionValues()
+    {
+        return $this->hasMany('App\SpawnOptionValue');
+    }
 }
