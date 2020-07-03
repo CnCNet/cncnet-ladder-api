@@ -67,7 +67,7 @@ class CreateSpawnOptionsTable extends Migration {
         SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "AIPlayers", "Settings", "AIPlayers")->save();
         SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "Tournament", "Settings", "Tournament")->save();
         SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "FrameSendRate", "Settings", "FrameSendRate")->save();
-        SpawnOption::makeOne(SpawnOptionType::PEPEND_FILE, "Prepend To Spawnmap.ini", "spawnmap.ini", "")->save();
+        SpawnOption::makeOne(SpawnOptionType::PREPEND_FILE, "Prepend To Spawnmap.ini", "spawnmap.ini", "")->save();
     }
 
     /**

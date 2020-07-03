@@ -48,7 +48,7 @@ Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'can
 
     Route::post('rules', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@postLadderSetupRules']);
 
-    Route::post('editmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editMap']);
+    Route::post('editmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMap']);
 
     Route::post('optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue' ]);
     Route::post('mappool/{mapPoolId}/optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue' ]);
