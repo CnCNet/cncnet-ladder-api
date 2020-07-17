@@ -85,6 +85,17 @@
     <section class="dark-texture">
         <div class="container">
             <div class="row">
+                <div class="col-md-6 col-md-offset-2 player-box player-card" style="margin-bottom: 8px">
+                    <p style="color: #fff">Player Alerts</p>
+                    <select id="alertList"  class="form-control" size="4">
+                        @foreach($player->alerts as $alert)
+                            <option value="{{$alert->id}}">{{$alert->message}}</option>
+                        @endforeach
+                        <option value="new">&lt;new></option>
+                    </select>
+                    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#editAlert">Edit </button>
+                </div>
+
                 <div class="col-md-12">
                     <h3>Ban History</h3>
                 </div>
@@ -144,4 +155,70 @@
     </section>
 
 </div>
+
+<div class="modal fade" id="editAlert" tabIndex="-1"  role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Edit Alert</h3>
+            </div>
+            <div class="modal-body clearfix">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 player-box player-card">
+                            <form method="POST" action="{{$player->id}}/alert">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                <input type="hidden" id="alertId" name="id" value="" />
+                                <input type="hidden" name="player_id" value="{{$player->id}}" />
+                                <div class="form-group">
+                                    <label for="alertText">Alert Text</label>
+                                    <textarea id="alertText" name="message" class="form-control" rows="4" cols="50"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="alertDate">Expiration</label>
+                                    <input type="text" id="alertDate" name="expires_at" class="form-control"></input>
+                                </div>
+                                <button type="submit" name="submit" value="update" class="btn btn-primary btn-md">Save</button>
+                                <button type="submit" name="submit" value="delete" class="btn btn-danger btn-md">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@endsection
+
+@section('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+    <script type="text/javascript">
+
+     let playerAlerts = { @foreach($player->alerts as $alert)
+        "{{$alert->id}}": { "id": "{{$alert->id}}", "message": {!! json_encode($alert->message) !!}, "expires_at": "{{$alert->expires_at}}"},
+     @endforeach
+        "new": { "id":"new", "message": "", "expires_at": "{{ \Carbon\Carbon::now()->addMonth(1)->startOfMonth()}}" }
+     };
+
+     $(function() {
+         $( "#alertDate" ).datepicker({ format: 'yyyy-mm-dd', startDate: "{{ \Carbon\Carbon::now()->addDay(1) }}" });
+     });
+
+     document.getElementById("alertList").onchange = function () {
+         document.getElementById("alertId").value = playerAlerts[this.value]["id"];
+         document.getElementById("alertText").innerHTML = playerAlerts[this.value]["message"];
+         document.getElementById("alertText").value = playerAlerts[this.value]["message"];
+         document.getElementById("alertDate").value = playerAlerts[this.value]["expires_at"];
+     };
+
+     (function () {
+         if (document.getElementById("alertList").value === '')
+             document.getElementById("alertList").selectedIndex = 0;
+
+         window.addEventListener('load', function() { document.getElementById("alertList").onchange(); });
+     })();
+    </script>
 @endsection

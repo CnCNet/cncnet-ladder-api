@@ -58,9 +58,25 @@
                             </li>
                         @endif
                     </ul>
-                   @if($userIsMod)
-                       {{ $playerUser->getBan() }}
-                   @endif
+                </div>
+
+                <div class="player-alerts">
+                    @if(count($bans))
+                        <h3> Bans: </h3>
+                        <ul>
+                            @foreach($bans as $ban)
+                                <li>{{ $ban }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                    @if(count($alerts))
+                        <h3> Alerts:</h3>
+                        <ul>
+                            @foreach($alerts as $alert)
+                                <li>{!! $alert->message !!}</li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
 
                 <div class="player-badges">

@@ -304,4 +304,14 @@ class Player extends Model
     {
         return \App\PlayerCache::where('player_id', '=', $this->id)->where("ladder_history_id", '=', $history_id)->first();
     }
+
+    public function unSeenAlerts()
+    {
+        return $this->hasMany('\App\PlayerAlert')->whereNull('seen_at')->where('expires_at', '>', Carbon::now());
+    }
+
+    public function alerts()
+    {
+        return $this->hasMany('\App\PlayerAlert')->where('expires_at', '>', Carbon::now());
+    }
 }

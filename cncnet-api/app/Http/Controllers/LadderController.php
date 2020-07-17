@@ -181,6 +181,16 @@ class LadderController extends Controller
                 ->paginate(24);
         $playerUser = $player->user;
 
+        $bans = [];
+        $alerts = [];
+        if ($user && ($playerUser->id == $user->id || $userIsMod))
+        {
+            $alerts = $player->alerts;
+            $ban = $playerUser->getBan();
+            if ($ban)
+                $bans[] = $ban;
+        }
+
         return view
         (
             "ladders.player-view",
@@ -193,6 +203,8 @@ class LadderController extends Controller
                 "userIsMod" => $userIsMod,
                 "playerUser" => $playerUser,
                 "ladderId" => $player->ladder->id,
+                "alerts" => $alerts,
+                "bans" => $bans,
             )
         );
     }

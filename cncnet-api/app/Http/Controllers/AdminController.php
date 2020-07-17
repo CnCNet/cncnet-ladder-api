@@ -550,6 +550,58 @@ class AdminController extends Controller
         $request->session()->flash('success', "Ban ". $banFlash);
         return redirect()->action('AdminController@getLadderPlayer', ['ladderId' => $ladderId, 'playerId' => $playerId]);
     }
+
+    public function editLadderAlert(Request $request, $ladderId)
+    {
+        $ladder = \App\Ladder::find($ladderId);
+
+        $alert = \App\LadderAlert::find($request->id);
+        if ($request->submit == "delete")
+        {
+            $alert->delete();
+            $request->session()->flash('success', "Alert has been deleted");
+            return redirect()->back();
+        }
+
+        if ($request->id == 'new' || $request->id === null)
+        {
+            $alert = new \App\LadderAlert;
+            $alert->ladder_id = $ladder->id;
+        }
+
+        $alert->message = $request->message;
+        $alert->expires_at = $request->expires_at;
+        $alert->save();
+
+        $request->session()->flash('success', "Alert has been updated");
+        return redirect()->back();
+    }
+
+    public function editPlayerAlert(Request $request, $ladderId, $playerId)
+    {
+        $player = \App\Player::find($playerId);
+
+        $alert = \App\PlayerAlert::find($request->id);
+        if ($request->submit == "delete")
+        {
+            $alert->delete();
+            $request->session()->flash('success', "Alert has been deleted");
+            return redirect()->back();
+        }
+
+        if ($request->id == 'new' || $request->id === null)
+        {
+            $alert = new \App\PlayerAlert;
+            $alert->player_id = $player->id;
+        }
+
+        $alert->message = $request->message;
+        $alert->expires_at = $request->expires_at;
+        $alert->save();
+
+        $request->session()->flash('success', "Alert has been updated");
+        return redirect()->back();
+    }
 }
 
 function ini_to_b($string)

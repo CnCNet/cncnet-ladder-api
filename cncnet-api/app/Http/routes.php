@@ -71,6 +71,8 @@ Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'can
 
     Route::post('add/tester', 'AdminController@addTester');
     Route::post('remove/tester', 'AdminController@removeTester');
+
+    Route::post('alert', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editLadderAlert']);
 });
 
 Route::group(['prefix' => 'admin/moderate/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
@@ -85,6 +87,7 @@ Route::group(['prefix' => 'admin/moderate/{ladderId}', 'middleware' => 'auth', '
     Route::get('/player/{playerId}/editban/{banId}', 'AdminController@editUserBan');
     Route::post('/player/{playerId}/editban/{banId}', 'AdminController@saveUserBan');
     Route::post('/player/{playerId}/editban', 'AdminController@saveUserBan');
+    Route::post('/player/{playerId}/alert', 'AdminController@editPlayerAlert');
 });
 
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()

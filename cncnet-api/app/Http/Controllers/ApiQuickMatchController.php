@@ -213,6 +213,7 @@ class ApiQuickMatchController extends Controller
                              "message" => "Quick Match Version {$request->version} is no longer supported.\n".
                                           "Please restart the client to get the latest updates.");
             }
+            $alert = "";
 
             /* This matchup system is restful, a player will have to check in to see if there
              * is a matchup waitin.
@@ -285,6 +286,17 @@ class ApiQuickMatchController extends Controller
                 \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ipv6_address_id);
 
                 $player->user->save();
+
+                foreach($ladder->alerts as $a)
+                {
+                    $alert .= "@everyone {$a->message}<br>\n<br>\n";
+                }
+            }
+
+            foreach($player->unSeenAlerts as $a)
+            {
+                $alert .= "@{$player->username} {$a->message}<br>\n<br>\n";
+                $a->acknowledge();
             }
 
             if ($request->ai_dat)
@@ -329,7 +341,10 @@ class ApiQuickMatchController extends Controller
                 $this->dispatch(new FindOpponent($qEntry->id));
 
                 $qmPlayer->touch();
-                return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5);
+                if ($alert)
+                    return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5, 'warning' => $alert);
+                else
+                    return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5);
             }
             // If we've made it this far, lets send the spawn details
 

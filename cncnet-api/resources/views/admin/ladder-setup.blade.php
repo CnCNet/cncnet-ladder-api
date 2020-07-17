@@ -102,7 +102,22 @@
                                 </form>
                                 @endif
                             </div>
+
+                            @if($user->isGod() || $user->isLadderAdmin($ladder))
+                            <div class="player-box player-card" style="margin-bottom: 8px">
+                                <p style="color: #fff">Alerts</p>
+                                <select id="alertList"  class="form-control" size="4">
+                                    @foreach($ladder->alerts as $alert)
+                                        <option value="{{$alert->id}}">{{$alert->message}}</option>
+                                    @endforeach
+                                    <option value="new">&lt;new></option>
+                                </select>
+                                <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#editAlert">Edit </button>
+                            </div>
+                            @endif
+
                         </div>
+
                         <div class="col-md-3">
                             <div class="player-box player-card" style="margin-bottom: 8px">
                                 <p style="color: #fff">{{ $ladder->name }}</p>
@@ -169,112 +184,112 @@
                             <div class="player-box player-card">
                                 <p style="color: #fff">Quick Match</p>
 
-                            <form method="POST" action="rules">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <input type="hidden" name="id" value="{{ $rule->id }}">
+                                <form method="POST" action="rules">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="id" value="{{ $rule->id }}">
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_player_count">Player Count</label>
-                                    <input id="{{ $rule->ladder_id }}_player_count" type="number" name="player_count" class="form-control" value="{{ $rule->player_count }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_player_count">Player Count</label>
+                                        <input id="{{ $rule->ladder_id }}_player_count" type="number" name="player_count" class="form-control" value="{{ $rule->player_count }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_map_vetoes">Map Vetoes</label>
-                                    <input id="{{ $rule->ladder_id }}_map_vetoes" type="number" name="map_vetoes" class="form-control" value="{{ $rule->map_vetoes }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_map_vetoes">Map Vetoes</label>
+                                        <input id="{{ $rule->ladder_id }}_map_vetoes" type="number" name="map_vetoes" class="form-control" value="{{ $rule->map_vetoes }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_difference">Matchup rating filter</label>
-                                    <input id="{{ $rule->ladder_id }}_difference" type="number" name="max_difference" class="form-control" value="{{ $rule->max_difference }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_difference">Matchup rating filter</label>
+                                        <input id="{{ $rule->ladder_id }}_difference" type="number" name="max_difference" class="form-control" value="{{ $rule->max_difference }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_rating_per_second">Filter - rating per q-second</label>
-                                    <input id="{{ $rule->ladder_id }}_rating_per_second" type="number" step="0.05" name="rating_per_second" class="form-control" value="{{ $rule->rating_per_second }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_rating_per_second">Filter - rating per q-second</label>
+                                        <input id="{{ $rule->ladder_id }}_rating_per_second" type="number" step="0.05" name="rating_per_second" class="form-control" value="{{ $rule->rating_per_second }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_point_difference">Matchup points filter</label>
-                                    <input id="{{ $rule->ladder_id }}_point_difference" type="number" name="max_points_difference" class="form-control" value="{{ $rule->max_points_difference }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_point_difference">Matchup points filter</label>
+                                        <input id="{{ $rule->ladder_id }}_point_difference" type="number" name="max_points_difference" class="form-control" value="{{ $rule->max_points_difference }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_points_per_second">Filter - points per q-second</label>
-                                    <input id="{{ $rule->ladder_id }}_points_per_second" type="number" step="0.05" name="points_per_second" class="form-control" value="{{ $rule->points_per_second }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_points_per_second">Filter - points per q-second</label>
+                                        <input id="{{ $rule->ladder_id }}_points_per_second" type="number" step="0.05" name="points_per_second" class="form-control" value="{{ $rule->points_per_second }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_bail_time">Bail Time</label>
-                                    <input id="{{ $rule->ladder_id }}_bail_time" type="number" name="bail_time" class="form-control" value="{{ $rule->bail_time }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_bail_time">Bail Time</label>
+                                        <input id="{{ $rule->ladder_id }}_bail_time" type="number" name="bail_time" class="form-control" value="{{ $rule->bail_time }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->frame_send_rate }}_frame_send_rate">Frame Send Rate</label>
-                                    <input id="{{ $rule->frame_send_rate }}_frame_send_rate" type="number" name="frame_send_rate" class="form-control" value="{{ $rule->frame_send_rate }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->frame_send_rate }}_frame_send_rate">Frame Send Rate</label>
+                                        <input id="{{ $rule->frame_send_rate }}_frame_send_rate" type="number" name="frame_send_rate" class="form-control" value="{{ $rule->frame_send_rate }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->use_elo_points }}_use_elo_points">Use Elo for Points</label>
-                                    <input id="{{ $rule->use_elo_points }}_use_elo_points" type="number" min="0" max="1" name="use_elo_points" class="form-control" value="{{ $rule->use_elo_points }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->use_elo_points }}_use_elo_points">Use Elo for Points</label>
+                                        <input id="{{ $rule->use_elo_points }}_use_elo_points" type="number" min="0" max="1" name="use_elo_points" class="form-control" value="{{ $rule->use_elo_points }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->wol_k }}_use_elo_points">WOL Points K Value</label>
-                                    <input id="{{ $rule->wol_k }}_use_elo_points" type="number" min="0" name="wol_k" class="form-control" value="{{ $rule->wol_k }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->wol_k }}_use_elo_points">WOL Points K Value</label>
+                                        <input id="{{ $rule->wol_k }}_use_elo_points" type="number" min="0" name="wol_k" class="form-control" value="{{ $rule->wol_k }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_bail_fps">Bail FPS</label>
-                                    <input id="{{ $rule->ladder_id }}_bail_fps" type="number" name="bail_fps" class="form-control" value="{{ $rule->bail_fps }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_bail_fps">Bail FPS</label>
+                                        <input id="{{ $rule->ladder_id }}_bail_fps" type="number" name="bail_fps" class="form-control" value="{{ $rule->bail_fps }}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_tier2_rating">Tier 2 If Rating Below</label>
-                                    <input id="{{ $rule->ladder_id }}_tier2_rating" type="number" name="tier2_rating" class="form-control" value="{{ $rule->tier2_rating }}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_tier2_rating">Tier 2 If Rating Below</label>
+                                        <input id="{{ $rule->ladder_id }}_tier2_rating" type="number" name="tier2_rating" class="form-control" value="{{ $rule->tier2_rating }}" />
+                                    </div>
 
-                                <?php $sides = \App\Side::where("ladder_id", "=", $rule->ladder_id)->orderby('local_id', 'ASC')->get(); ?>
+                                    <?php $sides = \App\Side::where("ladder_id", "=", $rule->ladder_id)->orderby('local_id', 'ASC')->get(); ?>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_sides">Random Sides</label>
-                                    <input id="{{ $rule->ladder_id }}_sides" name="all_sides" type="text" class="form-control" value="{{$rule->all_sides}}" />
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_sides">Random Sides</label>
+                                        <input id="{{ $rule->ladder_id }}_sides" name="all_sides" type="text" class="form-control" value="{{$rule->all_sides}}" />
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="{{ $rule->ladder_id }}_allowed_sides">Allowed Sides</label>
-                                    <?php $sideIdsAllowed = explode(',', $rule->allowed_sides); ?>
-                                    <select id="{{ $rule->ladder_id }}_allowed_sides" name="allowed_sides[]" class="form-control" multiple>
-                                        @foreach($sides as $side)
-                                        <option value="{{ $side->local_id }}" @if(in_array($side->local_id, $sideIdsAllowed)) selected @endif > {{ $side->name }} </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                    <div class="form-group">
+                                        <label for="{{ $rule->ladder_id }}_allowed_sides">Allowed Sides</label>
+                                        <?php $sideIdsAllowed = explode(',', $rule->allowed_sides); ?>
+                                        <select id="{{ $rule->ladder_id }}_allowed_sides" name="allowed_sides[]" class="form-control" multiple>
+                                            @foreach($sides as $side)
+                                                <option value="{{ $side->local_id }}" @if(in_array($side->local_id, $sideIdsAllowed)) selected @endif > {{ $side->name }} </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                <button type="submit" class="btn btn-primary btn-lg">Save</button>
-                            </form>
+                                    <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                                </form>
                             </div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="player-box player-card"  style="margin-bottom: 8px">
                                 <form method="POST" action="mappool">
-                                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                     <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
-                                     <input type="hidden" name="qm_rules_id" value="{{ $rule->id }}" />
-                                     <div class="form-group">
-                                         <label for="mapPoolSelector"> Map Pool</label>
-                                         <select id="mapPoolSelector" name="map_pool_id" class="form-control">
-                                             @foreach($mapPools as $pool)
-                                                 @if($pool->id == $rule->map_pool_id)
-                                                     <option value="{{ $pool->id }}" selected>{{ $pool->name }}</option>
-                                                 @else
-                                                     <option value="{{ $pool->id }}">{{ $pool->name }}</option>
-                                                 @endif
-                                             @endforeach
-                                         </select>
-                                     </div>
-                                     <button type="submit" class="btn btn-primary btn-md">Set</button>
-                                     <a type="button" class="btn btn-primary btn-md" id="editMapPool" href="mappool/{{$rule->map_pool_id}}/edit">Edit</a>
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                    <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
+                                    <input type="hidden" name="qm_rules_id" value="{{ $rule->id }}" />
+                                    <div class="form-group">
+                                        <label for="mapPoolSelector"> Map Pool</label>
+                                        <select id="mapPoolSelector" name="map_pool_id" class="form-control">
+                                            @foreach($mapPools as $pool)
+                                                @if($pool->id == $rule->map_pool_id)
+                                                    <option value="{{ $pool->id }}" selected>{{ $pool->name }}</option>
+                                                @else
+                                                    <option value="{{ $pool->id }}">{{ $pool->name }}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-md">Set</button>
+                                    <a type="button" class="btn btn-primary btn-md" id="editMapPool" href="mappool/{{$rule->map_pool_id}}/edit">Edit</a>
                                 </form>
                                 <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#newMapPool"> New </button>
                                 <button type="button" class="btn btn-primary btn-md" id="doClone" data-toggle="modal" data-target="#cloneMapPool"> Clone </button>
@@ -286,11 +301,11 @@
                             </select>
                             @foreach($rule->spawnOptionValues as $sov)
                                 @include('admin.spawn-option', [ 'sov' => $sov, 'rulesId' => $rule->id, 'qmMapId' => "", 'spawnOptions' => $spawnOptions,
-                                                                 "button" => "Update", "hidden" => true])
+                                                                                 "button" => "Update", "hidden" => true])
                             @endforeach
                             <?php $new_sov = new \App\SpawnOptionValue; $new_sov->id = "new"; $new_sov->value = ""; ?>
                             @include('admin.spawn-option', [ 'sov' => $new_sov, 'rulesId' => $rule->id, 'qmMapId' => "", 'spawnOptions' => $spawnOptions,
-                                                             "button" => "Add", "hidden" => false])
+                                                                                 "button" => "Add", "hidden" => false])
                         </div>
                     </div>
                 </div>
@@ -316,7 +331,7 @@
                                 <input type="hidden" name="qm_rules_id" value="{{ $rule->id }}" />
                                 <div class="form-group">
                                     <label for="map_pool_name"> Map Pool</label>
-                                    <input type="text" id="map_pool_name" name="name" value="" class="from-control"/>
+                                    <input type="text" id="map_pool_name" name="name" value="" class="form-control"/>
                                     <button type="submit" class="btn btn-primary btn-lg">Create</button>
                                 </div>
                             </form>
@@ -346,9 +361,44 @@
                                 <input type="hidden" name="map_pool_id" value="" id="cloneMapPoolId">
                                 <div class="form-group">
                                     <label for="map_pool_name"> Map Pool</label>
-                                    <input type="text" id="map_pool_name" name="name" value="" class="from-control"/>
+                                    <input type="text" id="map_pool_name" name="name" value="" class="form-control"/>
                                     <button type="submit" class="btn btn-primary btn-lg">Create</button>
                                 </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editAlert" tabIndex="-1"  role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Edit Alert</h3>
+            </div>
+            <div class="modal-body clearfix">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 player-box player-card">
+                            <form method="POST" action="alert">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                <input type="hidden" id="alertId" name="id" value="" />
+                                <input type="hidden" name="ladder_id" value="{{$rule->ladder->id}}" />
+                                <div class="form-group">
+                                    <label for="alertText">Alert Text</label>
+                                    <textarea id="alertText" name="message" class="form-control" rows="4" cols="50"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="alertDate">Expiration</label>
+                                    <input type="text" id="alertDate" name="expires_at" class="form-control"></input>
+                                </div>
+                                <button type="submit" name="submit" value="update" class="btn btn-primary btn-md">Save</button>
+                                <button type="submit" name="submit" value="delete" class="btn btn-danger btn-md">Delete</button>
                             </form>
                         </div>
                     </div>
@@ -361,7 +411,19 @@
 @endsection
 
 @section('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript">
+
+     @if($user->isGod() || $user->isLadderAdmin($ladder))
+     let ladderAlerts = {
+         @foreach($ladder->alerts as $alert)
+         "{{$alert->id}}": { "id": "{{$alert->id}}", "message": {!! json_encode($alert->message) !!}, "expires_at": "{{$alert->expires_at}}"},
+         @endforeach
+         "new": { "id":"new", "message": "", "expires_at": "{{ \Carbon\Carbon::now()->addMonth(1)->startOfMonth()}}" }
+     };
+     @else
+     let ladderAlerts = { };
+     @endif
      (function () {
          document.getElementById("mapPoolSelector").onchange = function ()
          {
@@ -391,5 +453,22 @@
          };
      })();
 
+     $(function() {
+         $( "#alertDate" ).datepicker({ format: 'yyyy-mm-dd', startDate: "{{ \Carbon\Carbon::now()->addDay(1) }}" });
+     });
+
+     document.getElementById("alertList").onchange = function () {
+         document.getElementById("alertId").value = ladderAlerts[this.value]["id"];
+         document.getElementById("alertText").innerHTML = ladderAlerts[this.value]["message"];
+         document.getElementById("alertText").value = ladderAlerts[this.value]["message"];
+         document.getElementById("alertDate").value = ladderAlerts[this.value]["expires_at"];
+     };
+
+     (function () {
+         if (document.getElementById("alertList").value === '')
+             document.getElementById("alertList").selectedIndex = 0;
+
+         window.addEventListener('load', function() { document.getElementById("alertList").onchange(); });
+     })();
     </script>
 @endsection

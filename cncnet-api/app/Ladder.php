@@ -64,4 +64,9 @@ class Ladder extends Model
                                  ->where('ladder_history.starts', '=', $start)
                                  ->where('ladder_history.ends', '=', $end)->first();
     }
+
+    public function alerts()
+    {
+        return $this->hasMany('\App\LadderAlert')->where('expires_at', '>', Carbon::now());
+    }
 }

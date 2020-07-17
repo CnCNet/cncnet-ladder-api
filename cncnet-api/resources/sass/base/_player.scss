@@ -1,5 +1,5 @@
 ﻿/* Player Detail */
-.player .player-statistics 
+.player .player-statistics
 {
     padding: 0;
 }
@@ -10,7 +10,7 @@
 }
 
 .player .feature-background
-{   
+{
     background: #000000;
     padding-bottom: 25px;
     color: #fff;
@@ -21,12 +21,12 @@
     background-position: top right;
 }
 
-.player .feature-footer-background 
+.player .feature-footer-background
 {
     background: #060606;
 }
 
-.profile 
+.profile
 {
     background: url(../images/textures/dark-pattern.jpg);
     padding: 15px;
@@ -38,14 +38,14 @@
     margin: 0 auto;
 }
 
-.player .rank 
+.player .rank
 {
     margin-top: 0;
     font-size: 48px;
     font-weight: 600;
 }
 
-.player .rank span 
+.player .rank span
 {
     font-size: 65%;
     letter-spacing: -1px;
@@ -61,26 +61,32 @@
     display: flex;
 }
 
-.player .username 
+.player .username
 {
     font-size: 48px;
 }
 
 // Main header
-.player-header 
+.player-header
 {
     display: flex;
     flex-direction: column;
 }
 
-.player-header .player-stats 
+.player-header .player-stats
 {
     order: 1;
     width: 100%;
     text-align: center;
 }
 
-.player-header .player-rank 
+.player-header .player-alerts
+{
+    order: 1;
+    width: 100%;
+}
+
+.player-header .player-rank
 {
     order: 0;
     width: 100%;
@@ -108,7 +114,7 @@
     text-align: center;
 }
 
-.player-achievements .title 
+.player-achievements .title
 {
     margin-top: 0;
     margin-bottom: 15px;
@@ -120,6 +126,7 @@
 }
 
 .player-header .player-stats,
+.player-header .player-alerts,
 .player-header .player-badges
 {
     margin-top: 22px;
@@ -137,12 +144,20 @@
 
 @media(min-width: 768px)
 {
-    .player-header 
+    .player-header
     {
         flex-direction: row;
     }
-    
-    .player-header .player-stats 
+
+    .player-header .player-stats
+    {
+        order: 0;
+        width: 80%;
+        align-self: center;
+        text-align: left;
+    }
+
+    .player-header .player-alerts
     {
         order: 0;
         width: 80%;
@@ -156,12 +171,12 @@
         width: 20%;
     }
 
-    .player-footer 
+    .player-footer
     {
         display: flex;
     }
 
-    .player-footer .player-dials 
+    .player-footer .player-dials
     {
         width: 60%;
     }
