@@ -8,4 +8,8 @@ class LadderAlert extends Model {
     use SoftDeletes;
 	//
 
+    public function players()
+    {
+        return $this->hasMany('App\LadderAlertPlayer');
+    }
 }

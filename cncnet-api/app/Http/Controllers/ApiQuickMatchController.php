@@ -289,7 +289,24 @@ class ApiQuickMatchController extends Controller
 
                 foreach($ladder->alerts as $a)
                 {
-                    $alert .= "@everyone {$a->message}<br>\n<br>\n";
+                    $lap = $a->players()->where('player_id', '=', $player->id)->first();
+
+                    if ($lap !== null)
+                    {
+                        if ($lap->show)
+                            $alert .= "@everyone {$a->message}<br>\n<br>\n";
+
+                        $lap->show = false;
+                    }
+                    else
+                    {
+                        $alert .= "@everyone {$a->message}<br>\n<br>\n";
+                        $lap = new \App\LadderAlertPlayer;
+                        $lap->player_id = $player->id;
+                        $lap->ladder_alert_id = $a->id;
+                        $lap->show = true;
+                    }
+                    $lap->save();
                 }
             }
 
