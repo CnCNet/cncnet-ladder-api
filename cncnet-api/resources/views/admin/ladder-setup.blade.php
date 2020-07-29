@@ -256,13 +256,16 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="{{ $rule->ladder_id }}_allowed_sides">Allowed Sides</label>
                                         <?php $sideIdsAllowed = explode(',', $rule->allowed_sides); ?>
-                                        <select id="{{ $rule->ladder_id }}_allowed_sides" name="allowed_sides[]" class="form-control" multiple>
+                                        <label>Allowed Sides</label>
+                                        <div class="overflow-auto" style="height: 250px; overflow: auto; background: black;">
                                             @foreach($sides as $side)
-                                                <option value="{{ $side->local_id }}" @if(in_array($side->local_id, $sideIdsAllowed)) selected @endif > {{ $side->name }} </option>
+                                                <div>
+                                                    <input id="side_{{ $side->id }}" type="checkbox" name="allowed_sides[]" value="{{ $side->local_id }}" @if(in_array($side->local_id, $sideIdsAllowed)) checked @endif />
+                                                    <label for="side_{{ $side->id }}">{{ $side->name }}</label>
+                                                </div>
                                             @endforeach
-                                        </select>
+                                        </div>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary btn-lg">Save</button>

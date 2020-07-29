@@ -91,36 +91,65 @@
                             <input type="hidden" name="valid" value="{{ $map->valid }}" />
 
                             <div class="form-group col-md-4">
-                                <label for="{{ $map->id }}_description"> Description </label>
-                                <input type="text" id="{{ $map->id }}_description" name="description" value="{{ $map->description }}" class="form-control" />
+                                <div class="form-group col-md-12">
+                                    <label for="{{ $map->id }}_description"> Description </label>
+                                    <input type="text" id="{{ $map->id }}_description" name="description" value="{{ $map->description }}" class="form-control" />
+                                </div>
 
-                                <label for="{{ $map->id }}_admin_description"> Admin Description </label>
-                                <input type="text" id="{{ $map->id }}_admin_description" name="admin_description" value="{{ $map->admin_description }}" class="form-control" />
-                                <label for="{{ $rule->ladder_id }}_allowed_sides">Allowed Sides</label>
-                                <?php $sideIdsAllowed = array_map('intval', explode(',', $map->allowed_sides)); ?>
-                                <select id="{{ $map->id }}_allowed_sides" size="9" name="allowed_sides[]" class="form-control" multiple>
-                                    @foreach($sides as $side)
-                                        <option value="{{ $side->local_id }}" @if(in_array($side->local_id, $sideIdsAllowed)) selected @endif > {{ $side->name }} </option>
-                                    @endforeach
-                                </select>
-                                <div>
-                                    <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                                <div class="form-group col-md-12">
+                                    <label for="{{ $map->id }}_admin_description"> Admin Description </label>
+                                    <input type="text" id="{{ $map->id }}_admin_description" name="admin_description" value="{{ $map->admin_description }}" class="form-control" />
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label for="{{ $map->id }}_spawn_order">spawn_order</label>
+                                    <input type="text" id="{{ $map->id }}_spawn_order" name="spawn_order" value="{{ $map->spawn_order }}" class="form-control" />
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label for="{{ $map->id }}_team1_spawn_order">team1</label>
+                                    <input type="text" id="{{ $map->id }}_team1_spawn_order" name="team1_spawn_order" value="{{ $map->team1_spawn_order }} " class="form-control"  />
+                                </div>
+
+                                <div class="form-group col-md-4">
+                                    <label for="{{ $map->id }}_team2_spawn_order">team2</label>
+                                    <input type="text" id="{{ $map->id }}_team2_spawn_order" name="team2_spawn_order" value="{{ $map->team2_spawn_order }}" class="form-control"  />
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label for="{{ $map->id }}_map"> map </label>
+                                    <select id="{{ $map->id }}_map" name="map_id" class="form-control map-selector"></select>
+                                    <button type="button" class="btn btn-primary btn-md" id="editMaps" data-toggle="modal" data-target="#editLadderMap"> Edit/New </button>
                                 </div>
                             </div>
 
-                            <div class="form-group col-md-4">
-                                <label for="{{ $map->id }}_spawn_order">spawn_order</label>
-                                <input type="text" id="{{ $map->id }}_spawn_order" name="spawn_order" value="{{ $map->spawn_order }}" class="form-control" />
+                            <div class="col-md-4" >
+                                <div class="col-md-12">
+                                    <?php $sideIdsAllowed = array_map('intval', explode(',', $map->allowed_sides)); ?>
+                                    <label>Allowed Sides</label>
+                                    <div class="overflow-auto" style="height: 250px; overflow: auto; background: black;">
+                                        @foreach($sides as $side)
+                                            <div>
+                                                <input id="side_{{ $side->id }}" type="checkbox" name="allowed_sides[]" value="{{ $side->local_id }}" @if(in_array($side->local_id, $sideIdsAllowed)) checked @endif />
+                                                <label for="side_{{ $side->id }}">{{ $side->name }}</label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
 
-                                <label for="{{ $map->id }}_team1_spawn_order">team1_spawn_order</label>
-                                <input type="text" id="{{ $map->id }}_team1_spawn_order" name="team1_spawn_order" value="{{ $map->team1_spawn_order }} " class="form-control"  />
+                                <div class="col-md-6">
+                                    <input id="{{ $map->id }}_rejectable" type="checkbox" name="rejectable" @if($map->rejectable) checked @endif />
+                                    <label for="{{ $map->id }}_rejectable"> Rejectable</label>
+                                </div>
 
-                                <label for="{{ $map->id }}_team2_spawn_order">team2_spawn_order</label>
-                                <input type="text" id="{{ $map->id }}_team2_spawn_order" name="team2_spawn_order" value="{{ $map->team2_spawn_order }}" class="form-control"  />
+                                <div class="col-md-6">
+                                    <input id="default_reject_{{$map->id}}" type="checkbox" name="default_reject" @if($map->default_reject) checked @endif />
+                                    <label for="default_reject_{{$map->id}}"> Rejected By Default</label>
+                                </div>
 
-                                <label for="{{ $map->id }}_map"> map </label>
-                                <select id="{{ $map->id }}_map" name="map_id" class="form-control map-selector"></select>
-                                <button type="button" class="btn btn-primary btn-md" id="editMaps" data-toggle="modal" data-target="#editLadderMap"> Edit/New </button>
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                                </div>
                             </div>
                         </form>
 
