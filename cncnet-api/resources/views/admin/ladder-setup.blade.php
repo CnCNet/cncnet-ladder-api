@@ -224,8 +224,11 @@
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="{{ $rule->frame_send_rate }}_frame_send_rate">Frame Send Rate</label>
-                                        <input id="{{ $rule->frame_send_rate }}_frame_send_rate" type="number" name="frame_send_rate" class="form-control" value="{{ $rule->frame_send_rate }}" />
+                                        <label for="show_map_preview">Show Map Preview in Client</label>
+                                        <select id ="show_map_preview" name="show_map_preview" class="form-control">
+                                            <option value="1" @if($rule->show_map_preview) selected @endif>Yes</option>
+                                            <option value="0" @if(!$rule->show_map_preview) selected @endif>No</option>
+                                        </select>
                                     </div>
 
                                     <div class="form-group">

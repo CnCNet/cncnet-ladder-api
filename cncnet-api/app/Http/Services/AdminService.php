@@ -29,7 +29,7 @@ class AdminService
         $ladderRule->max_points_difference = $request->max_points_difference;
         $ladderRule->points_per_second = $request->points_per_second;
 
-        $ladderRule->frame_send_rate = $request->frame_send_rate;
+        $ladderRule->show_map_preview = $request->show_map_preview;
         $ladderRule->use_elo_points = $request->use_elo_points;
         $ladderRule->wol_k = $request->wol_k;
         $ladderRule->bail_time = $request->bail_time;

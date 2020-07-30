@@ -434,8 +434,9 @@ class ApiQuickMatchController extends Controller
                 }
             }
 
-            // Write the Others sections
+            $spawnStruct["client"]["show_map_preview"] = $ladder_rules->show_map_preview;
 
+            // Write the Others sections
             $allPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
             $other_idx = 1;
 
