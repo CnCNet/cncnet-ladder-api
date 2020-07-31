@@ -403,7 +403,7 @@ class ApiQuickMatchController extends Controller
                     $spawnStruct["spawnmap"][$sov->spawnOption->string1->string][$sov->spawnOption->string2->string] = $sov->value->string;
                     break;
                 case SpawnOptionType::PREPEND_FILE:
-                    $spawnStruct["appends"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
+                    $spawnStruct["prepends"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
                     break;
                 case SpawnOptionType::COPY_FILE:
                     $spawnStruct["copies"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
@@ -424,7 +424,7 @@ class ApiQuickMatchController extends Controller
                     $spawnStruct["spawnmap"][$sov->spawnOption->string1->string][$sov->spawnOption->string2->string] = $sov->value->string;
                     break;
                 case SpawnOptionType::PREPEND_FILE:
-                    $spawnStruct["appends"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
+                    $spawnStruct["prepends"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
                     break;
                 case SpawnOptionType::COPY_FILE:
                     $spawnStruct["copies"][] = [ "to" => $sov->spawnOption->string1->string, "from" => $sov->value->string ];
