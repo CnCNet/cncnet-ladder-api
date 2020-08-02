@@ -184,43 +184,37 @@ class MapPoolController extends Controller {
         return redirect()->back();
     }
 
-    public function moveMap(Request $request, $ladderId, $mapPoolId)
+    public function reorderMapPool(Request $request, $mapPoolId)
     {
-        $qmMap = \App\QmMap::find($request->id);
         $mapPool = MapPool::find($mapPoolId);
 
-        if ($request->updown == 1 && $qmMap !== null)
+        $maps = $mapPool->maps;
+        $toSave = array();
+        $count = $maps->count();
+
+        for ($i = 0; $i < $count; ++$i)
         {
-            $mapAbove = $mapPool->maps()->where('bit_idx', $qmMap->bit_idx - 1)->first();
-            if ($mapAbove === null)
+            $map_id = $request->input("bit_idx_{$i}");
+
+            $map = \App\QmMap::find($map_id);
+            if ($map !== null)
             {
-                $request->session()->flash('error', "Can't move map that direction");
+                $map->bit_idx = $i;
+                $toSave[] = $map;
+            }
+            else
+            {
+                $request->session()->flash('error', "Unabled to reorder the map pool");
                 return redirect()->back();
             }
-
-            $mapAbove->bit_idx++;
-            $mapAbove->save();
-
-            $qmMap->bit_idx--;
-            $qmMap->save();
-            $request->session()->flash('success', "Map Moved Up");
         }
-        else if ($request->updown == 2 && $qmMap !== null)
+
+        foreach ($toSave as $map)
         {
-            $mapBelow = $mapPool->maps()->where('bit_idx', $qmMap->bit_idx + 1)->first();
-            if ($mapBelow === null)
-            {
-                $request->session()->flash('error', "Can't move map that direction");
-                return redirect()->back();
-            }
-
-            $mapBelow->bit_idx--;
-            $mapBelow->save();
-
-            $qmMap->bit_idx++;
-            $qmMap->save();
-            $request->session()->flash('success', "Map Moved Down");
+            $map->save();
         }
+
+        $request->session()->flash('success', "Map Pool Reordered");
         return redirect()->back();
     }
 }

@@ -49,7 +49,7 @@
                                 @endforeach
                                 @if ($lastmap !== null)
                                     <?php $new_map = $lastmap->replicate();
-                                    $new_map->bit_id++;
+                                    $new_map->bit_idx++;
                                     $new_map->id = 'new';
                                     $new_map->description = "Copy of " . $lastmap->description;
                                     $new_map->admin_description = "Copy of ". $lastmap->admin_description;
@@ -65,6 +65,7 @@
                                 <option value="new">&lt;New Map></option>
                             </select>
                             <button type="submit" class="btn btn-danger">Remove Map</button>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#reorderMapPool"> Reorder </button>
                         </form>
                     </div>
                     <div class="col-md-6">
@@ -75,14 +76,6 @@
                 </div>
                 @foreach($maps as $map)
                     <div class="row map hidden" id="map_{{$map->id}}">
-                        <div class="col-md-12">
-                            <form method="POST" action="movemap" class="map" id="qmapu_{{ $map->map_pool_id }}_{{ $map->id }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                <input type="hidden" name="id" value="{{ $map->id }}" />
-                                <button type="submit" name="updown" value="1" class="btn btn-primary">Move Up</button>
-                                <button type="submit" name="updown" value="2" class="btn btn-primary">Move Down</button>
-                            </form>
-                        </div>
                         <form method="POST" action="edit" class="map" id="qmap_{{ $map->map_pool_id }}_{{ $map->id }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                             <input type="hidden" name="id" value="{{ $map->id }}" />
@@ -301,6 +294,51 @@
             </div>
         </div>
     @endforeach
+
+    <div class="modal fade" id="reorderMapPool" tabIndex="-1"  role="dialog">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title">Reorder the Map Pool</h3>
+                </div>
+                <div class="modal-body clearfix">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-12 player-box player-card" style="padding:8px;margin:8px;">
+                                <form method="POST" action="reorder">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                    <input type="hidden" id="mapPoolId" name="id" value="{{ $mapPool->id }}" />
+                                    <div style="overflow: auto;max-height: calc(100vh - 300px);">
+                                        <table>
+                                            <tbody>
+                                                @foreach($maps as $map)
+                                                    @if($map->id != "new")
+                                                        <tr>
+                                                            <td>
+                                                                <input type="radio" id="rinput_idx_{{ $map->bit_idx }}" name="maphandle" value="{{$map->id}},{{ $map->bit_idx }}" class="maphandle"></radio>
+                                                                <label id="linput_idx_{{ $map->bit_idx }}" for="rinput_idx_{{ $map->bit_idx }}" style="margin-bottom: 0;" >{{$map->admin_description}}</label>
+                                                                <input type="hidden" id="input_idx_{{ $map->bit_idx }}" name="bit_idx_{{ $map->bit_idx }}" value="{{$map->id}}" />
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div style="margin-top: 8px;">
+                                        <a href="#reorderMapPool" class="move-up btn btn-primary"><span class="fa fa-arrow-up"></span></a>
+                                        <a href="#reorderMapPool" class="move-down btn btn-primary"><span class="fa fa-arrow-down"></span></a>
+                                        <button type="submit" class="btn btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('js')
@@ -324,12 +362,12 @@
      (function () {
          let mapSels = document.querySelectorAll(".map-selector")
          for (let i = 0; i < mapSels.length; i++)
+         {
+             mapSels[i].onchange = function ()
              {
-                 mapSels[i].onchange = function ()
-                 {
-                     document.getElementById("mapThumbnail").src = "/images/maps/{{$ladderAbbrev}}/" + ladderMaps[this.value].hash + ".png";
-                 }
+                 document.getElementById("mapThumbnail").src = "/images/maps/{{$ladderAbbrev}}/" + ladderMaps[this.value].hash + ".png";
              }
+         }
      })();
 
      (function () {
@@ -394,6 +432,99 @@
                  }
                  document.getElementById("option_" + this.value).classList.remove("hidden");
              };
+         }
+     })();
+
+     (function () {
+         let ups = document.querySelectorAll(".move-up");
+         for (let i = 0; i < ups.length; i++)
+         {
+             ups[i].addEventListener('click', function () {
+
+                 let ele = document.getElementsByName('maphandle');
+
+                 for(i = 0; i < ele.length; i++)
+                 {
+                     if(ele[i].checked)
+                     {
+                         let parts = ele[i].value.split(",");
+                         let prev_bit = parseInt(parts[1]) - 1;
+                         if (prev_bit < 0)
+                             break;
+
+                         let hid = document.getElementById("input_idx_" + parts[1]);
+                         let lab = document.getElementById("linput_idx_" + parts[1]);
+                         let rad = document.getElementById("rinput_idx_" + parts[1]);
+
+                         let prev_hid = document.getElementById("input_idx_" + prev_bit);
+                         let prev_lab = document.getElementById("linput_idx_" + prev_bit);
+                         let prev_rad = document.getElementById("rinput_idx_" + prev_bit);
+
+                         if (prev_hid !== null)
+                         {
+                             let desc = lab.innerHTML;
+                             let hval = hid.value;
+                             let rval = rad.value;
+
+                             lab.innerHTML = prev_lab.innerHTML;
+                             prev_lab.innerHTML = desc;
+
+                             hid.value = prev_hid.value;
+                             prev_hid.value = hval;
+
+                             rad.value = hid.value + "," + parts[1];
+                             prev_rad.value = prev_hid.value + "," + prev_bit;
+
+                             ele[i-1].checked = true;
+                             break;
+                         }
+                     }
+                 }
+             });
+         }
+
+         let downs = document.querySelectorAll(".move-down");
+         for (i = 0; i < downs.length; i++)
+         {
+             downs[i].addEventListener('click', function () {
+
+                 let ele = document.getElementsByName('maphandle');
+
+                 for(i = 0; i < ele.length; i++)
+                 {
+                     if(ele[i].checked)
+                     {
+                         let parts = ele[i].value.split(",");
+                         let next_bit = parseInt(parts[1]) + 1;
+
+                         let hid = document.getElementById("input_idx_" + parts[1]);
+                         let lab = document.getElementById("linput_idx_" + parts[1]);
+                         let rad = document.getElementById("rinput_idx_" + parts[1]);
+                         let next_hid = document.getElementById("input_idx_" + next_bit);
+                         let next_lab = document.getElementById("linput_idx_" + next_bit);
+                         let next_rad = document.getElementById("rinput_idx_" + next_bit);
+
+                         if (next_hid !== null)
+                         {
+                             let desc = lab.innerHTML;
+                             let hval = hid.value;
+                             let rval = rad.value;
+
+                             lab.innerHTML = next_lab.innerHTML;
+                             next_lab.innerHTML = desc;
+
+                             hid.value = next_hid.value;
+                             next_hid.value = hval;
+
+                             rad.value = hid.value + "," + parts[1];
+                             next_rad.value = next_hid.value + "," + next_bit;
+
+                             ele[i+1].checked = true;
+                             break;
+                         }
+                     }
+                 }
+             });
          }
      })();
 
