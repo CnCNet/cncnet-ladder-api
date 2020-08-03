@@ -172,10 +172,8 @@ class MapPoolController extends Controller {
 
         if ($qmMap !== null)
         {
-            \App\QmMap::valid()
-                      ->where('map_pool_id', '=', $request->map_pool_id)
-                      ->where('bit_idx', '>', $qmMap->bit_idx)
-                      ->decrement('bit_idx');
+            $mapPool->maps()->where('bit_idx', '>', $qmMap->bit_idx)
+                            ->decrement('bit_idx');
             $qmMap->valid = false;
             $qmMap->save();
         }
