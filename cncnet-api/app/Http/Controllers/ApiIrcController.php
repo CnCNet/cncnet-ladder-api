@@ -32,7 +32,7 @@ class ApiIrcController extends Controller {
 
         $lastRequest = Cache::get("getActive/{$ladder->id}");
 
-        if ($lastRequest !== null && Carbon::now()->diffInSeconds($lastRequest['cached_at']) > $forgetSeconds)
+        if ($lastRequest !== null && Carbon::now()->diff(new Carbon($lastRequest['cached_at']))->s > $forgetSeconds)
         {
             Cache::forget("getActive/{$ladder->id}");
         }
