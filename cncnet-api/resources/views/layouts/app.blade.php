@@ -31,7 +31,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body onload="@yield('body_onload')">
+<body>
     <div class="navigation-component">
         @include('components.navigation')
     </div>

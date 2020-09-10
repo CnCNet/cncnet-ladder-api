@@ -144,6 +144,8 @@ return [
 		'App\Providers\ConfigServiceProvider',
 		'App\Providers\EventServiceProvider',
 		'App\Providers\RouteServiceProvider',
+        'App\Providers\Navigation',
+        'App\Providers\IrcCache',
 		'App\MyMailer\MailServiceProvider',
 
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
@@ -200,4 +202,5 @@ return [
         'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory'
 	],
 
+    'irc_pipe' => env('IRC_PIPE', '/tmp/pp_file'),
 ];

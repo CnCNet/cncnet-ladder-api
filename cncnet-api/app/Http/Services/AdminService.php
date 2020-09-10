@@ -13,12 +13,27 @@ class AdminService
 
     }
 
-    public function saveQMLadderRulesRequest($request)
+    public function saveQMLadderRulesRequest($request, $ladderId)
     {
         $ladderRule = QmLadderRules::where("id", "=", $request->id)->first();
-        if ($ladderRule == null)
+
+        if ($request->id == "new")
+        {
+            $ladderRule = QmLadderRules::newDefault($ladderId);
+            $ladderRule->save();
+            $request->session()->flash('success', 'Default Quick Match rules added');
+            return redirect()->back();
+        }
+        else if ($ladderRule == null)
         {
             $request->session()->flash('error', 'Error no ladder rules found');
+            return redirect()->back();
+        }
+
+        if ($request->has('submit') && $request->submit == "delete")
+        {
+            $ladderRule->delete();
+            $request->session()->flash('success', 'Quick Match Rules have been deleted');
             return redirect()->back();
         }
 

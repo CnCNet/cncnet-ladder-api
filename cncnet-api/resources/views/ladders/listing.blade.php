@@ -93,7 +93,7 @@
                 <div class="col-md-12">
                     <div class="header">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 @if($history->ladder->qmLadderRules->tier2_rating > 0)
                                     @if($tier == 1 || $tier === null)
                                         <h3><strong>1vs1</strong> Masters League Rankings</h3>
@@ -105,8 +105,13 @@
                                 @endif
                             </div>
 
-                            <div class="col-md-8 text-right">
+                            <div class="col-md-9 text-right">
                                 <ul class="list-inline">
+                                    <li>
+                                        <a href="/account/{{ $history->ladder->abbreviation }}/list" class="btn btn-secondary text-uppercase" style="font-size: 15px;">
+                                            <i class="fa fa-user fa-lg fa-fw" aria-hidden="true" style="margin-right: 0;"></i> Your Account
+                                        </a>
+                                    </li>
                                     <li>
                                         <button class="btn btn-secondary text-uppercase" data-toggle="modal" data-target="#battleRanks" style="font-size: 15px;">
                                             <i class="fa fa-trophy fa-lg fa-fw" aria-hidden="true" style="margin-right: 5px;"></i> Battle Ranks

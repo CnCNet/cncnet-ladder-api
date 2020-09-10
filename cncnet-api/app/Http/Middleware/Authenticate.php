@@ -91,6 +91,16 @@ class Authenticate {
                 }
             }
 
+            if ($request->gameSchemaId !== null)
+            {
+                $gameSchema = \App\GameObjectSchema::find($request->gameSchemaId);
+
+                if (isset($actions['objectSchemaManager']))
+                {
+                    $gameSchema->managers()->where('user_id', '=', $this->auth->user()->id);
+                }
+            }
+
             if ($response !== null)
             {
                 return $response;

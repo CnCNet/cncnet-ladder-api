@@ -3,6 +3,7 @@
 use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
 use \Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 class LadderService
 {
@@ -13,9 +14,10 @@ class LadderService
         $this->authService = new AuthService();
     }
 
-    public function getLadders()
+    public function getLadders($private = false)
     {
-        $ladders = \App\Ladder::all();
+        $ladders = \App\Ladder::where('private', '=', $private)->get();
+
         foreach ($ladders as $ladder)
         {
             $ladder["sides"] = $ladder->sides()->get();
@@ -37,6 +39,7 @@ class LadderService
 
     public function getLatestLadders()
     {
+        return Cache::remember("ladderService::getLatestLadders", 1, function() {
         $date = Carbon::now();
 
         $start = $date->startOfMonth()->toDateTimeString();
@@ -46,7 +49,38 @@ class LadderService
             ->where("ladder_history.starts", "=", $start)
             ->where("ladder_history.ends", "=", $end)
             ->whereNotNull("ladder.id")
+            ->where('ladder.clans_allowed', '=', false)
+            ->where('ladder.private', '=', false)
             ->get();
+        });
+    }
+
+    public function getLatestClanLadders()
+    {
+        return Cache::remember("ladderService::getLatestClanLadders", 1, function() {
+        $date = Carbon::now();
+
+        $start = $date->startOfMonth()->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+
+        return \App\LadderHistory::leftJoin("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+            ->where("ladder_history.starts", "=", $start)
+            ->where("ladder_history.ends", "=", $end)
+            ->whereNotNull("ladder.id")
+            ->where('ladder.clans_allowed', '=', true)
+            ->where('ladder.private', '=', false)
+            ->get();
+        });
+    }
+
+    public function getPrivateLadders($user = null)
+    {
+        return Cache::remember("ladderService::getPrivateLadders{$user->id}", 1, function() use ($user) {
+        if ($user === null)
+            return collect();
+
+        return $user->privateLadders()->get();
+        });
     }
 
     public function getPreviousLaddersByGame($cncnetGame, $limit = 5)

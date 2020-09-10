@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
+use \App\Http\Services\LadderService;
 use \App\PlayerActiveHandle;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -13,22 +14,19 @@ use Carbon\Carbon;
 class ApiUserController extends Controller
 {
     private $authService;
+    private $ladderService;
+    private $playerService;
 
     public function __construct()
     {
         $this->authService = new AuthService();
+        $this->playerService = new PlayerService;
+        $this->ladderService = new LadderService;
     }
 
     public function getAccount(Request $request)
     {
-        $auth = $this->authService->getUser($request);
-
-        $playerService = new \App\Http\Services\PlayerService;
-
-        $user = $auth["user"];
-
-        if ($auth["user"] === null)
-            return response($auth["response"], $auth['status']);
+        $user = $request->user();
 
         foreach (\App\Ladder::all() as $ladder)
         {
@@ -43,17 +41,17 @@ class ApiUserController extends Controller
                     $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
                     foreach ($oPlayers as $op)
                     {
-                        $playerService->addPlayerToUser($op->username, $user, $ladder->id);
+                        $this->playerService->addPlayerToUser($op->username, $user, $ladder->id);
                         $playerCreated = true;
                     }
                 }
                 if (!$playerCreated)
                 {
-                    $playerService->addPlayerToUser($user->name, $user, $ladder->id);
+                    $this->playerService->addPlayerToUser($user->name, $user, $ladder->id);
                 }
             }
         }
-        return $this->getActivePlayerList($auth["user"]->id);
+        return $this->getActivePlayerList($user->id);
     }
 
     private function getActivePlayerList($userId)
@@ -63,7 +61,7 @@ class ApiUserController extends Controller
         $endOfMonth = $date->endOfMonth()->toDateTimeString();
 
         $activeHandles = PlayerActiveHandle::getUserActiveHandles($userId, $startOfMonth, $endOfMonth);
-        
+
         $players = [];
         foreach($activeHandles as $activeHandle)
         {
@@ -107,7 +105,7 @@ class ApiUserController extends Controller
         $date = Carbon::now();
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
-        
+
         $ladderHistory = \App\LadderHistory::where("starts", "=", $start)
             ->where("ends", "=", $end)
             ->first();
@@ -127,7 +125,7 @@ class ApiUserController extends Controller
             PlayerActiveHandle::setPlayerActiveHandle($ladderId, $tempNick->id, $userId);
             return $tempNick;
         }
-        
+
         $limitLatestNickByDate = Carbon::create("2019", "09", "01");
 
         // Get nick last created limited by this new 1 nick rule
@@ -176,5 +174,22 @@ class ApiUserController extends Controller
                 return response()->json(['account_present'], 400);
             }
         }
+    }
+
+    public function getPrivateLadders(Request $request)
+    {
+        $ladders = $this->ladderService->getLadders(true);
+
+        $user = $request->user();
+
+        if ($user->isGod())
+            return $ladders;
+
+        $ladders = $ladders->filter(function($ladder) use ($user)
+        {
+            return $ladder->allowedToView($user);
+        });
+
+        return $ladders->values();
     }
 }

@@ -28,7 +28,7 @@ class QmMap extends Model {
     public static function findMapsByLadder($id)
     {
         $ladder = \App\Ladder::find($id);
-        $qmMaps = $ladder->qmLadderRules->mapPool->maps;
+        $qmMaps = $ladder->mapPool->maps;
         return $qmMaps->map( function($qmMap)
         {
             $qmMap["hash"] = $qmMap->map->hash;

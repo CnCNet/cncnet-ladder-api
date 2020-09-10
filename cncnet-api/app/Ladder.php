@@ -7,7 +7,7 @@ class Ladder extends Model
 {
     protected $table = 'ladders';
 
-    protected $fillable = ['name', 'abbreviation'];
+    protected $fillable = ['name', 'abbreviation', 'game', 'clans_allowed', 'game_object_schema_id' ];
 
     public function qmLadderRules()
     {
@@ -27,6 +27,16 @@ class Ladder extends Model
     public function maps()
     {
         return $this->hasMany('App\Map');
+    }
+
+    public function mapPools()
+    {
+        return $this->hasMany('App\MapPool');
+    }
+
+    public function mapPool()
+    {
+        return $this->belongsTo('App\MapPool');
     }
 
     public function players()
@@ -54,6 +64,20 @@ class Ladder extends Model
         return $this->allAdmins()->where('tester', '=', true);
     }
 
+    public function allowedToView($user)
+    {
+        if ($this->private == false)
+            return true;
+
+        if ($user === null)
+            return false;
+
+        if ($user->isGod())
+            return true;
+
+        return $user->isLadderAdmin($this) || $user->isLadderMod($this) || $user->isLadderTester($this);
+    }
+
     public function currentHistory()
     {
         $date = Carbon::now();
@@ -65,8 +89,40 @@ class Ladder extends Model
                                  ->where('ladder_history.ends', '=', $end)->first();
     }
 
+    public function latestLeaderboardUrl()
+    {
+        $history = $this->currentHistory();
+
+        if ($history === null)
+        {
+            return "/";
+        }
+
+        if ($this->clans_allowed)
+        {
+            return "/clans/{$this->abbreviation}/leaderboards/{$history->short}/";
+        }
+
+        return "/ladder/{$history->short}/$ladder->abbreviation";
+    }
+
     public function alerts()
     {
         return $this->hasMany('\App\LadderAlert')->where('expires_at', '>', Carbon::now());
+    }
+
+    public function gameObjectSchema()
+    {
+        return $this->belongsTo('\App\GameObjectSchema');
+    }
+
+    public function countableGameObjects()
+    {
+        return $this->hasMany('\App\CountableGameObject', 'game_object_schema_id', 'game_object_schema_id');
+    }
+
+    public function spawnOptionValues()
+    {
+        return $this->hasMany('App\SpawnOptionValue');
     }
 }

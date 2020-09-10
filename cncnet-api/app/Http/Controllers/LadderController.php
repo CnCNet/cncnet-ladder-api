@@ -49,7 +49,8 @@ class LadderController extends Controller
         array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
-            "ladders_winners" => $prevWinners
+            "ladders_winners" => $prevWinners,
+            "clan_ladders" => $this->ladderService->getLatestClanLadders()
         ));
     }
 
@@ -65,6 +66,7 @@ class LadderController extends Controller
             "stats" => $this->statsService->getQmStats($request->game),
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
+            "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
             "history" => $history,
             "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)
@@ -89,6 +91,7 @@ class LadderController extends Controller
         array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
+            "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
             "games" => $this->ladderService->getRecentLadderGamesPaginated($request->date, $request->game)
         ));
@@ -148,6 +151,7 @@ class LadderController extends Controller
             "playerGameReports" => $gameReport !== null ? $gameReport->playerGameReports()->get() : [],
             "history" => $history,
             "ladders" => $this->ladderService->getLatestLadders(),
+            "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "heaps" => \App\CountableObjectHeap::all(),
             "user" => $user,
             "userIsMod" => $userIsMod,
@@ -197,6 +201,7 @@ class LadderController extends Controller
             array
             (
                 "ladders" => $this->ladderService->getLatestLadders(),
+                "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "history" => $history,
                 "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($history, $player->username))),
                 "games" => $games,
@@ -209,9 +214,10 @@ class LadderController extends Controller
         );
     }
 
-    public function addLadder()
+    public function addLadder($ladderId)
     {
-        $ladder = \App\Ladder::where("name", "=", "Red Alert")->first();
+        $ladder = \App\Ladder::find($ladderId);
+
         for($times = 0; $times < 5; $times++)
         {
             $year = 2017 + $times;
@@ -243,7 +249,12 @@ class LadderController extends Controller
     {
         $ladder = \App\Ladder::find($ladderId);
 
-        if ($ladderId === null || $ladder === null)
+        if ($request->id === "new")
+        {
+            $ladder = new \App\Ladder;
+        }
+
+        else if ($ladderId === null || $ladder === null)
         {
             $request->session()->flash('error', 'Unabled to find ladder');
             return redirect()->back();
@@ -252,10 +263,18 @@ class LadderController extends Controller
         $ladder->name = $request->name;
         $ladder->abbreviation = $request->abbreviation;
         $ladder->game = $request->game;
+        $ladder->clans_allowed = $request->clans_allowed;
+        $ladder->game_object_schema_id = $request->game_object_schema_id;
+        $ladder->private = $request->private;
         $ladder->save();
+
+        if ($request->id === "new")
+        {
+            $this->addLadder($ladder->id);
+        }
 
         $request->session()->flash('success', 'Ladder information saved.');
 
-        return redirect()->back();
+        return redirect("/admin/setup/{$ladder->id}/edit");
     }
 }

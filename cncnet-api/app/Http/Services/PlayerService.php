@@ -74,7 +74,7 @@ class PlayerService
         if ($card == null)
         {
             $request->session()->flash('error', 'There was a problem saving your profile card');
-            return redirect("/account");
+            return redirect()->back();
         }
 
         // Check the playerId belongs to us
@@ -88,7 +88,7 @@ class PlayerService
             }
         }
 
-        return redirect("/account");
+        return redirect()->back();
     }
 
     public function findPlayerById($id)

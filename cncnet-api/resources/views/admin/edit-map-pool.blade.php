@@ -113,6 +113,10 @@
                                     <label for="{{ $map->id }}_map"> map </label>
                                     <select id="{{ $map->id }}_map" name="map_id" class="form-control map-selector"></select>
                                     <button type="button" class="btn btn-primary btn-md" id="editMaps" data-toggle="modal" data-target="#editLadderMap"> Edit/New </button>
+                                    @if($ladderMaps->count() == 0)
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#cloneLadderMaps"> Clone </button>
+                                    @endif
+
                                 </div>
                             </div>
 
@@ -209,7 +213,7 @@
                             <div class="col-md-12 player-box player-card" style="padding:8px;margin:8px;">
                                 <form method="POST" action="remmap">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                    <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
+                                    <input type="hidden" name="ladder_id" value="{{ $ladder->id }}" />
                                     <p style="color: #fff" >Map Hashes</p>
 
                                     <select id="ladderMapSelector" name="map_id" size="6" class="form-control map_pool">
@@ -221,7 +225,7 @@
                                 </form>
                                 <form method="POST" action="../../editmap" class="map" id="ladderMapEdit" enctype="multipart/form-data">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                    <input type="hidden" name="ladder_id" value="{{ $rule->ladder_id }}" />
+                                    <input type="hidden" name="ladder_id" value="{{ $ladder->idd }}" />
                                     <input type="hidden" id="ladderMapId" name="map_id" value="new" />
                                     <input type="hidden" id="mapSelected" name="map_selected" value="" />
 
@@ -265,8 +269,8 @@
                     <div class="modal-body clearfix">
                         <div class="container-fluid">
                             <?php $new_sov = new \App\SpawnOptionValue; $new_sov->id = "new"; $new_sov->value = ""; ?>
-                            @include('admin.spawn-option', [ 'sov' => $new_sov, 'rulesId' => "", 'qmMapId' => $map->id, 'spawnOptions' => $spawnOptions,
-                            "button" => "Add", "hidden" => false])
+                            @include('admin.spawn-option', [ 'sov' => $new_sov, 'ladderId' => "", 'qmMapId' => $map->id, 'spawnOptions' => $spawnOptions,
+                                                             "button" => "Add", "hidden" => false])
                         </div>
                     </div>
                 </div>
@@ -282,11 +286,11 @@
                     <div class="modal-body clearfix">
                         <div class="container-fluid">
                             <?php $new_sov = new \App\SpawnOptionValue; $new_sov->id = "new"; $new_sov->value = ""; ?>
-                            @include('admin.spawn-option', [ 'sov' => $new_sov, 'rulesId' => "", 'qmMapId' => $map->id, 'spawnOptions' => $spawnOptions,
-                            "button" => "Add", "hidden" => true])
+                            @include('admin.spawn-option', [ 'sov' => $new_sov, 'ladderId' => "", 'qmMapId' => $map->id, 'spawnOptions' => $spawnOptions,
+                                                                                         "button" => "Add", "hidden" => true])
                             @foreach($map->spawnOptionValues as $sov)
-                                @include('admin.spawn-option', [ 'sov' => $sov, 'rulesId' => "", 'qmMapId' => $map->id, 'spawnOptions' => $spawnOptions,
-                                "button" => "Update", "hidden" => true])
+                                @include('admin.spawn-option', [ 'sov' => $sov, 'ladderId' => "", 'qmMapId' => $map->id, 'spawnOptions' => $spawnOptions,
+                                                                                         "button" => "Update", "hidden" => true])
                             @endforeach
                         </div>
                     </div>
@@ -294,6 +298,39 @@
             </div>
         </div>
     @endforeach
+
+<div class="modal fade" id="cloneLadderMaps" tabIndex="-1"  role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Seed the Map Pool</h3>
+            </div>
+            <div class="modal-body clearfix">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 player-box player-card" style="padding:8px;margin:8px;">
+                            <form method="POST" action="cloneladdermaps">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                <input type="hidden" name="ladder_id" value="{{ $ladder->id }}">
+                                <div class="form-group">
+                                    <label for="cloneSelector">Clone From</label>
+                                    <select name="clone_ladder_id" id="cloneSelector" class="form-control">
+                                        @foreach($allLadders as $ladder)
+                                            <option value="{{ $ladder->id }}">{{ $ladder->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <button type="submit" value="clone" name="submit" class="btn btn-lg btn-primary">Clone</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <div class="modal fade" id="reorderMapPool" tabIndex="-1"  role="dialog">
         <div class="modal-dialog modal-md" role="document">
@@ -356,7 +393,7 @@
          @foreach($ladderMaps as $mph)
          "{{$mph->id}}": { "ladder_id": "{{$mph->ladder_id}}", "name": {!!json_encode($mph->name)!!}, "hash": {!! json_encode($mph->hash)!!} },
          @endforeach
-         "new": { "ladder_id": "{{$rule->ladder_id}}", "name": "new map", "hash": "" },
+         "new": { "ladder_id": "{{$ladder->id}}", "name": "new map", "hash": "" },
      };
 
      (function () {

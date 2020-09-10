@@ -29,7 +29,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="text-center" style="padding-bottom: 40px;">
-                        <h1>Hi {{ $user->name }} </h1>
+                        <h1>Hi {{ $user->name }} <button class="btn btn-link inline-after-edit" data-toggle="modal" data-target="#renameUser"><span class="fa fa-edit"></span></button></h1>
                         <p class="lead">Manage everything to do with your CnCNet Ladder Account here.</p>
                     </div>
                 </div>
@@ -47,132 +47,115 @@
     <div class="container">
 
             <div class="row">
-                @if(!$user->email_verified)<div class="col-md-12 tutorial">
-                    <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
-                    <div class="text-center">
-                        <a href="{{ url("/account/verify") }}">Click Here to Send a New Code</a>
+                @if(!$user->email_verified)
+                    <div class="col-md-12 tutorial">
+                        <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
+                        <div class="text-center">
+                            <form class="form" method="POST" name="verify" action="/account/verify" >
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-link" >Click Here to Send a New Code</a>
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 @endif
             </div>
             <div class="row">
                 <div class="col-md-12">
-                @include("components.form-messages")
+                    @include("components.form-messages")
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="account-box">
-                        <h2>Add a new username?</h2>
-                        <form method="POST" action="account/username">
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <p>Usernames will be the name shown when you login to CnCNet clients and play games.</p>
-                            
-                            <div class="form-group">
-                                <label for="username">Username</label>
-                                <input type="text" name="username" class="form-control" id="username" placeholder="Username">
-                            </div>
-                            <div class="form-group">
-                                <label for="ladder">Ladder</label>
-                                <select name="ladder" id="ladder" class="form-control">
-                                @foreach($ladders as $history)
-                                <option value="{{ $history->ladder->id }}">{{ $history->ladder->name }}</option>
-                                @endforeach
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Create username</button>
-                        </form>
+            <div class="feature">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h2>1v1 Ladders</h2>
                     </div>
-                </div>
-
-                <div class="col-md-8">
-                    <?php $cards = \App\Card::all(); ?>
-                    <div class="account-box">
-                    <h2>Your Usernames</h2>
-                    <p>
-                        New rules everyone! You are only allowed:<br/>
-                    </p>
-                    <ul>
-                        <li>Tiberian Sun players are now allowed up to 3 nicknames per month.</li>
-                        <li>Red Alert &amp; Yuri's Revenge players are only allowed 1 nickname per month.</li>
-                        <li>One user account, having multiple accounts are not allowed. </li>
-                    </ul>
-                    <p>
-                        To use your nickname, activate it and it will appear in your Quick Match client.
-                    </p>
-
-                    <div class="account-player-listings">
-                    @foreach($user->usernames()
-                        ->orderBy("ladder_id", "DESC")
-                        ->orderBy("id", "DESC")
-                        ->get() as $u)
-
-                        <?php 
-                            $player = \App\Player::where("username", $u->username)
-                                ->where("ladder_id", $u->ladder_id)
-                                ->first();
-
-                            $date = \Carbon\Carbon::now();
-                            $startOfMonth = $date->startOfMonth()->toDateTimeString();
-                            $endOfMonth = $date->endOfMonth()->toDateTimeString();
-
-                            $activeHandle = \App\PlayerActiveHandle::getPlayerActiveHandle($player->id, $u->ladder_id, 
-                                $startOfMonth, $endOfMonth);
-                        ?>
-
-                        <div class="player-listing {{$activeHandle ? 'active': ''}}">
-                            <div class="username">
-                                <i class="icon icon-game icon-{{ $u->ladder()->first()->abbreviation }}"></i>  
-                                <div>
-                                    {{ $u->username }}
+                    @foreach($ladders as $history)
+                        <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
+                            <a href="/account/{{ $history->ladder->abbreviation }}/list" title="{{ $history->ladder->name }}" class="ladder-link">
+                                <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
+                                    <div class="details">
+                                        <div class="type">
+                                            <h1>{{ $history->ladder->name }}</h1>
+                                            <p class="lead">1<strong>vs</strong>1</p>
+                                        </div>
+                                    </div>
+                                    <div class="badge-cover">
+                                        <ul class="list-inline">
+                                            <li>
+                                                <p>{{ Carbon\Carbon::parse($history->starts)->format('F Y') }} Competition</p>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="card">
-                                <p>Ladder player card</p>
-                                <form id="playerCard" class="form-inline" method="POST" action="account/card">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                    <input type="hidden" name="playerId" value="{{ $u->id }}" />
-                                    
-                                    <select class="form-control" name="cardId">
-                                        @foreach($cards as $card)
-                                            <option value="{{ $card->id }}" @if($card->id == $u->card_id) selected @endif>
-                                            {{ $card->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    <button type="submit" class="btn btn-submit">Save</button>
-                                </form>
-                            </div>
-
-
-                            <div class="username-status">
-                                <p>
-                                    {{ 
-                                        $activeHandle 
-                                        ? 
-                                            "This username will appear in your Quick Match client. " 
-                                        : 
-                                        "Click Play to add this username to your Quick Match client"
-                                    }}
-                                </p>
-                                <form id="usernameStatus" class="form-inline" method="POST" action="account/username-status">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                    <input type="hidden" name="username" value="{{ $u->username }}" />
-                                    <input type="hidden" name="ladderId" value="{{ $u->ladder_id}}" />
-
-                                    <button type="submit" class="btn btn-activate">
-                                        {{ $activeHandle ? "Deactivate": "Play with username"}}
-                                    </button>
-                                </form>
-                            </div>
+                            </a>
                         </div>
                     @endforeach
-                    </div>
-                    </div>
+                </div>
+                <div class="row">
+                    @if($clan_ladders->count() > 0)
+                        <div class="col-md-12">
+                            <h2>Clan Ladders</h2>
+                        </div>
+                    @endif
+                    @foreach($clan_ladders as $history)
+                        <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
+                            <a href="/account/{{ $history->ladder->abbreviation }}/list" title="{{ $history->ladder->name }}" class="ladder-link">
+                                <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
+                                    <div class="details">
+                                        <div class="type">
+                                            <h1>{{ $history->ladder->name }}</h1>
+                                            <p class="lead">1<strong>vs</strong>1</p>
+                                        </div>
+                                    </div>
+                                    <div class="badge-cover">
+                                        <ul class="list-inline">
+                                            <li>
+                                                <p>{{ Carbon\Carbon::parse($history->starts)->format('F Y') }} Competition</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<div class="modal fade" id="renameUser" tabIndex="-1"  role="dialog">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Change Your Username</h3>
+            </div>
+            <div class="modal-body clearfix">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12 player-box player-card" style="padding:8px;margin:8px;">
+                            <div class="account-box">
+                                <form method="POST" action="/account/rename" >
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="id" value="{{ $user->id }}">
+
+                                    <div class="form-group">
+                                        <label for="name">Username</label>
+                                        <input type="text" name="name" class="form-control" id="name" placeholder="New Username" value="{{ $user->name }}">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Change</button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

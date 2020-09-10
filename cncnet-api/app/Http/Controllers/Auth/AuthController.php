@@ -39,7 +39,7 @@ class AuthController extends Controller {
 
     public function postRegister(Request $request)
 	{
-        $this->validate($request, [ 'name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11' ] );
+        $this->validate($request, [ 'name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users' ] );
 
 		$validator = $this->registrar->validator($request->all());
 
@@ -54,6 +54,7 @@ class AuthController extends Controller {
 
 		$this->auth->login($this->registrar->create($request->all()));
 
-		return redirect('/account/verify');
+        $this->auth->user()->sendNewVerification();
+		return redirect()->back();
 	}
 }

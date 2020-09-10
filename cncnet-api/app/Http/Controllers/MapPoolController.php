@@ -106,19 +106,19 @@ class MapPoolController extends Controller {
                       'mapPool' => $mapPool,
                       'ladderAbbrev' => $ladder->abbreviation,
                       'maps' => $mapPool->maps()->orderBy('bit_idx')->get(),
-                      'rule' => $ladder->qmLadderRules,
+                      'ladder' => $ladder,
                       'sides' => $ladder->sides,
                       'ladderMaps' => $ladder->maps,
                       'spawnOptions' =>  \App\SpawnOption::all(),
+                      'allLadders' => \App\Ladder::all(),
                     ]);
     }
 
     public function cloneMapPool(Request $request, $ladderId)
     {
-        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
         $mapPool = new MapPool;
         $mapPool->name = $request->name;
-        $mapPool->qm_ladder_rules_id = $qmLadderRules->id;
+        $mapPool->ladder_id = $ladderId;
         $mapPool->save();
 
         $prototype = MapPool::find($request->map_pool_id);
@@ -135,21 +135,37 @@ class MapPoolController extends Controller {
 
     public function newMapPool(Request $request, $ladderId)
     {
-        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
         $mapPool = new MapPool;
         $mapPool->name = $request->name;
-        $mapPool->qm_ladder_rules_id = $qmLadderRules->id;
+        $mapPool->ladder_id = $ladderId;
         $mapPool->save();
 
         return redirect("/admin/setup/{$ladderId}/mappool/{$mapPool->id}/edit");
     }
 
+    public function copyMaps(Request $request, $ladderId, $mapPoolId)
+    {
+        $ladder = \App\Ladder::find($ladderId);
+        $mapPool = MapPool::find($mapPoolId);
+        $copyFrom = \App\Ladder::find($request->clone_ladder_id);
+
+        foreach ($copyFrom->maps as $map)
+        {
+            $new = $map->replicate();
+            $new->ladder_id = $ladder->id;
+            $new->save();
+        }
+
+        $request->session()->flash('success', "Maps Cloned");
+        return redirect()->back();
+    }
+
     public function changeMapPool(Request $request, $ladderId)
     {
-        $qmLadderRules = \App\QmLadderRules::find($request->qm_rules_id);
+        $ladder = \App\Ladder::find($ladderId);
 
-        $qmLadderRules->map_pool_id = $request->map_pool_id;
-        $qmLadderRules->save();
+        $ladder->map_pool_id = $request->map_pool_id;
+        $ladder->save();
 
         $request->session()->flash('success', "Map Pool Changed");
         return redirect()->back();

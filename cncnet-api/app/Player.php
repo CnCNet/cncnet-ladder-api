@@ -314,4 +314,19 @@ class Player extends Model
     {
         return $this->hasMany('\App\PlayerAlert')->where('expires_at', '>', Carbon::now());
     }
+
+    public function clanPlayer()
+    {
+        return $this->hasOne('App\ClanPlayer');
+    }
+
+    public function clanInvitations()
+    {
+        return $this->hasMany('App\ClanInvitation');
+    }
+
+    public function ircAssociation()
+    {
+        return $this->hasOne('App\IrcAssociation');
+    }
 }

@@ -101,6 +101,13 @@ class ApiQuickMatchController extends Controller
             return array("type"=>"fail", "description" => "$playerName is not registered in $ladderAbbrev");
         }
 
+        $user = $request->user();
+
+        if ($user->id !== $player->user->id)
+        {
+            return array("type"=>"fail", "description" => "Failed");
+        }
+
         $date = Carbon::now();
         $startOfMonth = $date->startOfMonth()->toDateTimeString();
         $endOfMonth = $date->endOfMonth()->toDateTimeString();
@@ -392,7 +399,7 @@ class ApiQuickMatchController extends Controller
                    // Filter null values
                 ], function($var){return !is_null($var);} );
 
-            foreach($ladder_rules->spawnOptionValues as $sov)
+            foreach($ladder->spawnOptionValues as $sov)
             {
                 switch ($sov->spawnOption->type->id)
                 {

@@ -42,7 +42,8 @@ class LeagueChampionsController extends Controller
         (
             "abbreviation" => $game,
             "ladders_winners" => $prevWinners,
-            "ladders" => $this->ladderService->getLatestLadders()
+            "ladders" => $this->ladderService->getLatestLadders(),
+            "clan_ladders" => $this->ladderService->getLatestClanLadders()
         ));
     }
 }

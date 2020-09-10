@@ -19,14 +19,12 @@
 </div>
 @endsection
 
-@section('body_onload')document.verify.submit()@endsection
-
 @section('content')
 <section class="light-texture game-detail supported-games" style="color: silver;">
     <div class="container">
 	    <div class="row">
 		    <div class="col-md-8 col-md-offset-2">
-                        <form class="form" method="POST" name="verify" action="/account/verify" >
+                        <form class="form" method="POST" name="verify" id="verify" action="/account/verify" >
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <button type="submit" class="btn btn-primary" name="verify_submit" id="verify_submit">
                                 Click Here
@@ -36,4 +34,13 @@
             </div>
     </div>
 </section>
+@endsection
+
+@section('js')
+    <script type="text/javascript">
+     (function() {
+         var body = document.getElementsByTagName("BODY")[0];
+         body.onload = function() { document.getElementById("verify").submit(); }
+     })();
+    </script>
 @endsection

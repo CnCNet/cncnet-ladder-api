@@ -49,17 +49,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function isAdmin()
     {
-        return in_array(\Auth::user()->group, [self::God, self::Admin]);
+        return in_array($this->group, [self::God, self::Admin]);
     }
 
     public function isGod()
     {
-        return in_array(\Auth::user()->group, [self::God]);
+        return in_array($this->group, [self::God]);
     }
 
     public function isModerator()
     {
-        return in_array(\Auth::user()->group, [self::God, self::Admin, self::Moderator]);
+        return in_array($this->group, [self::God, self::Admin, self::Moderator]);
     }
 
     public function bans()
@@ -90,6 +90,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function ladderAdmins()
     {
         return $this->hasMany('App\LadderAdmin');
+    }
+
+    public function ladders()
+    {
+        return $this->belongsToMany('App\Ladder', 'ladder_admins');
+    }
+
+    public function privateLadders()
+    {
+        if ($this->isGod())
+            return \App\Ladder::where('private', '=', true);
+
+        return $this->ladders()->where('private', '=', true);
     }
 
     public function isLadderAdmin($ladder)

@@ -2,7 +2,7 @@
     <form method="POST" action="optval">
         <input type="hidden" name="_token" value="{{ csrf_token() }}" />
         <input type="hidden" name="id" value="{{ $sov->id }}" />
-        <input type="hidden" name="qm_ladder_rules_id" value="{{ $rulesId }}" />
+        <input type="hidden" name="ladder_id" value="{{ $ladderId }}" />
         <input type="hidden" name="qm_map_id" value="{{ $qmMapId }}" />
 
         <div class="form-group">

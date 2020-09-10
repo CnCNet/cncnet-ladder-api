@@ -68,7 +68,7 @@ class ApiLadderController extends Controller
         $game = App\Game::find($gameId);
 
         // Game stats result
-        $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder->id);
+        $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder);
 
         if (count($result) == 0 || $result == null)
         {
@@ -83,7 +83,7 @@ class ApiLadderController extends Controller
         $this->gameService->fillGameCols($game, $result);
 
         // Now save the processed stats
-        $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder->id, $ladder->game);
+        $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
         $gameReport = $result['gameReport'];
         if ($gameReport === null)
         {
@@ -340,7 +340,7 @@ class ApiLadderController extends Controller
 
     public function getCurrentLadders(Request $request)
     {
-        return $this->ladderService->getLadders();
+        return $this->ladderService->getLadders(false);
     }
 
     public function getLadderGame(Request $request, $game = null, $gameId = null)

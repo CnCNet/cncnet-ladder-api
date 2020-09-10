@@ -9,6 +9,7 @@ use \App\User;
 use \App\MapPool;
 use \App\Ladder;
 use \App\SpawnOptionString;
+use App\GameObjectSchema;
 
 class AdminController extends Controller
 {
@@ -24,7 +25,11 @@ class AdminController extends Controller
     public function getAdminIndex(Request $request)
     {
         return view("admin.index", ["ladders" => $this->ladderService->getLatestLadders(),
-                                    "all_ladders" => \App\Ladder::all()]);
+                                    "clan_ladders" => $this->ladderService->getLatestLadders(),
+                                    "all_ladders" => \App\Ladder::all(),
+                                    "schemas" => \App\GameObjectSchema::managedBy($request->user()),
+                                    "user" => $request->user(),
+        ]);
     }
 
     public function getLadderSetupIndex(Request $request, $ladderId = null)
@@ -35,19 +40,92 @@ class AdminController extends Controller
             return null;
 
         $ladders = $this->ladderService->getLatestLadders();
+        $clan_ladders = $this->ladderService->getLatestClanLadders();
+        $objectSchemas = GameObjectSchema::all();
         $rule = $ladder->qmLadderRules;
-        $mapPools = $rule->mapPools;
-        $qmMaps = $ladder->qmLadderRules->mapPool->maps;
+        $mapPools = $ladder->mapPools;
         $maps = $ladder->maps;
         $user = $request->user();
         $spawnOptions = \App\SpawnOption::all();
 
-        return view("admin.ladder-setup", compact('ladders', 'ladder', 'rule', 'mapPools', 'qmMaps', 'maps', 'user', 'spawnOptions'));
+        return view("admin.ladder-setup", compact('ladders', 'ladder', 'clan_ladders', 'objectSchemas',
+                                                  'rule', 'mapPools', 'maps', 'user', 'spawnOptions'));
     }
 
-    public function postLadderSetupRules(Request $request)
+    public function getGameSchemaSetup(Request $request, $gameSchemaId)
     {
-        return $this->adminService->saveQMLadderRulesRequest($request);
+        $gameSchema = \App\GameObjectSchema::find($gameSchemaId);
+        if ($gameSchema === null)
+            abort(404);
+
+        $countableGameObjects = $gameSchema->countableGameObjects;
+
+        $heapNames = \App\CountableObjectHeap::all();
+        $managers = $gameSchema->managers;
+
+        return view("admin.schema-setup", compact('gameSchema', 'countableGameObjects', 'heapNames', 'managers'));
+    }
+
+    public function saveSchemaManager(Request $request, $gameSchemaId)
+    {
+        $gameSchema = \App\GameObjectSchema::find($gameSchemaId);
+        if ($gameSchema === null)
+            abort(404);
+
+        $user = \App\User::where('email', '=', $request->email)->first();
+
+        if ($user === null)
+        {
+            $request->session()->flash('error', "No user with email: {$request->email}");
+            return redirect()->back();
+        }
+
+        $manager = \App\ObjectSchemaManager::firstOrCreate([ 'game_object_schema_id' => $gameSchema->id, 'user_id' => $user->id ]);
+
+        $request->session()->flash('success', "Manager added");
+        return redirect()->back();
+    }
+
+    public function saveGameSchema(Request $request, $gameSchemaId)
+    {
+        $gameSchema = \App\GameObjectSchema::find($gameSchemaId);
+        if ($gameSchema === null)
+            abort(404);
+
+        $gameSchema->name = $request->name;
+        $gameSchema->save();
+
+        $request->session()->flash('success', "Schema has been updated");
+        return redirect()->back();
+    }
+
+
+    public function saveGameObject(Request $request, $gameSchemaId, $objectId)
+    {
+        $gameSchema = \App\GameObjectSchema::find($gameSchemaId);
+        if ($gameSchema === null)
+            abort(404);
+
+        $object = \App\CountableGameObject::find($objectId);
+
+        if ($request->id == "new")
+        {
+            $object = new \App\CountableObjectHeap;
+        }
+        else if ($object === null)
+        {
+            abort(404);
+        }
+
+        $request->session()->flash('success', "Object has been updated");
+        $object->fill($request->all());
+        $object->save();
+        return redirect()->back();
+    }
+
+    public function postLadderSetupRules(Request $request, $ladderId)
+    {
+        return $this->adminService->saveQMLadderRulesRequest($request, $ladderId);
     }
 
     public function editSpawnOptionValue(Request $request)
@@ -64,7 +142,7 @@ class AdminController extends Controller
         }
         else
         {
-            $sov->qm_ladder_rules_id = $request->qm_ladder_rules_id;
+            $sov->ladder_id = $request->ladder_id;
             $sov->qm_map_id = $request->qm_map_id;
             $sov->spawn_option_id = $request->spawn_option_id;
             $sov->value_id = SpawnOptionString::findOrCreate($request->value)->id;

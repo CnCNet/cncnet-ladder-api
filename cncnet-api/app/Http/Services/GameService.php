@@ -11,7 +11,7 @@ class GameService
         $this->playerService = new PlayerService();
     }
 
-    public function saveGameStats($result, $gameId, $playerId, $ladderId, $cncnetGame)
+    public function saveGameStats($result, $gameId, $playerId, $ladder, $cncnetGame)
     {
         $game = \App\Game::where("id", "=", $gameId)->first();
 
@@ -57,7 +57,7 @@ class GameService
                 $playerGameReports[$id] = new \App\PlayerGameReport();
                 $playerGameReports[$id]->game_id = $game->id;
                 $playerGameReports[$id]->game_report_id = $gameReport->id;
-                $playerHere = \App\Player::where('ladder_id', $ladderId)->where('username', $value["value"])->first();
+                $playerHere = \App\Player::where('ladder_id', $ladder->id)->where('username', $value["value"])->first();
                 if ($playerHere === null)
                     return ['error' => 'playerHere is null for username '.json_decode($value["value"])
                            ,'gameReport' => null ];
@@ -76,7 +76,7 @@ class GameService
         }
 
         // Save Game Specific Stats like buildings bought, destroyed etc
-        foreach (\App\CountableGameObject::where('ladder_id', '=', $ladderId)->get() as $countable)
+        foreach ($ladder->countableGameObjects as $countable)
         {
             foreach ($playerStats as $k => $value)
             {
@@ -311,7 +311,7 @@ class GameService
     }
 
     // Credit: https://github.com/dkeetonx
-    public function processStatsDmp($file, $cncnetGame, $ladderId)
+    public function processStatsDmp($file, $cncnetGame, $ladder)
     {
         if($file == null)
             return null;
@@ -351,7 +351,7 @@ class GameService
             }
         }
 
-        $types = \App\CountableGameObject::where('ladder_id', '=', $ladderId)->groupBy("heap_name")->get();
+        $types = $ladder->countableGameObjects()->groupBy("heap_name")->get();
 
         foreach ($types as $type)
         {
