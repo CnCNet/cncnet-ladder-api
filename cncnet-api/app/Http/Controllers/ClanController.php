@@ -101,8 +101,8 @@ class ClanController extends Controller {
             $clan->save();
 
             $clanPlayer = new ClanPlayer;
-            $clanPlayer->fill([ 'clan_id' => $clan->id, 'player_id' => $player->id, 'role' => 'Owner' ]);
-
+            $clanPlayer->fill([ 'clan_id' => $clan->id, 'player_id' => $player->id ]);
+            $clanPlayer->role = "Owner";
             $clanPlayer->save();
 
             $clanInvite = new ClanInvitation;
