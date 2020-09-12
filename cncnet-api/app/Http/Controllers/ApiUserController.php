@@ -65,7 +65,8 @@ class ApiUserController extends Controller
         $players = [];
         foreach($activeHandles as $activeHandle)
         {
-            $players[] = $activeHandle->player;
+            if ($activeHandle->player->ladder->private == false)
+                $players[] = $activeHandle->player;
         }
 
         // If they haven't selected a nickname yet
