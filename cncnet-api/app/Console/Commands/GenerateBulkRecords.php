@@ -29,8 +29,8 @@ class GenerateBulkRecords extends Command {
 	public function handle()
 	{
 		//
-        $day = Carbon::now()->subDay(1)->format('m') + 0;
-        $month = Carbon::now()->subDay(1)->format('Y');
+        $day = Carbon::now()->subMonth(1)->format('m') + 0;
+        $month = Carbon::now()->subMonth(1)->format('Y');
         $histories = \App\LadderHistory::where('short', '=', $day."-".$month)->get();
 
         $ladders = [];
