@@ -206,26 +206,27 @@ class MapPoolController extends Controller {
         $toSave = array();
         $count = $maps->count();
 
-        for ($i = 0; $i < $count; ++$i)
+        for ($i = 0; $i < $count && $i < 1000; ++$i)
         {
             $map_id = $request->input("bit_idx_{$i}");
 
             $map = \App\QmMap::find($map_id);
             if ($map !== null)
             {
-                $map->bit_idx = $i;
                 $toSave[] = $map;
             }
             else
             {
-                $request->session()->flash('error', "Unabled to reorder the map pool");
-                return redirect()->back();
+                $count++;
             }
         }
 
+        $i = 0;
         foreach ($toSave as $map)
         {
+            $map->bit_idx = $i;
             $map->save();
+            $i++;
         }
 
         $request->session()->flash('success', "Map Pool Reordered");
