@@ -188,7 +188,46 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
 
             $qEntry->delete();
 
+            $recentlyPlayedFlag = true; //flag telling if map has been played in last 3 games
+            $count = 0;
             $map_idx = mt_rand(0, count($common_maps) - 1);
+
+            while ($recentlyPlayedFlag && $count < 50) {  //keep looping until a map is found that has not been played in last 3 games and count less than 50, in unlikely edge case no map is found
+                $recentlyPlayedFlag = false;
+                $count++;
+
+                $map_idx = mt_rand(0, count($common_maps) - 1);
+
+                $recentGames = array_slice($player->playerGames(), 0, 3);  //grab the last 3 games p1 has played
+
+                //loop through the player's last 3 games and check if any of the 3 played maps === the randomly picked map
+                foreach ($recentGames as $recentGame) { 
+                    $recent_map_id = $recentGame->scen;
+
+                    if ($recent_map_id === $qmMap->bit_idx) { //is recently played map equal to randomly picked map
+                        $recentlyPlayedFlag = true;
+                        break;
+                    }
+                }
+
+                //check opps last 3 games (rly it's just be 1 opponent being checked)
+                foreach ($qmOpns as $qOpn) {
+                    $qmOppPlayer = $qOpn->qmPlayer;
+                    $oppPlayer = $qmOppPlayer->player;
+
+                    $oppRecentGames = array_slice($oppPlayer->playerGames(), 0, 3);  //grab the last 3 games p2 (opponent) has played
+
+                    foreach ($oppRecentGames as $oppRecentGame) { //loop through the opponent's last 3 games and check if any of the 3 played maps === the randomly picked map
+                        $oppRecent_map_id = $oppRecentGame->scen;
+
+
+                        if ($oppRecent_map_id === $qmMap->bit_idx) { //is recently played map by opponent equal to randomly picked map
+                            $recentlyPlayedFlag = true;
+                            break;
+                        }
+                    }
+                }
+            }
 
             // Create the qm_matches db entry
             $qmMatch = new \App\QmMatch();
