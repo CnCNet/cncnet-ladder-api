@@ -198,7 +198,7 @@ class MapPoolController extends Controller {
         return redirect()->back();
     }
 
-    public function reorderMapPool(Request $request, $mapPoolId)
+    public function reorderMapPool(Request $request, $ladderId, $mapPoolId)
     {
         $mapPool = MapPool::find($mapPoolId);
 
