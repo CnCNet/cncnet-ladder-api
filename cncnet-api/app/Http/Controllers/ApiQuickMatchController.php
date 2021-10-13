@@ -447,6 +447,17 @@ class ApiQuickMatchController extends Controller
             $allPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
             $other_idx = 1;
 
+            if ($ladder->name === "Yuri's Revenge")
+            {
+                $opn = $allPlayers[0];
+
+                //if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
+                if (($qmPlayer->chosen_side < 6 && $opn->chosen_side == 9) || ($opn->chosen_side < 6 && $qmPlayer->chosen_side == 9))
+                {
+                    $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
+                }
+            }
+
             $multi_idx = $qmPlayer->color + 1;
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
 
