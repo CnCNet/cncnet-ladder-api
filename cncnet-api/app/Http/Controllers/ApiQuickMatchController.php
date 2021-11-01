@@ -452,7 +452,7 @@ class ApiQuickMatchController extends Controller
                 $opn = $allPlayers[0];
 
                 //if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
-                if (($qmPlayer->chosen_side < 6 && $opn->chosen_side == 9) || ($opn->chosen_side < 6 && $qmPlayer->chosen_side == 9))
+                if (($qmPlayer->actual_side < 5 && $opn->actual_side == 9) || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9))
                 {
                     $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
                 }
