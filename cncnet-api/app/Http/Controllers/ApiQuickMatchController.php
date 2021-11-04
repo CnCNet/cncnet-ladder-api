@@ -480,6 +480,8 @@ class ApiQuickMatchController extends Controller
                     }
                 }
             }
+            $qmPlayer->waiting = false;
+            $qmPlayer->save();
 
             return $spawnStruct;
             break;
