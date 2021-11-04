@@ -365,10 +365,7 @@ class ApiQuickMatchController extends Controller
                 $this->dispatch(new FindOpponent($qEntry->id));
 
                 $qmPlayer->touch();
-                if ($alert)
-                    return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5, 'warning' => $alert);
-                else
-                    return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5);
+                return checkback($alert);
             }
             // If we've made it this far, lets send the spawn details
 
@@ -447,15 +444,9 @@ class ApiQuickMatchController extends Controller
             $allPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
             $other_idx = 1;
 
-            if ($ladder->name === "Yuri's Revenge")
+            if (count($allPlayers) == 0)
             {
-                $opn = $allPlayers[0];
-
-                //if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
-                if (($qmPlayer->actual_side < 5 && $opn->actual_side == 9) || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9))
-                {
-                    $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
-                }
+                return checkback($alert);
             }
 
             $multi_idx = $qmPlayer->color + 1;
@@ -477,6 +468,15 @@ class ApiQuickMatchController extends Controller
                 $multi_idx = $opn->color + 1;
                 $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
                 $other_idx++;
+
+                if (array_key_exists("DisableSWAlliedvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWAlliedvsYuri"] === "True")
+                {    
+                    //if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
+                    if (($qmPlayer->actual_side < 5 && $opn->actual_side == 9) || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9))
+                    {
+                        $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
+                    }
+                }
             }
             $qmPlayer->waiting = false;
             $qmPlayer->save();
@@ -495,4 +495,12 @@ function b_to_ini($bool)
     if ($bool === null) return $bool;
     if ($bool == -1) return rand(0,1) ? "Yes" : "No"; // Pray the seed was set earlier or this will cause recons
     return $bool ? "Yes" : "No";
+}
+
+function checkback($alert)
+{
+    if ($alert)
+        return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5, 'warning' => $alert);
+     else
+        return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5);      
 }
