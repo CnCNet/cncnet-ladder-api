@@ -446,6 +446,8 @@ class ApiQuickMatchController extends Controller
 
             if (count($allPlayers) == 0)
             {
+                $qmPlayer->waiting = false;
+                $qmPlayer->save();
                 return checkback($alert);
             }
 
@@ -478,8 +480,6 @@ class ApiQuickMatchController extends Controller
                     }
                 }
             }
-            $qmPlayer->waiting = false;
-            $qmPlayer->save();
 
             return $spawnStruct;
             break;
