@@ -471,7 +471,7 @@ class ApiQuickMatchController extends Controller
                 $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
                 $other_idx++;
 
-                if (array_key_exists("DisableSWAlliedvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWAlliedvsYuri"] === "Yes")
+                if (array_key_exists("DisableSWAlliedvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
                 {    
                     //if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
                     if (($qmPlayer->actual_side < 5 && $opn->actual_side == 9) || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9))
