@@ -144,7 +144,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
             // long runs of identical matchups.
             $qmOpns = $qmOpns->shuffle()->take($ladder_rules->player_count - 1);
             // Randomly select a map
-            $common_maps = array();
+            $common_qm_maps = array();
 
             $qmMaps = $ladder->mapPool->maps;
             foreach ($qmMaps as $qmMap)
@@ -184,50 +184,48 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                     $match = false;
 
                 if ($match)
-                    $common_maps[] = $qmMap;
+                    $common_qm_maps[] = $qmMap;
             }
 
             $qEntry->delete();
 
-            $recentGames = array_slice($player->playerGames(), 0, 3);  //grab the last 3 games played
+            $recentPlayerGameReports = array_slice($player->playerGames()
+                ->where("ladder_history_id", "=", $history->id)
+                ->orderBy('created_at', 'DESC'), 0, 3);  //grab up to 3 recent games played
+            $recentMaps = removeRecentlyPlayedMaps($recentPlayerGameReports);
 
-            foreach ($recentGames as $recentGame)
-            { //remove the recently played games from the common maps
-                $recentMap = $recentGame->map;
-                if (array_key_exists($recentMap, $common_maps))
-                {
-                    unset($common_maps[$recentMap]);
-                }
+            foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
+            {
+                $common_qm_maps = removeMap($recentMap, $common_qm_maps);
             }
 
-            foreach ($qmOpns as $qOpn)
-            {  //check opps last 3 games
+            foreach ($qmOpns as $qOpn) //check Opn last 3 games
+            {
                 $oppPlayer = $qOpn->qmPlayer->player;
+                $oppRecentGames = array_slice($oppPlayer->playerGames()
+                    ->where("ladder_history_id", "=", $history->id)
+                    ->orderBy('created_at', 'DESC'), 0, 3);  //grab up to 3 recent games from opponent
 
-                $oppRecentGames = array_slice($oppPlayer->playerGames(), 0, 3);  //grab the last 3 games p2 (opponent) has played
+                $recentMaps = removeRecentlyPlayedMaps($oppRecentGames);
 
-                foreach ($oppRecentGames as $oppRecentGame)
+                foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
                 {
-                    $recentMap = $oppRecentGame->map;
-                    if (array_key_exists($recentMap, $common_maps))
-                    {
-                        unset($common_maps[$recentMap]);
-                    }
+                    $common_qm_maps = removeMap($recentMap, $common_qm_maps);
                 }
             }
 
-            if (count($common_maps) < 1)
+            if (count($common_qm_maps) < 1)
             {
                 $qmPlayer->touch();
                 return;
             }
 
-            $randomMapIndex = mt_rand(0, count($common_maps) - 1);
+            $randomMapIndex = mt_rand(0, count($common_qm_maps) - 1);
 
             // Create the qm_matches db entry
             $qmMatch = new \App\QmMatch();
             $qmMatch->ladder_id = $qmPlayer->ladder_id;
-            $qmMatch->qm_map_id = $common_maps[$randomMapIndex]->id;
+            $qmMatch->qm_map_id = $common_qm_maps[$randomMapIndex]->id;
             $qmMatch->seed = mt_rand(-2147483647, 2147483647);
 
             // Create the Game
@@ -305,4 +303,35 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
             $qmPlayer->save();
         }
     }
+}
+
+/**
+ * Grab the maps played from an array for player game reports
+ */
+function removeRecentlyPlayedMaps($recentPlayerGameReports)
+{
+    $maps = [];
+
+    foreach ($recentPlayerGameReports as $recentGame)
+    {
+        $maps[] = $recentGame->game->map;
+    }
+
+    return $maps;
+}
+
+function removeMap($recentMap, $common_qm_maps)
+{
+    $index = array_search($recentMap, $common_qm_maps);
+
+    foreach ($common_qm_maps as $qmMap)
+    {
+        if ($qmMap->map == $recentMap)
+        {
+            unset($common_qm_maps[$index]);
+            break;
+        }
+    }
+
+    return $common_qm_maps;
 }
