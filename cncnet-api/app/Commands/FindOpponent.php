@@ -320,18 +320,21 @@ function getMapsFromPlayerGameReports($recentPlayerGameReports)
     return $maps;
 }
 
+/**
+ * Remove this 'Map' from this array of 'QmMaps'.
+ * The function will loop through the array of common_qm_maps and check if equal to the $recentmMap
+ */
 function removeMap($recentMap, $common_qm_maps)
 {
-    $index = array_search($recentMap, $common_qm_maps);
+    $new_common_qm_maps = [];
 
-    foreach ($common_qm_maps as $qmMap)
+    foreach ($common_qm_maps as $common_qm_map)
     {
-        if ($qmMap->map == $recentMap)
+        if ($common_qm_map->map->hash != $recentMap->hash)
         {
-            unset($common_qm_maps[$index]);
-            break;
+            $new_common_qm_maps[] = $common_qm_map;
         }
     }
 
-    return $common_qm_maps;
+    return $new_common_qm_maps;
 }
