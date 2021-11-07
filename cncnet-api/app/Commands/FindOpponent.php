@@ -173,56 +173,37 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                 if ($match)
                     $common_maps[] = $qmMap;
             }
+
+            $qEntry->delete();
+
+            $recentGames = array_slice($player->playerGames(), 0, 3);  //grab the last 3 games played
+
+            foreach ($recentGames as $recentGame) { //remove the recently played games from the common maps
+                $recentMap = $recentGame->map;
+                if (array_key_exists($recentMap, $common_maps)) {
+                    unset($common_maps[$recentMap]);
+                }
+            }
+
+            foreach ($qmOpns as $qOpn) {  //check opps last 3 games
+                $oppPlayer = $qOpn->qmPlayer->player;
+
+                $oppRecentGames = array_slice($oppPlayer->playerGames(), 0, 3);  //grab the last 3 games p2 (opponent) has played
+
+                foreach ($oppRecentGames as $oppRecentGame) {
+                    $recentMap = $oppRecentGame->map;
+                    if (array_key_exists($recentMap, $common_maps)) {
+                        unset($common_maps[$recentMap]);
+                    }
+                }
+            }
+
             if (count($common_maps) < 1) {
                 $qmPlayer->touch();
                 return;
             }
 
-            $qEntry->delete();
-
-            $recentlyPlayedFlag = true; //flag telling if map has been played in last 3 games
             $randomMapIndex = mt_rand(0, count($common_maps) - 1);
-            $count = 0;
-
-            while ($recentlyPlayedFlag && $count < 50) {  //keep looping until a map is found that has not been played in last 3 games and count less than 50
-                $recentlyPlayedFlag = false;
-                $count++;
-
-                $randomMapIndex = mt_rand(0, count($common_maps) - 1);
-                $randomMapName = $common_maps[$randomMapIndex]->map->name;
-
-                $recentGames = array_slice($player->playerGames(), 0, 3);  //grab the last 3 games p1 has played
-
-                //loop through the player's last 3 games and check if any of the 3 played maps === the randomly picked map
-                foreach ($recentGames as $recentGame) {
-                    $recentMapName = $recentGame->scen;
-
-                    if ($recentMapName === $randomMapName) { //is recently played map equal to randomly picked map
-                        $recentlyPlayedFlag = true;
-                        break;
-                    }
-                }
-
-                if ($recentlyPlayedFlag)
-                    continue;
-
-                //check opps last 3 games (rly it's just be 1 opponent being checked)
-                foreach ($qmOpns as $qOpn) {
-                    $oppPlayer = $qOpn->qmPlayer->player;
-
-                    $oppRecentGames = array_slice($oppPlayer->playerGames(), 0, 3);  //grab the last 3 games p2 (opponent) has played
-
-                    foreach ($oppRecentGames as $oppRecentGame) { //loop through the opponent's last 3 games and check if any of the 3 played maps === the randomly picked map
-                        $oppRecentMapName = $oppRecentGame->scen;
-
-
-                        if ($oppRecentMapName === $qmMap->bit_idx) { //is recently played map by opponent equal to randomly picked map
-                            $recentlyPlayedFlag = true;
-                            break;
-                        }
-                    }
-                }
-            }
 
             // Create the qm_matches db entry
             $qmMatch = new \App\QmMatch();
