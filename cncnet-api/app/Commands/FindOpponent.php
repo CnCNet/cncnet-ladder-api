@@ -47,7 +47,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
         $this->delete();
         $qEntry = QmQueueEntry::find($this->qEntryId);
 
-        if ($qEntry === null) {
+        if ($qEntry === null)
+        {
             //error_log("qEntry is null\n");
             return;
         }
@@ -57,14 +58,16 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
         $qmPlayer = $qEntry->qmPlayer;
 
         // A player could cancel out of queue before this function runs
-        if ($qmPlayer === null) {
+        if ($qmPlayer === null)
+        {
             //error_log("qmPlayer is null");
             $qEntry->delete();
             return;
         }
 
         // Skip if the player has already been matched up
-        if ($qmPlayer->qm_match_id !== null) {
+        if ($qmPlayer->qm_match_id !== null)
+        {
             //error_log("qmPlayer->qm_match_id is not null");
             $qEntry->delete();
             return;
@@ -72,7 +75,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 
         $history = $qEntry->ladderHistory;
 
-        if ($history === null) {
+        if ($history === null)
+        {
             //error_log("history is null");
             $qEntry->delete();
             return;
@@ -80,7 +84,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 
         $ladder = $history->ladder;
 
-        if ($ladder === null) {
+        if ($ladder === null)
+        {
             //error_log("ladder is null");
             $qEntry->delete();
             return;
@@ -88,7 +93,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 
         $player = $qmPlayer->player;
 
-        if ($player === null) {
+        if ($player === null)
+        {
             //error_log("player is null");
             $qEntry->delete();
             return;
@@ -131,7 +137,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
         //error_log("Queried QmQueueEntry\n");
         $qmOpns = $qmOpns->shuffle();
 
-        if ($qmOpns->count() >= $ladder_rules->player_count - 1) {
+        if ($qmOpns->count() >= $ladder_rules->player_count - 1)
+        {
             //error_log("checking qmOpns\n");
             // Randomly choose the opponents from the best matches. To prevent
             // long runs of identical matchups.
@@ -140,7 +147,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
             $common_maps = array();
 
             $qmMaps = $ladder->mapPool->maps;
-            foreach ($qmMaps as $qmMap) {
+            foreach ($qmMaps as $qmMap)
+            {
                 $match = true;
                 if (
                     array_key_exists($qmMap->bit_idx, $qmPlayer->map_side_array())
@@ -148,11 +156,14 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                     $qmPlayer->map_side_array()[$qmMap->bit_idx] > -2
                     &&
                     in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array())
-                ) {
-                    foreach ($qmOpns as $qOpn) {
+                )
+                {
+                    foreach ($qmOpns as $qOpn)
+                    {
                         //error_log("qOpn->rating_time = {$qOpn->rating_time}");
                         $opn = $qOpn->qmPlayer;
-                        if ($opn === null) {
+                        if ($opn === null)
+                        {
                             $qOpn->delete();
                             $qEntry->delete();
                             return;
@@ -163,11 +174,13 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                             ($opn->map_side_array()[$qmMap->bit_idx] < -1
                                 ||
                                 !in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
-                        ) {
+                        )
+                        {
                             $match = false;
                         }
                     }
-                } else
+                }
+                else
                     $match = false;
 
                 if ($match)
@@ -178,27 +191,33 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 
             $recentGames = array_slice($player->playerGames(), 0, 3);  //grab the last 3 games played
 
-            foreach ($recentGames as $recentGame) { //remove the recently played games from the common maps
+            foreach ($recentGames as $recentGame)
+            { //remove the recently played games from the common maps
                 $recentMap = $recentGame->map;
-                if (array_key_exists($recentMap, $common_maps)) {
+                if (array_key_exists($recentMap, $common_maps))
+                {
                     unset($common_maps[$recentMap]);
                 }
             }
 
-            foreach ($qmOpns as $qOpn) {  //check opps last 3 games
+            foreach ($qmOpns as $qOpn)
+            {  //check opps last 3 games
                 $oppPlayer = $qOpn->qmPlayer->player;
 
                 $oppRecentGames = array_slice($oppPlayer->playerGames(), 0, 3);  //grab the last 3 games p2 (opponent) has played
 
-                foreach ($oppRecentGames as $oppRecentGame) {
+                foreach ($oppRecentGames as $oppRecentGame)
+                {
                     $recentMap = $oppRecentGame->map;
-                    if (array_key_exists($recentMap, $common_maps)) {
+                    if (array_key_exists($recentMap, $common_maps))
+                    {
                         unset($common_maps[$recentMap]);
                     }
                 }
             }
 
-            if (count($common_maps) < 1) {
+            if (count($common_maps) < 1)
+            {
                 $qmPlayer->touch();
                 return;
             }
@@ -235,21 +254,25 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                 $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
 
 
-            if ($qmPlayer->actual_side < -1) {
+            if ($qmPlayer->actual_side < -1)
+            {
                 $qmPlayer->actual_side = $qmPlayer->chosen_side;
             }
 
             $qmPlayer->save();
 
-            $perMS = array_values(array_filter($qmMap->sides_array(), function ($s) {
+            $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+            {
                 return $s >= 0;
             }));
             $color = 1;
-            foreach ($qmOpns as $qOpn) {
+            foreach ($qmOpns as $qOpn)
+            {
                 $opn = $qOpn->qmPlayer;
                 $qOpn->delete();
 
-                if ($opn === null) {
+                if ($opn === null)
+                {
                     $qEntry->delete();
                     return;
                 }
@@ -259,11 +282,13 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                 if (count($osides) > $qmMap->bit_idx)
                     $opn->actual_side = $osides[$qmMap->bit_idx];
 
-                if ($opn->actual_side  < -1) {
+                if ($opn->actual_side  < -1)
+                {
                     $opn->actual_side = $opn->chosen_side;
                 }
 
-                if ($opn->actual_side == -1) {
+                if ($opn->actual_side == -1)
+                {
                     $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
                 }
                 $opn->color = $color++;
@@ -273,7 +298,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                 $opn->save();
             }
 
-            if ($qmPlayer->actual_side == -1) {
+            if ($qmPlayer->actual_side == -1)
+            {
                 $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
             }
             $qmPlayer->save();
