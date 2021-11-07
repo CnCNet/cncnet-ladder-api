@@ -192,7 +192,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
             $recentPlayerGameReports = array_slice($player->playerGames()
                 ->where("ladder_history_id", "=", $history->id)
                 ->orderBy('created_at', 'DESC'), 0, 3);  //grab up to 3 recent games played
-            $recentMaps = removeRecentlyPlayedMaps($recentPlayerGameReports);
+            $recentMaps = getMapsFromPlayerGameReports($recentPlayerGameReports);
 
             foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
             {
@@ -206,7 +206,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                     ->where("ladder_history_id", "=", $history->id)
                     ->orderBy('created_at', 'DESC'), 0, 3);  //grab up to 3 recent games from opponent
 
-                $recentMaps = removeRecentlyPlayedMaps($oppRecentGames);
+                $recentMaps = getMapsFromPlayerGameReports($oppRecentGames);
 
                 foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
                 {
@@ -308,7 +308,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 /**
  * Grab the maps played from an array for player game reports
  */
-function removeRecentlyPlayedMaps($recentPlayerGameReports)
+function getMapsFromPlayerGameReports($recentPlayerGameReports)
 {
     $maps = [];
 
