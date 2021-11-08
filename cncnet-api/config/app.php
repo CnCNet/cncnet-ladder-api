@@ -116,7 +116,7 @@ return [
 		'Illuminate\Foundation\Providers\ArtisanServiceProvider',
 		'Illuminate\Auth\AuthServiceProvider',
 		'Illuminate\Bus\BusServiceProvider',
-		'Illuminate\Cache\CacheServiceProvider',
+		//'Illuminate\Cache\CacheServiceProvider',
 		'Illuminate\Foundation\Providers\ConsoleSupportServiceProvider',
 		'Illuminate\Routing\ControllerServiceProvider',
 		'Illuminate\Cookie\CookieServiceProvider',
@@ -147,6 +147,7 @@ return [
         'App\Providers\Navigation',
         'App\Providers\IrcCache',
 		'App\MyMailer\MailServiceProvider',
+        App\LockedCache\LockedCacheServiceProvider::class,
 
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
         //'Clarification\MailDrivers\Sparkpost\SparkpostServiceProvider',

@@ -10,7 +10,8 @@
 		"guzzlehttp/guzzle": "^5.3",
 		"maxmind-db/reader": "1.4.1",
 		"namshi/jose": "5.0.2",
-		"doctrine/dbal": "2.5.13"
+		"doctrine/dbal": "2.5.13",
+		"symfony/lock": "^3.4"
 	},
 	"require-dev": {
 		"phpspec/phpspec": "~2.1"
