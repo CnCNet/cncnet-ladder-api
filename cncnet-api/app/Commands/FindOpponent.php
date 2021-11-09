@@ -189,36 +189,52 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 
             $qEntry->delete();
 
-            $recentPlayerGameReports = array_slice($player->playerGames()
-                ->where("ladder_history_id", "=", $history->id)
-                ->orderBy('created_at', 'DESC'), 0, 3);  //grab up to 3 recent games played
-            $recentMaps = getMapsFromPlayerGameReports($recentPlayerGameReports);
+            $reduceMapRepeats = $ladder->qmLadderRules->reduce_map_repeats;
 
-            foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
+            if ($reduceMapRepeats > 0) //remove the recent maps from common_qm_maps
             {
-                $common_qm_maps = removeMap($recentMap, $common_qm_maps);
-            }
-
-            foreach ($qmOpns as $qOpn) //check Opn last 3 games
-            {
-                $oppPlayer = $qOpn->qmPlayer->player;
-                $oppRecentGames = array_slice($oppPlayer->playerGames()
+                $playerGameReports = $player->playerGames()
                     ->where("ladder_history_id", "=", $history->id)
-                    ->orderBy('created_at', 'DESC'), 0, 3);  //grab up to 3 recent games from opponent
+                    ->orderBy('created_at', 'DESC')
+                    ->limit($reduceMapRepeats)
+                    ->get();
 
-                $recentMaps = getMapsFromPlayerGameReports($oppRecentGames);
+                $recentMaps = $playerGameReports->map(function ($item)
+                {
+                    return $item->game->map;
+                });
 
-                foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
+                foreach ($recentMaps as $recentMap)
                 {
                     $common_qm_maps = removeMap($recentMap, $common_qm_maps);
                 }
-            }
 
-            if (count($common_qm_maps) < 1)
-            {
-                error_log("No common maps available");
-                $qmPlayer->touch();
-                return;
+                foreach ($qmOpns as $qOpn)
+                {
+                    $oppPlayer = $qOpn->qmPlayer->player;
+                    $oppPlayerGames = $oppPlayer->playerGames()
+                        ->where("ladder_history_id", "=", $history->id)
+                        ->orderBy('created_at', 'DESC')
+                        ->limit($reduceMapRepeats)
+                        ->get();
+
+                    $recentMaps = $oppPlayerGames->map(function ($item)
+                    {
+                        return $item->game->map;
+                    });
+
+                    foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
+                    {
+                        $common_qm_maps = removeMap($recentMap, $common_qm_maps);
+                    }
+                }
+
+                if (count($common_qm_maps) < 1)
+                {
+                    error_log("No common maps available");
+                    $qmPlayer->touch();
+                    return;
+                }
             }
 
             $randomMapIndex = mt_rand(0, count($common_qm_maps) - 1);
@@ -304,21 +320,6 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
             $qmPlayer->save();
         }
     }
-}
-
-/**
- * Grab the maps played from an array for player game reports
- */
-function getMapsFromPlayerGameReports($recentPlayerGameReports)
-{
-    $maps = [];
-
-    foreach ($recentPlayerGameReports as $recentGame)
-    {
-        $maps[] = $recentGame->game->map;
-    }
-
-    return $maps;
 }
 
 /**

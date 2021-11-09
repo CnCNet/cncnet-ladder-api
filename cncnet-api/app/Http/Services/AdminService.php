@@ -52,6 +52,7 @@ class AdminService
         $ladderRule->tier2_rating = $request->tier2_rating;
         $ladderRule->all_sides = $request->all_sides;
         $ladderRule->allowed_sides = implode(",", $request->allowed_sides);
+        $ladderRule->reduce_map_repeats = $request->reduce_map_repeats;
         $ladderRule->save();
 
         $request->session()->flash('success', 'Changes Saved');

@@ -343,6 +343,11 @@
                                         </div>
 
                                         <div class="form-group">
+                                            <label for="{{ $rule->ladder_id }}_reduce_map_repeats">Reduce Map Repeats</label>
+                                            <input id="{{ $rule->ladder_id }}_reduce_map_repeats" min="0" type="number" name="reduce_map_repeats" class="form-control" value="{{ $rule->reduce_map_repeats }}" />
+                                        </div>
+
+                                        <div class="form-group">
                                             <?php $sideIdsAllowed = explode(',', $rule->allowed_sides); ?>
                                             <label>Allowed Sides</label>
                                             <div class="overflow-auto" style="height: 250px; overflow: auto; background: black;">
