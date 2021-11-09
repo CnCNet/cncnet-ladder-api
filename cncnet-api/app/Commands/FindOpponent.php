@@ -228,13 +228,13 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                         $common_qm_maps = removeMap($recentMap, $common_qm_maps);
                     }
                 }
+            }
 
-                if (count($common_qm_maps) < 1)
-                {
-                    error_log("No common maps available");
-                    $qmPlayer->touch();
-                    return;
-                }
+            if (count($common_qm_maps) < 1)
+            {
+                error_log("No common maps available");
+                $qmPlayer->touch();
+                return;
             }
 
             $randomMapIndex = mt_rand(0, count($common_qm_maps) - 1);
