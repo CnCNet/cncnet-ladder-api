@@ -216,6 +216,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 
             if (count($common_qm_maps) < 1)
             {
+                error_log("No common maps available");
                 $qmPlayer->touch();
                 return;
             }
