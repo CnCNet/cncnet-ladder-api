@@ -14,8 +14,7 @@ class AddReduceMapRepeatsToQmLadderRules extends Migration {
 	{
 		Schema::table('qm_ladder_rules', function(Blueprint $table)
 		{
-			$table->integer('reduce_map_repeats');
-			$table->integer("reduce_map_repeats")->default(0);
+			$table->integer('reduce_map_repeats')->default(0);
 		});
 	}
 

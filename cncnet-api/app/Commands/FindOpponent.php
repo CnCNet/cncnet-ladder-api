@@ -332,7 +332,7 @@ function removeMap($recentMap, $common_qm_maps)
 
     foreach ($common_qm_maps as $common_qm_map)
     {
-        if ($common_qm_map->map->hash != $recentMap->hash)
+        if ($common_qm_map->map->id != $recentMap->id)
         {
             $new_common_qm_maps[] = $common_qm_map;
         }
