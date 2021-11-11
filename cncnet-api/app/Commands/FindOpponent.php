@@ -1,4 +1,6 @@
-<?php namespace App\Commands;
+<?php
+
+namespace App\Commands;
 
 use App\Commands\Command;
 
@@ -12,39 +14,40 @@ use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
 
-class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
+class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
+{
 
-	use InteractsWithQueue, SerializesModels;
+    use InteractsWithQueue, SerializesModels;
 
     public $qEntryId = null;
 
-	/**
-	 * Create a new command instance.
-	 *
-	 * @return void
-	 */
-	public function __construct($id)
-	{
-		//
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct($id)
+    {
+        //
         $this->qEntryId = $id;
-	}
+    }
 
     public function queue($queue, $arguments)
     {
         $queue->pushOn('findmatch', $arguments);
     }
 
-	/**
-	 * Execute the command.
-	 *
-	 * @return void
-	 */
-	public function handle()
-	{
+    /**
+     * Execute the command.
+     *
+     * @return void
+     */
+    public function handle()
+    {
         $this->delete();
         $qEntry = QmQueueEntry::find($this->qEntryId);
 
-        if($qEntry === null)
+        if ($qEntry === null)
         {
             //error_log("qEntry is null\n");
             return;
@@ -120,12 +123,12 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
          */
 
         $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
-                              ->where('ladder_history_id', '=', $history->id)
-                              ->select(DB::raw("*,"
-                                       ."TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->rating_per_second} as rating_time,"
-                                       ."TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
-                              ->havingRAW("rating_time + {$ladder_rules->max_difference} > ABS(rating - {$rating})"
-                                     ."AND points_time + {$ladder_rules->max_points_difference} > ABS(points - {$qEntry->points})");
+            ->where('ladder_history_id', '=', $history->id)
+            ->select(DB::raw("*,"
+                . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->rating_per_second} as rating_time,"
+                . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
+            ->havingRAW("rating_time + {$ladder_rules->max_difference} > ABS(rating - {$rating})"
+                . "AND points_time + {$ladder_rules->max_points_difference} > ABS(points - {$qEntry->points})");
 
         //error_log($query->toSql());
         $qmOpns = $query->get();
@@ -141,17 +144,19 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
             // long runs of identical matchups.
             $qmOpns = $qmOpns->shuffle()->take($ladder_rules->player_count - 1);
             // Randomly select a map
-            $common_maps = array();
+            $common_qm_maps = array();
 
             $qmMaps = $ladder->mapPool->maps;
             foreach ($qmMaps as $qmMap)
             {
                 $match = true;
-                if (array_key_exists($qmMap->bit_idx, $qmPlayer->map_side_array())
-                &&
-                $qmPlayer->map_side_array()[$qmMap->bit_idx] > -2
-                &&
-                in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
+                if (
+                    array_key_exists($qmMap->bit_idx, $qmPlayer->map_side_array())
+                    &&
+                    $qmPlayer->map_side_array()[$qmMap->bit_idx] > -2
+                    &&
+                    in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array())
+                )
                 {
                     foreach ($qmOpns as $qOpn)
                     {
@@ -163,11 +168,13 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
                             $qEntry->delete();
                             return;
                         }
-                        if (array_key_exists($qmMap->bit_idx, $opn->map_side_array())
-                        &&
-                        ($opn->map_side_array()[$qmMap->bit_idx] < -1
-                        ||
-                        !in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array())))
+                        if (
+                            array_key_exists($qmMap->bit_idx, $opn->map_side_array())
+                            &&
+                            ($opn->map_side_array()[$qmMap->bit_idx] < -1
+                                ||
+                                !in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
+                        )
                         {
                             $match = false;
                         }
@@ -177,23 +184,65 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
                     $match = false;
 
                 if ($match)
-                    $common_maps[] = $qmMap;
-
-            }
-            if (count($common_maps) < 1)
-            {
-                $qmPlayer->touch();
-                return;
+                    $common_qm_maps[] = $qmMap;
             }
 
             $qEntry->delete();
 
-            $map_idx = mt_rand(0, count($common_maps) - 1);
+            $reduceMapRepeats = $ladder->qmLadderRules->reduce_map_repeats;
+
+            if ($reduceMapRepeats > 0) //remove the recent maps from common_qm_maps
+            {
+                $playerGameReports = $player->playerGames()
+                    ->where("ladder_history_id", "=", $history->id)
+                    ->orderBy('created_at', 'DESC')
+                    ->limit($reduceMapRepeats)
+                    ->get();
+
+                $recentMaps = $playerGameReports->map(function ($item)
+                {
+                    return $item->game->map;
+                });
+
+                foreach ($recentMaps as $recentMap)
+                {
+                    $common_qm_maps = removeMap($recentMap, $common_qm_maps);
+                }
+
+                foreach ($qmOpns as $qOpn)
+                {
+                    $oppPlayer = $qOpn->qmPlayer->player;
+                    $oppPlayerGames = $oppPlayer->playerGames()
+                        ->where("ladder_history_id", "=", $history->id)
+                        ->orderBy('created_at', 'DESC')
+                        ->limit($reduceMapRepeats)
+                        ->get();
+
+                    $recentMaps = $oppPlayerGames->map(function ($item)
+                    {
+                        return $item->game->map;
+                    });
+
+                    foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
+                    {
+                        $common_qm_maps = removeMap($recentMap, $common_qm_maps);
+                    }
+                }
+            }
+
+            if (count($common_qm_maps) < 1)
+            {
+                error_log("No common maps available");
+                $qmPlayer->touch();
+                return;
+            }
+
+            $randomMapIndex = mt_rand(0, count($common_qm_maps) - 1);
 
             // Create the qm_matches db entry
             $qmMatch = new \App\QmMatch();
             $qmMatch->ladder_id = $qmPlayer->ladder_id;
-            $qmMatch->qm_map_id = $common_maps[$map_idx]->id;
+            $qmMatch->qm_map_id = $common_qm_maps[$randomMapIndex]->id;
             $qmMatch->seed = mt_rand(-2147483647, 2147483647);
 
             // Create the Game
@@ -227,7 +276,10 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
 
             $qmPlayer->save();
 
-            $perMS = array_values(array_filter($qmMap->sides_array(), function($s) { return $s >= 0; }));
+            $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+            {
+                return $s >= 0;
+            }));
             $color = 1;
             foreach ($qmOpns as $qOpn)
             {
@@ -267,6 +319,24 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued {
             }
             $qmPlayer->save();
         }
-	}
+    }
+}
 
+/**
+ * Remove this 'Map' from this array of 'QmMaps'.
+ * The function will loop through the array of common_qm_maps and check if equal to the $recentmMap
+ */
+function removeMap($recentMap, $common_qm_maps)
+{
+    $new_common_qm_maps = [];
+
+    foreach ($common_qm_maps as $common_qm_map)
+    {
+        if ($common_qm_map->map->id != $recentMap->id)
+        {
+            $new_common_qm_maps[] = $common_qm_map;
+        }
+    }
+
+    return $new_common_qm_maps;
 }
