@@ -13,6 +13,7 @@ use Illuminate\Contracts\Cache\Repository as CacheContract;
 use Symfony\Component\Lock\Store\FlockStore;
 use Symfony\Component\Lock\Store\SemaphoreStore;
 use Symfony\Component\Lock\Factory;
+use Exception;
 
 class LockedCacheRepository extends Repository {
 
@@ -22,7 +23,7 @@ class LockedCacheRepository extends Repository {
     public function __construct(Store $store)
     {
         $this->store = $store;
-        $this->lockStore = new FlockStore;
+        $this->lockStore = new FlockStore(storage_path() . '/locks/');
         $this->lockFactory = new Factory($this->lockStore);
     }
 
@@ -60,9 +61,10 @@ class LockedCacheRepository extends Repository {
             $this->put($key, $value = $callback(), $minutes);
             $lock->release();
         }
-        finally
+        catch (Exception $e)
         {
             $lock->release();
+            throw $e;
         }
 
         return $value;
@@ -105,9 +107,10 @@ class LockedCacheRepository extends Repository {
             $this->forever($key, $value = $callback());
             $lock->release();
         }
-        finally
+        catch (Exception $e)
         {
             $lock->release();
+            throw $e;
         }
 
         return $value;

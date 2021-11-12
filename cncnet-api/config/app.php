@@ -147,7 +147,7 @@ return [
         'App\Providers\Navigation',
         'App\Providers\IrcCache',
 		'App\MyMailer\MailServiceProvider',
-        App\LockedCache\LockedCacheServiceProvider::class,
+        'App\LockedCache\LockedCacheServiceProvider',
 
         'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
         //'Clarification\MailDrivers\Sparkpost\SparkpostServiceProvider',
