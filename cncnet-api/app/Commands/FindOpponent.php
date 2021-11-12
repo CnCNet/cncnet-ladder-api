@@ -55,6 +55,8 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 
         $qEntry->touch();
 
+        sleep(10);
+
         $qmPlayer = $qEntry->qmPlayer;
 
         // A player could cancel out of queue before this function runs
