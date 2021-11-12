@@ -41,14 +41,16 @@
                             </p>
 
                             <div class="search" style="margin-bottom: 15px; max-width: 500px">
-                                <form id="searchForm">
+                                <form>
                                     <input type="hidden" name="userId" value="{{ $userId }}" />
                                     <input type="hidden" name="hostname" value="{{ $hostname}}" />
 
                                     <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}" style="height: 50px" />
                                     <p style="color: silver;padding: 5px; display:inline-block">Exact Search</p>
                                     <input name="exact" type="checkbox" style="display:inline-block">
-                                    <input name="ClearSearch" type="reset" value="Clear Search" style="margin-top: 5px; display: block; float: right; background-color: transparent;background-repeat: no-repeat;border: none;cursor: pointer;overflow: hidden;outline: none;" onclick="resetForm('searchForm'); return false;" />
+                                    <a href="?" style="color: silver;padding: 5px; margin-top: 5px;margin-bottom: 5px; display: block;float: right;">
+                                        Clear search
+                                    </a>
                                 </form>
                             </div>
 
