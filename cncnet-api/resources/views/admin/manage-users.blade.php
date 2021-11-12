@@ -48,7 +48,7 @@
                                     <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}" style="height: 50px" />
                                     <p style="color: silver;padding: 5px; display:inline-block">Exact Search</p>
                                     <input name="exact" type="checkbox" style="display:inline-block">
-                                    <a href="?" style="color: silver;padding: 5px; margin-top: 5px;margin-bottom: 5px; display: block;float: right;">
+                                    <a href="?" style="color: silver;padding: 5px;margin-bottom: 5px; display: block;float: right;">
                                         Clear search
                                     </a>
                                 </form>
