@@ -170,7 +170,7 @@ class AdminController extends Controller
 
         if ($search && $exact)
         {
-            $players = \App\Player::where("username", "=", "{$search}");
+            $players = \App\Player::where("username", "=", "{$search}")->paginate(20);
         } 
         else if ($search)
         {          
