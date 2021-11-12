@@ -158,9 +158,14 @@ class AdminController extends Controller
         $hostname = $request->hostname;
         $userId = $request->userId;
         $search = $request->search;
+        $exact = $request->exact;
         $players = null;
 
-        if ($search)
+        if ($search && $exact)
+        {
+            $players = \App\Player::where("username", "=", "{$search}");
+        } 
+        else if ($search)
         {
             $players = \App\Player::where("username", "LIKE", "%{$search}%");
         }
@@ -175,8 +180,8 @@ class AdminController extends Controller
         }
 
         return view("admin.manage-users", [
-            "users" => $users->paginate(50),
-            "players" => $players != null ? $players->paginate(50): [],
+            "users" => $users->paginate(20),
+            "players" => $players != null ? $players->paginate(20): [],
             "search" => $search,
             "userId" => $userId,
             "hostname" => $hostname
