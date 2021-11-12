@@ -10,6 +10,7 @@ use \App\MapPool;
 use \App\Ladder;
 use \App\SpawnOptionString;
 use App\GameObjectSchema;
+use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
 {
@@ -158,25 +159,36 @@ class AdminController extends Controller
         $hostname = $request->hostname;
         $userId = $request->userId;
         $search = $request->search;
+        $exact = $request->exact;
+        $page = $request->page;
         $players = null;
 
-        if ($search)
+        if (isset($page))
         {
-            $players = \App\Player::where("username", "LIKE", "%{$search}%");
+            $page = 1;
+        }
+
+        if ($search && $exact)
+        {
+            $players = \App\Player::where("username", "=", "{$search}")->paginate(20);
+        } 
+        else if ($search)
+        {          
+            $players = Cache::remember("admin/users/{$search}{$page}", 20, function () use ($search) { return \App\Player::where("username", "LIKE", "%{$search}%")->paginate(20); });
         }
 
         if ($userId)
         {
-            $users = \App\User::where("id", $userId);
+            $users = Cache::remember("admin/users/users/{$page}", 20, function () use ($userId) { return \App\User::where("id", $userId)->paginate(20); });
         }
         else
         {
-            $users = \App\User::orderBy("id", "DESC");
+            $users = Cache::remember("admin/users/users/{$page}", 20, function () { return \App\User::orderBy("id", "DESC")->paginate(20); });
         }
 
         return view("admin.manage-users", [
-            "users" => $users->paginate(50),
-            "players" => $players != null ? $players->paginate(50): [],
+            "users" => $users,
+            "players" => $players != null ? $players: [],
             "search" => $search,
             "userId" => $userId,
             "hostname" => $hostname

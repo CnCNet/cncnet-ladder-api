@@ -14,7 +14,7 @@
                     CnCNet Admin
                 </h1>
                 <p>Admin panel for managing Users</p>
-                                                       
+
                 <a href="/admin/" class="btn btn-transparent btn-lg">
                     <i class="fa fa-chevron-left fa-lg fa-fw" aria-hidden="true"></i> Back to Admin
                 </a>
@@ -26,101 +26,95 @@
 
 @section('content')
 <div class="admin-users">
-<section class="light-texture game-detail supported-games">
-    <div class="container">
-        <div class="feature">
+    <section class="light-texture game-detail supported-games">
+        <div class="container">
+            <div class="feature">
 
-            <div class="row">
-                <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="players">
-                            <h2>Filter by player username</h2> 
+                            <h2>Filter by player username</h2>
                             <p class="lead">
-                            <?php if($search) : ?>
-                            Searching for {{ $search }}
-                            <?php endif; ?>
+                                <?php if ($search) : ?>
+                                    Searching for {{ $search }}
+                                <?php endif; ?>
                             </p>
 
-                            <div class="search" style="margin-bottom: 15px">
+                            <div class="search" style="margin-bottom: 15px; max-width: 500px">
                                 <form>
                                     <input type="hidden" name="userId" value="{{ $userId }}" />
                                     <input type="hidden" name="hostname" value="{{ $hostname}}" />
-                                    
-                                    <input class="form-control" 
-                                        name="search" 
-                                        placeholder="Search by player username" 
-                                        value="{{ $search }}"
-                                        style="height: 50px; max-width: 50%" 
-                                    />
-                                    <a href="?" style="color: silver;padding: 5px; margin-top: 5px;margin-bottom: 5px; display: block;">
-                                    Clear search
+
+                                    <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}" style="height: 50px" />
+                                    <p style="color: silver;padding: 5px; display:inline-block">Exact Search</p>
+                                    <input name="exact" type="checkbox" style="display:inline-block">
+                                    <a href="?" style="color: silver;padding: 5px;margin-bottom: 5px; display: block;float: right;">
+                                        Clear search
                                     </a>
                                 </form>
                             </div>
 
                             <div class="users">
-                            <?php $unique = []; ?>
-                            <?php foreach($players as $pResult): ?>
+                                <?php $unique = []; ?>
+                                <?php foreach ($players as $pResult) : ?>
 
-                                <?php 
+                                    <?php
                                     $user = $pResult->user()->first();
                                     if ($user == null)
                                     {
                                         continue;
                                     }
-                           
-                                    if (in_array($user->id, $unique)) 
+
+                                    if (in_array($user->id, $unique))
                                     {
                                         continue;
                                     }
                                     $unique[] = $user->id;
-                                ?>
+                                    ?>
 
+                                    <div class="user-info">
+                                        <h4><a href="?userId={{$user->id}}">{{ $user->name }}</a></h4>
+                                        <h5>User id: <strong>{{ $user->id }}</strong></h5>
+
+                                        <div class="base-info">
+                                            Created: {{ $user->created_at->toDateString()}}
+                                        </div>
+
+                                        @include("admin._duplicates", [$user])
+                                        @include("admin._bans", [$user])
+                                        @include("admin._nicknames")
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <?php if ($players) : ?>
+                                {!! $players->render() !!}
+                            <?php endif; ?>
+                        </div>
+
+                        <h2>Users</h2>
+
+                        <div class="users">
+                            <?php foreach ($users as $user) : ?>
                                 <div class="user-info">
                                     <h4><a href="?userId={{$user->id}}">{{ $user->name }}</a></h4>
                                     <h5>User id: <strong>{{ $user->id }}</strong></h5>
 
                                     <div class="base-info">
-                                    Created: {{ $user->created_at->toDateString()}}
+                                        Created: {{ $user->created_at->toDateString()}}
                                     </div>
 
-                                    @include("admin._duplicates", [$user])
+                                    @include("admin._duplicates", [$user, $hostname])
                                     @include("admin._bans", [$user])
                                     @include("admin._nicknames")
                                 </div>
                             <?php endforeach; ?>
-                            </div>
-                            
-                            <?php if($players): ?>
-                            {!! $players->render() !!}
-                            <?php endif; ?>
                         </div>
-                        
-                        <h2>Users</h2>
-                        
-                        <div class="users">
-                            <?php foreach($users as $user): ?>
-                            <div class="user-info">
-                                <h4><a href="?userId={{$user->id}}">{{ $user->name }}</a></h4>
-                                <h5>User id: <strong>{{ $user->id }}</strong></h5>
-
-                                <div class="base-info">
-                                Created: {{ $user->created_at->toDateString()}}
-                                </div>
-
-                                @include("admin._duplicates", [$user, $hostname])
-                                @include("admin._bans", [$user])
-                                @include("admin._nicknames")
-                            </div>
-                            <?php endforeach; ?>
-                        </div>
-                    {!! $users->render() !!}
-                </div>  
+                        {!! $users->render() !!}
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 </div>
 @endsection
-
-
-
