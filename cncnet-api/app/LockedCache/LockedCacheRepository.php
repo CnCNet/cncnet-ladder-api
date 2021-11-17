@@ -22,9 +22,9 @@ class LockedCacheRepository extends Repository {
 
     public function __construct(Store $store)
     {
-        $this->store = $store;
         $this->lockStore = new FlockStore(storage_path() . '/locks/');
         $this->lockFactory = new Factory($this->lockStore);
+        parent::__construct($store);
     }
 
     /**
@@ -40,6 +40,10 @@ class LockedCacheRepository extends Repository {
         // If the item exists in the cache we will just return this immediately
         // otherwise we will execute the given Closure and cache the result
         // of that execution for the given number of minutes in storage.
+        if ( ! is_null($value = $this->get($key)))
+        {
+            return $value;
+        }
 
         $lock = $this->lockFactory->createLock($key);
 
