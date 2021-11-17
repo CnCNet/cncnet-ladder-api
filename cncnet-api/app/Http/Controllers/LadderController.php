@@ -195,6 +195,8 @@ class LadderController extends Controller
                 $bans[] = $ban;
         }
 
+        $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
+
         return view
         (
             "ladders.player-view",
@@ -203,7 +205,8 @@ class LadderController extends Controller
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "history" => $history,
-                "player" => json_decode(json_encode($this->ladderService->getLadderPlayer($history, $player->username))),
+                "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
+                "player" => $ladderPlayer['player'],
                 "games" => $games,
                 "userIsMod" => $userIsMod,
                 "playerUser" => $playerUser,

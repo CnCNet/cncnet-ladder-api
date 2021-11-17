@@ -157,11 +157,13 @@ class ApiQuickMatchController extends Controller
             {
                 if ($qmPlayer->qm_match_id !== null)
                 {
+                    $qmPlayer->player->playerHistory($ladder->currentHistory())->cancels++;
+                    $qmPlayer->player->playerHistory($ladder->currentHistory())->save();
                     $qmPlayer->qmMatch->save();
                 }
                 if ($qmPlayer->qEntry !== null)
                     $qmPlayer->qEntry->delete();
-
+               
                 $qmPlayer->delete();
             }
             return array("type" => "quit");
