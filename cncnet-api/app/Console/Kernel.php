@@ -1,9 +1,12 @@
-<?php namespace App\Console;
+<?php
+
+namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
-class Kernel extends ConsoleKernel {
+class Kernel extends ConsoleKernel
+{
 
     /**
      * The Artisan commands provided by your application.
@@ -16,7 +19,8 @@ class Kernel extends ConsoleKernel {
         'App\Console\Commands\UpdatePlayerCache',
         'App\Console\Commands\GenerateBulkRecords',
         'App\Console\Commands\UpdateIrc',
-        'App\Console\Commands\AprilFoolsPurge'
+        'App\Console\Commands\AprilFoolsPurge',
+        'App\Console\Commands\CleanupQmMatchPlayers'
     ];
 
     /**
@@ -27,12 +31,13 @@ class Kernel extends ConsoleKernel {
      */
     protected function schedule(Schedule $schedule)
     {
-	$schedule->command('prune_logs')
-		 ->daily();
+        $schedule->command('prune_logs')
+            ->daily();
         $schedule->command('prune_stats')
-                 ->daily();
+            ->daily();
         $schedule->command('update_player_cache')
-                 ->hourly();
+            ->hourly();
+        $schedule->command('QmMatchPlayers:prune')
+            ->monthly();
     }
-
 }
