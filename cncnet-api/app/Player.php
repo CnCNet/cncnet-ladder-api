@@ -329,4 +329,18 @@ class Player extends Model
     {
         return $this->hasOne('App\IrcAssociation');
     }
+
+    /**
+     * Return true if player has been laundered
+     * A player has been laundered if their player game reports have 'backupPts' which is populated when a launder occurs, and erased when launder is undone.
+     */
+    public function laundered($ladderHistory)
+    {
+        $sum = \App\PlayerGameReport::where('player_id', '=', $this->id)
+            ->where('created_at', '<', $ladderHistory->ends)
+            ->where('created_at', '>', $ladderHistory->starts)
+            ->sum('backupPts');
+
+        return $sum > 0;
+    }
 }

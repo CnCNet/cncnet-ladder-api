@@ -789,7 +789,9 @@ class AdminController extends Controller
             $request->session()->flash('error', 'Unabled to find player');
 
         //Query for the player's game reports from the ladder history month
-        $playerGameReports = \App\PlayerGameReport::where('player_id', '=', $playerId)->where('created_at', '<', $ladderHistory->ends)->where('created_at', '>', $ladderHistory->starts)->get();
+        $playerGameReports = \App\PlayerGameReport::where('player_id', '=', $playerId)
+            ->where('created_at', '<', $ladderHistory->ends)
+            ->where('created_at', '>', $ladderHistory->starts)->get();
 
         //reset player's points from games played using backupPts
         foreach ($playerGameReports as $playerGameReport)
@@ -797,8 +799,9 @@ class AdminController extends Controller
             if ($playerGameReport->backupPts != 0)
             {
                 $playerGameReport->points = $playerGameReport->backupPts;
-                $playerGameReport->save();
             }
+            $playerGameReport->backupPts = 0;
+            $playerGameReport->save();
         }
 
         $playerCache->points = $player->points($ladderHistory);

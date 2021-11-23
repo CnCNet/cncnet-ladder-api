@@ -72,6 +72,11 @@
                                         <div class="container-fluid">
                                             <div class="row content">
                                                 <div class="col-md-12 player-box player-card list-inline">
+
+                                                    @if(!$player->laundered($history))
+                                                    <label>Are you sure you want to set all of {{$player->username}}'s points to 0?</label>
+                                                    @endif
+                                                    
                                                     <div style="display: inline-block">
                                                         <form method="POST" action="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/laundry">
                                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -80,6 +85,8 @@
                                                             <button type="submit" name="submit" value="update" class="btn btn-danger btn-md">Launder</button>
                                                         </form>
                                                     </div>
+
+                                                    @if($player->laundered($history))
                                                     <div style="padding-top: 5px; display: inline-block">
                                                         <form method="POST" action="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/undoLaundry">
                                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -88,6 +95,7 @@
                                                             <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Undo Launder</button>
                                                         </form>
                                                     </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
