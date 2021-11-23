@@ -72,18 +72,22 @@
                                         <div class="container-fluid">
                                             <div class="row content">
                                                 <div class="col-md-12 player-box player-card list-inline">
-                                                    <form method="POST" action="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/laundry">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                        <input name="player_id" type="hidden" value="{{ $player->id }}" />
-                                                        <input name="ladderHistory_id" type="hidden" value="{{ $history->id }}" />
-                                                        <button type="submit" name="submit" value="update" class="btn btn-danger btn-md">Launder</button>
-                                                    </form>
-                                                    <form method="POST" action="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/undoLaundry">
-                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                        <input name="player_id" type="hidden" value="{{ $player->id }}" />
-                                                        <input name="ladderHistory_id" type="hidden" value="{{ $history->id }}" />
-                                                        <button type="submit" name="submit" value="update" class="btn btn-primary btn-md">Undo Launder</button>
-                                                    </form>
+                                                    <div style="display: inline-block">
+                                                        <form method="POST" action="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/laundry">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                            <input name="player_id" type="hidden" value="{{ $player->id }}" />
+                                                            <input name="ladderHistory_id" type="hidden" value="{{ $history->id }}" />
+                                                            <button type="submit" name="submit" value="update" class="btn btn-danger btn-md">Launder</button>
+                                                        </form>
+                                                    </div>
+                                                    <div style="padding-top: 5px; display: inline-block">
+                                                        <form method="POST" action="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/undoLaundry">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                            <input name="player_id" type="hidden" value="{{ $player->id }}" />
+                                                            <input name="ladderHistory_id" type="hidden" value="{{ $history->id }}" />
+                                                            <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Undo Launder</button>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
