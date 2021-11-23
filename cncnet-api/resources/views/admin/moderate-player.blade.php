@@ -93,7 +93,7 @@
                         @endforeach
                         <option value="new">&lt;new></option>
                     </select>
-                    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#editAlert">Edit </button>
+                    <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="editAlert">Edit </button>
                 </div>
 
                 <div class="col-md-12">

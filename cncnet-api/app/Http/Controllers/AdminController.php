@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -25,11 +26,12 @@ class AdminController extends Controller
 
     public function getAdminIndex(Request $request)
     {
-        return view("admin.index", ["ladders" => $this->ladderService->getLatestLadders(),
-                                    "clan_ladders" => $this->ladderService->getLatestLadders(),
-                                    "all_ladders" => \App\Ladder::all(),
-                                    "schemas" => \App\GameObjectSchema::managedBy($request->user()),
-                                    "user" => $request->user(),
+        return view("admin.index", [
+            "ladders" => $this->ladderService->getLatestLadders(),
+            "clan_ladders" => $this->ladderService->getLatestLadders(),
+            "all_ladders" => \App\Ladder::all(),
+            "schemas" => \App\GameObjectSchema::managedBy($request->user()),
+            "user" => $request->user(),
         ]);
     }
 
@@ -49,8 +51,17 @@ class AdminController extends Controller
         $user = $request->user();
         $spawnOptions = \App\SpawnOption::all();
 
-        return view("admin.ladder-setup", compact('ladders', 'ladder', 'clan_ladders', 'objectSchemas',
-                                                  'rule', 'mapPools', 'maps', 'user', 'spawnOptions'));
+        return view("admin.ladder-setup", compact(
+            'ladders',
+            'ladder',
+            'clan_ladders',
+            'objectSchemas',
+            'rule',
+            'mapPools',
+            'maps',
+            'user',
+            'spawnOptions'
+        ));
     }
 
     public function getGameSchemaSetup(Request $request, $gameSchemaId)
@@ -81,7 +92,7 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
-        $manager = \App\ObjectSchemaManager::firstOrCreate([ 'game_object_schema_id' => $gameSchema->id, 'user_id' => $user->id ]);
+        $manager = \App\ObjectSchemaManager::firstOrCreate(['game_object_schema_id' => $gameSchema->id, 'user_id' => $user->id]);
 
         $request->session()->flash('success', "Manager added");
         return redirect()->back();
@@ -171,24 +182,33 @@ class AdminController extends Controller
         if ($search && $exact)
         {
             $players = \App\Player::where("username", "=", "{$search}")->paginate(20);
-        } 
+        }
         else if ($search)
-        {          
-            $players = Cache::remember("admin/users/{$search}{$page}", 20, function () use ($search) { return \App\Player::where("username", "LIKE", "%{$search}%")->paginate(20); });
+        {
+            $players = Cache::remember("admin/users/{$search}{$page}", 20, function () use ($search)
+            {
+                return \App\Player::where("username", "LIKE", "%{$search}%")->paginate(20);
+            });
         }
 
         if ($userId)
         {
-            $users = Cache::remember("admin/users/users/{$page}", 20, function () use ($userId) { return \App\User::where("id", $userId)->paginate(20); });
+            $users = Cache::remember("admin/users/users/{$page}", 20, function () use ($userId)
+            {
+                return \App\User::where("id", $userId)->paginate(20);
+            });
         }
         else
         {
-            $users = Cache::remember("admin/users/users/{$page}", 20, function () { return \App\User::orderBy("id", "DESC")->paginate(20); });
+            $users = Cache::remember("admin/users/users/{$page}", 20, function ()
+            {
+                return \App\User::orderBy("id", "DESC")->paginate(20);
+            });
         }
 
         return view("admin.manage-users", [
             "users" => $users,
-            "players" => $players != null ? $players: [],
+            "players" => $players != null ? $players : [],
             "search" => $search,
             "userId" => $userId,
             "hostname" => $hostname
@@ -207,9 +227,9 @@ class AdminController extends Controller
         $end = $date->endOfMonth()->toDateTimeString();
 
         $history = \App\LadderHistory::where("starts", "=", $start)
-                                     ->where("ends", "=", $end)
-                                     ->where("ladder_id", "=", $ladder->id)
-                                     ->first();
+            ->where("ends", "=", $end)
+            ->where("ladder_id", "=", $ladder->id)
+            ->first();
 
         $games = \App\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC")->limit(100);
         return view("admin.manage-games", ["games" => $games, "ladder" => $ladder, "history" => $history]);
@@ -507,14 +527,17 @@ class AdminController extends Controller
         $ladderService = new LadderService;
         $history = $ladderService->getActiveLadderByDate(Carbon::now()->format('m-Y'), $player->ladder->game);
 
-        return view("admin.moderate-player",
-                    [ "mod"    => $mod,
-                      "player" => $player,
-                      "user"   => $user,
-                      "bans"   => $user->bans()->orderBy('created_at', 'DESC')->get(),
-                      "ladder" => $player->ladder,
-                      "history" => $history
-                    ]);
+        return view(
+            "admin.moderate-player",
+            [
+                "mod"    => $mod,
+                "player" => $player,
+                "user"   => $user,
+                "bans"   => $user->bans()->orderBy('created_at', 'DESC')->get(),
+                "ladder" => $player->ladder,
+                "history" => $history
+            ]
+        );
     }
 
     public function getUserBan(Request $request, $ladderId = null, $playerId = null, $banType = 0)
@@ -530,22 +553,25 @@ class AdminController extends Controller
 
         $user = $player->user;
 
-        return view("admin.edit-ban",
-                    [ "mod"    => $mod,
-                      "player" => $player,
-                      "user"   => $user,
-                      "ladder" => $player->ladder,
-                      "id" => null,
-                      "expires" => null,
-                      "admin_id" => $mod->id,
-                      "user_id" => $user->id,
-                      "ban_type" => $banType,
-                      "internal_note" => "",
-                      "plubic_reason" => "",
-                      "ip_address_id" => $user->ip->id,
-                      "start_or_end" => false,
-                      "banDesc" => \App\Ban::typeToDescription($banType) ." - ". \App\Ban::banStyle($banType)
-                    ]);
+        return view(
+            "admin.edit-ban",
+            [
+                "mod"    => $mod,
+                "player" => $player,
+                "user"   => $user,
+                "ladder" => $player->ladder,
+                "id" => null,
+                "expires" => null,
+                "admin_id" => $mod->id,
+                "user_id" => $user->id,
+                "ban_type" => $banType,
+                "internal_note" => "",
+                "plubic_reason" => "",
+                "ip_address_id" => $user->ip->id,
+                "start_or_end" => false,
+                "banDesc" => \App\Ban::typeToDescription($banType) . " - " . \App\Ban::banStyle($banType)
+            ]
+        );
     }
 
     public function editUserBan(Request $request, $ladderId = null, $playerId = null, $banId = null)
@@ -565,22 +591,25 @@ class AdminController extends Controller
 
         $user = $player->user;
 
-        return view("admin.edit-ban",
-                    [ "mod"    => $mod,
-                      "player" => $player,
-                      "user"   => $user,
-                      "ladder" => $player->ladder,
-                      "id" => $ban->id,
-                      "expires" => $ban->expires->eq(\App\Ban::unstartedBanTime()) ? null : $ban->expires,
-                      "admin_id" => $mod->id,
-                      "user_id" => $user->id,
-                      "ban_type" => $ban->ban_type,
-                      "internal_note" => $ban->internal_note,
-                      "plubic_reason" => $ban->plubic_reason,
-                      "ip_address_id" => $ban->ip_address_id,
-                      "start_or_end" => false,
-                      "banDesc" => \App\Ban::typeToDescription($ban->ban_type) ." - ". \App\Ban::banStyle($ban->ban_type)
-                    ]);
+        return view(
+            "admin.edit-ban",
+            [
+                "mod"    => $mod,
+                "player" => $player,
+                "user"   => $user,
+                "ladder" => $player->ladder,
+                "id" => $ban->id,
+                "expires" => $ban->expires->eq(\App\Ban::unstartedBanTime()) ? null : $ban->expires,
+                "admin_id" => $mod->id,
+                "user_id" => $user->id,
+                "ban_type" => $ban->ban_type,
+                "internal_note" => $ban->internal_note,
+                "plubic_reason" => $ban->plubic_reason,
+                "ip_address_id" => $ban->ip_address_id,
+                "start_or_end" => false,
+                "banDesc" => \App\Ban::typeToDescription($ban->ban_type) . " - " . \App\Ban::banStyle($ban->ban_type)
+            ]
+        );
     }
 
     public function saveUserBan(Request $request, $ladderId = null, $playerId = null, $banId = null)
@@ -637,7 +666,7 @@ class AdminController extends Controller
 
         $ban->save();
 
-        $request->session()->flash('success', "Ban ". $banFlash);
+        $request->session()->flash('success', "Ban " . $banFlash);
         return redirect()->action('AdminController@getLadderPlayer', ['ladderId' => $ladderId, 'playerId' => $playerId]);
     }
 
@@ -690,6 +719,92 @@ class AdminController extends Controller
         $alert->save();
 
         $request->session()->flash('success', "Alert has been updated");
+        return redirect()->back();
+    }
+
+    /**
+     * Set all player's points for their played games to 0 of a given ladder history.
+     */
+    public function laundryService(Request $request)
+    {
+        $ladderHistoryId = $request->ladderHistory_id;
+
+        $playerId = $request->player_id;
+
+        $ladderHistory = \App\LadderHistory::find($ladderHistoryId);
+
+        if ($ladderHistory == null)
+            $request->session()->flash('error', 'Unabled to find ladder history');
+
+        $playerCache = \App\PlayerCache::where('player_id', '=', $playerId)
+            ->where('ladder_history_id', '=', $ladderHistoryId)
+            ->first();
+        if ($playerCache == null)
+            $request->session()->flash('error', 'Unabled to find player cache');
+
+        //Query for the player's game reports from the ladder history month
+        $playerGameReports = \App\PlayerGameReport::where('player_id', '=', $playerId)->where('created_at', '<', $ladderHistory->ends)->where('created_at', '>', $ladderHistory->starts)->get();
+
+        //set the players points to 0
+        foreach ($playerGameReports as $playerGameReport)
+        {
+            if ($playerGameReport->points != 0)
+            {
+                $playerGameReport->backupPts = $playerGameReport->points;
+                $playerGameReport->points = 0;
+                $playerGameReport->save();
+            }
+        }
+
+        $playerCache->points = 0;
+        $playerCache->save();
+
+        $request->session()->flash('success', "Player games have been laundered");
+        return redirect()->back();
+    }
+
+    /**
+     * Reverse Launder and restore a player's points from their games.
+     */
+    public function undoLaundryService(Request $request)
+    {
+        $ladderHistoryId = $request->ladderHistory_id;
+
+        $playerId = $request->player_id;
+
+        $ladderHistory = \App\LadderHistory::find($ladderHistoryId);
+
+        if ($ladderHistory == null)
+            $request->session()->flash('error', 'Unabled to find ladder history');
+
+        $playerCache = \App\PlayerCache::where('player_id', '=', $playerId)
+            ->where('ladder_history_id', '=', $ladderHistoryId)
+            ->first();
+
+        if ($playerCache == null)
+            $request->session()->flash('error', 'Unabled to find player cache');
+
+        $player = \App\Player::find($playerId);
+        if ($player == null)
+            $request->session()->flash('error', 'Unabled to find player');
+
+        //Query for the player's game reports from the ladder history month
+        $playerGameReports = \App\PlayerGameReport::where('player_id', '=', $playerId)->where('created_at', '<', $ladderHistory->ends)->where('created_at', '>', $ladderHistory->starts)->get();
+
+        //reset player's points from games played using backupPts
+        foreach ($playerGameReports as $playerGameReport)
+        {
+            if ($playerGameReport->backupPts != 0)
+            {
+                $playerGameReport->points = $playerGameReport->backupPts;
+                $playerGameReport->save();
+            }
+        }
+
+        $playerCache->points = $player->points($ladderHistory);
+        $playerCache->save();
+
+        $request->session()->flash('success', "Player games have been reset");
         return redirect()->back();
     }
 }
