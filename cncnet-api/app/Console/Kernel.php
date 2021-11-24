@@ -22,6 +22,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\AprilFoolsPurge',
         'App\Console\Commands\CleanupQmMatchPlayers',
         'App\Console\Commands\CleanupQmMatches',
+        'App\Console\Commands\CleanupGameReports',
     ];
 
     /**
@@ -41,6 +42,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('QmMatchPlayers:prune')
             ->monthly();
         $schedule->command('QmMatches:prune')
+            ->monthly();
+        $schedule->command('GameReports:prune')
             ->monthly();
     }
 }

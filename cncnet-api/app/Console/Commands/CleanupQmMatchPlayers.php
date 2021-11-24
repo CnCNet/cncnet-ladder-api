@@ -42,8 +42,16 @@ class CleanupQmMatchPlayers extends Command
 		$date = date('Y-m-d', strtotime(date('Y-m-1')));
 		$quickMatchPlayers = \App\QmMatchPlayer::where('created_at', '<', $date);
 
-		echo "Deleting " . $quickMatchPlayers->count() . " records from qm_match_players created before date " . $date;
+		echo "Deleting " . $quickMatchPlayers->count() . " records from qm_match_players created before date $date\n";
 
 		$quickMatchPlayers->delete();
+
+        $mapSides = \App\MapSideString::leftJoin('qm_match_players', function($join) {
+            $join->on('qm_match_players.map_sides_id', '=', 'map_side_strings.id');
+        })->whereNull('qm_match_players.map_sides_id');
+
+        echo "Deleting " . $mapSides->count() . " map_side_strings where qm_match_players.id is null\n";
+
+        $mapSides->delete();
 	}
 }
