@@ -58,7 +58,7 @@
                         </li>
                         @endif
 
-                        @if($mod->isLadderAdmin($player['ladder']))
+                        @if(isset($mod) && $mod->isLadderAdmin($player['ladder']))
                         <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#submitLaundryService">Laundry Service</button>
 
                         <div class="modal fade" id="submitLaundryService" tabIndex="-1" role="dialog">

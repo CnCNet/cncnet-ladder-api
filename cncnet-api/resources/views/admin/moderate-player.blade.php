@@ -56,7 +56,7 @@
                 <a class="btn btn-sm btn-danger" href="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/newban/{{\App\Ban::BAN48H}}">48 Hour Ban</a>
                 <a class="btn btn-sm btn-danger" href="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/newban/{{\App\Ban::BAN1WEEK}}">1 Week Ban</a>
                 <a class="btn btn-sm btn-danger" href="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/newban/{{\App\Ban::BAN2WEEK}}">2 Week Ban</a>
-                @if($mod->isLadderAdmin($player->ladder))
+                @if(isset($mod) && $mod->isLadderAdmin($player->ladder))
                     <a class="btn btn-sm btn-danger" href="/admin/moderate/{{$player->ladder->id}}/player/{{$player->id}}/newban/{{\App\Ban::PERMBAN}}">Indefinite Ban</a>
                 @endif
             </div>
