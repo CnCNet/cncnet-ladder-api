@@ -19,6 +19,7 @@ class Kernel extends HttpKernel {
         'App\Http\Middleware\ShareErrorsLazySession',
         'App\Http\Middleware\VerifyCsrfToken',
         'App\Http\Middleware\CorsMiddleware',
+        'App\Http\Middleware\HackStatApiHeaders',
 	];
 
 	/**
