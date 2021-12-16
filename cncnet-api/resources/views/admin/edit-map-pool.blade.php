@@ -366,6 +366,7 @@
                                     <div style="margin-top: 8px;">
                                         <a href="#reorderMapPool" class="move-up btn btn-primary"><span class="fa fa-arrow-up"></span></a>
                                         <a href="#reorderMapPool" class="move-down btn btn-primary"><span class="fa fa-arrow-down"></span></a>
+                                        <a href="#sortAlphabetical" class="btn btn-danger"><span>A-Z</span></a>
                                         <button type="submit" class="btn btn-primary">Save</button>
                                     </div>
                                 </form>
