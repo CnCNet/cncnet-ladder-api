@@ -195,13 +195,18 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
             {
                 $playerGameReports = $player->playerGames()
                     ->where("ladder_history_id", "=", $history->id)
+                    ->where("disconnected", "=", 0)
+                    ->where("no_completion", "=", 0)
+                    ->where("draw", "=", 0)
                     ->orderBy('created_at', 'DESC')
                     ->limit($reduceMapRepeats)
                     ->get();
 
-                $recentMaps = $playerGameReports->map(function ($item)
-                {
+                $recentMaps = $playerGameReports->map(function ($item) {
                     return $item->game->map;
+                });
+                $recentMaps = $recentMaps->filter(function ($value) {
+                    return !is_null($value);
                 });
 
                 foreach ($recentMaps as $recentMap)
@@ -214,13 +219,18 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                     $oppPlayer = $qOpn->qmPlayer->player;
                     $oppPlayerGames = $oppPlayer->playerGames()
                         ->where("ladder_history_id", "=", $history->id)
+                        ->where("disconnected", "=", 0)
+                        ->where("no_completion", "=", 0)
+                        ->where("draw", "=", 0)
                         ->orderBy('created_at', 'DESC')
                         ->limit($reduceMapRepeats)
                         ->get();
 
-                    $recentMaps = $oppPlayerGames->map(function ($item)
-                    {
+                    $recentMaps = $oppPlayerGames->map(function ($item) {
                         return $item->game->map;
+                    });
+                    $recentMaps = $recentMaps->filter(function ($value) {
+                        return !is_null($value);
                     });
 
                     foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
