@@ -346,27 +346,21 @@
                                 <form method="POST" action="reorder">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                     <input type="hidden" id="mapPoolId" name="id" value="{{ $mapPool->id }}" />
-                                    <div style="overflow: auto;max-height: calc(100vh - 300px);">
-                                        <table>
-                                            <tbody>
+                                    <ul id="mapList" style="overflow: auto;max-height: calc(100vh - 300px);">
                                                 @foreach($maps as $map)
                                                     @if($map->id != "new")
-                                                        <tr>
-                                                            <td>
-                                                                <input type="radio" id="rinput_idx_{{ $map->bit_idx }}" name="maphandle" value="{{$map->id}},{{ $map->bit_idx }}" class="maphandle"></radio>
-                                                                <label id="linput_idx_{{ $map->bit_idx }}" for="rinput_idx_{{ $map->bit_idx }}" style="margin-bottom: 0;" >{{$map->admin_description}}</label>
-                                                                <input type="hidden" id="input_idx_{{ $map->bit_idx }}" name="bit_idx_{{ $map->bit_idx }}" value="{{$map->id}}" />
-                                                            </td>
-                                                        </tr>
+                                                        <li class="map-in-list" value="{{ $map->bit_idx }}">
+                                                            <input type="radio" id="rinput_idx_{{ $map->bit_idx }}" name="maphandle" value="{{$map->id}},{{ $map->bit_idx }}" class="maphandle"></radio>
+                                                            <label id="linput_idx_{{ $map->bit_idx }}" for="rinput_idx_{{ $map->bit_idx }}" style="margin-bottom: 0;" >{{$map->admin_description}}</label>
+                                                            <input type="hidden" id="input_idx_{{ $map->bit_idx }}" name="bit_idx_{{ $map->bit_idx }}" value="{{$map->id}}" />
+                                                        </li>
                                                     @endif
                                                 @endforeach
-                                            </tbody>
-                                        </table>
                                     </div>
                                     <div style="margin-top: 8px;">
                                         <a href="#reorderMapPool" class="move-up btn btn-primary"><span class="fa fa-arrow-up"></span></a>
                                         <a href="#reorderMapPool" class="move-down btn btn-primary"><span class="fa fa-arrow-down"></span></a>
-                                        <a href="#sortAlphabetical" class="btn btn-danger"><span>A-Z</span></a>
+                                        <a href="#reorderMapPool" class="alphabetical-sort btn btn-danger"><span>A-Z</span></a>
                                         <button type="submit" class="btn btn-primary">Save</button>
                                     </div>
                                 </form>
@@ -563,6 +557,34 @@
                      }
                  }
              });
+         }
+
+         let alphabeticalSorts = document.querySelectorAll(".alphabetical-sort");
+         for (i = 0; i < alphabeticalSorts.length; i++) {
+
+            alphabeticalSorts[i].addEventListener('click', function () {
+
+                var mapList = document.getElementById("mapList");
+                
+                var i = 0;
+                Array.from(mapList.getElementsByTagName("li"))
+                    .sort((a, b) => a.textContent.localeCompare(b.textContent))
+                    .forEach(x => {
+
+                        let rinput = x.getElementsByTagName("input")[0];
+                        let parts = rinput.value.split(",");
+                        rinput.value=parts[i] + "," + i;
+
+                        let hinput = x.getElementsByTagName("input")[1];
+                        hinput.value=parts[0];
+                        hinput.id="input_idx_" + i;
+                        hinput.name="bit_idx_" + i;
+
+                        x.value=i;
+                        mapList.appendChild(x);
+                        i++;
+                    });
+            });
          }
      })();
 

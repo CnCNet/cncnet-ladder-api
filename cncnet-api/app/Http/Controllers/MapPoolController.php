@@ -232,12 +232,4 @@ class MapPoolController extends Controller {
         $request->session()->flash('success', "Map Pool Reordered");
         return redirect()->back();
     }
-
-    public function sortAlphabetical(Request $request)
-    {
-
-
-
-
-    }
 }
