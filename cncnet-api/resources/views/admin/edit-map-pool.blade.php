@@ -346,7 +346,7 @@
                                 <form method="POST" action="reorder">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                     <input type="hidden" id="mapPoolId" name="id" value="{{ $mapPool->id }}" />
-                                    <ul id="mapList" style="overflow: auto;max-height: calc(100vh - 300px);">
+                                    <ul id="mapList" style="overflow: auto;max-height: calc(100vh - 300px); list-style: none; margin: 0; padding: 0;">
                                                 @foreach($maps as $map)
                                                     @if($map->id != "new")
                                                         <li class="map-in-list" value="{{ $map->bit_idx }}">
