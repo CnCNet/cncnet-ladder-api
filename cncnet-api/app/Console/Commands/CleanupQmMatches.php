@@ -39,8 +39,8 @@ class CleanupQmMatches extends Command
      */
     public function handle()
     {
-        //Get QM Match Players from previous month
-        $date = Carbon::now()->startOfMonth();
+        //Get QM Matches older than previous week
+        $date = Carbon::now()->subWeek();
         $quickMatches = \App\QmMatch::where('created_at', '<', $date);
         echo "Deleting " . $quickMatches->count() . " records from qm_matches created before date $date\n";
         $quickMatches->delete();
