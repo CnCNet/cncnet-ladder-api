@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Carbon\Carbon;
 
 class CleanupQmMatchPlayers extends Command
 {
@@ -38,8 +39,8 @@ class CleanupQmMatchPlayers extends Command
 	 */
 	public function handle()
 	{
-		//Get QM Match Players from previous month
-		$date = date('Y-m-d', strtotime(date('Y-m-1')));
+		//Get QM Match Players older than one week
+		$date = Carbon::now()->subWeek();
 		$quickMatchPlayers = \App\QmMatchPlayer::where('created_at', '<', $date);
 
 		echo "Deleting " . $quickMatchPlayers->count() . " records from qm_match_players created before date $date\n";
