@@ -175,6 +175,7 @@ Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.public'], func
 {
     Route::get('/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
     Route::get('/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
+    Route::get('/{game}/player/{player}/webview', 'ApiLadderStatsProfile@getWebview');
 });
 
 // Ultra short cache ladder endpoints
