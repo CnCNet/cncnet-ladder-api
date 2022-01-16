@@ -8,8 +8,9 @@ Route::get('/', function ()
 });
 
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
+Route::get('/help/obs', 'HelpController@getOBSHelp');
 
-Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function()
+Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
     Route::get('/', 'LadderController@getLadders');
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
@@ -22,11 +23,10 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
     Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
 });
 
-Route::controllers
-([
-	'auth' => 'Auth\AuthController',
-	'password' => 'Auth\PasswordController',
-]);
+Route::controllers([
+        'auth' => 'Auth\AuthController',
+        'password' => 'Auth\PasswordController',
+    ]);
 
 Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
 
@@ -34,7 +34,7 @@ Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
 {
     Route::get('users/', 'AdminController@getManageUsersIndex');
-    Route::post('ladder/new', [ 'middleware' => 'auth', 'isGod' => true, 'uses' => 'LadderController@saveLadder']);
+    Route::post('ladder/new', ['middleware' => 'auth', 'isGod' => true, 'uses' => 'LadderController@saveLadder']);
 });
 
 Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
@@ -49,18 +49,18 @@ Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'can
 
     Route::post('editmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMap']);
 
-    Route::post('optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue' ]);
-    Route::post('mappool/{mapPoolId}/optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue' ]);
+    Route::post('optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue']);
+    Route::post('mappool/{mapPoolId}/optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue']);
 
     Route::post('mappool/{mapPoolId}/rempoolmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@removeQuickMatchMap']);
     Route::get('mappool/{mapPoolId}/edit', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMapPool']);
     Route::post('mappool/{mapPoolId}/edit', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@postQuickMatchMap']);
-    Route::post('mappool/{mapPoolId}/rename',  ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@renameMapPool' ]);
-    Route::post('mappool', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@changeMapPool' ]);
-    Route::post('mappool/new', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@newMapPool' ]);
-    Route::post('mappool/{mapPoolId}/remove', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@removeMapPool' ]);
-    Route::post('mappool/{mapPoolId}/reorder', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@reorderMapPool' ]);
-    Route::post('mappool/clone', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@cloneMapPool' ]);
+    Route::post('mappool/{mapPoolId}/rename',  ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@renameMapPool']);
+    Route::post('mappool', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@changeMapPool']);
+    Route::post('mappool/new', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@newMapPool']);
+    Route::post('mappool/{mapPoolId}/remove', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@removeMapPool']);
+    Route::post('mappool/{mapPoolId}/reorder', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@reorderMapPool']);
+    Route::post('mappool/clone', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@cloneMapPool']);
     Route::post('mappool/{mapPoolId}/cloneladdermaps', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@copyMaps']);
 
     Route::post('add/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@addAdmin']);
@@ -114,12 +114,12 @@ Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
     Route::get('/verify/{verify_token}', 'AccountController@verifyEmail');
 });
 
-Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], function()
+Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], function ()
 {
     Route::get('/token', 'ApiAuthController@getAuth');
 });
 
-Route::group(['prefix' => 'api/v1/auth/'], function()
+Route::group(['prefix' => 'api/v1/auth/'], function ()
 {
     Route::get('/refresh', 'ApiAuthController@refresh');
     Route::post('/login', 'ApiAuthController@login');
@@ -157,7 +157,7 @@ Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], func
 });
 
 // Ladder Endpoints
-Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'], function()
+Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'], function ()
 {
     Route::get('/', 'ApiLadderController@getCurrentLadders');
     Route::get('/{game}/games/recent/{count}', 'ApiLadderController@getLadderRecentGamesList');
@@ -171,7 +171,7 @@ Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'],
 });
 
 // Short cache ladder endpoints
-Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.public'], function()
+Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.public'], function ()
 {
     Route::get('/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
     Route::get('/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
@@ -179,21 +179,21 @@ Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.public'], func
 });
 
 // Ultra short cache ladder endpoints
-Route::group(['prefix' => 'api/v1/irc', 'middleware' => 'cache.ultra.public'], function()
+Route::group(['prefix' => 'api/v1/irc', 'middleware' => 'cache.ultra.public'], function ()
 {
     Route::get('/{abbreviation}/active', 'ApiIrcController@getActive');
     Route::get('/{abbreviation}/players', 'ApiIrcController@getPlayerNames');
-    Route::get('/{abbreviation}/clans', [ 'middleware' => 'cache.public', 'uses' => 'ApiIrcController@getClans' ]);
+    Route::get('/{abbreviation}/clans', ['middleware' => 'cache.public', 'uses' => 'ApiIrcController@getClans']);
     Route::get('/hostmasks', 'ApiIrcController@getHostmasks');
 });
 
-Route::group(['prefix' => 'clans', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true ], function()
+Route::group(['prefix' => 'clans', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
     Route::get('/', 'ClanController@getIndex');
     Route::get('/{ladderAbbrev}/leaderboards/{date}', 'ClanController@getListing');
 });
 
-Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth' ], function()
+Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
 {
     Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
     Route::post('/edit/{clanId}', 'ClanController@saveLadderClan');
