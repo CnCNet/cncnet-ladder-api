@@ -225,7 +225,7 @@ class LadderController extends Controller
 
         for($times = 0; $times < 5; $times++)
         {
-            $year = 2017 + $times;
+            $year = Carbon::Now()->year + $times;
             for($month = 0; $month <= 12; $month++)
             {
                 $date = Carbon::create($year, 01, 01, 0)->addMonth($month);
