@@ -38,7 +38,7 @@ class ApiAuthController extends Controller
             {
                 $email = $user->email;
                 $token = JWTAuth::parseToken()->refresh();
-                return response()->json(compact('token', 'email'));
+                return response()->json([ 'token' => $token, 'email' => $user->email, 'name' => $user->name ]);
             }
         }
         catch (\Exception $e)
@@ -67,7 +67,9 @@ class ApiAuthController extends Controller
         } catch (JWTException $e) {
             return response()->json(['error' => 'could_not_create_token'], 500);
         }
-        return response()->json(compact('token'));
+        $request->headers->set('Authorization', "Bearer $token");
+        $user = JWTAuth::parseToken()->authenticate();
+        return response()->json([ 'token' => $token, 'email' => $user->email, 'name' => $user->name ]);
 
     }
 }
