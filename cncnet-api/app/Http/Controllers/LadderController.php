@@ -61,6 +61,9 @@ class LadderController extends Controller
         if ($history === null)
             abort(404);
 
+        $user = $request->user();
+        $userIsMod = $user != null && $user->isLadderMod($history->ladder);
+
         $data = array
         (
             "stats" => $this->statsService->getQmStats($request->game),
@@ -73,6 +76,7 @@ class LadderController extends Controller
                                          ->where('tier', $request->tier?'=':'>', $request->tier+0)
                                          ->where('player_name', 'like', '%'.$request->search.'%')
                                          ->orderBy('points', 'desc')->paginate(45),
+            "userIsMod" => $userIsMod,
             "cards" => \App\Card::orderBy('id', 'asc')->lists('short'),
             "tier" => $request->tier,
             "search" => $request->search,
