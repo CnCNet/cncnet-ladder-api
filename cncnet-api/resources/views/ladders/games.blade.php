@@ -36,7 +36,7 @@
                 <div class="header">
                     <div class="col-md-12">
                         <h3><strong>1vs1</strong> Games</h3>
-                        @if ($userIsMod)
+                        @if ($userIsMod && ($errorGames === null || $errorGames === false))
                         <small style="margin-left: auto; margin-right: 0;">
                             <a href="{{"/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games?errorGames=true" }}">View 0:03 Games</a>
                         </small>

@@ -126,7 +126,8 @@ class LadderController extends Controller
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
             "games" => $games,
-            "userIsMod" => $userIsMod
+            "userIsMod" => $userIsMod,
+            "errorGames" => $errorGames
         ));
     }
 
