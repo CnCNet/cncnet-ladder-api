@@ -226,7 +226,7 @@ class LadderService
 
         return \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
             ->where("ladder_history_id", "=", $history->id)
-            ->where('game_reports.duration', '=', 3)
+            ->where('game_reports.duration', '<=', 3)
             ->orderBy("games.id", "DESC")
             ->paginate(45);
     }
