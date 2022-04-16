@@ -80,11 +80,6 @@
                             <small>
                                 <a href="{{"/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games"}}">View All Games</a>
                             </small>
-                            @if ($userIsMod)
-                                <small style="margin-left: auto; margin-right: 0;">
-                                    <a href="{{"/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/error-games"}}">View 0:03 Games</a>
-                                </small>
-                            @endif
                         </h3>
                     </div>
                 </div>

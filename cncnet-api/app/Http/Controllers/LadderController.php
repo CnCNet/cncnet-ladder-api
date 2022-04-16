@@ -91,13 +91,34 @@ class LadderController extends Controller
 
     public function getLadderGames(Request $request)
     {
+        $user = $request->user();
+        $userIsMod = false;
+
+        if ($user !== null && $user->isModerator())
+        {
+            $userIsMod = true;
+        }
+
+        $errorGames = $request->errorGames;
+
+        
+        if ($errorGames)
+        {
+            $games = $this->ladderService->getRecentErrorLadderGamesPaginated($request->date, $request->game);
+        } 
+        else 
+        {
+            $games = $this->ladderService->getRecentLadderGamesPaginated($request->date, $request->game);
+        }
+
         return view("ladders.games",
         array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
-            "games" => $this->ladderService->getRecentLadderGamesPaginated($request->date, $request->game)
+            "games" => $games,
+            "userIsMod" => $userIsMod
         ));
     }
 

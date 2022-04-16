@@ -213,6 +213,24 @@ class LadderService
             ->paginate(45);
     }
 
+    /**
+     * Return all games that did not load, duration = 3 seconds
+     */
+    public function getRecentErrorLadderGamesPaginated($date, $cncnetGame)
+    {
+        $history = $this->getActiveLadderByDate($date, $cncnetGame);
+        if ($history == null)
+        {
+            return [];
+        }
+
+        return \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
+            ->where("ladder_history_id", "=", $history->id)
+            ->where('game_reports.duration', '=', 3)
+            ->orderBy("games.id", "DESC")
+            ->paginate(45);
+    }
+
     public function getLadderGameById($history, $gameId)
     {
         if($history == null || $gameId == null)
