@@ -45,11 +45,16 @@ class LadderController extends Controller
             }
         }
 
+        $user = $request->user();
+        $userIsMod = $user != null && $user->isLadderMod($history->ladder);
+
+
         return view("ladders.index",
         array
         (
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_winners" => $prevWinners,
+            "userIsMod" => $userIsMod,
             "clan_ladders" => $this->ladderService->getLatestClanLadders()
         ));
     }
