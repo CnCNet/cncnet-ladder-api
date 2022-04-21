@@ -36,7 +36,7 @@
                 @foreach($clan_ladders as $history)
                     <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
                     <a href="/clans/{{ $history->ladder->abbreviation . "/leaderboards/" . $history->short }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                        <div class="ladder-cover cover-{{ $history->ladder->game}}" style="background-image: url('/images/ladder/{{ $history->ladder->game . "-cover.png" }}')">
+                        <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
                             <div class="details">
                                 <div class="type">
                                     <h1>{{ $history->ladder->name }}</h1>

@@ -62,7 +62,7 @@
                                 @else
                                 <small>Champion of the
                                 @endif
-                                <strong>{{ $date->format("m/Y") }}</strong> {{ $history->game }} League</small>
+                                <strong>{{ $date->format("m/Y") }}</strong> {{ $history->abbreviation }} League</small>
                             </div>
                         </div>
                     </div>

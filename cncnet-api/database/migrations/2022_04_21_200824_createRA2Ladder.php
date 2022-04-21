@@ -12,14 +12,11 @@ class CreateRA2Ladder extends Migration {
 	 */
 	public function up()
 	{
-		#add ra2 as a game
-		DB::statement("ALTER TABLE ladders CHANGE COLUMN game game ENUM('ra', 'ts', 'yr', 'ra2')");
-
 		#create ra2 ladder
 		$ra2Ladder = new \App\Ladder;
 		$ra2Ladder->name = 'Red Alert 2';
 		$ra2Ladder->abbreviation = 'ra2';
-		$ra2Ladder->game = 'ra2';
+		$ra2Ladder->game = 'yr'; #use yr game
 		$ra2Ladder->clans_allowed = 0;
 		$ra2Ladder->game_object_schema_id = 1;
 		$ra2Ladder->private = 0;

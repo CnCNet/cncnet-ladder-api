@@ -12,8 +12,8 @@
 <h5>Player nicknames:</h5> 
     <?php foreach($otherNames as $otherName): ?>
         <div class="player-nicknames">
-            <i class="icon icon-game icon-{{$otherName->ladder->game}}"></i>
-            <a href="/ladder/{{ $history->short }}/{{ $otherName->ladder->game}}/player/{{ $otherName->username}}">
+            <i class="icon icon-game icon-{{$otherName->ladder->abbreviation}}"></i>
+            <a href="/ladder/{{ $history->short }}/{{ $otherName->ladder->abbreviation}}/player/{{ $otherName->username}}">
                 {{ $otherName->username }}
             </a>
             {{ $otherName->created_at->toDateString()}}
