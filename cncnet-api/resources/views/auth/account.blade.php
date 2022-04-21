@@ -71,6 +71,7 @@
                         <h2>1v1 Ladders</h2>
                     </div>
                     @foreach($ladders as $history)
+                    @if($history->ladder->game != 'ra2' || $user->isModerator() == true) <!-- TODO REMOVE THIS if conditional when going live with RA2 MODE -->
                         <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
                             <a href="/account/{{ $history->ladder->abbreviation }}/list" title="{{ $history->ladder->name }}" class="ladder-link">
                                 <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
@@ -90,6 +91,7 @@
                                 </div>
                             </a>
                         </div>
+                        @endif
                     @endforeach
                 </div>
                 <div class="row">
