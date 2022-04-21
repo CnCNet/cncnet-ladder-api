@@ -39,11 +39,13 @@
                     <ul class="dropdown-menu" style="min-width:250px">
                         <li role="separator" class="nav-title">C&amp;C Live Ladders</li>
                         @foreach($ladders as $history)
+                        @if($history->ladder->abbreviation != 'ra2' || $userIsMod == true) <!-- TODO REMOVE THIS if conditional when going live with RA2 MODE -->
                         <li>
                             <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}">
                                 {{ $history->ladder->name }}
                             </a>
                         </li>
+                        @endif
                         @endforeach
 
                         <li role="separator" class="divider"></li>
