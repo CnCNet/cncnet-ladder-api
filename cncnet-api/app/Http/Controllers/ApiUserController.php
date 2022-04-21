@@ -35,7 +35,7 @@ class ApiUserController extends Controller
             {
                 // Auto-register a player for each ladder if there isn't already a player registered for this user
                 $playerCreated = false;
-                $oLadders = \App\Ladder::where('game', '=', $ladder->game)->where('id', '<>', $ladder->id)->get();
+                $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)->where('id', '<>', $ladder->id)->get();
                 foreach ($oLadders as $other)
                 {
                     $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();

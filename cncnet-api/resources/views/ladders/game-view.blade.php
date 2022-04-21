@@ -31,7 +31,7 @@
 @endsection
 
 @section('content')
-<?php $g = $history->ladder()->first()->game; ?>
+<?php $g = $history->ladder()->first()->abbreviation; ?>
 
 <div class="game {{ $g }}">
 
