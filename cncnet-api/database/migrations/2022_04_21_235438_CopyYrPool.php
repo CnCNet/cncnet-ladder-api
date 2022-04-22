@@ -35,7 +35,9 @@ class CopyYrPool extends Migration {
 			$newQmMap->ladder_id = $ra2LadderId;
 			$newQmMap->map_pool_id = $newPool->id;
 
-			$map_id = \App\Map::where('ladder_id', $ra2LadderId)->first()->id;
+			$map_id = \App\Map::where('ladder_id', $ra2LadderId)
+				->where('hash', $yrQmMap->map->hash)
+				->first()->id;
 			$newQmMap->map_id = $map_id;
 			$newQmMap->save();
 		}
