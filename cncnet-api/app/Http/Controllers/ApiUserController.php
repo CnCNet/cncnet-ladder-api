@@ -30,12 +30,23 @@ class ApiUserController extends Controller
 
         foreach (\App\Ladder::all() as $ladder)
         {
-            $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
+
+            if ($user->isLadderMod($ladder) == true) {
+                $players = $user->usernames()->where('ladder_id', '=', $ladder->id)
+                    ->get();
+            } else {
+                $players = $user->usernames()->where('ladder_id', '=', $ladder->id)
+                ->where('ladder_id', '!=', 5) // TODO remove
+                ->get();
+            }
+            
             if ($players->count() < 1)
             {
                 // Auto-register a player for each ladder if there isn't already a player registered for this user
                 $playerCreated = false;
-                $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)->where('id', '<>', $ladder->id)->get();
+                $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)
+                    ->where('abbreviation', '!=', 'ra2') // TODO remove
+                    ->where('id', '<>', $ladder->id)->get();
                 foreach ($oLadders as $other)
                 {
                     $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
@@ -51,21 +62,22 @@ class ApiUserController extends Controller
                 }
             }
         }
-        return $this->getActivePlayerList($user->id);
+        return $this->getActivePlayerList($user, $ladder);
     }
 
-    private function getActivePlayerList($userId)
+    private function getActivePlayerList($user, $ladder)
     {
         $date = Carbon::now();
         $startOfMonth = $date->startOfMonth()->toDateTimeString();
         $endOfMonth = $date->endOfMonth()->toDateTimeString();
 
-        $activeHandles = PlayerActiveHandle::getUserActiveHandles($userId, $startOfMonth, $endOfMonth);
+        $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth);
 
         $players = [];
         foreach($activeHandles as $activeHandle)
         {
-            if ($activeHandle->player->ladder->private == false)
+            if ($activeHandle->player->ladder->private == false
+                    && ($activeHandle->player->ladder->id != 5 || $user->isLadderMod($ladder))) //TODO remove
                 $players[] = $activeHandle->player;
         }
 
@@ -74,7 +86,7 @@ class ApiUserController extends Controller
 
         if (count($players) == 0)
         {
-            return $this->getTempNicks($userId);
+            return $this->getTempNicks($user->id);
         }
 
         return $players;
@@ -88,6 +100,11 @@ class ApiUserController extends Controller
         $tempNicks = [];
         foreach (\App\Ladder::all() as $ladder)
         {
+
+            if ($ladder->id == 5) { //TODO remove this
+                continue;
+            }
+
             $tempNick = $this->getTempNickByLadderType($ladder->id, $userId);
             if ($tempNick != null)
             {
