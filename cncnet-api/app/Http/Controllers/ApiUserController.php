@@ -35,9 +35,7 @@ class ApiUserController extends Controller
                 $players = $user->usernames()->where('ladder_id', '=', $ladder->id)
                     ->get();
             } else {
-                $players = $user->usernames()->where('ladder_id', '=', $ladder->id)
-                ->where('ladder_id', '!=', 5) // TODO remove
-                ->get();
+                $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
             }
             
             if ($players->count() < 1)
@@ -45,8 +43,8 @@ class ApiUserController extends Controller
                 // Auto-register a player for each ladder if there isn't already a player registered for this user
                 $playerCreated = false;
                 $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)
-                    ->where('abbreviation', '!=', 'ra2') // TODO remove
-                    ->where('id', '<>', $ladder->id)->get();
+                    ->where('id', '<>', $ladder->id)
+                    ->get();
                 foreach ($oLadders as $other)
                 {
                     $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
@@ -76,8 +74,7 @@ class ApiUserController extends Controller
         $players = [];
         foreach($activeHandles as $activeHandle)
         {
-            if ($activeHandle->player->ladder->private == false
-                    && ($activeHandle->player->ladder->id != 5 || $user->isLadderMod($ladder))) //TODO remove
+            if ($activeHandle->player->ladder->private == false)
                 $players[] = $activeHandle->player;
         }
 
@@ -100,11 +97,6 @@ class ApiUserController extends Controller
         $tempNicks = [];
         foreach (\App\Ladder::all() as $ladder)
         {
-
-            if ($ladder->id == 5) { //TODO remove this
-                continue;
-            }
-
             $tempNick = $this->getTempNickByLadderType($ladder->id, $userId);
             if ($tempNick != null)
             {
