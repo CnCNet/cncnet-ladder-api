@@ -210,7 +210,7 @@
                                 $countryName = "";
                                 $side = null;
 
-                                if ( $history->ladder->abbreviation == "yr")
+                                if ( $history->ladder->game == "yr")
                                 {
                                     $side = \App\Side::where("local_id", $player->country)
                                     ->where("ladder_id", $history->ladder->id)
@@ -245,7 +245,7 @@
                                     "playerCard" => $player->card !== null ? (array_key_exists($player->card, $cards) ? $cards[$player->card + 0] : "") : "",
                                     "side" => $countryName,
                                     "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name,
-                                    "game" => $history->ladder->abbreviation
+                                    "game" => $history->ladder->game
                                 ])
                             </div>
                         @endforeach
