@@ -57,7 +57,7 @@
 
                         <?php $gameStats = $pgr->stats; ?>
                         @if ($gameStats != null)
-                            <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif"></div>
+                            <div class="hidden-xs faction faction-{{ $gameStats->faction($history->ladder->game, $gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif"></div>
                         @endif
 
                         <?php $player = $pgr->player()->first(); ?>
