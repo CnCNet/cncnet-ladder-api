@@ -144,6 +144,11 @@
                                     <label for="default_reject_{{$map->id}}"> Rejected By Default</label>
                                 </div>
 
+                                <div class="col-md-6">
+                                    <input id="free_veto_{{$map->id}}" type="checkbox" name="free_veto" @if($map->free_veto) checked @endif />
+                                    <label for="free_veto_{{$map->id}}">Free to Veto</label>
+                                </div>
+
                                 <div class="col-md-12">
                                     <button type="submit" class="btn btn-primary btn-lg">Save</button>
                                 </div>

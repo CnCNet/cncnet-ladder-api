@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddFreeVetoColumn extends Migration
+class AddMapVeto extends Migration
 {
 
 	/**
@@ -15,7 +15,7 @@ class AddFreeVetoColumn extends Migration
 	{
 		Schema::table('qm_maps', function (Blueprint $table)
 		{
-			$table->integer("free_veto")
+			$table->tinyInteger("free_veto")
 				->nullable()
 				->default(0);
 		});

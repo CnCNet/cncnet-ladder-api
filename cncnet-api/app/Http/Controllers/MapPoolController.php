@@ -38,6 +38,7 @@ class MapPoolController extends Controller {
         $qmMap->valid = $request->valid;
         $qmMap->rejectable = $request->rejectable == "on" ? true : false;
         $qmMap->default_reject = $request->default_reject == "on" ? true : false;
+        $qmMap->free_veto = $request->free_veto == "on" ? true : false;
         $qmMap->allowed_sides = implode(",", $request->allowed_sides);
         $qmMap->spawn_order = $request->spawn_order;
         $qmMap->team1_spawn_order = $request->team1_spawn_order;
