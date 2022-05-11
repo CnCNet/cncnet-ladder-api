@@ -18,7 +18,7 @@
             @foreach($gamePlayers->get() as $k => $pgr)
             <?php $gameStats = $pgr->stats; ?>
                 @if ($gameStats != null)
-                    <div class="recent-games-faction hidden-xs faction faction-{{ $gameStats->faction($history->ladder->abbreviation, $gameStats->cty) }} 
+                    <div class="recent-games-faction hidden-xs faction faction-{{ $gameStats->faction($history->ladder->game, $gameStats->cty) }} 
                         @if($k&1) faction-right @else faction-left @endif"></div>
                 @endif
             @endforeach
