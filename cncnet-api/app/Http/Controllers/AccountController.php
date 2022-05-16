@@ -34,7 +34,8 @@ class AccountController extends Controller
             ,array (
                 "user" => $user,
                 "ladders" => $this->ladderService->getLatestLadders(),
-                "clan_ladders" => $this->ladderService->getLatestClanLadders()
+                "clan_ladders" => $this->ladderService->getLatestClanLadders(),
+                "private_ladders" => $this->ladderService->getLatestPrivateLadders($user)
             )
         );
     }

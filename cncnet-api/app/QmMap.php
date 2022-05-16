@@ -4,6 +4,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class QmMap extends Model {
 
+    protected $fillable = [ 'ladder_id', 'map_pool_id', 'map_id' ];
+
 	//
     public function qmMatches()
     {

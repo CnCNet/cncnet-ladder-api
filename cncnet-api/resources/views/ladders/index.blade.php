@@ -33,7 +33,6 @@
         <div class="feature">
             <div class="row">
                 @foreach($ladders as $history)
-                @if($history->ladder->abbreviation != 'ra2' || $userIsMod == true) <!-- TODO REMOVE THIS if conditional when going live with RA2 MODE -->
                 <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
                     <a href="/ladder/{{ $history->short . "/" . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
                         <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
@@ -53,7 +52,6 @@
                         </div>
                     </a>
                 </div>
-                @endif <!-- and remove this -->
                 @endforeach
             </div>
         </div>
