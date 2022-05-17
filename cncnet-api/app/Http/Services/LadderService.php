@@ -55,6 +55,39 @@ class LadderService
         });
     }
 
+    public function getLatestPrivateLadders($user = null)
+    {
+        return Cache::remember("ladderService::getLatestPrivateLadders", 1, function() use ($user) {
+            if ($user === null)
+                return collect();
+        $date = Carbon::now();
+
+        $start = $date->startOfMonth()->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+
+        if ($user->isGod())
+        {
+            return \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+            ->whereNotNull("ladder.id")
+            ->where("ladder_history.starts", "=", $start)
+            ->where("ladder_history.ends", "=", $end)
+            ->where('ladder.private', '=', 1)
+            ->get();
+        }
+        else
+        {
+            return \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+            ->join("ladder_admins as la", "la.ladder_id", "=", "ladder.id")
+            ->whereNotNull("ladder.id")
+            ->where("ladder_history.starts", "=", $start)
+            ->where("ladder_history.ends", "=", $end)
+            ->where('ladder.private', '=', 1)
+            ->get();
+        }
+
+        });
+    }
+
     public function getLatestClanLadders()
     {
         return Cache::remember("ladderService::getLatestClanLadders", 1, function() {

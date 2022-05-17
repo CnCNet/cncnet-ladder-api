@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class Map extends Model
 {
     protected $table = 'maps';
-    protected $fillable = ['name', 'hash'];
+    protected $fillable = ['name', 'hash', 'ladder_id'];
     public $timestamps = false;
 
     public function qmMaps()

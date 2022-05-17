@@ -120,6 +120,34 @@
                         </div>
                     @endforeach
                 </div>
+                <div class="row">
+                    @if($private_ladders->count() > 0)
+                        <div class="col-md-12">
+                            <h2>Private Ladders</h2>
+                        </div>
+                    @endif
+                    @foreach($private_ladders as $history)
+                        <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
+                           <a href="/account/{{ $history->ladder->abbreviation }}/list" title="{{ $history->ladder->name }}" class="ladder-link">
+                                <div class="ladder-cover cover-{{ $history->ladder->abbreviation}}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . "-cover.png" }}')">
+                                    <div class="details">
+                                        <div class="type">
+                                            <h1>{{ $history->ladder->name }}</h1>
+                                            <p class="lead">1<strong>vs</strong>1</p>
+                                        </div>
+                                    </div>
+                                    <div class="badge-cover">
+                                        <ul class="list-inline">
+                                            <li>
+                                                <p>{{ Carbon\Carbon::parse($history->starts)->format('F Y') }} Competition</p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </a> 
+                        </div> 
+                    @endforeach
+                </div>
             </div>
         </div>
     </div>

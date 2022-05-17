@@ -7,7 +7,7 @@ class Ladder extends Model
 {
     protected $table = 'ladders';
 
-    protected $fillable = ['name', 'abbreviation', 'game', 'clans_allowed', 'game_object_schema_id' ];
+    protected $fillable = ['name', 'abbreviation', 'game', 'clans_allowed', 'game_object_schema_id', 'private' ];
 
     public function qmLadderRules()
     {
@@ -102,6 +102,8 @@ class Ladder extends Model
         {
             return "/clans/{$this->abbreviation}/leaderboards/{$history->short}/";
         }
+
+        $ladder = $history->ladder;
 
         return "/ladder/{$history->short}/$ladder->abbreviation";
     }

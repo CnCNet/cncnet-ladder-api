@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers;
+
+namespace App\Http\Controllers\v2;
 
 use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
@@ -10,6 +11,7 @@ use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Log;
 use Carbon\Carbon;
+use \App\Http\Controllers\Controller;
 
 class ApiUserController extends Controller
 {
@@ -31,7 +33,7 @@ class ApiUserController extends Controller
         foreach (\App\Ladder::all() as $ladder)
         {
             $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
-            
+
             if ($players->count() < 1)
             {
                 // Auto-register a player for each ladder if there isn't already a player registered for this user
@@ -54,10 +56,10 @@ class ApiUserController extends Controller
                 }
             }
         }
-        return $this->getActivePlayerList($user);
+        return $this->getActivePlayerListV2($user);
     }
 
-    private function getActivePlayerList($user)
+    private function getActivePlayerListV2($user)
     {
         $date = Carbon::now();
         $startOfMonth = $date->startOfMonth()->toDateTimeString();
@@ -66,10 +68,11 @@ class ApiUserController extends Controller
         $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth);
 
         $players = [];
-        foreach($activeHandles as $activeHandle)
+        foreach ($activeHandles as $activeHandle)
         {
-            if ($activeHandle->player->ladder->private == false)
-                $players[] = $activeHandle->player;
+            $player = $activeHandle->player;
+            $player["ladder"] = \App\Ladder::where('id', $player->ladder_id)->first();
+            $players[] = $player;
         }
 
         // If they haven't selected a nickname yet
@@ -83,7 +86,7 @@ class ApiUserController extends Controller
         return $players;
     }
 
-    /**
+        /**
      * Returns a SINGLE nickname for all 3 ladder types
      */
     private function getTempNicks($userId)
@@ -100,7 +103,7 @@ class ApiUserController extends Controller
         return $tempNicks;
     }
 
-    /**
+        /**
      * Limit nicknames to the expired date, one per ladder type
      */
     private function getTempNickByLadderType($ladderId, $userId)
@@ -140,60 +143,5 @@ class ApiUserController extends Controller
             ->first();
 
         return $tempNick;
-    }
-
-    public function createUser(Request $request)
-    {
-        $token = JWTAuth::getToken();
-
-        if ($request->email == null && $request->password == null)
-        {
-            return response()->json(['bad_parameters'], 400);
-        }
-
-        if($token == null)
-        {
-            $check = \App\User::where("email", "=", $request->email)->first();
-            if($check == null)
-            {
-                $user = new \App\User();
-                $user->name = "";
-                $user->email = $request->email;
-                $user->password = \Hash::make($request->password);
-                $user->save();
-
-                $token = JWTAuth::fromUser($user);
-                return response()->json(compact('token'));
-            }
-            else
-            {
-                return response()->json(['account_present'], 400);
-            }
-        }
-        else
-        {
-            $user = $this->authService->getUser($request);
-            if($user)
-            {
-                return response()->json(['account_present'], 400);
-            }
-        }
-    }
-
-    public function getPrivateLadders(Request $request)
-    {
-        $ladders = $this->ladderService->getLadders(true);
-
-        $user = $request->user();
-
-        if ($user->isGod())
-            return $ladders;
-
-        $ladders = $ladders->filter(function($ladder) use ($user)
-        {
-            return $ladder->allowedToView($user);
-        });
-
-        return $ladders->values();
     }
 }

@@ -151,6 +151,11 @@ Route::group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function ()
     Route::post('/qm/{ladderAbbrev}/{playerName}', 'ApiQuickMatchController@matchRequest');
 });
 
+Route::group(['prefix' => 'api/v2/', 'middleware' => 'jwt.auth', 'namespace' => '\v2'], function ()
+{
+    Route::get('/user/account', 'ApiUserController@getAccount');
+});
+
 Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], function ()
 {
     Route::get('/qm/ladder/{ladderAbbrev}/stats', 'ApiQuickMatchController@statsRequest');
