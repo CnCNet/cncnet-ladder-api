@@ -170,44 +170,26 @@ class AdminController extends Controller
         $hostname = $request->hostname;
         $userId = $request->userId;
         $search = $request->search;
-        $exact = $request->exact;
-        $page = $request->page;
         $players = null;
+        $users = null;
 
-        if (isset($page))
+        if ($search)
         {
-            $page = 1;
-        }
-
-        if ($search && $exact)
-        {
-            $players = \App\Player::where("username", "=", "{$search}")->paginate(20);
-        }
-        else if ($search)
-        {
-            $players = Cache::remember("admin/users/{$search}{$page}", 20, function () use ($search)
+            $players = Cache::remember("admin/users/{$search}", 20, function () use ($search)
             {
-                return \App\Player::where("username", "LIKE", "%{$search}%")->paginate(20);
+                return \App\Player::where('username', '=', $search)->get();
             });
         }
-
-        if ($userId)
+        else if ($userId)
         {
-            $users = Cache::remember("admin/users/users/{$page}", 20, function () use ($userId)
+            $users = Cache::remember("admin/users/users/", 20, function () use ($userId)
             {
-                return \App\User::where("id", $userId)->paginate(20);
-            });
-        }
-        else
-        {
-            $users = Cache::remember("admin/users/users/{$page}", 20, function ()
-            {
-                return \App\User::orderBy("id", "DESC")->paginate(20);
+                return \App\User::where("id", $userId)->get();
             });
         }
 
         return view("admin.manage-users", [
-            "users" => $users,
+            "users" => $users != null ? $users : [],
             "players" => $players != null ? $players : [],
             "search" => $search,
             "userId" => $userId,
