@@ -1,0 +1,35 @@
+version: "3.3"
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile
+        env_file: ./src/.env
+        volumes:
+            - ./src:/home/cncnet/site
+        networks:
+            - cncnet
+
+    nginx:
+        image: nginx:stable-alpine
+        restart: always
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./src:/home/cncnet/site
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - cncnet
+
+    mysql:
+        image: mysql
+        restart: always
+        env_file: ./src/.env
+        networks:
+            - cncnet
+
+networks:
+    cncnet:
+        driver: bridge
