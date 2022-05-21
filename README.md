@@ -24,9 +24,12 @@ Find all of them by searching `// @TODO - Upgrade`
 ### Development
 
 - Copy `.env-example` to `.env`
-- Build docker image and spin up `docker-compose build` and `docker-compose up -d`
+- Build docker image and spin up `docker-compose -f docker-dev-compose.yml build` and `docker-compose up -d`
 - Install composer dependencies `composer install` within docker container. Enter container by using `docker exec -it <container_id> bash`
 - Open up [http://localhost](http://localhost)
+
+### Production
+- `docker-compose -f docker-compose.yml build` and `docker-compose up -d`
 
 ### Built with
 - PHP
