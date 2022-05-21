@@ -27,7 +27,7 @@ Route::group(['prefix' => 'v1/auth/'], function ()
     Route::post('/login', [ApiAuthController::class, 'login']);
 });
 
-Route::group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function ()
+Route::group(['prefix' => 'v1/', 'middleware' => 'jwt.auth'], function ()
 {
     Route::get('/user/account', [ApiUserController::class, 'getAccount']);
     Route::get('/user/ladders', [ApiUserController::class, 'getPrivateLadders']);
@@ -53,18 +53,19 @@ Route::group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function ()
     Route::post('/qm/{ladderAbbrev}/{playerName}', [ApiQuickMatchController::class, 'matchRequest']);
 });
 
-Route::group(['prefix' => 'api/v2/', 'middleware' => 'jwt.auth', 'namespace' => '\v2'], function ()
+# Err, ey v2?
+Route::group(['prefix' => 'v2/', 'middleware' => 'jwt.auth', 'namespace' => '\v2'], function ()
 {
     Route::get('/user/account', [ApiUserController::class, 'getAccount']);
 });
 
-Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], function ()
+Route::group(['prefix' => 'v1/', 'middleware' => 'cache.short.public'], function ()
 {
     Route::get('/qm/ladder/{ladderAbbrev}/stats', [ApiQuickMatchController::class, 'statsRequest']);
 });
 
 // Ladder Endpoints
-Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'], function ()
+Route::group(['prefix' => 'v1/ladder', 'middleware' => 'cache.long.public'], function ()
 {
     Route::get('/', [ApiLadderController::class, 'getCurrentLadders']);
     Route::get('/{game}/games/recent/{count}', [ApiLadderController::class, 'getLadderRecentGamesList']);
@@ -78,7 +79,7 @@ Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'],
 });
 
 // Short cache ladder endpoints
-Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.public'], function ()
+Route::group(['prefix' => 'v1/ladder', 'middleware' => 'cache.public'], function ()
 {
     Route::get('/{game}/top/{count}', [ApiLadderController::class, 'getLadderTopList']);
     Route::get('/{game}/player/{player}', [ApiLadderController::class, 'getLadderPlayer']);
@@ -86,7 +87,7 @@ Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.public'], func
 });
 
 // Ultra short cache ladder endpoints
-Route::group(['prefix' => 'api/v1/irc', 'middleware' => 'cache.ultra.public'], function ()
+Route::group(['prefix' => 'v1/irc', 'middleware' => 'cache.ultra.public'], function ()
 {
     Route::get('/{abbreviation}/active', [ApiIrcController::class, 'getActive']);
     Route::get('/{abbreviation}/players', [ApiIrcController::class, 'getPlayerNames']);
