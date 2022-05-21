@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
-use \App\EmailVerification;
+use \App\Models\EmailVerification;
 use \App\Models\PlayerActiveHandle;
 use Carbon\Carbon;
 use Mail;
@@ -24,8 +24,7 @@ class AccountController extends Controller
     public function getAccountIndex(Request $request)
     {
         $user = \Auth::user();
-
-        $user->ip_address_id = \App\Models\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+        $user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
             ? $_SERVER["HTTP_CF_CONNECTING_IP"]
             : $request->getClientIp());
 
@@ -81,8 +80,6 @@ class AccountController extends Controller
             })
             ->collapse();
 
-        $clan = null;
-
         return view("auth.ladder-account", compact(
             'ladders',
             'clan_ladders',
@@ -101,7 +98,7 @@ class AccountController extends Controller
     {
         $this->validate($request, ['name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users']);
 
-        $user = \App\Models\User::find($request->id);
+        $user = \App\User::find($request->id);
 
         if ($request->user()->id == $user->id || $request->user()->isGod())
         {

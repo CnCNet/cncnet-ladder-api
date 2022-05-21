@@ -8,8 +8,6 @@ use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
 use \App\Models\PlayerActiveHandle;
 use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
-use Log;
 use Carbon\Carbon;
 
 class ApiUserController extends Controller
