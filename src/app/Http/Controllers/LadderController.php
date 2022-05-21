@@ -108,11 +108,6 @@ class LadderController extends Controller
 
     public function getLadderGames(Request $request)
     {
-        $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
-
-        if ($history === null)
-            abort(404);
-
         $user = $request->user();
         $userIsMod = false;
 
@@ -123,11 +118,8 @@ class LadderController extends Controller
 
         $errorGames = $request->errorGames;
 
-        if ($errorGames && $userIsMod == false)
-        {
-            return redirect("/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/games"); //user is not a moderator, return to games page
-        }
-        else if ($errorGames)
+
+        if ($errorGames)
         {
             $games = $this->ladderService->getRecentErrorLadderGamesPaginated($request->date, $request->game);
         }
@@ -143,10 +135,27 @@ class LadderController extends Controller
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
                 "games" => $games,
-                "userIsMod" => $userIsMod,
-                "errorGames" => $errorGames
+                "userIsMod" => $userIsMod
             )
         );
+    }
+
+    /**
+     * Return all games that did not load, duration = 3 seconds
+     */
+    public function getRecentErrorLadderGamesPaginated($date, $cncnetGame)
+    {
+        $history = $this->getActiveLadderByDate($date, $cncnetGame);
+        if ($history == null)
+        {
+            return [];
+        }
+
+        return \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
+            ->where("ladder_history_id", "=", $history->id)
+            ->where('game_reports.duration', '=', 3)
+            ->orderBy("games.id", "DESC")
+            ->paginate(45);
     }
 
     public function getLaddersByGame(Request $request)
