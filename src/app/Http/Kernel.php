@@ -33,7 +33,7 @@ class Kernel extends HttpKernel
         'Illuminate\View\Middleware\ShareErrorsFromSession',
 
         // @TODO: Upgrade
-        // 'App\Http\Middleware\VerifyCsrfToken',
+        'App\Http\Middleware\VerifyCsrfToken',
         'App\Http\Middleware\CorsMiddleware',
         'App\Http\Middleware\HackStatApiHeaders',
     ];
