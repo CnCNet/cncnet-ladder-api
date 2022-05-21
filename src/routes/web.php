@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\LadderController;
+use App\Http\Controllers\AccountController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -17,16 +18,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function ()
 {
-    return view('welcome');
+    return redirect('ladder');
 });
 
-Route::get('/dashboard', function ()
-{
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
-
 require __DIR__ . '/auth.php';
-
 
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
 Route::get('/help/obs', 'HelpController@getOBSHelp');
@@ -44,37 +39,13 @@ Route::middleware(['auth', 'cache.public'])->prefix('ladder')->group(function ()
     Route::get('{date}/{game}/badges', [LadderController::class, 'getBadgesIndex']);
 });
 
-
-/*
-Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
-{
-    Route::get('/', 'LadderController@getLadders');
-    Route::get('{date}/{game}', 'LadderController@getLadderIndex');
-    Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
-    Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');
-    Route::get('{date}/{game}/player/', 'LadderController@getLadderIndex');
-    Route::get('{date}/{game}/player/{player}', 'LadderController@getLadderPlayer');
-    Route::get('{date}/{game}/games/{gameId}', 'LadderController@getLadderGame');
-    Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
-    Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
-});
-*/
-
-// @TODO: Upgrade
-/*
-Route::controllers([
-    'auth' => 'Auth\AuthController',
-    'password' => 'Auth\PasswordController',
-]);
-*/
-
-Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
+Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => [AdminController::class, 'getAdminIndex']]);
 
 
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
 {
-    Route::get('users/', 'AdminController@getManageUsersIndex');
-    Route::post('ladder/new', ['middleware' => 'auth', 'isGod' => true, 'uses' => 'LadderController@saveLadder']);
+    Route::get('users/', [AdminController::class, 'getManageUsersIndex']);
+    Route::post('ladder/new', ['middleware' => 'auth', 'isGod' => true, 'uses' => [LadderController::class, 'saveLadder']]);
 });
 
 Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
@@ -142,16 +113,16 @@ Route::group(['prefix' => 'admin/moderate/{ladderId}', 'middleware' => 'auth', '
 
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
 {
-    Route::get('/', 'AccountController@getAccountIndex');
-    Route::get('/{ladderAbbrev}/list', 'AccountController@getLadderAccountIndex');
-    Route::post('/{ladderAbbrev}/username-status', 'AccountController@toggleUsernameStatus');
-    Route::post('/rename', 'AccountController@rename');
+    Route::get('/', [AccountController::class, 'getAccountIndex']);
+    Route::get('/{ladderAbbrev}/list', [AccountController::class, 'getLadderAccountIndex']);
+    Route::post('/{ladderAbbrev}/username-status', [AccountController::class, 'toggleUsernameStatus']);
+    Route::post('/rename', [AccountController::class, 'rename']);
 
-    Route::post('/{ladderAbbrev}/username', 'AccountController@createUsername');
-    Route::post('/{ladderAbbrev}/card', 'AccountController@updatePlayerCard');
-    Route::get('/verify', 'AccountController@getNewVerification');
-    Route::post('/verify', 'AccountController@createNewVerification');
-    Route::get('/verify/{verify_token}', 'AccountController@verifyEmail');
+    Route::post('/{ladderAbbrev}/username', [AccountController::class, 'createUsername']);
+    Route::post('/{ladderAbbrev}/card', [AccountController::class, 'updatePlayerCard']);
+    Route::get('/verify', [AccountController::class, 'getNewVerification']);
+    Route::post('/verify', [AccountController::class, 'createNewVerification']);
+    Route::get('/verify/{verify_token}', [AccountController::class, 'verifyEmail']);
 });
 
 ## Clans

@@ -43,7 +43,7 @@ class Ban extends Model
 
     public function ip()
     {
-        return $this->belongsTo('App\IpAddress', 'ip_address_id');
+        return $this->belongsTo('App\Models\IpAddress', 'ip_address_id');
     }
 
     public static function unstartedBanTime()

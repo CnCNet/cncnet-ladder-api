@@ -82,7 +82,7 @@
                                     <strong>Past Ladder Champions</strong>
                                 </h4>
                                 <a href="{{ $url }}" title="View {{ $player->player_name }}'s profile">
-                                    <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}"
+                                    <div class="ladder-cover cover-{{ $history->ladder->abbreviation ?? '' }}"
                                         style="background-image: url('/images/ladder/{{ $ladderWinners['game'] }}-cover-masters.png">
                                         <div class="details tier-league-cards">
                                             <div class="type">
@@ -113,10 +113,8 @@
                             </div>
                         @endforeach
                     </div>
-
                 </div>
             @endforeach
         </div>
     </section>
-
 @endsection

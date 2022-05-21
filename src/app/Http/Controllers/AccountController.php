@@ -24,11 +24,13 @@ class AccountController extends Controller
     public function getAccountIndex(Request $request)
     {
         $user = \Auth::user();
-        $user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
-            ? $_SERVER["HTTP_CF_CONNECTING_IP"]
-            : $request->getClientIp());
 
-        \App\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
+        // @TODO - Upgrade
+        // $user->ip_address_id = \App\Models\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+        //     ? $_SERVER["HTTP_CF_CONNECTING_IP"]
+        //     : $request->getClientIp());
+
+        \App\Models\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
         $user->save();
 
         return view(

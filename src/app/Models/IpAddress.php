@@ -16,6 +16,8 @@ class IpAddress extends Model
             return null;
 
         $ip = IpAddress::where('address', '=', $address)->first();
+
+        // @TODO - Upgrade
         if ($ip === null)
         {
             $reader = new Reader(config('database.mmdb.file'));
@@ -71,6 +73,6 @@ class IpAddress extends Model
 
     public function ipHistory()
     {
-        return $this->hasMany('App\IpAddressHistory');
+        return $this->hasMany('App\Models\IpAddressHistory');
     }
 }

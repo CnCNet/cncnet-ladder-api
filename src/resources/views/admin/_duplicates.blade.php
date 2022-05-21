@@ -2,7 +2,7 @@
     <?php if($user->ip_address_id != null) :?>
     <h5>Duplicates/Shared accounts:</h5>
 
-    <?php $ips = \App\IpAddressHistory::where('ip_address_id', $user->ip_address_id)->get(); ?>
+    <?php $ips = \App\Models\IpAddressHistory::where('ip_address_id', $user->ip_address_id)->get(); ?>
 
     <ul class="list-styled">
         <?php foreach($ips as $ip): ?>

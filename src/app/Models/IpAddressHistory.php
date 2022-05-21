@@ -32,6 +32,6 @@ class IpAddressHistory extends Model
 
     public function ipAddress()
     {
-        return $this->belongsTo('App\IpAddress');
+        return $this->belongsTo('App\Models\IpAddress');
     }
 }

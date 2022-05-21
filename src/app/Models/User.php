@@ -47,7 +47,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function ip()
     {
-        return $this->belongsTo('App\IpAddress', 'ip_address_id');
+        return $this->belongsTo('App\Models\IpAddress', 'ip_address_id');
     }
 
     public function isAdmin()
@@ -173,6 +173,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function ipHistory()
     {
-        return $this->hasMany('App\IpAddressHistory');
+        return $this->hasMany('App\Models\IpAddressHistory');
     }
 }

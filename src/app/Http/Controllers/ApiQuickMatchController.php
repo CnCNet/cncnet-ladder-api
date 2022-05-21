@@ -129,7 +129,7 @@ class ApiQuickMatchController extends Controller
             return ['type' => 'fatal', 'message' => $ban];
         }
 
-        $ban = \App\IpAddress::findByIP($request->getClientIp())->getBan(true);
+        $ban = \App\Models\IpAddress::findByIP($request->getClientIp())->getBan(true);
         if ($ban !== null)
         {
             return ['type' => 'fatal', 'message' => $ban];
@@ -202,7 +202,7 @@ class ApiQuickMatchController extends Controller
                                         $con->qm_match_id = $qmMatch->id;
                                         $con->player_id = $player->id;
                                         $con->peer_id = $peer['id'];
-                                        $con->ip_address_id = \App\IpAddress::getID($peer['address']);
+                                        $con->ip_address_id = \App\Models\IpAddress::getID($peer['address']);
                                         $con->port = $peer['port'];
                                         $con->rtt = $peer['rtt'];
                                         $con->save();
@@ -247,15 +247,15 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer->qm_match_id = null;
                     $qmPlayer->tunnel_id = null;
 
-                    $addr = \App\IpAddress::findByIP($request->ip_address);
+                    $addr = \App\Models\IpAddress::findByIP($request->ip_address);
                     $qmPlayer->ip_address_id = $addr ? $addr->id : null;
                     $qmPlayer->port = $request->ip_port;
 
-                    $addr = \App\IpAddress::findByIP($request->lan_ip);
+                    $addr = \App\Models\IpAddress::findByIP($request->lan_ip);
                     $qmPlayer->lan_address_id = $addr ? $addr->id : null;
                     $qmPlayer->lan_port = $request->lan_port;
 
-                    $addr = \App\IpAddress::findByIP($request->ipv6_address);
+                    $addr = \App\Models\IpAddress::findByIP($request->ipv6_address);
                     $qmPlayer->ipv6_address_id = $addr ? $addr->id : null;
                     $qmPlayer->ipv6_port = $request->ipv6_port;
 
@@ -290,15 +290,15 @@ class ApiQuickMatchController extends Controller
 
 
                     // Save user IP Address
-                    $player->user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+                    $player->user->ip_address_id = \App\Models\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
                         ? $_SERVER["HTTP_CF_CONNECTING_IP"]
                         : $request->getClientIp());
 
-                    \App\IpAddressHistory::addHistory($player->user->id, $player->user->ip_address_id);
+                    \App\Models\IpAddressHistory::addHistory($player->user->id, $player->user->ip_address_id);
 
-                    \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ip_address_id);
+                    \App\Models\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ip_address_id);
 
-                    \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ipv6_address_id);
+                    \App\Models\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ipv6_address_id);
 
                     $player->user->save();
 

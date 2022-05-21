@@ -40,17 +40,17 @@ class QmMatchPlayer extends Model
 
     public function ipAddress()
     {
-        return $this->belongsTo('App\IpAddress');
+        return $this->belongsTo('App\Models\IpAddress');
     }
 
     public function ipv6Address()
     {
-        return $this->belongsTo('App\IpAddress', 'ipv6_address');
+        return $this->belongsTo('App\Models\IpAddress', 'ipv6_address');
     }
 
     public function lanAddress()
     {
-        return $this->belongsTo('App\IpAddress', 'lan_ip');
+        return $this->belongsTo('App\Models\IpAddress', 'lan_ip');
     }
 
     public function version()
