@@ -260,32 +260,9 @@ class LadderService
             return [];
         }
 
-        return \App\Models\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
-            ->select(
-                'games.id',
-                'games.ladder_history_id',
-                'wol_game_id',
-                'bamr',
-                'games.created_at',
-                'games.updated_at',
-                'crat',
-                'cred',
-                'shrt',
-                'supr',
-                'unit',
-                'plrs',
-                'scen',
-                'hash',
-                'game_report_id',
-                'qm_match_id'
-            )
+        return \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
             ->where("ladder_history_id", "=", $history->id)
-            ->where(function ($query)
-            {
-                $query->where('game_reports.duration', '<=', 3)
-                    ->orWhere('game_reports.fps', '<=', 10);
-            })
-            ->where('finished', '=', 1)
+            ->where('game_reports.duration', '<=', 3)
             ->orderBy("games.id", "DESC")
             ->paginate(45);
     }
