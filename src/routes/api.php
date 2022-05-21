@@ -3,6 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
+use App\Http\Controllers\ApiLadderStatsProfile;
+use App\Http\Controllers\ApiUserController;
+use App\Http\Controllers\ApiLadderController;
+use App\Http\Controllers\ApiQuickMatchController;
+use App\Http\Controllers\ApiIrcController;
 
 /*
 |--------------------------------------------------------------------------

@@ -82,6 +82,8 @@ class AccountController extends Controller
             })
             ->collapse();
 
+        $clan = null;
+
         return view("auth.ladder-account", compact(
             'ladders',
             'clan_ladders',

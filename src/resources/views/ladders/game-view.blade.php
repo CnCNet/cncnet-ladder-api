@@ -114,8 +114,8 @@
 
                                 @if ($k == 0)
                                     @if ($userIsMod && $thisGameReport->id != $gameReport->id)
-                                        <a class="btn btn-sm btn-primary"
-                                            href="{{ action('LadderController@getLadderGame', ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
+                                        <?php $url = action([\App\Http\Controllers\LadderController::class, 'getLadderGame'], ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]); ?>
+                                        <a class="btn btn-sm btn-primary" href="{{ $url }}">View</a>
                                     @elseif ($userIsMod && $thisGameReport->id == $gameReport->id && !$thisGameReport->best_report)
                                         <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch"
                                             class="text-center" method="POST">

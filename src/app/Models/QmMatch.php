@@ -30,6 +30,6 @@ class QmMatch extends Model
 
     public function qmConnectionStats()
     {
-        return $this->hasMany('\App\QmConnectionStats');
+        return $this->hasMany('\App\Models\QmConnectionStats');
     }
 }

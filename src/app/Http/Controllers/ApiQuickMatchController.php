@@ -198,7 +198,7 @@ class ApiQuickMatchController extends Controller
                                 {
                                     foreach ($request->peers as $peer)
                                     {
-                                        $con = new \App\QmConnectionStats;
+                                        $con = new \App\Models\QmConnectionStats;
                                         $con->qm_match_id = $qmMatch->id;
                                         $con->player_id = $player->id;
                                         $con->peer_id = $peer['id'];
