@@ -27,6 +27,6 @@ class GameObjectSchema extends Model
 
     public function countableGameObjects()
     {
-        return $this->hasMany('App\CountableGameObject');
+        return $this->hasMany('App\Models\CountableGameObject');
     }
 }

@@ -17,12 +17,12 @@ class SpawnOptionValue extends Model
     // Delete Me
     public function qmLadderRules()
     {
-        return $this->belongsTo('\App\QmLadderRules', 'qm_ladder_rules_id');
+        return $this->belongsTo('\App\Models\QmLadderRules', 'qm_ladder_rules_id');
     }
 
     public function ladder()
     {
-        return $this->belongsTo('\App\Ladder');
+        return $this->belongsTo('\App\Models\Ladder');
     }
 
     public function qmMap()

@@ -13,20 +13,20 @@ class GameReport extends Model
     //
     public function playerGameReports()
     {
-        return $this->hasMany('App\PlayerGameReport');
+        return $this->hasMany('App\Models\PlayerGameReport');
     }
     public function game()
     {
-        return $this->belongsTo('App\Game');
+        return $this->belongsTo('App\Models\Game');
     }
     public function reporter()
     {
-        return $this->belongsTo('App\Player', 'player_id');
+        return $this->belongsTo('App\Models\Player', 'player_id');
     }
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 
 

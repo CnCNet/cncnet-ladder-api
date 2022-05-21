@@ -21,11 +21,11 @@ class CountableGameObject extends Model
 
     public function ladder()
     {
-        return $this->belongsTo('App\Ladder');
+        return $this->belongsTo('App\Models\Ladder');
     }
 
     public function gameObjectCounts()
     {
-        return $this->hasMany('App\GameObjectCounts');
+        return $this->hasMany('App\Models\GameObjectCounts');
     }
 }

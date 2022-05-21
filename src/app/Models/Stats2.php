@@ -13,17 +13,17 @@ class Stats2 extends Model
 
     public function playerGameReport()
     {
-        return $this->belogsTo('App\PlayerGameReport');
+        return $this->belogsTo('App\Models\PlayerGameReport');
     }
 
     public function gameObjectCounts()
     {
-        return $this->hasMany('App\GameObjectCounts', 'stats_id');
+        return $this->hasMany('App\Models\GameObjectCounts', 'stats_id');
     }
 
     public function faction($game)
     {
-        $ladder = \App\Ladder::where("abbreviation", "=", $game)->first();
+        $ladder = \App\Models\Ladder::where("abbreviation", "=", $game)->first();
 
         $local_id = null;
         if ($game == 'yr')

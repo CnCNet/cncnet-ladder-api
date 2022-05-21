@@ -10,7 +10,7 @@ class PlayerActiveHandle extends Model
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 
     public static function setPlayerActiveHandle($ladderId, $playerId, $userId)

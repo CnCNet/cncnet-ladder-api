@@ -16,16 +16,16 @@ class ClanInvitation extends Model
 
     public function clan()
     {
-        return $this->belongsTo('App\Clan');
+        return $this->belongsTo('App\Models\Clan');
     }
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 
     public function author()
     {
-        return $this->belongsTo('App\Player', 'author_id');
+        return $this->belongsTo('App\Models\Player', 'author_id');
     }
 }

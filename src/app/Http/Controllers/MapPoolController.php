@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use \Carbon\Carbon;
-use \App\User;
-use \App\MapPool;
-use \App\Ladder;
+use \App\Models\User;
+use \App\Models\MapPool;
+use \App\Models\Ladder;
 use \App\SpawnOptionString;
 
 use Illuminate\Http\Request;
@@ -63,11 +63,11 @@ class MapPoolController extends Controller
 
         if ($request->map_id == 'new')
         {
-            $map = new \App\Map;
+            $map = new \App\Models\Map;
         }
         else
         {
-            $map = \App\Map::find($request->map_id);
+            $map = \App\Models\Map::find($request->map_id);
             if ($map === null)
             {
                 $request->session()->flash('error', "Map Not found");
@@ -118,7 +118,7 @@ class MapPoolController extends Controller
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
                 'spawnOptions' =>  \App\SpawnOption::all(),
-                'allLadders' => \App\Ladder::all(),
+                'allLadders' => \App\Models\Ladder::all(),
             ]
         );
     }
@@ -154,9 +154,9 @@ class MapPoolController extends Controller
 
     public function copyMaps(Request $request, $ladderId, $mapPoolId)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
         $mapPool = MapPool::find($mapPoolId);
-        $copyFrom = \App\Ladder::find($request->clone_ladder_id);
+        $copyFrom = \App\Models\Ladder::find($request->clone_ladder_id);
 
         foreach ($copyFrom->maps as $map)
         {
@@ -171,7 +171,7 @@ class MapPoolController extends Controller
 
     public function changeMapPool(Request $request, $ladderId)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
 
         $ladder->map_pool_id = $request->map_pool_id;
         $ladder->save();

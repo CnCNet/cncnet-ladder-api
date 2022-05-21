@@ -12,11 +12,11 @@ class LadderHistory extends Model
 
     public function ladder()
     {
-        return $this->belongsTo('App\Ladder');
+        return $this->belongsTo('App\Models\Ladder');
     }
 
     public function games()
     {
-        return $this->hasMany('App\Games');
+        return $this->hasMany('App\Models\Games');
     }
 }

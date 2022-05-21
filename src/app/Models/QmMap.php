@@ -12,17 +12,17 @@ class QmMap extends Model
     //
     public function qmMatches()
     {
-        return $this->hasMany('App\QmMatch');
+        return $this->hasMany('App\Models\QmMatch');
     }
 
     public function ladder()
     {
-        return $this->belongsTo('App\Ladder');
+        return $this->belongsTo('App\Models\Ladder');
     }
 
     public function map()
     {
-        return $this->belongsTo('App\Map');
+        return $this->belongsTo('App\Models\Map');
     }
 
     public function scopeValid($query)
@@ -32,7 +32,7 @@ class QmMap extends Model
 
     public static function findMapsByLadder($id)
     {
-        $ladder = \App\Ladder::find($id);
+        $ladder = \App\Models\Ladder::find($id);
         $qmMaps = $ladder->mapPool->maps;
         return $qmMaps->map(function ($qmMap)
         {

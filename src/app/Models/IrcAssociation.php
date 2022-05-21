@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
-use App\IrcHostmask;
-use App\IrcPlayer;
-use App\Ladder;
-use App\PlayerActiveHandle;
+use App\Models\IrcHostmask;
+use App\Models\IrcPlayer;
+use App\Models\Ladder;
+use App\Models\PlayerActiveHandle;
 use DB;
 use \Carbon\Carbon;
 
@@ -74,7 +74,7 @@ class IrcAssociation extends Model
 
     public function ircHostmaskRelation()
     {
-        return $this->belongsTo('App\IrcHostmask', 'irc_hostmask_id');
+        return $this->belongsTo('App\Models\IrcHostmask', 'irc_hostmask_id');
     }
 
     public function scopeLoggedIn($query)

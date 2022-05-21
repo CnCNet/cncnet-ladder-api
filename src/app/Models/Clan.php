@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\ClanRole;
+use App\Models\ClanRole;
 
 class Clan extends Model
 {
@@ -13,12 +13,12 @@ class Clan extends Model
 
     public function ladder()
     {
-        return $this->belongsTo('App\Ladder');
+        return $this->belongsTo('App\Models\Ladder');
     }
 
     public function clanPlayers()
     {
-        return $this->hasMany('App\ClanPlayer')->orderBy('clan_role_id', 'ASC');
+        return $this->hasMany('App\Models\ClanPlayer')->orderBy('clan_role_id', 'ASC');
     }
 
     public function owners()
@@ -41,7 +41,7 @@ class Clan extends Model
 
     public function invitations()
     {
-        return $this->hasMany('App\ClanInvitation');
+        return $this->hasMany('App\Models\ClanInvitation');
     }
 
     public function nextOwner($current = null)

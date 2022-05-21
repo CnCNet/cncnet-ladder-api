@@ -41,7 +41,7 @@ class QmLadderRules extends Model
 
     public function ladder()
     {
-        return $this->belongsTo('\App\Ladder');
+        return $this->belongsTo('\App\Models\Ladder');
     }
 
     // Delete Me
@@ -52,7 +52,7 @@ class QmLadderRules extends Model
 
     public function mapPools()
     {
-        return $this->hasMany('\App\MapPool');
+        return $this->hasMany('\App\Models\MapPool');
     }
 
     public function all_sides()

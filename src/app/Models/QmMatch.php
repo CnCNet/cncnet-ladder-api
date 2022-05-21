@@ -10,7 +10,7 @@ class QmMatch extends Model
     //
     public function players()
     {
-        return $this->hasMany('App\QmMatchPlayer');
+        return $this->hasMany('App\Models\QmMatchPlayer');
     }
 
     public function map()
@@ -20,12 +20,12 @@ class QmMatch extends Model
 
     public function ladder()
     {
-        return $this->belongsTo('App\Ladder');
+        return $this->belongsTo('App\Models\Ladder');
     }
 
     public function states()
     {
-        return $this->hasMany('App\QmMatchState');
+        return $this->hasMany('App\Models\QmMatchState');
     }
 
     public function qmConnectionStats()

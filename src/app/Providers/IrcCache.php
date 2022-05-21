@@ -1,16 +1,19 @@
-<?php namespace App\Providers;
+<?php
+
+namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Cache;
 use App\User;
-use App\Player;
-use App\Clan;
-use App\ClanPlayer;
+use App\Models\Player;
+use App\Models\Clan;
+use App\Models\ClanPlayer;
 use App\IrcAssociation;
-use App\IrcHostmask;
-use App\IrcPlayer;
+use App\Models\IrcHostmask;
+use App\Models\IrcPlayer;
 
-class IrcCache extends ServiceProvider {
+class IrcCache extends ServiceProvider
+{
 
     /**
      * Bootstrap the application services.
@@ -21,12 +24,12 @@ class IrcCache extends ServiceProvider {
     {
         //
 
-        IrcHostmask::created(function($hm)
+        IrcHostmask::created(function ($hm)
         {
             Cache::forget("getHostmasks");
         });
 
-        IrcPlayer::saving(function($ip)
+        IrcPlayer::saving(function ($ip)
         {
             if ($ip->isDirty('username'))
                 Cache::forget("getPlayerNames/{$ip->ladder_id}");
@@ -42,7 +45,7 @@ class IrcCache extends ServiceProvider {
             }
         });*/
 
-        ClanPlayer::saved(function($clanPlayer)
+        ClanPlayer::saved(function ($clanPlayer)
         {
             if ($clanPlayer->player->ircAssociation !== null)
             {
@@ -51,7 +54,7 @@ class IrcCache extends ServiceProvider {
             }
         });
 
-        ClanPlayer::deleting(function($clanPlayer)
+        ClanPlayer::deleting(function ($clanPlayer)
         {
             if ($clanPlayer->player->ircAssociation !== null)
             {
@@ -60,7 +63,7 @@ class IrcCache extends ServiceProvider {
             }
         });
 
-        Clan::saved(function($clan)
+        Clan::saved(function ($clan)
         {
             Cache::forget("getClans/{$clan->ladder_id}");
         });

@@ -15,11 +15,11 @@ class QmMatchState extends Model
 
     public function qmMatch()
     {
-        return $this->belongsTo('App\QmMatch');
+        return $this->belongsTo('App\Models\QmMatch');
     }
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 }

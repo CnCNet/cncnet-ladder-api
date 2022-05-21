@@ -12,12 +12,12 @@ class PlayerCache extends Model
 
     public function history()
     {
-        return $this->belongsTo('App\LadderHistory', 'ladder_history_id');
+        return $this->belongsTo('App\Models\LadderHistory', 'ladder_history_id');
     }
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 
     public function rank()
@@ -36,11 +36,11 @@ class PlayerCache extends Model
 
     public function mark()
     {
-        $pcu = \App\PlayerCacheUpdate::where('player_cache_id', '=', $this->id)->first();
+        $pcu = \App\Models\PlayerCacheUpdate::where('player_cache_id', '=', $this->id)->first();
 
         if ($pcu === null)
         {
-            $pcu = new \App\PlayerCacheUpdate;
+            $pcu = new \App\Models\PlayerCacheUpdate;
             $pcu->player_cache_id = $this->id;
             $pcu->save();
         }

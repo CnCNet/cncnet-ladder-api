@@ -67,7 +67,7 @@ class Authenticate extends Middleware
 
             if ($request->ladderId !== null)
             {
-                $ladder = \App\Ladder::find($request->ladderId);
+                $ladder = \App\Models\Ladder::find($request->ladderId);
 
                 if (isset($actions["canAdminLadder"]))
                 {
@@ -96,7 +96,7 @@ class Authenticate extends Middleware
 
             if ($request->gameSchemaId !== null)
             {
-                $gameSchema = \App\GameObjectSchema::find($request->gameSchemaId);
+                $gameSchema = \App\Models\GameObjectSchema::find($request->gameSchemaId);
 
                 if (isset($actions['objectSchemaManager']))
                 {

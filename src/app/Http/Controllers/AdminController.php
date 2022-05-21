@@ -6,11 +6,11 @@ use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
-use \App\User;
-use \App\MapPool;
-use \App\Ladder;
+use \App\Models\User;
+use \App\Models\MapPool;
+use \App\Models\Ladder;
 use \App\SpawnOptionString;
-use App\GameObjectSchema;
+use App\Models\GameObjectSchema;
 use Illuminate\Support\Facades\Cache;
 
 class AdminController extends Controller
@@ -29,15 +29,15 @@ class AdminController extends Controller
         return view("admin.index", [
             "ladders" => $this->ladderService->getLatestLadders(),
             "clan_ladders" => $this->ladderService->getLatestLadders(),
-            "all_ladders" => \App\Ladder::all(),
-            "schemas" => \App\GameObjectSchema::managedBy($request->user()),
+            "all_ladders" => \App\Models\Ladder::all(),
+            "schemas" => \App\Models\GameObjectSchema::managedBy($request->user()),
             "user" => $request->user(),
         ]);
     }
 
     public function getLadderSetupIndex(Request $request, $ladderId = null)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
 
         if ($ladder === null)
             return null;
@@ -66,13 +66,13 @@ class AdminController extends Controller
 
     public function getGameSchemaSetup(Request $request, $gameSchemaId)
     {
-        $gameSchema = \App\GameObjectSchema::find($gameSchemaId);
+        $gameSchema = \App\Models\GameObjectSchema::find($gameSchemaId);
         if ($gameSchema === null)
             abort(404);
 
         $countableGameObjects = $gameSchema->countableGameObjects;
 
-        $heapNames = \App\CountableObjectHeap::all();
+        $heapNames = \App\Models\CountableObjectHeap::all();
         $managers = $gameSchema->managers;
 
         return view("admin.schema-setup", compact('gameSchema', 'countableGameObjects', 'heapNames', 'managers'));
@@ -80,11 +80,11 @@ class AdminController extends Controller
 
     public function saveSchemaManager(Request $request, $gameSchemaId)
     {
-        $gameSchema = \App\GameObjectSchema::find($gameSchemaId);
+        $gameSchema = \App\Models\GameObjectSchema::find($gameSchemaId);
         if ($gameSchema === null)
             abort(404);
 
-        $user = \App\User::where('email', '=', $request->email)->first();
+        $user = \App\Models\User::where('email', '=', $request->email)->first();
 
         if ($user === null)
         {
@@ -100,7 +100,7 @@ class AdminController extends Controller
 
     public function saveGameSchema(Request $request, $gameSchemaId)
     {
-        $gameSchema = \App\GameObjectSchema::find($gameSchemaId);
+        $gameSchema = \App\Models\GameObjectSchema::find($gameSchemaId);
         if ($gameSchema === null)
             abort(404);
 
@@ -114,15 +114,15 @@ class AdminController extends Controller
 
     public function saveGameObject(Request $request, $gameSchemaId, $objectId)
     {
-        $gameSchema = \App\GameObjectSchema::find($gameSchemaId);
+        $gameSchema = \App\Models\GameObjectSchema::find($gameSchemaId);
         if ($gameSchema === null)
             abort(404);
 
-        $object = \App\CountableGameObject::find($objectId);
+        $object = \App\Models\CountableGameObject::find($objectId);
 
         if ($request->id == "new")
         {
-            $object = new \App\CountableObjectHeap;
+            $object = new \App\Models\CountableObjectHeap;
         }
         else if ($object === null)
         {
@@ -181,13 +181,13 @@ class AdminController extends Controller
 
         if ($search && $exact)
         {
-            $players = \App\Player::where("username", "=", "{$search}")->paginate(20);
+            $players = \App\Models\Player::where("username", "=", "{$search}")->paginate(20);
         }
         else if ($search)
         {
             $players = Cache::remember("admin/users/{$search}{$page}", 20, function () use ($search)
             {
-                return \App\Player::where("username", "LIKE", "%{$search}%")->paginate(20);
+                return \App\Models\Player::where("username", "LIKE", "%{$search}%")->paginate(20);
             });
         }
 
@@ -195,14 +195,14 @@ class AdminController extends Controller
         {
             $users = Cache::remember("admin/users/users/{$page}", 20, function () use ($userId)
             {
-                return \App\User::where("id", $userId)->paginate(20);
+                return \App\Models\User::where("id", $userId)->paginate(20);
             });
         }
         else
         {
             $users = Cache::remember("admin/users/users/{$page}", 20, function ()
             {
-                return \App\User::orderBy("id", "DESC")->paginate(20);
+                return \App\Models\User::orderBy("id", "DESC")->paginate(20);
             });
         }
 
@@ -217,7 +217,7 @@ class AdminController extends Controller
 
     public function getManageGameIndex(Request $request, $cncnetGame = null)
     {
-        $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();
+        $ladder = \App\Models\Ladder::where("abbreviation", "=", $cncnetGame)->first();
 
         if ($ladder == null)
             return "No ladder";
@@ -226,18 +226,18 @@ class AdminController extends Controller
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        $history = \App\LadderHistory::where("starts", "=", $start)
+        $history = \App\Models\LadderHistory::where("starts", "=", $start)
             ->where("ends", "=", $end)
             ->where("ladder_id", "=", $ladder->id)
             ->first();
 
-        $games = \App\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC")->limit(100);
+        $games = \App\Models\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC")->limit(100);
         return view("admin.manage-games", ["games" => $games, "ladder" => $ladder, "history" => $history]);
     }
 
     public function deleteGame(Request $request)
     {
-        $game = \App\Game::find($request->game_id);
+        $game = \App\Models\Game::find($request->game_id);
         if ($game == null) return "Game not found";
 
         // Just remove the game_report_id linkage rather than actually delete anything
@@ -249,7 +249,7 @@ class AdminController extends Controller
 
     public function switchGameReport(Request $request)
     {
-        $game = \App\Game::find($request->game_id);
+        $game = \App\Models\Game::find($request->game_id);
         if ($game === null) return "Game not found";
 
         $gameReport = $game->allReports()->find($request->game_report_id);
@@ -274,7 +274,7 @@ class AdminController extends Controller
     }
     public function washGame(Request $request)
     {
-        $game = \App\Game::find($request->game_id);
+        $game = \App\Models\Game::find($request->game_id);
         if ($game === null) return "Game not found";
 
         $gameReport = $game->report()->first();
@@ -282,7 +282,7 @@ class AdminController extends Controller
 
         $gameReport->best_report = false;
 
-        $wash = new \App\GameReport();
+        $wash = new \App\Models\GameReport();
         $wash->game_id = $gameReport->game_id;
         $wash->player_id = $gameReport->player_id;
         $wash->best_report = true;
@@ -304,7 +304,7 @@ class AdminController extends Controller
 
     public function remSide(Request $request, $ladderId = null)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
 
         if ($ladder === null || $ladderId === null)
         {
@@ -326,7 +326,7 @@ class AdminController extends Controller
 
     public function addSide(Request $request, $ladderId = null)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
 
         if ($ladder === null || $ladderId === null)
         {
@@ -337,7 +337,7 @@ class AdminController extends Controller
         $side = $ladder->sides()->where('local_id', '=', $request->local_id)->first();
         if ($side === null)
         {
-            $side = new \App\Side;
+            $side = new \App\Models\Side;
             $side->ladder_id = $ladder->id;
             $side->local_id = $request->local_id;
         }
@@ -356,14 +356,14 @@ class AdminController extends Controller
             $request->session()->flash('error', "No ladder specified");
         }
 
-        $user = \App\User::where('email', '=', $request->email)->first();
+        $user = \App\Models\User::where('email', '=', $request->email)->first();
         if ($request->email === null || $user == null)
         {
             $request->session()->flash('error', "Unable to add the user as admin");
             return redirect()->back();
         }
 
-        $ladderAdmin = \App\LadderAdmin::findOrCreate($user->id, $ladderId);
+        $ladderAdmin = \App\Models\LadderAdmin::findOrCreate($user->id, $ladderId);
 
         $ladderAdmin->admin = true;
         $ladderAdmin->moderator = true;
@@ -387,7 +387,7 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
-        $ladderAdmin = \App\LadderAdmin::find($request->ladder_admin_id);
+        $ladderAdmin = \App\Models\LadderAdmin::find($request->ladder_admin_id);
         if ($ladderAdmin === null)
         {
             $request->session()->flash('error', "Unable to find the requested admin");
@@ -410,14 +410,14 @@ class AdminController extends Controller
             $request->session()->flash('error', "No ladder specified");
         }
 
-        $user = \App\User::where('email', '=', $request->email)->first();
+        $user = \App\Models\User::where('email', '=', $request->email)->first();
         if ($request->email === null || $user == null)
         {
             $request->session()->flash('error', "Unable to add the user as moderator");
             return redirect()->back();
         }
 
-        $ladderAdmin = \App\LadderAdmin::findOrCreate($user->id, $ladderId);
+        $ladderAdmin = \App\Models\LadderAdmin::findOrCreate($user->id, $ladderId);
 
         $ladderAdmin->admin = false;
         $ladderAdmin->moderator = true;
@@ -441,7 +441,7 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
-        $ladderAdmin = \App\LadderAdmin::find($request->ladder_admin_id);
+        $ladderAdmin = \App\Models\LadderAdmin::find($request->ladder_admin_id);
         if ($ladderAdmin === null)
         {
             $request->session()->flash('error', "Unable to find the requested moderator");
@@ -464,14 +464,14 @@ class AdminController extends Controller
             $request->session()->flash('error', "No ladder specified");
         }
 
-        $user = \App\User::where('email', '=', $request->email)->first();
+        $user = \App\Models\User::where('email', '=', $request->email)->first();
         if ($request->email === null || $user == null)
         {
             $request->session()->flash('error', "Unable to add the user as tester");
             return redirect()->back();
         }
 
-        $ladderAdmin = \App\LadderAdmin::findOrCreate($user->id, $ladderId);
+        $ladderAdmin = \App\Models\LadderAdmin::findOrCreate($user->id, $ladderId);
 
         $ladderAdmin->admin = false;
         $ladderAdmin->moderator = false;
@@ -495,7 +495,7 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
-        $ladderAdmin = \App\LadderAdmin::find($request->ladder_admin_id);
+        $ladderAdmin = \App\Models\LadderAdmin::find($request->ladder_admin_id);
         if ($ladderAdmin === null)
         {
             $request->session()->flash('error', "Unable to find the requested tester");
@@ -517,7 +517,7 @@ class AdminController extends Controller
         if ($playerId === null)
             return;
 
-        $player = \App\Player::find($playerId);
+        $player = \App\Models\Player::find($playerId);
 
         if ($player === null || !$mod->isLadderMod($player->ladder))
             return;
@@ -546,7 +546,7 @@ class AdminController extends Controller
         if ($playerId === null)
             return;
 
-        $player = \App\Player::find($playerId);
+        $player = \App\Models\Player::find($playerId);
 
         if ($player === null || !$mod->isLadderMod($player->ladder))
             return;
@@ -580,7 +580,7 @@ class AdminController extends Controller
         if ($playerId === null)
             return;
 
-        $player = \App\Player::find($playerId);
+        $player = \App\Models\Player::find($playerId);
 
         if ($player === null || !$mod->isLadderMod($player->ladder))
             return;
@@ -617,7 +617,7 @@ class AdminController extends Controller
         $mod = $request->user();
         if ($playerId === null)
             return;
-        $player = \App\Player::find($playerId);
+        $player = \App\Models\Player::find($playerId);
 
         if ($player === null || !$mod->isLadderMod($player->ladder))
             return;
@@ -672,9 +672,9 @@ class AdminController extends Controller
 
     public function editLadderAlert(Request $request, $ladderId)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
 
-        $alert = \App\LadderAlert::find($request->id);
+        $alert = \App\Models\LadderAlert::find($request->id);
         if ($request->submit == "delete")
         {
             $alert->delete();
@@ -684,7 +684,7 @@ class AdminController extends Controller
 
         if ($request->id == 'new' || $request->id === null)
         {
-            $alert = new \App\LadderAlert;
+            $alert = new \App\Models\LadderAlert;
             $alert->ladder_id = $ladder->id;
         }
 
@@ -698,9 +698,9 @@ class AdminController extends Controller
 
     public function editPlayerAlert(Request $request, $ladderId, $playerId)
     {
-        $player = \App\Player::find($playerId);
+        $player = \App\Models\Player::find($playerId);
 
-        $alert = \App\PlayerAlert::find($request->id);
+        $alert = \App\Models\PlayerAlert::find($request->id);
         if ($request->submit == "delete")
         {
             $alert->delete();
@@ -710,7 +710,7 @@ class AdminController extends Controller
 
         if ($request->id == 'new' || $request->id === null)
         {
-            $alert = new \App\PlayerAlert;
+            $alert = new \App\Models\PlayerAlert;
             $alert->player_id = $player->id;
         }
 
@@ -731,19 +731,19 @@ class AdminController extends Controller
 
         $playerId = $request->player_id;
 
-        $ladderHistory = \App\LadderHistory::find($ladderHistoryId);
+        $ladderHistory = \App\Models\LadderHistory::find($ladderHistoryId);
 
         if ($ladderHistory == null)
             $request->session()->flash('error', 'Unabled to find ladder history');
 
-        $playerCache = \App\PlayerCache::where('player_id', '=', $playerId)
+        $playerCache = \App\Models\PlayerCache::where('player_id', '=', $playerId)
             ->where('ladder_history_id', '=', $ladderHistoryId)
             ->first();
         if ($playerCache == null)
             $request->session()->flash('error', 'Unabled to find player cache');
 
         //Query for the player's game reports from the ladder history month
-        $playerGameReports = \App\PlayerGameReport::where('player_id', '=', $playerId)->where('created_at', '<', $ladderHistory->ends)->where('created_at', '>', $ladderHistory->starts)->get();
+        $playerGameReports = \App\Models\PlayerGameReport::where('player_id', '=', $playerId)->where('created_at', '<', $ladderHistory->ends)->where('created_at', '>', $ladderHistory->starts)->get();
 
         //set the players points to 0
         foreach ($playerGameReports as $playerGameReport)
@@ -772,24 +772,24 @@ class AdminController extends Controller
 
         $playerId = $request->player_id;
 
-        $ladderHistory = \App\LadderHistory::find($ladderHistoryId);
+        $ladderHistory = \App\Models\LadderHistory::find($ladderHistoryId);
 
         if ($ladderHistory == null)
             $request->session()->flash('error', 'Unabled to find ladder history');
 
-        $playerCache = \App\PlayerCache::where('player_id', '=', $playerId)
+        $playerCache = \App\Models\PlayerCache::where('player_id', '=', $playerId)
             ->where('ladder_history_id', '=', $ladderHistoryId)
             ->first();
 
         if ($playerCache == null)
             $request->session()->flash('error', 'Unabled to find player cache');
 
-        $player = \App\Player::find($playerId);
+        $player = \App\Models\Player::find($playerId);
         if ($player == null)
             $request->session()->flash('error', 'Unabled to find player');
 
         //Query for the player's game reports from the ladder history month
-        $playerGameReports = \App\PlayerGameReport::where('player_id', '=', $playerId)
+        $playerGameReports = \App\Models\PlayerGameReport::where('player_id', '=', $playerId)
             ->where('created_at', '<', $ladderHistory->ends)
             ->where('created_at', '>', $ladderHistory->starts)->get();
 

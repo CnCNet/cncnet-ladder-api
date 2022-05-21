@@ -28,25 +28,20 @@ Route::get('/dashboard', function ()
 require __DIR__ . '/auth.php';
 
 
-
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
 Route::get('/help/obs', 'HelpController@getOBSHelp');
 
-Route::middleware(['auth', 'cache.public'])->group(function ()
+Route::middleware(['auth', 'cache.public'])->prefix('ladder')->group(function ()
 {
-    Route::name('ladder.')->group(function ()
-    {
-        // Route::get('/ladder', [LadderController::class, 'getIndex']);
-        Route::get('/', [LadderController::class, 'getLadders']);
-        // Route::get('{date}/{game}', 'LadderController@getLadderIndex');
-        // Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
-        // Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');
-        // Route::get('{date}/{game}/player/', 'LadderController@getLadderIndex');
-        // Route::get('{date}/{game}/player/{player}', 'LadderController@getLadderPlayer');
-        // Route::get('{date}/{game}/games/{gameId}', 'LadderController@getLadderGame');
-        // Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
-        // Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
-    });
+    Route::get('/', [LadderController::class, 'getLadders']);
+    Route::get('{date}/{game}', [LadderController::class, 'getLadderIndex']);
+    Route::get('{date}/{game}/games', [LadderController::class, 'getLadderGames']);
+    Route::get('{date}/{tier}/{game}', [LadderController::class, 'getLadderIndex']);
+    Route::get('{date}/{game}/player/', [LadderController::class, 'getLadderIndex']);
+    Route::get('{date}/{game}/player/{player}', [LadderController::class, 'getLadderPlayer']);
+    Route::get('{date}/{game}/games/{gameId}', [LadderController::class, 'getLadderGame']);
+    Route::get('{date}/{game}/games/{gameId}/{reportId}', [LadderController::class, 'getLadderGame']);
+    Route::get('{date}/{game}/badges', [LadderController::class, 'getBadgesIndex']);
 });
 
 

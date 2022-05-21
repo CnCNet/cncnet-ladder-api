@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Clan;
-use App\ClanRole;
+use App\Models\Clan;
+use App\Models\ClanRole;
 
 class ClanPlayer extends Model
 {
@@ -24,17 +24,17 @@ class ClanPlayer extends Model
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 
     public function clan()
     {
-        return $this->belongsTo('App\Clan');
+        return $this->belongsTo('App\Models\Clan');
     }
 
     public function roleRelation()
     {
-        return $this->belongsTo('App\ClanRole', 'clan_role_id');
+        return $this->belongsTo('App\Models\ClanRole', 'clan_role_id');
     }
 
     public function isOwner()

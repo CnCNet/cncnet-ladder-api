@@ -42,7 +42,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function usernames()
     {
-        return $this->hasMany('App\Player');
+        return $this->hasMany('App\Models\Player');
     }
 
     public function ip()
@@ -92,18 +92,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function ladderAdmins()
     {
-        return $this->hasMany('App\LadderAdmin');
+        return $this->hasMany('App\Models\LadderAdmin');
     }
 
     public function ladders()
     {
-        return $this->belongsToMany('App\Ladder', 'ladder_admins');
+        return $this->belongsToMany('App\Models\Ladder', 'ladder_admins');
     }
 
     public function privateLadders()
     {
         if ($this->isGod())
-            return \App\Ladder::where('private', '=', true);
+            return \App\Models\Ladder::where('private', '=', true);
 
         return $this->ladders()->where('private', '=', true);
     }

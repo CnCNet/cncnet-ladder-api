@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use \Carbon\Carbon;
-use App\LadderHistory;
+use App\Models\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 
@@ -33,7 +33,7 @@ class LeagueChampionsController extends Controller
                     "full" => $history->ladder->name,
                     "abbreviation" => $history->ladder->abbreviation,
                     "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 10)
+                    "players" => \App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 10)
                 ];
             }
         }

@@ -10,11 +10,11 @@ class LadderAlertPlayer extends Model
     //
     public function alert()
     {
-        return $this->belongsTo('App\LadderAlert');
+        return $this->belongsTo('App\Models\LadderAlert');
     }
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 }

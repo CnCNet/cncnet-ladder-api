@@ -12,7 +12,7 @@ class ObjectSchemaManager extends Model
 
     public function gameObjectSchema()
     {
-        return $this->belongsTo('App\GameObjectSchema');
+        return $this->belongsTo('App\Models\GameObjectSchema');
     }
 
     public function user()

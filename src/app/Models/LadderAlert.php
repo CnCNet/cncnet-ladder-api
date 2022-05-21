@@ -13,6 +13,6 @@ class LadderAlert extends Model
 
     public function players()
     {
-        return $this->hasMany('App\LadderAlertPlayer');
+        return $this->hasMany('App\Models\LadderAlertPlayer');
     }
 }

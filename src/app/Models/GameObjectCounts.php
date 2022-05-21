@@ -12,11 +12,11 @@ class GameObjectCounts extends Model
 
     public function stats()
     {
-        return $this->belongsTo('App\Stats2', 'stats_id');
+        return $this->belongsTo('App\Models\Stats2', 'stats_id');
     }
 
     public function countableGameObject()
     {
-        return $this->belongsTo('App\CountableGameObject', 'countable_game_objects_id');
+        return $this->belongsTo('App\Models\CountableGameObject', 'countable_game_objects_id');
     }
 }

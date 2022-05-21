@@ -1,4 +1,6 @@
-<?php namespace App\Http\Services;
+<?php
+
+namespace App\Http\Services;
 
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -7,7 +9,6 @@ class PlayerService
 {
     public function __construct()
     {
-
     }
 
     /**
@@ -17,22 +18,22 @@ class PlayerService
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
-        $player = \App\Player::where("username", "=", $username)
+        $player = \App\Models\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladderId)->first();
 
         if ($player == null)
         {
-            $player = new \App\Player();
+            $player = new \App\Models\Player();
             $player->username = $username;
             $player->user_id = $user->id;
             $player->ladder_id = $ladderId;
             $player->save();
 
-            $prating = new \App\PlayerRating();
+            $prating = new \App\Models\PlayerRating();
             $prating->player_id = $player['id'];
             $prating->save();
 
-            $activeHandle = new \App\PlayerActiveHandle();
+            $activeHandle = new \App\Models\PlayerActiveHandle();
             $activeHandle->ladder_id = $ladderId;
             $activeHandle->player_id = $player->id;
             $activeHandle->user_id = $user->id;
@@ -48,18 +49,18 @@ class PlayerService
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
-        $player = \App\Player::where("username", "=", $username)
+        $player = \App\Models\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladderId)->first();
 
         if ($player == null)
         {
-            $player = new \App\Player();
+            $player = new \App\Models\Player();
             $player->username = $username;
             $player->user_id = $user->id;
             $player->ladder_id = $ladderId;
             $player->save();
 
-            $prating = new \App\PlayerRating();
+            $prating = new \App\Models\PlayerRating();
             $prating->player_id = $player['id'];
             $prating->save();
 
@@ -78,11 +79,11 @@ class PlayerService
         }
 
         // Check the playerId belongs to us
-        foreach($user->usernames as $user)
+        foreach ($user->usernames as $user)
         {
             if ($user->id == $playerId)
             {
-                $player = \App\Player::find($user->id);
+                $player = \App\Models\Player::find($user->id);
                 $player->card_id = $card->id;
                 $player->save();
             }
@@ -93,17 +94,17 @@ class PlayerService
 
     public function findPlayerById($id)
     {
-        return \App\Player::find($id);
+        return \App\Models\Player::find($id);
     }
 
     public function findPlayerRatingByPid($pid)
     {
-        return \App\PlayerRating::where('player_id', '=', $pid)->first();
+        return \App\Models\PlayerRating::where('player_id', '=', $pid)->first();
     }
 
     public function findPlayerByUsername($name, $ladder)
     {
-        return \App\Player::where("username", "=", $name)
+        return \App\Models\Player::where("username", "=", $name)
             ->where("ladder_id", "=", $ladder->id)->first();
     }
 

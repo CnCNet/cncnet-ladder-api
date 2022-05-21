@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
-use \App\PlayerActiveHandle;
+use \App\Models\PlayerActiveHandle;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Log;
@@ -29,7 +29,7 @@ class ApiUserController extends Controller
     {
         $user = $request->user();
 
-        foreach (\App\Ladder::all() as $ladder)
+        foreach (\App\Models\Ladder::all() as $ladder)
         {
             $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
 
@@ -37,7 +37,7 @@ class ApiUserController extends Controller
             {
                 // Auto-register a player for each ladder if there isn't already a player registered for this user
                 $playerCreated = false;
-                $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)
+                $oLadders = \App\Models\Ladder::where('abbreviation', '=', $ladder->abbreviation)
                     ->where('id', '<>', $ladder->id)
                     ->get();
                 foreach ($oLadders as $other)
@@ -90,7 +90,7 @@ class ApiUserController extends Controller
     private function getTempNicks($userId)
     {
         $tempNicks = [];
-        foreach (\App\Ladder::all() as $ladder)
+        foreach (\App\Models\Ladder::all() as $ladder)
         {
             $tempNick = $this->getTempNickByLadderType($ladder->id, $userId);
             if ($tempNick != null)
@@ -111,12 +111,12 @@ class ApiUserController extends Controller
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        $ladderHistory = \App\LadderHistory::where("starts", "=", $start)
+        $ladderHistory = \App\Models\LadderHistory::where("starts", "=", $start)
             ->where("ends", "=", $end)
             ->first();
 
         // Detect if the player is active in the this months ladder already
-        $tempNick = \App\PlayerHistory::join('players as p', 'p.id', '=', 'player_histories.player_id')
+        $tempNick = \App\Models\PlayerHistory::join('players as p', 'p.id', '=', 'player_histories.player_id')
             ->where("player_histories.ladder_history_id", "=", $ladderHistory->id)
             ->where("user_id", $userId)
             ->where('ladder_id', $ladderId)
@@ -134,7 +134,7 @@ class ApiUserController extends Controller
         $limitLatestNickByDate = Carbon::create("2019", "09", "01");
 
         // Get nick last created limited by this new 1 nick rule
-        $tempNick = \App\Player::where("user_id", $userId)
+        $tempNick = \App\Models\Player::where("user_id", $userId)
             ->where("created_at", "<=", $limitLatestNickByDate)
             ->where('ladder_id', $ladderId)
             ->orderBy("id", "desc")
@@ -154,10 +154,10 @@ class ApiUserController extends Controller
 
         if ($token == null)
         {
-            $check = \App\User::where("email", "=", $request->email)->first();
+            $check = \App\Models\User::where("email", "=", $request->email)->first();
             if ($check == null)
             {
-                $user = new \App\User();
+                $user = new \App\Models\User();
                 $user->name = "";
                 $user->email = $request->email;
                 $user->password = \Hash::make($request->password);

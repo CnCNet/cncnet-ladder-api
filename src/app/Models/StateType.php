@@ -25,6 +25,6 @@ class StateType extends Model
 
     public function qmMatchStates()
     {
-        return $this->hasMany('App\QmMatchState');
+        return $this->hasMany('App\Models\QmMatchState');
     }
 }

@@ -22,11 +22,6 @@ class LadderController extends Controller
         $this->statsService = new StatsService();
     }
 
-    public function getIndex()
-    {
-        return "Works";
-    }
-
     public function getLadders(Request $request)
     {
         $games = ["ra", "ts", "yr"];
@@ -48,14 +43,13 @@ class LadderController extends Controller
                     "full" => $history->ladder->name,
                     "abbreviation" => $history->ladder->abbreviation,
                     "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
+                    "players" => \App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
                 ];
             }
         }
 
         $user = $request->user();
         $userIsMod = $user != null && $user->isLadderMod($history->ladder);
-
 
         return view(
             "ladders.index",
@@ -78,6 +72,21 @@ class LadderController extends Controller
         $user = $request->user();
         $userIsMod = $user != null && $user->isLadderMod($history->ladder);
 
+        $sides = \App\Models\Side::where('ladder_id', '=', $history->ladder_id)
+            ->where('local_id', '>=', 0)
+            ->orderBy('local_id', 'asc')
+            ->select('name')
+            ->get()
+            ->toArray();
+
+        $cards = \App\Models\Card::orderBy('id', 'asc')->select('short')->get()->toArray();
+
+        $players = \App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)
+            ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+            ->where('player_name', 'like', '%' . $request->search . '%')
+            ->orderBy('points', 'desc')
+            ->paginate(45);
+
         $data = array(
             "stats" => $this->statsService->getQmStats($request->game),
             "ladders" => $this->ladderService->getLatestLadders(),
@@ -85,17 +94,12 @@ class LadderController extends Controller
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
             "history" => $history,
-            "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)
-                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
-                ->where('player_name', 'like', '%' . $request->search . '%')
-                ->orderBy('points', 'desc')->paginate(45),
+            "players" => $players,
             "userIsMod" => $userIsMod,
-            "cards" => \App\Card::orderBy('id', 'asc')->lists('short'),
+            "cards" => $cards,
             "tier" => $request->tier,
             "search" => $request->search,
-            "sides" => \App\Side::where('ladder_id', '=', $history->ladder_id)
-                ->where('local_id', '>=', 0)
-                ->orderBy('local_id', 'asc')->lists('name')
+            "sides" => $sides
         );
 
         return view("ladders.listing", $data);
@@ -201,7 +205,7 @@ class LadderController extends Controller
                 "history" => $history,
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
-                "heaps" => \App\CountableObjectHeap::all(),
+                "heaps" => \App\Models\CountableObjectHeap::all(),
                 "user" => $user,
                 "userIsMod" => $userIsMod,
                 "date" => $date,
@@ -217,7 +221,7 @@ class LadderController extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
 
-        $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
+        $player = \App\Models\Player::where("ladder_id", "=", $history->ladder->id)
             ->where("username", "=", $username)->first();
 
         if ($player == null)

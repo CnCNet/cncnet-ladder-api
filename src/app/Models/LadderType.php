@@ -12,6 +12,6 @@ class LadderType extends Model
 
 	public function ladders()
 	{
-		return $this->hasMany('App\Ladder');
+		return $this->hasMany('App\Models\Ladder');
 	}
 }

@@ -6,12 +6,12 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use App\Ladder;
-use App\Clan;
-use App\ClanPlayer;
-use App\ClanRole;
-use App\ClanInvitation;
-use App\Player;
+use App\Models\Ladder;
+use App\Models\Clan;
+use App\Models\ClanPlayer;
+use App\Models\ClanRole;
+use App\Models\ClanInvitation;
+use App\Models\Player;
 
 class ClanController extends Controller
 {
@@ -208,7 +208,7 @@ class ClanController extends Controller
             return redirect()->back();
         }
 
-        $player = \App\Player::find($request->player_id);
+        $player = \App\Models\Player::find($request->player_id);
 
         if ($player === null)
         {
@@ -401,7 +401,7 @@ class ClanController extends Controller
             return redirect()->back();
         }
 
-        $player = \App\Player::find($request->player_id);
+        $player = \App\Models\Player::find($request->player_id);
 
         if ($player === null || !$player->clanPlayer->isOwner())
         {

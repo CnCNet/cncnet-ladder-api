@@ -26,12 +26,12 @@ class Stats extends Model
 
     public function playerGameReport()
     {
-        return $this->belogsTo('App\PlayerGameReport');
+        return $this->belogsTo('App\Models\PlayerGameReport');
     }
 
     public function faction($game)
     {
-        $ladder = \App\Ladder::where("abbreviation", "=", $game)->first();
+        $ladder = \App\Models\Ladder::where("abbreviation", "=", $game)->first();
 
         $local_id = null;
         if ($game == 'yr')

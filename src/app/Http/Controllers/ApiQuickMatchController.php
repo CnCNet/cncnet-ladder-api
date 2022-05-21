@@ -8,7 +8,7 @@ use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
-use \App\PlayerActiveHandle;
+use \App\Models\PlayerActiveHandle;
 use \Carbon\Carbon;
 use DB;
 use Log;
@@ -42,18 +42,18 @@ class ApiQuickMatchController extends Controller
         {
             $timediff = Carbon::now()->subHour()->toDateTimeString();
             $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
-            $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $timediff)
+            $recentMatchedPlayers = \App\Models\QmMatchPlayer::where('created_at', '>', $timediff)
                 ->where('ladder_id', '=', $ladder_id)
                 ->count();
-            $queuedPlayers = \App\QmMatchPlayer::where('ladder_id', '=', $ladder_id)->whereNull('qm_match_id')->count();
-            $recentMatches = \App\QmMatch::where('created_at', '>', $timediff)
+            $queuedPlayers = \App\Models\QmMatchPlayer::where('ladder_id', '=', $ladder_id)->whereNull('qm_match_id')->count();
+            $recentMatches = \App\Models\QmMatch::where('created_at', '>', $timediff)
                 ->where('ladder_id', '=', $ladder_id)
                 ->count();
 
-            $activeGames = \App\QmMatch::where('updated_at', '>', Carbon::now()->subMinute(2))
+            $activeGames = \App\Models\QmMatch::where('updated_at', '>', Carbon::now()->subMinute(2))
                 ->where('ladder_id', '=', $ladder_id)->count();
 
-            $past24hMatches = \App\QmMatch::where('updated_at', '>', Carbon::now()->subDay(1))
+            $past24hMatches = \App\Models\QmMatch::where('updated_at', '>', Carbon::now()->subDay(1))
                 ->where('ladder_id', '=', $ladder_id)->count();
 
             return [
@@ -152,7 +152,7 @@ class ApiQuickMatchController extends Controller
         }
         $rating = $player->rating()->first()->rating;
 
-        $qmPlayer = \App\QmMatchPlayer::where('player_id', $player->id)
+        $qmPlayer = \App\Models\QmMatchPlayer::where('player_id', $player->id)
             ->where('waiting', true)->first();
 
         switch ($request->type)
@@ -176,7 +176,7 @@ class ApiQuickMatchController extends Controller
 
                 if ($request->seed)
                 {
-                    $qmMatch = \App\QmMatch::where('seed', '=', $request->seed)
+                    $qmMatch = \App\Models\QmMatch::where('seed', '=', $request->seed)
                         ->join('qm_match_players', 'qm_match_id', '=', 'qm_matches.id')
                         ->where('qm_match_players.player_id', '=', $player->id)
                         ->select('qm_matches.*')->first();
@@ -188,7 +188,7 @@ class ApiQuickMatchController extends Controller
                                 $qmMatch->touch();
                                 break;
                             default:
-                                $qmState = new \App\QmMatchState;
+                                $qmState = new \App\Models\QmMatchState;
                                 $qmState->player_id = $player->id;
                                 $qmState->qm_match_id = $qmMatch->id;
                                 $qmState->state_type_id = \App\StateType::findByName($request->status)->id;
@@ -237,7 +237,7 @@ class ApiQuickMatchController extends Controller
              */
                 if ($qmPlayer == null)
                 {
-                    $qmPlayer = new \App\QmMatchPlayer();
+                    $qmPlayer = new \App\Models\QmMatchPlayer();
                     $qmPlayer->player_id = $player->id;
                     $qmPlayer->ladder_id = $player->ladder_id;
                     $qmPlayer->map_bitfield = $request->map_bitfield;
@@ -277,16 +277,16 @@ class ApiQuickMatchController extends Controller
                         return array("type" => "error", "description" => "Side ({$request->side}) is not allowed");
                     }
                     if ($request->map_sides)
-                        $qmPlayer->map_sides_id = \App\MapSideString::findValue(join(',', $request->map_sides))->id;
+                        $qmPlayer->map_sides_id = \App\Models\MapSideString::findValue(join(',', $request->map_sides))->id;
 
                     if ($request->version && $request->platform)
                     {
-                        $qmPlayer->version_id  = \App\PlayerDataString::findValue($request->version)->id;
-                        $qmPlayer->platform_id = \App\PlayerDataString::findValue($request->platform)->id;
+                        $qmPlayer->version_id  = \App\Models\PlayerDataString::findValue($request->version)->id;
+                        $qmPlayer->platform_id = \App\Models\PlayerDataString::findValue($request->platform)->id;
                     }
 
                     if ($request->ddraw)
-                        $qmPlayer->ddraw_id = \App\PlayerDataString::findValue($request->ddraw)->id;
+                        $qmPlayer->ddraw_id = \App\Models\PlayerDataString::findValue($request->ddraw)->id;
 
 
                     // Save user IP Address
@@ -316,7 +316,7 @@ class ApiQuickMatchController extends Controller
                         else
                         {
                             $alert .= "@everyone {$a->message}<br>\n<br>\n";
-                            $lap = new \App\LadderAlertPlayer;
+                            $lap = new \App\Models\LadderAlertPlayer;
                             $lap->player_id = $player->id;
                             $lap->ladder_alert_id = $a->id;
                             $lap->show = true;
@@ -380,7 +380,7 @@ class ApiQuickMatchController extends Controller
 
                 $spawnStruct = array("type" => "spawn");
                 $qmPlayer->waiting = false;
-                $qmMatch = \App\QmMatch::find($qmPlayer->qm_match_id);
+                $qmMatch = \App\Models\QmMatch::find($qmPlayer->qm_match_id);
                 $spawnStruct["gameID"] = $qmMatch->game_id;
                 $qmMap = $qmMatch->map;
                 $map = $qmMap->map;

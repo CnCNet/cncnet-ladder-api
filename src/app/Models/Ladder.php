@@ -13,12 +13,12 @@ class Ladder extends Model
 
     public function qmLadderRules()
     {
-        return $this->hasOne('App\QmLadderRules');
+        return $this->hasOne('App\Models\QmLadderRules');
     }
 
     public function sides()
     {
-        return $this->hasMany('App\Side');
+        return $this->hasMany('App\Models\Side');
     }
 
     public function qmMaps()
@@ -28,27 +28,27 @@ class Ladder extends Model
 
     public function maps()
     {
-        return $this->hasMany('App\Map');
+        return $this->hasMany('App\Models\Map');
     }
 
     public function mapPools()
     {
-        return $this->hasMany('App\MapPool');
+        return $this->hasMany('App\Models\MapPool');
     }
 
     public function mapPool()
     {
-        return $this->belongsTo('App\MapPool');
+        return $this->belongsTo('App\Models\MapPool');
     }
 
     public function players()
     {
-        return $this->hasMany('App\Player');
+        return $this->hasMany('App\Models\Player');
     }
 
     public function allAdmins()
     {
-        return $this->hasMany('App\LadderAdmin');
+        return $this->hasMany('App\Models\LadderAdmin');
     }
 
     public function admins()
@@ -86,7 +86,7 @@ class Ladder extends Model
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        return \App\LadderHistory::where('ladder_id', '=', $this->id)
+        return \App\Models\LadderHistory::where('ladder_id', '=', $this->id)
             ->where('ladder_history.starts', '=', $start)
             ->where('ladder_history.ends', '=', $end)->first();
     }
@@ -112,17 +112,17 @@ class Ladder extends Model
 
     public function alerts()
     {
-        return $this->hasMany('\App\LadderAlert')->where('expires_at', '>', Carbon::now());
+        return $this->hasMany('\App\Models\LadderAlert')->where('expires_at', '>', Carbon::now());
     }
 
     public function gameObjectSchema()
     {
-        return $this->belongsTo('\App\GameObjectSchema');
+        return $this->belongsTo('\App\Models\GameObjectSchema');
     }
 
     public function countableGameObjects()
     {
-        return $this->hasMany('\App\CountableGameObject', 'game_object_schema_id', 'game_object_schema_id');
+        return $this->hasMany('\App\Models\CountableGameObject', 'game_object_schema_id', 'game_object_schema_id');
     }
 
     public function spawnOptionValues()

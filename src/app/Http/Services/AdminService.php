@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\QmLadderRules;
+use App\Models\QmLadderRules;
 
 class AdminService
 {
@@ -10,7 +10,6 @@ class AdminService
 
     public function __construct()
     {
-
     }
 
     public function saveQMLadderRulesRequest($request, $ladderId)

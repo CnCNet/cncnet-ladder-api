@@ -28,22 +28,22 @@ class PlayerGameReport extends Model
 
     public function player()
     {
-        return $this->belongsTo("App\Player");
+        return $this->belongsTo("App\Models\Player");
     }
 
     public function game()
     {
-        return $this->belongsTo("App\Game");
+        return $this->belongsTo("App\Models\Game");
     }
 
     public function gameReport()
     {
-        return $this->belongsTo("App\GameReport");
+        return $this->belongsTo("App\Models\GameReport");
     }
 
     public function stats()
     {
-        return $this->hasOne("App\Stats2");
+        return $this->hasOne("App\Models\Stats2");
     }
 
     public function wonOrDisco()

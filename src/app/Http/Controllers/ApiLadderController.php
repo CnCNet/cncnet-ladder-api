@@ -43,8 +43,8 @@ class ApiLadderController extends Controller
 
     public function newPostLadder(Request $request, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
     {
-        $ladder = App\Ladder::find($ladderId);
-        $player = App\Player::find($playerId);
+        $ladder = App\Models\Ladder::find($ladderId);
+        $player = App\Models\Player::find($playerId);
 
         // Player checks
         $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
@@ -64,9 +64,9 @@ class ApiLadderController extends Controller
 
     public function saveLadderResult($file, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
     {
-        $ladder = App\Ladder::find($ladderId);
-        $player = App\Player::find($playerId);
-        $game = App\Game::find($gameId);
+        $ladder = App\Models\Ladder::find($ladderId);
+        $player = App\Models\Player::find($playerId);
+        $game = App\Models\Game::find($gameId);
 
         // Game stats result
         $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder);
@@ -124,7 +124,7 @@ class ApiLadderController extends Controller
             ($bestReport->oos && $gameReport->oos)
         )
         {
-            $wash = new \App\GameReport();
+            $wash = new \App\Models\GameReport();
             $wash->game_id = $gameReport->game_id;
             $wash->player_id = $gameReport->player_id;
             $wash->best_report = false;
@@ -138,7 +138,7 @@ class ApiLadderController extends Controller
 
             foreach ($gameReport->playerGameReports()->get() as $pgr)
             {
-                $playerGR = new \App\PlayerGameReport;
+                $playerGR = new \App\Models\PlayerGameReport;
                 $playerGR->game_report_id = $wash->id;
                 $playerGR->game_id = $pgr->game_id;
                 $playerGR->player_id = $pgr->player_id;
@@ -364,7 +364,7 @@ class ApiLadderController extends Controller
 
     public function viewRawGame(Request $request, $gameId)
     {
-        $rawGame = \App\GameRaw::where("game_id", "=", $gameId)->get();
+        $rawGame = \App\Models\GameRaw::where("game_id", "=", $gameId)->get();
 
         return response($rawGame, 200)
             ->header('Content-Type', 'application/json');
@@ -381,7 +381,7 @@ class ApiLadderController extends Controller
             {
                 $date = Carbon::now()->format('m-Y');
                 $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
-                $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
+                $players = \App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
                 $top = [];
                 foreach ($players as $player)
                 {
@@ -440,7 +440,7 @@ class ApiLadderController extends Controller
                     "full" => $history->ladder->name,
                     "abbreviation" => $history->ladder->abbreviation,
                     "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
+                    "players" => \App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
                 ];
             }
         }
@@ -450,7 +450,7 @@ class ApiLadderController extends Controller
 
     public function reRunDisconnectionPoints()
     {
-        $grs = \App\GameReport::where('game_reports.created_at', '>', '2018-03-01 00:00:00')
+        $grs = \App\Models\GameReport::where('game_reports.created_at', '>', '2018-03-01 00:00:00')
             ->where('disconnected', '=', true)->where('points', '>', 0)
             ->join('player_game_reports', 'player_game_reports.game_report_id', '=', 'game_reports.id')
             ->orderBy('game_reports.id', 'ASC')->select('game_reports.*')->get();
@@ -464,8 +464,8 @@ class ApiLadderController extends Controller
 
     public function countMapVetos($ladderId)
     {
-        $ladder = \App\Ladder::find($ladderId);
-        $qmMapSides = \App\QmMatchPlayer::select('map_sides')
+        $ladder = \App\Models\Ladder::find($ladderId);
+        $qmMapSides = \App\Models\QmMatchPlayer::select('map_sides')
             ->where('ladder_id', '=', $ladderId)
             ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
             ->get();
@@ -501,8 +501,8 @@ class ApiLadderController extends Controller
 
     public function countUniqueMapVetos($ladderId)
     {
-        $ladder = \App\Ladder::find($ladderId);
-        $qmMapSides = \App\QmMatchPlayer::select('map_sides')
+        $ladder = \App\Models\Ladder::find($ladderId);
+        $qmMapSides = \App\Models\QmMatchPlayer::select('map_sides')
             ->where('ladder_id', '=', $ladderId)
             ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
             ->groupBy('player_id')

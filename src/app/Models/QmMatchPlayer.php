@@ -10,17 +10,17 @@ class QmMatchPlayer extends Model
     //
     public function qmMatch()
     {
-        return $this->belongsTo('App\QmMatch');
+        return $this->belongsTo('App\Models\QmMatch');
     }
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 
     public function ladder()
     {
-        return $this->belongsTo('App\Ladder');
+        return $this->belongsTo('App\Models\Ladder');
     }
 
     protected $_map_side_array = null;
@@ -55,21 +55,21 @@ class QmMatchPlayer extends Model
 
     public function version()
     {
-        return $this->belongsTo('App\PlayerDataString', 'version_id');
+        return $this->belongsTo('App\Models\PlayerDataString', 'version_id');
     }
 
     public function platform()
     {
-        return $this->belongsTo('App\PlayerDataString', 'platform_id');
+        return $this->belongsTo('App\Models\PlayerDataString', 'platform_id');
     }
 
     public function ddraw()
     {
-        return $this->belongsTo('App\PlayerDataString', 'ddraw_id');
+        return $this->belongsTo('App\Models\PlayerDataString', 'ddraw_id');
     }
 
     public function mapSides()
     {
-        return $this->belongsTo('App\MapSideString', 'map_sides_id');
+        return $this->belongsTo('App\Models\MapSideString', 'map_sides_id');
     }
 }

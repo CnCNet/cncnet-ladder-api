@@ -175,6 +175,14 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        // Custom providers
+        App\Providers\Navigation::class,
+        App\Providers\IrcCache::class,
+        App\MyMailer\MailServiceProvider::class,
+
+        // @TODO - Upgrade
+        // App\LockedCache\LockedCacheServiceProvider::class,
+        // Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
     ],
 
     /*

@@ -21,12 +21,12 @@ class Player extends Model
 
     public function user()
     {
-        return $this->belongsTo("\App\User");
+        return $this->belongsTo("\App\Models\User");
     }
 
     public function playerGameReports()
     {
-        return $this->hasMany('App\PlayerGameReport');
+        return $this->hasMany('App\Models\PlayerGameReport');
     }
 
     public function wins($history = null)
@@ -46,7 +46,7 @@ class Player extends Model
 
     public function gameReports()
     {
-        return $this->hasMany('App\GameReport')
+        return $this->hasMany('App\Models\GameReport')
             ->join('games as g', 'g.id', '=', 'game_reports.game_id')
             ->where('g.game_report_id', '=', 'game_reports.id');
     }
@@ -114,7 +114,7 @@ class Player extends Model
 
     public function rating()
     {
-        return $this->hasOne("App\PlayerRating");
+        return $this->hasOne("App\Models\PlayerRating");
     }
 
     public function percentile()
@@ -122,7 +122,7 @@ class Player extends Model
         if ($this->rating->rated_games < 10)
             return 0;
 
-        $playerRatings = \App\PlayerRating::join('players as p', 'p.id', '=', 'player_id')
+        $playerRatings = \App\Models\PlayerRating::join('players as p', 'p.id', '=', 'player_id')
             ->where("ladder_id", "=", $this->ladder_id)
             ->where('rated_games', '>', 10)
             ->where('player_ratings.updated_at', '>', Carbon::now()->subMonths(2))
@@ -173,17 +173,17 @@ class Player extends Model
 
     public function ladder()
     {
-        return $this->belongsTo("App\Ladder");
+        return $this->belongsTo("App\Models\Ladder");
     }
 
     public function card()
     {
-        return $this->belongsTo("App\Card");
+        return $this->belongsTo("App\Models\Card");
     }
 
     public function rank($history)
     {
-        $ppQuery = \App\PlayerHistory::join('player_game_reports as pgr', 'pgr.player_id', '=', 'player_histories.player_id')
+        $ppQuery = \App\Models\PlayerHistory::join('player_game_reports as pgr', 'pgr.player_id', '=', 'player_histories.player_id')
             ->join('games', 'pgr.game_report_id', '=', 'games.game_report_id')
             ->where('games.ladder_history_id', '=', $history->id)
             ->where("player_histories.ladder_history_id", '=', $history->id)
@@ -204,7 +204,7 @@ class Player extends Model
 
     public function playerPoints($history, $username)
     {
-        $player = \App\Player::where("username", "=", $username)
+        $player = \App\Models\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $history->ladder->id)->first();
 
         if ($player == null) return "No player";
@@ -214,7 +214,7 @@ class Player extends Model
 
     public function points($history)
     {
-        $points = \App\PlayerGameReport::where('player_game_reports.player_id', $this->id)
+        $points = \App\Models\PlayerGameReport::where('player_game_reports.player_id', $this->id)
             ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
             ->where("g.ladder_history_id", "=", $history->id)
             ->sum('player_game_reports.points');
@@ -223,7 +223,7 @@ class Player extends Model
 
     public function pointsBefore($history, $game_id)
     {
-        $points = \App\PlayerGameReport::where('player_game_reports.player_id', $this->id)
+        $points = \App\Models\PlayerGameReport::where('player_game_reports.player_id', $this->id)
             ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
             ->where("g.ladder_history_id", "=", $history->id)
             ->where('g.id', '<', $game_id)
@@ -286,12 +286,12 @@ class Player extends Model
 
     public function playerRating()
     {
-        return $this->hasOne("App\PlayerRating");
+        return $this->hasOne("App\Models\PlayerRating");
     }
 
     public function playerHistories()
     {
-        return $this->hasMany("App\PlayerHistory");
+        return $this->hasMany("App\Models\PlayerHistory");
     }
 
     public function playerHistory($history)
@@ -311,7 +311,7 @@ class Player extends Model
 
         if ($pHist === null)
         {
-            $pHist = new \App\PlayerHistory;
+            $pHist = new \App\Models\PlayerHistory;
             $pHist->ladder_history_id = $history->id;
             $pHist->player_id = $this->id;
 
@@ -335,27 +335,27 @@ class Player extends Model
 
     public function playerCache($history_id)
     {
-        return \App\PlayerCache::where('player_id', '=', $this->id)->where("ladder_history_id", '=', $history_id)->first();
+        return \App\Models\PlayerCache::where('player_id', '=', $this->id)->where("ladder_history_id", '=', $history_id)->first();
     }
 
     public function unSeenAlerts()
     {
-        return $this->hasMany('\App\PlayerAlert')->whereNull('seen_at')->where('expires_at', '>', Carbon::now());
+        return $this->hasMany('\App\Models\PlayerAlert')->whereNull('seen_at')->where('expires_at', '>', Carbon::now());
     }
 
     public function alerts()
     {
-        return $this->hasMany('\App\PlayerAlert')->where('expires_at', '>', Carbon::now());
+        return $this->hasMany('\App\Models\PlayerAlert')->where('expires_at', '>', Carbon::now());
     }
 
     public function clanPlayer()
     {
-        return $this->hasOne('App\ClanPlayer');
+        return $this->hasOne('App\Models\ClanPlayer');
     }
 
     public function clanInvitations()
     {
-        return $this->hasMany('App\ClanInvitation');
+        return $this->hasMany('App\Models\ClanInvitation');
     }
 
     public function ircAssociation()
@@ -369,7 +369,7 @@ class Player extends Model
      */
     public function laundered($ladderHistory)
     {
-        $sum = \App\PlayerGameReport::where('player_id', '=', $this->id)
+        $sum = \App\Models\PlayerGameReport::where('player_id', '=', $this->id)
             ->where('created_at', '<', $ladderHistory->ends)
             ->where('created_at', '>', $ladderHistory->starts)
             ->sum('backupPts');

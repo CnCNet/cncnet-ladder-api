@@ -1,6 +1,10 @@
 ## CnCNet Ladder API
 This is the main repository for the CnCNet Ladder API.
 
+
+### TODO's for upgrade
+Find all of them by searching `// @TODO - Upgrade`
+
 ### Development
 
 - Copy `.env-example` to `.env`

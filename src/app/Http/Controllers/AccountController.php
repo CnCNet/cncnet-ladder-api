@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
 use \App\EmailVerification;
-use \App\PlayerActiveHandle;
+use \App\Models\PlayerActiveHandle;
 use Carbon\Carbon;
 use Mail;
 
@@ -46,7 +46,7 @@ class AccountController extends Controller
     {
         $ladders = $this->ladderService->getLatestLadders();
         $clan_ladders =  $this->ladderService->getLatestClanLadders();
-        $ladder = \App\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
+        $ladder = \App\Models\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
         $user = $request->user();
         $players = $user->usernames()->where("ladder_id", '=', $ladder->id)
             ->orderBy("ladder_id", "DESC")
@@ -57,7 +57,7 @@ class AccountController extends Controller
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $start, $end)->where('ladder_id', $ladder->id);
+        $activeHandles = \App\Models\PlayerActiveHandle::getUserActiveHandles($user->id, $start, $end)->where('ladder_id', $ladder->id);
 
         $primaryPlayer = $activeHandles->count() > 0 ? $activeHandles->first()->player : null;
 
@@ -98,7 +98,7 @@ class AccountController extends Controller
     {
         $this->validate($request, ['name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users']);
 
-        $user = \App\User::find($request->id);
+        $user = \App\Models\User::find($request->id);
 
         if ($request->user()->id == $user->id || $request->user()->isGod())
         {
@@ -120,7 +120,7 @@ class AccountController extends Controller
             'username' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
         ]);
 
-        $ladder = \App\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
+        $ladder = \App\Models\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
 
         if ($ladder === null)
         {
@@ -138,7 +138,7 @@ class AccountController extends Controller
         }
 
         // If we're creating a username for the first time for this ladder type
-        $isNewUser = \App\Player::where("user_id", $user->id)
+        $isNewUser = \App\Models\Player::where("user_id", $user->id)
             ->where("ladder_id", $ladder->id)
             ->count();
 
@@ -164,7 +164,7 @@ class AccountController extends Controller
         ]);
 
         $user = \Auth::user();
-        $ladder = \App\Ladder::where("abbreviation", $ladderAbbrev)->first();
+        $ladder = \App\Models\Ladder::where("abbreviation", $ladderAbbrev)->first();
 
         if ($user == null || $ladder == null)
         {
@@ -174,7 +174,7 @@ class AccountController extends Controller
         $username = $request->username;
 
         // Check request is linked to the auth'd user
-        $player = \App\Player::where("username", "=", $username)
+        $player = \App\Models\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladder->id)
             ->where("user_id", "=", $user->id)
             ->first();
@@ -241,7 +241,7 @@ class AccountController extends Controller
         ]);
 
         $user = \Auth::user();
-        $card = \App\Card::find($request->cardId);
+        $card = \App\Models\Card::find($request->cardId);
         return $this->playerService->updatePlayerCard($user, $card, $request->playerId);
     }
 

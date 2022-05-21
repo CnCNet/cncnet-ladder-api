@@ -11,6 +11,6 @@ class GamePlayer extends Model
 
     public function player()
     {
-        return $this->belongsTo('App\Player');
+        return $this->belongsTo('App\Models\Player');
     }
 }

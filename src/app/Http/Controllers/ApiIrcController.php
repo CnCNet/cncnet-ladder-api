@@ -9,15 +9,15 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use DB;
 use \Carbon\Carbon;
-use App\IrcHostmask;
+use App\Models\IrcHostmask;
 use App\IrcAssociation;
-use App\IrcPlayer;
-use App\Ladder;
+use App\Models\IrcPlayer;
+use App\Models\Ladder;
 use App\User;
-use App\Player;
-use App\PlayerRating;
-use App\PlayerActiveHandle;
-use App\Clan;
+use App\Models\Player;
+use App\Models\PlayerRating;
+use App\Models\PlayerActiveHandle;
+use App\Models\Clan;
 
 class ApiIrcController extends Controller
 {

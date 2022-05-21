@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\QmMatch;
+use App\Models\QmMatch;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -43,26 +43,26 @@ class Game extends Model
 
     public function map()
     {
-        return $this->belongsTo('App\Map', 'hash', 'hash');
+        return $this->belongsTo('App\Models\Map', 'hash', 'hash');
     }
 
     public function allReports()
     {
-        return $this->hasMany('App\GameReport');
+        return $this->hasMany('App\Models\GameReport');
     }
 
     public function report()
     {
-        return $this->belongsTo('App\GameReport', 'game_report_id');
+        return $this->belongsTo('App\Models\GameReport', 'game_report_id');
     }
 
     public function playerGameReports()
     {
-        return $this->hasMany('App\PlayerGameReport')->where('game_report_id', $this->game_report_id, 'game_report_id');
+        return $this->hasMany('App\Models\PlayerGameReport')->where('game_report_id', $this->game_report_id, 'game_report_id');
     }
     public function ladderHistory()
     {
-        return $this->belongsTo('App\LadderHistory');
+        return $this->belongsTo('App\Models\LadderHistory');
     }
 
     public static function genQmEntry(QmMatch $qmMatch)
@@ -81,6 +81,6 @@ class Game extends Model
 
     public function qmMatch()
     {
-        return $this->belongsTo('\App\QmMatch');
+        return $this->belongsTo('\App\Models\QmMatch');
     }
 }
