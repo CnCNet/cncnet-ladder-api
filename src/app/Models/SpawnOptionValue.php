@@ -11,7 +11,7 @@ class SpawnOptionValue extends Model
 
     public function name()
     {
-        return $this->belongsTo('App\SpawnOptionString', 'name_id');
+        return $this->belongsTo('App\Models\SpawnOptionString', 'name_id');
     }
 
     // Delete Me
@@ -32,11 +32,11 @@ class SpawnOptionValue extends Model
 
     public function spawnOption()
     {
-        return $this->belongsTo('\App\SpawnOption');
+        return $this->belongsTo('\App\Models\SpawnOption');
     }
 
     public function value()
     {
-        return $this->belongsTo('\App\SpawnOptionString');
+        return $this->belongsTo('\App\Models\SpawnOptionString');
     }
 }

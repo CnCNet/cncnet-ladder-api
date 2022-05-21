@@ -81,7 +81,7 @@ class Ban extends Model
     {
         $banned = false;
         $cooldown = false;
-        if (!$start && !($this->ban_type >= \App\Ban::START_NOW_BEGIN && $this->ban_type <= \App\Ban::START_NOW_END))
+        if (!$start && !($this->ban_type >= \App\Models\Ban::START_NOW_BEGIN && $this->ban_type <= \App\Models\Ban::START_NOW_END))
         {
             if ($this->ban_type == Ban::PERMBAN)
                 return "You are permanently banned!\n{$this->plubic_reason}";
@@ -250,10 +250,10 @@ class Ban extends Model
 
     public static function banStyle($ban_type)
     {
-        if ($ban_type >= \App\Ban::START_NOW_BEGIN && $ban_type <= \App\Ban::START_NOW_END)
+        if ($ban_type >= \App\Models\Ban::START_NOW_BEGIN && $ban_type <= \App\Models\Ban::START_NOW_END)
             return "Starts immediately";
 
-        if ($ban_type >= \App\Ban::START_ON_CONNECT_BEGIN && $ban_type <= \App\Ban::START_ON_CONNECT_END)
+        if ($ban_type >= \App\Models\Ban::START_ON_CONNECT_BEGIN && $ban_type <= \App\Models\Ban::START_ON_CONNECT_END)
             return "Starts next time the user tries to play";
         return "";
     }

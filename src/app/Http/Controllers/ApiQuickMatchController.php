@@ -15,7 +15,7 @@ use Log;
 use \App\Commands\FindOpponent;
 use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
-use \App\SpawnOptionType;
+use \App\Models\SpawnOptionType;
 
 class ApiQuickMatchController extends Controller
 {

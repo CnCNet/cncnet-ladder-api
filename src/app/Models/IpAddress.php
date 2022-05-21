@@ -53,7 +53,7 @@ class IpAddress extends Model
 
     public function users()
     {
-        return $this->hasMany('App\User', 'ip_address_id', 'id');
+        return $this->hasMany('App\Models\User', 'ip_address_id', 'id');
     }
 
     public function bans()

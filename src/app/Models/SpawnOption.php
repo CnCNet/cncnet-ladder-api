@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\SpawnOptionString;
-use App\SpawnOptionType;
+use App\Models\SpawnOptionString;
+use App\Models\SpawnOptionType;
 
 class SpawnOption extends Model
 {
@@ -22,26 +22,26 @@ class SpawnOption extends Model
 
     public function type()
     {
-        return $this->belongsTo('App\SpawnOptionType', 'type_id');
+        return $this->belongsTo('App\Models\SpawnOptionType', 'type_id');
     }
 
     public function name()
     {
-        return $this->belongsTo('App\SpawnOptionString', 'name_id');
+        return $this->belongsTo('App\Models\SpawnOptionString', 'name_id');
     }
 
     public function string1()
     {
-        return $this->belongsTo('App\SpawnOptionString', 'string1_id');
+        return $this->belongsTo('App\Models\SpawnOptionString', 'string1_id');
     }
 
     public function string2()
     {
-        return $this->belongsTo('App\SpawnOptionString', 'string2_id');
+        return $this->belongsTo('App\Models\SpawnOptionString', 'string2_id');
     }
 
     public function spawnOptionValues()
     {
-        return $this->hasMany('\App\SpawnOption');
+        return $this->hasMany('\App\Models\SpawnOption');
     }
 }

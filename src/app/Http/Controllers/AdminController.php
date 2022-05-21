@@ -9,7 +9,7 @@ use \Carbon\Carbon;
 use \App\Models\User;
 use \App\Models\MapPool;
 use \App\Models\Ladder;
-use \App\SpawnOptionString;
+use \App\Models\SpawnOptionString;
 use App\Models\GameObjectSchema;
 use Illuminate\Support\Facades\Cache;
 
@@ -49,7 +49,7 @@ class AdminController extends Controller
         $mapPools = $ladder->mapPools;
         $maps = $ladder->maps;
         $user = $request->user();
-        $spawnOptions = \App\SpawnOption::all();
+        $spawnOptions = \App\Models\SpawnOption::all();
 
         return view("admin.ladder-setup", compact(
             'ladders',
@@ -92,7 +92,7 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
-        $manager = \App\ObjectSchemaManager::firstOrCreate(['game_object_schema_id' => $gameSchema->id, 'user_id' => $user->id]);
+        $manager = \App\Models\ObjectSchemaManager::firstOrCreate(['game_object_schema_id' => $gameSchema->id, 'user_id' => $user->id]);
 
         $request->session()->flash('success', "Manager added");
         return redirect()->back();
@@ -143,9 +143,9 @@ class AdminController extends Controller
     public function editSpawnOptionValue(Request $request)
     {
         if ($request->id == "new")
-            $sov = new \App\SpawnOptionValue;
+            $sov = new \App\Models\SpawnOptionValue;
         else
-            $sov = \App\SpawnOptionValue::find($request->id);
+            $sov = \App\Models\SpawnOptionValue::find($request->id);
 
         if ($request->update !== null && $request->update == 2)
         {
@@ -569,7 +569,7 @@ class AdminController extends Controller
                 "plubic_reason" => "",
                 "ip_address_id" => $user->ip->id,
                 "start_or_end" => false,
-                "banDesc" => \App\Ban::typeToDescription($banType) . " - " . \App\Ban::banStyle($banType)
+                "banDesc" => \App\Models\Ban::typeToDescription($banType) . " - " . \App\Models\Ban::banStyle($banType)
             ]
         );
     }
@@ -585,7 +585,7 @@ class AdminController extends Controller
         if ($player === null || !$mod->isLadderMod($player->ladder))
             return;
 
-        $ban = \App\Ban::find($banId);
+        $ban = \App\Models\Ban::find($banId);
         if ($player === null)
             return;
 
@@ -599,7 +599,7 @@ class AdminController extends Controller
                 "user"   => $user,
                 "ladder" => $player->ladder,
                 "id" => $ban->id,
-                "expires" => $ban->expires->eq(\App\Ban::unstartedBanTime()) ? null : $ban->expires,
+                "expires" => $ban->expires->eq(\App\Models\Ban::unstartedBanTime()) ? null : $ban->expires,
                 "admin_id" => $mod->id,
                 "user_id" => $user->id,
                 "ban_type" => $ban->ban_type,
@@ -607,7 +607,7 @@ class AdminController extends Controller
                 "plubic_reason" => $ban->plubic_reason,
                 "ip_address_id" => $ban->ip_address_id,
                 "start_or_end" => false,
-                "banDesc" => \App\Ban::typeToDescription($ban->ban_type) . " - " . \App\Ban::banStyle($ban->ban_type)
+                "banDesc" => \App\Models\Ban::typeToDescription($ban->ban_type) . " - " . \App\Models\Ban::banStyle($ban->ban_type)
             ]
         );
     }
@@ -627,10 +627,10 @@ class AdminController extends Controller
 
         $user = $player->user;
 
-        $ban = \App\Ban::find($banId);
+        $ban = \App\Models\Ban::find($banId);
         if ($ban === null)
         {
-            $ban = new \App\Ban;
+            $ban = new \App\Models\Ban;
         }
 
         foreach ($ban->fillable as $col)
@@ -642,7 +642,7 @@ class AdminController extends Controller
         }
         $ban->save();
 
-        $banFlash = \App\Ban::banStyle($request->ban_type);
+        $banFlash = \App\Models\Ban::banStyle($request->ban_type);
 
         if ($request->start_or_end)
         {
@@ -651,7 +651,7 @@ class AdminController extends Controller
                 $ban->expires = Carbon::now();
                 $banFlash = "has ended.";
             }
-            else if ($ban->expires === null || $ban->expires->eq(\App\Ban::unstartedBanTime()))
+            else if ($ban->expires === null || $ban->expires->eq(\App\Models\Ban::unstartedBanTime()))
             {
                 $ban->checkStartBan(true);
                 $banFlash = "has started.";

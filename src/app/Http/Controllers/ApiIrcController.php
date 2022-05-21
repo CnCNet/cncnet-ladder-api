@@ -13,7 +13,7 @@ use App\Models\IrcHostmask;
 use App\IrcAssociation;
 use App\Models\IrcPlayer;
 use App\Models\Ladder;
-use App\User;
+use App\Models\User;
 use App\Models\Player;
 use App\Models\PlayerRating;
 use App\Models\PlayerActiveHandle;

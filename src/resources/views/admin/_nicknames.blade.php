@@ -14,10 +14,14 @@
     <?php foreach($otherNames as $otherName): ?>
     <div class="player-nicknames">
         <i class="icon icon-game icon-{{ $otherName->ladder->abbreviation }}"></i>
-        <a
-            href="/ladder/{{ $history->short }}/{{ $otherName->ladder->abbreviation }}/player/{{ $otherName->username }}">
+        @if ($history)
+            <a
+                href="/ladder/{{ $history->short }}/{{ $otherName->ladder->abbreviation }}/player/{{ $otherName->username }}">
+                {{ $otherName->username }}
+            </a>
+        @else
             {{ $otherName->username }}
-        </a>
+        @endif
         {{ $otherName->created_at->toDateString() }}
     </div>
     <?php endforeach; ?>

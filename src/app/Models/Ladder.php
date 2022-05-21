@@ -127,6 +127,6 @@ class Ladder extends Model
 
     public function spawnOptionValues()
     {
-        return $this->hasMany('App\SpawnOptionValue');
+        return $this->hasMany('App\Models\SpawnOptionValue');
     }
 }

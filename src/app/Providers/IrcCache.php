@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Cache;
-use App\User;
+use App\Models\User;
 use App\Models\Player;
 use App\Models\Clan;
 use App\Models\ClanPlayer;

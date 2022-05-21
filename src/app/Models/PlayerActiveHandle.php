@@ -77,6 +77,6 @@ class PlayerActiveHandle extends Model
 
     public function user()
     {
-        $this->belongsTo('App\User');
+        $this->belongsTo('App\Models\User');
     }
 }

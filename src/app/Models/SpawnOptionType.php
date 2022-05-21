@@ -32,6 +32,6 @@ class SpawnOptionType extends Model
 
     public function spawnOptions()
     {
-        return $this->hasMany('\App\SpawnOption', 'type_id');
+        return $this->hasMany('\App\Models\SpawnOption', 'type_id');
     }
 }

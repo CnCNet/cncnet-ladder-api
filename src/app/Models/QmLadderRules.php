@@ -68,6 +68,6 @@ class QmLadderRules extends Model
     // Delete Me
     public function spawnOptionValues()
     {
-        return $this->hasMany('App\SpawnOptionValue');
+        return $this->hasMany('App\Models\SpawnOptionValue');
     }
 }

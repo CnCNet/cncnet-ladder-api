@@ -8,7 +8,7 @@ use \Carbon\Carbon;
 use \App\Models\User;
 use \App\Models\MapPool;
 use \App\Models\Ladder;
-use \App\SpawnOptionString;
+use \App\Models\SpawnOptionString;
 
 use Illuminate\Http\Request;
 
@@ -117,7 +117,7 @@ class MapPoolController extends Controller
                 'ladder' => $ladder,
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
-                'spawnOptions' =>  \App\SpawnOption::all(),
+                'spawnOptions' =>  \App\Models\SpawnOption::all(),
                 'allLadders' => \App\Models\Ladder::all(),
             ]
         );

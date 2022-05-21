@@ -67,12 +67,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function bans()
     {
-        return $this->hasMany("\App\Ban");
+        return $this->hasMany("\App\Models\Ban");
     }
 
     public function bansGiven()
     {
-        return $this->hasMany("\App\Ban", "admin_id");
+        return $this->hasMany("\App\Models\Ban", "admin_id");
     }
 
     public function getBan($start = false)
