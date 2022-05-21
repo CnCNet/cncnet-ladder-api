@@ -57,7 +57,7 @@
                                     $new_map->admin_description = 'Copy of ' . $lastmap->admin_description;
                                     ?>
                                 @else
-                                    <?php $new_map = new \App\QmMap();
+                                    <?php $new_map = new App\Models\QmMap();
                                     $new_map->id = 'new';
                                     $new_map->map_pool_id = $mapPool->id;
                                     $new_map->valid = 1;
@@ -467,8 +467,9 @@
             let mapSels = document.querySelectorAll(".map-selector")
             for (let i = 0; i < mapSels.length; i++) {
                 mapSels[i].onchange = function() {
-                    document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" + ladderMaps[
-                        this.value].hash + ".png";
+                    document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" +
+                        ladderMaps[
+                            this.value].hash + ".png";
                 }
             }
         })();
@@ -479,7 +480,8 @@
                 document.getElementById("ladderMapId").value = this.value;
                 document.getElementById("ladderMapName").value = ladderMap.name;
                 document.getElementById("ladderMapHash").value = ladderMap.hash;
-                document.getElementById("ladderMapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" + ladderMap
+                document.getElementById("ladderMapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" +
+                    ladderMap
                     .hash + ".png"
             };
         })();

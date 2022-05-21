@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\Ladder;
+use App\Models\Map;
+use App\Models\QmLadderRules;
+use App\Models\QmMap;
+use App\Models\Side;
+use App\Models\SpawnOptionValue;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -13,7 +19,7 @@ class PrivateYrLadder extends Migration
 	 */
 	public function up()
 	{
-		$yrLadder = \App\Ladder::where('abbreviation', 'yr')->first();
+		$yrLadder = Ladder::where('abbreviation', 'yr')->first();
 
 		#create test ladder
 		$testLadder = $yrLadder->replicate()->fill([
@@ -23,16 +29,16 @@ class PrivateYrLadder extends Migration
 		]);
 		$testLadder->save();
 
-		$testLadder = \App\Ladder::where('abbreviation', 'yr-test')->first();
+		$testLadder = Ladder::where('abbreviation', 'yr-test')->first();
 
 		$lc = new \App\Http\Controllers\LadderController;
 		$lc->addLadder($testLadder->id); #create ladder histories
 
 		#add sides
-		$sides = \App\Models\Side::where('ladder_id', $yrLadder->id)->get();
+		$sides = Side::where('ladder_id', $yrLadder->id)->get();
 		for ($i = 0; $i < count($sides); ++$i)
 		{
-			$side = new \App\Models\Side();
+			$side = new Side();
 			$side->ladder_id = $testLadder->id;
 			$side->local_id = $i;
 			$side->name = $sides[$i]->name;
@@ -40,18 +46,18 @@ class PrivateYrLadder extends Migration
 		}
 
 		#create ladder rules			
-		$yrLadderRules = \App\QmLadderRules::where('ladder_id', $yrLadder->id)->first();
+		$yrLadderRules = QmLadderRules::where('ladder_id', $yrLadder->id)->first();
 		$newLadderRules = $yrLadderRules->replicate()->fill([
 			'ladder_id' => $testLadder->id
 		]);
 		$newLadderRules->save();
 
 		#Copy over the YR spawn options
-		$options = \App\SpawnOptionValue::where('ladder_id', $yrLadder->id)->get();
+		$options = App\Models\SpawnOptionValue::where('ladder_id', $yrLadder->id)->get();
 
 		foreach ($options as $option)
 		{
-			$o = new \App\SpawnOptionValue;
+			$o = new App\Models\SpawnOptionValue;
 			$o->ladder_id = $testLadder->id;
 			$o->spawn_option_id = $option->spawn_option_id;
 			$o->value_id = $option->value_id;
@@ -74,11 +80,11 @@ class PrivateYrLadder extends Migration
 			$newMap->save();
 		}
 
-		$yrQmMaps = \App\QmMap::where('map_pool_id', $yrLadder->map_pool_id)->get();
+		$yrQmMaps = QmMap::where('map_pool_id', $yrLadder->map_pool_id)->get();
 		#copy yr qm maps
 		foreach ($yrQmMaps as $yrQmMap)
 		{
-			$map_id = \App\Models\Map::where('ladder_id', $yrLadder->id)
+			$map_id = Map::where('ladder_id', $yrLadder->id)
 				->where('hash', $yrQmMap->map->hash)
 				->first()->id;
 
@@ -99,12 +105,12 @@ class PrivateYrLadder extends Migration
 	 */
 	public function down()
 	{
-		$testLadder = \App\Ladder::where('abbreviation', 'yr-test')->first();
-		\App\QmMap::where('map_pool_id', $testLadder->map_pool_id)->delete();
-		\App\Models\Map::where('ladder_id', $testLadder->id)->delete();
-		\App\SpawnOptionValue::where('ladder_id', $testLadder->id)->delete();
-		\App\QmLadderRules::where('ladder_id', $testLadder->id)->delete();
-		\App\Models\Side::where('ladder_id', $testLadder->id)->delete();
+		$testLadder = Ladder::where('abbreviation', 'yr-test')->first();
+		QmMap::where('map_pool_id', $testLadder->map_pool_id)->delete();
+		Map::where('ladder_id', $testLadder->id)->delete();
+		SpawnOptionValue::where('ladder_id', $testLadder->id)->delete();
+		QmLadderRules::where('ladder_id', $testLadder->id)->delete();
+		Side::where('ladder_id', $testLadder->id)->delete();
 
 		$testLadder->delete();
 	}

@@ -22,6 +22,6 @@ class MapPool extends Model
 
     public function maps()
     {
-        return $this->hasMany('\App\QmMap')->valid()->orderBy('bit_idx');
+        return $this->hasMany('App\Models\QmMap')->valid()->orderBy('bit_idx');
     }
 }

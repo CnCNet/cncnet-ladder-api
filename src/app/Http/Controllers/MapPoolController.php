@@ -19,12 +19,12 @@ class MapPoolController extends Controller
     {
         if ($request->id == "new")
         {
-            $qmMap = new \App\QmMap;
+            $qmMap = new App\Models\QmMap;
             $message = "Successfully created new map";
         }
         else
         {
-            $qmMap = \App\QmMap::where('id', $request->id)->first();
+            $qmMap = App\Models\QmMap::where('id', $request->id)->first();
             $message = "Sucessfully updated map";
         }
 
@@ -192,7 +192,7 @@ class MapPoolController extends Controller
 
     public function removeQuickMatchMap(Request $request, $ladderId, $mapPoolId)
     {
-        $qmMap = \App\QmMap::find($request->map_id);
+        $qmMap = App\Models\QmMap::find($request->map_id);
         $mapPool = MapPool::find($mapPoolId);
 
         if ($qmMap !== null)
@@ -219,7 +219,7 @@ class MapPoolController extends Controller
         {
             $map_id = $request->input("bit_idx_{$i}");
 
-            $map = \App\QmMap::find($map_id);
+            $map = App\Models\QmMap::find($map_id);
             if ($map !== null)
             {
                 $toSave[] = $map;

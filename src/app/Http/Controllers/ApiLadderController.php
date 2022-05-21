@@ -490,7 +490,7 @@ class ApiLadderController extends Controller
         $map_vetos = [];
         foreach ($map_vetos_raw as $index => $count)
         {
-            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
+            $map = App\Models\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
             if ($map !== null)
                 $map_vetos[$map->admin_description] = $count;
             else
@@ -529,7 +529,7 @@ class ApiLadderController extends Controller
         $map_vetos = [];
         foreach ($map_vetos_raw as $index => $count)
         {
-            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
+            $map = App\Models\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
             if ($map !== null)
                 $map_vetos[$map->admin_description] = $count;
             else

@@ -27,7 +27,7 @@ class SpawnOptionValue extends Model
 
     public function qmMap()
     {
-        return $this->belongsTo('\App\QmMap');
+        return $this->belongsTo('App\Models\QmMap');
     }
 
     public function spawnOption()
