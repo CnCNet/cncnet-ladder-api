@@ -7,6 +7,9 @@ use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;
+use App\Models\Card;
+use App\Models\PlayerCache;
+use App\Models\Side;
 use Illuminate\Support\Facades\Cache;
 
 class LadderController extends Controller
@@ -70,6 +73,18 @@ class LadderController extends Controller
 
         $user = $request->user();
         $userIsMod = $user != null && $user->isLadderMod($history->ladder);
+        $sides = Side::where('ladder_id', '=', $history->ladder_id)
+            ->where('local_id', '>=', 0)
+            ->orderBy('local_id', 'asc')
+            ->select('name')
+            ->get()
+            ->toArray();
+
+        $cards = Card::orderBy('id', 'asc')->select('short')->get()->toArray();
+        $players = PlayerCache::where('ladder_history_id', '=', $history->id)
+            ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+            ->where('player_name', 'like', '%' . $request->search . '%')
+            ->orderBy('points', 'desc')->paginate(45);
 
         $data = array(
             "stats" => $this->statsService->getQmStats($request->game),
@@ -78,17 +93,12 @@ class LadderController extends Controller
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
             "history" => $history,
-            "players" => \App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)
-                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
-                ->where('player_name', 'like', '%' . $request->search . '%')
-                ->orderBy('points', 'desc')->paginate(45),
+            "players" => $players,
             "userIsMod" => $userIsMod,
-            "cards" => \App\Models\Card::orderBy('id', 'asc')->lists('short'),
+            "cards" => $cards,
             "tier" => $request->tier,
             "search" => $request->search,
-            "sides" => \App\Models\Side::where('ladder_id', '=', $history->ladder_id)
-                ->where('local_id', '>=', 0)
-                ->orderBy('local_id', 'asc')->lists('name')
+            "sides" => $sides
         );
 
         return view("ladders.listing", $data);

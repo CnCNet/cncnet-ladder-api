@@ -29,10 +29,10 @@ class PrivateYrLadder extends Migration
 		$lc->addLadder($testLadder->id); #create ladder histories
 
 		#add sides
-		$sides = \App\Side::where('ladder_id', $yrLadder->id)->get();
+		$sides = \App\Models\Side::where('ladder_id', $yrLadder->id)->get();
 		for ($i = 0; $i < count($sides); ++$i)
 		{
-			$side = new \App\Side();
+			$side = new \App\Models\Side();
 			$side->ladder_id = $testLadder->id;
 			$side->local_id = $i;
 			$side->name = $sides[$i]->name;
@@ -59,13 +59,13 @@ class PrivateYrLadder extends Migration
 		}
 
 		#Copy over existing YR ladder Map Pool
-		$newPool = new \App\MapPool;
+		$newPool = new \App\Models\MapPool;
 		$newPool->name = 'Test Map Pool';
 		$newPool->ladder_id = $testLadder->id;
 		$newPool->save();
 
 		#copy over maps
-		$yrMaps = \App\Map::where('ladder_id', $yrLadder->id)->get();
+		$yrMaps = \App\Models\Map::where('ladder_id', $yrLadder->id)->get();
 		foreach ($yrMaps as $yrMap)
 		{
 			$newMap = $yrMap->replicate()->fill([
@@ -78,7 +78,7 @@ class PrivateYrLadder extends Migration
 		#copy yr qm maps
 		foreach ($yrQmMaps as $yrQmMap)
 		{
-			$map_id = \App\Map::where('ladder_id', $yrLadder->id)
+			$map_id = \App\Models\Map::where('ladder_id', $yrLadder->id)
 				->where('hash', $yrQmMap->map->hash)
 				->first()->id;
 
@@ -101,10 +101,10 @@ class PrivateYrLadder extends Migration
 	{
 		$testLadder = \App\Ladder::where('abbreviation', 'yr-test')->first();
 		\App\QmMap::where('map_pool_id', $testLadder->map_pool_id)->delete();
-		\App\Map::where('ladder_id', $testLadder->id)->delete();
+		\App\Models\Map::where('ladder_id', $testLadder->id)->delete();
 		\App\SpawnOptionValue::where('ladder_id', $testLadder->id)->delete();
 		\App\QmLadderRules::where('ladder_id', $testLadder->id)->delete();
-		\App\Side::where('ladder_id', $testLadder->id)->delete();
+		\App\Models\Side::where('ladder_id', $testLadder->id)->delete();
 
 		$testLadder->delete();
 	}

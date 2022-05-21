@@ -1,5 +1,5 @@
 <div class="usernames">
-    <?php $otherNames = \App\Player::where('user_id', $user->id)->get(); ?>
+    <?php $otherNames = \App\Models\Player::where('user_id', $user->id)->get(); ?>
 
     <?php
     $now = \Carbon\Carbon::now();

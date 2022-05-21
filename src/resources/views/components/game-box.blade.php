@@ -1,9 +1,9 @@
 <div class="game-box">
-    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map or '' }}.png)">
-        <a href="{{ $url or '' }}" class="status status-{{ $status }}"></a>
+    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map }}.png)">
+        <a href="{{ $url }}" class="status status-{{ $status }}"></a>
     </div>
 
-    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game">
+    <a href="{{ $url }}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
             <small class="status text-capitalize">{{ $status . ' ' . $date->diffForHumans() }}</small>
@@ -28,7 +28,7 @@
                 @endforeach
 
                 <?php $opponent = $gamePlayers->where('player_id', '!=', $points->player_id)->first(); ?>
-                <h5 class="player {{ $status or 'lost' }}">
+                <h5 class="player {{ $status ?? 'lost' }}">
                     {{ $points->player->username }} <span class="points">
                         @if ($points->points >= 0)
                             +

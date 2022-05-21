@@ -1,5 +1,5 @@
 <a href="{{ $url }}" class="player-box-link">
-    <div class="player-box player-card {{ $playerCard ?? 'carville' }}">
+    <div class="player-box player-card {{ $playerCard['short'] ?? 'carville' }}">
         <div class="details text-left">
             <div class="player-badge badge-1x">
                 <img src="/images/badges/{{ $badge['badge'] . '.png' }}" style="max-width:100%">
