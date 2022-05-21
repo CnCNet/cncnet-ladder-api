@@ -142,7 +142,8 @@ class LadderController extends Controller
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
                 "games" => $games,
-                "userIsMod" => $userIsMod
+                "userIsMod" => $userIsMod,
+                "errorGames" => $errorGames
             )
         );
     }
@@ -159,8 +160,27 @@ class LadderController extends Controller
         }
 
         return \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
+            ->select(
+                'games.id',
+                'games.ladder_history_id',
+                'wol_game_id',
+                'bamr',
+                'games.created_at',
+                'games.updated_at',
+                'crat',
+                'cred',
+                'shrt',
+                'supr',
+                'unit',
+                'plrs',
+                'scen',
+                'hash',
+                'game_report_id',
+                'qm_match_id'
+            )
             ->where("ladder_history_id", "=", $history->id)
-            ->where('game_reports.duration', '=', 3)
+            ->where('game_reports.duration', '<=', 3)
+            ->where('finished', '=', 1)
             ->orderBy("games.id", "DESC")
             ->paginate(45);
     }
