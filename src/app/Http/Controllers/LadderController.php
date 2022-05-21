@@ -179,7 +179,11 @@ class LadderController extends Controller
                 'qm_match_id'
             )
             ->where("ladder_history_id", "=", $history->id)
-            ->where('game_reports.duration', '<=', 3)
+            ->where(function ($query)
+            {
+                $query->where('game_reports.duration', '<=', 3)
+                    ->orWhere('game_reports.fps', '<=', 10);
+            })
             ->where('finished', '=', 1)
             ->orderBy("games.id", "DESC")
             ->paginate(45);
