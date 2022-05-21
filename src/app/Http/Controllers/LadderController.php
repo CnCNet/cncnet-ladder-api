@@ -108,6 +108,13 @@ class LadderController extends Controller
 
     public function getLadderGames(Request $request)
     {
+        $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
+
+        if ($history === null)
+        {
+            abort(404);
+        }
+
         $user = $request->user();
         $userIsMod = false;
 
@@ -119,13 +126,13 @@ class LadderController extends Controller
         $errorGames = $request->errorGames;
 
 
-        if ($errorGames)
+        if ($errorGames && $userIsMod == false)
+        {
+            return redirect("/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/games"); //user is not a moderator, return to games page
+        }
+        else if ($errorGames)
         {
             $games = $this->ladderService->getRecentErrorLadderGamesPaginated($request->date, $request->game);
-        }
-        else
-        {
-            $games = $this->ladderService->getRecentLadderGamesPaginated($request->date, $request->game);
         }
 
         return view(
