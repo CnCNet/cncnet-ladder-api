@@ -3,6 +3,7 @@
 use App\Http\Controllers\LadderController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LeagueChampionsController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -24,8 +25,8 @@ Route::get('/', function ()
 
 require __DIR__ . '/auth.php';
 
-Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
-Route::get('/help/obs', 'HelpController@getOBSHelp');
+Route::get('/ladder-champions/{game}', [LeagueChampionsController::class, 'getLeagueChampions']);
+Route::get('/help/obs', [HelpController::class, 'getOBSHelp']);
 
 Route::middleware(['auth', 'cache.public'])->prefix('ladder')->group(function ()
 {

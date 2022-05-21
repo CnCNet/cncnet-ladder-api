@@ -7,7 +7,7 @@
             </div>
         @endif
         <p class="username text-center" style="margin-bottom:0">1vs1</p>
-        <p class="points text-center">{{ $game->scen or 'Unknown' }}</p>
+        <p class="points text-center">{{ $game->scen ?? 'Unknown' }}</p>
         <ul class="text-center list-unstyled">
             <li> Players: {{ $game->plrs }} </li>
         </ul>
@@ -51,7 +51,7 @@
                 <?php $player = $pgr->player()->first(); ?>
 
                 <span class="player">
-                    {{ $player->username or 'Unknown' }} +{{ $pgr->points or '' }}
+                    {{ $player->username ?? 'Unknown' }} +{{ $pgr->points ?? '' }}
                     @if ($pgr->won)
                         <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
                     @else

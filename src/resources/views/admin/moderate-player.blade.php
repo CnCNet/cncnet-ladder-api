@@ -32,10 +32,10 @@
 @endsection
 
 @section('content')
-    <?php $card = \App\Card::find($player->card_id); ?>
+    <?php $card = \App\Models\Card::find($player->card_id); ?>
 
     <div class="player">
-        <div class="feature-background player-card {{ $card->short or 'no-card' }}">
+        <div class="feature-background player-card {{ $card->short ?? 'no-card' }}">
             <div class="container">
 
                 <div class="player-header">
