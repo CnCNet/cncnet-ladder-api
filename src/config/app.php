@@ -182,7 +182,6 @@ return [
 
         // @TODO - Upgrade
         // App\LockedCache\LockedCacheServiceProvider::class,
-        // Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
     ],
 
     /*
