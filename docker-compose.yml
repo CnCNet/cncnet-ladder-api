@@ -30,6 +30,15 @@ services:
         networks:
             - cncnet
 
+    phpmyadmin:
+        image: phpmyadmin
+        restart: always
+        env_file: ./src/.env
+        networks:
+            - cncnet
+        ports:
+            - 8080:80
+
 networks:
     cncnet:
         driver: bridge

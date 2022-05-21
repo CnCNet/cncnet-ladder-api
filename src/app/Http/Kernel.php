@@ -21,6 +21,21 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+
+        # Custom middleware
+        'App\Http\Middleware\BlockBadBots',
+        'App\Http\Middleware\ApiMiddleware',
+
+        // @TODO: Upgrade
+        // 'App\Http\Middleware\StartLazySession',
+        // 'App\Http\Middleware\ShareErrorsLazySession',
+        'Illuminate\Session\Middleware\StartSession',
+        'Illuminate\View\Middleware\ShareErrorsFromSession',
+
+        // @TODO: Upgrade
+        // 'App\Http\Middleware\VerifyCsrfToken',
+        'App\Http\Middleware\CorsMiddleware',
+        'App\Http\Middleware\HackStatApiHeaders',
     ];
 
     /**
@@ -63,5 +78,18 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+
+        // 'auth' => 'App\Http\Middleware\Authenticate',
+        // 'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
+        'auth.basic.once' => 'App\Http\Middleware\AuthenticateOnceWithBasicAuth',
+        // 'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
+        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
+        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+        'cache.public' => 'App\Http\Middleware\CachePublicMiddleware',
+        'cache.private' => 'App\Http\Middleware\CachePrivateMiddleware',
+        'cache.long.public' => 'App\Http\Middleware\CacheLongPublicMiddleware',
+        'cache.long.private' => 'App\Http\Middleware\CacheLongPrivateMiddleware',
+        'cache.short.public' => 'App\Http\Middleware\CacheShortPublic',
+        'cache.ultra.public' => 'App\Http\Middleware\CacheUltraShortPublic'
     ];
 }

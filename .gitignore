@@ -16,3 +16,4 @@ yarn-error.log
 
 # Hide original src for now
 cncnet-api/*
+db/*

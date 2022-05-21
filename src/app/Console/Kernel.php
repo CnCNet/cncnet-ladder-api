@@ -7,6 +7,18 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    protected $commands = [
+        // @TODO - Upgrade
+        // 'App\Console\Commands\PruneRawLogs',
+        // 'App\Console\Commands\PruneOldStats',
+        // 'App\Console\Commands\UpdatePlayerCache',
+        // 'App\Console\Commands\GenerateBulkRecords',
+        // 'App\Console\Commands\UpdateIrc',
+        // 'App\Console\Commands\AprilFoolsPurge',
+        // 'App\Console\Commands\CleanupQmMatchPlayers',
+        // 'App\Console\Commands\CleanupQmMatches',
+        // 'App\Console\Commands\CleanupGameReports',
+    ];
     /**
      * Define the application's command schedule.
      *
@@ -15,7 +27,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('prune_logs')
+            ->daily();
+        $schedule->command('prune_stats')
+            ->daily();
+        $schedule->command('update_player_cache')
+            ->hourly();
+        $schedule->command('QmMatchPlayers:prune')
+            ->monthly();
+        $schedule->command('QmMatches:prune')
+            ->monthly();
+        $schedule->command('GameReports:prune')
+            ->monthly();
     }
 
     /**
@@ -25,7 +48,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }
