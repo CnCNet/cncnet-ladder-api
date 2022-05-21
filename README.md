@@ -4,6 +4,7 @@ This is the main repository for the CnCNet Ladder API.
 
 ### TODO's for upgrade
 Find all of them by searching `// @TODO - Upgrade`
+`MaxMind\Db\Reader`. Need to supply db
 
 ### Development
 

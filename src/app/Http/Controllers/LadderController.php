@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use \Carbon\Carbon;
-use App\LadderHistory;
+use App\Models\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;

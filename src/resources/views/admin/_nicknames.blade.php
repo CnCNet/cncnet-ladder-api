@@ -5,7 +5,7 @@
     $now = \Carbon\Carbon::now();
     $start = $now->startOfMonth()->toDateTimeString();
     $end = $now->endOfMonth()->toDateTimeString();
-    $history = \App\LadderHistory::where('starts', $start)
+    $history = \App\Models\LadderHistory::where('starts', $start)
         ->where('ends', $end)
         ->first();
     ?>
