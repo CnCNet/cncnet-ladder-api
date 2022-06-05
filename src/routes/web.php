@@ -4,6 +4,7 @@ use App\Http\Controllers\LadderController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LeagueChampionsController;
+use App\Http\Controllers\MapPoolController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
