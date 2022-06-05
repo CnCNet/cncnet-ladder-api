@@ -2,6 +2,9 @@
 # Read more here: https://hub.docker.com/_/php
 FROM php:8.0-fpm
 
+# Args from Docker-compose
+ARG user
+ARG uid
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -25,23 +28,13 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Setup web user
-# --groups - Specify the groups we want our new user to be added to.
-# --uid - Add a non system account (i.e not < 1000)
-# --home - Specify path for the users home directory
-RUN useradd --groups www-data --uid 1000 --home /home/cncnet cncnet
-
-# Setup composer & site folders
-# --parents - Make parent directories as needed
-# chown:owner:group - Change the group owner of our files  
-# --recursive - Operate on all files and directories recursively 
-RUN mkdir --parents /home/cncnet/.composer && \
-    mkdir /home/cncnet/site && \
-    chown --recursive cncnet:cncnet /home/cncnet
-
+# Create system user to run Composer and Artisan Commands
+RUN useradd -G www-data,root -u $uid -d /home/$user $user
+RUN mkdir -p /home/$user/.composer && \
+    chown -R $user:$user /home/$user
 
 # Set working directory
-WORKDIR /home/cncnet/site
+WORKDIR /home/$user/site
 
 # Ensure our user is not root
-USER cncnet
+USER $user

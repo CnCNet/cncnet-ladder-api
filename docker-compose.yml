@@ -3,6 +3,9 @@ version: "3.3"
 services:
     app:
         build:
+            args:
+                user: cncnet
+                uid: 1001
             context: .
             dockerfile: ./docker/Dockerfile
         env_file: ./src/.env
