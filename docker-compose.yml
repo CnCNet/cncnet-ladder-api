@@ -4,8 +4,8 @@ services:
     app:
         build:
             args:
-                user: cncnet
-                uid: 1001
+                user: ${HOST_USER}
+                uid: ${HOST_UID}
             context: .
             dockerfile: ./docker/Dockerfile
         env_file: ./src/.env

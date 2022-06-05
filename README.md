@@ -23,9 +23,11 @@ Find all of them by searching `// @TODO - Upgrade`
 
 ### Development
 
-- Copy `.env-example` to `.env`
-- Build docker image and spin up `docker-compose -f docker-dev-compose.yml build` and `docker-compose -f docker-dev-compose.yml up -d`
-- Install composer dependencies `composer install` within docker container. Enter container by using `docker exec -it <container_id> bash`
+- Copy `.env-example` to `.env` and configure docker related env.  Copy `src/.env-example` to `.env` and configure laravel related env. 
+- Build docker image: `docker-compose -f docker-dev-compose.yml build`
+- Start docker container: `docker-compose -f docker-dev-compose.yml up -d`
+- Install dependencies and run any migrations inside the app service container: `composer install && php artisan migrate`
+- Generate laravel key inside the container `php artisan key:generate`. Re-start container after changing as this will change `.env` values.
 - Open up [http://localhost](http://localhost)
 
 ### Production
