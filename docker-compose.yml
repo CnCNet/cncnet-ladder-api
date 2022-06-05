@@ -10,7 +10,7 @@ services:
             dockerfile: ./docker/Dockerfile
         env_file: ./src/.env
         volumes:
-            - ./src:/home/cncnet/site
+            - ./src:/home/${HOST_USER}/site
         networks:
             - cncnet
 
@@ -21,8 +21,11 @@ services:
             - "80:80"
             - "443:443"
         volumes:
-            - ./src:/home/cncnet/site
-            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./src:/home/${HOST_USER}/site
+            - ./docker/nginx/templates:/etc/nginx/templates/
+        environment:
+            NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".conf"
+            HOST_USER: ${HOST_USER}
         networks:
             - cncnet
 
@@ -30,9 +33,15 @@ services:
         image: mysql
         restart: always
         env_file: ./src/.env
+        volumes:
+            - cncnet-ladder-db:/var/lib/mysql
         networks:
             - cncnet
 
 networks:
     cncnet:
         driver: bridge
+
+volumes:
+    cncnet-ladder-db:
+        driver: local
