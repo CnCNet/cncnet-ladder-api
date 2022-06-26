@@ -29,7 +29,7 @@ require __DIR__ . '/auth.php';
 Route::get('/ladder-champions/{game}', [LeagueChampionsController::class, 'getLeagueChampions']);
 Route::get('/help/obs', [HelpController::class, 'getOBSHelp']);
 
-Route::middleware(['auth', 'cache.public'])->prefix('ladder')->group(function ()
+Route::middleware(['guest', 'cache.public'])->prefix('ladder')->group(function ()
 {
     Route::get('/', [LadderController::class, 'getLadders']);
     Route::get('{date}/{game}', [LadderController::class, 'getLadderIndex']);
