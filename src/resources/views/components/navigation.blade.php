@@ -183,12 +183,17 @@
                                 </li>
                             @endif
                             <li><a href="/account">Manage Account</a></li>
-                            <li><a href="/auth/logout">Sign out</a></li>
+                            <li>
+                            <form method="POST" action="/logout">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <!-- todo -->
+                                <button type="submit" class="btn btn-primary" style="background:transparent;">Logout</button>
+                            </form>
                         </ul>
                     @else
                         <ul class="dropdown-menu">
-                            <li><a href="/auth/login">Sign in</a></li>
-                            <li><a href="/auth/register">Sign up</a></li>
+                            <li><a href="/login">Sign in</a></li>
+                            <li><a href="/register">Sign up</a></li>
                         </ul>
                     @endif
                 </li>

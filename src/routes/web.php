@@ -29,9 +29,11 @@ require __DIR__ . '/auth.php';
 Route::get('/ladder-champions/{game}', [LeagueChampionsController::class, 'getLeagueChampions']);
 Route::get('/help/obs', [HelpController::class, 'getOBSHelp']);
 
-Route::middleware(['guest', 'cache.public'])->prefix('ladder')->group(function ()
+Route::middleware(['cache.public'])->prefix('ladder')->group(function ()
 {
+
     Route::get('/', [LadderController::class, 'getLadders']);
+
     Route::get('{date}/{game}', [LadderController::class, 'getLadderIndex']);
     Route::get('{date}/{game}/games', [LadderController::class, 'getLadderGames']);
     Route::get('{date}/{tier}/{game}', [LadderController::class, 'getLadderIndex']);
@@ -115,6 +117,7 @@ Route::group(['prefix' => 'admin/moderate/{ladderId}', 'middleware' => 'auth', '
     Route::post('/player/{playerId}/laundry', [AdminController::class, 'laundryService']);
     Route::post('/player/{playerId}/undoLaundry', [AdminController::class, 'undoLaundryService']);
 });
+
 
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
 {
