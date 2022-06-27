@@ -18,6 +18,7 @@ class IpAddress extends Model
         $ip = IpAddress::where('address', '=', $address)->first();
 
         // @TODO - Upgrade
+        /*
         if ($ip === null)
         {
             $reader = new Reader(config('database.mmdb.file'));
@@ -43,12 +44,14 @@ class IpAddress extends Model
             $ip->save();
             $reader->close();
         }
+        */
         return $ip;
     }
 
     public static function getID($address)
     {
-        return IpAddress::findByIP($address)->id;
+        $ip = IpAddress::findByIP($address);
+        return $ip->id ?? null;
     }
 
     public function users()
