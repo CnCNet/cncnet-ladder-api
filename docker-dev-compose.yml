@@ -35,7 +35,7 @@ services:
         env_file: ./src/.env
         volumes:
             - cncnet-ladder-db:/var/lib/mysql
-            - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql # Import latest db dump on init 
+            - ./docker/mysql/tables.sql:/docker-entrypoint-initdb.d/tables.sql # Import latest db tables on init 
         networks:
             - cncnet
 

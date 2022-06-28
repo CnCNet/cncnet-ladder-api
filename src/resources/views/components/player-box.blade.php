@@ -21,7 +21,11 @@
                 </li>
             </ul>
             @if ($side)
+                @if($game !== "yr")
+                <div class="most-used-country country-{{ $game }}-{{ strtolower($side["name"]) }}"></div>
+                @else
                 <div class="most-used-country country-{{ $game }}-{{ strtolower($side) }}"></div>
+                @endif
             @endif
         </div>
     </div>
