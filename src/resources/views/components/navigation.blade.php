@@ -176,19 +176,21 @@
                     </a>
 
                     @if (isset($user))
+                        <form method="POST" action="{{ route('logout') }}" id="logoutform">
+                            @csrf
+                        </form>
                         <ul class="dropdown-menu">
                             @if ($user->canEditAnyLadders())
                                 <li>
                                     <a href="/admin/">Admin</a>
                                 </li>
                             @endif
-                            <li><a href="/account">Manage Account</a></li>
                             <li>
-                            <form method="POST" action="/logout">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <!-- todo -->
-                                <button type="submit" class="btn btn-primary" style="background:transparent;">Logout</button>
-                            </form>
+                                <a href="/account">Manage Account</a>
+                            </li>
+                            <li>
+                                <a href="#" onclick="event.preventDefault(); document.getElementById('logoutform').submit();">Logout</a>
+                            </li>
                         </ul>
                     @else
                         <ul class="dropdown-menu">
