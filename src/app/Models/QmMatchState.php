@@ -10,7 +10,7 @@ class QmMatchState extends Model
     //
     public function state()
     {
-        return $this->belongsTo('App\StateType', 'state_type_id');
+        return $this->belongsTo('App\Models\StateType', 'state_type_id');
     }
 
     public function qmMatch()
