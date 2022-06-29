@@ -5,6 +5,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LeagueChampionsController;
 use App\Http\Controllers\MapPoolController;
+use App\Http\Controllers\ClanController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -145,7 +146,7 @@ Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], funct
     Route::get('/edit/{clanId}/main', [ClanController::class, 'editLadderClan']);
     Route::post('/edit/{clanId}', [ClanController::class, 'saveLadderClan']);
     Route::post('/edit/{clanId}/members', [ClanController::class, 'saveMembers']);
-    //Route::post('/edit/new', [ClanController::class,'saveLadderClan']);
+    Route::post('/edit/new', [ClanController::class, 'saveLadderClan']);
 
     Route::post('/invite/{clanId}', [ClanController::class, 'saveInvitation']);
     Route::post('/invite/{clanId}/process', [ClanController::class, 'processInvitation']);

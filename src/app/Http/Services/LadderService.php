@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Models\Game;
 use \Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Ladder;
@@ -123,7 +124,9 @@ class LadderService
     {
         $date = Carbon::now();
 
-        $start = $date->startOfMonth()->subMonth($limit)->toDateTimeString();
+        // $start = $date->startOfMonth()->subMonth($limit)->toDateTimeString();
+        // Upgrade
+        $start = $date->startOfMonth()->subMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
         $ladder = Ladder::where("abbreviation", "=", $cncnetGame)->first();
@@ -260,7 +263,7 @@ class LadderService
             return [];
         }
 
-        return \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
+        return Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
             ->where("ladder_history_id", "=", $history->id)
             ->where('game_reports.duration', '<=', 3)
             ->orderBy("games.id", "DESC")
