@@ -87,7 +87,6 @@ class AccountController extends Controller
             'user',
             'players',
             'activeHandles',
-            'clan',
             'clanPlayers',
             'primaryPlayer',
             'invitations'
