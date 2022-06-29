@@ -17,8 +17,6 @@ class IpAddress extends Model
 
         $ip = IpAddress::where('address', '=', $address)->first();
 
-        // @TODO - Upgrade
-        /*
         if ($ip === null)
         {
             $reader = new Reader(config('database.mmdb.file'));
@@ -44,7 +42,7 @@ class IpAddress extends Model
             $ip->save();
             $reader->close();
         }
-        */
+
         return $ip;
     }
 
