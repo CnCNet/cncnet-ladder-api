@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use MaxMind\Db\Reader;
 
@@ -24,6 +25,8 @@ class IpAddress extends Model
 
             $ip = new IpAddress;
             $ip->address = $address;
+            $ip->city = "";
+            $ip->country = "";
             if ($mmData !== null)
             {
                 try
@@ -32,7 +35,7 @@ class IpAddress extends Model
                         $ip->country = $mmData["country"]["iso_code"];
 
                     if (array_key_exists("city", $mmData))
-                        $ip->city = $mmData["city"]["names"]["en"];
+                        $ip->city = $mmData["city"]["names"]["en"] ?? "";
                 }
                 catch (Exception $e)
                 {

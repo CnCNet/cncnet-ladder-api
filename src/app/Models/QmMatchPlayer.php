@@ -35,7 +35,7 @@ class QmMatchPlayer extends Model
 
     public function qEntry()
     {
-        return $this->hasOne('App\QmQueueEntry');
+        return $this->hasOne('App\Models\QmQueueEntry');
     }
 
     public function ipAddress()

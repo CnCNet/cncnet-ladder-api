@@ -3,18 +3,15 @@
 namespace App\Commands;
 
 use App\Commands\Command;
-
+use App\Models\Game;
+use App\Models\QmMatch;
+use App\Models\QmQueueEntry;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Bus\SelfHandling;
-use Illuminate\Contracts\Queue\ShouldBeQueued;
-use DB;
-use Carbon\Carbon;
-use App\QmMatch;
-use App\QmMatchPlayer;
-use App\QmQueueEntry;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\DB;
 
-class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
+class FindOpponent extends Command implements ShouldQueue
 {
 
     use InteractsWithQueue, SerializesModels;
@@ -202,10 +199,12 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                     ->limit($reduceMapRepeats)
                     ->get();
 
-                $recentMaps = $playerGameReports->map(function ($item) {
+                $recentMaps = $playerGameReports->map(function ($item)
+                {
                     return $item->game->map;
                 });
-                $recentMaps = $recentMaps->filter(function ($value) {
+                $recentMaps = $recentMaps->filter(function ($value)
+                {
                     return !is_null($value);
                 });
 
@@ -226,10 +225,12 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                         ->limit($reduceMapRepeats)
                         ->get();
 
-                    $recentMaps = $oppPlayerGames->map(function ($item) {
+                    $recentMaps = $oppPlayerGames->map(function ($item)
+                    {
                         return $item->game->map;
                     });
-                    $recentMaps = $recentMaps->filter(function ($value) {
+                    $recentMaps = $recentMaps->filter(function ($value)
+                    {
                         return !is_null($value);
                     });
 
@@ -250,13 +251,13 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
             $randomMapIndex = mt_rand(0, count($common_qm_maps) - 1);
 
             // Create the qm_matches db entry
-            $qmMatch = new \App\QmMatch();
+            $qmMatch = new QmMatch();
             $qmMatch->ladder_id = $qmPlayer->ladder_id;
             $qmMatch->qm_map_id = $common_qm_maps[$randomMapIndex]->id;
             $qmMatch->seed = mt_rand(-2147483647, 2147483647);
 
             // Create the Game
-            $game = \App\Game::genQmEntry($qmMatch);
+            $game = Game::genQmEntry($qmMatch);
             $qmMatch->game_id = $game->id;
             $qmMatch->save();
 
