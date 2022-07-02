@@ -6,18 +6,6 @@ This is the main repository for the CnCNet Ladder API.
 Find all of them by searching `// @TODO - Upgrade`
 
 - `App\LockedCache\LockedCacheServiceProvider` needs re-adding with Laravel 9
-- Kernel commands need re-aligning to Laravel 9 
-```
-// 'App\Console\Commands\PruneRawLogs',
-// 'App\Console\Commands\PruneOldStats',
-// 'App\Console\Commands\UpdatePlayerCache',
-// 'App\Console\Commands\GenerateBulkRecords',
-// 'App\Console\Commands\UpdateIrc',
-// 'App\Console\Commands\AprilFoolsPurge',
-// 'App\Console\Commands\CleanupQmMatchPlayers',
-// 'App\Console\Commands\CleanupQmMatches',
-// 'App\Console\Commands\CleanupGameReports',
-```
 - SCSS source needs re-adding and utilised with Laravel mix.
 
 ### Development
