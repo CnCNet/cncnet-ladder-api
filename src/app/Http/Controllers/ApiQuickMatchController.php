@@ -10,12 +10,14 @@ use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
 use \App\Models\PlayerActiveHandle;
 use \Carbon\Carbon;
-use DB;
 use Log;
-use \App\Commands\FindOpponent;
-use \App\QmQueueEntry;
+use App\Models\QmMap;
+use App\Models\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
 use \App\Models\SpawnOptionType;
+use App\Models\StateType;
+use Illuminate\Support\Facades\DB;
+use \App\Commands\FindOpponent;
 
 class ApiQuickMatchController extends Controller
 {
@@ -70,7 +72,7 @@ class ApiQuickMatchController extends Controller
     public function mapListRequest(Request $request, $ladderAbbrev = null)
     {
         //$qmMaps = App\Models\QmMap::where('ladder_id', $this->ladderService->getLadderByGame($ladderAbbrev)->id)->get();
-        return App\Models\QmMap::findMapsByLadder($this->ladderService->getLadderByGame($ladderAbbrev)->id);
+        return QmMap::findMapsByLadder($this->ladderService->getLadderByGame($ladderAbbrev)->id);
     }
 
     public function sidesListRequest(Request $request, $ladderAbbrev = null)
@@ -191,7 +193,7 @@ class ApiQuickMatchController extends Controller
                                 $qmState = new \App\Models\QmMatchState;
                                 $qmState->player_id = $player->id;
                                 $qmState->qm_match_id = $qmMatch->id;
-                                $qmState->state_type_id = \App\StateType::findByName($request->status)->id;
+                                $qmState->state_type_id = StateType::findByName($request->status)->id;
                                 $qmState->save();
 
                                 if ($request->peers !== null)

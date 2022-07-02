@@ -8,16 +8,15 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     protected $commands = [
-        // @TODO - Upgrade
-        // 'App\Console\Commands\PruneRawLogs',
-        // 'App\Console\Commands\PruneOldStats',
-        // 'App\Console\Commands\UpdatePlayerCache',
-        // 'App\Console\Commands\GenerateBulkRecords',
-        // 'App\Console\Commands\UpdateIrc',
-        // 'App\Console\Commands\AprilFoolsPurge',
-        // 'App\Console\Commands\CleanupQmMatchPlayers',
-        // 'App\Console\Commands\CleanupQmMatches',
-        // 'App\Console\Commands\CleanupGameReports',
+        'App\Console\Commands\PruneRawLogs',
+        'App\Console\Commands\PruneOldStats',
+        'App\Console\Commands\UpdatePlayerCache',
+        'App\Console\Commands\GenerateBulkRecords',
+        'App\Console\Commands\UpdateIrc',
+        'App\Console\Commands\AprilFoolsPurge',
+        'App\Console\Commands\CleanupQmMatchPlayers',
+        'App\Console\Commands\CleanupQmMatches',
+        'App\Console\Commands\CleanupGameReports',
     ];
     /**
      * Define the application's command schedule.
