@@ -242,7 +242,7 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer = new \App\Models\QmMatchPlayer();
                     $qmPlayer->player_id = $player->id;
                     $qmPlayer->ladder_id = $player->ladder_id;
-                    $qmPlayer->map_bitfield = $request->map_bitfield;
+                    $qmPlayer->map_bitfield = 0; // $request->map_bitfield; - not used anymore
                     $qmPlayer->waiting = true;
 
                     // color, chosen_side, actual_side and saving is done in the next if-statement

@@ -98,7 +98,7 @@ class FindOpponent extends Command implements ShouldQueue
         }
         $rating = $player->rating->rating;
         // map_bitfield is an old and unused bit of code
-        $qmPlayer->map_bitfield = 0xffffffff;
+        $qmPlayer->map_bitfield = 0; // 0xffffffff;
 
         // This will throw an exception when a not null field is null
         $qmPlayer->save();
