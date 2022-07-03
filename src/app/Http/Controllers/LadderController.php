@@ -83,7 +83,8 @@ class LadderController extends Controller
         $players = PlayerCache::where('ladder_history_id', '=', $history->id)
             ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
             ->where('player_name', 'like', '%' . $request->search . '%')
-            ->orderBy('points', 'desc')->paginate(45);
+            ->orderBy('points', 'desc')
+            ->paginate(45);
 
         $data = array(
             "stats" => $this->statsService->getQmStats($request->game),

@@ -271,7 +271,7 @@
 
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                {!! $players->render() !!}
+                                {{ $players->links() }}
                             </div>
                         </div>
                     </div>
