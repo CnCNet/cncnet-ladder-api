@@ -20,6 +20,7 @@ use App\Http\Controllers\ApiIrcController;
 |
 */
 
+Route::get("test", [ApiLadderController::class, "test"]);
 
 Route::group(['prefix' => 'v1/auth/', 'middleware' => 'auth.basic.once'], function ()
 {

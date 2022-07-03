@@ -12,6 +12,7 @@ use \Carbon\Carbon;
 use Log;
 use Illuminate\Support\Facades\Cache;
 use \App;
+use App\Models\Ladder;
 
 class ApiLadderController extends Controller
 {
@@ -29,6 +30,20 @@ class ApiLadderController extends Controller
         $this->gameService = new GameService();
         $this->playerService = new PlayerService();
         $this->authService = new AuthService();
+    }
+
+    public function test()
+    {
+        $ladder = Ladder::find(1);
+        $types = $ladder->countableGameObjects->groupBy("heap_name");
+        foreach ($types as $heapTypes)
+        {
+            foreach ($heapTypes as $heapType)
+            {
+                dd($heapType->heap_name);
+            }
+        }
+        return $ladder->countableGameObjects()->groupBy("heap_name")->get();
     }
 
     public function pingLadder(Request $request)

@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 
+use Exception;
+
 class GameService
 {
     private $maxPlayers;
@@ -36,6 +38,7 @@ class GameService
         $gameReport->valid = true;
         $gameReport->fps = 0;
         $gameReport->oos = false;
+        $gameReport->finished = false; // upgrade
         $gameReport->save();
 
         if ($game->game_report_id === null)
@@ -274,6 +277,7 @@ class GameService
     public function saveRawStats($result, $gameId, $ladderId)
     {
         $raw = new \App\Models\GameRaw();
+        $raw->hash = 0;
         try
         {
             $raw->packet = json_encode($result);
@@ -359,25 +363,28 @@ class GameService
             }
         }
 
-        $types = $ladder->countableGameObjects()->groupBy("heap_name")->get();
+        $types = $ladder->countableGameObjects->groupBy("heap_name");
 
-        foreach ($types as $type)
+        foreach ($types as $heapTypes)
         {
-            $tag = $type->heap_name;
-
-            for ($i = 0; $i < 8; $i++)
+            foreach ($heapTypes as $type)
             {
-                if (isset($result["$tag$i"]))
-                {
-                    $raw = base64_decode($result["$tag$i"]["raw"]);
-                    $length = $result["$tag$i"]["length"];
+                $tag = $type->heap_name;
 
-                    for ($j = 0, $t = 0; $j < $length; $j += 4, ++$t)
+                for ($i = 0; $i < 8; $i++)
+                {
+                    if (isset($result["$tag$i"]))
                     {
-                        $count = unpack("N", substr($raw, $j, 4))[1];
-                        if ($count > 0)
+                        $raw = base64_decode($result["$tag$i"]["raw"]);
+                        $length = $result["$tag$i"]["length"];
+
+                        for ($j = 0, $t = 0; $j < $length; $j += 4, ++$t)
                         {
-                            $result["$tag$i"]["counts"][$t] = $count;
+                            $count = unpack("N", substr($raw, $j, 4))[1];
+                            if ($count > 0)
+                            {
+                                $result["$tag$i"]["counts"][$t] = $count;
+                            }
                         }
                     }
                 }
