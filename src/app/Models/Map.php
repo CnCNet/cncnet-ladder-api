@@ -12,7 +12,7 @@ class Map extends Model
 
     public function qmMaps()
     {
-        return $this->hasMany('App\QmMap');
+        return $this->hasMany('App\Models\QmMap');
     }
 
     public function ladder()

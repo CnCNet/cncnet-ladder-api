@@ -15,7 +15,7 @@ class QmMatch extends Model
 
     public function map()
     {
-        return $this->belongsTo('App\QmMap', 'qm_map_id');
+        return $this->belongsTo('App\Models\QmMap', 'qm_map_id');
     }
 
     public function ladder()
