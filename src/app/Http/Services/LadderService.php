@@ -414,6 +414,11 @@ class LadderService
                 $pc->ladder_history_id = $history->id;
                 $pc->player_id = $player->id;
                 $pc->player_name = $player->username;
+                $pc->points = 0;
+                $pc->wins = 0;
+                $pc->games = 0;
+                $pc->percentile = 0;
+                $pc->fps = 0;
                 $pc->save();
             }
 
