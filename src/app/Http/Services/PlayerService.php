@@ -27,6 +27,7 @@ class PlayerService
             $player->username = $username;
             $player->user_id = $user->id;
             $player->ladder_id = $ladderId;
+            $player->card_id = 0;
             $player->save();
 
             $prating = new \App\Models\PlayerRating();
