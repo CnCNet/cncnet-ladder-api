@@ -72,6 +72,8 @@ class GameService
                     $reporter = $playerGameReports[$id];
 
                 $playerGameReports[$id]->player_id = $playerHere->id;
+                $playerGameReports[$id]->local_id = 0; // upgrade
+                $playerGameReports[$id]->local_team_id = 0; // upgrade
                 $playerGameReports[$id]->save();
 
                 $playerStats[$id] = new \App\Models\Stats2;
