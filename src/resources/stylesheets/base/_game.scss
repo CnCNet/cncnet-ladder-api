@@ -1,0 +1,394 @@
+﻿/* Game Detail */
+.game .game-statistics
+{
+    padding: 0;
+    position: relative;
+}
+
+.game .feature-background
+{
+    padding-bottom: 0!important;
+    color: #fff;
+    font-size: 15px;
+}
+
+.game-details
+{
+    background: url(../images/textures/dark-pattern.jpg);
+    margin: 0 auto;
+}
+
+.game .rank
+{
+    font-size: 70px;
+    font-weight: 600;
+}
+
+.game .rank span
+{
+    font-size: 65%;
+    letter-spacing: -1px;
+    font-weight: 500;
+}
+
+.game .dark-texture:before
+{
+    background: none;
+}
+
+h3.game-intro a
+{
+    color: #fff;
+
+    &:hover {
+        color: $brand-primary;
+    }
+}
+
+h3.game-intro > span:first-child:after
+{
+    content: " vs ";
+    font-size: 42px;
+    font-weight: bold;
+    padding: 15px;
+    text-transform: uppercase;
+}
+
+.profile-link,
+.profile-link:hover
+{
+    display: block;
+    text-decoration: none;
+}
+
+.profile-detail
+{
+    position: relative;
+    background: #080808;
+    padding: 30px 50px;
+    border-radius: 5px;
+    margin: 15px 0;
+    border: 1px solid #060606;
+}
+
+.profile-stats-breakdown
+{
+    position: relative;
+    background: #080808;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 15px 0;
+}
+
+.player-colour
+{
+    height: 15px;
+    margin-top: -20px;
+    margin-bottom: -20px;
+}
+
+.stats-row
+{
+    padding: 20px 0;
+    border-bottom: 1px solid #151515;
+}
+
+.row.stats-row h4
+{
+    color: #a2a2a2;
+}
+
+.stats-box
+{
+    min-height: 63px;
+}
+
+.profile-listing .rank, .profile-detail .rank
+{
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 54px;
+    color: rgb(255, 255, 255);
+}
+
+.username
+{
+    color: rgb(255, 255, 255);
+    font-weight: bold;
+}
+
+.profile-detail .points
+{
+    color: rgb(255, 255, 255);
+}
+
+.player-panel-blue
+{
+    background: linear-gradient(135deg, #000c2d 1%, #001266 51%, #001b7c 100%);
+    border: 1px solid #0036d8;
+}
+
+.player-panel-red
+{
+    background: linear-gradient(135deg, #870000 0%, #b20000 51%, #6b0001 100%);
+    border: 1px solid #ce0000;
+}
+
+.player-panel-orange
+{
+    background: linear-gradient(135deg, #ed8200 0%, #ed6600 51%, #c96100 100%);
+    border: 1px solid #ff7000;
+}
+
+.player-panel-yellow
+{
+    background: linear-gradient(135deg, #ffed51 1%, #ffe500 51%, #fcde00 100%);
+    border: 1px solid #ffe400;
+}
+
+.player-panel-yellow h3,
+.player-panel-yellow p
+{
+    color: #000;
+}
+
+.player-panel-teal
+{
+    background: linear-gradient(135deg, #00c9f2 1%, #00b1dd 51%, #008dce 100%);
+}
+
+.player-panel-purple
+{
+    background: linear-gradient(135deg, #3000f4 1%, #7500ea 51%, #8500f2 100%);
+}
+
+.player-panel-pink
+{
+    background: linear-gradient(135deg, #f74ff7 1%, #af00bf 51%, #b2009d 100%);
+    border: 1px solid #e900f3;
+}
+
+.faction
+{
+    position: absolute;
+    background-repeat: no-repeat;
+    height: 100%;
+    bottom: 0;
+    top: 0;
+    background-size: 50%;
+}
+
+.faction-left
+{
+    background-position: center center;
+    left: 30px;
+}
+
+.faction-right
+{
+    background-position: center center;
+    right: 30px;
+}
+
+.faction-great,
+.faction-america,
+.faction-korea,
+.faction-france,
+.faction-germany,
+.faction-great-britain
+{
+    background-image: url(../images/hud/allied.png);
+    width: 200px;
+}
+
+.faction-iraq,
+.faction-cuba,
+.faction-russia,
+.faction-libya
+{
+    background-image: url(../images/hud/soviet.png);
+    width: 150px;
+}
+
+.faction-yuri
+{
+    background-image: url(../images/hud/yuri.png);
+    width: 150px;
+}
+
+.ra .faction-russia,
+.ra .faction-uss,
+.ra .faction-ita,
+.ra .faction-ukraine
+{
+    background-image: url(../images/hud/ra_soviet.png);
+    width: 140px;
+}
+
+.ra .faction-spain,
+.ra .faction-england,
+.ra .faction-germany,
+.ra .faction-france,
+.ra .faction-greece
+{
+     background-image: url(../images/hud/ra_allies.png);
+     width: 140px;
+}
+
+.faction-gdi
+{
+     background-image: url(../images/hud/ts_gdi.png);
+     width: 150px;
+}
+
+.faction-nod
+{
+     background-image: url(../images/hud/ts_nod.png);
+     width: 150px;
+}
+
+/* Extra small devices (phones, less than 768px) */
+/* No media query since this is the default in Bootstrap */
+/* Small devices (tablets, 768px and up) */
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px)
+{
+    .faction
+    {
+        background-size: auto;
+    }
+    .faction-great,
+    .faction-america,
+    .faction-korea,
+    .faction-france,
+    .faction-germany,
+    .faction-iraq,
+    .faction-cuba,
+    .faction-russia,
+    .faction-libya,
+    .faction-germany,
+    .faction-uss,
+    .faction-ita,
+    .faction-spa,
+    .faction-eng,
+    .faction-ger,
+    .faction-fra,
+    .faction-gre,
+    .faction-gdi,
+    .faction-nod
+    {
+        background-size: 100%;
+    }
+}
+
+.country
+{
+  position: absolute;
+  right: 30px;
+  bottom: 25px;
+  font-size: 45px;
+}
+
+.game .game-intro
+{
+    position: relative;
+}
+
+.game .player-vs
+{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+}
+
+.game .player-vs h3
+{
+    margin: 0;
+}
+
+.game .player-vs .game-intro
+{
+    width: 100%;
+}
+
+.game .player-vs .vs
+{
+    width: 100%;
+    text-align: center;
+    color: #4e4e4e;
+    font-size: 31px;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.game .game-status-icon
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    i { font-size: 35px;}
+}
+
+.game .faction-left,
+.game .faction-right
+{
+    width: 13%;
+}
+
+.game .game-intro
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.game .vs
+{
+    animation: vs-flash 6s forwards infinite;
+}
+
+// #dunno bored
+@keyframes vs-flash
+{
+    0%{ opacity: 0.3;}
+    50% { opacity: 1; color: #fff;}
+    100% {  opacity: 0.3;}
+}
+
+@media(min-width: 768px)
+{
+    .game .player-vs
+    {
+        display: flex;
+        justify-content: space-evenly;
+        flex-direction: row;
+        width: 70%;
+        margin: 0 auto;
+        max-width: 100%;
+    }
+
+    .game .player-vs .game-intro
+    {
+        width: 50%;
+    }
+
+    .game .player-vs .vs
+    {
+        width: 5%;
+    }
+}
+
+.game-details-list
+{
+    margin-top: 20px;
+    font-size: 17px;
+}
+
+.game-details-list li
+{
+    padding: 4px 0;
+}

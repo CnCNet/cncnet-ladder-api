@@ -1,0 +1,190 @@
+﻿/* Player Detail */
+.player .player-statistics
+{
+    padding: 0;
+}
+
+.player .dark-texture:before
+{
+    background: none;
+}
+
+.player .feature-background
+{
+    background: #000000;
+    padding-bottom: 25px;
+    color: #fff;
+    font-size: 15px;
+
+    //player cards
+    background-repeat: no-repeat;
+    background-position: top right;
+}
+
+.player .feature-footer-background
+{
+    background: #060606;
+}
+
+.profile
+{
+    background: url(../images/textures/dark-pattern.jpg);
+    padding: 15px;
+    margin: 0 auto;
+}
+
+.player .badge-2x
+{
+    margin: 0 auto;
+}
+
+.player .rank
+{
+    margin-top: 0;
+    font-size: 48px;
+    font-weight: 600;
+}
+
+.player .rank span
+{
+    font-size: 65%;
+    letter-spacing: -1px;
+    font-weight: 500;
+}
+
+.player .player-badge img
+{
+    height: 80%;
+    margin: 0 auto;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+}
+
+.player .username
+{
+    font-size: 48px;
+}
+
+// Main header
+.player-header
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.player-header .player-stats
+{
+    order: 1;
+    width: 100%;
+    text-align: center;
+}
+
+.player-header .player-alerts
+{
+    order: 1;
+    width: 100%;
+}
+
+.player-header .player-rank
+{
+    order: 0;
+    width: 100%;
+}
+
+.player-footer .player-achievements h5
+{
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 10px;
+    color: #7d7d7d;
+}
+
+.player-achievements .achievements-list
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.player-achievements .achievement
+{
+    width: 100px;
+    text-align: center;
+}
+
+.player-achievements .title
+{
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-align: center;
+    color: silver;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.player-header .player-stats,
+.player-header .player-alerts,
+.player-header .player-badges
+{
+    margin-top: 22px;
+}
+
+.player-badges .player-badge p.lead
+{
+    color: #565656;
+    font-size: 16px;
+    text-transform: uppercase;
+    padding: 15px 0;
+}
+
+
+
+@media(min-width: 768px)
+{
+    .player-header
+    {
+        flex-direction: row;
+    }
+
+    .player-header .player-stats
+    {
+        order: 0;
+        width: 80%;
+        align-self: center;
+        text-align: left;
+    }
+
+    .player-header .player-alerts
+    {
+        order: 0;
+        width: 80%;
+        align-self: center;
+        text-align: left;
+    }
+
+    .player-header .player-badges
+    {
+        order: 1;
+        width: 20%;
+    }
+
+    .player-footer
+    {
+        display: flex;
+    }
+
+    .player-footer .player-dials
+    {
+        width: 60%;
+    }
+
+    .player-footer .player-achievements
+    {
+        width: 40%;
+        justify-content: center;
+        align-self: center;
+    }
+}

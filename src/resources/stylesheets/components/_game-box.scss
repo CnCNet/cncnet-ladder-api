@@ -1,0 +1,164 @@
+﻿$lostColour: #03bcd4;
+$wonColour: #00ec00;
+$drawColour: #e96b1e;
+$dcColour: #b50000;
+
+.game-box-link:hover 
+{
+    text-decoration: none;
+}
+
+.game-box 
+{
+    border-radius: 5px;
+    border: 2px solid transparent;
+}
+
+.game-box .preview
+{
+    position: relative;
+    height: 180px;
+    background-repeat: no-repeat;
+    background-color: #000;
+    border-radius: 5px 5px 0 0;
+    transition: all 4s;
+    transition-delay: 0.1s;
+}
+
+.game-box .preview:hover 
+{
+    background-position: 50% 100%;
+}
+
+.game-box .preview .status 
+{
+    position: absolute;
+    background: #000;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: table;
+    text-align: center;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.game-box .preview .status:before 
+{
+    font-family: FontAwesome;
+    display: table-cell;
+    vertical-align: middle;
+}
+
+.game-box .preview .status-lost:before
+{
+    content: "\f185";
+    color: $lostColour;
+}
+
+.game-box .preview .status-won:before
+{
+    content: "\f091";
+    color: $wonColour;
+}
+
+.game-box .preview .status-draw:before
+{
+    content: "\f2b5";
+    color: $wonColour;
+}
+
+.game-box .preview .status-dc:before
+{
+    content: "\f1e6";
+    color: $dcColour;
+}
+
+.game-box .preview .status-live:before
+{
+    content: "\f1e8";
+    color: $wonColour;
+}
+
+.game-box .preview .status-progress:before
+{
+    content: "\f1e8";
+    color: #636363;
+}
+
+.game-box .details
+{
+    padding: 15px;
+    background: #000 url(/images/textures/pattern-repeat.png);
+}
+
+.game-box .details .title,
+.game-box .details .status
+{
+    font-weight: 600;
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.game-box .details .status
+{
+    font-size: 12px;
+    color: #797979;
+}
+
+.game-box .details .status.online 
+{
+    color: #00ec00;
+}
+
+.game-box .footer 
+{
+    position: relative;
+    background: #000;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    border-radius: 0 0 5px 5px;
+}
+
+.game-box .footer .won .points 
+{
+    font-weight: 600;
+}
+
+.game-box .footer .lost .points 
+{
+    color: $lostColour;
+    font-weight: 600;
+}
+
+.game-box .footer .vs 
+{
+    margin: 0;
+    font-size: 21px;
+    color: #fff;
+    font-weight: 600;
+    font-style: italic;
+}
+
+.game-box .faction-right.recent-games-faction 
+{
+    position: absolute;
+    background-size: 25%;
+    background-position: bottom right;
+    right: 10px;
+    bottom: 10px;
+    top: auto;
+}
+
+.game-box .faction-left.recent-games-faction 
+{
+    float: left;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    background-size: 25%;
+    background-position: left top;
+}

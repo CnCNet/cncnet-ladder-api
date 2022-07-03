@@ -11,8 +11,12 @@ const mix = require('laravel-mix');
  |
  */
 
-mix.js('resources/js/app.js', 'public/js').postCss('resources/css/app.css', 'public/css', [
-    require('postcss-import'),
-    require('tailwindcss'),
-    require('autoprefixer'),
-]);
+mix.sass('resources/stylesheets/ladder.scss', 'public/css')
+    .postCss('public/css/ladder.css', 'public/css', [
+        require('postcss-import'),
+        require('autoprefixer'),
+    ])
+    .options({
+        processCssUrls: false
+    });
+

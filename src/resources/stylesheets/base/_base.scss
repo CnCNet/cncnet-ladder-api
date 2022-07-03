@@ -1,0 +1,565 @@
+﻿$brand-primary: #0068d2;
+$brand-secondary: #000;
+
+//
+// Breakpoints
+// Example use
+// @media (min-width: $sm-width) { }
+
+$sm-width: 567px;
+$md-width: 768px;
+$lg-width: 992px;
+$xl-width: 1200px;
+
+$sm-height: 568px;
+$md-height: 731px;
+$lg-height: 812px;
+$xl-height: 1024px;
+
+
+a, .btn-link {
+    color: $brand-primary;
+    text-decoration: none;
+
+    &:hover {
+        color: lighten($brand-primary, 5%);
+    }
+}
+
+a:hover, a:focus
+{
+    text-decoration: none;
+}
+
+.btn-transparent
+{
+    background: none;
+    border: none;
+    outline: 0;
+
+    &:hover, &:focus, &:active,
+    &:active:hover,
+    &:active:focus,
+    &:focus:hover
+    {
+        background: none;
+        border: none;
+        outline: 0;
+    }
+}
+
+.filter li a,
+.filter .dropdown-menu
+{
+    color: #afafaf;
+
+    li a:hover,
+    &:hover
+    {
+        color: #fff;
+        background-color: #000000;
+    }
+}
+
+.filter .dropdown-menu,
+.filter .open
+{
+    background-color: rgba(2, 2, 2, 0.96);
+    width: 100%;
+    border-radius: 0px;
+    border: 1px solid #000;
+    margin-top: -10px;
+    border-top: 1px solid #6200ff;
+}
+
+.btn-group.filter.open .btn
+{
+    background-color: #000000;
+    border-color: #000000;
+}
+
+.filter .btn-group.open .dropdown-toggle
+{
+    background: black;
+    padding: 15px;
+}
+
+.btn-primary
+{
+    font-size: 17px;
+    border-radius: 2px;
+
+    background: $brand-primary;
+    border-color: $brand-primary;
+
+    &:hover, &:focus, &:active,
+    &:active:hover,
+    &:active:focus,
+    &:focus:hover
+    {
+        background: darken($brand-primary, 2%);
+        border-color: darken($brand-primary, 2%);
+    }
+}
+
+.btn-secondary
+{
+    @extend .btn-primary;
+    background: $brand-secondary;
+    border-color: $brand-secondary;
+    color: #fff;
+
+    &:hover, &:focus, &:active,
+    &:active:focus,
+    &:active:hover,
+    &:focus:hover
+    {
+        background: darken($brand-secondary, 10%);
+        border-color: darken($brand-secondary, 10%);
+    }
+}
+
+.btn-tertiary
+{
+    @extend .btn-primary;
+    background: transparent;
+    border-color: #fff;
+    color: #fff;
+
+    &:hover, &:focus, &:active,
+    &:active:focus,
+    &:active:hover,
+    &:focus:hover
+    {
+        background: transparent;
+        border-color: $brand-primary;
+        color: $brand-primary;
+    }
+}
+
+
+.btn-transparent
+{
+    color: white;
+    text-transform: uppercase;
+    font-size: 15px;
+}
+
+.btn-transparent i
+{
+    margin-left: -20px;
+}
+
+.previous-link
+{
+    color: #fff;
+
+    &:hover,
+    &:focus
+    {
+        text-decoration: none;
+        color: #007dff;
+    }
+}
+
+h1 small
+{
+    display: block;
+    font-size: 19px;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+
+.date
+{
+    text-transform: uppercase;
+    font-size: 14px;
+    color: #2d2d2d;
+    font-weight: bold;
+}
+
+.rank
+{
+    padding-bottom: 15px;
+}
+
+.rank-title
+{
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.rank-title.gold
+{
+    color: #ffb300;
+}
+
+.rank-title.silver
+{
+    color: silver;
+}
+
+.rank-title.bronze
+{
+    color: brown;
+}
+
+.rank-title.normal
+{
+    color: #505050;
+}
+
+.table-hover > tbody > tr
+{
+    transition: all 0.3s;
+}
+
+.table-hover > tbody > tr:hover
+{
+    background-color: #0e0e0e;
+}
+
+.table > thead > tr > th, .table > thead > tr > td, .table > tbody > tr > th, .table > tbody > tr > td, .table > tfoot > tr > th, .table > tfoot > tr > td
+{
+    border-top: 1px solid #252525;
+}
+
+.badge-winpercent
+{
+    background-color: #00a300;
+}
+
+.panel.panel-default
+{
+    background: #151515;
+}
+
+.panel-default > .panel-heading
+{
+    background-color: #151515;
+    padding: 15px;
+    color: white;
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.game-detail
+{
+    margin-top: -50px;
+    position: relative;
+    z-index: 1;
+}
+
+.game-detail .game-details
+{
+    width: 500px;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.game-list
+{
+    z-index: 0;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.points
+{
+    color: #24f900;
+}
+
+
+
+h3.game-intro > span:first-child:after
+{
+    content: " vs ";
+    font-size: 43px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 15px
+}
+
+h3.game-intro
+{
+    margin-top: 0;
+    padding: 15px 0;
+    font-size: 25px;
+}
+
+.recent-games
+{
+    margin-bottom: 15px;
+}
+
+.recent-games .profile-listing
+{
+    padding: 20px;
+}
+
+.recent-games h3.game-intro
+{
+    font-size: 15px;
+    padding: 5px 0;
+    text-align: center;
+    height: 100px;
+}
+
+.recent-games h3.game-intro > span:first-child:after
+{
+    font-size: 25px;
+    padding: 5px;
+    display: block;
+    width: 100%;
+    margin-left: -5px;
+}
+
+.recent-games .feature-map
+{
+    margin-bottom: 15px;
+    margin-top: 0;
+    height: 150px;
+}
+
+.recent-games .feature-map img
+{
+    max-width: 100%;
+    height: 120px;
+}
+
+.recent-games .points
+{
+    font-size: 15px;
+}
+
+.game-profile
+{
+    position: relative;
+    background: #0a0a0a;
+    padding: 20px;
+    margin: 0 auto;
+    border-bottom: 5px solid #101010;
+    border-radius: 5px;
+}
+
+.feature-map img
+{
+    max-width: 80%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.ladder-cover
+{
+    position: relative;
+    height: 300px;
+    background-repeat: no-repeat;
+    background-position: 80%;
+    width: 100%;
+    display: table;
+    border-radius: 4px;
+    border: 1px solid transparent;
+}
+
+.badge-cover
+{
+    position: absolute;
+    text-align: center;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+}
+
+.badge-cover p
+{
+    color: #fff;
+}
+
+.ladder-cover .details
+{
+    vertical-align: middle;
+    display: table-cell;
+    text-align: right;
+    width: 100%;
+    color: #fff;
+}
+
+.ladder-cover .type
+{
+    width: 100%;
+    margin-left: auto;
+    text-align: center;
+}
+
+.ladder-cover .type .lead
+{
+    font-size: 47px;
+    color: #fff;
+    font-family: Roboto;
+    line-height: 1.0;
+}
+
+.ladder-link
+{
+    display: block;
+    text-decoration: none;
+    color: #fff;
+
+    &:hover, &:focus
+    {
+        color: #fff;
+        text-decoration: none;
+    }
+}
+
+.feature .header
+{
+    padding: 15px 0;
+    margin-bottom: 25px;
+}
+
+.recent-game
+{
+    margin-bottom: 15px;
+}
+
+.pagination > li > a, .pagination > li > span
+{
+    position: relative;
+    float: left;
+    padding: 15px;
+    line-height: 1.6;
+    text-decoration: none;
+    color: #0068d2;
+    background-color: #000;
+    border: 1px solid #131313;
+    margin-left: -1px;
+}
+
+.pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus,
+.pagination > li > a:hover, .pagination > li > a:focus, .pagination > li > span:hover, .pagination > li > span:focus
+{
+    z-index: 2;
+    color: #c5c5c5;
+    background-color: #0a0a0a;
+    border-color: #0a0a0a;
+}
+
+.pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
+    z-index: 3;
+    color: #fff;
+    background-color: #0068d2;
+    border-color: #0068d2;
+    cursor: default;
+}
+
+.modal-content
+{
+    background: #000;
+    box-shadow: 0 5px 15px rgba(0, 132, 239, 0.26);
+    border: 1px solid rgba(0, 140, 255, 0.39);
+}
+
+.modal-header
+{
+    border-color: #004077;
+}
+
+hr
+{
+    border-top: 1px solid #004077;
+}
+
+.tier-league-cards h1
+{
+    font-size: 54px;
+    line-height: 0.9;
+}
+
+.tier-league-cards h1 strong
+{
+    display: block;
+}
+
+@keyframes animateCountDown
+{
+    0%{
+        background-color: #002982f5;
+    }
+    25% {
+        background-color: #530082f5;
+    }
+    50%{
+        background-color: #821b00f5;
+    }
+    75%{
+        background-color: #ff00c8bf;
+    }
+    100%{
+        background-color: #002982f5;
+    }
+}
+
+.countdown
+{
+    transition: ease-in 350ms;
+    animation: animateCountDown 10s forwards infinite;
+    background-color: #002982f5;
+    padding: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    @media(min-width: $md-width)
+    {
+        flex-direction: row;
+    }
+
+    opacity: 1;
+    visibility: visible;
+    height: auto;
+}
+
+.countdown-hidden
+{
+    opacity: 0;
+    height: 0;
+    visibility: hidden;
+}
+
+.countdown h1
+{
+    @media(min-width: $md-width)
+    {
+        margin: 0;
+    }
+
+    font-size: 3rem;
+    font-weight: 600;
+}
+
+.countdown .close-countdown
+{
+    display: flex;
+    width: 100px;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+}
+
+.countdown .close-countdown i
+{
+    margin: 0;
+}
+
+.btn.btn-link.inline-after-edit
+{
+    color: inherit;
+    padding-left: 0;
+    padding-top: 0;
+    margin-top: 0;
+}
