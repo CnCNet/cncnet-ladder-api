@@ -6,7 +6,6 @@ This is the main repository for the CnCNet Ladder API.
 Find all of them by searching `// @TODO - Upgrade`
 
 - `App\LockedCache\LockedCacheServiceProvider` needs re-adding with Laravel 9
-- SCSS source needs re-adding and utilised with Laravel mix.
 
 ### Development
 
@@ -16,9 +15,11 @@ Find all of them by searching `// @TODO - Upgrade`
 - Install dependencies and run any migrations inside the app service container: `composer install && php artisan migrate`
 - Generate laravel key inside the container `php artisan key:generate`. Re-start container after changing as this will change `.env` values.
 - Open up [http://localhost](http://localhost)
+- Watch scss for changes: `npm run watch`
 
 ### Production
 - `docker-compose -f docker-compose.yml build` and `docker-compose up -d`
+- Compile latest scss: `npm run prod`
 
 ### Built with
 - PHP
