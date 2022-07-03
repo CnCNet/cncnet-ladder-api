@@ -239,4 +239,5 @@ return [
 
     ],
 
+    'irc_pipe' => env('IRC_PIPE', '/tmp/pp_file'),
 ];
