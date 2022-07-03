@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
-use \App\GameRaw;
 use App\Models\GameRaw;
 
 class PruneRawLogs extends Command
