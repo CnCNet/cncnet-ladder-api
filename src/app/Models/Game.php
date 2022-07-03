@@ -73,6 +73,7 @@ class Game extends Model
         {
             $game[$col] = 0;
         }
+        $game->wol_game_id = 0;
         $game->hash = $qmMatch->map->hash;
         $game->game_report_id = null;
         $game->save();
