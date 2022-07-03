@@ -36,9 +36,10 @@ services:
         volumes:
             - cncnet-ladder-db:/var/lib/mysql
             - ./docker/mysql/tables.sql:/docker-entrypoint-initdb.d/tables.sql # Import latest db tables on init 
+            - ./docker/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
         networks:
             - cncnet
-
+            
     phpmyadmin:
         image: phpmyadmin
         restart: always
