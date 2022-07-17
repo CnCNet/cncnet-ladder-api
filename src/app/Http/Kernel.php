@@ -70,6 +70,7 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
+        'auth-token-validation' => \App\Http\Middleware\ModifyTokenBeforeAuth::class,
         'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
@@ -80,17 +81,12 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
 
-        // 'auth' => 'App\Http\Middleware\Authenticate',
-        // 'auth.basic' => 'Illuminate\Auth\Middleware\AuthenticateWithBasicAuth',
         'auth.basic.once' => 'App\Http\Middleware\AuthenticateOnceWithBasicAuth',
-        // 'guest' => 'App\Http\Middleware\RedirectIfAuthenticated',
-        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
-        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
         'cache.public' => 'App\Http\Middleware\CachePublicMiddleware',
         'cache.private' => 'App\Http\Middleware\CachePrivateMiddleware',
         'cache.long.public' => 'App\Http\Middleware\CacheLongPublicMiddleware',
         'cache.long.private' => 'App\Http\Middleware\CacheLongPrivateMiddleware',
         'cache.short.public' => 'App\Http\Middleware\CacheShortPublic',
-        'cache.ultra.public' => 'App\Http\Middleware\CacheUltraShortPublic'
+        'cache.ultra.public' => 'App\Http\Middleware\CacheUltraShortPublic',
     ];
 }

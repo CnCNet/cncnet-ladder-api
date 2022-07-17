@@ -33,7 +33,7 @@ Route::group(['prefix' => 'v1/auth/'], function ()
     Route::post('/login', [ApiAuthController::class, 'login']);
 });
 
-Route::group(['prefix' => 'v1/', 'middleware' => 'jwt.auth'], function ()
+Route::group(['prefix' => 'v1/', 'middleware' => ['auth-token-validation', 'jwt.auth']], function ()
 {
     Route::get('/user/account', [ApiUserController::class, 'getAccount']);
     Route::get('/user/ladders', [ApiUserController::class, 'getPrivateLadders']);
@@ -60,7 +60,7 @@ Route::group(['prefix' => 'v1/', 'middleware' => 'jwt.auth'], function ()
 });
 
 # Err, ey v2?
-Route::group(['prefix' => 'v2/', 'middleware' => 'jwt.auth', 'namespace' => '\v2'], function ()
+Route::group(['prefix' => 'v2/', 'middleware' => ['auth-token-validation', 'jwt.auth'], 'namespace' => '\v2'], function ()
 {
     Route::get('/user/account', [ApiUserController::class, 'getAccount']);
 });

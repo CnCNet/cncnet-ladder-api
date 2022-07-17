@@ -32,7 +32,6 @@ Route::get('/help/obs', [HelpController::class, 'getOBSHelp']);
 
 Route::middleware(['cache.public'])->prefix('ladder')->group(function ()
 {
-
     Route::get('/', [LadderController::class, 'getLadders']);
 
     Route::get('{date}/{game}', [LadderController::class, 'getLadderIndex']);
