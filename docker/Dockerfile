@@ -15,7 +15,6 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libonig-dev
 
-
 # Install PHP extensions
 RUN docker-php-ext-install pdo_mysql exif pcntl bcmath gd zip iconv mbstring \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
