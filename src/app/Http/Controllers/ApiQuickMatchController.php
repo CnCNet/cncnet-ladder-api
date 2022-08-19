@@ -10,7 +10,6 @@ use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
 use \App\Models\PlayerActiveHandle;
 use \Carbon\Carbon;
-use Log;
 use App\Models\QmMap;
 use App\Models\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
@@ -18,6 +17,7 @@ use \App\Models\SpawnOptionType;
 use App\Models\StateType;
 use Illuminate\Support\Facades\DB;
 use \App\Commands\FindOpponent;
+use Illuminate\Support\Facades\Log;
 
 class ApiQuickMatchController extends Controller
 {
@@ -90,6 +90,8 @@ class ApiQuickMatchController extends Controller
 
     public function matchRequest(Request $request, $ladderAbbrev = null, $playerName = null)
     {
+        Log::info("Match request $playerName");
+
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
         $ladder_rules = $ladder->qmLadderRules()->first();
 
@@ -99,7 +101,9 @@ class ApiQuickMatchController extends Controller
             return $check;
         }
 
+
         $player = $this->playerService->findPlayerByUsername($playerName, $ladder);
+        Log::info("Match request player", [$player]);
 
         if ($player == null)
         {
@@ -124,6 +128,7 @@ class ApiQuickMatchController extends Controller
             PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $player->user->id);
         }
 
+        Log::info("Match request hasActiveHandle", [$hasActiveHandle]);
 
         $ban = $player->user->getBan(true);
         if ($ban !== null)
@@ -137,6 +142,7 @@ class ApiQuickMatchController extends Controller
             return ['type' => 'fatal', 'message' => $ban];
         }
 
+        Log::info("Match request ban", [$ban]);
 
         // Require a verified email address on file
         if (!$player->user->email_verified)
@@ -146,16 +152,25 @@ class ApiQuickMatchController extends Controller
                 $player->user->sendNewVerification();
             }
 
+            Log::info("Match request email_verified", [$player->user->email_verified]);
+
             return array(
                 "type" => "fatal",
                 "message" => "Quick Match now requires a verified email address to play.\n" .
                     "A verification code has been sent to {$player->user->email}.\n"
             );
         }
+
+
         $rating = $player->rating()->first()->rating;
+
+        Log::info("Match request rating", [$rating]);
+
 
         $qmPlayer = \App\Models\QmMatchPlayer::where('player_id', $player->id)
             ->where('waiting', true)->first();
+
+        Log::info("Match request qmPlayer", [$qmPlayer]);
 
         switch ($request->type)
         {
@@ -220,6 +235,9 @@ class ApiQuickMatchController extends Controller
                 break;
 
             case "match me up":
+
+                Log::info("Match request match me up");
+
                 // Deprecate older versions
                 if ($request->version  < 1.69)
                 {
@@ -340,9 +358,13 @@ class ApiQuickMatchController extends Controller
 
                 if ($qmPlayer->qm_match_id === null)
                 {
+                    Log::info("Match request qm_match_id == null");
+
                     $history = $ladder->currentHistory();
                     $pc = $player->playerCache($history->id);
                     $points = 0;
+
+                    Log::info("Match request playerCache", [$pc]);
 
                     if ($pc !== null)
                         $points = $pc->points;
@@ -352,6 +374,7 @@ class ApiQuickMatchController extends Controller
                         $qEntry = $qmPlayer->qEntry;
                         $qEntry->touch();
 
+                        Log::info("Match request qEntry", [$qEntry]);
 
                         if ($qEntry->ladder_history_id != $history->id)
                         {

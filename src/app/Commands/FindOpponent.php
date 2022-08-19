@@ -6,17 +6,20 @@ use App\Commands\Command;
 use App\Models\Game;
 use App\Models\QmMatch;
 use App\Models\QmQueueEntry;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class FindOpponent extends Command implements ShouldQueue
 {
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    use InteractsWithQueue, SerializesModels;
-
-    public $qEntryId = null;
+    public $qmQueueEntryId = null;
 
     /**
      * Create a new command instance.
@@ -25,8 +28,9 @@ class FindOpponent extends Command implements ShouldQueue
      */
     public function __construct($id)
     {
-        //
-        $this->qEntryId = $id;
+        Log::info("FindOpponent created" . $id);
+
+        $this->qmQueueEntryId = $id;
     }
 
     public function queue($queue, $arguments)
@@ -41,12 +45,14 @@ class FindOpponent extends Command implements ShouldQueue
      */
     public function handle()
     {
+        Log::info("FindOpponent handle called");
+
         $this->delete();
-        $qEntry = QmQueueEntry::find($this->qEntryId);
+        $qEntry = QmQueueEntry::find($this->qmQueueEntryId);
 
         if ($qEntry === null)
         {
-            //error_log("qEntry is null\n");
+            error_log("qEntry is null\n");
             return;
         }
 
@@ -131,7 +137,7 @@ class FindOpponent extends Command implements ShouldQueue
         $qmOpns = $query->get();
 
         //var_dump($qmOpns);
-        //error_log("Queried QmQueueEntry\n");
+        error_log("Queried QmQueueEntry\n");
         $qmOpns = $qmOpns->shuffle();
 
         if ($qmOpns->count() >= $ladder_rules->player_count - 1)
