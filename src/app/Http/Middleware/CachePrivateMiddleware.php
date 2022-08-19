@@ -1,13 +1,15 @@
-<?php namespace App\Http\Middleware;
+<?php
+
+namespace App\Http\Middleware;
 
 use Closure;
 
-class CachePrivateMiddleware 
+class CachePrivateMiddleware
 {
-	public function handle($request, Closure $next)
-	{
+    public function handle($request, Closure $next)
+    {
         $response = $next($request);
         $response->header('Cache-Control', 'max-age=300, private');
         return $response;
-	}
+    }
 }
