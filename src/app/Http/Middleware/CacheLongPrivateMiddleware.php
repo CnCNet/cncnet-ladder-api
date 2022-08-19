@@ -2,9 +2,10 @@
 
 namespace App\Http\Middleware;
 
+use Illuminate\Foundation\Http\Middleware\TrimStrings as Middleware;
 use Closure;
 
-class CacheLongPrivateMiddleware
+class CacheLongPrivateMiddleware extends Middleware
 {
     public function handle($request, Closure $next)
     {
