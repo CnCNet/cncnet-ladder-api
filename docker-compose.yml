@@ -30,13 +30,13 @@ services:
             - cncnet
 
     mysql:
-        image: mysql
+        image: mariadb:latest
         restart: always
         env_file: ./src/.env
         volumes:
             - cncnet-ladder-db:/var/lib/mysql
-            - ./docker/mysql/tables.sql:/docker-entrypoint-initdb.d/tables.sql # Import latest db tables on init 
-            - ./docker/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
+            - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init 
+            - ./docker/mysql/:/etc/mysql/conf.d
         networks:
             - cncnet
 
