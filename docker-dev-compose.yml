@@ -1,0 +1,60 @@
+version: "3.3"
+
+services:
+    app:
+        container_name: cncnet_ladder_app
+        build:
+            args:
+                user: ${HOST_USER}
+                uid: ${HOST_UID}
+            context: .
+            dockerfile: ./docker/Dockerfile
+        env_file: ./cncnet-api/.env
+        volumes:
+            - ./cncnet-api:/home/${HOST_USER}/site
+        networks:
+            - cncnet
+
+    nginx:
+        image: nginx:stable-alpine
+        container_name: cncnet_ladder_nginx
+        restart: always
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./cncnet-api:/home/${HOST_USER}/site
+            - ./docker/nginx/templates:/etc/nginx/templates/
+        environment:
+            NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".conf"
+            HOST_USER: ${HOST_USER}
+        networks:
+            - cncnet
+
+    mysql:
+        image: mariadb:latest
+        container_name: cncnet_ladder_mysql
+        restart: always
+        env_file: ./cncnet-api/.env
+        volumes:
+            - cncnet-ladder-db:/var/lib/mysql
+            - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init 
+        networks:
+            - cncnet
+
+    phpmyadmin:
+        image: phpmyadmin
+        restart: always
+        env_file: ./cncnet-api/.env
+        ports:
+            - 8080:80
+        networks:
+            - cncnet
+
+networks:
+    cncnet:
+        driver: bridge
+
+volumes:
+    cncnet-ladder-db:
+        driver: local

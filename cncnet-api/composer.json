@@ -1,12 +1,15 @@
 {
 	"name": "laravel/laravel",
 	"description": "The Laravel Framework.",
-	"keywords": ["framework", "laravel"],
+	"keywords": [
+		"framework",
+		"laravel"
+	],
 	"license": "MIT",
 	"type": "project",
 	"require": {
-    "laravel/framework": "5.0.*",   
-    "tymon/jwt-auth": "0.5.*",
+		"laravel/framework": "5.0.*",
+		"tymon/jwt-auth": "0.5.*",
 		"guzzlehttp/guzzle": "^5.3",
 		"maxmind-db/reader": "1.4.1",
 		"namshi/jose": "5.0.2",
@@ -44,6 +47,23 @@
 		]
 	},
 	"config": {
-		"preferred-install": "dist"
+		"preferred-install": "dist",
+		"sort-packages": true,
+		"platform": {
+			"php": "7.0.33",
+			"ext-mcrypt": "1",
+			"ext-mbstring": "1",
+			"ext-xml": "1",
+			"ext-xmlwriter": "1",
+			"ext-dom": "1",
+			"ext-bcmath": "1",
+			"ext-gd": "1",
+			"ext-simplexml": "1",
+			"ext-xmlreader": "1",
+			"ext-zip": "1"
+		},
+		"allow-plugins": {
+			"kylekatarnls/update-helper": true
+		}
 	}
 }
