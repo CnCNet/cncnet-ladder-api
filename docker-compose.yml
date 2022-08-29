@@ -37,7 +37,7 @@ services:
         restart: always
         env_file: ./cncnet-api/.env
         # https://dev.mysql.com/doc/refman/8.0/en/packet-too-large.html
-        command: --max_connections=1000 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=31536000 --slow-query-log --interactive_timeout=31536000 --log_error="/error.log" --general_log=true
+        command: --max_connections=1000 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=31536000 --slow-query-log --interactive_timeout=31536000
         volumes:
             - cncnet-ladder-db:/var/lib/mysql
             - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init 

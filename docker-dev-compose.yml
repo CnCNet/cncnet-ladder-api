@@ -46,10 +46,10 @@ services:
         image: phpmyadmin
         restart: always
         env_file: ./cncnet-api/.env
-        networks:
-            - cncnet
         ports:
             - 8080:80
+        networks:
+            - cncnet
 
 networks:
     cncnet:
