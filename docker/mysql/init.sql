@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Aug 20, 2022 at 11:56 AM
--- Server version: 10.8.3-MariaDB-1:10.8.3+maria~jammy
+-- Generation Time: Aug 29, 2022 at 12:31 PM
+-- Server version: 10.8.3-MariaDB-1:10.8.3+maria~jammy-log
 -- PHP Version: 8.0.20
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -384,14 +384,13 @@ CREATE TABLE `irc_players` (
 
 CREATE TABLE `jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `payload` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `attempts` tinyint(3) UNSIGNED NOT NULL,
-  `reserved` tinyint(3) UNSIGNED NOT NULL,
   `reserved_at` int(10) UNSIGNED DEFAULT NULL,
   `available_at` int(10) UNSIGNED NOT NULL,
   `created_at` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -590,6 +589,24 @@ CREATE TABLE `password_resets` (
   `token` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -1161,11 +1178,12 @@ CREATE TABLE `users` (
   `email` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
   `password` varchar(60) COLLATE utf8mb3_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
   `group` enum('User','Moderator','Admin','God') COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'User',
   `ip_address_id` int(11) DEFAULT NULL,
-  `email_verified` tinyint(1) NOT NULL DEFAULT 0
+  `email_verified` tinyint(1) NOT NULL DEFAULT 0,
+  `email_verified_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
 
 --
@@ -1308,7 +1326,8 @@ ALTER TABLE `irc_players`
 -- Indexes for table `jobs`
 --
 ALTER TABLE `jobs`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `jobs_queue_index` (`queue`);
 
 --
 -- Indexes for table `ladders`
@@ -1382,6 +1401,14 @@ ALTER TABLE `object_schema_managers`
 ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`) USING BTREE,
   ADD KEY `password_resets_token_index` (`token`) USING BTREE;
+
+--
+-- Indexes for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
 -- Indexes for table `players`
@@ -1765,6 +1792,12 @@ ALTER TABLE `map_side_strings`
 --
 ALTER TABLE `object_schema_managers`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `players`

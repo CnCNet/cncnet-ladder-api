@@ -2,6 +2,7 @@ version: "3.3"
 
 services:
     app:
+        container_name: cncnet_ladder_app
         build:
             args:
                 user: ${HOST_USER}
@@ -16,6 +17,7 @@ services:
 
     nginx:
         image: nginx:stable-alpine
+        container_name: cncnet_ladder_nginx
         restart: always
         ports:
             - "80:80"
@@ -31,12 +33,46 @@ services:
 
     mysql:
         image: mariadb:latest
+        container_name: cncnet_ladder_mysql
         restart: always
         env_file: ./src/.env
+        # https://dev.mysql.com/doc/refman/8.0/en/packet-too-large.html
+        command: --max_connections=1000 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=31536000 --slow-query-log --interactive_timeout=31536000 --log_error="/error.log" --general_log=true
         volumes:
             - cncnet-ladder-db:/var/lib/mysql
             - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init 
-            - ./docker/mysql/conf:/etc/mysql/conf.d
+        # https://medium.com/@kauminikg/how-to-increase-max-connections-in-mysql-docker-container-772ae17e3526
+        ulimits:
+            nofile:
+                soft: 20000
+                hard: 40000
+        networks:
+            - cncnet
+
+    redis:
+        image: redis:latest
+        container_name: cncnet_ladder_redis
+        environment:
+            - ALLOW_EMPTY_PASSWORD=yes
+            - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL,CONFIG
+        ports:
+            - "6382:6379"
+        volumes:
+            - cncnet-redis-db:/data
+        networks:
+            - cncnet
+
+    db-backup:
+        container_name: cncnet_ladder_backup
+        env_file:
+            - './src/.env'
+        image: tiredofit/db-backup
+        volumes:
+            - ./backups:/backup
+            - ./scripts/backup_complete.sh:/assets/custom-scripts/post-script.sh
+        restart: always
+        links:
+            - mysql
         networks:
             - cncnet
 
@@ -55,4 +91,7 @@ networks:
 
 volumes:
     cncnet-ladder-db:
+        driver: local
+
+    cncnet-redis-db:
         driver: local

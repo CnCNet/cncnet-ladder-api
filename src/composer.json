@@ -12,10 +12,11 @@
         "doctrine/dbal": "^3.3",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "laravel/framework": "^9.0",
+        "laravel/framework": "^9.26.1",
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "maxmind-db/reader": "^1.11",
+        "predis/predis": "^2.0",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {

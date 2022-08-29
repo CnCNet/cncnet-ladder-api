@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\GameRaw;
 use Illuminate\Support\Facades\Log;
 
-class PruneRawLogs extends Command
+class TestCronIsAlive extends Command
 {
     /**
      * The console command name.
