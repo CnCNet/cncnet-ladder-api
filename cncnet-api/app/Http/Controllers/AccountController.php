@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -24,14 +25,15 @@ class AccountController extends Controller
     {
         $user = \Auth::user();
         $user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
-                                                     ? $_SERVER["HTTP_CF_CONNECTING_IP"]
-                                                     : $request->getClientIp());
+            ? $_SERVER["HTTP_CF_CONNECTING_IP"]
+            : $request->getClientIp());
 
         \App\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
         $user->save();
 
-        return view("auth.account", 
-        array (
+        return view(
+            "auth.account",
+            array(
                 "user" => $user,
                 "userSettings" => $user->userSettings->first(),
                 "ladders" => $this->ladderService->getLatestLadders(),
@@ -48,9 +50,9 @@ class AccountController extends Controller
         $ladder = \App\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
         $user = $request->user();
         $players = $user->usernames()->where("ladder_id", '=', $ladder->id)
-                                   ->orderBy("ladder_id", "DESC")
-                                   ->orderBy("id", "DESC")
-                                       ->get();
+            ->orderBy("ladder_id", "DESC")
+            ->orderBy("id", "DESC")
+            ->get();
 
         $date = \Carbon\Carbon::now();
         $start = $date->startOfMonth()->toDateTimeString();
@@ -60,20 +62,42 @@ class AccountController extends Controller
 
         $primaryPlayer = $activeHandles->count() > 0 ? $activeHandles->first()->player : null;
 
-        $clanPlayers = $players->filter(function($player) { return $player->clanPlayer !== null; })
-                                  ->map(function($player) { return $player->clanPlayer; });
+        $clanPlayers = $players->filter(function ($player)
+        {
+            return $player->clanPlayer !== null;
+        })
+            ->map(function ($player)
+            {
+                return $player->clanPlayer;
+            });
 
-        $invitations = $players->filter(function($player) { return $player->clanInvitations->count() > 0; })
-                                  ->map(function($player) { return $player->clanInvitations; })
-                              ->collapse();
+        $invitations = $players->filter(function ($player)
+        {
+            return $player->clanInvitations->count() > 0;
+        })
+            ->map(function ($player)
+            {
+                return $player->clanInvitations;
+            })
+            ->collapse();
 
-        return view("auth.ladder-account", compact('ladders', 'clan_ladders', 'ladder', 'user', 'players', 'activeHandles',
-                                                   'clan', 'clanPlayers', 'primaryPlayer', 'invitations'));
+        return view("auth.ladder-account", compact(
+            'ladders',
+            'clan_ladders',
+            'ladder',
+            'user',
+            'players',
+            'activeHandles',
+            'clan',
+            'clanPlayers',
+            'primaryPlayer',
+            'invitations'
+        ));
     }
 
     public function rename(Request $request)
     {
-        $this->validate($request, [ 'name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users' ] );
+        $this->validate($request, ['name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users']);
 
         $user = \App\User::find($request->id);
 
@@ -126,7 +150,7 @@ class AccountController extends Controller
 
         if ($player == null)
         {
-             $request->session()->flash('error', 'This username has been taken');
+            $request->session()->flash('error', 'This username has been taken');
             return redirect()->back();
         }
 
@@ -238,7 +262,7 @@ class AccountController extends Controller
 
         $user->sendNewVerification();
 
-        $request->session()->flash('success', 'Email Verification Code Sent to '.$user->email);
+        $request->session()->flash('success', 'Email Verification Code Sent to ' . $user->email);
         return redirect()->back();
     }
 
@@ -258,4 +282,17 @@ class AccountController extends Controller
         return redirect()->back();
     }
 
+    public function userSettings(Request $request)
+    {
+        $user = $request->user();
+        $userSettings = $user->userSettings->first();
+
+        $userSettings->disabledPointFilter = $request->disabledPointFilter;
+        $userSettings->enableAnonymous  = $request->enableAnonymous;
+        $userSettings->save();
+
+        $request->session()->flash('success', 'User settings updated!');
+
+        return redirect()->back();
+    }
 }
