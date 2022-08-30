@@ -282,13 +282,13 @@ class AccountController extends Controller
         return redirect()->back();
     }
 
-    public function userSettings(Request $request)
+    public function updateUserSettings(Request $request)
     {
         $user = $request->user();
         $userSettings = $user->userSettings->first();
 
-        $userSettings->disabledPointFilter = $request->disabledPointFilter;
-        $userSettings->enableAnonymous  = $request->enableAnonymous;
+        $userSettings->disabledPointFilter = $request->disabledPointFilter  == "on" ? true : false;
+        // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
         $userSettings->save();
 
         $request->session()->flash('success', 'User settings updated!');

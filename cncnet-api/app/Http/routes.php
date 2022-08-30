@@ -106,14 +106,13 @@ Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
     Route::get('/{ladderAbbrev}/list', 'AccountController@getLadderAccountIndex');
     Route::post('/{ladderAbbrev}/username-status', 'AccountController@toggleUsernameStatus');
     Route::post('/rename', 'AccountController@rename');
+    Route::post('/settings', 'AccountController@updateUserSettings');
 
     Route::post('/{ladderAbbrev}/username', 'AccountController@createUsername');
     Route::post('/{ladderAbbrev}/card', 'AccountController@updatePlayerCard');
     Route::get('/verify', 'AccountController@getNewVerification');
     Route::post('/verify', 'AccountController@createNewVerification');
     Route::get('/verify/{verify_token}', 'AccountController@verifyEmail');
-
-    Route::post('/settings', 'AccountController@userSettings');
 });
 
 Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], function ()

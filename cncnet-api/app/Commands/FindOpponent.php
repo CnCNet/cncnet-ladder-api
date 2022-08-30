@@ -123,16 +123,17 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
          */
 
         $user = $qmPlayer->player->user;
+        $userSettings = $user->userSettings()->first();
 
         $query = null;
         
-        if ($user->disabledPointFilter) { //user will instantly match all lower point opponents, ignoring the point filter
+        if ($userSettings->disabledPointFilter) { //user will instantly match all lower point opponents, ignoring the point filter
 
             $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
-            ->where('ladder_history_id', '=', $history->id)
-            ->select(DB::raw("*,"
+                ->where('ladder_history_id', '=', $history->id)
+                ->select(DB::raw("*,"
                 . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
-            ->havingRAW("points_time + {$ladder_rules->max_points_difference} >= points - {$qEntry->points}"); //only filter out opponents who have more points
+                ->havingRAW("points_time + {$ladder_rules->max_points_difference} >= points - {$qEntry->points}"); //only filter out opponents who have more points
 
         } else {
 
