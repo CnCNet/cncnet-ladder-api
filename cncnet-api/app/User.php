@@ -177,6 +177,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany('App\IpAddressHistory');
     }
 
+    public function userSettings() {
+        return $this->hasOne('App\UserSettings');
+    }
+
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

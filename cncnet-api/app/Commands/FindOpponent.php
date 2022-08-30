@@ -123,13 +123,28 @@ class FindOpponent extends Command implements ShouldQueue
          * The ratio of seconds is tunable per ladder
          */
 
-        $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
+        $user = $qmPlayer->player->user;
+
+        $query = null;
+        
+        if ($user->disabledPointFilter) { //user will instantly match all lower point opponents, ignoring the point filter
+
+            $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
             ->where('ladder_history_id', '=', $history->id)
             ->select(DB::raw("*,"
-                . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->rating_per_second} as rating_time,"
                 . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
-            ->havingRAW("rating_time + {$ladder_rules->max_difference} > ABS(rating - {$rating})"
-                . "AND points_time + {$ladder_rules->max_points_difference} > ABS(points - {$qEntry->points})");
+            ->havingRAW("points_time + {$ladder_rules->max_points_difference} >= points - {$qEntry->points}"); //only filter out opponents who have more points
+
+        } else {
+
+            $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
+                ->where('ladder_history_id', '=', $history->id)
+                ->select(DB::raw("*,"
+                    . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->rating_per_second} as rating_time,"
+                    . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
+                ->havingRAW("rating_time + {$ladder_rules->max_difference} > ABS(rating - {$rating})"
+                    . "AND points_time + {$ladder_rules->max_points_difference} > ABS(points - {$qEntry->points})");
+        }
 
         //error_log($query->toSql());
         $qmOpns = $query->get();

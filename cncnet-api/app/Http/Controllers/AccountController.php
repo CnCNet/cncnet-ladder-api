@@ -31,10 +31,13 @@ class AccountController extends Controller
         \App\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
         $user->save();
 
+        return view("auth.account",
+        array (
         return view(
             "auth.account",
             array(
                 "user" => $user,
+                "userSettings" => $user->userSettings->first(),
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "private_ladders" => $this->ladderService->getLatestPrivateLadders($user)
