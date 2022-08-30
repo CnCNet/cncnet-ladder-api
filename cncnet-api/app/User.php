@@ -172,4 +172,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->hasMany('App\IpAddressHistory');
     }
+
+    public function userSettings() {
+        return $this->hasOne('App\UserSettings');
+    }
 }
