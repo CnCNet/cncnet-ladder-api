@@ -66,7 +66,9 @@
             </div>
         </div>
 
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#openUserSettings">User Settings</button>
+        <div class="col-md-12">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#openUserSettings"> User Settings </button>
+        </div>
 
         <div class="modal fade" id="openUserSettings" tabIndex="-1" role="dialog">
             <div class="modal-dialog modal-md" role="document">
@@ -83,19 +85,15 @@
                                     <div style="display: inline-block">
                                         <form method="POST" action="/account/settings">
 
-                                            <input id="disable_point_filter" type="checkbox" name="disable_point_filter" @if($userSettings->disabledPointFilter) checked @endif />
-                                            <label for="disable_point_filter"> Disable Point Filter </label>
+                                            <input id="disabledPointFilter" type="checkbox" name="disabledPointFilter" @if($userSettings->disabledPointFilter) checked @endif />
+                                            <label for="disabledPointFilter"> Disable Point Filter </label>
 
-                                            <input id="enable_anonymous" type="checkbox" name="enable_anonymous" @if($userSettings->enableAnonymous) checked @endif />
-                                            <label for="enable_anonymous"> Enable Anonymity </label>
+                                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous" @if($userSettings->enableAnonymous) checked @endif />
+                                            <label for="enableAnonymous"> Enable Anonymity </label>
 
-
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                                            <button type="submit" name="submit" value="update" class="btn btn-danger btn-md">Launder</button>
+                                            <button type="submit" value="update" class="btn btn-primary">Save Settings</button>
                                         </form>
                                     </div>
-
                                 </div>
                             </div>
                         </div>

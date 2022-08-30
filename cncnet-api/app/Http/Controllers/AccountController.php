@@ -31,6 +31,9 @@ class AccountController extends Controller
         \App\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
         $user->save();
 
+        return view(
+            "auth.account",
+            array(
         return view("auth.account",
         array (
         return view(
@@ -298,6 +301,20 @@ class AccountController extends Controller
             $user->save();
             $request->session()->flash('success', 'Your email has been Verified');
         }
+
+        return redirect()->back();
+    }
+
+    public function userSettings(Request $request)
+    {
+        $user = $request->user();
+        $userSettings = $user->userSettings->first();
+
+        $userSettings->disabledPointFilter = $request->disabledPointFilter;
+        $userSettings->enableAnonymous  = $request->enableAnonymous;
+        $userSettings->save();
+
+        $request->session()->flash('success', 'User settings updated!');
 
         return redirect()->back();
     }
