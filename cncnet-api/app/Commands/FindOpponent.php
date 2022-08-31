@@ -27,14 +27,12 @@ class FindOpponent extends Command implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($id)
-    {
+    public function __construct($id) {
         //
         $this->qEntryId = $id;
     }
 
-    public function queue($queue, $arguments)
-    {
+    public function queue($queue, $arguments) {
         $queue->pushOn('findmatch', $arguments);
     }
 
@@ -43,13 +41,11 @@ class FindOpponent extends Command implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
-    {
+    public function handle() {
         $this->delete();
         $qEntry = QmQueueEntry::find($this->qEntryId);
 
-        if ($qEntry === null)
-        {
+        if ($qEntry === null) {
             //error_log("qEntry is null\n");
             return;
         }
@@ -59,16 +55,14 @@ class FindOpponent extends Command implements ShouldQueue
         $qmPlayer = $qEntry->qmPlayer;
 
         // A player could cancel out of queue before this function runs
-        if ($qmPlayer === null)
-        {
+        if ($qmPlayer === null) {
             //error_log("qmPlayer is null");
             $qEntry->delete();
             return;
         }
 
         // Skip if the player has already been matched up
-        if ($qmPlayer->qm_match_id !== null)
-        {
+        if ($qmPlayer->qm_match_id !== null) {
             //error_log("qmPlayer->qm_match_id is not null");
             $qEntry->delete();
             return;
@@ -76,8 +70,7 @@ class FindOpponent extends Command implements ShouldQueue
 
         $history = $qEntry->ladderHistory;
 
-        if ($history === null)
-        {
+        if ($history === null) {
             //error_log("history is null");
             $qEntry->delete();
             return;
@@ -85,8 +78,7 @@ class FindOpponent extends Command implements ShouldQueue
 
         $ladder = $history->ladder;
 
-        if ($ladder === null)
-        {
+        if ($ladder === null) {
             //error_log("ladder is null");
             $qEntry->delete();
             return;
@@ -94,8 +86,7 @@ class FindOpponent extends Command implements ShouldQueue
 
         $player = $qmPlayer->player;
 
-        if ($player === null)
-        {
+        if ($player === null) {
             //error_log("player is null");
             $qEntry->delete();
             return;
@@ -126,36 +117,32 @@ class FindOpponent extends Command implements ShouldQueue
         $user = $qmPlayer->player->user;
         $userSettings = $user->userSettings()->first();
 
-        $query = null;
-        
-        if ($userSettings->disabledPointFilter) { //user will instantly match all lower point opponents, ignoring the point filter
+        $opponentEntries = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
+            ->where('ladder_history_id', '=', $history->id)
+            ->get(); //fetch all opponents who are currently in queue for this ladder
 
-            $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
-                ->where('ladder_history_id', '=', $history->id)
-                ->select(DB::raw("*,"
-                . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
-                ->havingRAW("points_time + {$ladder_rules->max_points_difference} >= points - {$qEntry->points}"); //only filter out opponents who have more points
+        $opponentEntriesFiltered = (new QmQueueEntry())->newCollection(); //a collection of qm opponents who are within point filter but also includes opponents who have mutual point filter disabled
 
-        } else {
+        foreach ($opponentEntries as $opponentEntry) {
+            $opnFilter = $opponentEntry->qmPlayer->player->user->userSettings()->first()->disablePointFilter; //opponent's point filter flag
 
-            $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
-                ->where('ladder_history_id', '=', $history->id)
-                ->select(DB::raw("*,"
-                    . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->rating_per_second} as rating_time,"
-                    . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
-                ->havingRAW("rating_time + {$ladder_rules->max_difference} > ABS(rating - {$rating})"
-                    . "AND points_time + {$ladder_rules->max_points_difference} > ABS(points - {$qEntry->points})");
+            if ($userSettings->disablePointFilter && $opnFilter) {   //both players have the point filter disabled, we will ignore the point filter
+
+                $opponentEntriesFiltered->add($opponentEntry);
+            } else {
+
+                //(updated_at - created_at) / 60 = seconds duration player has been waiting in queue
+                $points_time = ((strtotime($opponentEntry->updated_at) - strtotime($opponentEntry->created_at)) / 60) * $ladder_rules->points_per_second;
+
+                //is the opponent within the point filter
+                if ($points_time + $ladder_rules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
+                    $opponentEntriesFiltered->add($opponentEntry);
+            }
         }
 
-        //error_log($query->toSql());
-        $qmOpns = $query->get();
+        $qmOpns = $opponentEntriesFiltered->shuffle();
 
-        //var_dump($qmOpns);
-        //error_log("Queried QmQueueEntry\n");
-        $qmOpns = $qmOpns->shuffle();
-
-        if ($qmOpns->count() >= $ladder_rules->player_count - 1)
-        {
+        if ($qmOpns->count() >= $ladder_rules->player_count - 1) {
             //error_log("checking qmOpns\n");
             // Randomly choose the opponents from the best matches. To prevent
             // long runs of identical matchups.
@@ -164,8 +151,7 @@ class FindOpponent extends Command implements ShouldQueue
             $common_qm_maps = array();
 
             $qmMaps = $ladder->mapPool->maps;
-            foreach ($qmMaps as $qmMap)
-            {
+            foreach ($qmMaps as $qmMap) {
                 $match = true;
                 if (
                     array_key_exists($qmMap->bit_idx, $qmPlayer->map_side_array())
@@ -173,14 +159,11 @@ class FindOpponent extends Command implements ShouldQueue
                     $qmPlayer->map_side_array()[$qmMap->bit_idx] > -2
                     &&
                     in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array())
-                )
-                {
-                    foreach ($qmOpns as $qOpn)
-                    {
+                ) {
+                    foreach ($qmOpns as $qOpn) {
                         //error_log("qOpn->rating_time = {$qOpn->rating_time}");
                         $opn = $qOpn->qmPlayer;
-                        if ($opn === null)
-                        {
+                        if ($opn === null) {
                             $qOpn->delete();
                             $qEntry->delete();
                             return;
@@ -191,13 +174,11 @@ class FindOpponent extends Command implements ShouldQueue
                             ($opn->map_side_array()[$qmMap->bit_idx] < -1
                                 ||
                                 !in_array($opn->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array()))
-                        )
-                        {
+                        ) {
                             $match = false;
                         }
                     }
-                }
-                else
+                } else
                     $match = false;
 
                 if ($match)
@@ -228,13 +209,11 @@ class FindOpponent extends Command implements ShouldQueue
                     return !is_null($value);
                 });
 
-                foreach ($recentMaps as $recentMap)
-                {
+                foreach ($recentMaps as $recentMap) {
                     $common_qm_maps = removeMap($recentMap, $common_qm_maps);
                 }
 
-                foreach ($qmOpns as $qOpn)
-                {
+                foreach ($qmOpns as $qOpn) {
                     $oppPlayer = $qOpn->qmPlayer->player;
                     $oppPlayerGames = $oppPlayer->playerGames()
                         ->where("ladder_history_id", "=", $history->id)
@@ -261,8 +240,7 @@ class FindOpponent extends Command implements ShouldQueue
                 }
             }
 
-            if (count($common_qm_maps) < 1)
-            {
+            if (count($common_qm_maps) < 1) {
                 error_log("No common maps available");
                 $qmPlayer->touch();
                 return;
@@ -300,25 +278,21 @@ class FindOpponent extends Command implements ShouldQueue
                 $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
 
 
-            if ($qmPlayer->actual_side < -1)
-            {
+            if ($qmPlayer->actual_side < -1) {
                 $qmPlayer->actual_side = $qmPlayer->chosen_side;
             }
 
             $qmPlayer->save();
 
-            $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
-            {
+            $perMS = array_values(array_filter($qmMap->sides_array(), function ($s) {
                 return $s >= 0;
             }));
             $color = 1;
-            foreach ($qmOpns as $qOpn)
-            {
+            foreach ($qmOpns as $qOpn) {
                 $opn = $qOpn->qmPlayer;
                 $qOpn->delete();
 
-                if ($opn === null)
-                {
+                if ($opn === null) {
                     $qEntry->delete();
                     return;
                 }
@@ -328,13 +302,11 @@ class FindOpponent extends Command implements ShouldQueue
                 if (count($osides) > $qmMap->bit_idx)
                     $opn->actual_side = $osides[$qmMap->bit_idx];
 
-                if ($opn->actual_side  < -1)
-                {
+                if ($opn->actual_side  < -1) {
                     $opn->actual_side = $opn->chosen_side;
                 }
 
-                if ($opn->actual_side == -1)
-                {
+                if ($opn->actual_side == -1) {
                     $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
                 }
                 $opn->color = $color++;
@@ -344,8 +316,7 @@ class FindOpponent extends Command implements ShouldQueue
                 $opn->save();
             }
 
-            if ($qmPlayer->actual_side == -1)
-            {
+            if ($qmPlayer->actual_side == -1) {
                 $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
             }
             $qmPlayer->save();
@@ -357,14 +328,11 @@ class FindOpponent extends Command implements ShouldQueue
  * Remove this 'Map' from this array of 'QmMaps'.
  * The function will loop through the array of common_qm_maps and check if equal to the $recentmMap
  */
-function removeMap($recentMap, $common_qm_maps)
-{
+function removeMap($recentMap, $common_qm_maps) {
     $new_common_qm_maps = [];
 
-    foreach ($common_qm_maps as $common_qm_map)
-    {
-        if ($common_qm_map->map->id != $recentMap->id)
-        {
+    foreach ($common_qm_maps as $common_qm_map) {
+        if ($common_qm_map->map->id != $recentMap->id) {
             $new_common_qm_maps[] = $common_qm_map;
         }
     }

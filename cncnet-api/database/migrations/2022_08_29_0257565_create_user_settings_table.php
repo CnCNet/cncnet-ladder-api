@@ -22,7 +22,7 @@ class CreateUserSettingsTable extends Migration {
 				  ->references('id')->on('users')
 				  ->onDelete('cascade');
 			$table->boolean('enableAnonymous')->default(false);	//flag to determine if player is 'anonymous', their player details will be hidden from player profile
-			$table->boolean('disabledPointFilter')->default(false); //flag to determine if when entering queue they can ignore point filter when matching players with less pts to find matches quicker
+			$table->boolean('disabledPointFilter')->default(false); //flag to determine if when entering queue the point filter will be ignored when matching players who also have it disabled
 		});
 
 		//initialize user settings for all users
