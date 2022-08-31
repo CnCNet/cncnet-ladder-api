@@ -84,18 +84,19 @@
 
                                     <div style="display: inline-block">
                                         <form method="POST" action="/account/settings">
-
-                                            <input type="checkbox" name="disabledPointFilter" @if($userSettings->disabledPointFilter) checked @endif />
-                                            <label> Disable Point Filter </label>
-
-                                            <!-- TODO future functionality will use this value, no need to have users touch this yet
-                                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous"  value="{{ $userSettings->enableAnonymous }}" @if($userSettings->enableAnonymous) checked @endif />
-                                            <label for="enableAnonymous"> Enable Anonymity </label> 
-                                            -->
-
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-                                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                                            <input id="disablePointFilter" type="checkbox" name="disabledPointFilter" @if($userSettings->disabledPointFilter) checked @endif />
+                                            <label for="disablePointFilter">Disable Point Filter</label>
+
+                                            {{-- TODO future functionality will use this value, no need to have users touch this yet
+                                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous"  value="{{ $userSettings->enableAnonymous }}" @if($userSettings->enableAnonymous) checked @endif />
+                                            <label for="enableAnonymous"> Enable Anonymity </label>
+                                            --}}
+
+                                            <div>
+                                                <button type="submit" class="btn btn-primary">Save Settings</button>
+                                            </div>
                                         </form>
                                     </div>
                                 </div>
