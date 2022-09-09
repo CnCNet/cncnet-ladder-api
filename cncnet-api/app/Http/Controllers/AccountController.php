@@ -287,6 +287,12 @@ class AccountController extends Controller
         $user = $request->user();
         $userSettings = $user->userSettings->first();
 
+        if ($userSettings === null) 
+        {
+            $userSettings = new \App\UserSettings();
+            $userSettings->user_id = $user->id;
+        }
+
         $userSettings->disabledPointFilter = $request->disabledPointFilter  == "on" ? true : false;
         // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
         $userSettings->save();
