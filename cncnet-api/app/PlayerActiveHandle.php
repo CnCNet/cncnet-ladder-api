@@ -22,14 +22,10 @@ class PlayerActiveHandle extends Model
         return $activeHandle;
     }
 
-    public static function getPlayerActiveHandles($playerId, $ladderId, $dateStart, $dateEnd)
+    public static function getPlayerActiveHandles($playerId, $ladderId)
     {
         $activeHandles = PlayerActiveHandle::where("player_id", $playerId)
-            ->where("ladder_id", $ladderId)
-            ->where("created_at", ">=", $dateStart)
-            ->where("created_at", "<=", $dateEnd)
-            ->orderBy('created_at', 'DESC')
-            ->get();
+            ->where("ladder_id", $ladderId);
 
         return $activeHandles;
     }
@@ -51,8 +47,7 @@ class PlayerActiveHandle extends Model
         $hasActiveHandles = PlayerActiveHandle::where("user_id", $userId)
             ->where("created_at", ">=", $dateStart)
             ->where("created_at", "<=", $dateEnd)
-            ->orderBy('created_at', 'DESC')
-            ->get();
+            ->orderBy('created_at', 'DESC');
 
         return $hasActiveHandles;
     }

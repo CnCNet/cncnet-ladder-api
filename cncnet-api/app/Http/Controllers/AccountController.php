@@ -55,7 +55,7 @@ class AccountController extends Controller
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $start, $end)->where('ladder_id', $ladder->id);
+        $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $start, $end)->where('ladder_id', $ladder->id)->get();
 
         $primaryPlayer = $activeHandles->count() > 0 ? $activeHandles->first()->player : null;
 
@@ -195,19 +195,31 @@ class AccountController extends Controller
         // Get the player thats being requested to change
         $activeHandle = PlayerActiveHandle::getPlayerActiveHandle($player->id, $ladder->id, $startOfMonth, $endOfMonth);
 
-        // If it's not an active handle make it one
-        if ($activeHandle == null)
-        {
-            $activeHandle = PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $user->id);
-            $request->session()->flash('success', $player->username . ' is now active on the ladder.');
-            return redirect()->back();
-        }
+        $hasActiveHandlesGamesPlayed = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($user->id, $ladder->id, $startOfMonth, $endOfMonth);
 
-        if ($activeHandle->created_at > $endOfMonth)
+        //allowed to remove the active handle if no games have been played yet
+        if ($activeHandle != null && $hasActiveHandlesGamesPlayed < 1)
         {
             $activeHandle->delete();
 
             $request->session()->flash('success', $player->username . ' is now inactive');
+            return redirect()->back();
+        }
+
+        // If it's not an active handle make it one
+        if ($activeHandle == null)
+        {
+            if ($ladder->game != "ts")
+            {
+                //delete the player's other active handles
+                PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)
+                    ->where('ladder_id', $ladder->id)
+                    ->delete();
+            }
+
+            $activeHandle = PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $user->id);
+
+            $request->session()->flash('success', $player->username . ' is now active on the ladder.');
             return redirect()->back();
         }
 
