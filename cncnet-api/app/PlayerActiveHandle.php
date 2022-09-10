@@ -22,14 +22,10 @@ class PlayerActiveHandle extends Model
         return $activeHandle;
     }
 
-    public static function getPlayerActiveHandles($playerId, $ladderId, $dateStart, $dateEnd)
+    public static function getPlayerActiveHandles($playerId, $ladderId)
     {
         $activeHandles = PlayerActiveHandle::where("player_id", $playerId)
-            ->where("ladder_id", $ladderId)
-            ->where("created_at", ">=", $dateStart)
-            ->where("created_at", "<=", $dateEnd)
-            ->orderBy('created_at', 'DESC')
-            ->get();
+            ->where("ladder_id", $ladderId);
 
         return $activeHandles;
     }
@@ -51,8 +47,7 @@ class PlayerActiveHandle extends Model
         $hasActiveHandles = PlayerActiveHandle::where("user_id", $userId)
             ->where("created_at", ">=", $dateStart)
             ->where("created_at", "<=", $dateEnd)
-            ->orderBy('created_at', 'DESC')
-            ->get();
+            ->orderBy('created_at', 'DESC');
 
         return $hasActiveHandles;
     }
@@ -67,6 +62,34 @@ class PlayerActiveHandle extends Model
             ->count();
 
         return $hasActiveHandles;
+    }
+
+    /**
+     * Return how many games played the user has played this month from their active handles.
+     */
+    public static function getUserActiveHandleGamesPlayedCount(
+        $userId,
+        $ladderId,
+        $dateStart,
+        $dateEnd
+    )
+    {
+        $activeHandles = PlayerActiveHandle::where("ladder_id", $ladderId)
+            ->where("user_id", $userId)
+            ->where("created_at", ">=", $dateStart)
+            ->where("created_at", "<=", $dateEnd)
+            ->get();
+
+        $count = 0;
+        foreach ($activeHandles as $activeHandle)
+        {
+            $count += $activeHandle->player->playerGameReports()
+                ->where('created_at', '<=', $dateEnd)
+                ->where('created_at', '>', $dateStart)
+                ->get()->count();
+        }
+
+        return $count;
     }
 
     public function user()

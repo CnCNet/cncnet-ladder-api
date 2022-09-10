@@ -31,7 +31,7 @@ class ApiUserController extends Controller
         foreach (\App\Ladder::all() as $ladder)
         {
             $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
-            
+
             if ($players->count() < 1)
             {
                 // Auto-register a player for each ladder if there isn't already a player registered for this user
@@ -63,7 +63,7 @@ class ApiUserController extends Controller
         $startOfMonth = $date->startOfMonth()->toDateTimeString();
         $endOfMonth = $date->endOfMonth()->toDateTimeString();
 
-        $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth);
+        $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->get();
 
         $players = [];
         foreach($activeHandles as $activeHandle)
@@ -112,6 +112,7 @@ class ApiUserController extends Controller
 
         $ladderHistory = \App\LadderHistory::where("starts", "=", $start)
             ->where("ends", "=", $end)
+            ->where('ladder_id', '=', $ladderId)
             ->first();
 
         // Detect if the player is active in the this months ladder already
@@ -130,11 +131,8 @@ class ApiUserController extends Controller
             return $tempNick;
         }
 
-        $limitLatestNickByDate = Carbon::create("2019", "09", "01");
-
         // Get nick last created limited by this new 1 nick rule
         $tempNick = \App\Player::where("user_id", $userId)
-            ->where("created_at", "<=", $limitLatestNickByDate)
             ->where('ladder_id', $ladderId)
             ->orderBy("id", "desc")
             ->first();
