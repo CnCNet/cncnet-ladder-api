@@ -69,6 +69,34 @@ class PlayerActiveHandle extends Model
         return $hasActiveHandles;
     }
 
+    /**
+     * Return how many games played the user has played this month from their active handles.
+     */
+    public static function getUserActiveHandleGamesPlayedCount(
+        $userId,
+        $ladderId,
+        $dateStart,
+        $dateEnd
+    )
+    {
+        $activeHandles = PlayerActiveHandle::where("ladder_id", $ladderId)
+            ->where("user_id", $userId)
+            ->where("created_at", ">=", $dateStart)
+            ->where("created_at", "<=", $dateEnd)
+            ->get();
+
+        $count = 0;
+        foreach ($activeHandles as $activeHandle)
+        {
+            $count += $activeHandle->player->playerGameReports()
+                ->where('created_at', '<=', $dateEnd)
+                ->where('created_at', '>', $dateStart)
+                ->get()->count();
+        }
+
+        return $count;
+    }
+
     public function user()
     {
         $this->belongsTo('App\User');
