@@ -507,7 +507,7 @@ class AdminController extends Controller
         $user = $player->user;
 
         $ladderService = new LadderService;
-        $history = $ladderService->getActiveLadderByDate(Carbon::now()->format('m-Y'), $player->ladder->game);
+        $history = $ladderService->getActiveLadderByDate(Carbon::now()->format('m-Y'), $player->ladder->abbreviation);
 
         return view(
             "admin.moderate-player",
