@@ -251,3 +251,5 @@ ModelManifest.xml
 .fake/
 cncnet-api/public/images/maps/ra2-clan/*
 cncnet-api/database/migrations/2022_05_14_214858_createDummyTestAccounts.php
+
+.env

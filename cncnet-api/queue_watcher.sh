@@ -3,11 +3,6 @@ set -x
 
 cd "$(dirname "$0")"
 
-if [ "${PHP}x" = "x" ]
-then
-   PHP=php
-fi
-
 queue=$1
 
 if [ "${queue}x" = "x" ]
@@ -22,7 +17,7 @@ PID=$(cat $PIDFILE)
 
 if ! kill -0 $PID
 then
-    $PHP artisan queue:work database --daemon --queue=$queue &
+    docker exec cncnet_ladder_app php artisan queue:work database --daemon --queue=$queue &
     PID=$!
 fi
 
