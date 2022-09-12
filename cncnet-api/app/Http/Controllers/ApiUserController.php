@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -66,7 +67,7 @@ class ApiUserController extends Controller
         $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->get();
 
         $players = [];
-        foreach($activeHandles as $activeHandle)
+        foreach ($activeHandles as $activeHandle)
         {
             if ($activeHandle->player->ladder->private == false)
                 $players[] = $activeHandle->player;
@@ -149,16 +150,25 @@ class ApiUserController extends Controller
             return response()->json(['bad_parameters'], 400);
         }
 
-        if($token == null)
+        if ($token == null)
         {
             $check = \App\User::where("email", "=", $request->email)->first();
-            if($check == null)
+            if ($check == null)
             {
                 $user = new \App\User();
                 $user->name = "";
                 $user->email = $request->email;
                 $user->password = \Hash::make($request->password);
                 $user->save();
+
+                $achievements = \App\Achievement::all();
+                foreach ($achievements as $achievement)
+                {
+                    $achievementTracker = new \App\AchievementTracker();
+                    $achievementTracker->achievement_id = $achievement->id;
+                    $achievementTracker->user_id = $user->id;
+                    $achievementTracker->save();
+                }
 
                 $token = JWTAuth::fromUser($user);
                 return response()->json(compact('token'));
@@ -171,7 +181,7 @@ class ApiUserController extends Controller
         else
         {
             $user = $this->authService->getUser($request);
-            if($user)
+            if ($user)
             {
                 return response()->json(['account_present'], 400);
             }
@@ -187,7 +197,7 @@ class ApiUserController extends Controller
         if ($user->isGod())
             return $ladders;
 
-        $ladders = $ladders->filter(function($ladder) use ($user)
+        $ladders = $ladders->filter(function ($ladder) use ($user)
         {
             return $ladder->allowedToView($user);
         });
