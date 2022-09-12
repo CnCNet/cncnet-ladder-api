@@ -89,7 +89,7 @@ class ApiUserController extends Controller
     private function getTempNicks($userId)
     {
         $tempNicks = [];
-        foreach (\App\Ladder::all() as $ladder)
+        foreach (\App\Ladder::where('private', '=', '0')->get() as $ladder) //don't create nick for private ladder
         {
             $tempNick = $this->getTempNickByLadderType($ladder->id, $userId);
             if ($tempNick != null)
