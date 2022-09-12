@@ -542,7 +542,7 @@ class ApiLadderController extends Controller
         return $map_vetos;
     }
 
-    public function updateAchievements($playerId, $ladderId, $stats)
+    private function updateAchievements($playerId, $ladderId, $stats)
     {
         if ($stats === null)
             return;
@@ -555,6 +555,15 @@ class ApiLadderController extends Controller
             ->where('ladder_id', $ladderId)
             ->whereNull('achivement_unlocked_date')
             ->get();
+
+        //play qm games achievement
+        $lockedAchievement = $lockedAchievements->filter(function ($value)
+        {
+            return $value->tag === 'Win QM Games';
+        })->sortBy('unlock_count')->first();
+
+        if ($lockedAchievement !== null)
+            $this->achivementCheck($user, $lockedAchievement);
 
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
@@ -583,13 +592,7 @@ class ApiLadderController extends Controller
             //update achievement tracker
             if ($lockedAchievement->achievement_type === 'CAREER')
             {
-                $lockedAchievementTracker->count += $count;
-
-                if ($lockedAchievementTracker->count >= $lockedAchievement->unlock_count)
-                {
-                    $lockedAchievementTracker->achievement_unlocked_date = Carbon::now();
-                }
-                $lockedAchievementTracker->save();
+                $this->achivementCheck($user, $lockedAchievement);
             }
             else if ($lockedAchievement->achievement_type === 'IMMEDIATE')
             {
@@ -614,17 +617,7 @@ class ApiLadderController extends Controller
 
             if ($lockedAchievement !== null)
             {
-                $lockedAchievementTracker = \App\AchievementTracker::where('achivement_id', $lockedAchievement->achievement_id)
-                    ->where('user_id', $user->id)
-                    ->first();
-
-                $lockedAchievementTracker->count += 1;
-
-                if ($lockedAchievementTracker->count >= $lockedAchievement->unlock_count)
-                {
-                    $lockedAchievementTracker->achievement_unlocked_date = Carbon::now();
-                    $lockedAchievementTracker->save();
-                }
+                $this->achivementCheck($user, $lockedAchievement);
             }
 
             $country = $stats->cty;
@@ -635,20 +628,10 @@ class ApiLadderController extends Controller
                 {
                     return $value->tag === 'Allied: Win QM Games';
                 })->sortBy('unlock_count')->first();
-    
+
                 if ($lockedAchievement !== null)
                 {
-                    $lockedAchievementTracker = \App\AchievementTracker::where('achivement_id', $lockedAchievement->achievement_id)
-                        ->where('user_id', $user->id)
-                        ->first();
-    
-                    $lockedAchievementTracker->count += 1;
-    
-                    if ($lockedAchievementTracker->count >= $lockedAchievement->unlock_count)
-                    {
-                        $lockedAchievementTracker->achievement_unlocked_date = Carbon::now();
-                        $lockedAchievementTracker->save();
-                    }
+                    $this->achivementCheck($user, $lockedAchievement);
                 }
             }
             else if ($country > 4 && $country < 9) //soviet
@@ -657,22 +640,43 @@ class ApiLadderController extends Controller
                 {
                     return $value->tag === 'Soviet: Win QM Games';
                 })->sortBy('unlock_count')->first();
-    
+
                 if ($lockedAchievement !== null)
                 {
-                    $lockedAchievementTracker = \App\AchievementTracker::where('achivement_id', $lockedAchievement->achievement_id)
-                        ->where('user_id', $user->id)
-                        ->first();
-    
-                    $lockedAchievementTracker->count += 1;
-    
-                    if ($lockedAchievementTracker->count >= $lockedAchievement->unlock_count)
-                    {
-                        $lockedAchievementTracker->achievement_unlocked_date = Carbon::now();
-                        $lockedAchievementTracker->save();
-                    }
+                    $this->achivementCheck($user, $lockedAchievement);
                 }
             }
+            else if ($country == 9) //yuri
+            {
+                $lockedAchievement = $lockedAchievements->filter(function ($value)
+                {
+                    return $value->tag === 'Yuri: Win QM Games';
+                })->sortBy('unlock_count')->first();
+
+                if ($lockedAchievement !== null)
+                {
+                    $this->achivementCheck($user, $lockedAchievement);
+                }
+            }
+        }
+    }
+
+    /**
+     * Tick achievement tracker then check if achievement is unlocked.
+     * For career achievements.
+     */
+    private function achivementCheck($user, $lockedAchievement)
+    {
+        $lockedAchievementTracker = \App\AchievementTracker::where('achivement_id', $lockedAchievement->achievement_id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        $lockedAchievementTracker->count += 1;
+
+        if ($lockedAchievementTracker->count >= $lockedAchievement->unlock_count)
+        {
+            $lockedAchievementTracker->achievement_unlocked_date = Carbon::now();
+            $lockedAchievementTracker->save();
         }
     }
 }

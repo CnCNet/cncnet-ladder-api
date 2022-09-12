@@ -119,6 +119,34 @@ class CreateAchievementTables extends Migration
 			$a->save();
 		}
 
+		//create win Yuri qm games achievements
+		$map[] = [
+			['id' => 10, 'value' => 'G.I.'],
+			['id' => 25, 'value' => 'Navy Seal'],
+			['id' => 50, 'value' => 'Rocketeer'],
+			['id' => 100, 'value' => 'Grizzly Tank'],
+			['id' => 300, 'value' => 'IFV'],
+			['id' => 500, 'value' => 'Mirage Tank'],
+			['id' => 1000, 'value' => 'Harrier'],
+			['id' => 1500, 'value' => 'Prism Tank'],
+			['id' => 2000, 'value' => 'Black Eagle'],
+			['id' => 3000, 'value' => 'Battle Fortress']
+		];
+
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = 4;
+			$a->tag = 'Yuri: Win QM Games';
+			$a->achievement_type = 'CAREER';
+			$a->achievement_name = 'Yuri wins: ' . $val;
+			$a->achievement_description = 'Win ' . $key . ' YR QM Games as Yuri';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+
 		//create play monthly qm games achievements
 		$map[] = [
 			['id' => 25, 'value' => 'Conscript'],
