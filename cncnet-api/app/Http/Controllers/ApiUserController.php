@@ -38,7 +38,9 @@ class ApiUserController extends Controller
                 $playerCreated = false;
                 $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)
                     ->where('id', '<>', $ladder->id)
+                    ->where('private', '=', false)
                     ->get();
+                    
                 foreach ($oLadders as $other)
                 {
                     $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
@@ -89,7 +91,7 @@ class ApiUserController extends Controller
     private function getTempNicks($userId)
     {
         $tempNicks = [];
-        foreach (\App\Ladder::where('private', '=', '0')->get() as $ladder) //don't create nick for private ladder
+        foreach (\App\Ladder::where('private', '=', false)->get() as $ladder) //don't create nick for private ladder
         {
             $tempNick = $this->getTempNickByLadderType($ladder->id, $userId);
             if ($tempNick != null)
