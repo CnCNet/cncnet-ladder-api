@@ -20,7 +20,8 @@ class PlayerService
         $player = \App\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladderId)->first();
 
-        if ($player == null)
+        $ladder = \App\Ladder::where('id', $ladderId)->first();
+        if ($player == null && $ladder->private == false)
         {
             $player = new \App\Player();
             $player->username = $username;
