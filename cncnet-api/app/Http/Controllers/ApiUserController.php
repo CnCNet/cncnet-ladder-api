@@ -28,7 +28,7 @@ class ApiUserController extends Controller
     {
         $user = $request->user();
 
-        foreach (\App\Ladder::all() as $ladder)
+        foreach (\App\Ladder::where('private', '=', false)->get() as $ladder)
         {
             $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
 
@@ -38,9 +38,8 @@ class ApiUserController extends Controller
                 $playerCreated = false;
                 $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)
                     ->where('id', '<>', $ladder->id)
-                    ->where('private', '=', false)
                     ->get();
-                    
+
                 foreach ($oLadders as $other)
                 {
                     $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
