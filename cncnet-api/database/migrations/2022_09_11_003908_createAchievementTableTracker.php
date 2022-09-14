@@ -6,20 +6,20 @@ use Illuminate\Database\Migrations\Migration;
 class CreateAchievementTableTracker extends Migration {
 
 	/**
-	 * Run the migrations.
+	 * A table to track the player's locked/unlocked achievements as well as track progress towards unlocking an achievement.
 	 *
 	 * @return void
 	 */
 	public function up()
 	{
-		Schema::create('achievement_tracker', function (Blueprint $table)
+		Schema::create('achievements_tracker', function (Blueprint $table)
 		{
 			$table->increments('id');
 			$table->integer('achievement_id')->nullable(false);
 			$table->foreign('achievement_id')->references('id')->on('achievements')->onDelete('cascade');
 			$table->integer('user_id')->nullable(false);
 			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-			$table->timestamp('achievement_unlocked_date')->nullable(true);
+			$table->timestamp('achievement_unlocked_date')->nullable(true); //the timestamp when the user unlocked the achivement
 			$table->integer('count')->default(0);
 		});
 
@@ -48,7 +48,7 @@ class CreateAchievementTableTracker extends Migration {
 	 */
 	public function down()
 	{
-		Schema::drop('achievement_tracker');
+		Schema::drop('achievements_tracker');
 	}
 
 }

@@ -97,9 +97,12 @@ class ApiLadderController extends Controller
         // Award points
         $status = $this->awardPoints($gameReport, $history);
 
-        //achivements
-        $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
-        $this->updateAchievements($playerId, $ladderId, $stats);
+        //achievements
+        if ($player->username === 'Burg') //TODO remove
+        {
+            $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
+            $this->updateAchievements($playerId, $ladderId, $stats);
+        }
 
         // Dispute handling
         $this->handleGameDispute($gameReport);
