@@ -125,7 +125,7 @@ class Ladder extends Model
             // If ladder is private, hide for non ladder testers
             if ($ladder->private == true)
             {
-                if ($user->isAdmin() || $user->isLadderAdmin($ladder) || $user->isLadderTester($ladder) != null)
+                if ($user->isAdmin() || $user->isLadderAdmin($ladder) || $user->isLadderTester($ladder))
                 {
                     continue;
                 }
