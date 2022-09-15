@@ -1,4 +1,6 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -10,18 +12,18 @@ use Mail;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
-	use Authenticatable, CanResetPassword;
+    use Authenticatable, CanResetPassword;
 
     const God = "God";
     const Admin = "Admin";
     const Moderator = "Moderator";
     const User = "User";
 
-	protected $table = 'users';
+    protected $table = 'users';
 
-	protected $fillable = ['name', 'email', 'password'];
+    protected $fillable = ['name', 'email', 'password'];
 
-	protected $hidden = ['password', 'remember_token'];
+    protected $hidden = ['password', 'remember_token'];
 
     public function canEditAnyLadders()
     {
@@ -29,22 +31,23 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return true;
 
         $la = $this->ladderAdmins()->where(
-            function($query)
+            function ($query)
             {
                 $query->where('admin', '=', true)->orWhere('moderator', '=', true);
-            });
+            }
+        );
 
         return $la->count() > 0;
     }
 
     public function usernames()
-	{
-		return $this->hasMany('App\Player');
-	}
+    {
+        return $this->hasMany('App\Player');
+    }
 
     public function ip()
     {
-        return $this->belongsTo('App\IpAddress','ip_address_id');
+        return $this->belongsTo('App\IpAddress', 'ip_address_id');
     }
 
     public function isAdmin()
@@ -156,12 +159,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         // Create a new confirmation entry
         $ev = new EmailVerification;
         $ev->user_id = $this->id;
-        $ev->token = hash('sha256', rand(0, getrandmax()).$this->email);
+        $ev->token = hash('sha256', rand(0, getrandmax()) . $this->email);
         $ev->save();
 
         $email = $this->email;
         // Email new confirmation
-        Mail::send('emails.verification', ['token' => $ev->token ], function($message) use ($email)
+        Mail::send('emails.verification', ['token' => $ev->token], function ($message) use ($email)
         {
             $message->to($email)->subject('Email verification for CnCNet Ladder');
         });

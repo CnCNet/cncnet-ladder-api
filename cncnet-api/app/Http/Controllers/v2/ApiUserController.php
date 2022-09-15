@@ -86,7 +86,7 @@ class ApiUserController extends Controller
         return $players;
     }
 
-        /**
+    /**
      * Returns a SINGLE nickname for all 3 ladder types
      */
     private function getTempNicks($userId)
@@ -103,7 +103,7 @@ class ApiUserController extends Controller
         return $tempNicks;
     }
 
-        /**
+    /**
      * Limit nicknames to the expired date, one per ladder type
      */
     private function getTempNickByLadderType($ladderId, $userId)

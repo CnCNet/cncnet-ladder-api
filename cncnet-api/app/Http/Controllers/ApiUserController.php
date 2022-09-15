@@ -1,11 +1,14 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
+use App\Ladder;
 use \App\PlayerActiveHandle;
+use App\User;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Log;
@@ -28,34 +31,41 @@ class ApiUserController extends Controller
     {
         $user = $request->user();
 
-        foreach (\App\Ladder::where('private', '=', false)->get() as $ladder)
+        $ladders = Ladder::getAllowedQMLaddersByUser($user);
+        foreach ($ladders as $ladder)
         {
-            $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
+            $this->autoRegisterUserbyLadder($user, $ladder);
+        }
 
-            if ($players->count() < 1)
+        return $this->getActivePlayerList($user);
+    }
+
+    private function autoRegisterUserbyLadder($user, $ladder)
+    {
+        $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
+
+        if ($players->count() < 1)
+        {
+            // Auto-register a player for each ladder if there isn't already a player registered for this user
+            $playerCreated = false;
+            $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)
+                ->where('id', '<>', $ladder->id)
+                ->get();
+
+            foreach ($oLadders as $other)
             {
-                // Auto-register a player for each ladder if there isn't already a player registered for this user
-                $playerCreated = false;
-                $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)
-                    ->where('id', '<>', $ladder->id)
-                    ->get();
-
-                foreach ($oLadders as $other)
+                $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
+                foreach ($oPlayers as $op)
                 {
-                    $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
-                    foreach ($oPlayers as $op)
-                    {
-                        $this->playerService->addPlayerToUser($op->username, $user, $ladder->id);
-                        $playerCreated = true;
-                    }
-                }
-                if (!$playerCreated)
-                {
-                    $this->playerService->addPlayerToUser($user->name, $user, $ladder->id);
+                    $this->playerService->addPlayerToUser($op->username, $user, $ladder->id);
+                    $playerCreated = true;
                 }
             }
+            if (!$playerCreated)
+            {
+                $this->playerService->addPlayerToUser($user->name, $user, $ladder->id);
+            }
         }
-        return $this->getActivePlayerList($user);
     }
 
     private function getActivePlayerList($user)
@@ -67,7 +77,7 @@ class ApiUserController extends Controller
         $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->get();
 
         $players = [];
-        foreach($activeHandles as $activeHandle)
+        foreach ($activeHandles as $activeHandle)
         {
             if ($activeHandle->player->ladder->private == false)
                 $players[] = $activeHandle->player;
@@ -78,7 +88,7 @@ class ApiUserController extends Controller
 
         if (count($players) == 0)
         {
-            return $this->getTempNicks($user->id);
+            return $this->getTempNicks($user);
         }
 
         return $players;
@@ -87,12 +97,15 @@ class ApiUserController extends Controller
     /**
      * Returns a SINGLE nickname for all 3 ladder types
      */
-    private function getTempNicks($userId)
+    private function getTempNicks(User $user)
     {
         $tempNicks = [];
-        foreach (\App\Ladder::where('private', '=', false)->get() as $ladder) //don't create nick for private ladder
+
+        $ladders = Ladder::getAllowedQMLaddersByUser($user);
+
+        foreach ($ladders as $ladder)
         {
-            $tempNick = $this->getTempNickByLadderType($ladder->id, $userId);
+            $tempNick = $this->getTempNickByLadderType($ladder->id, $user->id);
             if ($tempNick != null)
             {
                 $tempNicks[] = $tempNick;
@@ -150,10 +163,10 @@ class ApiUserController extends Controller
             return response()->json(['bad_parameters'], 400);
         }
 
-        if($token == null)
+        if ($token == null)
         {
             $check = \App\User::where("email", "=", $request->email)->first();
-            if($check == null)
+            if ($check == null)
             {
                 $user = new \App\User();
                 $user->name = "";
@@ -172,7 +185,7 @@ class ApiUserController extends Controller
         else
         {
             $user = $this->authService->getUser($request);
-            if($user)
+            if ($user)
             {
                 return response()->json(['account_present'], 400);
             }
@@ -188,7 +201,7 @@ class ApiUserController extends Controller
         if ($user->isGod())
             return $ladders;
 
-        $ladders = $ladders->filter(function($ladder) use ($user)
+        $ladders = $ladders->filter(function ($ladder) use ($user)
         {
             return $ladder->allowedToView($user);
         });

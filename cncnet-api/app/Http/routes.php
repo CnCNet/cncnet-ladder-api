@@ -24,9 +24,9 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
 });
 
 Route::controllers([
-        'auth' => 'Auth\AuthController',
-        'password' => 'Auth\PasswordController',
-    ]);
+    'auth' => 'Auth\AuthController',
+    'password' => 'Auth\PasswordController',
+]);
 
 Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
 
