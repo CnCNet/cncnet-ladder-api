@@ -124,9 +124,12 @@ class Ladder extends Model
         foreach ($ladders as $ladder)
         {
             // Show private ladders to ladder testers only
-            if ($ladder->private == true && !$user->isLadderTester($ladder))
+            if ($ladder->private == true)
             {
-                continue;
+                if (!$user->isLadderAdmin($ladder) || !$user->isLadderTester($ladder))
+                {
+                    continue;
+                }
             }
             $userAllowedLadders[] = $ladder;
         }
