@@ -31,7 +31,7 @@ class ApiUserController extends Controller
     {
         $user = $request->user();
 
-        $ladders = Ladder::getAllowedLaddersByUser($user);
+        $ladders = Ladder::getAllowedQMLaddersByUser($user);
         foreach ($ladders as $ladder)
         {
             $this->autoRegisterUserbyLadder($user, $ladder);
@@ -101,7 +101,7 @@ class ApiUserController extends Controller
     {
         $tempNicks = [];
 
-        $ladders = Ladder::getAllowedLaddersByUser($user);
+        $ladders = Ladder::getAllowedQMLaddersByUser($user);
 
         foreach ($ladders as $ladder)
         {

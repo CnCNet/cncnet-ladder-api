@@ -111,28 +111,26 @@ class Ladder extends Model
     }
 
     /**
-     * Returns array of ladders (private included) that a user has access to
+     * Returns array of QM ladders user has access to
+     * Show private ladders to ladder testers only
      * @param User $user 
      * @return array 
      */
-    public static function getAllowedLaddersByUser(User $user)
+    public static function getAllowedQMLaddersByUser(User $user)
     {
         $userAllowedLadders = [];
 
         $ladders = Ladder::all();
         foreach ($ladders as $ladder)
         {
-            // If ladder is private, hide for non ladder testers
-            if ($ladder->private == true)
+            // Show private ladders to ladder testers only
+            if ($ladder->private == true && !$user->isLadderTester($ladder))
             {
-                if ($user->isAdmin() || $user->isLadderAdmin($ladder) || $user->isLadderTester($ladder))
-                {
-                    continue;
-                }
+                continue;
             }
-
             $userAllowedLadders[] = $ladder;
         }
+
         return $userAllowedLadders;
     }
 
