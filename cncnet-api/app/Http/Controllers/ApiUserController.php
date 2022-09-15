@@ -109,6 +109,7 @@ class ApiUserController extends Controller
             if ($tempNick != null)
             {
                 $tempNicks[] = $tempNick;
+                $this->autoRegisterUserbyLadder($user, $ladder);
             }
         }
         return $tempNicks;
@@ -138,18 +139,16 @@ class ApiUserController extends Controller
             ->orderBy("id", "desc")
             ->first();
 
-        // If they are, set their nick as the active handle
-        if ($tempNick != null)
+        if ($tempNick == null)
         {
-            PlayerActiveHandle::setPlayerActiveHandle($ladderId, $tempNick->id, $userId);
-            return $tempNick;
+            // Get nick last created limited by this new 1 nick rule
+            $tempNick = \App\Player::where("user_id", $userId)
+                ->where('ladder_id', $ladderId)
+                ->orderBy("id", "desc")
+                ->first();
         }
 
-        // Get nick last created limited by this new 1 nick rule
-        $tempNick = \App\Player::where("user_id", $userId)
-            ->where('ladder_id', $ladderId)
-            ->orderBy("id", "desc")
-            ->first();
+        PlayerActiveHandle::setPlayerActiveHandle($ladderId, $tempNick->id, $userId);
 
         return $tempNick;
     }
