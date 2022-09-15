@@ -32,7 +32,6 @@ class ApiUserController extends Controller
         $user = $request->user();
 
         $ladders = Ladder::getAllowedQMLaddersByUser($user);
-        return $ladders;
         foreach ($ladders as $ladder)
         {
             $this->autoRegisterUserbyLadder($user, $ladder);
