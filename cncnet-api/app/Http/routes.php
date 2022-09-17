@@ -164,7 +164,7 @@ Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], func
 // Ladder Endpoints
 Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'], function ()
 {
-    Route::get('/', 'ApiLadderController@getCurrentLadders');
+    Route::get('/', 'ApiLadderController@getAllLadders');
     Route::get('/{game}/games/recent/{count}', 'ApiLadderController@getLadderRecentGamesList');
     Route::get('/{game}', 'ApiLadderController@getLadder');
     Route::get('/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');
