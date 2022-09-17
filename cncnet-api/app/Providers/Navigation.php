@@ -27,6 +27,7 @@ class Navigation extends ServiceProvider
             $ladders = $ladderService->getLatestLadders();
             $clan_ladders = $ladderService->getLatestClanLadders();
             $private_ladders = collect();
+
             if ($user !== null)
             {
                 $private_ladders = $ladderService->getPrivateLadders($user);

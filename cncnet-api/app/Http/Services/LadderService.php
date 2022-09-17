@@ -139,7 +139,7 @@ class LadderService
 
         return Cache::remember("ladderService::getPrivateLadders{$user->id}", 1, function () use ($user)
         {
-            collect(Ladder::getAllowedQMLaddersByUser($user));
+            return collect(Ladder::getAllowedQMLaddersByUser($user));
         });
     }
 
