@@ -1,11 +1,14 @@
-<?php namespace App\Providers;
+<?php
+
+namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Request;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
 
-class Navigation extends ServiceProvider {
+class Navigation extends ServiceProvider
+{
 
     /**
      * Bootstrap the application services.
@@ -15,7 +18,8 @@ class Navigation extends ServiceProvider {
     public function boot()
     {
         //
-        view()->composer('components.navigation', function($view) {
+        view()->composer('components.navigation', function ($view)
+        {
             $playerService = new PlayerService();
             $ladderService = new LadderService();
 

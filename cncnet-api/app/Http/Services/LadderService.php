@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Ladder;
 use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
 use \Illuminate\Pagination\LengthAwarePaginator;
@@ -131,12 +132,14 @@ class LadderService
 
     public function getPrivateLadders($user = null)
     {
+        if ($user == null)
+        {
+            return collect();
+        }
+
         return Cache::remember("ladderService::getPrivateLadders{$user->id}", 1, function () use ($user)
         {
-            if ($user === null)
-                return collect();
-
-            return $user->privateLadders()->get();
+            collect(Ladder::getAllowedQMLaddersByUser($user));
         });
     }
 

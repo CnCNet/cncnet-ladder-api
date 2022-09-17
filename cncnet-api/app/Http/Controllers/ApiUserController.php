@@ -255,18 +255,7 @@ class ApiUserController extends Controller
 
     public function getPrivateLadders(Request $request)
     {
-        $ladders = $this->ladderService->getLadders(true);
-
         $user = $request->user();
-
-        if ($user->isGod())
-            return $ladders;
-
-        $ladders = $ladders->filter(function ($ladder) use ($user)
-        {
-            return $ladder->allowedToView($user);
-        });
-
-        return $ladders->values();
+        return Ladder::getAllowedQMLaddersByUser($user);
     }
 }
