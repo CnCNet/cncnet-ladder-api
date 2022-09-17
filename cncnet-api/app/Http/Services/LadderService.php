@@ -137,10 +137,7 @@ class LadderService
             return collect();
         }
 
-        return Cache::remember("ladderService::getPrivateLadders{$user->id}", 1, function () use ($user)
-        {
-            return collect(Ladder::getAllowedQMLaddersByUser($user));
-        });
+        return collect(Ladder::getAllowedQMLaddersByUser($user, true));
     }
 
     public function getPreviousLaddersByGame($cncnetGame, $limit = 5)
