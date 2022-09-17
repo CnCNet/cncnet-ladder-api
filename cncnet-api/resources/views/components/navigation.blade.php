@@ -47,9 +47,12 @@
                         @endforeach
 
                         <li role="separator" class="divider"></li>
+
+                        @if($private_ladders)
                         <li role="separator" class="nav-title">Private Ladders 
                             <i class="fa fa-lock" aria-hidden="true"></i>
                         </li>
+                        @endif
 
                         @foreach($private_ladders as $private)
                         <li>
