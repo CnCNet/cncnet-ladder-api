@@ -47,7 +47,7 @@
         </div>
 
         @include("components.global-recent-games", ["games" => $games])
-        
+
         <div class="row">
             <div class="col-md-12 text-center">
             {!! $games->render() !!}

@@ -23,8 +23,7 @@
         <?php $pgr = \App\PlayerGameReport::where('game_report_id', $game->game_report_id); ?>
         <?php $gr = \App\GameReport::where('id', $game->game_report_id)->first(); ?>
 
-        @include("components/game-box",
-        [
+        @include("components/game-box", [
             "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->game_id,
             "game" => $history->ladder->abbreviation,
             "gamePlayers" => $pgr,
