@@ -94,7 +94,6 @@ class Ladder extends Model
     public function latestLeaderboardUrl()
     {
         $history = $this->currentHistory();
-
         if ($history === null)
         {
             return "/";
@@ -116,11 +115,16 @@ class Ladder extends Model
      * @param User $user 
      * @return array 
      */
-    public static function getAllowedQMLaddersByUser(User $user)
+    public static function getAllowedQMLaddersByUser(User $user, bool $onlyReturnPrivateLadders = false)
     {
         $userAllowedLadders = [];
 
         $ladders = Ladder::all();
+        if ($onlyReturnPrivateLadders === true)
+        {
+            $ladders = Ladder::where("private", true)->get();
+        }
+
         foreach ($ladders as $ladder)
         {
             // Show private ladders to ladder testers only

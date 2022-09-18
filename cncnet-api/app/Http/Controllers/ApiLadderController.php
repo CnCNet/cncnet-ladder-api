@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -47,16 +48,16 @@ class ApiLadderController extends Controller
 
         // Player checks
         $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
-        if($check !== null)
+        if ($check !== null)
         {
             return $check;
         }
 
         $filePath = config('filesystems')['dmp'];
-        $fileName = $gameId.'.'.$ladderId.'.'.$playerId.'.dmp';
+        $fileName = $gameId . '.' . $ladderId . '.' . $playerId . '.dmp';
         $file = $request->file('file')->move($filePath, $fileName);
 
-        $this->dispatch(new App\Commands\SaveLadderResult($filePath.'/'.$fileName, $ladderId, $gameId, $playerId, $pingSent, $pingReceived));
+        $this->dispatch(new App\Commands\SaveLadderResult($filePath . '/' . $fileName, $ladderId, $gameId, $playerId, $pingSent, $pingReceived));
 
         return response()->json(['success' => 'Queued for processing.'], 200);
     }
@@ -120,7 +121,8 @@ class ApiLadderController extends Controller
         // I'm disconnected then we wash the game
         if (($bestReport->disconnected() && $gameReport->disconnected())
             ||
-            ($bestReport->oos && $gameReport->oos))
+            ($bestReport->oos && $gameReport->oos)
+        )
         {
             $wash = new \App\GameReport();
             $wash->game_id = $gameReport->game_id;
@@ -155,7 +157,8 @@ class ApiLadderController extends Controller
 
             if (($gameReport->pings_sent - $gameReport->pings_received + 5)
                 <
-                $bestReport->pings_sent - $bestReport->pings_received)
+                $bestReport->pings_sent - $bestReport->pings_received
+            )
             {
                 $bestReport->best_report = false;
                 $gameReport->best_report = true;
@@ -210,7 +213,6 @@ class ApiLadderController extends Controller
             $this->ladderService->updatePlayerCache($gameReport);
             return;
         }
-
     }
 
     public function awardPoints($gameReport, $history)
@@ -258,7 +260,8 @@ class ApiLadderController extends Controller
                     $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
                     $ally_count++;
                 }
-                else {
+                else
+                {
                     $enemy_average += $other->rating;
                     $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
                     $enemy_count++;
@@ -281,7 +284,7 @@ class ApiLadderController extends Controller
             $wol_k = $history->ladder->qmLadderRules->wol_k;
 
             $diff = $enemy_points - $ally_points;
-            $we = 1/(pow(10, abs($diff)/600)+1);
+            $we = 1 / (pow(10, abs($diff) / 600) + 1);
             $we = $diff > 0 && $playerGR->wonOrDisco() ? 1 - $we : ($diff < 0 && !$playerGR->wonOrDisco() ? 1 - $we : $we);
             $wol = (int)($wol_k * $we);
 
@@ -301,26 +304,26 @@ class ApiLadderController extends Controller
 
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
                 if ($gameReport->best_report)
-                    $this->playerService->updatePlayerRating($playerGR->player_id,$eloAdjust->getNewRatings()["a"]);
+                    $this->playerService->updatePlayerRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
             }
             else
             {
                 if ($enemy_games < 10)
                 {
-                    $wol = (int)($wol * ($enemy_games/10));
+                    $wol = (int)($wol * ($enemy_games / 10));
                 }
                 if ($ally_points  < ($wol + $gvc) * 10)
                 {
-                    $playerGR->points = -1 * (int)($ally_points/10);
+                    $playerGR->points = -1 * (int)($ally_points / 10);
                 }
-                else {
+                else
+                {
                     $playerGR->points = -1 * ($wol + $gvc);
                 }
 
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
                 if ($gameReport->best_report)
-                    $this->playerService->updatePlayerRating($playerGR->player_id,$eloAdjust->getNewRatings()["a"]);
-
+                    $this->playerService->updatePlayerRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
             }
 
             $playerGR->player->doTierStuff($history);
@@ -338,6 +341,11 @@ class ApiLadderController extends Controller
         return 200;
     }
 
+    public function getAllLadders(Request $request)
+    {
+        return $this->ladderService->getAllLadders();
+    }
+
     public function getCurrentLadders(Request $request)
     {
         return $this->ladderService->getLadders(false);
@@ -352,7 +360,7 @@ class ApiLadderController extends Controller
     {
         $date = Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
-        return Cache::remember("$date/$game/$player", 5, function() use ($ladderService, $date, $game, $player)
+        return Cache::remember("$date/$game/$player", 5, function () use ($ladderService, $date, $game, $player)
         {
             $history = $ladderService->getActiveLadderByDate($date, $game);
             return $ladderService->getLadderPlayer($history, $player);
@@ -364,54 +372,60 @@ class ApiLadderController extends Controller
         $rawGame = \App\GameRaw::where("game_id", "=", $gameId)->get();
 
         return response($rawGame, 200)
-                  ->header('Content-Type', 'application/json');
+            ->header('Content-Type', 'application/json');
     }
 
     public function getLadderTopList(Request $request, $cncnetGame = null, $count = 10)
     {
         if ($count > 100) $count = 100;
 
-        return Cache::remember("$cncnetGame/top/$count", 5,
-        function() use (&$cncnetGame, &$count)
-        {
-            $date = Carbon::now()->format('m-Y');
-            $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
-            $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
-            $top = [];
-            foreach ($players as $player)
+        return Cache::remember(
+            "$cncnetGame/top/$count",
+            5,
+            function () use (&$cncnetGame, &$count)
             {
-                $top[] = ["name" => $player->player_name, "points" => $player->points];
+                $date = Carbon::now()->format('m-Y');
+                $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+                $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
+                $top = [];
+                foreach ($players as $player)
+                {
+                    $top[] = ["name" => $player->player_name, "points" => $player->points];
+                }
+                return $top;
             }
-            return $top;
-        });
+        );
     }
 
     public function getLadderRecentGamesList(Request $request, $cncnetGame = null, $count = 10)
     {
         if ($count > 100) $count = 100;
 
-        return Cache::remember("$cncnetGame/games/recent/$count", 5,
-        function() use (&$request, &$cncnetGame, &$count)
-        {
-            $date = Carbon::now()->format('m-Y');
-            $recentGames = $this->ladderService->getRecentValidLadderGames($date, $request->game, $count);
-
-            foreach($recentGames as $rg)
+        return Cache::remember(
+            "$cncnetGame/games/recent/$count",
+            5,
+            function () use (&$request, &$cncnetGame, &$count)
             {
-                $rg["url"] = "/ladder/" . $date . "/" . $request->game . "/games/" . $rg->id;
-                $rg["map_url"] = "/images/maps/". $request->game . "/" . $rg->hash . ".png";
-                $rg["players"] = $rg->playerGameReports()
-                                    ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
-                                    ->get();
+                $date = Carbon::now()->format('m-Y');
+                $recentGames = $this->ladderService->getRecentValidLadderGames($date, $request->game, $count);
 
-                foreach($rg["players"] as $p)
+                foreach ($recentGames as $rg)
                 {
-                    $p["username"] = $p->player()->first()->username;
-                    $p["url"] = "/ladder/" . $date . "/" . $request->game . "/player/" . $p->username;
+                    $rg["url"] = "/ladder/" . $date . "/" . $request->game . "/games/" . $rg->id;
+                    $rg["map_url"] = "/images/maps/" . $request->game . "/" . $rg->hash . ".png";
+                    $rg["players"] = $rg->playerGameReports()
+                        ->select("won", "player_id", "points", "no_completion", "quit", "defeated", "draw")
+                        ->get();
+
+                    foreach ($rg["players"] as $p)
+                    {
+                        $p["username"] = $p->player()->first()->username;
+                        $p["url"] = "/ladder/" . $date . "/" . $request->game . "/player/" . $p->username;
+                    }
                 }
+                return $recentGames;
             }
-            return $recentGames;
-        });
+        );
     }
 
     public function getLadderWinners(Request $request, $cncnetGame)
@@ -419,11 +433,11 @@ class ApiLadderController extends Controller
         $prevWinners = [];
         $prevLadders = [];
 
-        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($cncnetGame, 5)->splice(0,1);
+        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($cncnetGame, 5)->splice(0, 1);
 
         foreach ($prevLadders as $h)
         {
-            foreach($h as $history)
+            foreach ($h as $history)
             {
                 $prevWinners[] = [
                     "game" => $history->ladder->game,
@@ -431,7 +445,7 @@ class ApiLadderController extends Controller
                     "full" => $history->ladder->name,
                     "abbreviation" => $history->ladder->abbreviation,
                     "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0,2)
+                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
                 ];
             }
         }
@@ -441,10 +455,10 @@ class ApiLadderController extends Controller
 
     public function reRunDisconnectionPoints()
     {
-        $grs = \App\GameReport::where('game_reports.created_at','>','2018-03-01 00:00:00')
-                              ->where('disconnected','=',true)->where('points','>',0)
-                              ->join('player_game_reports', 'player_game_reports.game_report_id', '=', 'game_reports.id')
-                              ->orderBy('game_reports.id','ASC')->select('game_reports.*')->get();
+        $grs = \App\GameReport::where('game_reports.created_at', '>', '2018-03-01 00:00:00')
+            ->where('disconnected', '=', true)->where('points', '>', 0)
+            ->join('player_game_reports', 'player_game_reports.game_report_id', '=', 'game_reports.id')
+            ->orderBy('game_reports.id', 'ASC')->select('game_reports.*')->get();
 
         foreach ($grs as $gr)
         {
@@ -457,9 +471,9 @@ class ApiLadderController extends Controller
     {
         $ladder = \App\Ladder::find($ladderId);
         $qmMapSides = \App\QmMatchPlayer::select('map_sides')
-                                        ->where('ladder_id', '=', $ladderId)
-                                        ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
-                                        ->get();
+            ->where('ladder_id', '=', $ladderId)
+            ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
+            ->get();
 
         $map_vetos_raw = [];
         foreach ($qmMapSides as $ms)
@@ -481,7 +495,7 @@ class ApiLadderController extends Controller
         $map_vetos = [];
         foreach ($map_vetos_raw as $index => $count)
         {
-            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid','=', true)->first();
+            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
             if ($map !== null)
                 $map_vetos[$map->admin_description] = $count;
             else
@@ -494,11 +508,11 @@ class ApiLadderController extends Controller
     {
         $ladder = \App\Ladder::find($ladderId);
         $qmMapSides = \App\QmMatchPlayer::select('map_sides')
-                                        ->where('ladder_id', '=', $ladderId)
-                                        ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
-                                        ->groupBy('player_id')
-                                        ->orderBy('id', 'desc')
-                                        ->get();
+            ->where('ladder_id', '=', $ladderId)
+            ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
+            ->groupBy('player_id')
+            ->orderBy('id', 'desc')
+            ->get();
 
         $map_vetos_raw = [];
         foreach ($qmMapSides as $ms)
@@ -520,7 +534,7 @@ class ApiLadderController extends Controller
         $map_vetos = [];
         foreach ($map_vetos_raw as $index => $count)
         {
-            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid','=', true)->first();
+            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
             if ($map !== null)
                 $map_vetos[$map->admin_description] = $count;
             else
