@@ -78,12 +78,11 @@ class LadderService
         });
     }
 
-    public function getLatestPrivateLadders($user = null)
+    public function getLatestPrivateLadders($user)
     {
-        return Cache::remember("ladderService::getLatestPrivateLadders", 1, function () use ($user)
+        $cacheKey = "ladderService::getLatestPrivateLadders" . $user->id;
+        return Cache::remember($cacheKey, 1, function () use ($user)
         {
-            if ($user === null)
-                return collect();
             $date = Carbon::now();
 
             $start = $date->startOfMonth()->toDateTimeString();
