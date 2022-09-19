@@ -1,12 +1,13 @@
-<?php namespace App\Http\Controllers\Auth;
+<?php
+
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 
-class AuthController extends Controller {
+class AuthController extends Controller
+{
 
 	/*
 	|--------------------------------------------------------------------------
@@ -21,40 +22,54 @@ class AuthController extends Controller {
 
 	use AuthenticatesAndRegistersUsers;
 
-    protected $redirectTo = '/account';
-	/**
-	 * Create a new authentication controller instance.
-	 *
-	 * @param  \Illuminate\Contracts\Auth\Guard  $auth
-	 * @param  \Illuminate\Contracts\Auth\Registrar  $registrar
-	 * @return void
-	 */
-	public function __construct(Guard $auth, Registrar $registrar)
-	{
-		$this->auth = $auth;
-		$this->registrar = $registrar;
+	protected $redirectTo = '/account';
 
+	public function __construct()
+	{
 		$this->middleware('guest', ['except' => 'getLogout']);
 	}
 
-    public function postRegister(Request $request)
+	public function postRegister(Request $request)
 	{
-        $this->validate($request, [ 'name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users' ] );
+		$validator = $this->validator($request->all());
 
-		$validator = $this->registrar->validator($request->all());
-
-        if ($request->play_nay != null) return redirect()->back();
+		if ($request->play_nay != null) return redirect()->back();
 
 		if ($validator->fails())
 		{
 			$this->throwValidationException(
-				$request, $validator
+				$request,
+				$validator
 			);
 		}
 
-		$this->auth->login($this->registrar->create($request->all()));
+		$this->auth->login($this->create($request->all()));
 
-        $this->auth->user()->sendNewVerification();
+		$this->auth->user()->sendNewVerification();
 		return redirect()->back();
+	}
+
+	public function validator(array $data)
+	{
+		return Validator::make($data, [
+			'name' => 'required|max:11|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/',
+			'email' => 'required|email|max:255|unique:users',
+			'password' => 'required|confirmed|min:6',
+		]);
+	}
+
+	/**
+	 * Create a new user instance after a valid registration.
+	 *
+	 * @param  array  $data
+	 * @return User
+	 */
+	public function create(array $data)
+	{
+		return User::create([
+			'name' => $data['name'],
+			'email' => $data['email'],
+			'password' => bcrypt($data['password']),
+		]);
 	}
 }

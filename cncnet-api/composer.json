@@ -8,7 +8,7 @@
 	"license": "MIT",
 	"type": "project",
 	"require": {
-		"laravel/framework": "5.0.*",
+		"laravel/framework": "5.1.0",
 		"tymon/jwt-auth": "0.5.*",
 		"guzzlehttp/guzzle": "^5.3",
 		"maxmind-db/reader": "1.4.1",

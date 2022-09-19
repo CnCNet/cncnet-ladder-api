@@ -136,6 +136,9 @@ return [
 		'Illuminate\Validation\ValidationServiceProvider',
 		'Illuminate\View\ViewServiceProvider',
 
+		// 5.1.0
+		'Illuminate\Broadcasting\BroadcastServiceProvider',
+
 		/*
 		 * Application Service Providers...
 		 */
@@ -144,13 +147,13 @@ return [
 		'App\Providers\ConfigServiceProvider',
 		'App\Providers\EventServiceProvider',
 		'App\Providers\RouteServiceProvider',
-        'App\Providers\Navigation',
-        'App\Providers\IrcCache',
+		'App\Providers\Navigation',
+		'App\Providers\IrcCache',
 		'App\MyMailer\MailServiceProvider',
-        'App\LockedCache\LockedCacheServiceProvider',
+		'App\LockedCache\LockedCacheServiceProvider',
 
-        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
-        //'Clarification\MailDrivers\Sparkpost\SparkpostServiceProvider',
+		'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
+		//'Clarification\MailDrivers\Sparkpost\SparkpostServiceProvider',
 
 	],
 
@@ -199,9 +202,9 @@ return [
 		'URL'       => 'Illuminate\Support\Facades\URL',
 		'Validator' => 'Illuminate\Support\Facades\Validator',
 		'View'      => 'Illuminate\Support\Facades\View',
-        'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
-        'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory'
+		'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
+		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory'
 	],
 
-    'irc_pipe' => env('IRC_PIPE', '/tmp/pp_file'),
+	'irc_pipe' => env('IRC_PIPE', '/tmp/pp_file'),
 ];

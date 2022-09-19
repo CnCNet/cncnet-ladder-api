@@ -7,6 +7,7 @@ use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;
+use Exception;
 use Illuminate\Support\Facades\Cache;
 
 class LadderController extends Controller
