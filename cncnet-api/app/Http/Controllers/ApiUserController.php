@@ -235,6 +235,10 @@ class ApiUserController extends Controller
                 $user->password = \Hash::make($request->password);
                 $user->save();
 
+                $userSettings = new \App\UserSettings();
+                $userSettings->user_id = $user->id;
+                $userSettings->save();
+
                 $token = JWTAuth::fromUser($user);
                 return response()->json(compact('token'));
             }

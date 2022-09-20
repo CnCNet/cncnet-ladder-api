@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use App\Commands\Command;
 
+use Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
@@ -45,6 +46,8 @@ class FindOpponent extends Command implements ShouldQueue
      */
     public function handle()
     {
+        Log::info('Finding match.');
+        
         $this->delete();
         $qEntry = QmQueueEntry::find($this->qEntryId);
 
@@ -123,21 +126,40 @@ class FindOpponent extends Command implements ShouldQueue
          * The ratio of seconds is tunable per ladder
          */
 
-        $query = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
+        $user = $qmPlayer->player->user;
+        $userSettings = $user->userSettings;
+
+        $opponentEntries = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
             ->where('ladder_history_id', '=', $history->id)
-            ->select(DB::raw("*,"
-                . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->rating_per_second} as rating_time,"
-                . "TIMESTAMPDIFF(SECOND, created_at, updated_at) * {$ladder_rules->points_per_second} as points_time"))
-            ->havingRAW("rating_time + {$ladder_rules->max_difference} > ABS(rating - {$rating})"
-                . "AND points_time + {$ladder_rules->max_points_difference} > ABS(points - {$qEntry->points})");
+            ->get(); //fetch all opponents who are currently in queue for this ladder
 
-        //error_log($query->toSql());
-        $qmOpns = $query->get();
+        $opponentEntriesFiltered = (new QmQueueEntry())->newCollection(); //a collection of qm opponents who are within point filter but also includes opponents who have mutual point filter disabled
 
-        //var_dump($qmOpns);
-        //error_log("Queried QmQueueEntry\n");
-        $qmOpns = $qmOpns->shuffle();
+        foreach ($opponentEntries as $opponentEntry)
+        {
+            $opnFilter = $opponentEntry->qmPlayer->player->user->userSettings->disablePointFilter; //opponent's point filter flag
 
+            if ($userSettings->disablePointFilter && $opnFilter)
+            {   
+                Log::info('both players have the point filter disabled, we will ignore the point filter');
+                //both players have the point filter disabled, we will ignore the point filter
+                $opponentEntriesFiltered->add($opponentEntry);
+            }
+            else
+            {
+                //(updated_at - created_at) / 60 = seconds duration player has been waiting in queue
+                $points_time = ((strtotime($opponentEntry->updated_at) - strtotime($opponentEntry->created_at)) / 60) * $ladder_rules->points_per_second;
+
+                Log::info('pt filter enabled');
+                //is the opponent within the point filter
+                if ($points_time + $ladder_rules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
+                    $opponentEntriesFiltered->add($opponentEntry);
+            }
+        }
+
+        $qmOpns = $opponentEntriesFiltered->shuffle();
+        Log::info($qmOpns->count().' opponents found');
+        
         if ($qmOpns->count() >= $ladder_rules->player_count - 1)
         {
             //error_log("checking qmOpns\n");
