@@ -66,9 +66,11 @@
             </div>
         </div>
 
+        @if(isset($userSettings))
         <div class="col-md-12">
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#openUserSettings"> User Settings </button>
         </div>
+        @endif
 
         <div class="modal fade" id="openUserSettings" tabIndex="-1" role="dialog">
             <div class="modal-dialog modal-md" role="document">
@@ -86,8 +88,10 @@
                                         <form method="POST" action="/account/settings">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
+                                            @if(isset($userSettings))
                                             <input id="disablePointFilter" type="checkbox" name="disabledPointFilter" @if($userSettings->disabledPointFilter) checked @endif />
                                             <label for="disablePointFilter">Disable Point Filter</label>
+                                            @endif
 
                                             {{-- TODO future functionality will use this value, no need to have users touch this yet
                                             <input id="enableAnonymous" type="checkbox" name="enableAnonymous"  value="{{ $userSettings->enableAnonymous }}" @if($userSettings->enableAnonymous) checked @endif />
