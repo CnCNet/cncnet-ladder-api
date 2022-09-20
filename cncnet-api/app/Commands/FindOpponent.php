@@ -123,7 +123,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
          */
 
         $user = $qmPlayer->player->user;
-        $userSettings = $user->userSettings()->first();
+        $userSettings = $user->userSettings;
 
         $opponentEntries = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
             ->where('ladder_history_id', '=', $history->id)
@@ -133,7 +133,7 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
 
         foreach ($opponentEntries as $opponentEntry)
         {
-            $opnFilter = $opponentEntry->qmPlayer->player->user->userSettings()->first()->disablePointFilter; //opponent's point filter flag
+            $opnFilter = $opponentEntry->qmPlayer->player->user->userSettings->disablePointFilter; //opponent's point filter flag
 
             if ($userSettings->disablePointFilter && $opnFilter)
             {   //both players have the point filter disabled, we will ignore the point filter

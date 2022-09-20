@@ -30,12 +30,12 @@ class AccountController extends Controller
 
         \App\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
         $user->save();
-
+        
         return view(
             "auth.account",
             array(
                 "user" => $user,
-                "userSettings" => $user->userSettings->first(),
+                "userSettings" => $user->userSettings,
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "private_ladders" => $this->ladderService->getLatestPrivateLadders($user)
@@ -285,7 +285,7 @@ class AccountController extends Controller
     public function updateUserSettings(Request $request)
     {
         $user = $request->user();
-        $userSettings = $user->userSettings->first();
+        $userSettings = $user->userSettings;
 
         if ($userSettings === null) 
         {
