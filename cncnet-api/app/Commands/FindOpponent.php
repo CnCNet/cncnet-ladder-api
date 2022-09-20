@@ -4,7 +4,6 @@ namespace App\Commands;
 
 use App\Commands\Command;
 
-use Log;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
@@ -15,6 +14,7 @@ use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
 
 class FindOpponent extends Command implements ShouldQueue
 {
@@ -46,14 +46,14 @@ class FindOpponent extends Command implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Finding match.');
-        
+        Log::info("FindOpponent ** Finding match.");
+
         $this->delete();
         $qEntry = QmQueueEntry::find($this->qEntryId);
 
         if ($qEntry === null)
         {
-            //error_log("qEntry is null\n");
+            Log::info("FindOpponent ** qEntry is null.");
             return;
         }
 
@@ -64,7 +64,7 @@ class FindOpponent extends Command implements ShouldQueue
         // A player could cancel out of queue before this function runs
         if ($qmPlayer === null)
         {
-            //error_log("qmPlayer is null");
+            Log::info("FindOpponent ** qmPlayer is null.");
             $qEntry->delete();
             return;
         }
@@ -72,7 +72,7 @@ class FindOpponent extends Command implements ShouldQueue
         // Skip if the player has already been matched up
         if ($qmPlayer->qm_match_id !== null)
         {
-            //error_log("qmPlayer->qm_match_id is not null");
+            Log::info("FindOpponent ** qmPlayer->qm_match_id is not null.");
             $qEntry->delete();
             return;
         }
@@ -81,7 +81,7 @@ class FindOpponent extends Command implements ShouldQueue
 
         if ($history === null)
         {
-            //error_log("history is null");
+            Log::info("FindOpponent ** history is null.");
             $qEntry->delete();
             return;
         }
@@ -91,6 +91,7 @@ class FindOpponent extends Command implements ShouldQueue
         if ($ladder === null)
         {
             //error_log("ladder is null");
+            Log::info("FindOpponent ** ladder is null.");
             $qEntry->delete();
             return;
         }
@@ -99,10 +100,11 @@ class FindOpponent extends Command implements ShouldQueue
 
         if ($player === null)
         {
-            //error_log("player is null");
+            Log::info("FindOpponent ** player is null.");
             $qEntry->delete();
             return;
         }
+
         $rating = $player->rating->rating;
         // map_bitfield is an old and unused bit of code
         $qmPlayer->map_bitfield = 0xffffffff;
@@ -140,17 +142,18 @@ class FindOpponent extends Command implements ShouldQueue
             $opnFilter = $opponentEntry->qmPlayer->player->user->userSettings->disablePointFilter; //opponent's point filter flag
 
             if ($userSettings->disablePointFilter && $opnFilter)
-            {   
-                Log::info('both players have the point filter disabled, we will ignore the point filter');
-                //both players have the point filter disabled, we will ignore the point filter
+            {
+                // both players have the point filter disabled, we will ignore the point filter
+                Log::info("FindOpponent ** Ignoring point filter");
                 $opponentEntriesFiltered->add($opponentEntry);
             }
             else
             {
+                Log::info("FindOpponent ** Point filter enabled");
+
                 //(updated_at - created_at) / 60 = seconds duration player has been waiting in queue
                 $points_time = ((strtotime($opponentEntry->updated_at) - strtotime($opponentEntry->created_at)) / 60) * $ladder_rules->points_per_second;
 
-                Log::info('pt filter enabled');
                 //is the opponent within the point filter
                 if ($points_time + $ladder_rules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
                     $opponentEntriesFiltered->add($opponentEntry);
@@ -158,11 +161,13 @@ class FindOpponent extends Command implements ShouldQueue
         }
 
         $qmOpns = $opponentEntriesFiltered->shuffle();
-        Log::info($qmOpns->count().' opponents found');
-        
+        Log::info("FindOpponent ** Opponents found: " . $qmOpns->count());
+
         if ($qmOpns->count() >= $ladder_rules->player_count - 1)
         {
             //error_log("checking qmOpns\n");
+            Log::info("FindOpponent ** checking qmOpns");
+
             // Randomly choose the opponents from the best matches. To prevent
             // long runs of identical matchups.
             $qmOpns = $qmOpns->shuffle()->take($ladder_rules->player_count - 1);
@@ -183,6 +188,8 @@ class FindOpponent extends Command implements ShouldQueue
                 {
                     foreach ($qmOpns as $qOpn)
                     {
+                        Log::info("FindOpponent ** " . "qOpn->rating_time = {$qOpn->rating_time}");
+
                         //error_log("qOpn->rating_time = {$qOpn->rating_time}");
                         $opn = $qOpn->qmPlayer;
                         if ($opn === null)
@@ -191,6 +198,7 @@ class FindOpponent extends Command implements ShouldQueue
                             $qEntry->delete();
                             return;
                         }
+
                         if (
                             array_key_exists($qmMap->bit_idx, $opn->map_side_array())
                             &&
@@ -204,10 +212,14 @@ class FindOpponent extends Command implements ShouldQueue
                     }
                 }
                 else
+                {
                     $match = false;
+                }
 
                 if ($match)
+                {
                     $common_qm_maps[] = $qmMap;
+                }
             }
 
             $qEntry->delete();
@@ -269,18 +281,24 @@ class FindOpponent extends Command implements ShouldQueue
 
             if (count($common_qm_maps) < 1)
             {
-                error_log("No common maps available");
+                Log::info("FindOpponent ** No common maps available");
+
                 $qmPlayer->touch();
                 return;
             }
 
             $randomMapIndex = mt_rand(0, count($common_qm_maps) - 1);
 
+            Log::info("FindOpponent ** Create QmMatch");
+
             // Create the qm_matches db entry
             $qmMatch = new \App\QmMatch();
             $qmMatch->ladder_id = $qmPlayer->ladder_id;
             $qmMatch->qm_map_id = $common_qm_maps[$randomMapIndex]->id;
             $qmMatch->seed = mt_rand(-2147483647, 2147483647);
+
+
+            Log::info("FindOpponent ** Create Game");
 
             // Create the Game
             $game = \App\Game::genQmEntry($qmMatch);
