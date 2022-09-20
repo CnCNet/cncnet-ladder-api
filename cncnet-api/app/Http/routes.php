@@ -24,9 +24,9 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
 });
 
 Route::controllers([
-        'auth' => 'Auth\AuthController',
-        'password' => 'Auth\PasswordController',
-    ]);
+    'auth' => 'Auth\AuthController',
+    'password' => 'Auth\PasswordController',
+]);
 
 Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
 
@@ -165,7 +165,7 @@ Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], func
 // Ladder Endpoints
 Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'], function ()
 {
-    Route::get('/', 'ApiLadderController@getCurrentLadders');
+    Route::get('/', 'ApiLadderController@getAllLadders');
     Route::get('/{game}/games/recent/{count}', 'ApiLadderController@getLadderRecentGamesList');
     Route::get('/{game}', 'ApiLadderController@getLadder');
     Route::get('/{game}/game/{gameId}', 'ApiLadderController@getLadderGame');

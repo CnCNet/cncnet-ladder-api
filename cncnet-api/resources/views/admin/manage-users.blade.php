@@ -46,8 +46,6 @@
                                     <input type="hidden" name="hostname" value="{{ $hostname}}" />
 
                                     <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}" style="height: 50px" />
-                                    <p style="color: silver;padding: 5px; display:inline-block">Exact Search</p>
-                                    <input name="exact" type="checkbox" style="display:inline-block">
                                     <a href="?" style="color: silver;padding: 5px;margin-bottom: 5px; display: block;float: right;">
                                         Clear search
                                     </a>
@@ -86,14 +84,11 @@
                                     </div>
                                 <?php endforeach; ?>
                             </div>
-
-                            <?php if ($players) : ?>
-                                {!! $players->render() !!}
-                            <?php endif; ?>
                         </div>
 
-                        <h2>Users</h2>
-
+                        <?php if ($users) : ?>
+                            <h2>Users</h2>
+                        <?php endif; ?>
                         <div class="users">
                             <?php foreach ($users as $user) : ?>
                                 <div class="user-info">
@@ -110,7 +105,6 @@
                                 </div>
                             <?php endforeach; ?>
                         </div>
-                        {!! $users->render() !!}
                     </div>
                 </div>
             </div>

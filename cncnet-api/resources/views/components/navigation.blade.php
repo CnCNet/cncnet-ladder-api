@@ -44,7 +44,22 @@
                                 {{ $history->ladder->name }}
                             </a>
                         </li>
+                        @endforeach
 
+                        <li role="separator" class="divider"></li>
+
+                        @if($private_ladders)
+                        <li role="separator" class="nav-title">Private Ladders 
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                        </li>
+                        @endif
+
+                        @foreach($private_ladders as $private)
+                        <li>
+                            <a href="/ladder/{{ $history->short . "/" . $private->ladder->abbreviation }}/" title="{{ $private->ladder->name }}">
+                                {{ $private->ladder->name }} 
+                            </a>
+                        </li>
                         @endforeach
 
                         <li role="separator" class="divider"></li>
@@ -75,21 +90,6 @@
                         @endforeach
                     </ul>
                 </li>
-                @endif
-                @if(isset($private_ladders) && $private_ladders->count() > 0)
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Private <span class="caret"></span></a>
-                        <ul class="dropdown-menu" style="min-width:250px">
-                            <li role="separator" class="nav-title">C&amp;C Live Ladders</li>
-                            @foreach($private_ladders as $ladder)
-                                <li>
-                                    <a href="{{ $ladder->latestLeaderboardUrl() }}" title="{{ $ladder->name }}">
-                                        {{ $ladder->name }}
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </li>
                 @endif
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Community <span class="caret"></span></a>

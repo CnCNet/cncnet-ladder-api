@@ -1,5 +1,8 @@
-<?php namespace App\Http\Services;
+<?php
 
+namespace App\Http\Services;
+
+use App\Ladder;
 use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
 use \Illuminate\Pagination\LengthAwarePaginator;
@@ -12,6 +15,27 @@ class LadderService
     public function __construct()
     {
         $this->authService = new AuthService();
+    }
+
+    public function getAllLadders()
+    {
+        $ladders = \App\Ladder::all();
+
+        foreach ($ladders as $ladder)
+        {
+            $ladder["sides"] = $ladder->sides()->get();
+            $rules = $ladder->qmLadderRules;
+
+            if ($rules !== null)
+            {
+                $ladder["vetoes"] = $rules->map_vetoes;
+                $ladder["allowed_sides"] = array_map('intval', explode(',', $rules->allowed_sides));
+            }
+            $current = $this->getActiveLadderByDate(Carbon::now()->format('m-Y'), $ladder->abbreviation);
+            if ($current !== null)
+                $ladder["current"] = $current->short;
+        }
+        return $ladders;
     }
 
     public function getLadders($private = false)
@@ -27,93 +51,92 @@ class LadderService
             {
                 $ladder["vetoes"] = $rules->map_vetoes;
                 $ladder["allowed_sides"] = array_map('intval', explode(',', $rules->allowed_sides));
-
             }
             $current = $this->getActiveLadderByDate(Carbon::now()->format('m-Y'), $ladder->abbreviation);
             if ($current !== null)
                 $ladder["current"] = $current->short;
-
         }
         return $ladders;
     }
 
     public function getLatestLadders()
     {
-        return Cache::remember("ladderService::getLatestLadders", 1, function() {
-        $date = Carbon::now();
+        return Cache::remember("ladderService::getLatestLadders", 1, function ()
+        {
+            $date = Carbon::now();
 
-        $start = $date->startOfMonth()->toDateTimeString();
-        $end = $date->endOfMonth()->toDateTimeString();
+            $start = $date->startOfMonth()->toDateTimeString();
+            $end = $date->endOfMonth()->toDateTimeString();
 
-        return \App\LadderHistory::leftJoin("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
-            ->where("ladder_history.starts", "=", $start)
-            ->where("ladder_history.ends", "=", $end)
-            ->whereNotNull("ladder.id")
-            ->where('ladder.clans_allowed', '=', false)
-            ->where('ladder.private', '=', false)
-            ->get();
+            return \App\LadderHistory::leftJoin("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+                ->where("ladder_history.starts", "=", $start)
+                ->where("ladder_history.ends", "=", $end)
+                ->whereNotNull("ladder.id")
+                ->where('ladder.clans_allowed', '=', false)
+                ->where('ladder.private', '=', false)
+                ->get();
         });
     }
 
-    public function getLatestPrivateLadders($user = null)
+    public function getLatestPrivateLadders($user)
     {
-        return Cache::remember("ladderService::getLatestPrivateLadders", 1, function() use ($user) {
-            if ($user === null)
-                return collect();
-        $date = Carbon::now();
-
-        $start = $date->startOfMonth()->toDateTimeString();
-        $end = $date->endOfMonth()->toDateTimeString();
-
-        if ($user->isGod())
+        $cacheKey = "ladderService::getLatestPrivateLadders" . $user->id;
+        return Cache::remember($cacheKey, 1, function () use ($user)
         {
-            return \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
-            ->whereNotNull("ladder.id")
-            ->where("ladder_history.starts", "=", $start)
-            ->where("ladder_history.ends", "=", $end)
-            ->where('ladder.private', '=', 1)
-            ->get();
-        }
-        else
-        {
-            return \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
-            ->join("ladder_admins as la", "la.ladder_id", "=", "ladder.id")
-            ->whereNotNull("ladder.id")
-            ->where("ladder_history.starts", "=", $start)
-            ->where("ladder_history.ends", "=", $end)
-            ->where('ladder.private', '=', 1)
-            ->get();
-        }
+            $date = Carbon::now();
 
+            $start = $date->startOfMonth()->toDateTimeString();
+            $end = $date->endOfMonth()->toDateTimeString();
+
+            if ($user->isGod())
+            {
+                return \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+                    ->whereNotNull("ladder.id")
+                    ->where("ladder_history.starts", "=", $start)
+                    ->where("ladder_history.ends", "=", $end)
+                    ->where('ladder.private', '=', 1)
+                    ->get();
+            }
+            else
+            {
+                return \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+                    ->join("ladder_admins as la", "la.ladder_id", "=", "ladder.id")
+                    ->whereNotNull("ladder.id")
+                    ->where("ladder_history.starts", "=", $start)
+                    ->where("ladder_history.ends", "=", $end)
+                    ->where('ladder.private', '=', 1)
+                    ->get();
+            }
         });
     }
 
     public function getLatestClanLadders()
     {
-        return Cache::remember("ladderService::getLatestClanLadders", 1, function() {
-        $date = Carbon::now();
+        return Cache::remember("ladderService::getLatestClanLadders", 1, function ()
+        {
+            $date = Carbon::now();
 
-        $start = $date->startOfMonth()->toDateTimeString();
-        $end = $date->endOfMonth()->toDateTimeString();
+            $start = $date->startOfMonth()->toDateTimeString();
+            $end = $date->endOfMonth()->toDateTimeString();
 
-        return \App\LadderHistory::leftJoin("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
-            ->where("ladder_history.starts", "=", $start)
-            ->where("ladder_history.ends", "=", $end)
-            ->whereNotNull("ladder.id")
-            ->where('ladder.clans_allowed', '=', true)
-            ->where('ladder.private', '=', false)
-            ->get();
+            return \App\LadderHistory::leftJoin("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+                ->where("ladder_history.starts", "=", $start)
+                ->where("ladder_history.ends", "=", $end)
+                ->whereNotNull("ladder.id")
+                ->where('ladder.clans_allowed', '=', true)
+                ->where('ladder.private', '=', false)
+                ->get();
         });
     }
 
     public function getPrivateLadders($user = null)
     {
-        return Cache::remember("ladderService::getPrivateLadders{$user->id}", 1, function() use ($user) {
-        if ($user === null)
+        if ($user == null)
+        {
             return collect();
+        }
 
-        return $user->privateLadders()->get();
-        });
+        return collect(Ladder::getAllowedQMLaddersByUser($user, true));
     }
 
     public function getPreviousLaddersByGame($cncnetGame, $limit = 5)
@@ -188,7 +211,7 @@ class LadderService
     {
         $ladder = $this->getLadderByGame($game);
 
-        if($ladder == null)
+        if ($ladder == null)
             return "No ladder found";
 
         $players = \App\Player::where("ladder_id", "=", $ladder->id)
@@ -258,12 +281,29 @@ class LadderService
         }
 
         return \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
-            ->select('games.id', 'games.ladder_history_id', 'wol_game_id', 'bamr', 'games.created_at', 'games.updated_at', 'crat',
-                     'cred', 'shrt', 'supr', 'unit', 'plrs', 'scen', 'hash', 'game_report_id', 'qm_match_id')
+            ->select(
+                'games.id',
+                'games.ladder_history_id',
+                'wol_game_id',
+                'bamr',
+                'games.created_at',
+                'games.updated_at',
+                'crat',
+                'cred',
+                'shrt',
+                'supr',
+                'unit',
+                'plrs',
+                'scen',
+                'hash',
+                'game_report_id',
+                'qm_match_id'
+            )
             ->where("ladder_history_id", "=", $history->id)
-            ->where(function ($query) {
-                    $query->where('game_reports.duration', '<=', 3)
-                          ->orWhere('game_reports.fps', '<=', 10);
+            ->where(function ($query)
+            {
+                $query->where('game_reports.duration', '<=', 3)
+                    ->orWhere('game_reports.fps', '<=', 10);
             })
             ->where('finished', '=', 1)
             ->orderBy("games.id", "DESC")
@@ -272,7 +312,7 @@ class LadderService
 
     public function getLadderGameById($history, $gameId)
     {
-        if($history == null || $gameId == null)
+        if ($history == null || $gameId == null)
             return "Invalid parameters";
 
         return \App\Game::where("id", "=", $gameId)->where('ladder_history_id', $history->id)->first();
@@ -280,14 +320,14 @@ class LadderService
 
     public function getLadderPlayer($history, $username)
     {
-        if($history === null)
-            return [ "error" => "Incorrect Ladder" ];
+        if ($history === null)
+            return ["error" => "Incorrect Ladder"];
 
         $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
             ->where("username", "=", $username)->first();
 
         if ($player === null)
-            return [ "error" => "No such player" ];
+            return ["error" => "No such player"];
 
         $playerCache = $player->playerCache($history->id);
 
@@ -332,7 +372,7 @@ class LadderService
         if ($tier === null)
             $tier = 1;
 
-        if($history == null)
+        if ($history == null)
             return [];
 
         $query = \App\Player::where("ladder_id", "=", $history->ladder->id)
@@ -343,7 +383,7 @@ class LadderService
 
         if ($search)
         {
-            $query->where('players.username','LIKE',"%{$search}%");
+            $query->where('players.username', 'LIKE', "%{$search}%");
         }
 
         $query->where("games.ladder_history_id", "=", $history->id)
@@ -356,7 +396,8 @@ class LadderService
                 \DB::raw("SUM(pgr.points) as points"),
                 \DB::raw("COUNT(games.id) as total_games"),
                 \DB::raw("SUM(pgr.won) as total_wins"), // TODO
-                "players.*")
+                "players.*"
+            )
             ->orderBy("points", "DESC");
 
         if ($paginate)
@@ -385,7 +426,7 @@ class LadderService
         {
             $player = $playerGR->player;
             $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
-                                  ->where('player_id', '=', $player->id)->first();
+                ->where('player_id', '=', $player->id)->first();
             $pc->mark();
             $pc->points -= $playerGR->points;
             $pc->games--;
@@ -404,7 +445,7 @@ class LadderService
         {
             $player = $playerGR->player;
             $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
-                                  ->where('player_id', '=', $player->id)->first();
+                ->where('player_id', '=', $player->id)->first();
 
             if ($pc === null)
             {

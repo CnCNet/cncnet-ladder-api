@@ -13,8 +13,9 @@ use Carbon\Carbon;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
+class FindOpponent extends Command implements ShouldQueue
 {
 
     use InteractsWithQueue, SerializesModels;

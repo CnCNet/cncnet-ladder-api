@@ -1,10 +1,18 @@
-<?php namespace App\Exceptions;
+<?php
+
+namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
 
-class Handler extends ExceptionHandler {
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+class Handler extends ExceptionHandler
+{
 
 	/**
 	 * A list of the exception types that should not be reported.
@@ -12,7 +20,10 @@ class Handler extends ExceptionHandler {
 	 * @var array
 	 */
 	protected $dontReport = [
-		'Symfony\Component\HttpKernel\Exception\HttpException'
+		AuthorizationException::class,
+		HttpException::class,
+		ModelNotFoundException::class,
+		ValidationException::class,
 	];
 
 	/**
@@ -25,10 +36,10 @@ class Handler extends ExceptionHandler {
 	 */
 	public function report(Exception $e)
 	{
-        if ($e instanceof TokenMismatchException)
-        {
-            return;
-        }
+		if ($e instanceof TokenMismatchException)
+		{
+			return;
+		}
 
 		return parent::report($e);
 	}
@@ -42,12 +53,11 @@ class Handler extends ExceptionHandler {
 	 */
 	public function render($request, Exception $e)
 	{
-        if ($e instanceof TokenMismatchException)
-        {
-            return redirect($request->fullUrl())->with('csrf_error',"Oops! Seems you couldn't submit form for a long time. Please try again.");
-        }
+		if ($e instanceof TokenMismatchException)
+		{
+			return redirect($request->fullUrl())->with('csrf_error', "Oops! Seems you couldn't submit form for a long time. Please try again.");
+		}
 
 		return parent::render($request, $e);
 	}
-
 }

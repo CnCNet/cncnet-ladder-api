@@ -1,11 +1,15 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\LadderService;
+use App\Ladder;
+use App\Player;
 use \App\PlayerActiveHandle;
+use App\User;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Log;
@@ -28,82 +32,157 @@ class ApiUserController extends Controller
     {
         $user = $request->user();
 
-        foreach (\App\Ladder::all() as $ladder)
-        {
-            $players = $user->usernames()->where('ladder_id', '=', $ladder->id)->get();
-            
-            if ($players->count() < 1)
-            {
-                // Auto-register a player for each ladder if there isn't already a player registered for this user
-                $playerCreated = false;
-                $oLadders = \App\Ladder::where('abbreviation', '=', $ladder->abbreviation)
-                    ->where('id', '<>', $ladder->id)
-                    ->get();
-                foreach ($oLadders as $other)
-                {
-                    $oPlayers = $other->players()->where('user_id', '=', $user->id)->get();
-                    foreach ($oPlayers as $op)
-                    {
-                        $this->playerService->addPlayerToUser($op->username, $user, $ladder->id);
-                        $playerCreated = true;
-                    }
-                }
-                if (!$playerCreated)
-                {
-                    $this->playerService->addPlayerToUser($user->name, $user, $ladder->id);
-                }
-            }
-        }
-        return $this->getActivePlayerList($user);
+        $this->createPlayerForLaddersIfNoneExist($user);
+
+        return $this->getActivePlayersByUser($user);
     }
 
-    private function getActivePlayerList($user)
+    /**
+     * Return user's active players
+     * @param User $user 
+     * @return array 
+     */
+    private function getActivePlayersByUser(User $user)
     {
+        $playerList = [];
+
         $date = Carbon::now();
         $startOfMonth = $date->startOfMonth()->toDateTimeString();
         $endOfMonth = $date->endOfMonth()->toDateTimeString();
 
-        $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth);
+        $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->get();
 
-        $players = [];
-        foreach($activeHandles as $activeHandle)
+        foreach ($activeHandles as $activeHandle)
         {
-            if ($activeHandle->player->ladder->private == false)
-                $players[] = $activeHandle->player;
-        }
-
-        // If they haven't selected a nickname yet
-        // Get their last created
-
-        if (count($players) == 0)
-        {
-            return $this->getTempNicks($user->id);
-        }
-
-        return $players;
-    }
-
-    /**
-     * Returns a SINGLE nickname for all 3 ladder types
-     */
-    private function getTempNicks($userId)
-    {
-        $tempNicks = [];
-        foreach (\App\Ladder::all() as $ladder)
-        {
-            $tempNick = $this->getTempNickByLadderType($ladder->id, $userId);
-            if ($tempNick != null)
+            // IMPORTANT: Include this $player->ladder in this check to trigger it in the response
+            // No idea why.
+            if ($activeHandle->player->ladder)
             {
-                $tempNicks[] = $tempNick;
+                $playerList[] = $activeHandle->player;
             }
         }
-        return $tempNicks;
+
+        return $playerList;
     }
+
+    private function createPlayerForLaddersIfNoneExist(User $user)
+    {
+        $ladders = Ladder::getAllowedQMLaddersByUser($user);
+
+        foreach ($ladders as $ladder)
+        {
+            // Do we have an active handle in this ladder?
+            $hasActiveHandle = PlayerActiveHandle::getActiveMonthPlayerHandle($user->id, $ladder->id);
+
+            if ($hasActiveHandle != null)
+                // Nothing more to do.
+                continue;
+
+            // Have we had past active handles we can use this month?
+            $hasPastActiveHandle = PlayerActiveHandle::getAnyPreviousPlayerHandle($user->id, $ladder->id);
+            if ($hasPastActiveHandle)
+            {
+                // Automatically set this as our active handle
+                PlayerActiveHandle::setPlayerActiveHandle(
+                    $ladder->id,
+                    $hasPastActiveHandle->player_id,
+                    $user->id
+                );
+            }
+            else
+            {
+                // We've had no past active handles
+                // Find a player that a user recently owned on the ladder and use that
+                $player = Player::where("user_id", $user->id)->where("ladder_id", $ladder->id)
+                    ->orderBy("id", "DESC")
+                    ->first();
+
+                if ($player)
+                {
+                    // Use as our active handle on this ladder.
+                    PlayerActiveHandle::setPlayerActiveHandle(
+                        $ladder->id,
+                        $player->id,
+                        $user->id
+                    );
+                }
+                else
+                {
+                    // Find a player that a user recently owned on ANY ladder
+                    // and use that on this ladder too
+                    $player = Player::where("user_id", $user->id)
+                        ->orderBy("id", "DESC")
+                        ->first();
+
+                    if ($player)
+                    {
+                        // Check this username is not owned by someone on this ladder
+                        $playerTaken = Player::where("username", $player->username)->where("id", "!=", $player->id)->first();
+                        if ($playerTaken == null)
+                        {
+                            // Use as our active handle on this ladder.
+                            $this->playerService->addPlayerToUser($player->username, $user, $ladder->id);
+                            continue;
+                        }
+                        else
+                        {
+                            // Use as our active handle on this ladder.
+                            PlayerActiveHandle::setPlayerActiveHandle(
+                                $ladder->id,
+                                $player->id,
+                                $user->id
+                            );
+                            continue;
+                        }
+                    }
+
+                    // Last resort, failsafe
+                    $this->createRandomNickForLadder($user, $ladder);
+                }
+            }
+        }
+    }
+
+    private function createRandomNickForLadder(User $user, Ladder $ladder)
+    {
+        $playerUsername = "";
+        $userCanCreateNick = false;
+
+        while ($userCanCreateNick == false)
+        {
+            $playerUsername = $this->autoGeneratePlayerUsername($user, $ladder);
+            $existsAlready = Player::where("username", $playerUsername)->where("ladder_id", $ladder->id)->first();
+
+            if ($existsAlready == null)
+            {
+                $userCanCreateNick = true;
+            }
+        }
+
+        // Add new player username to user
+        $this->playerService->addPlayerToUser($playerUsername, $user, $ladder->id);
+    }
+
+
+    private function autoGeneratePlayerUsername()
+    {
+        $characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $randomPlayerName = "";
+
+        for ($i = 0; $i < 9; $i++)
+        {
+            $index = rand(0, strlen($characters) - 1);
+            $randomPlayerName .= $characters[$index];
+        }
+
+        return $randomPlayerName;
+    }
+
 
     /**
      * Limit nicknames to the expired date, one per ladder type
      */
-    private function getTempNickByLadderType($ladderId, $userId)
+    private function getActivePlayerByLadder($ladderId, $userId)
     {
         // Get this months ladder
         $date = Carbon::now();
@@ -112,6 +191,7 @@ class ApiUserController extends Controller
 
         $ladderHistory = \App\LadderHistory::where("starts", "=", $start)
             ->where("ends", "=", $end)
+            ->where('ladder_id', '=', $ladderId)
             ->first();
 
         // Detect if the player is active in the this months ladder already
@@ -123,21 +203,14 @@ class ApiUserController extends Controller
             ->orderBy("id", "desc")
             ->first();
 
-        // If they are, set their nick as the active handle
-        if ($tempNick != null)
+        if ($tempNick == null)
         {
-            PlayerActiveHandle::setPlayerActiveHandle($ladderId, $tempNick->id, $userId);
-            return $tempNick;
+            // Get nick last created limited by this new 1 nick rule
+            $tempNick = \App\Player::where("user_id", $userId)
+                ->where('ladder_id', $ladderId)
+                ->orderBy("id", "desc")
+                ->first();
         }
-
-        $limitLatestNickByDate = Carbon::create("2019", "09", "01");
-
-        // Get nick last created limited by this new 1 nick rule
-        $tempNick = \App\Player::where("user_id", $userId)
-            ->where("created_at", "<=", $limitLatestNickByDate)
-            ->where('ladder_id', $ladderId)
-            ->orderBy("id", "desc")
-            ->first();
 
         return $tempNick;
     }
@@ -151,10 +224,10 @@ class ApiUserController extends Controller
             return response()->json(['bad_parameters'], 400);
         }
 
-        if($token == null)
+        if ($token == null)
         {
             $check = \App\User::where("email", "=", $request->email)->first();
-            if($check == null)
+            if ($check == null)
             {
                 $user = new \App\User();
                 $user->name = "";
@@ -177,7 +250,7 @@ class ApiUserController extends Controller
         else
         {
             $user = $this->authService->getUser($request);
-            if($user)
+            if ($user)
             {
                 return response()->json(['account_present'], 400);
             }
@@ -186,18 +259,7 @@ class ApiUserController extends Controller
 
     public function getPrivateLadders(Request $request)
     {
-        $ladders = $this->ladderService->getLadders(true);
-
         $user = $request->user();
-
-        if ($user->isGod())
-            return $ladders;
-
-        $ladders = $ladders->filter(function($ladder) use ($user)
-        {
-            return $ladder->allowedToView($user);
-        });
-
-        return $ladders->values();
+        return Ladder::getAllowedQMLaddersByUser($user);
     }
 }

@@ -30,6 +30,7 @@
             <a href="https://www.whoismyisp.org/ip/{{ $ipHistory->ipaddress->address }}" target="_blank">
                 {{ $ipHistory->ipaddress->address }}
             </a>
+            <label>{{ $ipHistory->created_at->toDateString() }}</label>
         </li>
     <?php endforeach; ?>
     </ul>

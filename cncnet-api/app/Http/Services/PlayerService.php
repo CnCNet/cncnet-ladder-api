@@ -1,5 +1,8 @@
-<?php namespace App\Http\Services;
+<?php
 
+namespace App\Http\Services;
+
+use App\Player;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -7,18 +10,24 @@ class PlayerService
 {
     public function __construct()
     {
-
     }
 
+
     /**
-     * Strictly QM call only
+     * Creates Player, PlayerRating and PlayerActiveHandle if the username is not taken.
+     * Returns null if username taken.
+     * @param mixed $username 
+     * @param mixed $user 
+     * @param mixed $ladderId 
+     * @return Player|null 
      */
     public function addPlayerToUser($username, $user, $ladderId)
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
         $player = \App\Player::where("username", "=", $username)
-            ->where("ladder_id", "=", $ladderId)->first();
+            ->where("ladder_id", "=", $ladderId)
+            ->first();
 
         if ($player == null)
         {
@@ -78,7 +87,7 @@ class PlayerService
         }
 
         // Check the playerId belongs to us
-        foreach($user->usernames as $user)
+        foreach ($user->usernames as $user)
         {
             if ($user->id == $playerId)
             {

@@ -1,4 +1,7 @@
-<?php namespace App;
+<?php
+
+namespace App;
+
 use App\QmMatch;
 
 use Illuminate\Database\Eloquent\Model;
@@ -57,6 +60,7 @@ class Game extends Model
     {
         return $this->hasMany('App\PlayerGameReport')->where('game_report_id', $this->game_report_id, 'game_report_id');
     }
+
     public function ladderHistory()
     {
         return $this->belongsTo('App\LadderHistory');
