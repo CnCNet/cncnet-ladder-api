@@ -30,7 +30,7 @@ class AccountController extends Controller
 
         \App\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
         $user->save();
-        
+
         return view(
             "auth.account",
             array(
@@ -310,7 +310,7 @@ class AccountController extends Controller
         $user = $request->user();
         $userSettings = $user->userSettings;
 
-        if ($userSettings === null) 
+        if ($userSettings === null)
         {
             $userSettings = new \App\UserSettings();
             $userSettings->user_id = $user->id;
