@@ -34,11 +34,6 @@ class AccountController extends Controller
         return view(
             "auth.account",
             array(
-        return view("auth.account",
-        array (
-        return view(
-            "auth.account",
-            array(
                 "user" => $user,
                 "userSettings" => $user->userSettings,
                 "ladders" => $this->ladderService->getLatestLadders(),
