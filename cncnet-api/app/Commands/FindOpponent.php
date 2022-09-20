@@ -137,6 +137,9 @@ class FindOpponent extends Command implements ShouldQueue
 
         $opponentEntriesFiltered = (new QmQueueEntry())->newCollection(); //a collection of qm opponents who are within point filter but also includes opponents who have mutual point filter disabled
 
+        Log::info("FindOpponent ** 21:14 update");
+        Log::info("FindOpponent ** OpponentEntries " . $opponentEntries->count());
+
         foreach ($opponentEntries as $opponentEntry)
         {
             $opnFilter = $opponentEntry->qmPlayer->player->user->userSettings->disablePointFilter; //opponent's point filter flag
@@ -149,18 +152,22 @@ class FindOpponent extends Command implements ShouldQueue
             }
             else
             {
-                Log::info("FindOpponent ** Point filter enabled");
-
                 //(updated_at - created_at) / 60 = seconds duration player has been waiting in queue
-                $points_time = ((strtotime($opponentEntry->updated_at) - strtotime($opponentEntry->created_at)) / 60) * $ladder_rules->points_per_second;
+                $points_time = ((strtotime($opponentEntry->updated_at) - strtotime($opponentEntry->created_at))) * $ladder_rules->points_per_second;
+
+                Log::info("FindOpponent ** Point filter enabled (without /60) - Points_time = " . $points_time);
 
                 //is the opponent within the point filter
                 if ($points_time + $ladder_rules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
+                {
                     $opponentEntriesFiltered->add($opponentEntry);
+                    Log::info("FindOpponent ** opponentEntriesFiltered added to");
+                }
             }
         }
 
         $qmOpns = $opponentEntriesFiltered->shuffle();
+
         Log::info("FindOpponent ** Opponents found: " . $qmOpns->count());
 
         if ($qmOpns->count() >= $ladder_rules->player_count - 1)
