@@ -39,8 +39,8 @@ class ApiUserController extends Controller
 
     /**
      * Return user's active players
-     * @param User $user 
-     * @return array 
+     * @param User $user
+     * @return array
      */
     private function getActivePlayersByUser(User $user)
     {
