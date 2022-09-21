@@ -142,7 +142,11 @@ class FindOpponent extends Command implements ShouldQueue
 
         foreach ($opponentEntries as $opponentEntry)
         {
-            $opnFilter = $opponentEntry->qmPlayer->player->user->userSettings->disablePointFilter; //opponent's point filter flag
+            $oppPlayer = $opponentEntry->qmPlayer->player;
+            $opnFilter = $oppPlayer->user->userSettings->disablePointFilter; //opponent's point filter flag
+
+            Log::info("FindOpponent ** My pt filter - " . $qmPlayer->player->username . ': ' . $userSettings->disablePointFilter);
+            Log::info("FindOpponent ** Opponent pt filter - " . $oppPlayer->player->username . ': ' . $opnFilter);
 
             if ($userSettings->disablePointFilter && $opnFilter)
             {
