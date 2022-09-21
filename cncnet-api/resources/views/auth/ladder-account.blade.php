@@ -162,17 +162,14 @@
                         </p>
 
                         <div class="account-player-listings">
-                            @if ($activeHandles->count() == 0)
-
-                                <div class="player-listing new">
-                                    <a href="#" class="new-username" data-toggle="modal" data-target="#newLadderPlayer">
-                                        <i class="fa fa-plus" aria-hidden="true" style="font-size: 40px;"></i>
-                                    </a>
-                                    <div class="username-status">
-                                        <p> Register an Account for this Ladder. </p>
-                                    </div>
+                            <div class="player-listing new">
+                                <a href="#" class="new-username" data-toggle="modal" data-target="#newLadderPlayer">
+                                    <i class="fa fa-plus" aria-hidden="true" style="font-size: 40px;"></i>
+                                </a>
+                                <div class="username-status">
+                                    <p> Register an Account for this Ladder. </p>
                                 </div>
-                            @endif
+                            </div>
 
                             @foreach ($players as $player)
                                 <div
