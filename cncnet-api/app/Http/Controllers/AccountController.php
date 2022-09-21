@@ -37,7 +37,7 @@ class AccountController extends Controller
                 "user" => $user,
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
-                "private_ladders" => $this->ladderService->getLatestPrivateLadders($user)
+                "private_ladders" => $this->ladderService->getLatestPrivateLadderHistory($user)
             )
         );
     }

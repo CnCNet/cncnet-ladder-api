@@ -26,12 +26,11 @@ class Navigation extends ServiceProvider
             $user = $view->app->request->user();
             $ladders = $ladderService->getLatestLadders();
             $clan_ladders = $ladderService->getLatestClanLadders();
-            $private_ladders = collect();
+            $private_ladders = [];
 
             if ($user !== null)
             {
-                // @TODO: Caching issue, needs looking at.
-                //$private_ladders = $ladderService->getLatestPrivateLadders($user);
+                $private_ladders = $ladderService->getLatestPrivateLadderHistory($user);
             }
 
             $view->with(compact('user', 'ladders', 'clan_ladders', 'private_ladders'));
