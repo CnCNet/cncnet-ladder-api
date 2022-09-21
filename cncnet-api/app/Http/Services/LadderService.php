@@ -78,36 +78,36 @@ class LadderService
         });
     }
 
-    public function getLatestPrivateLadders($user)
+    /**
+     * Returns ladder history 
+     * @param mixed $user 
+     * @return array 
+     */
+    public function getLatestPrivateLadderHistory($user)
     {
-        $cacheKey = "ladderService::getLatestPrivateLadders" . $user->id;
-        return Cache::remember($cacheKey, 1, function () use ($user)
+        $date = Carbon::now();
+
+        $start = $date->startOfMonth()->toDateTimeString();
+        $end = $date->endOfMonth()->toDateTimeString();
+
+        $ladderHistories = \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+            ->whereNotNull("ladder.id")
+            ->where("ladder_history.starts", "=", $start)
+            ->where("ladder_history.ends", "=", $end)
+            ->where('ladder.private', true)
+            ->get();
+
+        $allowedLadderHistory = [];
+        foreach ($ladderHistories as $ladderHistory)
         {
-            $date = Carbon::now();
-
-            $start = $date->startOfMonth()->toDateTimeString();
-            $end = $date->endOfMonth()->toDateTimeString();
-
-            if ($user->isGod())
+            if (!$user->isLadderAdmin($ladderHistory) || !$user->isLadderTester($ladderHistory))
             {
-                return \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
-                    ->whereNotNull("ladder.id")
-                    ->where("ladder_history.starts", "=", $start)
-                    ->where("ladder_history.ends", "=", $end)
-                    ->where('ladder.private', '=', 1)
-                    ->get();
+                continue;
             }
-            else
-            {
-                return \App\LadderHistory::join("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
-                    ->join("ladder_admins as la", "la.ladder_id", "=", "ladder.id")
-                    ->whereNotNull("ladder.id")
-                    ->where("ladder_history.starts", "=", $start)
-                    ->where("ladder_history.ends", "=", $end)
-                    ->where('ladder.private', '=', 1)
-                    ->get();
-            }
-        });
+
+            $allowedLadderHistory[] = $ladderHistory;
+        }
+        return $allowedLadderHistory;
     }
 
     public function getLatestClanLadders()
