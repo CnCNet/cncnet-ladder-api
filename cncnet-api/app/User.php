@@ -199,6 +199,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     public function userSettings() {
-        return $this->hasOne('App\UserSettings');
+        return $this->hasOne('App\UserSettings', 'user_id');
     }
 }
