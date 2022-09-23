@@ -46,8 +46,6 @@ class FindOpponent extends Command implements ShouldQueue
      */
     public function handle()
     {
-        Log::info("FindOpponent ** Finding match.");
-
         $this->delete();
         $qEntry = QmQueueEntry::find($this->qEntryId);
 
@@ -137,8 +135,8 @@ class FindOpponent extends Command implements ShouldQueue
 
         $opponentEntriesFiltered = (new QmQueueEntry())->newCollection(); //a collection of qm opponents who are within point filter but also includes opponents who have mutual point filter disabled
 
-        Log::info("FindOpponent ** 21:14 update");
-        Log::info("FindOpponent ** OpponentEntries " . $opponentEntries->count());
+        Log::info("FindOpponent ** 21:15 update");
+        Log::info("FindOpponent ** OpponentEntries " . $qmPlayer->player->username . ': ' . $opponentEntries->count());
 
         foreach ($opponentEntries as $opponentEntry)
         {
@@ -199,8 +197,6 @@ class FindOpponent extends Command implements ShouldQueue
                 {
                     foreach ($qmOpns as $qOpn)
                     {
-                        Log::info("FindOpponent ** " . "qOpn->rating_time = {$qOpn->rating_time}");
-
                         //error_log("qOpn->rating_time = {$qOpn->rating_time}");
                         $opn = $qOpn->qmPlayer;
                         if ($opn === null)
