@@ -5,6 +5,11 @@
 /images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
 @endsection
 
+@section('head')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+@endsection
+
 @section('feature')
 <div class="game">
     <div class="feature-background sub-feature-background">
@@ -146,7 +151,6 @@
         <div class="container">
             <div class="player-footer">
                 <div class="player-dials">
-
                     @include("components.dials", [
                     "gamesCount" => $ladderPlayer->game_count,
                     "averageFps" => $ladderPlayer->average_fps,
@@ -156,33 +160,76 @@
                     ])
                 </div>
                 <div class="player-achievements">
-                    <h3 class="title">Achievements</h3>
 
-                    <div class="achievements-list">
-                        @if ($ladderPlayer->game_count >= 200)
-                        <div class="achievement">
-                            <img src="/images/badges/achievement-games.png" style="height:50px" />
-                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />200+ Games</h5>
-                        </div>
-                        @endif
-                        @if ($ladderPlayer->game_count >= 300)
-                        <div class="achievement">
-                            <img src="/images/badges/achievement-games.png" style="height:50px" />
-                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />300+ Games</h5>
-                        </div>
-                        @endif
+                <canvas id="gamesPlayed" width="350" height="250" style="margin-top: 15px;"></canvas>
 
-                        @if ($ladderPlayer->rank <= 10) <div class="achievement">
-                            @if ($ladderPlayer->rank == 1)
-                            <img src="/images/badges/achievement-rank1.png" style="height:50px" />
-                            <h5 class="gold">Rank #1 Player</h5>
-                            @elseif($ladderPlayer->rank > 1 && $ladderPlayer->rank
-                            <=5) <img src="/images/badges/achievement-top5.png" style="height:50px" />
-                            <h5 class="silver">Top 5 Player</h5>
-                            @elseif($ladderPlayer->rank > 5 && $ladderPlayer->rank
-                            <=10) <img src="/images/badges/achievement-top10.png" style="height:50px" />
-                            <h5 class="bronze">Top 10 Player</h5>
-                            @endif
+                <script>
+                    const config = {
+                        type: "bar",
+                        data: {
+                            labels: {!! json_encode($graphGamesPlayedByWeek["labels"]) !!},
+                            datasets: [
+                                {
+                                    label: "Won",
+                                    data: {!! json_encode($graphGamesPlayedByWeek["data_games_won"]) !!},
+                                    backgroundColor: "rgba(64, 206, 0, 1",
+                                },
+                                {
+                                    label: "Lost",
+                                    data: {!! json_encode($graphGamesPlayedByWeek["data_games_lost"]) !!},
+                                    backgroundColor: "rgba(0, 0, 255, 0.9)",
+                                },
+                            ]
+                        },
+                        options: {
+                            scales: {
+                                x: {
+                                    stacked: true,
+                                    type: "time"
+                                },
+                                y: {
+                                    stacked: true
+                                }
+                            },
+                            responsive: true,
+                            scale: {
+                                ticks: {
+                                    precision: 0
+                                },
+                            },
+                        }
+                    };
+                    const ctx = document.getElementById("gamesPlayed");
+                    const myChart = new Chart(ctx, config);
+                </script>
+
+                <h3 class="title">Achievements</h3>
+
+                <div class="achievements-list">
+                    @if ($ladderPlayer->game_count >= 200)
+                    <div class="achievement">
+                        <img src="/images/badges/achievement-games.png" style="height:50px" />
+                        <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />200+ Games</h5>
+                    </div>
+                    @endif
+                    @if ($ladderPlayer->game_count >= 300)
+                    <div class="achievement">
+                        <img src="/images/badges/achievement-games.png" style="height:50px" />
+                        <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />300+ Games</h5>
+                    </div>
+                    @endif
+
+                    @if ($ladderPlayer->rank <= 10) 
+                    <div class="achievement">
+                        @if ($ladderPlayer->rank == 1)
+                        <img src="/images/badges/achievement-rank1.png" style="height:50px" />
+                        <h5 class="gold">Rank #1 Player</h5>
+                        @elseif($ladderPlayer->rank > 1 && $ladderPlayer->rank <=5) 
+                        <img src="/images/badges/achievement-top5.png" style="height:50px" />
+                        <h5 class="silver">Top 5 Player</h5>
+                        @elseif($ladderPlayer->rank > 5 && $ladderPlayer->rank<=10) <img src="/images/badges/achievement-top10.png" style="height:50px" />
+                        <h5 class="bronze">Top 10 Player</h5>
+                        @endif
                     </div>
                     @endif
                 </div>
