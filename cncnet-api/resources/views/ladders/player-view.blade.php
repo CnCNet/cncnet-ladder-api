@@ -209,16 +209,16 @@
                         const config = {
                             type: "bar",
                             data: {
-                                labels: {!! json_encode($graphGamesPlayedByWeek["labels"]) !!},
+                                labels: {!! json_encode($graphGamesPlayedByMonth["labels"]) !!},
                                 datasets: [
                                     {
                                         label: "Won",
-                                        data: {!! json_encode($graphGamesPlayedByWeek["data_games_won"]) !!},
+                                        data: {!! json_encode($graphGamesPlayedByMonth["data_games_won"]) !!},
                                         backgroundColor: "rgba(64, 206, 0, 1",
                                     },
                                     {
                                         label: "Lost",
-                                        data: {!! json_encode($graphGamesPlayedByWeek["data_games_lost"]) !!},
+                                        data: {!! json_encode($graphGamesPlayedByMonth["data_games_lost"]) !!},
                                         backgroundColor: "rgba(0, 0, 255, 0.9)",
                                     },
                                 ]

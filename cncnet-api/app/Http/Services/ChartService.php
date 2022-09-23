@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class ChartService
 {
-    public function getGamesPlayedByWeek($player, $history)
+    public function getGamesPlayedByMonth($player, $history)
     {
         $now = $history->starts;
         $from = $now->startOfMonth()->toDateTimeString();
