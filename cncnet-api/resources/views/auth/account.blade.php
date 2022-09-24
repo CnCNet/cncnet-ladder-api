@@ -91,6 +91,7 @@
                             </a>
                         </div>
                     @endforeach
+                    
                     @foreach($private_ladders as $history)
                     <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
                         <a href="/account/{{ $history->ladder->abbreviation }}/list" title="{{ $history->ladder->name }}" class="ladder-link">
