@@ -16,6 +16,7 @@
     @yield('meta')
     <title>@yield('title') - CnCNet</title>
     @yield('css')
+    @yield('head')
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="stylesheet" href="/css/ladder.css?v=2.94" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
