@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\DB;
 
 class ChartService
@@ -13,43 +14,39 @@ class ChartService
         $from = $now->startOfMonth()->toDateTimeString();
         $to = $now->endOfMonth()->toDateTimeString();
 
-        $queryGames = $player->playerGames()
-            ->where("ladder_history_id", $history->id)
-            ->whereBetween("player_game_reports.created_at", [$from, $to])
-            ->select(
-                DB::raw("DATE(player_game_reports.created_at) as playedDate"),
-                DB::raw("count(*) as gamesTotal")
-            )
-            ->groupBy("playedDate")
-            ->orderBy("playedDate", "DESC");
+        $period = CarbonPeriod::create($from, $to);
 
-        $queryGamesWon = $player->playerGames()
-            ->where("ladder_history_id", $history->id)
-            ->whereBetween("player_game_reports.created_at", [$from, $to])
-            ->where("won", true)
-            ->select(
-                DB::raw("DATE(player_game_reports.created_at) as playedDate"),
-                DB::raw("count(*) as gamesTotalWon")
-            )
-            ->groupBy("playedDate")
-            ->orderBy("playedDate", "DESC");
+        $results = [];
+        foreach ($period as $date)
+        {
+            $dateKey = $date->format("Y-m-d");
 
-        $queryGamesLost = $player->playerGames()
-            ->where("ladder_history_id", $history->id)
-            ->whereBetween("player_game_reports.created_at", [$from, $to])
-            ->where("won", false)
-            ->select(
-                DB::raw("DATE(player_game_reports.created_at) as playedDate"),
-                DB::raw("count(*) as gamesTotalLost")
-            )
-            ->groupBy("playedDate")
-            ->orderBy("playedDate", "DESC");
+            $s = $date->copy()->startOfDay();
+            $e = $date->copy()->endOfDay();
+
+            $wins = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$s, $e])
+                ->where("won", true)
+                ->count();
+
+            $results[$dateKey]["won"] = $wins;
+
+            $losses = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$s, $e])
+                ->where("won", false)
+                ->count();
+
+            $results[$dateKey]["lost"] = $losses;
+        }
+
+        $resultCollection = collect($results);
 
         return [
-            "labels" => $queryGames->pluck("playedDate"),
-            "data_games_total" => $queryGames->pluck("gamesTotal"),
-            "data_games_won" => $queryGamesWon->pluck("gamesTotalWon"),
-            "data_games_lost" => $queryGamesLost->pluck("gamesTotalLost"),
+            "labels" => array_keys($results),
+            "data_games_won" => $resultCollection->pluck("won"),
+            "data_games_lost" => $resultCollection->pluck("lost"),
         ];
     }
 }

@@ -227,7 +227,6 @@
                                 scales: {
                                     x: {
                                         stacked: true,
-                                        type: "time"
                                     },
                                     y: {
                                         stacked: true
