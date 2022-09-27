@@ -29,27 +29,33 @@
 // TS Animations
 @keyframes nod-animation
 {
-    0% { 
+    0% 
+    {
         border-color: #250000;
     }
-    50% {
+    50% 
+    {
         border-color: #800000;
     }
-    100% {
+    100% 
+    {
         border-color: #250000;
     }
 }
 
 @keyframes gdi-animation
 {
-    0% { 
+    0% 
+    {
         border-color: #250000;
     }
-    50% {
+    50% 
+    {
         border-color: #805400;
 
     }
-    100% {
+    100% 
+    {
         border-color: #250000;
     }
 }

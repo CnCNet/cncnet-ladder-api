@@ -1,4 +1,6 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
@@ -8,10 +10,12 @@ use DB;
 
 class Player extends Model
 {
-	protected $table = 'players';
+    protected $table = 'players';
 
-	protected $fillable = ['user_id', 'username', 'win_count', 'loss_count', 'games_count',
-    'dc_count', 'oos_count', 'points', 'countries', 'ladder_id'];
+    protected $fillable = [
+        'user_id', 'username', 'win_count', 'loss_count', 'games_count',
+        'dc_count', 'oos_count', 'points', 'countries', 'ladder_id'
+    ];
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
 
@@ -56,12 +60,41 @@ class Player extends Model
             ->where('player_game_reports.player_id', $this->id)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
-            ->select('player_game_reports.id as id', 'player_game_reports.player_id as player_id',
-                     'game_reports.id as game_report_id', 'games.ladder_history_id as ladder_history_id',
-                     'game_reports.game_id as game_id', 'duration', 'fps', 'oos', 'sid', 'cty',
-                     'local_id', 'local_team_id', 'points', 'stats_id', 'disconnected', 'no_completion', 'quit',
-                     'won', 'defeated', 'draw', 'spectator', 'game_reports.created_at', 'wol_game_id', 'bamr',
-                     'crat', 'cred', 'shrt', 'supr', 'supr', 'unit', 'plrs', 'scen', 'hash');
+            ->select(
+                'player_game_reports.id as id',
+                'player_game_reports.player_id as player_id',
+                'game_reports.id as game_report_id',
+                'games.ladder_history_id as ladder_history_id',
+                'game_reports.game_id as game_id',
+                'duration',
+                'fps',
+                'oos',
+                'sid',
+                'cty',
+                'local_id',
+                'local_team_id',
+                'points',
+                'stats_id',
+                'disconnected',
+                'no_completion',
+                'quit',
+                'won',
+                'defeated',
+                'draw',
+                'spectator',
+                'game_reports.created_at',
+                'wol_game_id',
+                'bamr',
+                'crat',
+                'cred',
+                'shrt',
+                'supr',
+                'supr',
+                'unit',
+                'plrs',
+                'scen',
+                'hash'
+            );
     }
 
     public function totalGames($history = null)
@@ -79,6 +112,45 @@ class Player extends Model
         return $result;
     }
 
+    public function totalGames24Hours($history)
+    {
+        $now = Carbon::now();
+        $start = $now->startOfDay();
+        $end = $now->endOfDay();
+
+        return $this->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->whereBetween("game_reports.created_at", [$start, $end])
+            ->count();
+    }
+
+    public function winstreakCurrent($history)
+    {
+        $games = $this->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->orderBy("game_reports.created_at", "DESC")
+            ->get();
+
+        $winStreak = 0;
+        $endStreak = false;
+        foreach ($games as $game)
+        {
+            if ($game->won == false)
+            {
+                $endStreak = true;
+            }
+
+            if ($endStreak == true)
+            {
+                continue;
+            }
+
+            if ($game->won)
+                $winStreak++;
+        }
+        return $winStreak;
+    }
+
     public function rating()
     {
         return $this->hasOne("App\PlayerRating");
@@ -90,25 +162,25 @@ class Player extends Model
             return 0;
 
         $playerRatings = \App\PlayerRating::join('players as p', 'p.id', '=', 'player_id')
-                            ->where("ladder_id", "=", $this->ladder_id)
-                            ->where('rated_games', '>', 10)
-                            ->where('player_ratings.updated_at', '>', Carbon::now()->subMonths(2))
-                            ->orderBy('rating', 'ASC')
-                            ->get();
+            ->where("ladder_id", "=", $this->ladder_id)
+            ->where('rated_games', '>', 10)
+            ->where('player_ratings.updated_at', '>', Carbon::now()->subMonths(2))
+            ->orderBy('rating', 'ASC')
+            ->get();
 
         $ratingsCount = $playerRatings->count();
         $count = 0;
         foreach ($playerRatings as $playerRating)
         {
             $count++;
-            if($playerRating->player_id == $this->id)
+            if ($playerRating->player_id == $this->id)
             {
                 $count--;
                 break;
             }
         }
         if ($ratingsCount != 0 && $count < $ratingsCount && $count > 0)
-            $ptile = (($count/$ratingsCount) * 100) - 1;
+            $ptile = (($count / $ratingsCount) * 100) - 1;
         else
             $ptile = 0;
 
@@ -120,7 +192,7 @@ class Player extends Model
         $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
         $total = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->sum('fps');
         if ($count != 0)
-            return $total/$count;
+            return $total / $count;
         return 0;
     }
 
@@ -128,14 +200,14 @@ class Player extends Model
     {
         $pq = $this->playerGames()->where('ladder_history_id', '=', $history->id);
         $total = $pq->count();
-        return $pq->select('sid', DB::raw('count(*) / '. $total.' * 100 as count'))->groupBy('sid')->orderBy('count', 'desc')->get();
+        return $pq->select('sid', DB::raw('count(*) / ' . $total . ' * 100 as count'))->groupBy('sid')->orderBy('count', 'desc')->get();
     }
 
     public function countryUsage($history)
     {
         $pq = $this->playerGames()->where('ladder_history_id', '=', $history->id);
         $total = $pq->count();
-        return $pq->select('cty', DB::raw('count(*) / '. $total.' * 100 as count'))->groupBy('cty')->orderBy('count', 'desc')->get();
+        return $pq->select('cty', DB::raw('count(*) / ' . $total . ' * 100 as count'))->groupBy('cty')->orderBy('count', 'desc')->get();
     }
 
     public function ladder()
@@ -151,13 +223,13 @@ class Player extends Model
     public function rank($history)
     {
         $ppQuery = \App\PlayerHistory::join('player_game_reports as pgr', 'pgr.player_id', '=', 'player_histories.player_id')
-                                      ->join('games', 'pgr.game_report_id', '=', 'games.game_report_id')
-                                      ->where('games.ladder_history_id', '=', $history->id)
-                                      ->where("player_histories.ladder_history_id", '=', $history->id)
-                                      ->where('player_histories.tier', '=', $this->playerHistory($history)->tier)
-                                      ->groupBy('pgr.player_id')
-                                      ->orderBy('points', 'DESC')
-                                      ->selectRaw('pgr.player_id, SUM(points) as points');
+            ->join('games', 'pgr.game_report_id', '=', 'games.game_report_id')
+            ->where('games.ladder_history_id', '=', $history->id)
+            ->where("player_histories.ladder_history_id", '=', $history->id)
+            ->where('player_histories.tier', '=', $this->playerHistory($history)->tier)
+            ->groupBy('pgr.player_id')
+            ->orderBy('points', 'DESC')
+            ->selectRaw('pgr.player_id, SUM(points) as points');
 
         $playerPoints = $ppQuery->get();
 
@@ -182,19 +254,19 @@ class Player extends Model
     public function points($history)
     {
         $points = \App\PlayerGameReport::where('player_game_reports.player_id', $this->id)
-                    ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
-                    ->where("g.ladder_history_id", "=", $history->id)
-                    ->sum('player_game_reports.points');
+            ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
+            ->where("g.ladder_history_id", "=", $history->id)
+            ->sum('player_game_reports.points');
         return $points !== null ? $points : 0;
     }
 
     public function pointsBefore($history, $game_id)
     {
         $points = \App\PlayerGameReport::where('player_game_reports.player_id', $this->id)
-                ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
-                ->where("g.ladder_history_id", "=", $history->id)
-                ->where('g.id', '<', $game_id)
-                ->sum('player_game_reports.points');
+            ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
+            ->where("g.ladder_history_id", "=", $history->id)
+            ->where('g.id', '<', $game_id)
+            ->sum('player_game_reports.points');
         return $points !== null ? $points : 0;
     }
 

@@ -8,12 +8,6 @@
 @section('head')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-<style>
-.player-achievements .achievements-list
-{
-    justify-content: flex-start!important;
-}
-</style>
 @endsection
 
 @section('feature')
@@ -44,7 +38,7 @@
 @section('content')
 <?php $card = \App\Card::find($ladderPlayer->player->card_id); ?>
 
-<div class="player">
+<div class="player player-view">
     <div class="feature-background player-card {{ $card->short or "no-card" }}">
         <div class="container">
 
@@ -56,12 +50,20 @@
                     </h1>
                     <ul class="list-inline text-uppercase">
                         <li>
-                            Points <strong> {{ $ladderPlayer->points }} </strong>
+                            Points: <strong> {{ $ladderPlayer->points }} </strong>
                             <i class="fa fa-bolt fa-fw fa-lg"></i>
                         </li>
                         <li>
-                            Wins <strong>{{ $ladderPlayer->games_won }}</strong>
+                            Wins: <strong>{{ $ladderPlayer->games_won }}</strong>
                             <i class="fa fa-level-up fa-fw fa-lg"></i>
+                        </li>
+                        @if($playerWinStreak>1)
+                        <li>
+                            Current Winstreak: <strong>{{ $playerWinStreak }}</strong>
+                        </li>
+                        @endif
+                        <li>
+                            Games Last 24 hrs: <strong>{{ $playerGamesLast24Hours }}</strong>
                         </li>
                         @if($userIsMod)
                         <li>
@@ -168,7 +170,6 @@
                     ])
 
                     <div>
-                        <h3 class="title" style="color: grey">Achievements</h3>
                         <div class="player-achievements">
                             <div class="achievements-list">
                                 @if ($ladderPlayer->game_count >= 200)
@@ -201,6 +202,36 @@
                             </div>
                         </div>
                     </div>
+
+                    @if ($history->abbreviation != "ra" && $history->abbreviation != "ts")
+                    <div>
+                        <div class="faction-counts">
+
+                            @foreach($playerFactionsByMonth as $faction => $winLossArr)
+                            <div class="faction-row">
+                                <div class="player-faction player-faction-{{ \App\Stats2::getCountryById($faction) }}"></div>
+                                
+                                <div class="counts">
+                                    @foreach($winLossArr as $k => $v)
+                                    <div class="count {{ $k }}">
+                                    @if ($k == "won")
+                                        x{{ $v}} wins
+                                    @elseif ($k =="lost")
+                                        x{{ $v}} losses
+                                    @elseif ($k  == "total")
+                                        x{{ $v }} total
+                                    @endif
+                                    </div>
+                                    @endforeach
+                                    <div class="count">
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+
+                        </div>
+                    </div>
+                    @endif
                 </div>
 
                 <div>
