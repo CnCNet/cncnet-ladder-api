@@ -57,11 +57,6 @@
                             Wins: <strong>{{ $ladderPlayer->games_won }}</strong>
                             <i class="fa fa-level-up fa-fw fa-lg"></i>
                         </li>
-                        @if($playerWinStreak>1)
-                        <li>
-                            Current Winstreak: <strong>{{ $playerWinStreak }}</strong>
-                        </li>
-                        @endif
                         <li>
                             Games Last 24 hrs: <strong>{{ $playerGamesLast24Hours }}</strong>
                         </li>

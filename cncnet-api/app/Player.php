@@ -124,33 +124,6 @@ class Player extends Model
             ->count();
     }
 
-    public function winstreakCurrent($history)
-    {
-        $games = $this->playerGames()
-            ->where("ladder_history_id", $history->id)
-            ->orderBy("game_reports.created_at", "DESC")
-            ->get();
-
-        $winStreak = 0;
-        $endStreak = false;
-        foreach ($games as $game)
-        {
-            if ($game->won == false)
-            {
-                $endStreak = true;
-            }
-
-            if ($endStreak == true)
-            {
-                continue;
-            }
-
-            if ($game->won)
-                $winStreak++;
-        }
-        return $winStreak;
-    }
-
     public function rating()
     {
         return $this->hasOne("App\PlayerRating");
