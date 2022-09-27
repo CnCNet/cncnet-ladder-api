@@ -243,7 +243,11 @@ class LadderController extends Controller
         $mod = $request->user();
 
         $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
+
+        # Stats
         $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
+        $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
+        $playerGamesLast24Hours = $player->totalGames24Hours($history);
 
         return view(
             "ladders.player-view",
@@ -260,7 +264,9 @@ class LadderController extends Controller
                 "ladderId" => $player->ladder->id,
                 "alerts" => $alerts,
                 "bans" => $bans,
-                "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth
+                "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
+                "playerFactionsByMonth" => $playerFactionsByMonth,
+                "playerGamesLast24Hours" => $playerGamesLast24Hours
             )
         );
     }
