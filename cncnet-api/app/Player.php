@@ -115,8 +115,8 @@ class Player extends Model
     public function totalGames24Hours($history)
     {
         $now = Carbon::now();
-        $start = $now->startOfDay();
-        $end = $now->endOfDay();
+        $start = $now->copy()->startOfDay();
+        $end = $now->copy()->endOfDay();
 
         return $this->playerGames()
             ->where("ladder_history_id", $history->id)
