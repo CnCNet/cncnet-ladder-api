@@ -203,7 +203,7 @@
                         </div>
                     </div>
 
-                    @if ($history->abbreviation != "ra" && $history->abbreviation != "ts")
+                    @if ($history->ladder->abbreviation != "ra" && $history->ladder->abbreviation != "ts")
                     <div>
                         <div class="faction-counts">
 
