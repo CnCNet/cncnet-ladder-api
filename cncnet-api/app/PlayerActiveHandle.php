@@ -111,10 +111,10 @@ class PlayerActiveHandle extends Model
         $count = 0;
         foreach ($activeHandles as $activeHandle)
         {
-            $count += $activeHandle->player->gameReports()
-                ->where('g.created_at', '<=', $dateEnd)
-                ->where('g.created_at', '>', $dateStart)
-                ->get()->count();
+            $count += $activeHandle->player->hasMany('App\GameReport')
+                ->where('created_at', '<=', $dateEnd)
+                ->where('created_at', '>', $dateStart)
+                ->count();
         }
 
         return $count;

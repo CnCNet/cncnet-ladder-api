@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\ChartService;
 use \Carbon\Carbon;
 use App\LadderHistory;
 use Illuminate\Http\Request;
@@ -14,11 +15,13 @@ class LadderController extends Controller
 {
     private $ladderService;
     private $statsService;
+    private $chartService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
         $this->statsService = new StatsService();
+        $this->chartService = new ChartService();
     }
 
     public function getLadders(Request $request)
@@ -94,7 +97,6 @@ class LadderController extends Controller
 
         return view("ladders.listing", $data);
     }
-
 
     public function getLadderGames(Request $request)
     {
@@ -242,6 +244,11 @@ class LadderController extends Controller
 
         $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
 
+        # Stats
+        $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
+        $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
+        $playerGamesLast24Hours = $player->totalGames24Hours($history);
+
         return view(
             "ladders.player-view",
             array(
@@ -257,6 +264,9 @@ class LadderController extends Controller
                 "ladderId" => $player->ladder->id,
                 "alerts" => $alerts,
                 "bans" => $bans,
+                "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
+                "playerFactionsByMonth" => $playerFactionsByMonth,
+                "playerGamesLast24Hours" => $playerGamesLast24Hours
             )
         );
     }

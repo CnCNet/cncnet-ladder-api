@@ -104,7 +104,7 @@
 {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding-top: 10px;
 }
 
@@ -112,6 +112,9 @@
 {
     width: 100px;
     text-align: center;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    min-height: 100px;
 }
 
 .player-achievements .title

@@ -1,0 +1,67 @@
+.player-faction
+{
+    display: flex;
+    width: 60px;
+    position: relative;
+
+    &:before 
+    {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-repeat: no-repeat;
+    }
+}
+
+.player-faction-kr::before
+{
+    background-image: url(../images/game-icons/korea.png);
+}
+
+.player-faction-um:before
+{
+    background-image: url(../images/game-icons/america.png);
+}
+
+.player-faction-cu:before
+{
+    background-image: url(../images/game-icons/cuba.png);
+}
+
+.player-faction-iq:before
+{
+    background-image: url(../images/game-icons/iraq.png);
+}
+
+.player-faction-fr:before
+{
+    background-image: url(../images/game-icons/france.png);
+}
+
+.player-faction-yuri:before
+{
+    background-image: url(../images/game-icons/yuri.png);
+}
+
+.player-faction-de:before
+{
+    background-image: url(../images/game-icons/germany.png);
+}
+
+.player-faction-gb:before
+{
+    background-image: url(../images/game-icons/great_britain.png);
+}
+
+.player-faction-ly:before
+{
+    background-image: url(../images/game-icons/libya.png);
+}
+
+.player-faction-ru:before
+{
+    background-image: url(../images/game-icons/russia.png);
+}

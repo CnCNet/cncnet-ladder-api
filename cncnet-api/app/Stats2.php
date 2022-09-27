@@ -1,4 +1,6 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,12 +50,17 @@ class Stats2 extends Model
 
     public function country($side)
     {
+        return Stats2::getCountryById($side);
+    }
+
+    public static function getCountryById($side)
+    {
         if ($side === null)
         {
             return "";
         }
 
-        switch($side)
+        switch ($side)
         {
             case 0:
                 return "um";
@@ -83,7 +90,7 @@ class Stats2 extends Model
 
     public function colour($colour)
     {
-        switch($colour)
+        switch ($colour)
         {
             case 3:
                 return "yellow";

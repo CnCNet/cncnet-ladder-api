@@ -16,8 +16,9 @@
     @yield('meta')
     <title>@yield('title') - CnCNet</title>
     @yield('css')
+    @yield('head')
     <link rel="stylesheet" href="/css/app.css" />
-    <link rel="stylesheet" href="/css/ladder.css?v=2.94" />
+    <link rel="stylesheet" href="/css/ladder.css" />
     <link rel="stylesheet" href="/css/font-awesome.min.css" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" href="/images/favicon/favicon-32x32.png" sizes="32x32">

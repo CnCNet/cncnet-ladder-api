@@ -5,6 +5,11 @@
 /images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
 @endsection
 
+@section('head')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+@endsection
+
 @section('feature')
 <div class="game">
     <div class="feature-background sub-feature-background">
@@ -33,7 +38,7 @@
 @section('content')
 <?php $card = \App\Card::find($ladderPlayer->player->card_id); ?>
 
-<div class="player">
+<div class="player player-view">
     <div class="feature-background player-card {{ $card->short or "no-card" }}">
         <div class="container">
 
@@ -45,12 +50,15 @@
                     </h1>
                     <ul class="list-inline text-uppercase">
                         <li>
-                            Points <strong> {{ $ladderPlayer->points }} </strong>
+                            Points: <strong> {{ $ladderPlayer->points }} </strong>
                             <i class="fa fa-bolt fa-fw fa-lg"></i>
                         </li>
                         <li>
-                            Wins <strong>{{ $ladderPlayer->games_won }}</strong>
+                            Wins: <strong>{{ $ladderPlayer->games_won }}</strong>
                             <i class="fa fa-level-up fa-fw fa-lg"></i>
+                        </li>
+                        <li>
+                            Games Last 24 hrs: <strong>{{ $playerGamesLast24Hours }}</strong>
                         </li>
                         @if($userIsMod)
                         <li>
@@ -142,56 +150,130 @@
             </div>
         </div>
     </div>
+
     <div class="feature-footer-background">
         <div class="container">
             <div class="player-footer">
+            
                 <div class="player-dials">
-
                     @include("components.dials", [
-                    "gamesCount" => $ladderPlayer->game_count,
-                    "averageFps" => $ladderPlayer->average_fps,
-                    "gamesWon" => $ladderPlayer->games_won,
-                    "gamesLost" => $ladderPlayer->games_lost,
-                    "gamesCount" => $ladderPlayer->game_count
+                        "gamesCount" => $ladderPlayer->game_count,
+                        "averageFps" => $ladderPlayer->average_fps,
+                        "gamesWon" => $ladderPlayer->games_won,
+                        "gamesLost" => $ladderPlayer->games_lost,
+                        "gamesCount" => $ladderPlayer->game_count
                     ])
-                </div>
-                <div class="player-achievements">
-                    <h3 class="title">Achievements</h3>
 
-                    <div class="achievements-list">
-                        @if ($ladderPlayer->game_count >= 200)
-                        <div class="achievement">
-                            <img src="/images/badges/achievement-games.png" style="height:50px" />
-                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />200+ Games</h5>
-                        </div>
-                        @endif
-                        @if ($ladderPlayer->game_count >= 300)
-                        <div class="achievement">
-                            <img src="/images/badges/achievement-games.png" style="height:50px" />
-                            <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />300+ Games</h5>
-                        </div>
-                        @endif
+                    <div>
+                        <div class="player-achievements">
+                            <div class="achievements-list">
+                                @if ($ladderPlayer->game_count >= 200)
+                                <div class="achievement">
+                                    <img src="/images/badges/achievement-games.png" style="height:50px" />
+                                    <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />200+ Games</h5>
+                                </div>
+                                @endif
 
-                        @if ($ladderPlayer->rank <= 10) <div class="achievement">
-                            @if ($ladderPlayer->rank == 1)
-                            <img src="/images/badges/achievement-rank1.png" style="height:50px" />
-                            <h5 class="gold">Rank #1 Player</h5>
-                            @elseif($ladderPlayer->rank > 1 && $ladderPlayer->rank
-                            <=5) <img src="/images/badges/achievement-top5.png" style="height:50px" />
-                            <h5 class="silver">Top 5 Player</h5>
-                            @elseif($ladderPlayer->rank > 5 && $ladderPlayer->rank
-                            <=10) <img src="/images/badges/achievement-top10.png" style="height:50px" />
-                            <h5 class="bronze">Top 10 Player</h5>
-                            @endif
+                                @if ($ladderPlayer->game_count >= 300)
+                                <div class="achievement">
+                                    <img src="/images/badges/achievement-games.png" style="height:50px" />
+                                    <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />300+ Games</h5>
+                                </div>
+                                @endif
+
+                                @if ($ladderPlayer->rank <= 10) 
+                                <div class="achievement">
+                                    @if ($ladderPlayer->rank == 1)
+                                    <img src="/images/badges/achievement-rank1.png" style="height:50px" />
+                                    <h5 class="gold">Rank #1 Player</h5>
+                                    @elseif($ladderPlayer->rank > 1 && $ladderPlayer->rank <=5) 
+                                    <img src="/images/badges/achievement-top5.png" style="height:50px" />
+                                    <h5 class="silver">Top 5 Player</h5>
+                                    @elseif($ladderPlayer->rank > 5 && $ladderPlayer->rank<=10) <img src="/images/badges/achievement-top10.png" style="height:50px" />
+                                    <h5 class="bronze">Top 10 Player</h5>
+                                    @endif
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    @if ($history->ladder->abbreviation != "ra" && $history->ladder->abbreviation != "ts")
+                    <div>
+                        <div class="faction-counts">
+
+                            @foreach($playerFactionsByMonth as $faction => $winLossArr)
+                            <div class="faction-row">
+                                <div class="player-faction player-faction-{{ \App\Stats2::getCountryById($faction) }}"></div>
+                                
+                                <div class="counts">
+                                    @foreach($winLossArr as $k => $v)
+                                    <div class="count {{ $k }}">
+                                    @if ($k == "won")
+                                        x{{ $v}} wins
+                                    @elseif ($k =="lost")
+                                        x{{ $v}} losses
+                                    @elseif ($k  == "total")
+                                        x{{ $v }} total
+                                    @endif
+                                    </div>
+                                    @endforeach
+                                    <div class="count">
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+
+                        </div>
                     </div>
                     @endif
+                </div>
+
+                <div>
+                    <canvas id="gamesPlayed" width="450" height="340" style="margin-top: 15px;"></canvas>
+                    <script>
+                        const config = {
+                            type: "bar",
+                            data: {
+                                labels: {!! json_encode($graphGamesPlayedByMonth["labels"]) !!},
+                                datasets: [
+                                    {
+                                        label: "Won",
+                                        data: {!! json_encode($graphGamesPlayedByMonth["data_games_won"]) !!},
+                                        backgroundColor: "rgba(64, 206, 0, 1",
+                                    },
+                                    {
+                                        label: "Lost",
+                                        data: {!! json_encode($graphGamesPlayedByMonth["data_games_lost"]) !!},
+                                        backgroundColor: "rgba(0, 0, 255, 0.9)",
+                                    },
+                                ]
+                            },
+                            options: {
+                                scales: {
+                                    x: {
+                                        stacked: true,
+                                    },
+                                    y: {
+                                        stacked: true
+                                    }
+                                },
+                                responsive: true,
+                                scale: {
+                                    ticks: {
+                                        precision: 0
+                                    },
+                                },
+                            }
+                        };
+                        const ctx = document.getElementById("gamesPlayed");
+                        const myChart = new Chart(ctx, config);
+                    </script>
                 </div>
             </div>
         </div>
     </div>
 </div>
-</div>
-
 
 <div class="player">
     <section class="dark-texture">
@@ -217,7 +299,6 @@
             </div>
         </div>
     </section>
-
 </div>
 @endsection
 
