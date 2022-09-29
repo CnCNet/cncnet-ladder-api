@@ -273,6 +273,19 @@
             </div>
         </div>
     </div>
+
+    <div class="feature-footer-background">
+        <div class="container">
+            <h3>Win/loss map stats</h3>
+            @foreach($playerWinLossByMaps as $k => $v)
+                Map: {{ $k }} 
+                Won: {{ $v["won"] }}
+                Lost: {{ $v["lost"] }}
+                Total: {{ $v["total"] }}
+                <br/>
+            @endforeach
+        </div>
+    </div>
 </div>
 
 <div class="player">
