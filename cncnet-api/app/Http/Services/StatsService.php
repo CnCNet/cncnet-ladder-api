@@ -53,8 +53,8 @@ class StatsService
         return Cache::remember("getFactionsPlayedByPlayer/$history->short/$player->id", 5, function () use ($player, $history)
         {
             $now = $history->starts;
-            $from = $now->startOfMonth()->toDateTimeString();
-            $to = $now->endOfMonth()->toDateTimeString();
+            $from = $now->copy()->startOfMonth()->toDateTimeString();
+            $to = $now->copy()->endOfMonth()->toDateTimeString();
 
             $playerGames = $player->playerGames()
                 ->where("ladder_history_id", $history->id)
@@ -101,17 +101,17 @@ class StatsService
         return Cache::remember("getMapWinLossByPlayer/$history->short/$player->id", 5, function () use ($player, $history)
         {
             $now = $history->starts;
-            $from = $now->startOfMonth()->toDateTimeString();
-            $to = $now->endOfMonth()->toDateTimeString();
+            $from = $now->copy()->startOfMonth()->toDateTimeString();
+            $to = $now->copy()->endOfMonth()->toDateTimeString();
 
-            $playerGames = $player->playerGames()
+            $playerGamesByMaps = $player->playerGames()
                 ->where("ladder_history_id", $history->id)
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
                 ->groupBy("scen")
                 ->get();
 
             $mapResults = [];
-            foreach ($playerGames as $pg)
+            foreach ($playerGamesByMaps as $pg)
             {
                 $mapWins = $player->playerGames()
                     ->where("ladder_history_id", $history->id)
@@ -134,6 +134,7 @@ class StatsService
                     ->count();
 
                 $mapResults[$pg->scen] = [
+                    "preview" => $pg->hash,
                     "won" => $mapWins,
                     "lost" => $mapLosses,
                     "total" => $mapTotal

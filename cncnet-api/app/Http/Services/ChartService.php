@@ -14,8 +14,8 @@ class ChartService
         return Cache::remember("getGamesPlayedByMonth/$history->short/$player->id", 5, function () use ($player, $history)
         {
             $now = $history->starts;
-            $from = $now->startOfMonth()->toDateTimeString();
-            $to = $now->endOfMonth()->toDateTimeString();
+            $from = $now->copy()->startOfMonth()->toDateTimeString();
+            $to = $now->copy()->endOfMonth()->toDateTimeString();
 
             $period = CarbonPeriod::create($from, $to);
 
