@@ -17,9 +17,18 @@
         <div class="footer text-center {{ $history->ladder->abbreviation }}">
             @foreach($gamePlayers->get() as $k => $pgr)
             <?php $gameStats = $pgr->stats; ?>
+                
                 @if ($gameStats != null)
-                    <div class="recent-games-faction hidden-xs faction faction-{{ $gameStats->faction($history->ladder->game, $gameStats->cty) }} 
-                        @if($k&1) faction-right @else faction-left @endif"></div>
+                    @if ($history->ladder->abbreviation != "ts" && $history->ladder->abbreviation != "ra")
+                    <div class="recent-games-faction hidden-xs @if($k&1) faction-right @else faction-left @endif">
+                        <div class="player-faction player-faction-{{ \App\Stats2::getCountryById($gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif">
+                        </div>
+                    </div>
+                    @else
+                        <div class="recent-games-faction hidden-xs faction faction-{{ $gameStats->faction($history->ladder->game, $gameStats->cty) }} 
+                            @if($k&1) faction-right @else faction-left @endif">
+                        </div>
+                    @endif
                 @endif
             @endforeach
 
