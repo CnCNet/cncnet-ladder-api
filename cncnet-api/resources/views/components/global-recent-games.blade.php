@@ -6,6 +6,7 @@
 
 <div class="row recent-game">
     @foreach($games as $game)
+
         <div class="col-md-{{ $column }}">
             <?php $pp = $game->playerGameReports()->first(); ?>
 
