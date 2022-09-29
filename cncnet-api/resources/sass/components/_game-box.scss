@@ -143,6 +143,26 @@ $dcColour: #b50000;
     font-style: italic;
 }
 
+.game-box .recent-games-faction 
+{
+    position: relative;
+}
+
+.game-box .recent-games-faction .player-faction
+{
+    height: 30px;
+}
+
+.game-box .recent-games-faction .player-faction.faction-right
+{
+    right: 0;
+}
+
+.game-box .recent-games-faction .player-faction.faction-left
+{
+    left: 0;
+}
+
 .game-box .faction-right.recent-games-faction 
 {
     position: absolute;
@@ -162,3 +182,4 @@ $dcColour: #b50000;
     background-size: 25%;
     background-position: left top;
 }
+
