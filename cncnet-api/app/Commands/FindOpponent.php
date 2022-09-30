@@ -135,35 +135,26 @@ class FindOpponent extends Command implements ShouldQueue
 
         $opponentEntriesFiltered = (new QmQueueEntry())->newCollection(); //a collection of qm opponents who are within point filter but also includes opponents who have mutual point filter disabled
 
-        Log::info("FindOpponent ** 21:15 update");
-        Log::info("FindOpponent ** OpponentEntries " . $qmPlayer->player->username . ': ' . $opponentEntries->count());
-
         foreach ($opponentEntries as $opponentEntry)
         {
             $oppPlayer = $opponentEntry->qmPlayer->player;
-            $opnFilter = $oppPlayer->user->userSettings->disablePointFilter; //opponent's point filter flag
+            $oppUserSettings = $oppPlayer->user->userSettings; //opponent's point filter flag
 
-            Log::info("FindOpponent ** My pt filter - " . $qmPlayer->player->username . ': ' . $userSettings->disablePointFilter);
-            Log::info("FindOpponent ** Opponent pt filter - " . $oppPlayer->player->username . ': ' . $opnFilter);
-
-            if ($userSettings->disablePointFilter && $opnFilter)
+            if ($userSettings->disabledPointFilter && $oppUserSettings->disabledPointFilter)
             {
                 // both players have the point filter disabled, we will ignore the point filter
-                Log::info("FindOpponent ** Ignoring point filter");
+                Log::info("FindOpponent ** Ignoring point filter for " . $qmPlayer->player->username . ' and ' . $oppPlayer->username);
                 $opponentEntriesFiltered->add($opponentEntry);
             }
             else
             {
                 //(updated_at - created_at) / 60 = seconds duration player has been waiting in queue
-                $points_time = ((strtotime($opponentEntry->updated_at) - strtotime($opponentEntry->created_at))) * $ladder_rules->points_per_second;
-
-                Log::info("FindOpponent ** Point filter enabled (without /60) - Points_time = " . $points_time);
+                $points_time = ((strtotime($qEntry->updated_at) - strtotime($qEntry->created_at))) * $ladder_rules->points_per_second;
 
                 //is the opponent within the point filter
                 if ($points_time + $ladder_rules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
                 {
                     $opponentEntriesFiltered->add($opponentEntry);
-                    Log::info("FindOpponent ** opponentEntriesFiltered added to");
                 }
             }
         }
