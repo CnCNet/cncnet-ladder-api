@@ -348,6 +348,11 @@ class ApiLadderController extends Controller
         return 200;
     }
 
+    public function getAllLadders(Request $request)
+    {
+        return $this->ladderService->getAllLadders();
+    }
+
     public function getCurrentLadders(Request $request)
     {
         return $this->ladderService->getLadders(false);

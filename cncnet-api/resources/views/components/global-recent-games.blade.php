@@ -6,10 +6,11 @@
 
 <div class="row recent-game">
     @foreach($games as $game)
+
         <div class="col-md-{{ $column }}">
             <?php $pp = $game->playerGameReports()->first(); ?>
-            @include("components/game-box",
-            [
+
+            @include("components/game-box", [
                 "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games/" . $game->id,
                 "game" => $history->ladder->abbreviation,
                 "gamePlayers" => $game->playerGameReports(),

@@ -8,13 +8,13 @@
 	"license": "MIT",
 	"type": "project",
 	"require": {
-		"laravel/framework": "5.0.*",
-		"tymon/jwt-auth": "0.5.*",
-		"guzzlehttp/guzzle": "^5.3",
-		"maxmind-db/reader": "1.4.1",
-		"namshi/jose": "5.0.2",
 		"doctrine/dbal": "2.5.13",
-		"symfony/lock": "^3.4"
+		"guzzlehttp/guzzle": "^5.3",
+		"laravel/framework": "5.2.*",
+		"maxmind-db/reader": "1.4.1",
+		"namshi/jose": "7.0.*",
+		"symfony/lock": "^3.4",
+		"tymon/jwt-auth": "^1.0"
 	},
 	"require-dev": {
 		"phpspec/phpspec": "~2.1"

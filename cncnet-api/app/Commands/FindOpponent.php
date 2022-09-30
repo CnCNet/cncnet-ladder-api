@@ -13,8 +13,9 @@ use Carbon\Carbon;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
+class FindOpponent extends Command implements ShouldQueue
 {
 
     use InteractsWithQueue, SerializesModels;
@@ -202,10 +203,12 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                     ->limit($reduceMapRepeats)
                     ->get();
 
-                $recentMaps = $playerGameReports->map(function ($item) {
+                $recentMaps = $playerGameReports->map(function ($item)
+                {
                     return $item->game->map;
                 });
-                $recentMaps = $recentMaps->filter(function ($value) {
+                $recentMaps = $recentMaps->filter(function ($value)
+                {
                     return !is_null($value);
                 });
 
@@ -226,10 +229,12 @@ class FindOpponent extends Command implements SelfHandling, ShouldBeQueued
                         ->limit($reduceMapRepeats)
                         ->get();
 
-                    $recentMaps = $oppPlayerGames->map(function ($item) {
+                    $recentMaps = $oppPlayerGames->map(function ($item)
+                    {
                         return $item->game->map;
                     });
-                    $recentMaps = $recentMaps->filter(function ($value) {
+                    $recentMaps = $recentMaps->filter(function ($value)
+                    {
                         return !is_null($value);
                     });
 

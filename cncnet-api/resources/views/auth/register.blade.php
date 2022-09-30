@@ -75,14 +75,14 @@
 						    <div class="form-group">
 							    <label class="col-md-4 control-label">Password</label>
 							    <div class="col-md-6">
-								    <input type="password" class="form-control" name="password">
+								    <input type="password" class="form-control" name="password" value="{{ old('password') }}">
 							    </div>
 						    </div>
 
 						    <div class="form-group">
 							    <label class="col-md-4 control-label">Confirm Password</label>
 							    <div class="col-md-6">
-								    <input type="password" class="form-control" name="password_confirmation">
+								    <input type="password" class="form-control" name="password_confirmation" value="{{ old('password_confirmation') }}">
 							    </div>
 						    </div>
 
@@ -90,12 +90,14 @@
 
 						    <div class="form-group">
 							    <div class="col-md-6 col-md-offset-4">
-									<div class="g-recaptcha" data-sitekey="6Lei3bAUAAAAAN20U0DHaEYCTqdlolsAThtjPtr-"></div>
 								    <button type="submit" class="btn btn-primary">
 									    Register
 								    </button>
                                     <p>
-                                    <small>By registering and using the Quick Match software and related sites, you agree to the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp; Conditions</a></small>
+                                    	<small>
+											By registering and using the Quick Match software and related sites, 
+											you agree to the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp; Conditions</a>
+										</small>
                                     </p>
 								</div>
 						    </div>
@@ -106,84 +108,4 @@
 		</div>
 	</div>
 </div>
-
-<style>
-#signUpForm { display: none; }
-</style>
-
-<script type="text/javascript">
-	var ready = false;
-	var request = new XMLHttpRequest();
-	var url = "https://rawcdn.githack.com/andreis/disposable-email-domains/master/domains.json";
-	var signUpForm = document.getElementById("signUpForm");
-	var emailAddress = document.getElementById("emailAddress");
-	var domains = [];
-
-	if (request.overrideMimeType)
-	{
-		request.overrideMimeType("application/json");
-	}
-
-	request.addEventListener("readystatechange", function(e)
-	{
-		var request = e.target;
-		if (request.readyState == 4)
-		{
-			if (request.status == 200)
-			{
-				domains = JSON.parse(request.responseText);
-				signUpForm.style.display = "block";
-			}
-		}
-	});
-	request.open("GET", url, true);
-	request.send(null);
-</script>
-
-<noscript><meta http-equiv="refresh" content="0; URL=/"></noscript>
-<script src="https://www.recaptcha.net/recaptcha/api.js" async defer></script>
-<script type="text/javascript">
-var form = document.getElementById("signUpForm");
-var checks = window.localStorage.getItem("checks");
-if (checks != null)
-{
-	form.remove();
-}
-
-form.addEventListener("submit", function(e)
-{
-	e.preventDefault();
-	var response = grecaptcha.getResponse();
-	var email = emailAddress.value;
-
-	if (email == null)
-		return;
-
-	var domain = email.substring(email.lastIndexOf("@") +1);
-	if (domains != null && domains.length == 0)
-	{
-		console.error("Error signing up, contact support");
-		return;
-	}
-
-	if (domains.indexOf(domain) > -1)
-	{
-		window.localStorage.setItem("checks", true);
-		form.remove();
-		return;
-	}
-	else
-	{
-		ready = true;
-	}
-
-	if (response != null && response.length == 0 && ready == false)
-	{
-		// captcha not checked
-		return;
-	}
-	form.submit();
-});
-
-</script>
 @endsection

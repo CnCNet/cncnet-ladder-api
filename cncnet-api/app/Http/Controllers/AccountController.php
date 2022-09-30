@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -30,12 +31,13 @@ class AccountController extends Controller
         \App\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
         $user->save();
 
-        return view("auth.account"
-            ,array (
+        return view(
+            "auth.account",
+            array(
                 "user" => $user,
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
-                "private_ladders" => $this->ladderService->getLatestPrivateLadders($user)
+                "private_ladders" => $this->ladderService->getLatestPrivateLadderHistory($user)
             )
         );
     }
@@ -59,20 +61,42 @@ class AccountController extends Controller
 
         $primaryPlayer = $activeHandles->count() > 0 ? $activeHandles->first()->player : null;
 
-        $clanPlayers = $players->filter(function($player) { return $player->clanPlayer !== null; })
-                                  ->map(function($player) { return $player->clanPlayer; });
+        $clanPlayers = $players->filter(function ($player)
+        {
+            return $player->clanPlayer !== null;
+        })
+            ->map(function ($player)
+            {
+                return $player->clanPlayer;
+            });
 
-        $invitations = $players->filter(function($player) { return $player->clanInvitations->count() > 0; })
-                                  ->map(function($player) { return $player->clanInvitations; })
+        $invitations = $players->filter(function ($player)
+        {
+            return $player->clanInvitations->count() > 0;
+        })
+            ->map(function ($player)
+            {
+                return $player->clanInvitations;
+            })
             ->collapse();
 
-        return view("auth.ladder-account", compact('ladders', 'clan_ladders', 'ladder', 'user', 'players', 'activeHandles',
-                                                   'clan', 'clanPlayers', 'primaryPlayer', 'invitations'));
+        return view("auth.ladder-account", compact(
+            'ladders',
+            'clan_ladders',
+            'ladder',
+            'user',
+            'players',
+            'activeHandles',
+            'clan',
+            'clanPlayers',
+            'primaryPlayer',
+            'invitations'
+        ));
     }
 
     public function rename(Request $request)
     {
-        $this->validate($request, [ 'name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users' ] );
+        $this->validate($request, ['name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users']);
 
         $user = \App\User::find($request->id);
 
@@ -185,7 +209,7 @@ class AccountController extends Controller
 
             if ($hasActiveHandlesGamesPlayed >= 1)
             {
-                $request->session()->flash('error', 'Your active user has already played '.$hasActiveHandlesGamesPlayed.' games this month.
+                $request->session()->flash('error', 'Your active user has already played ' . $hasActiveHandlesGamesPlayed . ' games this month.
                 If you are trying to make a username inactive, the month we are in has to complete first.');
 
                 return redirect()->back();
@@ -255,7 +279,7 @@ class AccountController extends Controller
 
         $user->sendNewVerification();
 
-        $request->session()->flash('success', 'Email Verification Code Sent to '.$user->email);
+        $request->session()->flash('success', 'Email Verification Code Sent to ' . $user->email);
         return redirect()->back();
     }
 
@@ -274,5 +298,4 @@ class AccountController extends Controller
 
         return redirect()->back();
     }
-
 }

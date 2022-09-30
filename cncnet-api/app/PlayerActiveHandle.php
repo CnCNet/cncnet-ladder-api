@@ -1,5 +1,8 @@
-<?php namespace App;
+<?php
 
+namespace App;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class PlayerActiveHandle extends Model
@@ -30,6 +33,27 @@ class PlayerActiveHandle extends Model
         return $activeHandles;
     }
 
+    public static function getAnyPreviousPlayerHandle($userId, $ladderId)
+    {
+        return PlayerActiveHandle::where("user_id", $userId)
+            ->where("ladder_id", $ladderId)
+            ->first();
+    }
+
+    public static function getActiveMonthPlayerHandle($userId, $ladderId)
+    {
+        $date = Carbon::now();
+        $startOfMonth = $date->startOfMonth()->toDateTimeString();
+        $endOfMonth = $date->endOfMonth()->toDateTimeString();
+
+        return PlayerActiveHandle::where("user_id", $userId)
+            ->where("ladder_id", $ladderId)
+            ->where("created_at", ">=", $startOfMonth)
+            ->where("created_at", "<=", $endOfMonth)
+            ->orderBy('created_at', 'DESC')
+            ->first();
+    }
+
     public static function getPlayerActiveHandle($playerId, $ladderId, $dateStart, $dateEnd)
     {
         $activeHandle = PlayerActiveHandle::where("player_id", $playerId)
@@ -52,8 +76,12 @@ class PlayerActiveHandle extends Model
         return $hasActiveHandles;
     }
 
-    public static function getUserActiveHandleCount($userId, $ladderId,
-        $dateStart, $dateEnd)
+    public static function getUserActiveHandleCount(
+        $userId,
+        $ladderId,
+        $dateStart,
+        $dateEnd
+    )
     {
         $hasActiveHandles = PlayerActiveHandle::where("ladder_id", $ladderId)
             ->where("user_id", $userId)
@@ -83,10 +111,10 @@ class PlayerActiveHandle extends Model
         $count = 0;
         foreach ($activeHandles as $activeHandle)
         {
-            $count += $activeHandle->player->gameReports()
-                ->where('g.created_at', '<=', $dateEnd)
-                ->where('g.created_at', '>', $dateStart)
-                ->get()->count();
+            $count += $activeHandle->player->hasMany('App\GameReport')
+                ->where('created_at', '<=', $dateEnd)
+                ->where('created_at', '>', $dateStart)
+                ->count();
         }
 
         return $count;
