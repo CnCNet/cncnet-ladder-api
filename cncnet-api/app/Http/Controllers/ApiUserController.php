@@ -52,7 +52,6 @@ class ApiUserController extends Controller
 
         $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->get();
 
-        $players = [];
         foreach ($activeHandles as $activeHandle)
         {
             // IMPORTANT: Include this $player->ladder in this check to trigger it in the response
@@ -244,6 +243,10 @@ class ApiUserController extends Controller
                     $achievementTracker->user_id = $user->id;
                     $achievementTracker->save();
                 }
+
+                $userSettings = new \App\UserSettings();
+                $userSettings->user_id = $user->id;
+                $userSettings->save();
 
                 $token = JWTAuth::fromUser($user);
                 return response()->json(compact('token'));

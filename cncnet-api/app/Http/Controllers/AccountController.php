@@ -35,6 +35,7 @@ class AccountController extends Controller
             "auth.account",
             array(
                 "user" => $user,
+                "userSettings" => $user->userSettings,
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "private_ladders" => $this->ladderService->getLatestPrivateLadderHistory($user)
@@ -295,6 +296,26 @@ class AccountController extends Controller
             $user->save();
             $request->session()->flash('success', 'Your email has been Verified');
         }
+
+        return redirect()->back();
+    }
+
+    public function updateUserSettings(Request $request)
+    {
+        $user = $request->user();
+        $userSettings = $user->userSettings;
+
+        if ($userSettings === null) 
+        {
+            $userSettings = new \App\UserSettings();
+            $userSettings->user_id = $user->id;
+        }
+
+        $userSettings->disabledPointFilter = $request->disabledPointFilter  == "on" ? true : false;
+        // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
+        $userSettings->save();
+
+        $request->session()->flash('success', 'User settings updated!');
 
         return redirect()->back();
     }

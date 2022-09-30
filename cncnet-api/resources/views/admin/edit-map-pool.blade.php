@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 @foreach($maps as $map)
-                    <div class="row map hidden" id="map_{{$map->id}}">
+                    <div class="row map hidden" id="map_{{$map->id == 0 ? 'new': $map->id }}">
                         <form method="POST" action="edit" class="map" id="qmap_{{ $map->map_pool_id }}_{{ $map->id }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                             <input type="hidden" name="id" value="{{ $map->id }}" />
