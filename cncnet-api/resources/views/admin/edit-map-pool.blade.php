@@ -423,7 +423,6 @@
                  if (!hideList[i].classList.contains("hidden"))
                      hideList[i].classList.add("hidden");
              }
-             console.log(this.value)
              document.getElementById("map_" + this.value).classList.remove("hidden");
 
              let mapSel = document.getElementById(this.value + "_map");
