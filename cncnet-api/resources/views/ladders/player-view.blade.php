@@ -238,14 +238,14 @@
                                 labels: {!! json_encode($graphGamesPlayedByMonth["labels"]) !!},
                                 datasets: [
                                     {
-                                        label: "Won",
-                                        data: {!! json_encode($graphGamesPlayedByMonth["data_games_won"]) !!},
-                                        backgroundColor: "rgba(64, 206, 0, 1",
-                                    },
-                                    {
                                         label: "Lost",
                                         data: {!! json_encode($graphGamesPlayedByMonth["data_games_lost"]) !!},
                                         backgroundColor: "rgba(0, 0, 255, 0.9)",
+                                    },
+                                    {
+                                        label: "Won",
+                                        data: {!! json_encode($graphGamesPlayedByMonth["data_games_won"]) !!},
+                                        backgroundColor: "rgba(64, 206, 0, 1",
                                     },
                                 ]
                             },
@@ -275,7 +275,7 @@
     </div>
 </div>
 
-<div class="player">
+<div class="player player-view">
     <section class="dark-texture">
         <div class="container">
             <div class="row">
@@ -294,6 +294,34 @@
                         <div class="col-md-12 text-center">
                             {!! $games->render() !!}
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Player map stats</h3>
+
+                    <div class="map-stats">
+                    @foreach($playerWinLossByMaps as $mapName => $v)
+                        <div class="map-row-container">
+                            <div class="map-name"><h5>{{ $mapName }}</h5></div>
+                            <div class="map-row">
+                                <div class="map-preview" style="background-image:url(/images/maps/{{ $history->ladder->abbreviation }}/{{ $v["preview"]}}.png)"></div>
+                                <div class="counts">
+                                    <div class="count won">
+                                        x{{ $v["won"] }} wins
+                                    </div>
+                                    <div class="count lost">
+                                        x{{ $v["lost"] }} losses
+                                    </div>
+                                    <div class="count total">
+                                        x{{ $v["total"] }} total
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                     </div>
                 </div>
             </div>

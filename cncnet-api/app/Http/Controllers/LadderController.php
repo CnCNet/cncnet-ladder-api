@@ -247,6 +247,7 @@ class LadderController extends Controller
         # Stats
         $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
         $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
+        $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
 
         return view(
@@ -266,7 +267,8 @@ class LadderController extends Controller
                 "bans" => $bans,
                 "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
                 "playerFactionsByMonth" => $playerFactionsByMonth,
-                "playerGamesLast24Hours" => $playerGamesLast24Hours
+                "playerGamesLast24Hours" => $playerGamesLast24Hours,
+                "playerWinLossByMaps" => $playerWinLossByMaps
             )
         );
     }

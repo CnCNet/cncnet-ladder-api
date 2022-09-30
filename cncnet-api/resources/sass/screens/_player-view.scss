@@ -15,19 +15,61 @@
     margin: 5px;
 }
 
-.player-view .faction-row .count.won
+.player-view .count.won
 {
     color: #58ce00;
     font-weight: bold;
 }
 
-.player-view .faction-row .count.lost
+.player-view .count.lost
 {
     color: #0f64ff;
     font-weight: bold;
 }
 
-.player-view .faction-row .count
+.player-view .count
 {
     color: grey;
+}
+
+// Map win/loss
+.player-view .map-stats
+{
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.player-view .map-stats .map-preview 
+{
+    width: 100px;
+    height: 70px;
+    margin: 0 15px 0 0;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.player-view .map-row-container
+{
+    display: flex;
+    flex-direction: column;
+    background: #0a0a0a;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 5px;
+}
+
+.player-view .map-row-container .map-name *
+{
+    margin-top: 0;
+    margin-top: 0;
+    text-align: center;
+    font-weight: 400;
+    color: silver;
+}
+
+.player-view .map-row-container .map-row
+{
+    display: flex;
 }
