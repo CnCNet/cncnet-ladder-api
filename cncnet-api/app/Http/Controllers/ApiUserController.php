@@ -39,8 +39,8 @@ class ApiUserController extends Controller
 
     /**
      * Return user's active players
-     * @param User $user 
-     * @return array 
+     * @param User $user
+     * @return array
      */
     private function getActivePlayersByUser(User $user)
     {
@@ -52,6 +52,7 @@ class ApiUserController extends Controller
 
         $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->get();
 
+        $players = [];
         foreach ($activeHandles as $activeHandle)
         {
             // IMPORTANT: Include this $player->ladder in this check to trigger it in the response
@@ -234,6 +235,15 @@ class ApiUserController extends Controller
                 $user->email = $request->email;
                 $user->password = \Hash::make($request->password);
                 $user->save();
+
+                $achievements = \App\Achievement::all();
+                foreach ($achievements as $achievement)
+                {
+                    $achievementTracker = new \App\AchievementTracker();
+                    $achievementTracker->achievement_id = $achievement->id;
+                    $achievementTracker->user_id = $user->id;
+                    $achievementTracker->save();
+                }
 
                 $token = JWTAuth::fromUser($user);
                 return response()->json(compact('token'));
