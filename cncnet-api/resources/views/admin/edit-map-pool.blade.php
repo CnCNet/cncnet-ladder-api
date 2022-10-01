@@ -425,8 +425,14 @@
              }
              document.getElementById("map_" + this.value).classList.remove("hidden");
 
-             let mapSel = document.getElementById(this.value + "_map");
+             var id = this.value
+             if (this.value == "new") 
+             {
+                id = "0"
+             }
 
+             console.log(id)
+             let mapSel = document.getElementById(id + "_map");
              if (mapSel.length == 0)
              {
                  for (map_id in ladderMaps)
@@ -439,11 +445,11 @@
                      mapSel.add(option);
                  }
              }
-             document.getElementById("ladderMapSelector").selectedIndex = document.getElementById(this.value + "_map").selectedIndex;
+             document.getElementById("ladderMapSelector").selectedIndex = document.getElementById(id + "_map").selectedIndex;
              document.getElementById("ladderMapSelector").onchange();
 
              mapSel.value = maps[this.value].map_id;
-             document.getElementById("mapSelected").value = this.value;
+             document.getElementById("mapSelected").value = id;
          };
          if (mps.selectedIndex < 0)
              mps.selectedIndex = 0;

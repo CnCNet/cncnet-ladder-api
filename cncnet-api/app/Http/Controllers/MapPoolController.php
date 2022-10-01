@@ -14,7 +14,7 @@ class MapPoolController extends Controller {
 
     public function postQuickMatchMap(Request $request)
     {
-        if ($request->id == "new")
+        if ($request->id == "new" || $request->id == 0)
         {
             $qmMap = new \App\QmMap;
             $message = "Successfully created new map";
