@@ -99,7 +99,11 @@
                         </ul>
                     </li>
                 @endif
-
+                <li>
+                    <a href="https://cncnet.org/live">
+                        Live <span class="live-count-badge">Live</span>
+                    </a>
+                </li>
                 <li>
                     <a href="/donate">
                         Donate <span class="live-count-badge pink">New</span>

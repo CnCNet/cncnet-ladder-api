@@ -14,7 +14,7 @@
                         Donate to the <strong>Developers</strong>
                     </h1>
                     <p>
-                        Donate directly to CnCNet developers who are working on the ladder.
+                        Donating to the CnCNet Ladder Development Team
                     </p>
                 </div>
             </div>
@@ -27,16 +27,19 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-8 col-md-offset-2">
-                    <h3>Donating to the CnCNet <strong>Ladder Development Team</strong></h3>
+                    <h3>Every donation is appreciated</h3>
                     <p>
-                        Below are the profiles who are contributing towards the
-                        <a href="https://github.com/CnCNet/cncnet-ladder-api">CnCNet Ladder</a>.
-                        Each profile links out to their own individual Paypal profiles.
+                        Below is the incredible team who are responsible for developing the
+                        <a href="https://github.com/CnCNet/cncnet-ladder-api">CnCNet Ladder codebase</a>.
+                        Each profile will show their own individual Paypal pages you are able to send a donation to.
                     </p>
                     <p>
-                        The <a href="#">Yuri's Revenge discord</a> will have an exclusive private channel where you'll
-                        be able to see new ladder features being proposed and worked on. Be sure to include your Discord
-                        username in the donation message so we can add you to the channel.
+                        If you choose to donate, firstly, thank you, seriously! All donations are appreciated. Secondly, we
+                        will add you
+                        to an exclusive private channel on the
+                        <a href="https://discord.gg/ZZvg3zEYaa" target="_blank">Yuri's Revenge discord</a>
+                        where you'll be able to see new ladder features being proposed and worked on.
+                        Once you have donated, please contact an admin of the discord channel to be added.
                     </p>
                 </div>
             </div>
@@ -83,9 +86,7 @@
                         </a>
                     </h3>
                     <p>
-                        Burg has brought new features and bug fixes to the CnCNet ladders since
-                        joining in late 2021. Also managing everything around the Red Alert 2 & Yuri's
-                        Revenge community keeping the ladders and the competitive scene alive.
+                        TODO
                     </p>
                     <p>
                         <a href="https://www.paypal.com/donate?business=97YLXRUPWZAK8" style="color: white;" target="_blank"
@@ -152,12 +153,12 @@
                         </a>
                     </h3>
                     <p>
-                        Neogrant has designed and built various features, mainly the front-end development of the ladder.
-                        Returning in 2022 after a break in 2019, his focus is bringing new features and a new design to the
-                        ladders.
+                        Neogrant designs and builds anything around the CnCNet websites.
+                        Returning in 2022 after a break in 2019, his focus is building new features on the ladder and
+                        implementing a new design to CnCNet websites.
                     </p>
                     <p>
-                        Developments this year so far:
+                        Developments this year so since returning:
                     <ul>
                         <li>
                             <a href="https://github.com/CnCNet/cncnet-ladder-api/pull/54" target="_blank">Streamers OBS
