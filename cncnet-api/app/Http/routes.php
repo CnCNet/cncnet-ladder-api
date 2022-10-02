@@ -8,7 +8,8 @@ Route::get('/', function ()
 });
 
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
-Route::get('/help/obs', 'HelpController@getOBSHelp');
+Route::get('/help/obs', 'SiteController@getOBSHelp');
+Route::get('/donate', 'SiteController@getDonate');
 
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
