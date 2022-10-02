@@ -85,8 +85,33 @@
                             Burg
                         </a>
                     </h3>
-                    <p>
-                        TODO
+                    <ul>
+                        <li>
+                            <p>
+                                Created a handful of popular YR maps ranging from 3v3/4v4 and competitive 1v1 ladder maps.
+                                Helped lead initiatives for new community maps.
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                Orchestrated regular YR CnCNet client updates to include new maps and community client
+                                features.
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                Maintained RA2 and YR CnCNet quick match ladders. Managed ladder map pools, moderated ladder
+                                rules, worked closely with community to improve the ladder. Edited QM maps as necessary per
+                                community feedback
+                            </p>
+                        </li>
+                        <li>
+                            <p>
+                                Developed ladder enhancements such as: reduce map repeats, remove point filter, creation of
+                                RA2/Blitz/SFJ ladders, and general ladder maintenance.
+                            </p>
+                        </li>
+                    </ul>
                     </p>
                     <p>
                         <a href="https://www.paypal.com/donate?business=97YLXRUPWZAK8" style="color: white;" target="_blank"
