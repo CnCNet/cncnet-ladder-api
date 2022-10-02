@@ -4,10 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class HelpController extends Controller
+class SiteController extends Controller
 {
     public function getOBSHelp(Request $request)
     {
         return view("help.obs");
+    }
+
+    public function getDonate(Request $request)
+    {
+        return view("donate");
     }
 }
