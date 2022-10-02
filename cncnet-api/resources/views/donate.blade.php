@@ -178,9 +178,9 @@
                         </a>
                     </h3>
                     <p>
-                        Neogrant designs and builds anything around the CnCNet websites.
-                        Returning in 2022 after a break in 2019, his focus is building new features on the ladder and
-                        implementing a new design to CnCNet websites.
+                        Neogrant leads the design and build of all the CnCNet websites. Returning in 2022 after a break in
+                        2019, his focus will be around adding new features to the ladder as-well as implementing a new look
+                        design.
                     </p>
                     <p>
                         Developments this year so since returning:
