@@ -21,14 +21,16 @@
             @endif
         </div>
 
-        <div class="footer text-center">
+        <div class="footer text-center {{ $history->ladder->abbreviation }}">
             <?php $gamePlayerResults = $gamePlayers->get(); ?>
             @foreach($gamePlayerResults as $k => $gamePlayer)
 
                 <div class="player {{ $gamePlayer->won == true ? 'won': 'lost' }} player-order-{{ $k }}">
 
-                    @php $playerFaction = \App\Stats2::getCountryById($gamePlayer->stats->cty); @endphp
-                    <div class="player-faction player-faction-{{ $playerFaction }}"></div>
+                    @php $playerStats2 = \App\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
+                    @php $playerCountry = $playerStats2->faction($history->ladder->game, $gamePlayer->stats->cty); @endphp
+                    
+                    <div class="player-faction player-faction-{{ $playerCountry }}"></div>
 
                     <h5>
                         {{ $gamePlayer->player->username }} 
