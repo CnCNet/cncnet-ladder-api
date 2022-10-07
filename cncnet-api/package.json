@@ -5,6 +5,9 @@
     "gulp-sass": "^3.2.1",
     "gulp-autoprefixer": "^6.1.0"
   },
+  "scripts": {
+    "watch": "gulp"
+  },
   "dependencies": {},
   "browserslist": [
     ">1%",

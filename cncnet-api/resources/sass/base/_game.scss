@@ -40,7 +40,8 @@ h3.game-intro a
 {
     color: #fff;
 
-    &:hover {
+    &:hover 
+    {
         color: $brand-primary;
     }
 }
@@ -223,6 +224,7 @@ h3.game-intro > span:first-child:after
 .ra .faction-ukraine
 {
     background-image: url(../images/hud/ra_soviet.png);
+    background-size: 100%;
     width: 140px;
 }
 
@@ -233,6 +235,7 @@ h3.game-intro > span:first-child:after
 .ra .faction-greece
 {
      background-image: url(../images/hud/ra_allies.png);
+     background-size: 100%;
      width: 140px;
 }
 

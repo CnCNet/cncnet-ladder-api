@@ -21,48 +21,30 @@
             @endif
         </div>
 
-        @if ($points != null)
-            <div class="footer text-center {{ $history->ladder->abbreviation }}">
-                @foreach ($gamePlayers->get() as $k => $pgr)
-                    <?php $gameStats = $pgr->stats; ?>
+        <div class="footer text-center {{ $history->ladder->abbreviation }}">
+            <?php $gamePlayerResults = $gamePlayers->get(); ?>
+            @foreach($gamePlayerResults as $k => $gamePlayer)
 
-                    @if ($gameStats != null)
-                        @if ($history->ladder->abbreviation != 'ts' && $history->ladder->abbreviation != 'ra')
-                            @php $faction = \App\Stats2::getCountryById($pgr->stats->cty); @endphp
-                            <div class="recent-games-faction hidden-xs @if ($k & 1) faction-right @else faction-left @endif">
-                                <div class="player-faction player-faction-{{ $faction }} @if ($k & 1) faction-right @else faction-left @endif">
-                                </div>
-                            </div>
-                        @else
-                            <div
-                                class="recent-games-faction hidden-xs faction faction-{{ $faction }} 
-                            @if ($k & 1) faction-right @else faction-left @endif">
-                            </div>
-                        @endif
-                    @endif
-                @endforeach
+                <div class="player {{ $gamePlayer->won == true ? 'won': 'lost' }} player-order-{{ $k }}">
 
-                <?php $opponent = $gamePlayers->where('player_id', '!=', $points->player_id)->first(); ?>
+                    @php $playerStats2 = \App\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
+                    @php $playerCountry = $playerStats2->faction($history->ladder->game, $gamePlayer->stats->cty); @endphp
+                    
+                    <div class="player-faction player-faction-{{ $playerCountry }}"></div>
 
-                <h5 class="player {{ $status or 'lost' }}">
-                    {{ $points->player->username }} <span class="points">
-                        @if ($points->points >= 0)
-                            +
-                        @endif{{ $points->points }}
-                    </span>
-                </h5>
-
-                <p class="vs">vs</p>
-                @if ($opponent)
-                    <h5 class="player {{ $opponent->won ? 'won' : 'lost ' }}">
-                        {{ $opponent->player->username }} <span class="points">
-                            @if ($opponent->points >= 0)
-                                +
-                            @endif{{ $opponent->points }}
+                    <h5>
+                        {{ $gamePlayer->player->username }} 
+                        <span class="points">
+                        @if ($gamePlayer->points >= 0)+@endif 
+                        {{ $gamePlayer->points }}
                         </span>
                     </h5>
+                </div>
+
+                @if($k == 0)
+                <p class="vs">vs</p>
                 @endif
-            </div>
-        @endif
+            @endforeach
+        </div>
     </a>
 </div>

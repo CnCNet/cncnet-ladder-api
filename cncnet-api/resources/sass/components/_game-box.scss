@@ -94,6 +94,12 @@ $dcColour: #b50000;
     background: #000 url(/images/textures/pattern-repeat.png);
 }
 
+.game-box .footer 
+{
+    padding: 15px;
+    background: #000;
+}
+
 .game-box .details .title,
 .game-box .details .status
 {
@@ -114,27 +120,18 @@ $dcColour: #b50000;
     color: #00ec00;
 }
 
-.game-box .footer 
-{
-    position: relative;
-    background: #000;
-    padding-top: 40px;
-    padding-bottom: 40px;
-    border-radius: 0 0 5px 5px;
-}
-
-.game-box .footer .won .points 
+.game-box .won .points 
 {
     font-weight: 600;
 }
 
-.game-box .footer .lost .points 
+.game-box .lost .points 
 {
     color: $lostColour;
     font-weight: 600;
 }
 
-.game-box .footer .vs 
+.game-box .vs 
 {
     margin: 0;
     font-size: 21px;
@@ -143,43 +140,20 @@ $dcColour: #b50000;
     font-style: italic;
 }
 
-.game-box .recent-games-faction 
+.game-box .player 
 {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.game-box .recent-games-faction .player-faction
+.game-box .player.player-order-0 .player-faction
 {
-    height: 30px;
+    margin-right: auto;
 }
 
-.game-box .recent-games-faction .player-faction.faction-right
+.game-box .player.player-order-1 .player-faction
 {
-    right: 0;
+    margin-left: auto;
+    order: 1;
 }
-
-.game-box .recent-games-faction .player-faction.faction-left
-{
-    left: 0;
-}
-
-.game-box .faction-right.recent-games-faction 
-{
-    position: absolute;
-    background-size: 25%;
-    background-position: bottom right;
-    right: 10px;
-    bottom: 10px;
-    top: auto;
-}
-
-.game-box .faction-left.recent-games-faction 
-{
-    float: left;
-    position: absolute;
-    left: 10px;
-    top: 10px;
-    background-size: 25%;
-    background-position: left top;
-}
-
