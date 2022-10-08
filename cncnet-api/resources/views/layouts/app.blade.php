@@ -72,7 +72,7 @@
                     <h3>{{ trans('footer.footer_support') }}</h3>
                     <ul class="list-unstyled">
                         <li><a href="//forums.cncnet.org" title="{{ trans('footer.footer_support') }}">{{ trans('footer.footer_support') }}</a></li>
-                        <li><a href="developers" title="{{ trans('footer.footer_irc') }}">{{ trans('footer.footer_irc') }}</a></li>
+                        <li><a href="https://cncnet.org/developers" title="Developers">Developers</a></li>
                         <li><a href="https://discord.gg/aJRJFe5" title="{{ trans('footer.footer_discord') }}" target="_blank">{{ trans('footer.footer_discord') }}</a></li>
                     </ul>
                 </div>
