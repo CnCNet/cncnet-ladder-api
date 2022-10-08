@@ -6,22 +6,25 @@
 @endsection
 
 @section('feature')
-<div class="feature-background sub-feature-background">
+<div class="feature-background sub-feature-background {{ $history->ladder->abbreviation }}">
     <div class="container">
-        <div class="row text-center">
-            <div class="col-md-8 col-md-offset-2">
-                <h1>
-                    {{ $history->ladder->name }}
+
+        <div class="ladder-header">
+            <div class="ladder-title">
+                <h1 class="text-uppercase">
+                    <strong>{{ $history->ladder->name }}</strong>
+                    <br/><span>Ladder Rankings</span>
+                    <small>{{ $history->starts->format("F Y") }} - 1vs1 QUICK MATCH</small>
                 </h1>
-                <p>
-                    CnCNet Ladders <strong>1vs1</strong>
-                </p>
-                <p>
-                    <a href="/ladder" class="previous-link">
-                        <i class="fa fa-caret-left" aria-hidden="true"></i>
-                        <i class="fa fa-caret-left" aria-hidden="true"></i>
-                    </a>
-                </p>
+
+                <a href="/ladder" class="previous-link">
+                    <i class="fa fa-caret-left" aria-hidden="true"></i>
+                    <i class="fa fa-caret-left" aria-hidden="true"></i>
+                </a>
+            </div>
+
+            <div class="ladder-logo">
+                <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"/>
             </div>
         </div>
     </div>
@@ -31,7 +34,12 @@
 @section('content')
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
-        @include("components.stats", [$stats])
+
+        @include("components.stats", [
+            "stats" => $stats, 
+            "history" => $history,
+            "statsPlayerOfTheDay" => $statsPlayerOfTheDay
+        ])
 
         <?php $date = \Carbon\Carbon::parse($history->ends); ?>
 
@@ -244,7 +252,7 @@
                                     "totalGames" => $player->games,
                                     "playerCard" => $player->card !== null ? (array_key_exists($player->card, $cards) ? $cards[$player->card + 0] : "") : "",
                                     "side" => $countryName,
-                                    "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name,
+                                    "url" => \App\URLHelper::getPlayerProfileUrl($history, $player->player_name),
                                     "game" => $history->ladder->game
                                 ])
                             </div>

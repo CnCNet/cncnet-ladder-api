@@ -6,6 +6,7 @@
 //
 // Base styles
 @import "base/_base",
+        "base/_variables",
         "base/_player",
         "base/_game",
         "base/_icons";
@@ -21,7 +22,9 @@
         "components/_admin-data",
         "components/_object_heaps",
         "components/_factions",
-        "components/_dev-profiles";
+        "components/_dev-profiles",
+        "components/_ladder-header";
+        
 //
 // Screens
 
@@ -29,6 +32,12 @@
         "screens/_user-info",
         "screens/_clan",
         "screens/_player-view";
+
+
+//
+// Screen components
+@import "screens/components/_player-of-the-day-award";
+
 
 @import "countries";
 @import "global";

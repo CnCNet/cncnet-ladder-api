@@ -75,8 +75,12 @@ class LadderController extends Controller
         $user = $request->user();
         $userIsMod = $user != null && $user->isLadderMod($history->ladder);
 
+        # Stats
+        $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
+
         $data = array(
             "stats" => $this->statsService->getQmStats($request->game),
+            "statsPlayerOfTheDay" => $statsPlayerOfTheDay,
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
@@ -250,6 +254,9 @@ class LadderController extends Controller
         $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
 
+        # Awards
+        $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
+
         return view(
             "ladders.player-view",
             array(
@@ -268,7 +275,8 @@ class LadderController extends Controller
                 "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
                 "playerFactionsByMonth" => $playerFactionsByMonth,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "playerWinLossByMaps" => $playerWinLossByMaps
+                "playerWinLossByMaps" => $playerWinLossByMaps,
+                "playerOfTheDayAward" => $playerOfTheDayAward
             )
         );
     }

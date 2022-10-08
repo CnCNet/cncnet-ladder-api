@@ -36,8 +36,7 @@
                     <h5>
                         {{ $gamePlayer->player->username }} 
                         <span class="points">
-                        @if ($gamePlayer->points >= 0)+@endif 
-                        {{ $gamePlayer->points }}
+                        @if ($gamePlayer->points >= 0)+@endif{{ $gamePlayer->points }}
                         </span>
                     </h5>
                 </div>

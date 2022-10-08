@@ -23,6 +23,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\CleanupQmMatchPlayers',
         'App\Console\Commands\CleanupQmMatches',
         'App\Console\Commands\CleanupGameReports',
+        'App\Console\Commands\UpdateStatsCache',
     ];
 
     /**
@@ -45,5 +46,7 @@ class Kernel extends ConsoleKernel
             ->monthly();
         $schedule->command('GameReports:prune')
             ->monthly();
+        $schedule->command('update_stats_cache')
+            ->hourly();
     }
 }

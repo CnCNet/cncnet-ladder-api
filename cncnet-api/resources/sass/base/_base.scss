@@ -17,11 +17,13 @@ $lg-height: 812px;
 $xl-height: 1024px;
 
 
-a, .btn-link {
+a, .btn-link 
+{
     color: $brand-primary;
     text-decoration: none;
 
-    &:hover {
+    &:hover 
+    {
         color: lighten($brand-primary, 5%);
     }
 }
@@ -153,6 +155,7 @@ a:hover, a:focus
 .previous-link
 {
     color: #fff;
+    font-size: 2rem;
 
     &:hover,
     &:focus
@@ -447,7 +450,8 @@ h3.game-intro
     border-color: #0a0a0a;
 }
 
-.pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus {
+.pagination > .active > a, .pagination > .active > a:hover, .pagination > .active > a:focus, .pagination > .active > span, .pagination > .active > span:hover, .pagination > .active > span:focus 
+{
     z-index: 3;
     color: #fff;
     background-color: #0068d2;
@@ -485,19 +489,24 @@ hr
 
 @keyframes animateCountDown
 {
-    0%{
+    0%
+    {
         background-color: #002982f5;
     }
-    25% {
+    25% 
+    {
         background-color: #530082f5;
     }
-    50%{
+    50%
+    {
         background-color: #821b00f5;
     }
-    75%{
+    75%
+    {
         background-color: #ff00c8bf;
     }
-    100%{
+    100%
+    {
         background-color: #002982f5;
     }
 }
