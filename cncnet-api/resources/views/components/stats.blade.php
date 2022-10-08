@@ -43,7 +43,6 @@
                 </div>
 
                 @if($statsPlayerOfTheDay)
-
                 <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsPlayerOfTheDay->username); ?>
                 <a class="stat gold" style="position:relative" href="{{ $url }}" title="{{ $statsPlayerOfTheDay->username }}">
                     <div class="text-center">
