@@ -153,7 +153,7 @@ class StatsService
         $players = StatsCache::getPlayersTodayFromCache($history);
 
         // These stats will update instantly
-        $now = $history->starts;
+        $now = Carbon::now();
         $from = $now->copy()->startOfDay()->toDateTimeString();
         $to = $now->copy()->endOfDay()->toDateTimeString();
         $stats = [];
