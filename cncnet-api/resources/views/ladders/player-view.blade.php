@@ -113,6 +113,14 @@
                         </div>
                         @endif
                     </ul>
+
+                    @if($playerOfTheDayAward)
+                        @include("ladders.components.award-player-of-the-day",
+                        [
+                            "wins" => $playerOfTheDayAward->wins,
+                            "username" => $playerOfTheDayAward->username
+                        ])
+                    @endif
                 </div>
 
                 <div class="player-alerts">

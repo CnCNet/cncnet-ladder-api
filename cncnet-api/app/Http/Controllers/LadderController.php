@@ -254,6 +254,9 @@ class LadderController extends Controller
         $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
 
+        # Awards
+        $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
+
         return view(
             "ladders.player-view",
             array(
@@ -272,7 +275,8 @@ class LadderController extends Controller
                 "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
                 "playerFactionsByMonth" => $playerFactionsByMonth,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "playerWinLossByMaps" => $playerWinLossByMaps
+                "playerWinLossByMaps" => $playerWinLossByMaps,
+                "playerOfTheDayAward" => $playerOfTheDayAward
             )
         );
     }

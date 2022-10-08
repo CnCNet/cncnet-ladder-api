@@ -1,0 +1,23 @@
+.player-of-the-day-award
+{
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.player-of-the-day-award .info .title 
+{
+    font-weight: 600;
+    color: #ffcd00;
+    margin-bottom: 0;
+}
+
+.player-of-the-day-award .icon 
+{
+    margin-right: 1.3rem;
+}
+
+.player-of-the-day-award .details 
+{
+    color: #787878;
+}

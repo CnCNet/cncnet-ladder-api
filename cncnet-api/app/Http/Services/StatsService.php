@@ -180,4 +180,14 @@ class StatsService
 
         return null;
     }
+
+    public function checkPlayerIsPlayerOfTheDay($history, $player)
+    {
+        $playerOfTheDay = $this->getPlayerOfTheDay($history);
+        if ($player->username === $playerOfTheDay->username)
+        {
+            return $playerOfTheDay;
+        }
+        return null;
+    }
 }
