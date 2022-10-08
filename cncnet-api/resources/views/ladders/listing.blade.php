@@ -31,7 +31,12 @@
 @section('content')
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
-        @include("components.stats", ["stats" => $stats, "statsPlayerOfTheDay" => $statsPlayerOfTheDay])
+
+        @include("components.stats", [
+            "stats" => $stats, 
+            "history" => $history,
+            "statsPlayerOfTheDay" => $statsPlayerOfTheDay
+        ])
 
         <?php $date = \Carbon\Carbon::parse($history->ends); ?>
 
@@ -244,7 +249,7 @@
                                     "totalGames" => $player->games,
                                     "playerCard" => $player->card !== null ? (array_key_exists($player->card, $cards) ? $cards[$player->card + 0] : "") : "",
                                     "side" => $countryName,
-                                    "url" => "/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/player/" . $player->player_name,
+                                    "url" => \App\URLHelper::getPlayerProfileUrl($history, $player->player_name),
                                     "game" => $history->ladder->game
                                 ])
                             </div>

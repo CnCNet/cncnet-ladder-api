@@ -43,7 +43,9 @@
                 </div>
 
                 @if($statsPlayerOfTheDay)
-                <div class="stat gold" style="position:relative">
+
+                <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsPlayerOfTheDay->username); ?>
+                <a class="stat gold" style="position:relative" href="{{ $url }}" title="{{ $statsPlayerOfTheDay->username }}">
                     <div class="text-center">
                         <div class="fa" style="width: 35px;">
                             @include("icons.crown", [
@@ -61,10 +63,10 @@
                         "src" => "/animations/confetti.json", 
                         "loop" => "false",
                         "width" => "100%",
-                        "height" => "150px"
+                        "height" => "200px"
                     ])
                     </div>
-                </div>
+                </a>
                 @endif
             </div>
         </div>

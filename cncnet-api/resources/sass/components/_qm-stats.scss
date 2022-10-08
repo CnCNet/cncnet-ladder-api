@@ -11,6 +11,11 @@
     width: 100%;
 }
 
+.qm-stats .stat h4 
+{
+    font-weight: 600;
+}
+
 @media(min-width: $md-width)
 {
     .qm-stats 
