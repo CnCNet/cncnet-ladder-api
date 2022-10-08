@@ -75,8 +75,12 @@ class LadderController extends Controller
         $user = $request->user();
         $userIsMod = $user != null && $user->isLadderMod($history->ladder);
 
+        # Stats
+        $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
+
         $data = array(
             "stats" => $this->statsService->getQmStats($request->game),
+            "statsPlayerOfTheDay" => $statsPlayerOfTheDay,
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),

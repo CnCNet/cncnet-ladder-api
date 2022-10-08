@@ -46,6 +46,12 @@
     color: #ff00c8;
 }
 
+.qm-stats .stat.gold,
+.qm-stats .stat.gold h4 
+{
+    color: #ffcd00;
+}
+
 
 // Stats layout
 .qm-stats .stat 
@@ -68,9 +74,8 @@
 
 .qm-stats .stat .value 
 {
-    text-transform: uppercase;
     font-weight: 600;
-    font-size: 21px;
+    font-size: 18px;
     color: #fff;
 }
 

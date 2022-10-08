@@ -31,7 +31,7 @@
 @section('content')
 <section class="cncnet-features general-texture game-detail">
     <div class="container">
-        @include("components.stats", [$stats])
+        @include("components.stats", ["stats" => $stats, "statsPlayerOfTheDay" => $statsPlayerOfTheDay])
 
         <?php $date = \Carbon\Carbon::parse($history->ends); ?>
 

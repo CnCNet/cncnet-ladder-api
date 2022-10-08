@@ -1,10 +1,13 @@
-<?php namespace App\Console\Commands;
+<?php
+
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class UpdatePlayerCache extends Command {
+class UpdatePlayerCache extends Command
+{
 
     /**
      * The console command name.
@@ -27,7 +30,7 @@ class UpdatePlayerCache extends Command {
      */
     public function __construct()
     {
-	parent::__construct();
+        parent::__construct();
     }
 
     /**
