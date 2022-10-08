@@ -27,11 +27,12 @@
 
                 <div class="player {{ $gamePlayer->won == true ? 'won': 'lost' }} player-order-{{ $k }}">
 
+                    @if($gamePlayer->stats)
                     @php $playerStats2 = \App\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
                     @php $playerCountry = $playerStats2->faction($history->ladder->game, $gamePlayer->stats->cty); @endphp
-                    
                     <div class="player-faction player-faction-{{ $playerCountry }}"></div>
-
+                    @endif
+                    
                     <h5>
                         {{ $gamePlayer->player->username }} 
                         <span class="points">
