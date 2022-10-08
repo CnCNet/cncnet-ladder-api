@@ -184,9 +184,12 @@ class StatsService
     public function checkPlayerIsPlayerOfTheDay($history, $player)
     {
         $playerOfTheDay = $this->getPlayerOfTheDay($history);
-        if ($player->username === $playerOfTheDay->username)
+        if ($playerOfTheDay != null)
         {
-            return $playerOfTheDay;
+            if ($player->username === $playerOfTheDay->username)
+            {
+                return $playerOfTheDay;
+            }
         }
         return null;
     }
