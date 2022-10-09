@@ -339,6 +339,12 @@ class AccountController extends Controller
         // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
         $userSettings->save();
 
+        # Remove avatar?
+        if ($request->removeAvatar == "on")
+        {
+            $user->removeAvatar();
+        }
+
         # Social profiles
         $user->discord_profile = $request->discord_profile;
         $user->youtube_profile = $request->youtube_profile;

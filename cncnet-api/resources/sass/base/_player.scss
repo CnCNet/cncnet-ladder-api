@@ -92,6 +92,25 @@
     width: 100%;
 }
 
+.player-username-avatar
+{
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+}
+
+.player-username-avatar .avatar-container
+{
+    margin-right: 1rem;
+}
+
+.player-username-avatar .username 
+{
+    margin: 0;
+    margin-left: 1rem;
+}
+
 .player-footer .player-achievements h5
 {
     font-weight: 800;

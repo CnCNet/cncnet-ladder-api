@@ -8,6 +8,7 @@ use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;
+use App\User;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 
@@ -247,6 +248,7 @@ class LadderController extends Controller
         $mod = $request->user();
 
         $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
+        $userPlayer = User::where("id", $player->user_id)->first();
 
         # Stats
         $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
@@ -276,7 +278,8 @@ class LadderController extends Controller
                 "playerFactionsByMonth" => $playerFactionsByMonth,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
                 "playerWinLossByMaps" => $playerWinLossByMaps,
-                "playerOfTheDayAward" => $playerOfTheDayAward
+                "playerOfTheDayAward" => $playerOfTheDayAward,
+                "userPlayer" => $userPlayer,
             )
         );
     }

@@ -35,13 +35,12 @@
                             </button>
                         </h1>
                         <p class="lead">Manage everything to do with your CnCNet Ladder Account here.</p>
+
+                        @if(isset($userSettings))
+                            <a href="account/settings" class="btn btn-primary">User Settings</a>
+                        @endif
                     </div>
                 </div>
-                @if(isset($userSettings))
-                    <div class="col-md-12 text-center">
-                        <a href="account/settings" class="btn btn-primary">User Settings</a>
-                    </div>
-                @endif
             </div>
         </div>
     </div>

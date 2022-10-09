@@ -90,6 +90,13 @@
 
                     <label for="avatar">Upload an avatar</label>
                     <input type="file" id="avatar" name="avatar">
+
+                    @if($user->getUserAvatar())
+                       <label>
+                            <input id="removeAvatar" type="checkbox" name="removeAvatar" />
+                            Remove avatar?
+                        </label>
+                    @endif
                 </div>
                 @endif
 

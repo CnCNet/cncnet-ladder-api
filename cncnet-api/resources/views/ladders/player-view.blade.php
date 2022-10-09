@@ -45,9 +45,14 @@
             <div class="player-header">
                 <div class="player-stats">
 
-                    <h1 class="username">
-                        {{ $ladderPlayer->username }}
-                    </h1>
+                    <div class="player-username-avatar">
+                        @include("components.avatar", ["avatar" => $userPlayer->getUserAvatar(), "size" => 80])
+                   
+                        <h1 class="username">
+                            {{ $ladderPlayer->username }}
+                        </h1>
+                    </div>
+
                     <ul class="list-inline text-uppercase">
                         <li>
                             Points: <strong> {{ $ladderPlayer->points }} </strong>
@@ -147,13 +152,12 @@
                         <span class="text-uppercase">Rank</span>
                         #{{ $ladderPlayer->rank == -1 ? "Unranked" : $ladderPlayer->rank }}
                     </h1>
-                    <?php $badge = $ladderPlayer->badge; ?>
-                    <div class="player-badge badge-2x">
-                        @if (strlen($badge->badge) > 0)
-                        <img src="/images/badges/{{ $badge->badge . ".png" }}">
-                        <p class="lead text-center">{{ $ladderPlayer->badge->type }}</p>
-                        @endif
-                    </div>
+                    @include("components.rank", [
+                        "badge" => $ladderPlayer->badge->badge,
+                        "type" => $ladderPlayer->badge->type,
+                        "size" => "2x",
+                        "showType" => true
+                    ])
                 </div>
             </div>
         </div>
