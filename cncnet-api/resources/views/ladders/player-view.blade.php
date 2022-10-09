@@ -58,7 +58,7 @@
                             <i class="fa fa-level-up fa-fw fa-lg"></i>
                         </li>
                         <li>
-                            Games Last 24 hrs: <strong>{{ $playerGamesLast24Hours }}</strong>
+                            Games played today: <strong>{{ $playerGamesLast24Hours }}</strong>
                         </li>
                         @if($userIsMod)
                         <li>

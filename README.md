@@ -13,6 +13,11 @@ This is the main repository for the CnCNet Ladder API.
 - Open up [http://localhost](http://localhost)
 - Watch scss for changes: `npm run watch`
 
+
+### Storage links
+Replace user with the host user
+`ln -s /home/user/site/storage/app/avatars /home/user/site/public/avatars`
+
 ### Production
 - `docker-compose build` and `docker-compose up -d`
 - Compile latest scss: `npm run prod`
