@@ -166,6 +166,8 @@ class CreateAchievementTables extends Migration
 
 			if ($i !== 5 && $i !== 8)
 			{
+				$order = $this->yuriCareerBuild($i, $order);
+				$order = $this->yuriIntermediateBuild($i, $order);
 			}
 		}
 	}
@@ -244,7 +246,7 @@ class CreateAchievementTables extends Migration
 			$a = new \App\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
-			$a->tag = 'Build Flak Troopers ';
+			$a->tag = 'Build Flak Troopers';
 			$a->achievement_type = $type;
 			$a->achievement_name = 'Flak Troopers ' . $val;
 			$a->achievement_description = 'Build ' . $key . ' Flak Troopers';
@@ -270,7 +272,7 @@ class CreateAchievementTables extends Migration
 			$a = new \App\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
-			$a->tag = 'Build Tesla Troopers ';
+			$a->tag = 'Build Tesla Troopers';
 			$a->achievement_type = $type;
 			$a->achievement_name = 'Tesla Troopers ' . $val;
 			$a->achievement_description = 'Build ' . $key . ' Tesla Troopers';
@@ -296,7 +298,7 @@ class CreateAchievementTables extends Migration
 			$a = new \App\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
-			$a->tag = 'Build Crazy Ivans ';
+			$a->tag = 'Build Crazy Ivans';
 			$a->achievement_type = $type;
 			$a->achievement_name = 'Crazy Ivans ' . $val;
 			$a->achievement_description = 'Build ' . $key . ' Crazy Ivans';
@@ -481,7 +483,7 @@ class CreateAchievementTables extends Migration
 			$a = new \App\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
-			$a->tag = 'Build Tesla Tanks ';
+			$a->tag = 'Build Tesla Tanks';
 			$a->achievement_type = $type;
 			$a->achievement_name = 'Tesla Tanks ' . $val;
 			$a->achievement_description = 'Build ' . $key . ' Tesla Tanks';
@@ -507,7 +509,7 @@ class CreateAchievementTables extends Migration
 			$a = new \App\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
-			$a->tag = 'Build Demolition Trucks ';
+			$a->tag = 'Build Demolition Trucks';
 			$a->achievement_type = $type;
 			$a->achievement_name = 'Demolition Trucks ' . $val;
 			$a->achievement_description = 'Build ' . $key . ' Demolition Trucks';
@@ -664,7 +666,7 @@ class CreateAchievementTables extends Migration
 			$a = new \App\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
-			$a->tag = 'Build Flak Troopers ';
+			$a->tag = 'Build Flak Troopers';
 			$a->achievement_type = $type;
 			$a->achievement_name = 'Flak Troopers ' . $val;
 			$a->achievement_description = 'Build ' . $key . ' Flak Troopers in one game';
@@ -686,7 +688,7 @@ class CreateAchievementTables extends Migration
 			$a = new \App\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
-			$a->tag = 'Build Tesla Troopers ';
+			$a->tag = 'Build Tesla Troopers';
 			$a->achievement_type = $type;
 			$a->achievement_name = 'Tesla Troopers ' . $val;
 			$a->achievement_description = 'Build ' . $key . ' Tesla Troopers in one game';
@@ -708,7 +710,7 @@ class CreateAchievementTables extends Migration
 			$a = new \App\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
-			$a->tag = 'Build Crazy Ivans ';
+			$a->tag = 'Build Crazy Ivans';
 			$a->achievement_type = $type;
 			$a->achievement_name = 'Crazy Ivans ' . $val;
 			$a->achievement_description = 'Build ' . $key . ' Crazy Ivans in one game';
@@ -1021,10 +1023,10 @@ class CreateAchievementTables extends Migration
 				$a = new \App\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
-				$a->tag = 'Build Guadian GIs ';
+				$a->tag = 'Build Guardian GIs';
 				$a->achievement_type = $type;
-				$a->achievement_name = 'Guadian GIs ' . $val;
-				$a->achievement_description = 'Build ' . $key . ' Guadian GIs';
+				$a->achievement_name = 'Guardian GIs ' . $val;
+				$a->achievement_description = 'Build ' . $key . ' Guardian GIs';
 				$a->heap_name = 'UNB';
 				$a->object_name = 'GGI';
 				$a->cameo = 'gdgiicon';
@@ -1443,10 +1445,10 @@ class CreateAchievementTables extends Migration
 				$a = new \App\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
-				$a->tag = 'Build Guadian GIs ';
+				$a->tag = 'Build Guardian GIs';
 				$a->achievement_type = $type;
-				$a->achievement_name = 'Guadian GIs ' . $val;
-				$a->achievement_description = 'Build ' . $key . ' Guadian GIs in one game';
+				$a->achievement_name = 'Guardian GIs ' . $val;
+				$a->achievement_description = 'Build ' . $key . ' Guardian GIs in one game';
 				$a->heap_name = 'UNB';
 				$a->object_name = 'GGI';
 				$a->cameo = 'gdgiicon';
@@ -1721,6 +1723,484 @@ class CreateAchievementTables extends Migration
 			$a->heap_name = 'UNB';
 			$a->object_name = 'BEAG';
 			$a->cameo = 'beagicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		return $order;
+	}
+
+	/**
+	 * Career Achievements for building Yuri units
+	 */
+	private function yuriCareerBuild($ladderId, $order)
+	{
+		$type = 'CAREER';
+
+		//Build Initiates achievements
+		$map = [
+			25 => 'Noob',
+			50 => 'Recruit',
+			100 => 'Captain',
+			300 => 'Veteran',
+			500 => 'Master',
+			1000 => 'Legend',
+			2000 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Initiates';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Initiate ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Initiates';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'INIT';
+			$a->cameo = 'initicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Virus achievements
+		$map = [
+			10 => 'Noob',
+			50 => 'Recruit',
+			125 => 'Captain',
+			300 => 'Veteran',
+			500 => 'Master',
+			700 => 'Legend',
+			1000 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Viruses';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Virus ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Viruses';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'VIRUS';
+			$a->cameo = 'vrusicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Yuri Clone achievements
+		$map = [
+			10 => 'Noob',
+			30 => 'Recruit',
+			60 => 'Captain',
+			125 => 'Veteran',
+			300 => 'Master',
+			500 => 'Legend',
+			1000 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Yuri Clones';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Yuri Clone ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Yuri Clones';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'YURI';
+			$a->cameo = 'clonicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Brute achievements
+		$map = [
+			25 => 'Noob',
+			75 => 'Recruit',
+			150 => 'Captain',
+			300 => 'Veteran',
+			500 => 'Master',
+			1000 => 'Legend',
+			2000 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Brutes';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Brutes ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Brutes';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'BRUTE';
+			$a->cameo = 'bruticon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Yuri Prime achievements
+		$map = [
+			5 => 'Noob',
+			15 => 'Recruit',
+			30 => 'Captain',
+			60 => 'Veteran',
+			100 => 'Master',
+			300 => 'Legend',
+			500 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Yuri Primes';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Yuri Prime ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Yuri Primes';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'YURIPR';
+			$a->cameo = 'yurpicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Lasher Tanks achievements
+		$map = [
+			30 => 'Noob',
+			100 => 'Recruit',
+			300 => 'Captain',
+			500 => 'Veteran',
+			1000 => 'Master',
+			2000 => 'Legend',
+			3000 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Lasher Tanks';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Lasher ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Lasher Tanks';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'LTNK';
+			$a->cameo = 'ltnkicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build gattling tanks achievements
+		$map = [
+			20 => 'Noob',
+			50 => 'Recruit',
+			100 => 'Captain',
+			300 => 'Veteran',
+			750 => 'Master',
+			1250 => 'Legend',
+			2500 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Gattling Tanks';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Gattling Tanks ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Gattling Tanks';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'YTNK';
+			$a->cameo = 'ytnkicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Magnetrons achievements
+		$map = [
+			20 => 'Noob',
+			50 => 'Recruit',
+			100 => 'Captain',
+			200 => 'Veteran',
+			500 => 'Master',
+			1000 => 'Legend',
+			2000 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Magnetrons';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Magnetrons ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Magnetrons';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'TELE';
+			$a->cameo = 'teleicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Masterminds achievements
+		$map = [
+			10 => 'Noob',
+			50 => 'Recruit',
+			100 => 'Captain',
+			250 => 'Veteran',
+			500 => 'Master',
+			1000 => 'Legend',
+			2000 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Masterminds';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Masterminds ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Masterminds';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'MIND';
+			$a->cameo = 'mindicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build DISK achievements
+		$map = [
+			10 => 'Noob',
+			50 => 'Recruit',
+			100 => 'Captain',
+			150 => 'Veteran',
+			300 => 'Master',
+			500 => 'Legend',
+			1000 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Floating Disks';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Floating Disk ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Floating Disk';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'DISK';
+			$a->cameo = 'diskicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		return $order;
+	}
+
+	/**
+	 * Intermediate Achievements for building Yuri units
+	 */
+	private function yuriIntermediateBuild($ladderId, $order)
+	{
+		$type = 'Intermediate';
+
+		//Build Initiates achievements
+		$map = [
+			15 => 'Noob',
+			40 => 'Veteran',
+			75 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Initiates';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Initiate ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Initiates in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'INIT';
+			$a->cameo = 'initicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Virus achievements
+		$map = [
+			5 => 'Noob',
+			20 => 'Veteran',
+			50 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Viruses';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Virus ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Viruses in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'VIRUS';
+			$a->cameo = 'vrusicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Yuri Clone achievements
+		$map = [
+			5 => 'Noob',
+			20 => 'Veteran',
+			50 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Yuri Clones';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Yuri Clone ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Yuri Clones in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'YURI';
+			$a->cameo = 'clonicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Brute achievements
+		$map = [
+			15 => 'Noob',
+			100 => 'Veteran',
+			300 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Brutes';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Brutes ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Brutes in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'BRUTE';
+			$a->cameo = 'bruticon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Lasher Tanks achievements
+		$map = [
+			10 => 'Noob',
+			30 => 'Veteran',
+			60 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Lasher Tanks';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Lasher ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Lasher Tanks in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'LTNK';
+			$a->cameo = 'ltnkicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build gattling tanks achievements
+		$map = [
+			10 => 'Noob',
+			30 => 'Veteran',
+			60 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Gattling Tanks';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Gattling Tanks ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Gattling Tanks in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'YTNK';
+			$a->cameo = 'ytnkicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Magnetrons achievements
+		$map = [
+			8 => 'Noob',
+			20 => 'Veteran',
+			50 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Magnetrons';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Magnetrons ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Magnetrons in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'TELE';
+			$a->cameo = 'teleicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build Masterminds achievements
+		$map = [
+			10 => 'Noob',
+			30 => 'Veteran',
+			50 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Masterminds';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Masterminds ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Masterminds in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'MIND';
+			$a->cameo = 'mindicon';
+			$a->unlock_count = $key;
+			$a->save();
+		}
+
+		//Build DISK achievements
+		$map = [
+			10 => 'Noob',
+			25 => 'Veteran',
+			50 => 'Elite'
+		];
+		foreach ($map as $key => $val)
+		{
+			$a = new \App\Achievement();
+			$a->ladder_id = $ladderId;
+			$a->order = $order++;
+			$a->tag = 'Build Floating Disks';
+			$a->achievement_type = $type;
+			$a->achievement_name = 'Floating Disk ' . $val;
+			$a->achievement_description = 'Build ' . $key . ' Floating Disks in one game';
+			$a->heap_name = 'UNB';
+			$a->object_name = 'DISK';
+			$a->cameo = 'diskicon';
 			$a->unlock_count = $key;
 			$a->save();
 		}
