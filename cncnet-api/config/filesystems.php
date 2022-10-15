@@ -45,7 +45,7 @@ return [
 
 		'local' => [
 			'driver' => 'local',
-			'root'   => storage_path().'/app',
+			'root'   => storage_path() . '/app',
 		],
 
 		's3' => [
@@ -67,6 +67,6 @@ return [
 		],
 
 	],
-    'dmp' => public_path().'/dmp',
-    'map_images' => public_path().'/images/maps',
+	'dmp' => public_path() . '/dmp',
+	'map_images' => public_path() . '/images/maps',
 ];

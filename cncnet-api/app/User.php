@@ -8,6 +8,8 @@ use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Storage;
 use Mail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
@@ -172,6 +174,58 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return true;
     }
 
+    public function getUserAvatar()
+    {
+        if ($this->avatar_path)
+        {
+            return asset($this->avatar_path);
+        }
+        return null;
+    }
+
+    public function removeAvatar()
+    {
+        if ($this->avatar_path)
+        {
+            try
+            {
+                Storage::delete($this->avatar_path);
+            }
+            catch (Exception $ex)
+            {
+            }
+        }
+
+        $this->avatar_path = null;
+        $this->save();
+    }
+
+    public function restrictAvatarUpload($bool)
+    {
+        $this->avatar_upload_allowed = $bool;
+        $this->save();
+    }
+
+    public function getIsAllowedToUploadAvatar()
+    {
+        return $this->avatar_upload_allowed;
+    }
+
+    public function getDiscordProfile()
+    {
+        return $this->discord_profile;
+    }
+
+    public function getYouTubeProfile()
+    {
+        return $this->youtube_profile;
+    }
+
+    public function getTwitchProfile()
+    {
+        return $this->twitch_profile;
+    }
+
     public function ipHistory()
     {
         return $this->hasMany('App\IpAddressHistory');
@@ -198,7 +252,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return [];
     }
 
-    public function userSettings() {
+    public function userSettings()
+    {
         return $this->hasOne('App\UserSettings', 'user_id');
     }
 }

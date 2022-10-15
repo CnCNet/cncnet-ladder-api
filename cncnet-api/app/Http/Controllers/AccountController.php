@@ -8,6 +8,11 @@ use \App\Http\Services\LadderService;
 use \App\EmailVerification;
 use \App\PlayerActiveHandle;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Intervention\Image\Facades\Image;
 use Mail;
 
 class AccountController extends Controller
@@ -300,23 +305,65 @@ class AccountController extends Controller
         return redirect()->back();
     }
 
+    public function getUserSettings(Request $request)
+    {
+        $user = Auth::user();
+        return view(
+            "auth.account-settings",
+            [
+                "user" => $user,
+                "userSettings" => $user->userSettings,
+            ]
+        );
+    }
+
     public function updateUserSettings(Request $request)
     {
-        $user = $request->user();
-        $userSettings = $user->userSettings;
+        $this->validate($request, [
+            "avatar" => "image|mimes:jpg,jpeg,png|max:1000",
+            "discord_profile" => "string",
+            "youtube_profile" => "string",
+            "twitch_profile" => "string"
+        ]);
 
-        if ($userSettings === null) 
+        $user = Auth::user();
+
+        # User Settings
+        $userSettings = $user->userSettings;
+        if ($userSettings === null)
         {
             $userSettings = new \App\UserSettings();
             $userSettings->user_id = $user->id;
         }
-
-        $userSettings->disabledPointFilter = $request->disabledPointFilter  == "on" ? true : false;
+        $userSettings->disabledPointFilter = $request->disabledPointFilter == "on" ? true : false;
         // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
         $userSettings->save();
 
-        $request->session()->flash('success', 'User settings updated!');
+        # Remove avatar?
+        if ($request->removeAvatar == "on")
+        {
+            $user->removeAvatar();
+        }
 
+        # Social profiles
+        $user->discord_profile = $request->discord_profile;
+        $user->youtube_profile = $request->youtube_profile;
+        $user->twitch_profile = $request->twitch_profile;
+
+        # User Avatar
+        if ($request->hasFile("avatar"))
+        {
+            $avatar = Image::make($request->file('avatar')->getRealPath())->resize(300, 300)->encode("png");
+            $hash = md5($avatar->__toString());
+            $path = "avatars/{$user->id}/{$hash}.png";
+            Storage::put($path, $avatar);
+
+            $user->avatar_path = $path;
+        }
+
+        $user->save();
+
+        $request->session()->flash("success", 'User settings updated!');
         return redirect()->back();
     }
 }

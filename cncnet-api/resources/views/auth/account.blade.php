@@ -29,8 +29,16 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="text-center" style="padding-bottom: 40px;">
-                        <h1>Hi {{ $user->name }} <button class="btn btn-link inline-after-edit" data-toggle="modal" data-target="#renameUser"><span class="fa fa-edit"></span></button></h1>
+                        <h1>Hi {{ $user->name }} 
+                            <button class="btn btn-link inline-after-edit" data-toggle="modal" data-target="#renameUser">
+                                <span class="fa fa-edit"></span>
+                            </button>
+                        </h1>
                         <p class="lead">Manage everything to do with your CnCNet Ladder Account here.</p>
+
+                        @if(isset($userSettings))
+                            <a href="account/settings" class="btn btn-primary">User Settings</a>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -60,54 +68,10 @@
             </div>
             @endif
         </div>
+
         <div class="row">
             <div class="col-md-12">
                 @include("components.form-messages")
-            </div>
-        </div>
-
-        @if(isset($userSettings))
-        <div class="col-md-12">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#openUserSettings"> User Settings </button>
-        </div>
-        @endif
-
-        <div class="modal fade" id="openUserSettings" tabIndex="-1" role="dialog">
-            <div class="modal-dialog modal-md" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h3 class="modal-title">User Settings</h3>
-                    </div>
-                    <div class="modal-body clearfix">
-                        <div class="container-fluid">
-                            <div class="row content">
-                                <div class="col-md-12 player-box player-card list-inline">
-
-                                    <div style="display: inline-block">
-                                        <form method="POST" action="/account/settings">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-
-                                            @if(isset($userSettings))
-                                            <input id="disablePointFilter" type="checkbox" name="disabledPointFilter" @if($userSettings->disabledPointFilter) checked @endif />
-                                            <label for="disablePointFilter">Disable Point Filter</label>
-                                            @endif
-
-                                            {{-- TODO future functionality will use this value, no need to have users touch this yet
-                                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous"  value="{{ $userSettings->enableAnonymous }}" @if($userSettings->enableAnonymous) checked @endif />
-                                            <label for="enableAnonymous"> Enable Anonymity </label>
-                                            --}}
-
-                                            <div>
-                                                <button type="submit" class="btn btn-primary">Save Settings</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
