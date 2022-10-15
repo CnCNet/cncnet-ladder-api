@@ -53,12 +53,12 @@
                         <p class="lead" style="margin-bottom:0">Ladder Point Filter</p>
                         <p>
                             Disable the Point Filter to match against any player on the ladder regardless of your rank.<br/> 
-                            Opponents will also need it disabled.
+                            Opponents will also need it disabled. 
                         </p>
                         <p>
                             <label>
                                 <input id="disablePointFilter" type="checkbox" name="disabledPointFilter" @if($userSettings->disabledPointFilter) checked @endif />
-                                Disable Point Filter
+                                Disable Point Filter &amp; Match with anyone
                             </label>
                         </p>
                         @endif
@@ -76,14 +76,13 @@
                 <div class="form-group">
                     <p class="lead" style="margin-bottom:0">Ladder Avatar</p>
                     <p>
-                        Avatars that are not deemed suitable will be removed without warning. <br/>
-                        No obscenity or advertising other platforms similar to CnCNet is allowed. 
+                        <strong>Recommended dimensions are 300x300. Max file size: 1mb.<br/> File types allowed: jpg, png </strong>
+                    </p>
+                    <p>
+                        Avatars that are not deemed suitable by CnCNet will be removed without warning. <br/>
+                        Inappropriate images and advertising is not allowed.
                     </p>
 
-                    <p>
-                        <strong>Recommended dimensions are 300x300. Max file size: 1mb.</strong>
-                    </p>
-                    
                     <div>
                         @include("components.avatar", ["avatar" => $user->getUserAvatar()])
                     </div>
@@ -117,7 +116,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="discord">Discord username</label>
+                    <label for="discord">Discord username, E.g. user#9999</label>
                     <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->getDiscordProfile() }}" 
                         placeholder="Enter your Discord username only"
                     />

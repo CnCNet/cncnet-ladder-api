@@ -353,10 +353,9 @@ class AccountController extends Controller
         # User Avatar
         if ($request->hasFile("avatar"))
         {
-            // Resize to 300x300
-            $avatar = Image::make($request->file('avatar')->getRealPath())->resize(300, 300)->encode("jpg");
+            $avatar = Image::make($request->file('avatar')->getRealPath())->resize(300, 300)->encode("png");
             $hash = md5($avatar->__toString());
-            $path = "avatars/{$user->id}/{$hash}.jpg";
+            $path = "avatars/{$user->id}/{$hash}.png";
             Storage::put($path, $avatar);
 
             $user->avatar_path = $path;
