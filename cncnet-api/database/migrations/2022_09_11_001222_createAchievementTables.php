@@ -43,7 +43,6 @@ class CreateAchievementTables extends Migration
 			2 => 'Tiberian Sun',
 			3 => 'Red Alert',
 			5 => 'Red Alert 2',
-			7 => 'SFJ',
 			8 => 'Blitz'
 		];
 		$order = 0;
@@ -156,7 +155,7 @@ class CreateAchievementTables extends Migration
 			$a->save();
 		}
 
-		$arr[] = [1, 5, 7, 8]; //yr, ra2, SFJ, blitz ladders
+		$arr[] = [1, 5, 8]; //yr, ra2, blitz ladders
 		foreach ($arr as $i)
 		{
 			$order = $this->sovietCareerBuild($i, $order);
@@ -164,7 +163,7 @@ class CreateAchievementTables extends Migration
 			$order = $this->alliedCareerBuild($i, $order);
 			$order = $this->alliedIntermediateBuild($i, $order);
 
-			if ($i !== 5 && $i !== 8)
+			if ($i !== 5 && $i !== 8) //yr achievemnts only for yuri ladder
 			{
 				$order = $this->yuriCareerBuild($i, $order);
 				$order = $this->yuriIntermediateBuild($i, $order);
