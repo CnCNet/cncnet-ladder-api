@@ -1,4 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -10,16 +12,17 @@ use \App\SpawnOptionString;
 
 use Illuminate\Http\Request;
 
-class MapPoolController extends Controller {
-
+class MapPoolController extends Controller
+{
     public function postQuickMatchMap(Request $request)
     {
-        if ($request->id == "new")
+        if ($request->id == "new" || $request->id == 0)
         {
             $qmMap = new \App\QmMap;
             $message = "Successfully created new map";
         }
-        else {
+        else
+        {
             $qmMap = \App\QmMap::where('id', $request->id)->first();
             $message = "Sucessfully updated map";
         }
@@ -50,10 +53,12 @@ class MapPoolController extends Controller {
 
     public function editMap(Request $request)
     {
-        $this->validate($request, ['map_id' => 'required',
-                                   'hash'   => 'required|min:40|max:40',
-                                   'name'   => 'string',
-                                   'mapImage' => 'image']);
+        $this->validate($request, [
+            'map_id' => 'required',
+            'hash'   => 'required|min:40|max:40',
+            'name'   => 'string',
+            'mapImage' => 'image'
+        ]);
 
         if ($request->map_id == 'new')
         {
@@ -101,17 +106,20 @@ class MapPoolController extends Controller {
         $ladder = Ladder::find($ladderId);
         $mapPool = MapPool::find($mapPoolId);
 
-        return view("admin.edit-map-pool",
-                    [ 'ladderUrl' => "/admin/setup/{$ladder->id}/edit",
-                      'mapPool' => $mapPool,
-                      'ladderAbbrev' => $ladder->abbreviation,
-                      'maps' => $mapPool->maps()->orderBy('bit_idx')->get(),
-                      'ladder' => $ladder,
-                      'sides' => $ladder->sides,
-                      'ladderMaps' => $ladder->maps,
-                      'spawnOptions' =>  \App\SpawnOption::all(),
-                      'allLadders' => \App\Ladder::all(),
-                    ]);
+        return view(
+            "admin.edit-map-pool",
+            [
+                'ladderUrl' => "/admin/setup/{$ladder->id}/edit",
+                'mapPool' => $mapPool,
+                'ladderAbbrev' => $ladder->abbreviation,
+                'maps' => $mapPool->maps()->orderBy('bit_idx')->get(),
+                'ladder' => $ladder,
+                'sides' => $ladder->sides,
+                'ladderMaps' => $ladder->maps,
+                'spawnOptions' =>  \App\SpawnOption::all(),
+                'allLadders' => \App\Ladder::all(),
+            ]
+        );
     }
 
     public function cloneMapPool(Request $request, $ladderId)
@@ -189,7 +197,7 @@ class MapPoolController extends Controller {
         if ($qmMap !== null)
         {
             $mapPool->maps()->where('bit_idx', '>', $qmMap->bit_idx)
-                            ->decrement('bit_idx');
+                ->decrement('bit_idx');
             $qmMap->valid = false;
             $qmMap->save();
         }
