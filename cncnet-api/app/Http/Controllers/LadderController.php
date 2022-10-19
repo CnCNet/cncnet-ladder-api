@@ -249,6 +249,9 @@ class LadderController extends Controller
         $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
 
+        # Achievements
+        $achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
+
         return view(
             "ladders.player-view",
             array(
@@ -266,7 +269,8 @@ class LadderController extends Controller
                 "bans" => $bans,
                 "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
                 "playerFactionsByMonth" => $playerFactionsByMonth,
-                "playerGamesLast24Hours" => $playerGamesLast24Hours
+                "playerGamesLast24Hours" => $playerGamesLast24Hours,
+                "achievementProgress" => $achievementProgress
             )
         );
     }

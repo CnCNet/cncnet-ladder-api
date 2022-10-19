@@ -558,7 +558,7 @@ class ApiLadderController extends Controller
         $user = \App\Player::where('id', $playerId)->first()->user;
 
         //fetch achievements that have not been unlocked for this user for this ladder
-        $lockedAchievements = \App\AchievementTracker::join('achievement', 'achievement_tracker.achievement_id', '=', 'achievement.id')
+        $lockedAchievements = \App\AchievementProgress::join('achievement', 'achievement_tracker.achievement_id', '=', 'achievement.id')
             ->where('user_id', $user->id)
             ->where('ladder_id', $ladderId)
             ->whereNull('achivement_unlocked_date')
@@ -593,7 +593,7 @@ class ApiLadderController extends Controller
 
             $count = $goc->count;
 
-            $lockedAchievementTracker = \App\AchievementTracker::where('achivement_id', $lockedAchievement->achievement_id)
+            $lockedAchievementTracker = \App\AchievementProgress::where('achivement_id', $lockedAchievement->achievement_id)
                 ->where('user_id', $user->id)
                 ->first();
 
@@ -675,7 +675,7 @@ class ApiLadderController extends Controller
      */
     private function achivementCheck($user, $lockedAchievement)
     {
-        $lockedAchievementTracker = \App\AchievementTracker::where('achivement_id', $lockedAchievement->achievement_id)
+        $lockedAchievementTracker = \App\AchievementProgress::where('achivement_id', $lockedAchievement->achievement_id)
             ->where('user_id', $user->id)
             ->first();
 

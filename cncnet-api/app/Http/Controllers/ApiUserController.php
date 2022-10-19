@@ -238,10 +238,10 @@ class ApiUserController extends Controller
                 $achievements = \App\Achievement::all();
                 foreach ($achievements as $achievement)
                 {
-                    $achievementTracker = new \App\AchievementTracker();
-                    $achievementTracker->achievement_id = $achievement->id;
-                    $achievementTracker->user_id = $user->id;
-                    $achievementTracker->save();
+                    $AchievementProgress = new \App\AchievementProgress();
+                    $AchievementProgress->achievement_id = $achievement->id;
+                    $AchievementProgress->user_id = $user->id;
+                    $AchievementProgress->save();
                 }
 
                 $userSettings = new \App\UserSettings();

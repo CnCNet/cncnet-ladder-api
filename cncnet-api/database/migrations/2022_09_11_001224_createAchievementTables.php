@@ -5,7 +5,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateAchievementTables extends Migration
 {
-
 	/**
 	 * Run the migrations.
 	 *
@@ -13,16 +12,18 @@ class CreateAchievementTables extends Migration
 	 */
 	public function up()
 	{
+		Schema::drop('achievements');
+
 		Schema::create('achievements', function (Blueprint $table)
 		{
 			$table->increments('id');
 			$table->enum('achievement_type', ['IMMEDIATE', 'CAREER', 'MULTI']); //'career' achievements can progress and be unlocked over time, 'immediate' achievements are unlocked after one match, 'multi' achievements span over multiple ladders
 			$table->integer('order')->default(999);
 			$table->text('tag')->nullable(true); //can group similar achivements with a tag
-			$table->integer('ladder_id')->nullable(false);
+			$table->integer('ladder_id')->unsigned();
 			$table->foreign('ladder_id')->references('id')->on('ladders')->onDelete('cascade');
 			$table->text('achievement_name')->nullable(false);
-			$table->text('achievement_description')->unique->nullable(false);
+			$table->text('achievement_description')->nullable(false);
 			$table->text('heap_name')->nullable(true);
 			$table->text('object_name')->nullable(true);
 			$table->text('cameo')->nullable(true);
@@ -38,7 +39,7 @@ class CreateAchievementTables extends Migration
 	private function createAchievements()
 	{
 		//create achievements for these ladders
-		$lmap[] = [
+		$lmap = [
 			1 => 'Yuri\'s Revenge',
 			2 => 'Tiberian Sun',
 			3 => 'Red Alert',
@@ -78,7 +79,7 @@ class CreateAchievementTables extends Migration
 			}
 
 			//create win qm games as faction achievements
-			$arr[] = ['Soviet', 'Allied', 'Yuri'];
+			$arr = ['Soviet', 'Allied', 'Yuri'];
 			foreach ($arr as $faction)
 			{
 				$map = [
@@ -155,7 +156,7 @@ class CreateAchievementTables extends Migration
 			$a->save();
 		}
 
-		$arr[] = [1, 5, 8]; //yr, ra2, blitz ladders
+		$arr = [1, 5, 8]; //yr, ra2, blitz ladders
 		foreach ($arr as $i)
 		{
 			$order = $this->sovietCareerBuild($i, $order);

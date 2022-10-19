@@ -466,4 +466,12 @@ class LadderService
             $pc->save();
         }
     }
+
+    public function getAchievementProgress($ladderId, $userId)
+    {
+        return \App\AchievementProgress::join('achievements as a', 'achievements_progress.achievement_id', '=', 'a.id')
+            ->where('user_id', $userId)
+            ->where('a.ladder_id', $ladderId)
+            ->get();
+    }
 }

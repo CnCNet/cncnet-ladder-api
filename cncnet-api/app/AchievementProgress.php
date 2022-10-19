@@ -2,9 +2,9 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class AchievementTracker extends Model {
+class AchievementProgress extends Model {
 
-    protected $table = 'achievements_tracker';
+    protected $table = 'achievements_progress';
 
     public function achievement()
 	{
