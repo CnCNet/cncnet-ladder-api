@@ -11,8 +11,6 @@ class CreateAchievementTableTracker extends Migration {
 	 */
 	public function up()
 	{
-		Schema::drop('achievements_progress');
-
 		Schema::create('achievements_progress', function (Blueprint $table)
 		{
 			$table->increments('id');
