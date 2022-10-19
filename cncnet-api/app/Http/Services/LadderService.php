@@ -100,9 +100,12 @@ class LadderService
         $allowedLadderHistory = [];
         foreach ($ladderHistories as $ladderHistory)
         {
-            if (!$user->isLadderAdmin($ladderHistory) || !$user->isLadderTester($ladderHistory))
+            if (!$user->isLadderTester($ladderHistory->ladder))
             {
-                continue;
+                if (!$user->isLadderAdmin($ladderHistory->ladder))
+                {
+                    continue;
+                }
             }
 
             $allowedLadderHistory[] = $ladderHistory;

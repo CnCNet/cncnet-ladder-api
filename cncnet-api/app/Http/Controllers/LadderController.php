@@ -8,6 +8,7 @@ use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;
+use App\User;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 
@@ -75,8 +76,12 @@ class LadderController extends Controller
         $user = $request->user();
         $userIsMod = $user != null && $user->isLadderMod($history->ladder);
 
+        # Stats
+        $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
+
         $data = array(
             "stats" => $this->statsService->getQmStats($request->game),
+            "statsPlayerOfTheDay" => $statsPlayerOfTheDay,
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
@@ -243,11 +248,16 @@ class LadderController extends Controller
         $mod = $request->user();
 
         $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
+        $userPlayer = User::where("id", $player->user_id)->first();
 
         # Stats
         $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
         $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
+        $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
+
+        # Awards
+        $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
 
         # Achievements
         $achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
@@ -269,6 +279,10 @@ class LadderController extends Controller
                 "bans" => $bans,
                 "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
                 "playerFactionsByMonth" => $playerFactionsByMonth,
+                "playerGamesLast24Hours" => $playerGamesLast24Hours,
+                "playerWinLossByMaps" => $playerWinLossByMaps,
+                "playerOfTheDayAward" => $playerOfTheDayAward,
+                "userPlayer" => $userPlayer,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
                 "achievementProgress" => $achievementProgress
             )

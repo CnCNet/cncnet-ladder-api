@@ -45,9 +45,14 @@
             <div class="player-header">
                 <div class="player-stats">
 
-                    <h1 class="username">
-                        {{ $ladderPlayer->username }}
-                    </h1>
+                    <div class="player-username-avatar">
+                        @include("components.avatar", ["avatar" => $userPlayer->getUserAvatar(), "size" => 80])
+                   
+                        <h1 class="username">
+                            {{ $ladderPlayer->username }}
+                        </h1>
+                    </div>
+
                     <ul class="list-inline text-uppercase">
                         <li>
                             Points: <strong> {{ $ladderPlayer->points }} </strong>
@@ -58,7 +63,7 @@
                             <i class="fa fa-level-up fa-fw fa-lg"></i>
                         </li>
                         <li>
-                            Games Last 24 hrs: <strong>{{ $playerGamesLast24Hours }}</strong>
+                            Games played today: <strong>{{ $playerGamesLast24Hours }}</strong>
                         </li>
                         @if($userIsMod)
                         <li>
@@ -113,6 +118,14 @@
                         </div>
                         @endif
                     </ul>
+
+                    @if($playerOfTheDayAward)
+                        @include("ladders.components.award-player-of-the-day",
+                        [
+                            "wins" => $playerOfTheDayAward->wins,
+                            "username" => $playerOfTheDayAward->username
+                        ])
+                    @endif
                 </div>
 
                 <div class="player-alerts">
@@ -139,13 +152,12 @@
                         <span class="text-uppercase">Rank</span>
                         #{{ $ladderPlayer->rank == -1 ? "Unranked" : $ladderPlayer->rank }}
                     </h1>
-                    <?php $badge = $ladderPlayer->badge; ?>
-                    <div class="player-badge badge-2x">
-                        @if (strlen($badge->badge) > 0)
-                        <img src="/images/badges/{{ $badge->badge . ".png" }}">
-                        <p class="lead text-center">{{ $ladderPlayer->badge->type }}</p>
-                        @endif
-                    </div>
+                    @include("components.rank", [
+                        "badge" => $ladderPlayer->badge->badge,
+                        "type" => $ladderPlayer->badge->type,
+                        "size" => "2x",
+                        "showType" => true
+                    ])
                 </div>
             </div>
         </div>
@@ -238,14 +250,14 @@
                                 labels: {!! json_encode($graphGamesPlayedByMonth["labels"]) !!},
                                 datasets: [
                                     {
-                                        label: "Won",
-                                        data: {!! json_encode($graphGamesPlayedByMonth["data_games_won"]) !!},
-                                        backgroundColor: "rgba(64, 206, 0, 1",
-                                    },
-                                    {
                                         label: "Lost",
                                         data: {!! json_encode($graphGamesPlayedByMonth["data_games_lost"]) !!},
                                         backgroundColor: "rgba(0, 0, 255, 0.9)",
+                                    },
+                                    {
+                                        label: "Won",
+                                        data: {!! json_encode($graphGamesPlayedByMonth["data_games_won"]) !!},
+                                        backgroundColor: "rgba(64, 206, 0, 1",
                                     },
                                 ]
                             },
@@ -275,7 +287,7 @@
     </div>
 </div>
 
-<div class="player">
+<div class="player player-view">
     <section class="dark-texture">
         <div class="container">
             <div class="row">
@@ -294,6 +306,34 @@
                         <div class="col-md-12 text-center">
                             {!! $games->render() !!}
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Player map stats</h3>
+
+                    <div class="map-stats">
+                    @foreach($playerWinLossByMaps as $mapName => $v)
+                        <div class="map-row-container">
+                            <div class="map-name"><h5>{{ $mapName }}</h5></div>
+                            <div class="map-row">
+                                <div class="map-preview" style="background-image:url(/images/maps/{{ $history->ladder->abbreviation }}/{{ $v["preview"]}}.png)"></div>
+                                <div class="counts">
+                                    <div class="count won">
+                                        x{{ $v["won"] }} wins
+                                    </div>
+                                    <div class="count lost">
+                                        x{{ $v["lost"] }} losses
+                                    </div>
+                                    <div class="count total">
+                                        x{{ $v["total"] }} total
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
                     </div>
                 </div>
             </div>

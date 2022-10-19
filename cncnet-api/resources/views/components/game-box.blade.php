@@ -1,48 +1,50 @@
 <div class="game-box">
-    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map or ""}}.png)">
-        <a href="{{ $url or ""}}" class="status status-{{ $status }}"></a>
+    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map or '' }}.png)">
+        <a href="{{ $url or '' }}" class="status status-{{ $status }}"></a>
     </div>
 
-    <a href="{{ $url or ""}}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game">
+    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
-            <small class="status text-capitalize">{{ $status . " " . $date->diffForHumans() }}</small>
+            <small class="status text-capitalize">{{ $status . ' ' . $date->diffForHumans() }}</small>
 
-            @if($gameReport !== null)
-            <div><small class="status text-capitalize"><strong>Duration:</strong> {{ gmdate("H:i:s", $gameReport->duration) }}</small></div>
-            <div><small class="status text-capitalize"><strong>Average FPS:</strong> {{ $gameReport->fps }}</small></div>
+            @if ($gameReport !== null)
+                <div>
+                    <small class="status text-capitalize">
+                        <strong>Duration:</strong>
+                        {{ gmdate('H:i:s', $gameReport->duration) }}
+                    </small>
+                </div>
+                <div>
+                    <small class="status text-capitalize"><strong>Average FPS:</strong> {{ $gameReport->fps }}</small>
+                </div>
             @endif
         </div>
-        @if ($points != null)
+
         <div class="footer text-center {{ $history->ladder->abbreviation }}">
-            @foreach($gamePlayers->get() as $k => $pgr)
-            <?php $gameStats = $pgr->stats; ?>
-                
-                @if ($gameStats != null)
-                    @if ($history->ladder->abbreviation != "ts" && $history->ladder->abbreviation != "ra")
-                    <div class="recent-games-faction hidden-xs @if($k&1) faction-right @else faction-left @endif">
-                        <div class="player-faction player-faction-{{ \App\Stats2::getCountryById($gameStats->cty) }} @if($k&1) faction-right @else faction-left @endif">
-                        </div>
-                    </div>
-                    @else
-                        <div class="recent-games-faction hidden-xs faction faction-{{ $gameStats->faction($history->ladder->game, $gameStats->cty) }} 
-                            @if($k&1) faction-right @else faction-left @endif">
-                        </div>
+            <?php $gamePlayerResults = $gamePlayers->get(); ?>
+            @foreach($gamePlayerResults as $k => $gamePlayer)
+
+                <div class="player {{ $gamePlayer->won == true ? 'won': 'lost' }} player-order-{{ $k }}">
+
+                    @if($gamePlayer->stats)
+                    @php $playerStats2 = \App\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
+                    @php $playerCountry = $playerStats2->faction($history->ladder->game, $gamePlayer->stats->cty); @endphp
+                    <div class="player-faction player-faction-{{ $playerCountry }}"></div>
                     @endif
+                    
+                    <h5>
+                        {{ $gamePlayer->player->username }} 
+                        <span class="points">
+                        @if ($gamePlayer->points >= 0)+@endif{{ $gamePlayer->points }}
+                        </span>
+                    </h5>
+                </div>
+
+                @if($k == 0)
+                <p class="vs">vs</p>
                 @endif
             @endforeach
-
-            <?php $opponent = $gamePlayers->where("player_id", "!=", $points->player_id)->first(); ?>
-            <h5 class="player {{ $status or "lost"}}">
-                {{ $points->player->username }} <span class="points">@if($points->points >= 0) +@endif{{ $points->points }}</span>
-            </h5>
-            <p class="vs">vs</p>
-            @if ($opponent)
-            <h5 class="player {{ $opponent->won ? "won" : "lost " }}">
-                {{ $opponent->player->username }} <span class="points">@if($opponent->points >= 0) +@endif{{ $opponent->points }}</span>
-            </h5>
-            @endif
         </div>
-        @endif
     </a>
 </div>

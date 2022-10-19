@@ -197,6 +197,38 @@ class AdminController extends Controller
         ]);
     }
 
+    public function getEditUser(Request $request)
+    {
+        $user = User::where("id", $request->userId)->first();
+
+        return view("admin.edit-user", [
+            "user" => $user
+        ]);
+    }
+
+    public function updateUser(Request $request)
+    {
+        $user = User::where("id", $request->userId)->first();
+
+        if ($request->removeUserAvatar == "on")
+        {
+            $user->removeAvatar();
+        }
+
+        if ($request->restrictAvatarUpload == "on")
+        {
+            $user->restrictAvatarUpload(true);
+        }
+        else
+        {
+            $user->restrictAvatarUpload(false);
+        }
+
+        return view("admin.edit-user", [
+            "user" => $user
+        ]);
+    }
+
     public function getManageGameIndex(Request $request, $cncnetGame = null)
     {
         $ladder = \App\Ladder::where("abbreviation", "=", $cncnetGame)->first();

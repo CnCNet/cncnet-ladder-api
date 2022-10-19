@@ -2,6 +2,7 @@
 {
     display: flex;
     width: 60px;
+    height: 25px;
     position: relative;
 
     &:before 
@@ -16,27 +17,32 @@
     }
 }
 
-.player-faction-kr::before
+.player-faction-kr::before,
+.player-faction-korea::before
 {
     background-image: url(../images/game-icons/korea.png);
 }
 
-.player-faction-um:before
+.player-faction-um:before,
+.player-faction-america:before
 {
     background-image: url(../images/game-icons/america.png);
 }
 
-.player-faction-cu:before
+.player-faction-cu:before,
+.player-faction-cuba:before
 {
     background-image: url(../images/game-icons/cuba.png);
 }
 
-.player-faction-iq:before
+.player-faction-iq:before,
+.player-faction-iraq:before
 {
     background-image: url(../images/game-icons/iraq.png);
 }
 
-.player-faction-fr:before
+.player-faction-fr:before,
+.player-faction-france:before
 {
     background-image: url(../images/game-icons/france.png);
 }
@@ -46,22 +52,68 @@
     background-image: url(../images/game-icons/yuri.png);
 }
 
-.player-faction-de:before
+.player-faction-de:before,
+.player-faction-germany:before
 {
     background-image: url(../images/game-icons/germany.png);
 }
 
-.player-faction-gb:before
+.player-faction-gb:before,
+.player-faction-great-britain:before,
+.player-faction-great:before
 {
     background-image: url(../images/game-icons/great_britain.png);
 }
 
-.player-faction-ly:before
+.player-faction-ly:before,
+.player-faction-libya:before
 {
     background-image: url(../images/game-icons/libya.png);
 }
 
-.player-faction-ru:before
+.player-faction-ru:before,
+.player-faction-russia:before
 {
     background-image: url(../images/game-icons/russia.png);
+}
+
+
+
+// RA
+.ra .player-faction-spain:before,
+.ra .player-faction-england:before,
+.ra .player-faction-germany:before,
+.ra .player-faction-america:before,
+.ra .player-faction-greece:before
+{
+     background-image: url(../images/hud/ra_allies.png);
+     background-size: contain;
+     background-position: center;
+}
+
+.ra .player-faction-russia:before,
+.ra .player-faction-uss:before,
+.ra .player-faction-ita:before,
+.ra .player-faction-ukraine:before
+{
+    background-image: url(../images/hud/ra_soviet.png);
+    background-size: contain;
+    background-position: center;
+}
+
+
+
+// TS
+.player-faction-gdi:before
+{
+    background-image: url(../images/hud/ts_gdi.png);
+    background-size: contain;
+    background-position: center;
+}
+
+.player-faction-nod:before
+{
+    background-image: url(../images/hud/ts_nod.png);
+    background-size: contain;
+    background-position: center;
 }

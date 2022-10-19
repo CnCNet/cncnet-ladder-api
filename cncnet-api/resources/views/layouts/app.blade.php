@@ -27,6 +27,11 @@
     <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#6b6b6b">
     <meta name="theme-color" content="#ffffff">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -68,7 +73,7 @@
                     <h3>{{ trans('footer.footer_support') }}</h3>
                     <ul class="list-unstyled">
                         <li><a href="//forums.cncnet.org" title="{{ trans('footer.footer_support') }}">{{ trans('footer.footer_support') }}</a></li>
-                        <li><a href="developers" title="{{ trans('footer.footer_irc') }}">{{ trans('footer.footer_irc') }}</a></li>
+                        <li><a href="https://cncnet.org/developers" title="Developers">Developers</a></li>
                         <li><a href="https://discord.gg/aJRJFe5" title="{{ trans('footer.footer_discord') }}" target="_blank">{{ trans('footer.footer_discord') }}</a></li>
                     </ul>
                 </div>

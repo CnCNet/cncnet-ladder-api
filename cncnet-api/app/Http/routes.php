@@ -8,7 +8,8 @@ Route::get('/', function ()
 });
 
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
-Route::get('/help/obs', 'HelpController@getOBSHelp');
+Route::get('/help/obs', 'SiteController@getOBSHelp');
+Route::get('/donate', 'SiteController@getDonate');
 
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
@@ -34,6 +35,8 @@ Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
 {
     Route::get('users/', 'AdminController@getManageUsersIndex');
+    Route::get('users/edit/{userId}', 'AdminController@getEditUser');
+    Route::post('users/edit/{userId}', 'AdminController@updateUser');
     Route::post('ladder/new', ['middleware' => 'auth', 'isGod' => true, 'uses' => 'LadderController@saveLadder']);
 });
 
@@ -112,6 +115,7 @@ Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
     Route::get('/verify', 'AccountController@getNewVerification');
     Route::post('/verify', 'AccountController@createNewVerification');
     Route::get('/verify/{verify_token}', 'AccountController@verifyEmail');
+    Route::get('/settings', 'AccountController@getUserSettings');
     Route::post('/settings', 'AccountController@updateUserSettings');
 });
 
