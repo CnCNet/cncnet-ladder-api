@@ -62,7 +62,7 @@ class AuthController extends Controller
 			'email' => $data['email'],
 			'password' => bcrypt($data['password']),
 		]);
-		
+
 		//initialize user settings
 		$userSettings = new \App\UserSettings();
 		$userSettings->user_id = $user->id;
