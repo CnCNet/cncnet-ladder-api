@@ -1,0 +1,174 @@
+// Theme for each ladder listing
+@import 
+    "themes/_base",
+    "themes/_ra2",
+    "themes/_yr";
+
+
+.ladder-listing .player-rankings
+{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.ladder-listing .player-rank-row 
+{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 18px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}   
+
+.ladder-listing .player-rank-row .most-used-country
+{
+    border-radius: 100%;
+    width: 60px;
+    height: 60px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    margin-left: 1rem;
+
+    &:before {
+        content: "";
+        width: 80%;
+        height: 80%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+}
+
+.ladder-listing .player-rank-row .avatar 
+{
+    background-size: cover;
+}
+
+
+//
+// Player listing row widths
+.player-rank-row .player-rank 
+{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    margin-right: 30px;
+}
+
+.player-rank-row .player-avatar
+{
+    display: flex;
+    align-items: center;
+    width: 70px;
+    height: 70px;
+
+    &.avatar-container 
+    {
+        max-width: 100%;
+        max-height: 100%;
+    }
+}
+
+.player-rank-row .player-faction 
+{
+    width: 50px;
+}
+
+.player-rank-row .player-username 
+{
+    width: 200px;
+}
+
+.player-rank-row .player-social 
+{
+    width: 100px;
+    margin-left: auto;
+    margin-right: 2rem;
+
+    & a {
+        display: inline-block;
+        padding: 5px 10px;
+    }
+}
+
+.player-rank-row div 
+{
+    position: relative;
+
+    & span 
+    {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        font-size: 13px;
+        height: 10px;
+        width: 100%;
+        color: #323645;
+        text-transform: uppercase;
+        padding-top: 0.5rem;
+    }
+}
+
+.player-rank-row-header .player-games,
+.player-rank-row-header .player-points,
+.player-rank-row .player-games,
+.player-rank-row .player-points 
+{
+    width: 100px;
+}
+
+.player-rank-row-header .player-wins,
+.player-rank-row .player-wins 
+{
+    width: 100px;
+}
+
+
+//
+// Player listing header names
+.player-rank-row-header
+{
+    display: flex;
+    justify-content: space-around;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.player-rank-row-header .player-avatar
+{
+    width: 150px;
+}
+
+.player-rank-row-header .player-rank 
+{
+    width: 80px;
+}
+
+.player-rank-row-header .player-username
+{
+    width: 150px;
+}
+
+.player-rank-row-header .player-username 
+{
+    width: 200px;
+}
+
+.player-rank-row-header .player-social 
+{
+    width: 100px;
+    margin-left: auto;
+    margin-right: 2rem;
+}

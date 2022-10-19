@@ -1,0 +1,38 @@
+// Base theme
+.ladder-listing
+{
+    background: #07080c;
+}
+
+.ladder-listing .player-rank-row 
+{
+    background: #13161f;
+    color: #b5c9e0;
+}
+
+.player-rank-row .player-social a 
+{
+    color: #b5c9e0;
+}
+
+.ladder-listing .player-rank-row:nth-child(2n+3)
+{
+    background: #1f2331;
+}
+
+.ladder-listing .qm-stats .stat
+{
+    background: #0b0d14;
+    border: 1px solid #161926;
+}
+
+.ladder-listing .player-rank-row-header
+{
+    color: #b5c9e0;
+}
+
+// Default no Avatar bg 
+.ladder-listing .player-rank-row .avatar 
+{
+    background: #1f2331;
+}

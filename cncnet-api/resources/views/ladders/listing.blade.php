@@ -32,7 +32,7 @@
 @endsection
 
 @section('content')
-    <section class="cncnet-features general-texture game-detail">
+    <section class="ladder-listing game-{{ $history->ladder->abbreviation }}">
         <div class="container">
 
             @if ($history->ladder->abbreviation == 'blitz')
@@ -104,7 +104,7 @@
                     </div>
                 </div>
             @endif
-
+            {{-- 
             <div class="feature">
                 <div class="row">
                     <div class="header">
@@ -119,7 +119,7 @@
                 </div>
             </div>
 
-            @include('components.global-recent-games', ['games' => $games])
+            @include('components.global-recent-games', ['games' => $games]) --}}
 
             <div class="feature">
                 <div class="row">
@@ -140,16 +140,6 @@
 
                                 <div class="col-md-9 text-right">
                                     <ul class="list-inline">
-                                        <li>
-                                            <a href="/account/{{ $history->ladder->abbreviation }}/list" class="btn btn-secondary text-uppercase" style="font-size: 15px;">
-                                                <i class="fa fa-user fa-lg fa-fw" aria-hidden="true" style="margin-right: 0;"></i> Your Account
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <button class="btn btn-secondary text-uppercase" data-toggle="modal" data-target="#battleRanks" style="font-size: 15px;">
-                                                <i class="fa fa-trophy fa-lg fa-fw" aria-hidden="true" style="margin-right: 5px;"></i> Battle Ranks
-                                            </button>
-                                        </li>
                                         <li>
                                             <div class="btn-group filter">
                                                 <button type="button" class="btn btn-secondary dropdown-toggle text-uppercase" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
@@ -228,13 +218,28 @@
                         <?php $perPage = $players->perPage();
                         $rankOffset = $players->currentPage() * $perPage - $perPage; ?>
 
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-12 text-center">
                                 {!! $players->render() !!}
                             </div>
-                        </div>
+                        </div> --}}
 
-                        <div class="row">
+                        <div class="player-rankings">
+                            <div class="player-rank-row-header">
+                                <div class="player-rank">
+                                    Rank
+                                </div>
+                                <div class="player-avatar">
+                                    Name
+                                </div>
+                                <div class="player-social">
+                                    Social
+                                </div>
+                                <div class="player-points">Points</div>
+                                <div class="player-wins">Wins</div>
+                                <div class="player-games">Games</div>
+                            </div>
+
                             @foreach ($players as $k => $player)
                                 <?php
                                 $rank = $rankOffset + $k + 1;
@@ -265,20 +270,21 @@
                                 }
                                 ?>
 
-                                <div class="col-md-4">
-                                    @include('components/player-box', [
-                                        'username' => $player->player_name,
-                                        'points' => $player->points,
-                                        'badge' => \App\Player::getBadge($player->percentile),
-                                        'rank' => $rank,
-                                        'wins' => $player->wins,
-                                        'totalGames' => $player->games,
-                                        'playerCard' => $player->card !== null ? (array_key_exists($player->card, $cards) ? $cards[$player->card + 0] : '') : '',
-                                        'side' => $countryName,
-                                        'url' => \App\URLHelper::getPlayerProfileUrl($history, $player->player_name),
-                                        'game' => $history->ladder->game,
-                                    ])
-                                </div>
+                                @include('components/player-row', [
+                                    'username' => $player->player_name,
+                                    'points' => $player->points,
+                                    'badge' => \App\Player::getBadge($player->percentile),
+                                    'rank' => $rank,
+                                    'wins' => $player->wins,
+                                    'totalGames' => $player->games,
+                                    'side' => $countryName,
+                                    'url' => \App\URLHelper::getPlayerProfileUrl($history, $player->player_name),
+                                    'avatar' => $player->player->user->getUserAvatar(),
+                                    'game' => $history->ladder->game,
+                                    'twitch' => $player->player->user->getTwitchProfile(),
+                                    'youtube' => $player->player->user->getYouTubeProfile(),
+                                    'discord' => $player->player->user->getDiscordProfile(),
+                                ])
                             @endforeach
                         </div>
 

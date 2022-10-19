@@ -1,0 +1,62 @@
+
+//
+// Yuri theme
+.ladder-listing.game-yr
+{
+    background: #0a060c;
+}
+
+.ladder-listing.game-yr .player-rank-row 
+{
+    background: #1e131f;
+    color: #d1b5e0;
+}
+
+.ladder-listing.game-yr .player-rank-row svg path
+{
+    fill: #d1b5e0;
+}
+
+.ladder-listing.game-yr .player-social a 
+{
+    color: #d1b5e0;
+}
+
+.ladder-listing.game-yr .player-rank-row:nth-child(2n+3)
+{
+    background: #140c16;
+}
+
+.ladder-listing.game-yr .player-rank-row-header
+{
+    color: #d1b5e0;
+}
+
+// Default no Avatar bg 
+.ladder-listing.game-yr .player-rank-row .avatar 
+{
+    background-color: #140c16;
+}
+
+
+
+// Qm stats box
+.ladder-listing.game-yr .qm-stats .stat
+{
+    background: #140c16;
+    border: 1px solid #2a1a32;
+}
+
+
+// Pagination
+.ladder-listing.game-yr .pagination > li > a
+{
+    color: #8211bb;
+}
+
+.ladder-listing.game-yr .pagination .active>span 
+{
+    background-color: #8211bb;
+    border-color: #8211bb;
+}
+
