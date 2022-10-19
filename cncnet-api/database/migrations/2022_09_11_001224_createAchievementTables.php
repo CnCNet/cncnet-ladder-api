@@ -17,7 +17,7 @@ class CreateAchievementTables extends Migration
 			$table->increments('id');
 			$table->enum('achievement_type', ['IMMEDIATE', 'CAREER', 'MULTI']); //'career' achievements can progress and be unlocked over time, 'immediate' achievements are unlocked after one match, 'multi' achievements span over multiple ladders
 			$table->integer('order')->default(999);
-			$table->text('tag')->nullable(true); //can group similar achivements with a tag
+			$table->text('tag')->nullable(true); //can group similar achievements with a tag
 			$table->integer('ladder_id')->unsigned();
 			$table->foreign('ladder_id')->references('id')->on('ladders')->onDelete('cascade');
 			$table->text('achievement_name')->nullable(false);

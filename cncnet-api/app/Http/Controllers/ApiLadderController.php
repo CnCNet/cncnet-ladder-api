@@ -561,7 +561,7 @@ class ApiLadderController extends Controller
         $lockedAchievements = \App\AchievementProgress::join('achievement', 'achievement_tracker.achievement_id', '=', 'achievement.id')
             ->where('user_id', $user->id)
             ->where('ladder_id', $ladderId)
-            ->whereNull('achivement_unlocked_date')
+            ->whereNull('achievement_unlocked_date')
             ->get();
 
         //play qm games achievement
@@ -571,7 +571,7 @@ class ApiLadderController extends Controller
         })->sortBy('unlock_count')->first();
 
         if ($lockedAchievement !== null)
-            $this->achivementCheck($user, $lockedAchievement);
+            $this->achievementCheck($user, $lockedAchievement);
 
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
@@ -593,14 +593,14 @@ class ApiLadderController extends Controller
 
             $count = $goc->count;
 
-            $lockedAchievementTracker = \App\AchievementProgress::where('achivement_id', $lockedAchievement->achievement_id)
+            $lockedAchievementTracker = \App\AchievementProgress::where('e_id', $lockedAchievement->achievement_id)
                 ->where('user_id', $user->id)
                 ->first();
 
             //update achievement tracker
             if ($lockedAchievement->achievement_type === 'CAREER')
             {
-                $this->achivementCheck($user, $lockedAchievement);
+                $this->achievementCheck($user, $lockedAchievement);
             }
             else if ($lockedAchievement->achievement_type === 'IMMEDIATE')
             {
@@ -625,7 +625,7 @@ class ApiLadderController extends Controller
 
             if ($lockedAchievement !== null)
             {
-                $this->achivementCheck($user, $lockedAchievement);
+                $this->achievementCheck($user, $lockedAchievement);
             }
 
             $country = $stats->cty;
@@ -639,7 +639,7 @@ class ApiLadderController extends Controller
 
                 if ($lockedAchievement !== null)
                 {
-                    $this->achivementCheck($user, $lockedAchievement);
+                    $this->achievementCheck($user, $lockedAchievement);
                 }
             }
             else if ($country > 4 && $country < 9) //soviet
@@ -651,7 +651,7 @@ class ApiLadderController extends Controller
 
                 if ($lockedAchievement !== null)
                 {
-                    $this->achivementCheck($user, $lockedAchievement);
+                    $this->achievementCheck($user, $lockedAchievement);
                 }
             }
             else if ($country == 9) //yuri
@@ -663,7 +663,7 @@ class ApiLadderController extends Controller
 
                 if ($lockedAchievement !== null)
                 {
-                    $this->achivementCheck($user, $lockedAchievement);
+                    $this->achievementCheck($user, $lockedAchievement);
                 }
             }
         }
@@ -673,9 +673,9 @@ class ApiLadderController extends Controller
      * Tick achievement tracker then check if achievement is unlocked.
      * For career achievements.
      */
-    private function achivementCheck($user, $lockedAchievement)
+    private function achievementCheck($user, $lockedAchievement)
     {
-        $lockedAchievementTracker = \App\AchievementProgress::where('achivement_id', $lockedAchievement->achievement_id)
+        $lockedAchievementTracker = \App\AchievementProgress::where('achievement_id', $lockedAchievement->achievement_id)
             ->where('user_id', $user->id)
             ->first();
 
