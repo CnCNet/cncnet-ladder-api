@@ -76,35 +76,39 @@ class CreateAchievementTables extends Migration
 				$a->save();
 			}
 
-			//create win qm games as faction achievements
-			$arr = ['Soviet', 'Allied', 'Yuri'];
-			foreach ($arr as $faction)
+			if ($ladderId !== 2 && $ladderId !== 3) //skip RA and Tiberian Sun faction achievements
 			{
-				$map = [
-					10 => $faction . ' Noob',
-					25 => $faction . ' Recruit',
-					50 => $faction . ' Soldier',
-					100 => $faction .  ' Marine',
-					300 => $faction . ' Veteran',
-					500 => $faction . ' Warrior',
-					1000 => $faction .  ' Spartan',
-					1500 => $faction . ' Master',
-					2000 => $faction . ' Champion',
-					3000 => $faction . ' Legend'
-				];
 
-				//create the achievement
-				foreach ($map as $numGames => $achName)
+				//create win qm games as faction achievements
+				$arr = ['Soviet', 'Allied', 'Yuri'];
+				foreach ($arr as $faction)
 				{
-					$a = new \App\Achievement();
-					$a->ladder_id = $ladderId;
-					$a->order = $order++;
-					$a->tag = explode(" ", $achName)[0] . ': Win QM Games';
-					$a->achievement_type = $type;
-					$a->achievement_name = $ladderName . ' ' . $achName;
-					$a->achievement_description = 'Win ' . $numGames . ' ' . $ladderName . ' QM Games as ' . explode(" ", $achName)[0];
-					$a->unlock_count = $numGames;
-					$a->save();
+					$map = [
+						10 => $faction . ' Noob',
+						25 => $faction . ' Recruit',
+						50 => $faction . ' Soldier',
+						100 => $faction .  ' Marine',
+						300 => $faction . ' Veteran',
+						500 => $faction . ' Warrior',
+						1000 => $faction .  ' Spartan',
+						1500 => $faction . ' Master',
+						2000 => $faction . ' Champion',
+						3000 => $faction . ' Legend'
+					];
+
+					//create the achievement
+					foreach ($map as $numGames => $achName)
+					{
+						$a = new \App\Achievement();
+						$a->ladder_id = $ladderId;
+						$a->order = $order++;
+						$a->tag = explode(" ", $achName)[0] . ': Win QM Games';
+						$a->achievement_type = $type;
+						$a->achievement_name = $ladderName . ' ' . $achName;
+						$a->achievement_description = 'Win ' . $numGames . ' ' . $ladderName . ' QM Games as ' . explode(" ", $achName)[0];
+						$a->unlock_count = $numGames;
+						$a->save();
+					}
 				}
 			}
 		}
