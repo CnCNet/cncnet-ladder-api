@@ -4,18 +4,22 @@
     background: #07080c;
 }
 
-.ladder-listing .player-rank-row 
+.ladder-listing .player-row
 {
     background: #13161f;
     color: #b5c9e0;
+
+    & a {
+        color: #b5c9e0;
+    }
 }
 
-.player-rank-row .player-social a 
+.ladder-listing .player-row-header
 {
     color: #b5c9e0;
 }
 
-.ladder-listing .player-rank-row:nth-child(2n+3)
+.ladder-listing .player-row:nth-child(2n+3)
 {
     background: #1f2331;
 }
@@ -26,13 +30,9 @@
     border: 1px solid #161926;
 }
 
-.ladder-listing .player-rank-row-header
-{
-    color: #b5c9e0;
-}
 
 // Default no Avatar bg 
-.ladder-listing .player-rank-row .avatar 
+.ladder-listing .player-row .avatar 
 {
-    background: #1f2331;
+    background-color: #1f2331;
 }

@@ -104,7 +104,7 @@
                     </div>
                 </div>
             @endif
-            {{-- 
+
             <div class="feature">
                 <div class="row">
                     <div class="header">
@@ -119,7 +119,7 @@
                 </div>
             </div>
 
-            @include('components.global-recent-games', ['games' => $games]) --}}
+            @include('components.global-recent-games', ['games' => $games])
 
             <div class="feature">
                 <div class="row">
@@ -215,17 +215,13 @@
                             </div>
                         @endif
 
-                        <?php $perPage = $players->perPage();
-                        $rankOffset = $players->currentPage() * $perPage - $perPage; ?>
+                        <?php
+                        $perPage = $players->perPage();
+                        $rankOffset = $players->currentPage() * $perPage - $perPage;
+                        ?>
 
-                        {{-- <div class="row">
-                            <div class="col-md-12 text-center">
-                                {!! $players->render() !!}
-                            </div>
-                        </div> --}}
-
-                        <div class="player-rankings">
-                            <div class="player-rank-row-header">
+                        <div class="ladder-player-listing">
+                            <div class="player-row-header">
                                 <div class="player-rank">
                                     Rank
                                 </div>
@@ -249,7 +245,6 @@
                                 ?>
 
                                 <?php
-                                
                                 $countryName = '';
                                 $side = null;
                                 
@@ -273,14 +268,13 @@
                                 @include('components/player-row', [
                                     'username' => $player->player_name,
                                     'points' => $player->points,
-                                    'badge' => \App\Player::getBadge($player->percentile),
                                     'rank' => $rank,
                                     'wins' => $player->wins,
                                     'totalGames' => $player->games,
                                     'side' => $countryName,
+                                    'game' => $history->ladder->game,
                                     'url' => \App\URLHelper::getPlayerProfileUrl($history, $player->player_name),
                                     'avatar' => $player->player->user->getUserAvatar(),
-                                    'game' => $history->ladder->game,
                                     'twitch' => $player->player->user->getTwitchProfile(),
                                     'youtube' => $player->player->user->getYouTubeProfile(),
                                     'discord' => $player->player->user->getDiscordProfile(),

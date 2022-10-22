@@ -1,143 +1,82 @@
 // Theme for each ladder listing
 @import 
+    "_player-profile",
     "themes/_base",
     "themes/_ra2",
     "themes/_yr";
 
 
-.ladder-listing .player-rankings
+.ladder-listing .ladder-player-listing
 {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-.ladder-listing .player-rank-row 
+.ladder-listing .ladder-player-listing .player-row
 {
     display: flex;
+    flex-direction: column;
     align-items: center;
     width: 100%;
     border-radius: 4px;
     font-weight: 600;
     font-size: 18px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-}   
+    padding-bottom: 20px;
+    padding-top: 20px;
+    margin-bottom: 1rem;
 
-.ladder-listing .player-rank-row .most-used-country
-{
-    border-radius: 100%;
-    width: 60px;
-    height: 60px;
-    background-size: 100%;
-    background-repeat: no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    margin-left: 1rem;
-
-    &:before {
-        content: "";
-        width: 80%;
-        height: 80%;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
-    }
-}
-
-.ladder-listing .player-rank-row .avatar 
-{
-    background-size: cover;
-}
-
-
-//
-// Player listing row widths
-.player-rank-row .player-rank 
-{
-    display: flex;
-    text-align: center;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    margin-right: 30px;
-}
-
-.player-rank-row .player-avatar
-{
-    display: flex;
-    align-items: center;
-    width: 70px;
-    height: 70px;
-
-    &.avatar-container 
+    @media(min-width: $lg-width)
     {
-        max-width: 100%;
-        max-height: 100%;
+        flex-direction: row;
     }
 }
 
-.player-rank-row .player-faction 
+.ladder-player-listing .player-profile,
+.ladder-player-listing .player-profile-info
 {
-    width: 50px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
-.player-rank-row .player-username 
+
+@media(max-width: $md-width)
 {
-    width: 200px;
-}
-
-.player-rank-row .player-social 
-{
-    width: 100px;
-    margin-left: auto;
-    margin-right: 2rem;
-
-    & a {
-        display: inline-block;
-        padding: 5px 10px;
-    }
-}
-
-.player-rank-row div 
-{
-    position: relative;
-
-    & span 
+    .ladder-player-listing .player-profile
     {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        font-size: 13px;
-        height: 10px;
-        width: 100%;
-        color: #323645;
-        text-transform: uppercase;
-        padding-top: 0.5rem;
+        padding-bottom: 1rem;
+    }
+
+    .ladder-player-listing .player-rank
+    {
+        order: 3;
+    }
+
+    .ladder-player-listing .player-profile .player-country 
+    {
+        display: none;
+    }
+
+    .ladder-player-listing .player-profile-info
+    {
+        text-align: center;
+        justify-content: center;
     }
 }
 
-.player-rank-row-header .player-games,
-.player-rank-row-header .player-points,
-.player-rank-row .player-games,
-.player-rank-row .player-points 
+@media(min-width: $lg-width)
 {
-    width: 100px;
+    .ladder-player-listing .player-profile-info
+    {
+        justify-content: flex-end;
+    }
 }
 
-.player-rank-row-header .player-wins,
-.player-rank-row .player-wins 
-{
-    width: 100px;
-}
-
-
-//
-// Player listing header names
-.player-rank-row-header
+// Table colum names
+.player-row-header
 {
     display: flex;
     justify-content: space-around;
@@ -146,29 +85,39 @@
     padding: 1rem;
 }
 
-.player-rank-row-header .player-avatar
+.player-row-header .player-avatar
 {
     width: 150px;
 }
 
-.player-rank-row-header .player-rank 
+.player-row-header .player-rank 
 {
     width: 80px;
 }
 
-.player-rank-row-header .player-username
-{
-    width: 150px;
-}
-
-.player-rank-row-header .player-username 
+.player-row-header .player-username 
 {
     width: 200px;
 }
 
-.player-rank-row-header .player-social 
+.player-row-header .player-games 
 {
     width: 100px;
+}
+
+.player-row-header .player-wins 
+{
+    width: 100px;
+}
+
+.player-row-header .player-points 
+{
+    width: 100px;
+}
+
+.player-row-header .player-social 
+{
+    width: 130px;
     margin-left: auto;
     margin-right: 2rem;
 }
