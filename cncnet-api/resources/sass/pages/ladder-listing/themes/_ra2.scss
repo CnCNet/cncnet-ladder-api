@@ -24,6 +24,15 @@
 {
     background: #0e0607;
     color: #e0b5bf;
+    
+    & a {
+        transition: ease 350ms;
+        color: #e0b5bf;
+
+        &:hover {
+            color: #fff;
+        }
+    }
 }
 
 .ladder-listing.game-ra2 .player-row:nth-child(2n+3)

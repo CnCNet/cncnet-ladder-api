@@ -15,6 +15,7 @@
 
 .ladder-listing .ladder-player-listing .player-row
 {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -29,6 +30,29 @@
     @media(min-width: $lg-width)
     {
         flex-direction: row;
+    }
+}
+
+.ladder-listing .ladder-player-listing .player-row .player-link 
+{
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 100%;
+    transition: ease 250ms;
+    
+    &:hover {
+        color: #fff;
+    }
+
+    @media(min-width: $lg-width)
+    {
+        display: flex;
     }
 }
 
@@ -47,6 +71,7 @@
     .ladder-player-listing .player-profile-info
     {
         justify-content: flex-end;
+        margin-right: 50px;
     }
 }
 
@@ -58,6 +83,7 @@
     text-transform: uppercase;
     font-weight: 600;
     padding: 1rem;
+    font-size: 1.5rem;
 }
 
 .player-row-header .player-avatar
@@ -77,7 +103,8 @@
 
 .player-row-header .player-games 
 {
-    width: 100px;
+    width: 80px;
+    margin-right: 50px;
 }
 
 .player-row-header .player-wins 
@@ -92,7 +119,7 @@
 
 .player-row-header .player-social 
 {
-    width: 130px;
+    width: 150px;
     margin-left: auto;
     margin-right: 2rem;
 }

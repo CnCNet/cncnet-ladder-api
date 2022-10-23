@@ -1,6 +1,8 @@
 .player-profile 
 {
     position: relative;
+
+    transition: ease 250ms;
 }
 
 .player-profile .player-stat
@@ -60,9 +62,9 @@
     }
 }
 
-
 .player-profile-info 
 {
+    position: relative;
     font-size: 1.4rem;
 
     @media(max-width: $md-width)
@@ -70,7 +72,6 @@
         padding-top: 1rem;
     }
 }
-
 
 .player-profile-info .player-social 
 {
@@ -87,7 +88,6 @@
         width: 150px;
     }
 }
-
 
 .player-profile-info .player-stat 
 {
