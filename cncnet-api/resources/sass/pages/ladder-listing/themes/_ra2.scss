@@ -15,23 +15,23 @@
     color: #e0b5bf;
 }
 
-.ladder-listing.game-ra2 .player-rank-row svg path
+.ladder-listing.game-ra2 .player-row svg path
 {
     fill: #e0b5bf;
 }
 
-.ladder-listing.game-ra2 .player-rank-row 
+.ladder-listing.game-ra2 .player-row 
 {
     background: #0e0607;
     color: #e0b5bf;
 }
 
-.ladder-listing.game-ra2 .player-rank-row:nth-child(2n+3)
+.ladder-listing.game-ra2 .player-row:nth-child(2n+3)
 {
     background: #160c0d;
 }
 
-.ladder-listing.game-ra2 .player-rank-row span
+.ladder-listing.game-ra2 .player-row span
 {
     color: #3d3132;
 }
@@ -43,7 +43,7 @@
 }
 
 // Default no Avatar bg 
-.ladder-listing.game-ra2 .player-rank-row .avatar 
+.ladder-listing.game-ra2 .player-row .avatar 
 {
     background-color: #080404;
 }
@@ -57,7 +57,7 @@
     border: 1px solid #201313;
 }
 
-.ladder-listing.game-ra2 .player-rank-row-header
+.ladder-listing.game-ra2 .player-row-header
 {
     color: #e0b5bf;
 }

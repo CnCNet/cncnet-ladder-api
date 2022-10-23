@@ -17,6 +17,11 @@
 .ladder-listing .player-row-header
 {
     color: #b5c9e0;
+
+    @media(max-width: $lg-width)
+    {
+        display: none;
+    }
 }
 
 .ladder-listing .player-row:nth-child(2n+3)

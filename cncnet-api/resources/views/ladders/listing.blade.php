@@ -244,34 +244,12 @@
                                 }
                                 ?>
 
-                                <?php
-                                $countryName = '';
-                                $side = null;
-                                
-                                if ($history->ladder->game == 'yr') {
-                                    $side = \App\Side::where('local_id', $player->country)
-                                        ->where('ladder_id', $history->ladder->id)
-                                        ->first();
-                                } else {
-                                    if ($player->side !== null) {
-                                        if (array_key_exists($player->side, $sides)) {
-                                            $countryName = $sides[$player->side];
-                                        }
-                                    }
-                                }
-                                
-                                if ($side !== null) {
-                                    $countryName = $side->name;
-                                }
-                                ?>
-
                                 @include('components/player-row', [
                                     'username' => $player->player_name,
                                     'points' => $player->points,
                                     'rank' => $rank,
                                     'wins' => $player->wins,
                                     'totalGames' => $player->games,
-                                    'side' => $countryName,
                                     'game' => $history->ladder->game,
                                     'url' => \App\URLHelper::getPlayerProfileUrl($history, $player->player_name),
                                     'avatar' => $player->player->user->getUserAvatar(),

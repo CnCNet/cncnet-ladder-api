@@ -47,3 +47,19 @@
 
 @import "countries";
 @import "global";
+
+
+
+
+.visible-xs 
+{
+    display: none!important;
+}
+
+@media(max-width: $md-width)
+{
+    .visible-xs 
+    {
+        display: flex!important;
+    }
+}

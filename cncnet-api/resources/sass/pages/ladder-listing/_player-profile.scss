@@ -1,3 +1,15 @@
+.player-profile 
+{
+    position: relative;
+}
+
+.player-profile .player-stat
+{
+    position: relative;
+    padding-left: 2rem;
+    padding-right: 2rem;
+} 
+
 .player-profile .most-used-country
 {
     border-radius: 100%;
@@ -21,45 +33,44 @@
     }
 }
 
-.player-profile .avatar 
-{
-    background-size: cover;
-}
-
 .player-profile .player-rank 
 {
     display: flex;
     text-align: center;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    margin-right: 30px;
 }
 
 .player-profile .player-avatar
 {
     display: flex;
     align-items: center;
-    width: 70px;
-    height: 70px;
-
+    
     &.avatar-container 
     {
         max-width: 100%;
         max-height: 100%;
     }
+
+    @media(max-width: $md-width)
+    {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
 }
 
-.player-profile .player-faction 
+
+.player-profile-info 
 {
-    width: 50px;
+    font-size: 1.4rem;
+
+    @media(max-width: $md-width)
+    {
+        padding-top: 1rem;
+    }
 }
 
-.player-profile .player-username 
-{
-    width: 200px;
-    word-break: break-word;
-}
 
 .player-profile-info .player-social 
 {
@@ -77,14 +88,16 @@
     }
 }
 
+
 .player-profile-info .player-stat 
 {
     position: relative;
+    padding-left: 2rem;
+    padding-right: 2rem;
 
     & span 
     {
         display: block;
-        font-size: 13px;
         height: 10px;
         width: 100%;
         color: #323645;
@@ -92,17 +105,36 @@
     }
 }
 
-.player-profile-info .player-points 
+@media(min-width: $lg-width)
 {
-    width: 100px;
-}
+    .player-profile .player-faction 
+    {
+        width: 50px;
+    }
 
-.player-profile-info .player-wins 
-{
-    width: 100px;
-}
+    .player-profile .player-country 
+    {
+        padding-right: 0;
+    }
 
-.player-profile-info .player-games 
-{
-    width: 100px;
+    .player-profile .player-username 
+    {
+        width: 200px;
+        word-break: break-word;
+    }
+
+    .player-profile-info .player-points 
+    {
+        width: 100px;
+    }
+
+    .player-profile-info .player-wins 
+    {
+        width: 100px;
+    }
+
+    .player-profile-info .player-games 
+    {
+        width: 100px;
+    }
 }

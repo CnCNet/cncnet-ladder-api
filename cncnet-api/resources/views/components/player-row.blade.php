@@ -26,20 +26,56 @@
     </div>
 </a> --}}
 
+
+@php
+    $countryName = '';
+    $side = null;
+    
+    if ($game == 'yr') {
+        $side = \App\Side::where('local_id', $player->country)
+            ->where('ladder_id', $history->ladder->id)
+            ->first();
+    } else {
+        if ($player->side !== null) {
+            if (array_key_exists($player->side, $sides)) {
+                $countryName = $sides[$player->side];
+            }
+        }
+    }
+    
+    if ($side !== null) {
+        $countryName = $side->name;
+    }
+@endphp
+
 <div class="player-row">
-    <div class="player-profile">
-        <div class="player-rank">
+    <div class="player-profile visible-xs">
+        <div class="player-rank player-stat">
             #{{ $rank or 'Unranked' }}
         </div>
-        <a class="player-avatar" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+        <a class="player-avatar player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             @include('components.avatar', ['avatar' => $avatar, 'size' => 50])
         </a>
-        <a class="player-country" href="{{ $url }}" title="Go to {{ $username }}'s profile">
-            @if ($side)
-                <div class="most-used-country country-{{ $game }}-{{ strtolower($side) }}"></div>
+        <a class="player-username player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+            {{ $username or '' }}
+        </a>
+    </div>
+
+    <div class="player-profile hidden-xs">
+        <div class="player-rank player-stat">
+            #{{ $rank or 'Unranked' }}
+        </div>
+
+        <a class="player-avatar player-stat hidden-xs" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+            @include('components.avatar', ['avatar' => $avatar, 'size' => 50])
+        </a>
+
+        <a class="player-country player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+            @if ($countryName)
+                <div class="most-used-country country-{{ $game }}-{{ strtolower($countryName) }}"></div>
             @endif
         </a>
-        <a class="player-username" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+        <a class="player-username player-stat hidden-xs" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             {{ $username or '' }}
         </a>
     </div>

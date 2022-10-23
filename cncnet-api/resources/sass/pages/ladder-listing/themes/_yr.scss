@@ -6,13 +6,13 @@
     background: #0a060c;
 }
 
-.ladder-listing.game-yr .player-rank-row 
+.ladder-listing.game-yr .player-row 
 {
     background: #1e131f;
     color: #d1b5e0;
 }
 
-.ladder-listing.game-yr .player-rank-row svg path
+.ladder-listing.game-yr .player-row svg path
 {
     fill: #d1b5e0;
 }
@@ -22,18 +22,18 @@
     color: #d1b5e0;
 }
 
-.ladder-listing.game-yr .player-rank-row:nth-child(2n+3)
+.ladder-listing.game-yr .player-row:nth-child(2n+3)
 {
     background: #140c16;
 }
 
-.ladder-listing.game-yr .player-rank-row-header
+.ladder-listing.game-yr .player-row-header
 {
     color: #d1b5e0;
 }
 
 // Default no Avatar bg 
-.ladder-listing.game-yr .player-rank-row .avatar 
+.ladder-listing.game-yr .player-row .avatar 
 {
     background-color: #140c16;
 }

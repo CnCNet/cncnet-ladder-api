@@ -42,31 +42,6 @@
     padding-right: 1rem;
 }
 
-
-@media(max-width: $md-width)
-{
-    .ladder-player-listing .player-profile
-    {
-        padding-bottom: 1rem;
-    }
-
-    .ladder-player-listing .player-rank
-    {
-        order: 3;
-    }
-
-    .ladder-player-listing .player-profile .player-country 
-    {
-        display: none;
-    }
-
-    .ladder-player-listing .player-profile-info
-    {
-        text-align: center;
-        justify-content: center;
-    }
-}
-
 @media(min-width: $lg-width)
 {
     .ladder-player-listing .player-profile-info
