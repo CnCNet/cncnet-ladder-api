@@ -19,7 +19,7 @@
     }
 @endphp
 
-<div class="player-row">
+<div class="player-row rank-{{ $rank }}">
     <div class="player-profile visible-xs">
         <div class="player-rank player-stat">
             #{{ $rank or 'Unranked' }}

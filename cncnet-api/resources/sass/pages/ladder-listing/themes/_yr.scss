@@ -13,6 +13,11 @@
 
     & a {
         color: #d1b5e0;
+        transition: all ease 350ms;
+
+        &:hover {
+            color: #fff;
+        }
     }
 }
 

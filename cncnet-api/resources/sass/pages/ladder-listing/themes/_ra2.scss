@@ -8,6 +8,15 @@
 .ladder-listing.game-ra2 a 
 {
     color: #e0b5bf;
+
+    & a {
+        color: #e0b5bf;
+        transition: all ease 350ms;
+
+        &:hover {
+            color: #fff;
+        }
+    }
 }
 
 .ladder-listing.game-ra2 .player-social a 

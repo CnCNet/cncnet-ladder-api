@@ -1,9 +1,9 @@
 // Theme for each ladder listing
 @import 
     "_player-profile",
-    "themes/_base",
-    "themes/_ra2",
-    "themes/_yr";
+    "themes/_base";
+    // "themes/_ra2",
+    // "themes/_yr";
 
 
 .ladder-listing .ladder-player-listing
@@ -29,6 +29,8 @@
 
     @media(min-width: $lg-width)
     {
+        padding-bottom: 5px;
+        padding-top: 5px;
         flex-direction: row;
     }
 }
@@ -50,7 +52,7 @@
         color: #fff;
     }
 
-    @media(min-width: $lg-width)
+    @media(min-width: $xl-width)
     {
         display: flex;
     }
@@ -104,7 +106,11 @@
 .player-row-header .player-games 
 {
     width: 80px;
-    margin-right: 50px;
+
+    @media(min-width: $xl-width)
+    {
+        margin-right: 50px;
+    }
 }
 
 .player-row-header .player-wins 

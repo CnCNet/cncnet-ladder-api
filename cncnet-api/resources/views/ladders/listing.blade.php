@@ -133,8 +133,6 @@
                                         @elseif($tier == 2)
                                             <h3><strong>1vs1</strong> Contenders League Rankings</h3>
                                         @endif
-                                    @else
-                                        <h3><strong>1vs1</strong> Battle Rankings</h3>
                                     @endif
                                 </div>
 
@@ -178,6 +176,12 @@
                                             </small>
                                         @endif
                                     </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12 text-center">
+                                    {!! $players->render() !!}
                                 </div>
                             </div>
                         </div>
@@ -270,32 +274,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Battle Ranks -->
-    <div class="modal fade" id="battleRanks" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-md" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h3 class="modal-title">Battle Ranks <small class="text-uppercase">What rank am I?</small></h3>
-                </div>
-                <div class="modal-body clearfix text-center">
-                    <?php $pecentiles = [15, 25, 45, 55, 65, 75, 85, 90, 100]; ?>
-                    @foreach ($pecentiles as $percentile)
-                        <?php $badge = \App\Player::getBadge($percentile); ?>
-                        <p class="lead">{{ $badge['type'] }}</p>
-                        <div class="player-badge badge-2x" style="margin: 0 auto; height: 150px;">
-                            <img src="/images/badges/{{ $badge['badge'] . '.png' }}" style="height:150px;">
-                        </div>
-                        <hr>
-                    @endforeach
-                </div>
-                <div class="modal-footer" style="border:none;">
-                    <button type="button" class="btn btn-primary btn-lg" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @if ($history->ends > Carbon\Carbon::now())

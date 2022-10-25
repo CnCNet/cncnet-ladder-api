@@ -8,15 +8,20 @@
 {
     background: #13161f;
     color: #b5c9e0;
-
+    
     & a {
         color: #b5c9e0;
+        transition: all ease 350ms;
+
+        &:hover {
+            color: #fff;
+        }
     }
 }
 
 .ladder-listing .player-row-header
 {
-    color: #b5c9e0;
+    color: #fdfdfd;
 
     @media(max-width: $lg-width)
     {
@@ -28,6 +33,14 @@
 {
     background: #1f2331;
 }
+
+.ladder-listing .player-row.rank-1
+{
+    background: rgba(0, 255, 138,0.4);
+    border: 1px solid #00ff8a9e;
+    * { color: #fff;}
+}
+
 
 .ladder-listing .qm-stats .stat
 {
