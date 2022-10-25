@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="C&amp;C, Command and Conquer, C&amp;C95, C&quot;C1, RA, RA95, CnCNet, Online, C&amp;C95 Online,
+    <meta name="keywords"
+        content="C&amp;C, Command and Conquer, C&amp;C95, C&quot;C1, RA, RA95, CnCNet, Online, C&amp;C95 Online,
         C&amp;C GLE, LANmate, Tiberian, Sun, Tiberium, Red Alert, Red, Alert, Kane, Stalin, Classics, Forums, website, online,
         chat, GDI, Nod, The Brotherhood of Nod, The Global Defense Initiative, Allies, Soviets, Covert Operations, Firestorm, Aftermath, Gallery, Counterstrike" />
     <meta name="author" content="CnCNet">
-    <meta name="google-site-verification" content="UACqC83TaSFSDZsv31UMLMgzDKasIAdB7IEGP9IUSEM"/>
+    <meta name="google-site-verification" content="UACqC83TaSFSDZsv31UMLMgzDKasIAdB7IEGP9IUSEM" />
     <meta property="og:title" content="@yield('title') - CnCNet" />
     <meta property="og:image" content="https://cncnet.org/images/meta.png" />
-    <meta property="og:url" content="{{ Request::url() }}"/>
+    <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:type" content="website" />
     @yield('meta')
     <title>@yield('title') - CnCNet</title>
@@ -37,6 +39,7 @@
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
+
 <body>
     <div class="navigation-component">
         @include('components.navigation')
@@ -91,8 +94,9 @@
                     <ul class="list-inline">
                         <li><a href="http://facebook.com/cncnet" title="Follow CnCNet on Facebook" target="_blank"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
                         <li><a href="http://twitter.com/cncnetofficial" title="Follow CnCNet on Twitter" target="_blank"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
-                        <li><a href="https://www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" title="Subscribe to CnCNet on YouTube" target="_blank"><i class="fa fa-youtube fa-2x fa-fw"></i></a></li>
-                        <li><a href="https://reddit.com/r/cncnet" title="Subscribe to CnCNet on Reddit" target="_blank"><i class="fa fa-reddit fa-2x fa-fw"></i></a>                        </li>
+                        <li><a href="https://www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" title="Subscribe to CnCNet on YouTube" target="_blank"><i
+                                    class="fa fa-youtube fa-2x fa-fw"></i></a></li>
+                        <li><a href="https://reddit.com/r/cncnet" title="Subscribe to CnCNet on Reddit" target="_blank"><i class="fa fa-reddit fa-2x fa-fw"></i></a> </li>
                         <li><a href="https://www.twitch.tv/cncnetofficial" title="Subscribe to CnCNet on Twitch" target="_blank"><i class="fa fa-twitch fa-2x fa-fw"></i></a></li>
                         <li><a href="https://github.com/cncnet" title="Follow and Star us on GitHub" target="_blank"><i class="fa fa-github fa-2x fa-fw"></i></a></li>
                     </ul>
@@ -100,7 +104,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6 col-md-offset-6">
-                     <ul class="list-inline partners text-right">
+                    <ul class="list-inline partners text-right">
                         <li>
                             <a href="http://gamesurge.net" target="_blank" title="GameSurge"><img src="/images/gamesurge.png" alt="GameSurge Logo" width="200" /></a>
                         </li>
@@ -109,7 +113,7 @@
                     <ul class="list-inline text-right">
                         <li><a href="//cncnet.org/privacy-policy" title="{{ trans('footer.footer_privacy_policy') }}">{{ trans('footer.footer_privacy_policy') }}</a></li>
                         <li><a href="//cncnet.org/terms-and-conditions" title="{{ trans('footer.footer_terms_conditions') }}">{{ trans('footer.footer_terms_conditions') }}</a></li>
-                        <li>Copyright  &copy; CnCNet 2009 - {{ Date("Y") }}</li>
+                        <li>Copyright &copy; CnCNet 2009 - {{ Date('Y') }}</li>
                     </ul>
                 </div>
             </div>
@@ -128,14 +132,18 @@
         _gaq.push(['_trackPageview']);
 
         (function() {
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
         })();
 
-        $(function () {
-          $('[data-toggle="tooltip"]').tooltip();
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
 </body>
+
 </html>

@@ -178,6 +178,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         if ($this->avatar_path)
         {
+            if (config("app.env") !== "production")
+            {
+                return "https://ladder.cncnet.org/" . $this->avatar_path;
+            }
             return asset($this->avatar_path);
         }
         return null;
@@ -218,12 +222,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getYouTubeProfile()
     {
-        return $this->youtube_profile;
+        if ($this->youtube_profile)
+        {
+            return "https://youtube.com/$this->youtube_profile";
+        }
+        return null;
     }
 
     public function getTwitchProfile()
     {
-        return $this->twitch_profile;
+        if ($this->twitch_profile)
+        {
+            return "https://twitch.tv/$this->twitch_profile";
+        }
+        return null;
     }
 
     public function ipHistory()

@@ -1,6 +1,12 @@
 ﻿$brand-primary: #0068d2;
 $brand-secondary: #000;
 
+
+// 
+// New branding
+$color-primary: #00ff8a;
+
+
 //
 // Breakpoints
 // Example use
@@ -432,13 +438,13 @@ h3.game-intro
 {
     position: relative;
     float: left;
-    padding: 15px;
-    line-height: 1.6;
+    padding: 15px 15px;
+    line-height: initial;
     text-decoration: none;
     color: #0068d2;
     background-color: #000;
     border: 1px solid #131313;
-    margin-left: -1px;
+    font-weight: 600;
 }
 
 .pagination > .disabled > span, .pagination > .disabled > span:hover, .pagination > .disabled > span:focus, .pagination > .disabled > a, .pagination > .disabled > a:hover, .pagination > .disabled > a:focus,

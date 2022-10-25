@@ -27,12 +27,17 @@
         "components/_avatar";
         
 //
-// Screens
+// Screens - to be legacy
 
 @import "screens/_account",
         "screens/_user-info",
         "screens/_clan",
         "screens/_player-view";
+
+
+// 
+// Pages
+@import "pages/ladder-listing/_ladder-listing";
 
 
 //
@@ -42,3 +47,19 @@
 
 @import "countries";
 @import "global";
+
+
+
+
+.visible-xs 
+{
+    display: none!important;
+}
+
+@media(max-width: $md-width)
+{
+    .visible-xs 
+    {
+        display: flex!important;
+    }
+}

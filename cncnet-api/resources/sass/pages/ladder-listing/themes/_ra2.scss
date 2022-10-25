@@ -1,0 +1,95 @@
+//
+// Ra2 theme
+.ladder-listing.game-ra2
+{
+    background: #040202;
+}
+
+.ladder-listing.game-ra2 a 
+{
+    color: #e0b5bf;
+
+    & a {
+        color: #e0b5bf;
+        transition: all ease 350ms;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
+.ladder-listing.game-ra2 .player-social a 
+{
+    color: #e0b5bf;
+}
+
+.ladder-listing.game-ra2 .player-row svg path
+{
+    fill: #e0b5bf;
+}
+
+.ladder-listing.game-ra2 .player-row 
+{
+    background: #0e0607;
+    color: #e0b5bf;
+    
+    & a {
+        transition: ease 350ms;
+        color: #e0b5bf;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
+.ladder-listing.game-ra2 .player-row:nth-child(2n+3)
+{
+    background: #160c0d;
+}
+
+.ladder-listing.game-ra2 .player-row span
+{
+    color: #3d3132;
+}
+
+.ladder-listing.game-ra2 .qm-stats .stat
+{
+    background: #100909;
+    border: 1px solid #221515;
+}
+
+// Default no Avatar bg 
+.ladder-listing.game-ra2 .player-row .avatar 
+{
+    background-color: #080404;
+}
+
+
+//
+// Qm stats box
+.ladder-listing.game-ra2 .qm-stats .stat
+{
+    background: #120a0a;
+    border: 1px solid #201313;
+}
+
+.ladder-listing.game-ra2 .player-row-header
+{
+    color: #e0b5bf;
+}
+
+
+//
+// Pagination
+.ladder-listing.game-ra2 .pagination > li > a
+{
+    color: #974242;
+}
+
+.ladder-listing.game-ra2 .pagination .active>span 
+{
+    background-color: #480505;
+    border-color: #340606;
+}
