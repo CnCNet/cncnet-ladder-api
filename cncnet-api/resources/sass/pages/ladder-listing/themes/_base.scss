@@ -26,16 +26,20 @@
     }
 }
 
-.ladder-listing .player-row .player-rank 
+@media(max-width: $lg-width)
 {
-    color: #fff;
+    .ladder-listing .player-row .player-rank 
+    {
+        color: #fff;
+    }
 }
 
 .ladder-listing .player-row-header
 {
     color: #fdfdfd;
+    font-size: 1.7rem;
 
-    @media(max-width: $lg-width)
+    @media(max-width: $xl-width)
     {
         display: none;
     }

@@ -14,16 +14,14 @@
 
 .player-profile .most-used-country
 {
-    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 60px;
     height: 60px;
     background-size: 100%;
     background-repeat: no-repeat;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 1rem;
-    margin-left: 1rem;
+    border-radius: 100%;
 
     &:before {
         content: "";
@@ -121,6 +119,7 @@
     .player-profile .player-country 
     {
         padding-right: 0;
+        padding-left: 0;
     }
 
     .player-profile .player-username 
