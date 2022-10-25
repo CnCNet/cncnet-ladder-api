@@ -41,7 +41,7 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    
+
     @media(min-width: $lg-width)
     {
         width: 60px;
@@ -105,8 +105,9 @@
         display: block;
         height: 10px;
         width: 100%;
-        color: #323645;
+        color: #333746;
         text-transform: uppercase;
+        font-size: 1.2rem;
     }
 }
 

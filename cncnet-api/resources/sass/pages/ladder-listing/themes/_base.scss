@@ -10,13 +10,25 @@
     color: #b5c9e0;
     
     & a {
-        color: #b5c9e0;
+        color: #fff;
         transition: all ease 350ms;
 
         &:hover {
             color: #fff;
         }
     }
+
+    @media(min-width: $lg-width)
+    {
+        & a {
+            color: #b5c9e0;
+        }
+    }
+}
+
+.ladder-listing .player-row .player-rank 
+{
+    color: #fff;
 }
 
 .ladder-listing .player-row-header
@@ -40,7 +52,6 @@
     border: 1px solid #00ff8a9e;
     * { color: #fff;}
 }
-
 
 .ladder-listing .qm-stats .stat
 {
