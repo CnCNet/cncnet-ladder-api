@@ -26,7 +26,7 @@ class CreateAchievementTableTracker extends Migration {
 		$achievements = \App\Achievement::all();
 
 		$numUsers = \App\User::count();
-		$partition = $numUsers / 10;
+		$partition = $numUsers / 100;
 		$percent = 0;
 
 		$count = 0;
@@ -38,9 +38,9 @@ class CreateAchievementTableTracker extends Migration {
 			{
 				$count++;
 				if ($count % $partition == 0) {
-					$percent += 10;
+					$percent += 1;
 				
-					echo $percent."% completed creating achievements_progress objects for users.";
+					printf($percent."% completed creating achievements_progress objects for users.");
 				}
 
 				foreach ($achievements as $achievement)
