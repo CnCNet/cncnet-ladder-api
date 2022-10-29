@@ -79,6 +79,27 @@ class LadderController extends Controller
         # Stats
         $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
 
+        # Filter & Ordering
+        if ($request->filterBy && $request->orderBy)
+        {
+            $orderBy = $request->orderBy == "desc" ? "desc" : "asc";
+
+            $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
+                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+                ->where('player_name', 'like', '%' . $request->search . '%')
+                ->orderBy('games', $orderBy)
+                ->paginate(45);
+        }
+        else
+        {
+            # Default
+            $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
+                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+                ->where('player_name', 'like', '%' . $request->search . '%')
+                ->orderBy('points', 'desc')
+                ->paginate(45);
+        }
+
         $data = array(
             "stats" => $this->statsService->getQmStats($request->game),
             "statsPlayerOfTheDay" => $statsPlayerOfTheDay,
@@ -87,10 +108,7 @@ class LadderController extends Controller
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
             "history" => $history,
-            "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)
-                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
-                ->where('player_name', 'like', '%' . $request->search . '%')
-                ->orderBy('points', 'desc')->paginate(45),
+            "players" => $players,
             "userIsMod" => $userIsMod,
             "cards" => \App\Card::orderBy('id', 'asc')->lists('short'),
             "tier" => $request->tier,

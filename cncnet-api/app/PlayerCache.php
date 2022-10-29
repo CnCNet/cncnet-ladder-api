@@ -1,10 +1,13 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PlayerCache extends Model {
+class PlayerCache extends Model
+{
 
-	//
+    //
     public $timestamps = false;
 
     public function history()
