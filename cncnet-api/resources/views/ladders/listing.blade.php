@@ -181,7 +181,7 @@
 
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    {!! $players->render() !!}
+                                    {{ $players->appends(request()->query())->links() }}
                                 </div>
                             </div>
                         </div>
@@ -239,6 +239,7 @@
                                 <div class="player-points">Points</div>
                                 <div class="player-wins">Won</div>
                                 <div class="player-losses">Lost</div>
+
                                 @if (request()->input('orderBy') == 'desc')
                                     <a class="player-games filter-link" href="?filterBy=games&orderBy=asc#listing">
                                         Games
@@ -272,7 +273,7 @@
 
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                {!! $players->render() !!}
+                                {{ $players->appends(request()->query())->links() }}
                             </div>
                         </div>
                     </div>
