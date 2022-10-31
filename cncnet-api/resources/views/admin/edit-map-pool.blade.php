@@ -551,7 +551,6 @@
                              let hval = hid.value;
                              let rval = rad.value;
 
-                             console.log(next_lab)
                              lab.innerHTML = next_lab.innerHTML;
                              next_lab.innerHTML = desc;
 
