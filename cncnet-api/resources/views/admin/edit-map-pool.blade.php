@@ -544,7 +544,7 @@
 
                          if (next_hid !== null)
                          {
-                             let desc = lab.innerHTML;
+                             let desc = lab.innerHTML; //store temp values before swapping
                              let hval = hid.value;
                              let rval = rad.value;
 
@@ -577,17 +577,22 @@
                     .sort((a, b) => a.textContent.localeCompare(b.textContent))
                     .forEach(x => {
 
-                        let rinput = x.getElementsByTagName("input")[0];
+                        let rinput = x.getElementsByTagName("input")[0]; //radio input
                         let parts = rinput.value.split(",");
                         rinput.value=parts[i] + "," + i;
+                        rinput.id="rinput_idx_" + i;
 
-                        let hinput = x.getElementsByTagName("input")[1];
+                        let label = x.getElementsByTagName("label")[0]; //label
+                        label.for="linput_idx_" + i;
+                        label.id="rinput_idx_" + i;
+
+                        let hinput = x.getElementsByTagName("input")[1]; //hidden input - (stores the sort value)
                         hinput.value=parts[0];
                         hinput.id="input_idx_" + i;
                         hinput.name="bit_idx_" + i;
 
                         x.value=i;
-                        mapList.appendChild(x);
+                        mapList.appendChild(x); //place element at end of list
                         i++;
                     });
             });
