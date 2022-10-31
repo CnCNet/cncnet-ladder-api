@@ -12,6 +12,7 @@ use \App\Ladder;
 use \App\SpawnOptionString;
 use App\GameObjectSchema;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -182,7 +183,7 @@ class AdminController extends Controller
         }
         else if ($userId)
         {
-            $users = Cache::remember("admin/users/users/", 20, function () use ($userId)
+            $users = Cache::remember("admin/users/users/{$userId}", 20, function () use ($userId)
             {
                 return \App\User::where("id", $userId)->get();
             });
