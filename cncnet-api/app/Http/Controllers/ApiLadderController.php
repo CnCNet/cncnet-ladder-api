@@ -98,7 +98,8 @@ class ApiLadderController extends Controller
         $status = $this->awardPoints($gameReport, $history);
 
         //achievements
-        if ($player->username === 'Burg') //TODO remove
+        $user = $player->user;
+        if ($user->isLadderMod($ladder) || $user->isLadderTester($ladder)) //TODO remove
         {
             $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
             $this->updateAchievements($playerId, $ladderId, $stats);
@@ -558,7 +559,7 @@ class ApiLadderController extends Controller
         $user = \App\Player::where('id', $playerId)->first()->user;
 
         //fetch achievements that have not been unlocked for this user for this ladder
-        $lockedAchievements = \App\AchievementProgress::join('achievement', 'achievement_tracker.achievement_id', '=', 'achievement.id')
+        $lockedAchievements = \App\AchievementProgress::join('achievements as a ', 'achievements_progress.achievement_id', '=', 'a.id')
             ->where('user_id', $user->id)
             ->where('ladder_id', $ladderId)
             ->whereNull('achievement_unlocked_date')
@@ -597,7 +598,7 @@ class ApiLadderController extends Controller
                 ->where('user_id', $user->id)
                 ->first();
 
-            //update achievement tracker
+            //update achievement progress
             if ($lockedAchievement->achievement_type === 'CAREER')
             {
                 $this->achievementCheck($user, $lockedAchievement);
