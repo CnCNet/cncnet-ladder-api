@@ -431,7 +431,6 @@
                 id = "0"
              }
 
-             console.log(id)
              let mapSel = document.getElementById(id + "_map");
              if (mapSel.length == 0)
              {
@@ -483,6 +482,7 @@
 
                  for(i = 0; i < ele.length; i++)
                  {
+                    //this radio is checked, swap it with element above it
                      if(ele[i].checked)
                      {
                          let parts = ele[i].value.split(",");
@@ -500,6 +500,7 @@
 
                          if (prev_hid !== null)
                          {
+                             //store temp values before swapping elements
                              let desc = lab.innerHTML;
                              let hval = hid.value;
                              let rval = rad.value;
@@ -530,6 +531,7 @@
 
                  for(i = 0; i < ele.length; i++)
                  {
+                     //this radio is checked, swap it with element below it
                      if(ele[i].checked)
                      {
                          let parts = ele[i].value.split(",");
@@ -544,6 +546,7 @@
 
                          if (next_hid !== null)
                          {
+                             //store temp values before swapping elements
                              let desc = lab.innerHTML;
                              let hval = hid.value;
                              let rval = rad.value;
@@ -575,19 +578,24 @@
                 var i = 0;
                 Array.from(mapList.getElementsByTagName("li"))
                     .sort((a, b) => a.textContent.localeCompare(b.textContent))
-                    .forEach(x => {
-
-                        let rinput = x.getElementsByTagName("input")[0];
+                    .forEach(x => 
+                    {
+                        let rinput = x.getElementsByTagName("input")[0]; //radio input
                         let parts = rinput.value.split(",");
                         rinput.value=parts[i] + "," + i;
+                        rinput.id="rinput_idx_" + i;
 
-                        let hinput = x.getElementsByTagName("input")[1];
+                        let label = x.getElementsByTagName("label")[0]; //label
+                        label.for="rinput_idx_" + i;
+                        label.id="linput_idx_" + i;
+
+                        let hinput = x.getElementsByTagName("input")[1]; //hidden input - (stores the sort value)
                         hinput.value=parts[0];
                         hinput.id="input_idx_" + i;
                         hinput.name="bit_idx_" + i;
 
                         x.value=i;
-                        mapList.appendChild(x);
+                        mapList.appendChild(x); //place element at end of list
                         i++;
                     });
             });

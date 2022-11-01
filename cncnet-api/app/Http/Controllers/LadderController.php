@@ -277,6 +277,9 @@ class LadderController extends Controller
         # Awards
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
 
+        # Achievements
+        $achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
+
         return view(
             "ladders.player-view",
             array(
@@ -298,6 +301,8 @@ class LadderController extends Controller
                 "playerWinLossByMaps" => $playerWinLossByMaps,
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $userPlayer,
+                "playerGamesLast24Hours" => $playerGamesLast24Hours,
+                "achievementProgress" => $achievementProgress
             )
         );
     }

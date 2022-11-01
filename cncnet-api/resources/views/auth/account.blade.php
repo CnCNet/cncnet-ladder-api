@@ -29,7 +29,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="text-center" style="padding-bottom: 40px;">
-                        <h1>Hi {{ $user->name }} 
+                        <h1>Hi {{ $user->name }}
                             <button class="btn btn-link inline-after-edit" data-toggle="modal" data-target="#renameUser">
                                 <span class="fa fa-edit"></span>
                             </button>

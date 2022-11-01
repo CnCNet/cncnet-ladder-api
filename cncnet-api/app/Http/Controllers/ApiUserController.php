@@ -39,8 +39,8 @@ class ApiUserController extends Controller
 
     /**
      * Return user's active players
-     * @param User $user 
-     * @return array 
+     * @param User $user
+     * @return array
      */
     private function getActivePlayersByUser(User $user)
     {
@@ -234,6 +234,15 @@ class ApiUserController extends Controller
                 $user->email = $request->email;
                 $user->password = \Hash::make($request->password);
                 $user->save();
+
+                $achievements = \App\Achievement::all();
+                foreach ($achievements as $achievement)
+                {
+                    $AchievementProgress = new \App\AchievementProgress();
+                    $AchievementProgress->achievement_id = $achievement->id;
+                    $AchievementProgress->user_id = $user->id;
+                    $AchievementProgress->save();
+                }
 
                 $userSettings = new \App\UserSettings();
                 $userSettings->user_id = $user->id;
