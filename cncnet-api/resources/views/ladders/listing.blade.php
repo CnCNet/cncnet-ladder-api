@@ -65,7 +65,7 @@
 
         @if ($history->ladder->qmLadderRules->ladder_discord != null )
         <div style="display: flex;">
-            <h4>Join the <strong>Discord</strong>!</h4>
+            <h4>Join the {{ $history->ladder->name }} <strong>Discord</strong>!</h4>
             <a style="padding-left: 20px" href="{{ $history->ladder->qmLadderRules->ladder_discord }}"><img src="/images/discord_logo.png"></a>
         </div>
         @endif
