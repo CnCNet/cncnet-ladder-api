@@ -23,7 +23,8 @@
     background-repeat: no-repeat;
     border-radius: 100%;
 
-    &:before {
+    &:before 
+    {
         content: "";
         width: 80%;
         height: 80%;
@@ -80,7 +81,8 @@
 {
     display: none;
 
-    & a {
+    & a 
+    {
         display: inline-block;
         padding: 5px 10px;
     }
@@ -135,7 +137,12 @@
 
     .player-profile-info .player-wins 
     {
-        width: 100px;
+        width: 85px;
+    }
+
+    .player-profile-info .player-losses 
+    {
+        width: 85px;
     }
 
     .player-profile-info .player-games 

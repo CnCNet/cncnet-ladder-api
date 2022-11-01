@@ -3,13 +3,13 @@
     $side = null;
     
     if ($game == 'yr') {
-        $side = \App\Side::where('local_id', $player->country)
+        $side = \App\Side::where('local_id', $playerCache->country)
             ->where('ladder_id', $history->ladder->id)
             ->first();
     } else {
-        if ($player->side !== null) {
-            if (array_key_exists($player->side, $sides)) {
-                $countryName = $sides[$player->side];
+        if ($playerCache->side !== null) {
+            if (array_key_exists($playerCache->side, $sides)) {
+                $countryName = $sides[$playerCache->side];
             }
         }
     }
@@ -64,7 +64,8 @@
             @endif --}}
         </div>
         <div class="player-points player-stat">{{ $points }} <span>points</span></div>
-        <div class="player-wins player-stat">{{ $wins }} <span>wins</span></div>
+        <div class="player-wins player-stat">{{ $wins }} <span>won</span></div>
+        <div class="player-losses player-stat">{{ $losses }} <span>lost</span></div>
         <div class="player-games player-stat">{{ $totalGames }} <span>games</span></div>
     </div>
     <a href="{{ $url }}" class="player-link">
