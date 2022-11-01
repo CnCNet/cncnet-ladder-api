@@ -302,7 +302,8 @@ class LadderController extends Controller
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $userPlayer,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "achievementProgress" => $achievementProgress
+                "achievementProgress" => $achievementProgress,
+                "achievements" => $history->ladder->achievements
             )
         );
     }
