@@ -68,16 +68,6 @@ class AuthController extends Controller
 		$userSettings->user_id = $user->id;
 		$userSettings->save();
 
-		//initialize user achievements
-		$achievements = \App\Achievement::all();
-		foreach ($achievements as $achievement)
-		{
-			$AchievementProgress = new \App\AchievementProgress();
-			$AchievementProgress->achievement_id = $achievement->id;
-			$AchievementProgress->user_id = $user->id;
-			$AchievementProgress->save();
-		}
-
 		return $user;
 	}
 }
