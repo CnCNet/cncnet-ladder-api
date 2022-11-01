@@ -181,7 +181,7 @@
 
                             <div class="row">
                                 <div class="col-md-12 text-center">
-                                    {!! $players->render() !!}
+                                    {{ $players->appends(request()->query())->links() }}
                                 </div>
                             </div>
                         </div>
@@ -219,12 +219,13 @@
                             </div>
                         @endif
 
-                        <?php
-                        $perPage = $players->perPage();
-                        $rankOffset = $players->currentPage() * $perPage - $perPage;
-                        ?>
+                        @if (request()->input('filterBy') == 'games')
+                            <p>
+                                You are ordering by game count, <a href="?#listing">reset by rank?</a>
+                            </p>
+                        @endif
 
-                        <div class="ladder-player-listing">
+                        <div class="ladder-player-listing" id="listing">
                             <div class="player-row-header">
                                 <div class="player-rank">
                                     Rank
@@ -236,37 +237,43 @@
                                     Social
                                 </div>
                                 <div class="player-points">Points</div>
-                                <div class="player-wins">Wins</div>
-                                <div class="player-games">Games</div>
+                                <div class="player-wins">Won</div>
+                                <div class="player-losses">Lost</div>
+
+                                @if (request()->input('orderBy') == 'desc')
+                                    <a class="player-games filter-link" href="?filterBy=games&orderBy=asc#listing">
+                                        Games
+                                        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                                    </a>
+                                @else
+                                    <a class="player-games filter-link" href="?filterBy=games&orderBy=desc#listing">
+                                        Games
+                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                    </a>
+                                @endif
                             </div>
 
-                            @foreach ($players as $k => $player)
-                                <?php
-                                $rank = $rankOffset + $k + 1;
-                                if ($search) {
-                                    $rank = null;
-                                }
-                                ?>
-
+                            @foreach ($players as $k => $playerCache)
                                 @include('components/player-row', [
-                                    'username' => $player->player_name,
-                                    'points' => $player->points,
-                                    'rank' => $rank,
-                                    'wins' => $player->wins,
-                                    'totalGames' => $player->games,
+                                    'username' => $playerCache->player_name,
+                                    'points' => $playerCache->points,
+                                    'rank' => $playerCache->rank(),
+                                    'wins' => $playerCache->wins,
+                                    'losses' => $playerCache->games - $playerCache->wins,
+                                    'totalGames' => $playerCache->games,
                                     'game' => $history->ladder->game,
-                                    'url' => \App\URLHelper::getPlayerProfileUrl($history, $player->player_name),
-                                    'avatar' => $player->player->user->getUserAvatar(),
-                                    'twitch' => $player->player->user->getTwitchProfile(),
-                                    'youtube' => $player->player->user->getYouTubeProfile(),
-                                    'discord' => $player->player->user->getDiscordProfile(),
+                                    'url' => \App\URLHelper::getPlayerProfileUrl($history, $playerCache->player_name),
+                                    'avatar' => $playerCache->player->user->getUserAvatar(),
+                                    'twitch' => $playerCache->player->user->getTwitchProfile(),
+                                    'youtube' => $playerCache->player->user->getYouTubeProfile(),
+                                    'discord' => $playerCache->player->user->getDiscordProfile(),
                                 ])
                             @endforeach
                         </div>
 
                         <div class="row">
                             <div class="col-md-12 text-center">
-                                {!! $players->render() !!}
+                                {{ $players->appends(request()->query())->links() }}
                             </div>
                         </div>
                     </div>
