@@ -701,7 +701,7 @@ class ApiLadderController extends Controller
         if ($lockedAchievementProgress->count >= $lockedAchievement->unlock_count)
         {
             $lockedAchievementProgress->achievement_unlocked_date = Carbon::now();
-            $lockedAchievementProgress->save();
         }
+        $lockedAchievementProgress->save();
     }
 }
