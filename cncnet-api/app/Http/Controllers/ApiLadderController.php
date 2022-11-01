@@ -600,7 +600,7 @@ class ApiLadderController extends Controller
             if ($lockedAchievementTracker == null)
             {
                 $lockedAchievementProgress = new \App\AchievementProgress();
-                $lockedAchievementProgress = $lockedAchievement->id;
+                $lockedAchievementProgress->achievement_id = $lockedAchievement->id;
                 $lockedAchievementProgress->user_id = $user->id;
                 $lockedAchievementProgress->save();
             }
@@ -691,7 +691,7 @@ class ApiLadderController extends Controller
         if ($lockedAchievementProgress == null)
         {
             $lockedAchievementProgress = new \App\AchievementProgress();
-            $lockedAchievementProgress = $lockedAchievement->id;
+            $lockedAchievementProgress->achievement_id = $lockedAchievement->id;
             $lockedAchievementProgress->user_id = $user->id;
             $lockedAchievementProgress->save();
         }
