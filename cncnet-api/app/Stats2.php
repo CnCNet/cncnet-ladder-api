@@ -13,7 +13,7 @@ class Stats2 extends Model
 
     public function playerGameReport()
     {
-        return $this->belogsTo('App\PlayerGameReport');
+        return $this->belongsTo('App\PlayerGameReport');
     }
 
     public function gameObjectCounts()
