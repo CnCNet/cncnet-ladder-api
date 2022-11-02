@@ -19,7 +19,7 @@ class LadderService
 
     public function getAllLadders()
     {
-        $ladders = \App\Ladder::all();
+        $ladders = \App\Ladder::where('private', 0)->get();
 
         foreach ($ladders as $ladder)
         {
