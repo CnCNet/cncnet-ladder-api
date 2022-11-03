@@ -97,6 +97,9 @@ class ApiLadderController extends Controller
         // Award points
         $status = $this->awardPoints($gameReport, $history);
 
+        // Dispute handling
+        $this->handleGameDispute($gameReport);
+
         //achievements
         $user = $player->user;
         if ($user->isLadderMod($ladder) || $user->isLadderTester($ladder)) //TODO remove
@@ -104,9 +107,6 @@ class ApiLadderController extends Controller
             $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
             $this->updateAchievements($playerId, $ladderId, $stats);
         }
-
-        // Dispute handling
-        $this->handleGameDispute($gameReport);
 
         return response()->json(['success' => $status], 200);
     }
