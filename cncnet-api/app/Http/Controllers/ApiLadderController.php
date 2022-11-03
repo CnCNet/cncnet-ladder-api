@@ -101,12 +101,8 @@ class ApiLadderController extends Controller
         $this->handleGameDispute($gameReport);
 
         //achievements
-        $user = $player->user;
-        if ($user->isLadderMod($ladder) || $user->isLadderTester($ladder)) //TODO remove
-        {
-            $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
-            $this->updateAchievements($playerId, $ladderId, $stats);
-        }
+        $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
+        $this->updateAchievements($playerId, $ladderId, $stats);
 
         return response()->json(['success' => $status], 200);
     }
@@ -562,6 +558,7 @@ class ApiLadderController extends Controller
         $lockedAchievements = \App\Achievement::leftJoin('achievements_progress as ap', 'ap.achievement_id', '=', 'achievements.id')
             ->where('ladder_id', $ladderId)
             ->whereNull('achievement_unlocked_date')
+            ->select("achievements.*")
             ->get();
 
         //play qm games achievement
