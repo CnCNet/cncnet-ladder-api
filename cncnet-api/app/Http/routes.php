@@ -165,6 +165,7 @@ Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], func
 {
     Route::get('/qm/ladder/{ladderAbbrev}/maps/public', 'ApiQuickMatchController@mapListRequest');
     Route::get('/qm/ladder/{ladderAbbrev}/stats', 'ApiQuickMatchController@statsRequest');
+    Route::get('/qm/ladder/{ladderAbbrev}/stats', 'ApiQuickMatchController@getActivePlayers');
 });
 
 // Ladder Endpoints
