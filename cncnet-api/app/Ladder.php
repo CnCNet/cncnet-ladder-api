@@ -160,4 +160,9 @@ class Ladder extends Model
     {
         return $this->hasMany('App\SpawnOptionValue');
     }
+
+    public function qmCanceledMatches()
+    {
+        return $this->hasMany('App\QmCanceledMatch', 'ladder_id');
+    }
 }

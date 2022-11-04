@@ -36,6 +36,19 @@ class AdminController extends Controller
         ]);
     }
 
+    public function getCanceledMatches($ladderAbbreviation = null)
+    {
+        $ladder = \App\Ladder::where('abbreviation', $ladderAbbreviation)->first();
+
+        if ($ladder == null)
+            abort(404);
+
+        return view("admin.canceled-matches", [
+            "canceled_matches" => \App\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')->orderBy('qm_canceled_matches.created_at', 'DESC')->get(),
+            "ladder" => $ladder
+        ]);
+    }
+
     public function getLadderSetupIndex(Request $request, $ladderId = null)
     {
         $ladder = \App\Ladder::find($ladderId);
