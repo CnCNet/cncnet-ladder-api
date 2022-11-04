@@ -164,6 +164,7 @@ Route::group(['prefix' => 'api/v2/', 'middleware' => 'jwt.auth', 'namespace' => 
 
 Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], function ()
 {
+    Route::get('/qm/ladder/{ladderAbbrev}/maps/public', 'ApiQuickMatchController@mapListRequest');
     Route::get('/qm/ladder/{ladderAbbrev}/stats', 'ApiQuickMatchController@statsRequest');
 });
 

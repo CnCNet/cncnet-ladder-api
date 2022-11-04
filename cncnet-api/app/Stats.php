@@ -24,7 +24,7 @@ class Stats extends Model
 
     public function playerGameReport()
     {
-        return $this->belogsTo('App\PlayerGameReport');
+        return $this->belongsTo('App\PlayerGameReport');
     }
 
     public function faction($game)

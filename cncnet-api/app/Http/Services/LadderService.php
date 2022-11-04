@@ -470,9 +470,13 @@ class LadderService
         }
     }
 
+    /**
+     * Return user's progress towards achievements, if any.
+     * Resulting set may not include all achievements as there could be achievements the user has not made any progress towards.
+     */
     public function getAchievementProgress($ladderId, $userId)
     {
-        return \App\AchievementProgress::join('achievements as a', 'achievements_progress.achievement_id', '=', 'a.id')
+        return \App\AchievementProgress::leftJoin('achievements as a', 'achievements_progress.achievement_id', '=', 'a.id')
             ->where('user_id', $userId)
             ->where('a.ladder_id', $ladderId)
             ->get();

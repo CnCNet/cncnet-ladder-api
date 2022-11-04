@@ -165,4 +165,9 @@ class Ladder extends Model
     {
         return $this->hasMany('App\QmCanceledMatch', 'ladder_id');
     }
+    
+    public function achievements()
+    {
+        return $this->hasMany('App\Achievement', 'ladder_id');
+    }
 }
