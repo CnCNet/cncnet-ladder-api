@@ -388,4 +388,9 @@ class Player extends Model
 
         return $sum > 0;
     }
+
+    public function qmCanceledMatches()
+    {
+        return $this->hasMany('App\QmCanceledMatch', 'player_id');
+    }
 }

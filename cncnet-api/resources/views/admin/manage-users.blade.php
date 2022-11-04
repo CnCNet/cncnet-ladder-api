@@ -73,7 +73,7 @@
                                     <div class="user-info">
                                         <h4><a href="?userId={{$user->id}}">{{ $user->name }}</a></h4>
                                         <h5>User id: <strong>{{ $user->id }}</strong></h5>
-
+                                        <h5>Email: <strong>{{ $user->email }}</strong></h5>
                                         <div class="base-info">
                                             Created: {{ $user->created_at->toDateString()}}
                                         </div>
@@ -94,7 +94,8 @@
                                 <div class="user-info">
                                     <h4><a href="?userId={{$user->id}}">{{ $user->name }}</a></h4>
                                     <h5>User id: <strong>{{ $user->id }}</strong></h5>
-
+                                    <h5>Email: <strong>{{ $user->email }}</strong></h5>
+                                    
                                     <div class="base-info">
                                         Created: {{ $user->created_at->toDateString()}}
                                     </div>

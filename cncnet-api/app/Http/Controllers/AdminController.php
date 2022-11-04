@@ -12,6 +12,7 @@ use \App\Ladder;
 use \App\SpawnOptionString;
 use App\GameObjectSchema;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -32,6 +33,19 @@ class AdminController extends Controller
             "all_ladders" => \App\Ladder::all(),
             "schemas" => \App\GameObjectSchema::managedBy($request->user()),
             "user" => $request->user(),
+        ]);
+    }
+
+    public function getCanceledMatches($ladderAbbreviation = null)
+    {
+        $ladder = \App\Ladder::where('abbreviation', $ladderAbbreviation)->first();
+
+        if ($ladder == null)
+            abort(404);
+
+        return view("admin.canceled-matches", [
+            "canceled_matches" => \App\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')->orderBy('qm_canceled_matches.created_at', 'DESC')->get(),
+            "ladder" => $ladder
         ]);
     }
 
@@ -182,7 +196,7 @@ class AdminController extends Controller
         }
         else if ($userId)
         {
-            $users = Cache::remember("admin/users/users/", 20, function () use ($userId)
+            $users = Cache::remember("admin/users/users/{$userId}", 20, function () use ($userId)
             {
                 return \App\User::where("id", $userId)->get();
             });

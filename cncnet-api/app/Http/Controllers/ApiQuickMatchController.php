@@ -189,6 +189,15 @@ class ApiQuickMatchController extends Controller
                         $qmState->state_type_id = \App\StateType::findByName($request->status)->id;
                         $qmState->save();
 
+                        if ($qmState->state_type_id === 7) //match not ready
+                        {
+                            $canceledMatch = new \App\QmCanceledMatch;
+                            $canceledMatch->qm_match_id = $qmMatch->id;
+                            $canceledMatch->player_id = $player->id;
+                            $canceledMatch->ladder_id = $qmMatch->ladder_id;
+                            $canceledMatch->save();
+                        }
+
                         if ($request->peers !== null)
                         {
                             foreach($request->peers as $peer)
