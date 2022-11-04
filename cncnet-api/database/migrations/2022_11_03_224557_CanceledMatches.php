@@ -16,7 +16,7 @@ class CanceledMatches extends Migration
 		{
 			$table->increments('id');
 
-			$table->integer('qm_match_id')->unsigned();
+			$table->unsignedBigInteger('qm_match_id')->unsigned();
 			$table->integer('player_id')->unsigned();
             $table->integer('ladder_id')->unsigned();
 
