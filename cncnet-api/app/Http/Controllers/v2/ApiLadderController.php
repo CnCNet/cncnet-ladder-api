@@ -4,9 +4,6 @@ namespace App\Http\Controllers\v2;
 
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
-use \App\Http\Services\GameService;
-use \App\Http\Services\PlayerService;
-use \App\Http\Services\AuthService;
 
 class ApiLadderController extends Controller
 {
@@ -29,7 +26,7 @@ class ApiLadderController extends Controller
 
     public function getAllLadders(Request $request)
     {
-        return $this->ladderService->getAllNonMigratedLadders();
+        return $this->ladderService->getAllLadders();
     }
 
     public function getCurrentLadders(Request $request)
