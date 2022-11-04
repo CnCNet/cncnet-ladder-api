@@ -20,7 +20,7 @@ services:
         container_name: cncnet_ladder_nginx
         restart: always
         ports:
-            - "80:80"
+            - "8000:80"
             - "443:443"
         volumes:
             - ./cncnet-api:/home/${HOST_USER}/site
