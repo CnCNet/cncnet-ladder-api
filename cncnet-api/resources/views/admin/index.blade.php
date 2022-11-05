@@ -46,11 +46,11 @@
 
                             <ul class="list-unstyled">
                                 @foreach($all_ladders as $ladder)
-                                    <li><a href="/admin/setup/{{$ladder->id}}/edit">{{$ladder->name}}</a></li>
+                                <li><a href="/admin/setup/{{$ladder->id}}/edit">{{$ladder->name}}</a></li>
                                 @endforeach
                             </ul>
                             @if($user->isGod())
-                                <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#newLadder">New Ladder</button>
+                            <button type="button" class="btn btn-primary btn-md" data-toggle="modal" data-target="#newLadder">New Ladder</button>
                             @endif
                         </div>
                     </div>
@@ -63,9 +63,27 @@
 
                             <ul class="list-unstyled">
                                 @foreach($schemas as $schema)
-                                    <li><a href="/admin/schema/{{ $schema->id }}">{{ $schema->name }}</a></li>
+                                <li><a href="/admin/schema/{{ $schema->id }}">{{ $schema->name }}</a></li>
                                 @endforeach
                             </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="profile-link">
+                        <div class="player-box player-card">
+                            <h3>Canceled Matches</h3>
+
+                            <label for="ladders_label">Ladder</label>
+
+                            <select name="ladder_dropdown" id="ladder_dropdown" class="form-control">
+                                @foreach($ladders as $ladder)
+                                <option value="{{ $ladder->abbreviation }}"> {{ $ladder->abbreviation }} </option>
+                                @endforeach
+                            </select>
+
+                            <a id="canceledMatchesLink" href="canceledMatches/{{ $ladders[0]->abbreviation }}" class="btn btn-sm">View</a>
                         </div>
                     </div>
                 </div>
@@ -75,7 +93,21 @@
     </div>
 </section>
 
-<div class="modal fade" id="newLadder" tabIndex="-1"  role="dialog">
+@section('js')
+<script type="text/javascript">
+    (function() {
+        let ladderDropdown = document.getElementById("ladder_dropdown")
+        let cancelLink = document.getElementById("canceledMatchesLink")
+
+        ladderDropdown.onchange = function() {
+            let value = ladderDropdown.value
+            cancelLink.setAttribute("href", "canceledMatches/" + value);
+        }
+    })();
+</script>
+@endsection
+
+<div class="modal fade" id="newLadder" tabIndex="-1" role="dialog">
     <div class="modal-dialog modal-md" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -87,7 +119,7 @@
                     <div class="row">
                         <div class="col-md-12 player-box player-card" style="padding:8px;margin:8px;">
                             <form method="POST" action="ladder/new">
-                                <input type="hidden"  name="_token" value="{{ csrf_token() }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                 <input type="hidden" name="id" value="new">
 
                                 <div class="form-group">
@@ -109,7 +141,7 @@
                                     <label for="gameObjectSchema">Game Object Schema</label>
                                     <select name="game_object_schema_id" id="gameObjectSchema" class="form-control">
                                         @foreach ($schemas as $gos)
-                                            <option value="{{ $gos->id }}">{{ $gos->name }}</option>
+                                        <option value="{{ $gos->id }}">{{ $gos->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -132,7 +164,7 @@
 
                                 <button type="submit" class="btn btn-primary btn-lg">Create</button>
                         </div>
-                            </form>
+                        </form>
                     </div>
                 </div>
             </div>

@@ -108,17 +108,17 @@ class ApiQuickMatchController extends Controller
 
         $qm_id = -1;
         $player1 = "";
-        foreach ($qms2 as $qm) 
+        foreach ($qms2 as $qm)
         {
-             //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
-            if ($qm_id != $qm->id) 
+            //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
+            if ($qm_id != $qm->id)
             {
                 $qm_id = $qm->id;
                 $player1 = $qm->player;
             }
             else
             {
-                $games[] = $player1 . " vs " . $qm->player . " on " . $qm->map; 
+                $games[] = $player1 . " vs " . $qm->player . " on " . $qm->map;
             }
         }
 
@@ -251,6 +251,15 @@ class ApiQuickMatchController extends Controller
                                 $qmState->qm_match_id = $qmMatch->id;
                                 $qmState->state_type_id = \App\StateType::findByName($request->status)->id;
                                 $qmState->save();
+
+                                if ($qmState->state_type_id === 7) //match not ready
+                                {
+                                    $canceledMatch = new \App\QmCanceledMatch;
+                                    $canceledMatch->qm_match_id = $qmMatch->id;
+                                    $canceledMatch->player_id = $player->id;
+                                    $canceledMatch->ladder_id = $qmMatch->ladder_id;
+                                    $canceledMatch->save();
+                                }
 
                                 if ($request->peers !== null)
                                 {
