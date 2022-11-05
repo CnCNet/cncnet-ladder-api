@@ -47,7 +47,7 @@ class AdminController extends Controller
             "canceled_matches" => \App\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
                 ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')
                 ->orderBy('qm_canceled_matches.created_at', 'DESC')
-                ->select("qm_canceled_matches.*")
+                ->select("qm_canceled_matches.*", "p.username")
                 ->get(),
             "ladder" => $ladder
         ]);
