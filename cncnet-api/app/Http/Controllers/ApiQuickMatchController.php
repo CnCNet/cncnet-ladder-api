@@ -67,27 +67,60 @@ class ApiQuickMatchController extends Controller
         });
     }
 
-    public function getActivePlayers(Request $request, $ladderAbbrev = null)
+    /**
+     * Fetch details about games thare are currently in match
+     */
+    public function getActiveMatches(Request $request, $ladderAbbrev = null)
     {
         $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
 
-        $activeGames = \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
+        //get all QMs that whose games have spawned. (state_type_id == 5)
+        $qms = \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
             ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
             ->join('qm_match_players as qmp', 'qm_matches.id', '=', 'qmp.qm_match_id')
-            ->join('players as p', 'qmp.player_id', '=', 'p.id')
-            ->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
+            ->join('players as p', 'qmp.player_id', '=', 'p.id')->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
             ->where('qms.state_type_id', 5)
-            ->where('qm_matches.ladder_id', 1)
-            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(5))
+            ->where('qm_matches.ladder_id', $ladder_id)
+            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(15))
+            ->groupBy('qmp.id')
+            ->select("qm_matches.id", "p.username as player", "qm_maps.description as map")
             ->get();
+
+        //get all QMs that have finished recently.  (state_type_id == 1)
+        $finishedQms = \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
+            ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
+            ->where('qms.state_type_id', 1)
+            ->where('qm_matches.ladder_id', $ladder_id)
+            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(15))
+            ->select("qm_matches.id")
+            ->get();
+
+
+        //i'm bad at sql so here is a janky work around to remove finished QMs
+
+        //remove all QMs that have finished
+        $qms2 = $qms->filter(function ($qm) use (&$finishedQms)
+        {
+            return $finishedQms->contains($qm->id);
+        })->values();
 
         $games = [];
 
-        foreach ($activeGames as $activeGame)
+        $qm_id = -1;
+        $player1 = "";
+        foreach ($qms2 as $qm) 
         {
-            $games[] = "";
+             //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
+            if ($qm_id != $qm->id) 
+            {
+                $qm_id = $qm->id;
+                $player1 = $qm->player;
+            }
+            else
+            {
+                $games[] = $player1 . " vs " . $qm->player . " on " . $qm->map; 
+            }
         }
-
 
         return $games;
     }
