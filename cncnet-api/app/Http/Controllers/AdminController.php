@@ -44,7 +44,11 @@ class AdminController extends Controller
             abort(404);
 
         return view("admin.canceled-matches", [
-            "canceled_matches" => \App\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')->orderBy('qm_canceled_matches.created_at', 'DESC')->get(),
+            "canceled_matches" => \App\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
+                ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')
+                ->orderBy('qm_canceled_matches.created_at', 'DESC')
+                ->select("qm_canceled_matches.*")
+                ->get(),
             "ladder" => $ladder
         ]);
     }

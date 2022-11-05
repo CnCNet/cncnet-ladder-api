@@ -36,9 +36,9 @@
         <tbody class="table">
             @foreach ($canceled_matches as $canceled_match)
             <tr>
-                <td>{{ $canceled_match -> created_at}}</td>
-                <td>{{ $canceled_match -> username}}</td>
-                <td>{{ $canceled_match -> qm_match_id}}</td>
+                <td>{{ $canceled_match->created_at->format("F j, Y, g:i a") }}</td>
+                <td>{{ $canceled_match->username }}</td>
+                <td>{{ $canceled_match->qm_match_id }}</td>
             </tr>
             @endforeach
         </tbody>
