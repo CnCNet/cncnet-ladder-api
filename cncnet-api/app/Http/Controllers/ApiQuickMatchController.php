@@ -159,7 +159,7 @@ class ApiQuickMatchController extends Controller
 
         if ($player == null)
         {
-            return array("type" => "fail", "description" => "$playerName is not registered in $ladderAbbrev");
+            return array("type"=>"fail", "description" => "$playerName is not registered in $ladderAbbrev");
         }
 
         $user = $request->user();
@@ -392,11 +392,11 @@ class ApiQuickMatchController extends Controller
                     }
                 }
 
-                foreach ($player->unSeenAlerts as $a)
-                {
-                    $alert .= "@{$player->username} {$a->message}<br>\n<br>\n";
-                    $a->acknowledge();
-                }
+            foreach($player->unSeenAlerts as $a)
+            {
+                $alert .= "@{$player->username} {$a->message}<br>\n<br>\n";
+                $a->acknowledge();
+            }
 
                 if ($request->ai_dat)
                     $qmPlayer->ai_dat = $request->ai_dat;
