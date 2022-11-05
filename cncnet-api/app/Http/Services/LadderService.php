@@ -474,11 +474,42 @@ class LadderService
      * Return user's progress towards achievements, if any.
      * Resulting set may not include all achievements as there could be achievements the user has not made any progress towards.
      */
-    public function getAchievementProgress($ladderId, $userId)
+    public function getAchievementProgress($ladder_id, $user_id)
     {
         return \App\AchievementProgress::leftJoin('achievements as a', 'achievements_progress.achievement_id', '=', 'a.id')
-            ->where('user_id', $userId)
-            ->where('a.ladder_id', $ladderId)
+            ->where('user_id', $user_id)
+            ->where('a.ladder_id', $ladder_id)
             ->get();
+    }
+
+    /**
+     * Return matches which have spawned in last $minutes minutes. 
+     * Note: This could include matches which have finished as well.
+     */
+    public function getRecentSpawnedMatches($ladder_id, $minutes)
+    {
+        return \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
+            ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
+            ->join('qm_match_players as qmp', 'qm_matches.id', '=', 'qmp.qm_match_id')
+            ->join('players as p', 'qmp.player_id', '=', 'p.id')->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
+            ->where('qms.state_type_id', 5)
+            ->where('qm_matches.ladder_id', $ladder_id)
+            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($minutes))
+            ->groupBy('qmp.id')
+            ->select("qm_matches.id", "p.username as player", "qm_maps.description as map")
+            ->get();
+    }
+
+    /**
+     * Return matches which have finished in last $minutes minutes. 
+     */
+    public function getRecentFinishedMatches($ladder_id, $minutes) {
+        return \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
+        ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
+        ->where('qms.state_type_id', 1)
+        ->where('qm_matches.ladder_id', $ladder_id)
+        ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($minutes))
+        ->select("qm_matches.id")
+        ->get();
     }
 }

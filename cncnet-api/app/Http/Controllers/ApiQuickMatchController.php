@@ -72,36 +72,32 @@ class ApiQuickMatchController extends Controller
      */
     public function getActiveMatches(Request $request, $ladderAbbrev = null)
     {
-        $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
+        $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
+
+        if ($ladder == null)
+            abort(400, "Invalid ladder provided");
+
+        $ladder_id = $ladder->id;
 
         //get all QMs that whose games have spawned. (state_type_id == 5)
-        $qms = \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
-            ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
-            ->join('qm_match_players as qmp', 'qm_matches.id', '=', 'qmp.qm_match_id')
-            ->join('players as p', 'qmp.player_id', '=', 'p.id')->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
-            ->where('qms.state_type_id', 5)
-            ->where('qm_matches.ladder_id', $ladder_id)
-            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(15))
-            ->groupBy('qmp.id')
-            ->select("qm_matches.id", "p.username as player", "qm_maps.description as map")
-            ->get();
+        $qms = $this->ladderService->getRecentSpawnedMatches($ladder_id, 15);
 
         //get all QMs that have finished recently.  (state_type_id == 1)
-        $finishedQms = \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
-            ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
-            ->where('qms.state_type_id', 1)
-            ->where('qm_matches.ladder_id', $ladder_id)
-            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(15))
-            ->select("qm_matches.id")
-            ->get();
+        $finishedQms = $this->ladderService->getRecentFinishedMatches($ladder_id, 15);
 
+        $finishedQmsArr = [];
+        $finishedQms->map(function ($qm) use (&$finishedQmsArr)
+        {
+            $finishedQmsArr[] = $qm->id;
+            return;
+        })->values();
 
         //i'm bad at sql so here is a janky work around to remove finished QMs
 
         //remove all QMs that have finished
-        $qms2 = $qms->filter(function ($qm) use (&$finishedQms)
+        $qms2 = $qms->filter(function ($qm) use (&$finishedQmsArr)
         {
-            return $finishedQms->contains($qm->id);
+            return !in_array($qm->id, $finishedQmsArr);
         })->values();
 
         $games = [];
@@ -159,7 +155,7 @@ class ApiQuickMatchController extends Controller
 
         if ($player == null)
         {
-            return array("type"=>"fail", "description" => "$playerName is not registered in $ladderAbbrev");
+            return array("type" => "fail", "description" => "$playerName is not registered in $ladderAbbrev");
         }
 
         $user = $request->user();
@@ -392,11 +388,11 @@ class ApiQuickMatchController extends Controller
                     }
                 }
 
-            foreach($player->unSeenAlerts as $a)
-            {
-                $alert .= "@{$player->username} {$a->message}<br>\n<br>\n";
-                $a->acknowledge();
-            }
+                foreach ($player->unSeenAlerts as $a)
+                {
+                    $alert .= "@{$player->username} {$a->message}<br>\n<br>\n";
+                    $a->acknowledge();
+                }
 
                 if ($request->ai_dat)
                     $qmPlayer->ai_dat = $request->ai_dat;
