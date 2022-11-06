@@ -49,9 +49,9 @@
         @yield('feature')
     </div>
 
-    <div class="content-component">
+    <main class="main">
         @yield('content')
-    </div>
+    </main>
 
     <footer>
         <div class="container">

@@ -1,15 +1,21 @@
-﻿//
-// Vendor
-@import "vendor/_dials",
-        "vendor/_flags";
+﻿@charset "UTF-8";
 
 //
-// Base styles
-@import "base/_base",
-        "base/_variables",
-        "base/_player",
-        "base/_game",
-        "base/_icons";
+// Core styles, fonts and variables
+@import "base/variables",
+        "base/fonts",
+        "base/typography",
+        "base/buttons",
+        "base/icons";
+
+//
+// Vendors
+
+
+//
+// Global
+@import "global";
+
 
 //
 // Components
@@ -24,42 +30,20 @@
         "components/_factions",
         "components/_dev-profiles",
         "components/_ladder-header",
-        "components/_avatar";
+        "components/_avatar",
+        "components/_player-of-the-day-award",
+        "components/_countries";
+
         
 //
 // Screens - to be legacy
-
 @import "screens/_account",
         "screens/_user-info",
-        "screens/_clan",
-        "screens/_player-view";
+        "screens/_clan";
 
 
 // 
 // Pages
-@import "pages/ladder-listing/_ladder-listing";
-
-
-//
-// Screen components
-@import "screens/components/_player-of-the-day-award";
-
-
-@import "countries";
-@import "global";
-
-
-
-
-.visible-xs 
-{
-    display: none!important;
-}
-
-@media(max-width: $md-width)
-{
-    .visible-xs 
-    {
-        display: flex!important;
-    }
-}
+@import "pages/ladder-listing/index",
+        "pages/game-detail/index",
+        "pages/player-detail/index";

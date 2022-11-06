@@ -1,18 +1,19 @@
-.player-profile 
+
+.ladder-listing .player-profile 
 {
     position: relative;
 
     transition: ease 250ms;
 }
 
-.player-profile .player-stat
+.ladder-listing .player-profile .player-stat
 {
     position: relative;
     padding-left: 2rem;
     padding-right: 2rem;
 } 
 
-.player-profile .most-used-country
+.ladder-listing .player-profile .most-used-country
 {
     display: flex;
     align-items: center;
@@ -34,7 +35,7 @@
     }
 }
 
-.player-profile .player-rank 
+.ladder-listing .player-profile .player-rank 
 {
     display: flex;
     text-align: center;
@@ -47,7 +48,7 @@
     }
 }
 
-.player-profile .player-avatar
+.ladder-listing .player-profile .player-avatar
 {
     display: flex;
     align-items: center;
@@ -66,7 +67,7 @@
     }
 }
 
-.player-profile-info 
+.ladder-listing .player-profile-info 
 {
     position: relative;
     font-size: 1.4rem;
@@ -77,7 +78,7 @@
     }
 }
 
-.player-profile-info .player-social 
+.ladder-listing .player-profile-info .player-social 
 {
     display: none;
 
@@ -94,7 +95,7 @@
     }
 }
 
-.player-profile-info .player-stat 
+.ladder-listing .player-profile-info .player-stat 
 {
     position: relative;
     padding-left: 2rem;
@@ -118,34 +119,34 @@
         width: 50px;
     }
 
-    .player-profile .player-country 
+    .ladder-listing  .player-profile .player-country 
     {
         padding-right: 0;
         padding-left: 0;
     }
 
-    .player-profile .player-username 
+    .ladder-listing .player-profile .player-username 
     {
         width: 200px;
         word-break: break-word;
     }
 
-    .player-profile-info .player-points 
+    .ladder-listing .player-profile-info .player-points 
     {
         width: 100px;
     }
 
-    .player-profile-info .player-wins 
+    .ladder-listing .player-profile-info .player-wins 
     {
         width: 85px;
     }
 
-    .player-profile-info .player-losses 
+    .ladder-listing .player-profile-info .player-losses 
     {
         width: 85px;
     }
 
-    .player-profile-info .player-games 
+    .ladder-listing .player-profile-info .player-games 
     {
         width: 100px;
     }

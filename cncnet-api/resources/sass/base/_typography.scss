@@ -1,0 +1,152 @@
+//
+// Typography
+// Font sizes, never colours
+
+html,body 
+{
+    @extend .font-primary;
+}
+
+h1, h2, h3, h4, h5
+{
+    @extend .font-secondary-bold;
+}
+
+h1
+{
+    font-size: ($font-size-base * 2.5);
+}
+
+h2
+{
+    font-size: ($font-size-base * 2);
+}
+
+h3 
+{
+    font-size: ($font-size-base * 1.75);
+}
+
+h4 
+{
+    font-size: ($font-size-base * 1.65);
+}
+
+h5
+{
+    font-size: ($font-size-base * 1.65);
+}
+
+p, ul, ol
+{
+    font-size: ($font-size-base * 1.15);
+    line-height: 1.65;
+}
+
+p.lead 
+{
+    font-size: ($font-size-base * 1.25);
+    line-height: 1.6;
+}
+
+.title 
+{
+    @extend .font-secondary-light;
+
+    .highlight 
+    {
+        @extend .font-secondary-bold;
+    }
+}
+
+.highlight 
+{
+    color: $color-primary;
+}
+
+@media(min-width: $lg-width)
+{
+    h1
+    {
+        font-size: ($font-size-base * 2.5);
+    }
+    
+    h2
+    {
+        font-size: ($font-size-base * 2.4);
+    }
+    
+    h3 
+    {
+        font-size: ($font-size-base * 1.8);
+    }
+    
+    h4 
+    {
+        font-size: ($font-size-base * 1.55);
+    }
+    
+    h5
+    {
+        font-size: ($font-size-base * 1.45);
+    }
+
+    p, ul, ol
+    {
+        font-size: ($font-size-base * 1.15);
+    }
+
+    p.lead 
+    {
+        font-size: ($font-size-base * 1.45);
+        line-height: 1.6;
+    }
+}
+
+@media(min-width: $xxl-width)
+{
+    h1
+    {
+        font-size: ($font-size-base * 3);
+    }
+    
+    h2
+    {
+        font-size: ($font-size-base * 2.8);
+    }
+    
+    h3 
+    {
+        font-size: ($font-size-base * 2);
+    }
+    
+    h4 
+    {
+        font-size: ($font-size-base * 1.75);
+    }
+    
+    h5
+    {
+        font-size: ($font-size-base * 1.65);
+    }
+
+    p, ul, ol
+    {
+        font-size: ($font-size-base * 1.25);
+    }
+
+    p.lead 
+    {
+        font-size: ($font-size-base * 1.5);
+        line-height: 1.6;
+    }
+}
+
+%small-h1 
+{
+    font-size: 1.5rem;
+    font-weight: normal;
+    margin-bottom: 25px;
+    margin-top: 15px;
+    line-height: 1.25;
+}

@@ -281,7 +281,7 @@ class LadderController extends Controller
         $achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
 
         return view(
-            "ladders.player-view",
+            "ladders.player-detail",
             array(
                 "mod" => $mod,
                 "ladders" => $this->ladderService->getLatestLadders(),

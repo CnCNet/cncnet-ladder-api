@@ -1,41 +1,125 @@
 @extends('layouts.app')
-@section('title', 'Ladder')
-
-@section('cover')
-    /images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
-@endsection
+@section('title', $ladderPlayer->username)
 
 @section('head')
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 @endsection
 
-{{-- @section('feature')
-    <div class="game">
-        <div class="feature-background sub-feature-background">
-            <div class="container">
-                <div class="row text-center">
-                    <div class="col-md-8 col-md-offset-2">
-                        <h1>
-                            {{ $history->ladder->name }}
-                        </h1>
-                        <p>
-                            CnCNet Ladders <strong>1vs1</strong>
-                        </p>
-                        <p>
-                            <a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation }}" class="previous-link">
-                                <i class="fa fa-caret-left" aria-hidden="true"></i>
-                                <i class="fa fa-caret-left" aria-hidden="true"></i>
-                            </a>
-                        </p>
+@section('content')
+    <section class="player-detail">
+
+        <div class="container">
+
+            <section class="player-header">
+                <div>
+                    <div class="player-profile">
+                        <div class="player-avatar">
+                            @include('components.avatar', ['avatar' => $userPlayer->getUserAvatar(), 'size' => 100])
+                        </div>
+                        <div class="player-rank">
+                            <h1>{{ $ladderPlayer->username }}</h1>
+                            <h2 class="highlight text-uppercase mt-0">Rank #1</h2>
+                        </div>
+                        <div class="player-social">
+                            Social
+
+                            {{ dd($userPlayer) }}
+                            @if ($userPlayer->getTwitchProfile())
+                                <a href="{{ $ladderPlayer->getTwitchProfile() }}"><i class="fa fa-twitch fa-lg"></i></a>
+                            @endif
+                            @if ($ladderPlayer->getYouTubeProfile())
+                                <a href="{{ $ladderPlayer->getYouTubeProfile() }}"><i class="fa fa-youtube fa-lg"></i></a>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="player-stats">
+                        <div>
+                            <h3>Player stats</h3>
+                            <div class="player-stats-drilldown">
+                                <div>
+                                    Points: {{ $ladderPlayer->points }}
+                                </div>
+                                <div>
+                                    Games: {{ $ladderPlayer->game_count }}
+                                </div>
+                                <div>
+                                    Wins: {{ $ladderPlayer->games_won }}
+                                </div>
+                                <div>
+                                    Losses: {{ $ladderPlayer->games_won }}
+                                </div>
+                                <div>
+                                    Average FPS: {{ $ladderPlayer->average_fps }}
+                                </div>
+                                <div>
+                                    Played today: {{ $playerGamesLast24Hours }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3>Top factions played</h3>
+                            <div>
+                                @if ($history->ladder->abbreviation != 'ra' && $history->ladder->abbreviation != 'ts')
+                                    <div>
+                                        <div class="faction-counts">
+
+                                            @foreach ($playerFactionsByMonth as $faction => $winLossArr)
+                                                <div class="faction-row">
+                                                    <div>
+                                                        <div class="player-faction player-faction-{{ \App\Stats2::getCountryById($faction) }}"></div>
+                                                        {{ \App\Stats2::getCountryNameById($faction) }}
+                                                    </div>
+
+                                                    <div>
+                                                        @foreach ($winLossArr as $k => $v)
+                                                            <div class="count {{ $k }}">
+                                                                @if ($k == 'won')
+                                                                    x{{ $v }} wins
+                                                                @elseif ($k == 'lost')
+                                                                    x{{ $v }} losses
+                                                                @elseif ($k == 'total')
+                                                                    x{{ $v }} total
+                                                                @endif
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            @endforeach
+
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3>Popular playing times</h3>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-@endsection --}}
 
-@section('content')
+                <div>
+                    <div class="player-achievements">
+                        <h3>Player achievements</h3>
+                    </div>
+                </div>
+            </section>
+
+            <section class="player-main">
+                <div class="player-games">
+                    Recent games
+                </div>
+                <div class="player-live">
+                    Embed player
+                </div>
+            </section>
+
+        </div>
+    </section>
+
 
     <div class="player player-view">
         <div class="feature-background player-card {{ $card->short or 'no-card' }}">
