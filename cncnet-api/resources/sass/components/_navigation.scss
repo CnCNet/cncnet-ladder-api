@@ -1,10 +1,140 @@
-﻿.navigation-component .status-text 
+﻿.navigation 
 {
-    color: #fff !important;
+    background: #070709;
+    width: 100%;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
-.navigation-component .nav-title,
-.navigation-component .online 
+.navigation .top-navigation 
 {
-    color: #fff;
+    position: relative;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
 }
+
+.navigation .nav-menu-items 
+{
+    display: flex;
+}
+
+.navigation .nav-item 
+{
+    display: flex;
+    align-items: center;
+    padding: 1rem 2rem;
+    @extend .font-primary-bold;
+    font-size: 1.8rem;
+    color: $color-white;
+    position: relative;
+
+    & svg 
+    {
+        width: 100%;
+        height: 100%;
+    }
+
+    & a 
+    {
+        display: flex;
+        align-items: center;
+        color: $color-white;
+    }
+}
+
+.navigation .nav-logo 
+{
+    padding-left: 0;
+    & img { height: 40px;}
+}
+
+.navigation .open .dropdown-menu 
+{
+    background: #13161e;
+    padding: 1rem 1.8em;
+    color: #444d65;
+
+    .nav-title 
+    {
+        @extend .font-primary;
+        color:#676e8b;   
+        font-size: 1.5rem;
+        padding-bottom: 1rem;
+        padding-top: 1rem;
+        font-weight: 600;
+    }
+}
+
+.navigation .open .dropdown-menu li 
+{
+    padding: 0;
+
+    @extend .font-secondary;
+
+    & a 
+    {
+        padding: 0.5rem;
+        padding-left: 0;
+        font-size: 1.5rem;
+
+        &:hover 
+        {
+            background: transparent;
+            color:  $color-primary;
+        }
+    }
+}
+
+.navigation .spacer 
+{
+    width: 1px;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    position: relative;
+
+    &:before 
+    {
+        content: "";
+        width: 100%;
+        height: 73%;
+        background: #252a37;
+        display: block;
+        position: absolute;
+        bottom: 0;
+        top: 0;
+        margin: auto;
+    }
+}
+
+.navigation .nav-item .nav-item-text 
+{
+    margin-left: 2rem;
+    margin-right: 1rem;
+}
+
+.navigation .nav-item .icon 
+{
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+// .navigation-component
+// {
+// }
+
+// .navigation-component .status-text 
+// {
+//     color: #fff !important;
+// }
+
+// .navigation-component .nav-title,
+// .navigation-component .online 
+// {
+//     color: #fff;
+// }

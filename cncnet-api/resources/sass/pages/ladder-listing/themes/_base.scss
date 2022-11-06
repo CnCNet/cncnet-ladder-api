@@ -9,18 +9,21 @@
     background: #13161f;
     color: #b5c9e0;
     
-    & a {
+    & a 
+    {
         color: #fff;
         transition: all ease 350ms;
 
-        &:hover {
+        &:hover 
+        {
             color: #fff;
         }
     }
 
     @media(min-width: $lg-width)
     {
-        & a {
+        & a 
+        {
             color: #b5c9e0;
         }
     }
@@ -50,13 +53,6 @@
     background: #1f2331;
 }
 
-.ladder-listing .player-row.rank-1
-{
-    background: rgba(0, 255, 138,0.4);
-    border: 1px solid #00ff8a9e;
-    * { color: #fff;}
-}
-
 .ladder-listing .qm-stats .stat
 {
     background: #0b0d14;
@@ -68,4 +64,18 @@
 .ladder-listing .player-row .avatar 
 {
     background-color: #1f2331;
+}
+
+.ladder-listing .player-row .player-profile-info .player-stat span 
+{
+    color: #333746;
+}
+
+.ladder-listing .player-row.rank-1
+{
+    background: rgba(0, 255, 138,0.4);
+    border: 1px solid #00ff8a9e;
+
+    * { color: #fff;}
+    .player-stat span { color: #fff;}
 }

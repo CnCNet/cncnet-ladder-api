@@ -1,42 +1,42 @@
 // 
 // Fonts
-$font-open-sans: 'Open Sans', sans-serif;
+$font-roboto: 'Roboto', sans-serif;
 $font-oswald: 'Oswald', sans-serif;
 
 .font-primary-light
 {
-    font-family: $font-open-sans;
+    font-family: $font-roboto;
     font-weight: 300;
 }
 
 .font-primary
 {
-    font-family: $font-open-sans;
+    font-family: $font-roboto;
     font-weight: 500;
 }
 
 .font-primary-bold
 {
-    font-family: $font-open-sans;
+    font-family: $font-roboto;
     font-weight: 700;
 }
 
 .font-secondary-light
 {
     font-family: $font-oswald;
-    font-weight: 300;
+    font-weight: 200;
 }
 
 .font-secondary 
 {
     font-family: $font-oswald;
-    font-weight: 500;
+    font-weight: 300;
 }
 
 .font-secondary-bold
 {
     font-family: $font-oswald;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 // Icon sizes
