@@ -590,7 +590,7 @@ class ApiLadderController extends Controller
 
             $count = $goc->count;
 
-            $lockedAchievementProgress = \App\AchievementProgress::where('id', $lockedAchievement->id)
+            $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
                 ->where('user_id', $user->id)
                 ->first();
 
