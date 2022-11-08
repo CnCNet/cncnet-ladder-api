@@ -83,7 +83,7 @@ class ApiQuickMatchController extends Controller
             }
         } else
         {
-            return $this->getActiveMatchesByLadder($ladderAbbrev);
+            $games[$ladderAbbrev] = $this->getActiveMatchesByLadder($ladderAbbrev);
         }
 
         return $games;
