@@ -73,6 +73,24 @@ class ApiQuickMatchController extends Controller
      */
     public function getActiveMatches(Request $request, $ladderAbbrev = null)
     {
+        $games = [];
+        if ($ladderAbbrev == "all")
+        {
+            foreach ($this->ladderService->getLadders() as $ladder)
+            {
+                $res = $this->getActiveMatchesByLadder($ladder->abbreviation);
+                $games[$ladder->abbreviation] = $res;
+            }
+        } else
+        {
+            return $this->getActiveMatchesByLadder($ladderAbbrev);
+        }
+
+        return $games;
+    }
+
+    private function getActiveMatchesByLadder($ladderAbbrev)
+    {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
 
         if ($ladder == null)
