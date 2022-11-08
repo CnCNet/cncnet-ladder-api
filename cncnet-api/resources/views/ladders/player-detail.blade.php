@@ -26,17 +26,17 @@
                         </div>
                         <div class="player-social">
                             @if ($userPlayer->getTwitchProfile())
-                                <a href="{{ $userPlayer->getTwitchProfile() }}"><i class="fa fa-twitch fa-lg"></i></a>
+                                <a href="{{ $userPlayer->getTwitchProfile() }}"><i class="fa-brands fa-twitch fa-lg"></i></a>
                             @endif
                             @if ($userPlayer->getYouTubeProfile())
-                                <a href="{{ $userPlayer->getYouTubeProfile() }}"><i class="fa fa-youtube fa-lg"></i></a>
+                                <a href="{{ $userPlayer->getYouTubeProfile() }}"><i class="fa-brands fa-youtube fa-lg"></i></a>
                             @endif
                         </div>
                     </div>
 
                     <div class="player-overall-stats">
                         <div class="stat-column">
-                            <h3 class="stat-title">Player stats</h3>
+                            <h4 class="stat-title">Player stats</h4>
                             <div class="player-stats-drilldown stats-wrap">
                                 <div class="stat-item">
                                     <span class="name">Points:</span> {{ $ladderPlayer->points }}
@@ -60,14 +60,14 @@
                         </div>
 
                         <div class="stat-column">
-                            <h3 class="stat-title">Top factions played</h3>
+                            <h4 class="stat-title">Top factions played</h4>
                             <div>
                                 @include('ladders.components.player-factions')
                             </div>
                         </div>
 
                         <div class="stat-column">
-                            <h3 class="stat-title">Daily progress</h3>
+                            <h4 class="stat-title">Daily progress</h4>
                             <div>
                                 @include('ladders.components.player-chart')
                             </div>
@@ -86,15 +86,6 @@
                 {{-- <div class="player-achievements">
                     <h3>Player achievements</h3>
                 </div> --}}
-            </section>
-
-            <section class="player-main">
-                <div class="player-games">
-                    Recent games
-                </div>
-                <div class="player-live">
-                    Embed player
-                </div>
             </section>
         </div>
     </section>

@@ -48,7 +48,6 @@ body.body-player-detail .feature-component
     color: #9dafc3;
 
     @extend .font-secondary;
-    @extend h5;
 
     @media(min-width: $sm-width)
     {
@@ -104,30 +103,19 @@ body.body-player-detail .feature-component
 {
     background: #13161e;
     border-radius: 100%;
+    margin-right: auto;
 }
 
 .player-detail .player-social a 
 {
     color: $color-white;  
+    padding: 1rem;
     &:hover { color: $color-primary;} 
-}
-
-@media(min-width: $md-width)
-{
-    .player-detail .player-rank .username 
-    {
-        font-size: 4rem;
-    }
-    .player-detail .player-rank .rank 
-    {
-        font-size: 3rem;
-    }
 }
 
 .player-detail .player-factions-table 
 {
     @extend .font-secondary;
-    @extend h5;
 
     th 
     {
@@ -170,11 +158,6 @@ body.body-player-detail .feature-component
 .player-detail .stat-column .stat-title
 {
     margin-bottom: 2rem;
-
-    @media(min-width: $lg-width)
-    {
-        font-size: 2.3rem;
-    }
 }
 
 

@@ -25,8 +25,9 @@ $icon-xl-size: $font-size-xl * 5;
 // Colours
 $color-primary: #00ff8a;
 $color-white: #fff;
+$color-text: #ececec;
 $brand-primary: $color-primary;
-$brand-secondary: #000;
+$brand-secondary: #13161f;
 
 //
 // Breakpoints
@@ -57,8 +58,8 @@ $xxxl-width: 1600px;
 .container
 {
     width: 100%;
-    padding-right: var(1.5rem, 0.75rem);
-    padding-left: var(1.5rem, 0.75rem);
+    padding-left: 15px;
+    padding-right: 15px;
     margin-right: auto;
     margin-left: auto;
 }

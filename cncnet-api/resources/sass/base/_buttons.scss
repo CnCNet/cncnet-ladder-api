@@ -1,3 +1,9 @@
+.btn 
+{
+    transition: ease-in-out all 250ms;
+    padding: 1rem 2.5rem;
+}
+
 .btn-transparent
 {
     background: none;
@@ -15,7 +21,6 @@
     }
 }
 
-
 .btn-primary
 {
     font-size: 17px;
@@ -23,14 +28,19 @@
 
     background: $brand-primary;
     border-color: $brand-primary;
+    color: #043c14;
+
+    @extend .font-secondary-bold;
 
     &:hover, &:focus, &:active,
     &:active:hover,
     &:active:focus,
     &:focus:hover
     {
-        background: darken($brand-primary, 2%);
-        border-color: darken($brand-primary, 2%);
+        background: darken($brand-primary, 5%);
+        border-color: darken($brand-primary, 5%);
+        color: #043c14;
+        outline: 0;
     }
 }
 
@@ -46,8 +56,9 @@
     &:active:hover,
     &:focus:hover
     {
-        background: darken($brand-secondary, 10%);
-        border-color: darken($brand-secondary, 10%);
+        background: lighten($brand-secondary, 5%);
+        border-color: lighten($brand-secondary, 5%);
+        color: #fff;
     }
 }
 

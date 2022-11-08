@@ -2,6 +2,11 @@
 // Typography
 // Font sizes, never colours
 
+html 
+{
+    font-size: 16px;
+}
+
 html,body 
 {
     @extend .font-primary;
@@ -39,8 +44,7 @@ h5
 
 p, ul, ol
 {
-    font-size: ($font-size-base * 1.15);
-    line-height: 1.65;
+    font-size: ($font-size-base);
 }
 
 p.lead 
@@ -59,85 +63,41 @@ p.lead
     }
 }
 
-.highlight 
-{
-    color: $color-primary;
-}
-
 @media(min-width: $lg-width)
 {
     h1
     {
-        font-size: ($font-size-base * 2.5);
+        font-size: ($font-size-base * 2.2);
     }
     
     h2
     {
-        font-size: ($font-size-base * 2.4);
+        font-size: ($font-size-base * 2.3);
     }
     
     h3 
     {
-        font-size: ($font-size-base * 1.8);
+        font-size: ($font-size-base * 1.7);
     }
     
     h4 
     {
-        font-size: ($font-size-base * 1.55);
+        font-size: ($font-size-base * 1.45);
     }
     
     h5
     {
-        font-size: ($font-size-base * 1.45);
+        font-size: ($font-size-base * 1.35);
     }
 
     p, ul, ol
     {
-        font-size: ($font-size-base * 1.15);
+        font-size: ($font-size-base * 1);
     }
 
     p.lead 
     {
-        font-size: ($font-size-base * 1.45);
-        line-height: 1.6;
-    }
-}
-
-@media(min-width: $xxl-width)
-{
-    h1
-    {
-        font-size: ($font-size-base * 3);
-    }
-    
-    h2
-    {
-        font-size: ($font-size-base * 2.8);
-    }
-    
-    h3 
-    {
-        font-size: ($font-size-base * 2);
-    }
-    
-    h4 
-    {
-        font-size: ($font-size-base * 1.75);
-    }
-    
-    h5
-    {
-        font-size: ($font-size-base * 1.65);
-    }
-
-    p, ul, ol
-    {
-        font-size: ($font-size-base * 1.25);
-    }
-
-    p.lead 
-    {
-        font-size: ($font-size-base * 1.5);
+        font-size: ($font-size-base * 1.35);
         line-height: 1.6;
     }
 }

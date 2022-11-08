@@ -1,0 +1,37 @@
+.open .dropdown-menu
+{
+    background: #070709;
+    padding: 1rem 1.8em;
+    color: #444d65;
+}
+
+.open .dropdown-menu.secondary
+{
+    background: $brand-secondary;
+}
+
+.open > .dropdown-toggle.btn-secondary
+{
+    @extend .btn-secondary;
+}
+
+.open .dropdown-menu li 
+{
+    padding: 0;
+
+    @extend .font-primary;
+
+    & a 
+    {
+        padding: 0.2rem;
+        padding-left: 0;
+        color: #acafb7;
+        font-weight: 400;
+
+        &:hover 
+        {
+            background: transparent;
+            color:  $color-primary;
+        }
+    }
+}

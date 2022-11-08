@@ -15,13 +15,14 @@
     <meta property="og:image" content="https://cncnet.org/images/meta.png" />
     <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:type" content="website" />
+
     @yield('meta')
     <title>@yield('title') - CnCNet</title>
     @yield('css')
     @yield('head')
+
     <link rel="stylesheet" href="/css/app.css" />
     <link rel="stylesheet" href="/css/ladder.css" />
-    <link rel="stylesheet" href="/css/font-awesome.min.css" />
     <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
     <link rel="icon" type="image/png" href="/images/favicon/favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="/images/favicon/favicon-16x16.png" sizes="16x16">
@@ -32,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500" rel="stylesheet">
-    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="/js/lottie.js"></script>
 </head>
 
 <body class='@yield('body-class')'>

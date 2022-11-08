@@ -99,7 +99,7 @@ h1 small
 
 .table-hover > tbody > tr
 {
-    transition: all 0.3s;
+    transition: all 0.1s;
 }
 
 .table-hover > tbody > tr:hover
@@ -248,6 +248,7 @@ h3.game-intro
     display: table;
     border-radius: 4px;
     border: 1px solid transparent;
+    background-size: cover;
 }
 
 .badge-cover

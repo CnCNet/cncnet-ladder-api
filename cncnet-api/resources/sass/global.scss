@@ -2,3 +2,13 @@
 {
     position: relative;    
 }
+
+.ladder-info 
+{
+    display: flex;
+
+    & div 
+    {
+        margin-right: 1rem;
+    }
+}

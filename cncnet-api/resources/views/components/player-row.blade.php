@@ -54,10 +54,10 @@
     <div class="player-profile-info">
         <div class="player-social">
             @if ($twitch)
-                <a href="{{ $twitch }}"><i class="fa fa-twitch fa-lg"></i></a>
+                <a href="{{ $twitch }}"><i class="fa-brands fa-twitch"></i></a>
             @endif
             @if ($youtube)
-                <a href="{{ $youtube }}"><i class="fa fa-youtube fa-lg"></i></a>
+                <a href="{{ $youtube }}"><i class="fa-brands fa-youtube"></i></a>
             @endif
             {{-- @if ($discord)
             <a href=" {{ $discord }}"><i class="fa fa-discord"></i></a>
