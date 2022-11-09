@@ -12,7 +12,7 @@
     <meta name="author" content="CnCNet">
     <meta name="google-site-verification" content="UACqC83TaSFSDZsv31UMLMgzDKasIAdB7IEGP9IUSEM" />
     <meta property="og:title" content="@yield('title') - CnCNet" />
-    <meta property="og:image" content="https://cncnet.org/images/meta.png" />
+    <meta property="og:image" content="/images/meta.png" />
     <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:type" content="website" />
     @yield('meta')
@@ -33,11 +33,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500" rel="stylesheet">
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
 </head>
 
 <body>
@@ -92,8 +87,8 @@
                     <p>{{ trans('footer.footer_support_us_description') }}</p>
 
                     <ul class="list-inline">
-                        <li><a href="http://facebook.com/cncnet" title="Follow CnCNet on Facebook" target="_blank"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
-                        <li><a href="http://twitter.com/cncnetofficial" title="Follow CnCNet on Twitter" target="_blank"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
+                        <li><a href="https://facebook.com/cncnet" title="Follow CnCNet on Facebook" target="_blank"><i class="fa fa-facebook fa-2x fa-fw"></i></a></li>
+                        <li><a href="https://twitter.com/cncnetofficial" title="Follow CnCNet on Twitter" target="_blank"><i class="fa fa-twitter fa-2x fa-fw"></i></a></li>
                         <li><a href="https://www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" title="Subscribe to CnCNet on YouTube" target="_blank"><i
                                     class="fa fa-youtube fa-2x fa-fw"></i></a></li>
                         <li><a href="https://reddit.com/r/cncnet" title="Subscribe to CnCNet on Reddit" target="_blank"><i class="fa fa-reddit fa-2x fa-fw"></i></a> </li>
@@ -106,7 +101,7 @@
                 <div class="col-md-6 col-md-offset-6">
                     <ul class="list-inline partners text-right">
                         <li>
-                            <a href="http://gamesurge.net" target="_blank" title="GameSurge"><img src="/images/gamesurge.png" alt="GameSurge Logo" width="200" /></a>
+                            <a href="https://gamesurge.net/" target="_blank" title="GameSurge"><img src="/images/gamesurge.png" alt="GameSurge Logo" width="200" /></a>
                         </li>
                         <li><img src="/images/logo.png" width="200" alt="CnCNet Logo" /></li>
                     </ul>
@@ -127,19 +122,6 @@
 
     @yield('js')
     <script type="text/javascript">
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-19628724-6']);
-        _gaq.push(['_trackPageview']);
-
-        (function() {
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript';
-            ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-        })();
-
         $(function() {
             $('[data-toggle="tooltip"]').tooltip();
         });
