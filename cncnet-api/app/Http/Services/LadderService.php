@@ -510,7 +510,13 @@ class LadderService
     public function getRecentFinishedMatches($ladder_id, $minutes) {
         return \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
         ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
-        ->where('qms.state_type_id', 1)
+        ->where(function($where)
+        {
+            $where->where('qms.state_type_id', 1);
+            $where->orWhere('qms.state_type_id', 3);
+            $where->orWhere('qms.state_type_id', 6);
+            $where->orWhere('qms.state_type_id', 7);
+        })
         ->where('qm_matches.ladder_id', $ladder_id)
         ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($minutes))
         ->select("qm_matches.id")
