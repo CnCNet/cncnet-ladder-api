@@ -99,10 +99,10 @@ class ApiQuickMatchController extends Controller
         $ladder_id = $ladder->id;
 
         //get all QMs that whose games have spawned. (state_type_id == 5)
-        $qms = $this->ladderService->getRecentSpawnedMatches($ladder_id, 15);
+        $qms = $this->ladderService->getRecentSpawnedMatches($ladder_id, 20);
 
         //get all QMs that have finished recently.  (state_type_id == 1)
-        $finishedQms = $this->ladderService->getRecentFinishedMatches($ladder_id, 15);
+        $finishedQms = $this->ladderService->getRecentFinishedMatches($ladder_id, 20);
 
         $finishedQmsArr = [];
         $finishedQms->map(function ($qm) use (&$finishedQmsArr)
