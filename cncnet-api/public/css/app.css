@@ -1,4 +1,14 @@
 @charset "UTF-8";
+.player-detail .player-factions-table, .player-detail .stats-wrap .stat-item {
+  font-family: "Oswald", sans-serif;
+  font-weight: 300;
+}
+
+.player-detail .stats-wrap .stat-item .name {
+  font-family: "Oswald", sans-serif;
+  font-weight: 500;
+}
+
 :root {
   --bs-blue: #0d6efd;
   --bs-indigo: #6610f2;
@@ -11689,4 +11699,137 @@ textarea.form-control-lg {
 
 .player-row-header .filter-link {
   color: #fff;
+}
+
+body.body-player-detail .feature-component {
+  padding-top: 15rem;
+  padding-bottom: 15rem;
+}
+
+.player-detail {
+  width: 90%;
+  background: #0a0b10;
+  padding: 2rem;
+  margin: auto;
+}
+
+.player-detail .player-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-detail .player-stats {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 1200px) {
+  .player-detail .player-stats {
+    flex-direction: row;
+  }
+}
+
+.player-detail .player-stats-drilldown {
+  width: 300px;
+  max-width: 100%;
+}
+
+.player-detail .stats-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.player-detail .stats-wrap .stat-item {
+  width: 100%;
+}
+@media (min-width: 567px) {
+  .player-detail .stats-wrap .stat-item {
+    width: 50%;
+  }
+}
+.player-detail .stats-wrap .stat-item .name {
+  padding-right: 0.5rem;
+}
+
+.player-detail .faction-name {
+  display: flex;
+}
+
+.player-detail .player-overall-stats {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .player-detail .player-overall-stats {
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+@media (min-width: 1200px) {
+  .player-detail .player-overall-stats {
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    flex-direction: row;
+  }
+}
+
+.player-detail .player-achievements {
+  display: flex;
+}
+
+.player-detail .player-profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-detail .player-avatar {
+  background: #13161e;
+  border-radius: 100%;
+  margin-right: auto;
+}
+
+.player-detail .player-social a {
+  padding: 1rem;
+}
+.player-detail .player-social a:hover {
+  color: #00ff8a;
+}
+
+.player-detail .player-factions-table th {
+  border: 0;
+  padding-left: 0;
+  font-weight: normal;
+}
+.player-detail .player-factions-table td {
+  border: 0;
+  font-weight: normal;
+}
+
+.player-detail .stat-column {
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #292929;
+  border-bottom: 1px solid #292929;
+}
+@media (min-width: 768px) {
+  .player-detail .stat-column {
+    padding: 2rem;
+    border-top: none;
+    border-bottom: none;
+  }
+}
+@media (min-width: 1200px) {
+  .player-detail .stat-column {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}
+
+.player-detail .stat-column .stat-title {
+  margin-bottom: 2rem;
+}
+
+.player-detail canvas#gamesPlayed {
+  max-width: 100%;
 }

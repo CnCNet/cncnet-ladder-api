@@ -1,0 +1,162 @@
+body.body-player-detail .feature-component 
+{
+    padding-top: 15rem;
+    padding-bottom: 15rem;
+}
+
+.player-detail 
+{
+    width: 90%;
+    background: #0a0b10;
+    padding: 2rem;
+    margin: auto;
+}
+
+.player-detail .player-header 
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.player-detail .player-stats 
+{
+    display: flex;
+    flex-direction: column;
+
+    @media(min-width: $xl-width)
+    {
+        flex-direction: row;
+    }
+}
+
+.player-detail .player-stats-drilldown
+{
+    width: 300px;
+    max-width: 100%;
+}
+
+.player-detail .stats-wrap 
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.player-detail .stats-wrap .stat-item 
+{
+    width: 100%;
+
+    @extend %font-secondary;
+
+    @media(min-width: $sm-width)
+    {
+        width: 50%;
+    }
+
+    & .name 
+    {
+        @extend %font-secondary-bold;
+        padding-right: 0.5rem;
+    }
+}
+
+.player-detail .faction-name 
+{
+    display: flex;
+}
+
+.player-detail .player-overall-stats 
+{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+
+    @media(min-width: $md-width)
+    {
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    @media(min-width: $xl-width)
+    {
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        flex-direction: row;
+    }
+}
+
+.player-detail .player-achievements 
+{
+    display: flex;
+}
+
+.player-detail .player-profile 
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.player-detail .player-avatar 
+{
+    background: #13161e;
+    border-radius: 100%;
+    margin-right: auto;
+}
+
+.player-detail .player-social a 
+{
+    padding: 1rem;
+    &:hover { color: $primary;} 
+}
+
+.player-detail .player-factions-table 
+{
+    @extend %font-secondary;
+
+    th 
+    {
+        border: 0;
+        padding-left: 0;
+        font-weight: normal;
+    }
+
+    td 
+    {
+        border: 0;
+        font-weight: normal;
+    }
+}
+
+// Stat columss specific to player detail pages
+.player-detail .stat-column
+{
+    padding-bottom: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #292929;
+    border-bottom: 1px solid #292929;
+
+    @media(min-width: $md-width)
+    {
+        padding: 2rem;
+        border-top: none;
+        border-bottom: none;
+    }
+
+    @media(min-width: $xl-width)
+    {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+}
+
+.player-detail .stat-column .stat-title
+{
+    margin-bottom: 2rem;
+}
+
+
+// Chart
+.player-detail canvas#gamesPlayed 
+{
+    max-width: 100%;
+}
