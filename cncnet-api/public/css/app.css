@@ -54,7 +54,7 @@
   --bs-body-bg: #07080c;
   --bs-border-width: 1px;
   --bs-border-style: solid;
-  --bs-border-color: #dee2e6;
+  --bs-border-color: #1c1c1c;
   --bs-border-color-translucent: rgba(0, 0, 0, 0.175);
   --bs-border-radius: 0.375rem;
   --bs-border-radius-sm: 0.25rem;
@@ -11203,4 +11203,10 @@ textarea.form-control-lg {
 
 .btn-secondary {
   color: #888b97;
+}
+
+.feature-icon {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.75rem;
 }
