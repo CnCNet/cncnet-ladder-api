@@ -1,0 +1,95 @@
+
+
+
+//
+// Breakpoints
+// Example use
+// @media (min-width: $sm-width) { }
+
+$sm-width: 567px;
+$md-width: 768px;
+$lg-width: 992px;
+$xl-width: 1200px;
+$xxl-width: 1400px;
+$xxxl-width: 1600px;
+
+
+// 
+// Bootstrap Overrides
+
+$enable-cssgrid: true;
+
+// Colours
+$primary:  #00ff8a;
+$secondary: #13161e;
+$success: $primary;
+$warning:#ffb700;
+$danger: #c70013;
+
+$generic-bg: #0c0e14;;
+
+$body-bg: #07080c;
+$body-color: #7c8091;
+$text-light-color: #ececec;
+
+$font-family-base: $font-roboto;
+$font-family-code: $font-roboto;
+$headings-font-family: $font-oswald;
+
+// Buttons
+$btn-font-family: $font-oswald;
+$btn-padding-y: 0.7rem;
+$btn-padding-x: 2rem;
+$btn-font-weight: 400;
+$btn-font-size: 1.2rem;
+
+// Navbar
+$navbar-light-color: $body-color;
+$navbar-dark-color: $body-color;
+$navbar-dark-hover-color: lighten($body-color,15%);
+
+// Dropdowns
+$dropdown-bg: $generic-bg;
+$dropdown-color:  $body-color;
+$dropdown-dark-color: $dropdown-color;
+$dropdown-dark-bg: $dropdown-bg;
+$dropdown-dark-link-hover-color: lighten($dropdown-color, 5%);
+$dropdown-dark-link-hover-bg: darken($dropdown-bg, 5%);
+$dropdown-dark-link-active-color: $dropdown-dark-link-hover-color;
+$dropdown-dark-link-active-bg: $dropdown-dark-link-hover-bg;
+
+$dropdown-link-color: $dropdown-color;
+$dropdown-link-hover-bg: darken($dropdown-bg, 5%);
+$dropdown-link-active-color: $dropdown-dark-link-hover-color;
+$dropdown-link-active-bg: $dropdown-dark-link-hover-bg;
+$dropdown-link-hover-color: lighten($dropdown-color, 5%);
+
+// Pagination
+$pagination-bg: $generic-bg;
+$pagination-color:  $body-color;
+$pagination-border-color: transparent;
+$pagination-hover-color: lighten(#798199, 15%);
+$pagination-hover-bg: transparent;
+$pagination-hover-border-color:transparent;
+
+// Input fields
+$input-btn-padding-y: 0.7rem;
+$input-btn-border-width: 0;
+$input-bg: $generic-bg;
+$input-color: $body-color;
+
+// Modals
+$modal-content-color: $body-color;
+$modal-content-bg: $generic-bg;
+$modal-content-border-color: transparent;
+$modal-header-border-color:transparent;
+$modal-footer-border-color:transparent;
+
+// Btn close
+$btn-close-color: $body-color;
+
+// Tooltips
+$tooltip-color: $body-color;
+$tooltip-bg: $generic-bg; 
+$tooltip-opacity: 1;
+$tooltip-font-size: 1rem;

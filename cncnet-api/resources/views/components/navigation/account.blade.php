@@ -1,42 +1,26 @@
-<div class="nav-item nav-account">
-    @if (!\Auth::user())
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            <div class="icon">
-                @include('icons.user', ['colour' => '#00ff8a'])
-            </div>
-
-            <span class="nav-item-text">
-                Account
-            </span>
-
-            <span class="caret"></span>
-        </a>
-
-        <ul class="dropdown-menu">
-            <li><a href="/auth/login">Login</a></li>
-        </ul>
+@php $user = \Auth::user(); @endphp
+<a href="#" class="link-dark text-decoration-none dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+    @if ($user && $user->getUserAvatar())
+        @include('components.avatar', ['avatar' => $user->getUserAvatar(), 'size' => 32])
     @else
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-            <div class="icon">
-                @include('icons.user', ['colour' => '#00ff8a'])
-            </div>
-
-            <span class="nav-item-text">
-                {{ \Auth::user()->name }}
-            </span>
-
-            <span class="caret"></span>
-        </a>
-
-        <ul class="dropdown-menu">
-            @if (\Auth::user()->canEditAnyLadders())
-                <li>
-                    <a href="/admin/">Admin</a>
-                </li>
-            @endif
-            <li><a href="/account">Manage account</a></li>
-            <li><a href="/auth/logout">Sign out</a></li>
-        </ul>
+        @include('icons.user', ['colour' => '#00ff8a'])
     @endif
+</a>
 
-</div>
+<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" style="">
+    @if ($user)
+        @if ($user->canEditAnyLadders())
+            <li>
+                <a href="/admin/" class="dropdown-item">Admin</a>
+            </li>
+        @endif
+        <li><a href="/account" class="dropdown-item">Manage account</a></li>
+        <li>
+            <hr class="dropdown-divider">
+        </li>
+        <li><a href="/auth/logout" class="dropdown-item">Logout</a></li>
+    @else
+        <li><a href="/auth/login" class="dropdown-item">Login</a></li>
+        <li><a href="/auth/register" class="dropdown-item">Register account</a></li>
+    @endif
+</ul>

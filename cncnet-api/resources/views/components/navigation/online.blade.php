@@ -1,6 +1,6 @@
 <div class="nav-item nav-online">
-    <div class="icon">
-        @include('icons.graph', ['colour' => '#fff'])
-    </div>
+    <span class="material-symbols-outlined">
+        bar_chart
+    </span>
     <span class="nav-item-text status-text"><span class="online">...</span> Players Online</span>
 </div>

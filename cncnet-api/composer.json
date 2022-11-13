@@ -8,6 +8,7 @@
 	"license": "MIT",
 	"type": "project",
 	"require": {
+		"darkaonline/l5-swagger": "~3.0",
 		"doctrine/dbal": "2.5.13",
 		"guzzlehttp/guzzle": "^5.3",
 		"intervention/image": "^2.7",

@@ -1,65 +1,65 @@
-<div class="nav-item">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-        <div class="icon">
-            @include('icons.trophy', ['colour' => '#00ff8a'])
-        </div>
-
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+        <span class="material-symbols-outlined">
+            military_tech
+        </span>
         <span class="nav-item-text">
             Ladders
         </span>
-
-        <span class="caret"></span>
     </a>
-
-    <ul class="dropdown-menu" style="min-width:250px">
-        <li role="separator" class="nav-title">C&amp;C Live Ladders</li>
+    <ul class="dropdown-menu dropdown-menu-dark">
         @foreach ($ladders as $history)
             <li>
-                <a href="/ladder/{{ $history->short . '/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}">
+                <a href="/ladder/{{ $history->short . '/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
                     {{ $history->ladder->name }}
                 </a>
             </li>
         @endforeach
 
+        @if (isset($private_ladders))
+            @if (count($private_ladders) > 0)
+                <li role="separator" class="divider"></li>
+                <li role="separator" class="nav-title">Private Ladders
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                </li>
+            @endif
 
-        @if (count($private_ladders) > 0)
-            <li role="separator" class="divider"></li>
-            <li role="separator" class="nav-title">Private Ladders
-                <i class="fa fa-lock" aria-hidden="true"></i>
-            </li>
+            @foreach ($private_ladders as $private)
+                <li>
+                    <a href="/ladder/{{ $private->short . '/' . $private->ladder->abbreviation }}/" title="{{ $private->ladder->name }}" class="dropdown-item">
+                        {{ $private->ladder->name }}
+                    </a>
+                </li>
+            @endforeach
         @endif
 
-        @foreach ($private_ladders as $private)
-            <li>
-                <a href="/ladder/{{ $private->short . '/' . $private->ladder->abbreviation }}/" title="{{ $private->ladder->name }}">
-                    {{ $private->ladder->name }}
-                </a>
-            </li>
-        @endforeach
+        @if (isset($private_ladders))
 
-        @if (count($clan_ladders) > 0)
-            <li role="separator" class="divider"></li>
-            <li role="separator" class="nav-title">Clan Ladders
-            </li>
+            @if (count($clan_ladders) > 0)
+                <li role="separator" class="divider"></li>
+                <li role="separator" class="nav-title">Clan Ladders
+                </li>
+            @endif
+
+            @foreach ($clan_ladders as $history)
+                <li>
+                    <a href="/clans/{{ $history->ladder->abbreviation . '/leaderboards/' . $history->short }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
+                        {{ $history->ladder->name }}
+                    </a>
+                </li>
+            @endforeach
         @endif
 
-        @foreach ($clan_ladders as $history)
-            <li>
-                <a href="/clans/{{ $history->ladder->abbreviation . '/leaderboards/' . $history->short }}/" title="{{ $history->ladder->name }}">
-                    {{ $history->ladder->name }}
-                </a>
-            </li>
-        @endforeach
 
         <li role="separator" class="divider"></li>
         <li role="separator" class="nav-title">C&amp;C Ladder Champions</li>
 
         @foreach ($ladders as $history)
             <li>
-                <a href="/ladder-champions/{{ $history->abbreviation }}/" title="{{ $history->ladder->name }}">
+                <a href="/ladder-champions/{{ $history->abbreviation }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
                     {{ $history->ladder->name }} Winners
                 </a>
             </li>
         @endforeach
     </ul>
-</div>
+</li>

@@ -2,11 +2,6 @@
 // Typography
 // Font sizes, never colours
 
-html 
-{
-    font-size: 16px;
-}
-
 html,body 
 {
     @extend .font-primary;
@@ -15,98 +10,4 @@ html,body
 h1, h2, h3, h4, h5
 {
     @extend .font-secondary-bold;
-}
-
-h1
-{
-    font-size: ($font-size-base * 2.5);
-}
-
-h2
-{
-    font-size: ($font-size-base * 2);
-}
-
-h3 
-{
-    font-size: ($font-size-base * 1.75);
-}
-
-h4 
-{
-    font-size: ($font-size-base * 1.65);
-}
-
-h5
-{
-    font-size: ($font-size-base * 1.65);
-}
-
-p, ul, ol
-{
-    font-size: ($font-size-base);
-}
-
-p.lead 
-{
-    font-size: ($font-size-base * 1.25);
-    line-height: 1.6;
-}
-
-.title 
-{
-    @extend .font-secondary-light;
-
-    .highlight 
-    {
-        @extend .font-secondary-bold;
-    }
-}
-
-@media(min-width: $lg-width)
-{
-    h1
-    {
-        font-size: ($font-size-base * 2.2);
-    }
-    
-    h2
-    {
-        font-size: ($font-size-base * 2.3);
-    }
-    
-    h3 
-    {
-        font-size: ($font-size-base * 1.7);
-    }
-    
-    h4 
-    {
-        font-size: ($font-size-base * 1.45);
-    }
-    
-    h5
-    {
-        font-size: ($font-size-base * 1.35);
-    }
-
-    p, ul, ol
-    {
-        font-size: ($font-size-base * 1);
-    }
-
-    p.lead 
-    {
-        font-size: ($font-size-base * 1.35);
-        line-height: 1.6;
-    }
-}
-
-%small-h1 
-{
-    font-size: 1.5rem;
-    font-weight: normal;
-    margin-bottom: 25px;
-    margin-top: 15px;
-    line-height: 1.25;
 }

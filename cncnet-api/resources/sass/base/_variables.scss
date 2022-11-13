@@ -5,7 +5,6 @@
 
 //
 // Font sizings
-
 $font-size-base: 1rem; 
 $font-size-xs: ($font-size-base * 0.8);
 $font-size-sm: ($font-size-base * 0.9);
@@ -40,83 +39,3 @@ $lg-width: 992px;
 $xl-width: 1200px;
 $xxl-width: 1400px;
 $xxxl-width: 1600px;
-
-
-.visible-xs 
-{
-    display: none!important;
-}
-
-@media(max-width: $md-width)
-{
-    .visible-xs 
-    {
-        display: flex!important;
-    }
-}
-
-.container
-{
-    width: 100%;
-    padding-left: 15px;
-    padding-right: 15px;
-    margin-right: auto;
-    margin-left: auto;
-}
-
-@media(min-width: $sm-width)
-{
-    .container
-    {
-        width: $sm-width;
-        max-width: 100%;
-    }
-}
-
-@media(min-width: $md-width)
-{
-    .container
-    {
-        width: $md-width;
-        max-width: 100%;
-    }
-}
-
-@media(min-width: $lg-width)
-{
-    .container
-    {
-        width: $lg-width;
-        max-width: 100%;
-    }
-}
-
-@media(min-width: $xl-width)
-{
-    .container
-    {
-        width: $xl-width;
-        max-width: 100%;
-    }
-}
-
-@media(min-width: $xxl-width)
-{
-    .container
-    {
-        width: $xxl-width;
-        max-width: 100%;
-    }
-}
-
-@media(min-width: $xxxl-width)
-{
-    .container
-    {
-        width: $xxxl-width;
-        max-width: 100%;
-    }
-}
-
-.mt-0 { margin-top: 0; }
-.mb-0 { margin-bottom: 0; }

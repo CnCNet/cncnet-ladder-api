@@ -3,58 +3,37 @@
 $font-roboto: 'Roboto', sans-serif;
 $font-oswald: 'Oswald', sans-serif;
 
-.font-primary-light
+%font-primary-light
 {
     font-family: $font-roboto;
     font-weight: 300;
 }
 
-.font-primary
+%font-primary
 {
     font-family: $font-roboto;
 }
 
-.font-primary-bold
+%font-primary-bold
 {
     font-family: $font-roboto;
     font-weight: 700;
 }
 
-.font-secondary-light
+%font-secondary-light
 {
     font-family: $font-oswald;
     font-weight: 200;
 }
 
-.font-secondary 
+%font-secondary 
 {
     font-family: $font-oswald;
     font-weight: 300;
 }
 
-.font-secondary-bold
+%font-secondary-bold
 {
     font-family: $font-oswald;
     font-weight: 500;
-}
-
-// Icon sizes
-.icon-xs
-{
-    font-size: $icon-xs-size;
-}
-
-.icon-sm
-{
-    font-size: $icon-sm-size;
-}
-
-.icon-md
-{
-    font-size: $icon-md-size;
-}
-
-.icon-lg
-{
-    font-size: $icon-lg-size;
 }
