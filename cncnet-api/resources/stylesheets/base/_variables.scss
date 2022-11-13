@@ -71,6 +71,13 @@ $pagination-border-color: transparent;
 $pagination-hover-color: lighten(#798199, 15%);
 $pagination-hover-bg: transparent;
 $pagination-hover-border-color:transparent;
+$pagination-focus-color: $body-color;
+$pagination-focus-bg: $generic-bg;
+
+$pagination-active-color: #fff;
+$pagination-active-bg: $generic-bg;
+$pagination-active-border-color: $generic-bg;
+
 
 // Input fields
 $input-btn-padding-y: 0.7rem;

@@ -20,7 +20,7 @@
 @endphp
 
 <div class="player-row rank-{{ $rank }}">
-    <div class="player-profile visible-xs">
+    <div class="player-profile d-flex d-lg-none">
         <div class="player-rank player-stat">
             #{{ $rank or 'Unranked' }}
         </div>
@@ -32,12 +32,12 @@
         </a>
     </div>
 
-    <div class="player-profile hidden-xs">
+    <div class="player-profile d-none d-lg-flex">
         <div class="player-rank player-stat">
             #{{ $rank or 'Unranked' }}
         </div>
 
-        <a class="player-avatar player-stat hidden-xs" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+        <a class="player-avatar player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             @include('components.avatar', ['avatar' => $avatar, 'size' => 50])
         </a>
 
@@ -46,7 +46,7 @@
                 <div class="most-used-country country-{{ $game }}-{{ strtolower($countryName) }}"></div>
             @endif
         </a>
-        <a class="player-username player-stat hidden-xs" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+        <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             {{ $username or '' }}
         </a>
     </div>

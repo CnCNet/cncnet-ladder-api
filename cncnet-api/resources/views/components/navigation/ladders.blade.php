@@ -1,12 +1,13 @@
 <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-        <span class="material-symbols-outlined">
-            military_tech
+    <a class="nav-link dropdown-toggle d-flex align-items-center me-1 ms-1 ps-2 pe-4" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+        <span>
+            @include('icons.trophy', ['colour' => 'var(--bs-primary)', 'width' => '25px'])
         </span>
-        <span class="nav-item-text">
+        <span class="ms-2 text">
             Ladders
         </span>
     </a>
+
     <ul class="dropdown-menu dropdown-menu-dark">
         @foreach ($ladders as $history)
             <li>

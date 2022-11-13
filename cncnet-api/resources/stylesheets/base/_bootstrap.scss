@@ -62,3 +62,24 @@
 {
     color: #888b97;
 }
+
+.dropdown-toggle::after
+{
+    color: $body-color;
+}
+
+@media(min-width: $lg-width)
+{
+    .navbar .nav-item 
+    {
+        font-size: 1.1rem;
+    }
+}
+
+.page-link.disabled, .disabled > .page-link 
+{
+    color: #232628;
+    pointer-events: none;
+    background-color: #000;
+    border-color: #000000;
+}

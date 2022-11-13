@@ -6,17 +6,18 @@
 @endsection
 
 @section('feature')
-    <div class="feature-background sub-feature-background">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-8 col-md-offset-2">
-                    <h1>
-                        CnCNet <strong>Ladders</strong>
-                    </h1>
-                    <p>
-                        Play, Compete, <strong>Conquer!</strong>
-                    </p>
-                </div>
+    <div class="px-4 py-5 text-center" style="background: #0e0f16;">
+        <img class="d-block mx-auto mb-4" src="/images/cncnet-logo.png" alt="">
+        <h1 class="display-5 fw-bold">
+            CnCNet Ladders
+        </h1>
+        <div class="col-lg-6 mx-auto">
+            <p class="lead mb-4">
+                Play, Complete, Conquer
+            </p>
+            <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                <button type="button" class="btn btn-primary px-4 gap-3">Register</button>
+                <button type="button" class="btn btn-secondary px-4">Login</button>
             </div>
         </div>
     </div>

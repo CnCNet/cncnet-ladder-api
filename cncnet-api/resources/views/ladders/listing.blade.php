@@ -1,29 +1,29 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name . ' Ladder')
 
-@section('cover')
-    /images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
-@endsection
-
 @section('feature')
-    <div class="feature-background sub-feature-background {{ $history->ladder->abbreviation }}">
-        <div class="container">
-            <div class="ladder-header">
-                <div class="ladder-title">
-                    <h1 class="text-uppercase">
-                        <strong>{{ $history->ladder->name }}</strong>
-                        <br /><span>Ladder Rankings</span>
-                        <small>{{ $history->starts->format('F Y') }} - 1vs1 QUICK MATCH</small>
-                    </h1>
+    @php $featureImage = "/images/feature/feature-".$history->ladder->abbreviation.".jpg"; @endphp
 
-                    <a href="/ladder" class="previous-link">
-                        <i class="fa fa-caret-left" aria-hidden="true"></i>
-                        <i class="fa fa-caret-left" aria-hidden="true"></i>
-                    </a>
+    <div class="feature" style="background: url({{ $featureImage }})">
+        <div class="container px-4 py-5 text-light">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-12 col-sm-8 col-lg-6">
+                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
-                <div class="ladder-logo">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" />
+                <div class="col-12 col-lg-6">
+                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
+                        <span>Ladder Rankings</span>
+                    </h1>
+
+                    <p class="lead text-uppercase">
+                        <small>{{ $history->starts->format('F Y') }} - 1vs1 QUICK MATCH</small>
+                    </p>
+
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                        <button type="button" class="btn btn-secondary px-4 me-md-2">Back</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -86,7 +86,7 @@
                         @endforeach
                     </ul>
                 </div>
-                {{-- 
+
                 <form>
                     <div class="form-group" method="GET">
                         <div class="search" style="position:relative;">
@@ -102,7 +102,7 @@
                         Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
                         <a href="?search=">Clear?</a>
                     </small>
-                @endif --}}
+                @endif
             </div>
 
             <div class="modal fade" id="openLadderRules" tabIndex="-1" role="dialog">
@@ -200,11 +200,6 @@
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-12 text-center">
-                                    {{ $players->appends(request()->query())->links() }}
-                                </div>
-                            </div>
                         </div>
 
                         @if ($history->ladder->qmLadderRules->tier2_rating > 0)
@@ -246,6 +241,8 @@
                             </p>
                         @endif
 
+                        @include('components.pagination.paginate', ['paginator' => $players])
+
                         <div class="ladder-player-listing" id="listing">
                             <div class="player-row-header">
                                 <div class="player-rank">
@@ -262,14 +259,18 @@
                                 <div class="player-losses">Lost</div>
 
                                 @if (request()->input('orderBy') == 'desc')
-                                    <a class="player-games filter-link" href="?filterBy=games&orderBy=asc#listing">
+                                    <a class="player-games filter-link d-flex text-decoration-none" href="?filterBy=games&orderBy=asc#listing">
                                         Games
-                                        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                                        <span class="material-symbols-outlined ms-1">
+                                            expand_less
+                                        </span>
                                     </a>
                                 @else
-                                    <a class="player-games filter-link" href="?filterBy=games&orderBy=desc#listing">
+                                    <a class="player-games filter-link d-flex text-decoration-none" href="?filterBy=games&orderBy=desc#listing">
                                         Games
-                                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                        <span class="material-symbols-outlined ms-1">
+                                            expand_more
+                                        </span>
                                     </a>
                                 @endif
                             </div>
@@ -292,11 +293,7 @@
                             @endforeach
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                {{ $players->appends(request()->query())->links() }}
-                            </div>
-                        </div>
+                        @include('components.pagination.paginate', ['paginator' => $players])
                     </div>
                 </div>
             </div>

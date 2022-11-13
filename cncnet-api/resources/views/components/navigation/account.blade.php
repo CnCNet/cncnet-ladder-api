@@ -1,13 +1,13 @@
 @php $user = \Auth::user(); @endphp
-<a href="#" class="link-dark text-decoration-none dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
+<a href="#" class="dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown" aria-expanded="false">
     @if ($user && $user->getUserAvatar())
         @include('components.avatar', ['avatar' => $user->getUserAvatar(), 'size' => 32])
     @else
-        @include('icons.user', ['colour' => '#00ff8a'])
+        @include('icons.user', ['colour' => 'var(--bs-body-color)'])
     @endif
 </a>
 
-<ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" style="">
+<ul class="dropdown-menu dropdown-menu-end" style="">
     @if ($user)
         @if ($user->canEditAnyLadders())
             <li>
