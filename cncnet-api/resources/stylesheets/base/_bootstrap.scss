@@ -68,14 +68,6 @@
     color: $body-color;
 }
 
-@media(min-width: $lg-width)
-{
-    .navbar .nav-item 
-    {
-        font-size: 1.1rem;
-    }
-}
-
 .page-link.disabled, .disabled > .page-link 
 {
     color: #232628;

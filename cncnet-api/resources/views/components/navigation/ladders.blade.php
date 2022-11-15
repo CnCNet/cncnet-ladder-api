@@ -1,9 +1,9 @@
 <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle d-flex align-items-center me-1 ms-1 ps-2 pe-4" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-        <span>
-            @include('icons.trophy', ['colour' => 'var(--bs-primary)', 'width' => '25px'])
+        <span class="material-symbols-outlined icon">
+            military_tech
         </span>
-        <span class="ms-2 text">
+        <span class="ms-2 me-2 text">
             Ladders
         </span>
     </a>
@@ -12,7 +12,10 @@
         @foreach ($ladders as $history)
             <li>
                 <a href="/ladder/{{ $history->short . '/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
-                    {{ $history->ladder->name }}
+                    <span class="d-flex align-items-center">
+                        <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
+                        {{ $history->ladder->name }}
+                    </span>
                 </a>
             </li>
         @endforeach
@@ -28,7 +31,10 @@
             @foreach ($private_ladders as $private)
                 <li>
                     <a href="/ladder/{{ $private->short . '/' . $private->ladder->abbreviation }}/" title="{{ $private->ladder->name }}" class="dropdown-item">
-                        {{ $private->ladder->name }}
+                        <span class="d-flex align-items-center">
+                            <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
+                            {{ $history->ladder->name }}
+                        </span>
                     </a>
                 </li>
             @endforeach
@@ -45,7 +51,10 @@
             @foreach ($clan_ladders as $history)
                 <li>
                     <a href="/clans/{{ $history->ladder->abbreviation . '/leaderboards/' . $history->short }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
-                        {{ $history->ladder->name }}
+                        <span class="d-flex align-items-center">
+                            <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
+                            {{ $history->ladder->name }}
+                        </span>
                     </a>
                 </li>
             @endforeach
@@ -53,12 +62,16 @@
 
 
         <li role="separator" class="divider"></li>
-        <li role="separator" class="nav-title">C&amp;C Ladder Champions</li>
+        <li role="separator" class="nav-title">Hall of Fame</li>
 
         @foreach ($ladders as $history)
             <li>
                 <a href="/ladder-champions/{{ $history->abbreviation }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
-                    {{ $history->ladder->name }} Winners
+
+                    <span class="d-flex align-items-center">
+                        <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
+                        {{ $history->ladder->name }}
+                    </span>
                 </a>
             </li>
         @endforeach

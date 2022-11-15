@@ -1,21 +1,35 @@
+//
+// Core
+//
+
 @import "base/fonts",
         "base/variables",
         "base/bootstrap";
 
+// 
+// Components
+@import "components/navbar",
+        "components/game-icons";
+
+        
+//
+// Pages
+@import "pages/ladder-listing/index",
+        "pages/player-detail/index";
+
+
+// 
+// Ladder specific
+// Below are ladder only import styles
+// 
 
 //
 // Standard components
-@import "components/feature-icon";
-
-
-// Ladder components only
 @import "components/avatar",
         "components/countries";
 
 
 //
 // Pages
-
-// Ladder pages only
 @import "pages/ladder-listing/index",
         "pages/player-detail/index";

@@ -11219,11 +11219,6 @@ textarea.form-control-lg {
   color: #7c8091;
 }
 
-@media (min-width: 992px) {
-  .navbar .nav-item {
-    font-size: 1.1rem;
-  }
-}
 .page-link.disabled, .disabled > .page-link {
   color: #232628;
   pointer-events: none;
@@ -11231,10 +11226,524 @@ textarea.form-control-lg {
   border-color: #000000;
 }
 
-.feature-icon {
-  width: 4rem;
-  height: 4rem;
-  border-radius: 0.75rem;
+.navbar .nav-item .nav-link {
+  color: #d3d2d2;
+}
+.navbar .nav-item .nav-link:after {
+  color: #ececec;
+}
+.navbar .nav-item .nav-link:hover {
+  color: #fff;
+}
+.navbar .nav-item .nav-link:hover:after {
+  color: #fff;
+}
+
+@media (min-width: 992px) {
+  .navbar .nav-item {
+    font-size: 1.1rem;
+    padding: 1rem;
+  }
+  .nav-item .icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: #0e1018;
+    border-radius: 100%;
+  }
+}
+.navbar .dropdown-menu {
+  background: #07080c;
+  padding: 1rem;
+}
+.navbar .dropdown-menu .dropdown-item {
+  padding: 0.2rem 1rem;
+  border-radius: 4px;
+}
+.navbar .dropdown-menu .nav-title {
+  padding: 1rem;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #999da9;
+}
+
+.icon-game {
+  position: relative;
+}
+
+.icon-game:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/icons.png);
+  background-repeat: no-repeat;
+  width: 25px;
+  height: 25px;
+}
+
+.icon-ra:before {
+  background-position: 0px;
+}
+
+.icon-yr:before {
+  background-position: -75px;
+}
+
+.icon-ts:before {
+  background-position: -25px;
+}
+
+.icon-ra2:before {
+  background-position: -225px;
+}
+
+.icon-blitz:before {
+  background-position: -250px;
+}
+
+.icon-sfj:before {
+  background-position: -275px;
+}
+
+.ladder-listing .player-profile {
+  position: relative;
+  transition: ease 250ms;
+}
+
+.ladder-listing .player-profile .player-stat {
+  position: relative;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.ladder-listing .player-profile .most-used-country {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  border-radius: 100%;
+}
+.ladder-listing .player-profile .most-used-country:before {
+  content: "";
+  width: 80%;
+  height: 80%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.ladder-listing .player-profile .player-rank {
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 992px) {
+  .ladder-listing .player-profile .player-rank {
+    width: 60px;
+  }
+}
+
+.ladder-listing .player-profile .player-avatar {
+  display: flex;
+  align-items: center;
+}
+.ladder-listing .player-profile .player-avatar.avatar-container {
+  max-width: 100%;
+  max-height: 100%;
+}
+@media (max-width: 768px) {
+  .ladder-listing .player-profile .player-avatar {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+.ladder-listing .player-profile-info {
+  position: relative;
+  font-size: 1rem;
+}
+@media (max-width: 768px) {
+  .ladder-listing .player-profile-info {
+    padding-top: 1rem;
+  }
+}
+
+.ladder-listing .player-profile-info .player-social {
+  display: none;
+}
+.ladder-listing .player-profile-info .player-social a {
+  display: inline-block;
+  padding: 5px 10px;
+}
+@media (min-width: 992px) {
+  .ladder-listing .player-profile-info .player-social {
+    display: flex;
+    width: 150px;
+  }
+}
+
+.ladder-listing .player-profile-info .player-stat {
+  position: relative;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.ladder-listing .player-profile-info .player-stat span {
+  display: block;
+  height: 10px;
+  width: 100%;
+  color: #333746;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+@media (min-width: 992px) {
+  .player-profile .player-faction {
+    width: 50px;
+  }
+  .ladder-listing .player-profile .player-country {
+    padding-right: 0;
+    padding-left: 0;
+  }
+  .ladder-listing .player-profile .player-username {
+    width: 200px;
+    word-break: break-word;
+  }
+  .ladder-listing .player-profile-info .player-points {
+    width: 100px;
+  }
+  .ladder-listing .player-profile-info .player-wins {
+    width: 85px;
+  }
+  .ladder-listing .player-profile-info .player-losses {
+    width: 85px;
+  }
+  .ladder-listing .player-profile-info .player-games {
+    width: 100px;
+  }
+}
+.ladder-listing {
+  background: #07080c;
+}
+
+.ladder-listing .player-row {
+  background: #13161f;
+  color: #b5c9e0;
+}
+.ladder-listing .player-row a {
+  color: #fff;
+  transition: all ease 350ms;
+}
+.ladder-listing .player-row a:hover {
+  color: #fff;
+}
+@media (min-width: 992px) {
+  .ladder-listing .player-row a {
+    color: #b5c9e0;
+  }
+}
+
+@media (max-width: 992px) {
+  .ladder-listing .player-row .player-rank {
+    color: #fff;
+  }
+}
+.ladder-listing .player-row-header {
+  color: #fdfdfd;
+  font-size: 1rem;
+}
+@media (max-width: 1200px) {
+  .ladder-listing .player-row-header {
+    display: none;
+  }
+}
+
+.ladder-listing .player-row:nth-child(2n+3) {
+  background: #1f2331;
+}
+
+.ladder-listing .qm-stats .stat {
+  background: #0b0d14;
+  border: 1px solid #161926;
+}
+
+.ladder-listing .player-row .avatar {
+  background-color: #1f2331;
+}
+
+.ladder-listing .player-row .player-profile-info .player-stat span {
+  color: #333746;
+}
+
+.ladder-listing .player-row.rank-1 {
+  background: rgba(0, 255, 138, 0.4);
+  border: 1px solid rgba(0, 255, 138, 0.6196078431);
+}
+.ladder-listing .player-row.rank-1 * {
+  color: #fff;
+}
+.ladder-listing .player-row.rank-1 .player-stat span {
+  color: #fff;
+}
+
+.ladder-listing .ladder-info {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ladder-listing .ladder-info div {
+  margin-right: 1rem;
+}
+
+.ladder-listing .ladder-player-listing {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ladder-listing .ladder-player-listing .player-row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 18px;
+  padding-bottom: 20px;
+  padding-top: 20px;
+  margin-bottom: 1rem;
+}
+@media (min-width: 992px) {
+  .ladder-listing .ladder-player-listing .player-row {
+    margin-bottom: auto;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    flex-direction: row;
+  }
+}
+
+.ladder-listing .ladder-player-listing .player-row .player-link {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 50px;
+  height: 100%;
+  transition: ease 250ms;
+}
+.ladder-listing .ladder-player-listing .player-row .player-link:hover {
+  color: #fff;
+}
+@media (min-width: 1200px) {
+  .ladder-listing .ladder-player-listing .player-row .player-link {
+    display: flex;
+  }
+}
+
+.ladder-player-listing .player-profile,
+.ladder-player-listing .player-profile-info {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  .ladder-player-listing .player-profile-info {
+    justify-content: flex-end;
+    margin-right: 50px;
+  }
+}
+.player-row-header {
+  display: flex;
+  justify-content: space-around;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 1rem;
+  font-size: 1.5rem;
+}
+
+.player-row-header .player-avatar {
+  width: 150px;
+}
+
+.player-row-header .player-rank {
+  width: 80px;
+}
+
+.player-row-header .player-username {
+  width: 200px;
+}
+
+.player-row-header .player-games {
+  width: 80px;
+}
+@media (min-width: 1200px) {
+  .player-row-header .player-games {
+    margin-right: 50px;
+  }
+}
+
+.player-row-header .player-wins {
+  width: 85px;
+}
+
+.player-row-header .player-losses {
+  width: 85px;
+}
+
+.player-row-header .player-points {
+  width: 100px;
+}
+
+.player-row-header .player-social {
+  width: 150px;
+  margin-left: auto;
+  margin-right: 1rem;
+}
+
+.player-row-header .filter-link {
+  color: #fff;
+}
+
+body.body-player-detail .feature-component {
+  padding-top: 15rem;
+  padding-bottom: 15rem;
+}
+
+.player-detail {
+  width: 90%;
+  background: #0a0b10;
+  padding: 2rem;
+  margin: auto;
+}
+
+.player-detail .player-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-detail .player-stats {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 1200px) {
+  .player-detail .player-stats {
+    flex-direction: row;
+  }
+}
+
+.player-detail .player-stats-drilldown {
+  width: 300px;
+  max-width: 100%;
+}
+
+.player-detail .stats-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.player-detail .stats-wrap .stat-item {
+  width: 100%;
+}
+@media (min-width: 567px) {
+  .player-detail .stats-wrap .stat-item {
+    width: 50%;
+  }
+}
+.player-detail .stats-wrap .stat-item .name {
+  padding-right: 0.5rem;
+}
+
+.player-detail .faction-name {
+  display: flex;
+}
+
+.player-detail .player-overall-stats {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .player-detail .player-overall-stats {
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+@media (min-width: 1200px) {
+  .player-detail .player-overall-stats {
+    flex-wrap: nowrap;
+    justify-content: space-around;
+    flex-direction: row;
+  }
+}
+
+.player-detail .player-achievements {
+  display: flex;
+}
+
+.player-detail .player-profile {
+  display: flex;
+  flex-direction: column;
+}
+
+.player-detail .player-avatar {
+  background: #13161e;
+  border-radius: 100%;
+  margin-right: auto;
+}
+
+.player-detail .player-social a {
+  padding: 1rem;
+}
+.player-detail .player-social a:hover {
+  color: #00ff8a;
+}
+
+.player-detail .player-factions-table th {
+  border: 0;
+  padding-left: 0;
+  font-weight: normal;
+}
+.player-detail .player-factions-table td {
+  border: 0;
+  font-weight: normal;
+}
+
+.player-detail .stat-column {
+  padding-bottom: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #292929;
+  border-bottom: 1px solid #292929;
+}
+@media (min-width: 768px) {
+  .player-detail .stat-column {
+    padding: 2rem;
+    border-top: none;
+    border-bottom: none;
+  }
+}
+@media (min-width: 1200px) {
+  .player-detail .stat-column {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+}
+
+.player-detail .stat-column .stat-title {
+  margin-bottom: 2rem;
+}
+
+.player-detail canvas#gamesPlayed {
+  max-width: 100%;
 }
 
 .avatar {
