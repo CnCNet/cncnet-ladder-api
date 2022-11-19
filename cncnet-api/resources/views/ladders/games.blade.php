@@ -1,58 +1,77 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name . ' Ladder')
 
-@section('cover')
-/images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
-@endsection
-
 @section('feature')
-<div class="feature-background sub-feature-background">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-8 col-md-offset-2">
-                <h1>
-                    {{ $history->ladder->name }}
-                </h1>
-                <p>
-                    Games Played <strong>1vs1</strong>
-                </p>
-                <p>
-                    <a href="/ladder" class="previous-link">
-                        <i class="fa fa-caret-left" aria-hidden="true"></i>
-                        <i class="fa fa-caret-left" aria-hidden="true"></i>
-                    </a>
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
+    @php $featureImage = "/images/feature/feature-".$history->ladder->abbreviation.".jpg"; @endphp
 
-@section('content')
-<section class="cncnet-features general-texture game-detail">
-    <div class="container">
-        <div class="feature">
-            <div class="row">
-                <div class="header">
-                    <div class="col-md-12">
-                        <h3><strong>1vs1</strong> Games</h3>
-                        @if ($userIsMod && ($errorGames === null || $errorGames === false))
-                        <small style="margin-left: auto; margin-right: 0;">
-                            <a href="{{"/ladder/". $history->short . "/" . $history->ladder->abbreviation . "/games?errorGames=true" }}">View 0:03 Games</a>
-                        </small>
-                        @endif
-                    </div>
+    <div class="feature" style="background: url({{ $featureImage }})">
+        <div class="container px-4 py-5 text-light">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-12 col-sm-8 col-lg-6">
+                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                </div>
+
+                <div class="col-12 col-lg-6">
+                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
+                        <span>Games Played</span>
+                    </h1>
+
+                    <p class="lead text-uppercase">
+                        <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
+                    </p>
                 </div>
             </div>
         </div>
-
-        @include("components.global-recent-games", ["games" => $games])
-
-        <div class="row">
-            <div class="col-md-12 text-center">
-            {!! $games->render() !!}
-            </div>
-        </div>
     </div>
-</section>
+@endsection
+
+@section('content')
+    <section class="mt-4">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="/">
+                            <span class="material-symbols-outlined">
+                                home
+                            </span>
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                            <span class="material-symbols-outlined icon pe-3">
+                                military_tech
+                            </span>
+                            Ladders
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="">
+                            <span class="material-symbols-outlined icon pe-3">
+                                insights
+                            </span>
+                            Games
+                        </a>
+                    </li>
+                </ol>
+            </nav>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            @if ($userIsMod && ($errorGames === null || $errorGames === false))
+                <div class="mb-4">
+                    <a href="{{ \App\URLHelper::getLadderUrl($history) . '?errorGames=true' }}" class="btn btn-danger btn-md">
+                        View 0:03 Games
+                    </a>
+                </div>
+            @endif
+
+            @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+            @include('components.global-recent-games', ['games' => $games])
+            @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+        </div>
+    </section>
 @endsection

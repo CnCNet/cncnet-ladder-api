@@ -1,3 +1,18 @@
+.navbar 
+{
+    font-family: $font-oswald;
+}
+
+.navbar .dropdown-toggle::after
+{
+    color: #fefeff;
+}
+
+.navbar .icon-game 
+{
+    transform: scale(0.8);
+}
+
 .navbar .nav-item .nav-link 
 {
     color: #d3d2d2;
@@ -15,6 +30,16 @@
         {
             color: #fff;
         }
+    }
+}
+
+
+@media(max-width: $lg-width)
+{
+    .navbar .nav-item
+    {
+        width: 100%;
+        padding: 1rem;
     }
 }
 
@@ -38,15 +63,33 @@
     }
 }
 
+.navbar .dropdown-header 
+{
+    font-family: $font-oswald;
+    color: #cbcbcb;
+    padding-bottom: 1rem;
+    padding-top: 1.5rem;
+}
+
+.navbar-expand-lg .navbar-nav .dropdown-menu
+{
+    padding-top: 0;
+}
+
 .navbar .dropdown-menu 
 {
     background: #07080c;
     padding: 1rem;
 
+    transition: 250ms ease all;
+
     .dropdown-item 
     {
         padding: 0.2rem 1rem;
         border-radius: 4px;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        font-weight: 500;
     }
 
     .nav-title 
@@ -54,6 +97,6 @@
         padding: 1rem;
         text-transform: uppercase;
         font-weight: 600;
-        color: #999da9;
+        color: #7e818b;
     }
 }

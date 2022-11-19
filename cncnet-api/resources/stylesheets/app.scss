@@ -24,12 +24,15 @@
 // 
 
 //
-// Standard components
+// Components
 @import "components/avatar",
-        "components/countries";
+        "components/countries",
+        "components/qm-stats",
+        "components/game-box";
 
 
 //
 // Pages
 @import "pages/ladder-listing/index",
-        "pages/player-detail/index";
+        "pages/player-detail/index",
+        "pages/ladder-index";

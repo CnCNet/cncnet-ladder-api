@@ -3,12 +3,15 @@
         <span class="material-symbols-outlined icon">
             military_tech
         </span>
-        <span class="ms-2 me-2 text">
+        <span class="ms-2 me-2 text text-uppercase">
             Ladders
         </span>
     </a>
 
     <ul class="dropdown-menu dropdown-menu-dark">
+        <li>
+            <h4 class="dropdown-header text-uppercase">1 vs 1 Ladders</h4>
+        </li>
         @foreach ($ladders as $history)
             <li>
                 <a href="/ladder/{{ $history->short . '/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
@@ -22,9 +25,8 @@
 
         @if (isset($private_ladders))
             @if (count($private_ladders) > 0)
-                <li role="separator" class="divider"></li>
-                <li role="separator" class="nav-title">Private Ladders
-                    <i class="fa fa-lock" aria-hidden="true"></i>
+                <li>
+                    <h4 class="dropdown-header text-uppercase">Private Ladders</h4>
                 </li>
             @endif
 
@@ -33,7 +35,7 @@
                     <a href="/ladder/{{ $private->short . '/' . $private->ladder->abbreviation }}/" title="{{ $private->ladder->name }}" class="dropdown-item">
                         <span class="d-flex align-items-center">
                             <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
-                            {{ $history->ladder->name }}
+                            {{ $private->ladder->name }}
                         </span>
                     </a>
                 </li>
@@ -43,8 +45,8 @@
         @if (isset($private_ladders))
 
             @if (count($clan_ladders) > 0)
-                <li role="separator" class="divider"></li>
-                <li role="separator" class="nav-title">Clan Ladders
+                <li>
+                    <h4 class="dropdown-header text-uppercase">Clan Ladders</h4>
                 </li>
             @endif
 
@@ -59,11 +61,9 @@
                 </li>
             @endforeach
         @endif
-
-
-        <li role="separator" class="divider"></li>
-        <li role="separator" class="nav-title">Hall of Fame</li>
-
+        {{-- <li>
+            <h4 class="dropdown-header text-uppercase">Hall of Fame</h4>
+        </li>
         @foreach ($ladders as $history)
             <li>
                 <a href="/ladder-champions/{{ $history->abbreviation }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
@@ -74,6 +74,6 @@
                     </span>
                 </a>
             </li>
-        @endforeach
+        @endforeach --}}
     </ul>
 </li>

@@ -1,6 +1,6 @@
 @php $user = \Auth::user(); @endphp
-<div class="nav-item">
-    <a href="#" class="dropdown-toggle d-flex align-items-center nav-link" data-bs-toggle="dropdown" aria-expanded="false">
+<li class="nav-item">
+    <a href="#" class="dropdown-toggle d-flex align-items-center nav-link me-1 ms-1 ps-2 pe-4" data-bs-toggle="dropdown" aria-expanded="false">
         @if ($user && $user->getUserAvatar())
             @include('components.avatar', ['avatar' => $user->getUserAvatar(), 'size' => 32])
         @else
@@ -27,5 +27,4 @@
             <li><a href="/auth/register" class="dropdown-item">Register account</a></li>
         @endif
     </ul>
-
-</div>
+</li>

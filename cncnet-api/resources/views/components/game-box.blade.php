@@ -23,26 +23,27 @@
 
         <div class="footer text-center {{ $history->ladder->abbreviation }}">
             <?php $gamePlayerResults = $gamePlayers->get(); ?>
-            @foreach($gamePlayerResults as $k => $gamePlayer)
+            @foreach ($gamePlayerResults as $k => $gamePlayer)
+                <div class="player {{ $gamePlayer->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
 
-                <div class="player {{ $gamePlayer->won == true ? 'won': 'lost' }} player-order-{{ $k }}">
-
-                    @if($gamePlayer->stats)
-                    @php $playerStats2 = \App\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
-                    @php $playerCountry = $playerStats2->faction($history->ladder->game, $gamePlayer->stats->cty); @endphp
-                    <div class="player-faction player-faction-{{ $playerCountry }}"></div>
+                    @if ($gamePlayer->stats)
+                        @php $playerStats2 = \App\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
+                        @php $playerCountry = $playerStats2->faction($history->ladder->game, $gamePlayer->stats->cty); @endphp
+                        <div class="player-faction player-faction-{{ $playerCountry }}"></div>
                     @endif
-                    
+
                     <h5>
-                        {{ $gamePlayer->player->username }} 
+                        {{ $gamePlayer->player->username }}
                         <span class="points">
-                        @if ($gamePlayer->points >= 0)+@endif{{ $gamePlayer->points }}
+                            @if ($gamePlayer->points >= 0)
+                                +
+                            @endif{{ $gamePlayer->points }}
                         </span>
                     </h5>
                 </div>
 
-                @if($k == 0)
-                <p class="vs">vs</p>
+                @if ($k == 0)
+                    <p class="vs">vs</p>
                 @endif
             @endforeach
         </div>

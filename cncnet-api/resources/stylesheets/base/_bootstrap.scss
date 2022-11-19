@@ -50,22 +50,72 @@
 @import "../../node_modules/bootstrap/scss/utilities/api";
 
 
+// Bootstrap icons for brands
+@import "bootstrap-icons";
 
-
+// 
 // Oveerrides that don't follow variables
+
+
+// Forms
 .form-check-input
 {
     border: 1px solid rgb(201 201 201 / 25%);
 }
 
+// Mobile navbar
+@media(max-width: $md-width)
+{
+    ul.navbar-nav
+    {
+        width: 100%;
+    }
+
+    li.nav-item.dropdown
+    {
+        width: 100%;
+    }   
+} 
+
+// Buttons & links
 .btn-secondary 
 {
     color: #888b97;
 }
 
+.btn.btn-md 
+{
+    padding: 0.5rem 1.4rem;
+    font-size: 1.1rem;
+}
+
+.btn-outline 
+{
+    border: 1px solid #d7d7d7;
+    color: #d7d7d7;
+
+    &:hover 
+    {
+        border: 1px solid #fff;
+        color: #fff;
+    }
+}
+
+a 
+{
+    text-decoration: none;
+}
+
+
+// Dropdowns
 .dropdown-toggle::after
 {
     color: $body-color;
+}
+
+.dropdown-divider
+{
+    border-top: 1px solid rgb(46 46 46 / 18%);
 }
 
 .page-link.disabled, .disabled > .page-link 
@@ -74,4 +124,35 @@
     pointer-events: none;
     background-color: #000;
     border-color: #000000;
+}
+
+
+// Breadcrumb
+.breadcrumb-item + .breadcrumb-item::before
+{
+    padding: 1rem 0;
+    background: #0a0c10;
+    color: #2c3038;
+}
+
+.breadcrumb-item a
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 4px;
+    color: #6c6f76;
+    transition: 350ms all ease;
+    background: #0a0c10;
+
+    &:hover 
+    {
+        color: #fff;
+    }
+}
+
+.breadcrumb-item + .breadcrumb-item
+{
+    padding-left: 0;
 }

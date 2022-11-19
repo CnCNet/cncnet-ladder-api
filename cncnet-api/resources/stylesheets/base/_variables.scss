@@ -29,7 +29,9 @@ $danger: #c70013;
 $generic-bg: #0c0e14;;
 
 $body-bg: #07080c;
-$body-color: #7c8091;
+// $body-color: #7c8091;
+$body-color: #4f5054;
+
 $text-light-color: #ececec;
 
 $font-family-base: $font-roboto;
@@ -50,10 +52,10 @@ $navbar-dark-hover-color: lighten($body-color,15%);
 
 // Dropdowns
 $dropdown-bg: $generic-bg;
-$dropdown-color:  $body-color;
+$dropdown-color:  #898989;
 $dropdown-dark-color: $dropdown-color;
 $dropdown-dark-bg: $dropdown-bg;
-$dropdown-dark-link-hover-color: lighten($dropdown-color, 5%);
+$dropdown-dark-link-hover-color: lighten($dropdown-color, 15%);
 $dropdown-dark-link-hover-bg: darken($dropdown-bg, 5%);
 $dropdown-dark-link-active-color: $dropdown-dark-link-hover-color;
 $dropdown-dark-link-active-bg: $dropdown-dark-link-hover-bg;

@@ -14,4 +14,14 @@ class URLHelper
     {
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/player/" . $playerUsername;
     }
+
+    /**
+     * Returns ladder url from history obj
+     * @param mixed $history 
+     * @return string 
+     */
+    public static function getLadderUrl($history)
+    {
+        return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation;
+    }
 }

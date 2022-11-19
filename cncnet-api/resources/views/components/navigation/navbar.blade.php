@@ -1,14 +1,26 @@
 <nav class="top-navigation navbar navbar-expand-lg navbar-dark">
     <div class="container">
-        <div class="dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="btn-group">
+            <a href="/" class="btn pe-1 ps-0">
                 <img src="/images/cncnet-logo.png" alt="CnCNet Logo" width="50px" />
             </a>
-            <ul class="dropdown-menu text-small shadow" style="">
-                <li><a class="dropdown-item" href="/">Ladder</a></li>
-                <li><a class="dropdown-item" href="https://cncnet.org">CnCNet</a></li>
+
+            <button type="button" class="btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+
+            <ul class="dropdown-menu">
+                <li>
+                    <h4 class="dropdown-header text-uppercase">CnCNet - Play C&C Online</h4>
+                </li>
+                <li><a class="dropdown-item" href="https://cncnet.org/download">Games</a></li>
                 <li><a class="dropdown-item" href="https://forums.cncnet.org">Forums</a></li>
                 <li><a class="dropdown-item" href="https://cncnet.org/discord">Discord</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="#">Live</a></li>
+                <li><a class="dropdown-item" href="#">Donate</a></li>
             </ul>
         </div>
 
@@ -20,13 +32,8 @@
             <ul class="navbar-nav ms-auto me-5 align-items-center">
                 @include('components.navigation.ladders')
                 @include('components.navigation.online')
+                @include('components.navigation.account')
             </ul>
-
-            <form role="search" class="me-4">
-                <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-            </form>
-
-            @include('components.navigation.account')
         </div>
     </div>
 </nav>
