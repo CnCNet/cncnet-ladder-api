@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-
 @section('body-feature-image', '/images/feature/feature-index.jpg')
 
 @section('feature')

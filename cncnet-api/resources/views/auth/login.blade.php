@@ -51,8 +51,7 @@
     <section class="pt-4">
         <div class="container">
             <div class="row">
-                <div class="col-12 col-md-6">
-                    <h3>Login to your account</h3>
+                <div class="col-6 m-auto">
 
                     <form class="" method="POST" action="/auth/login">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -77,11 +76,13 @@
                             <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
                             <label for="floatingPassword">Password</label>
                         </div>
+
                         <div class="checkbox mb-3">
                             <label>
                                 <input type="checkbox" name="remember" value="remember-me"> Remember me
                             </label>
                         </div>
+
                         <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
 
                         <hr class="my-4">

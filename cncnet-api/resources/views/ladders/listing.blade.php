@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name . ' Ladder')
-
 @section('body-feature-image', '/images/feature/feature-' . $history->ladder->abbreviation . '.jpg')
 
 @section('feature')
