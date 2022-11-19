@@ -1,10 +1,10 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name . ' Ladder')
 
-@section('feature')
-    @php $featureImage = "/images/feature/feature-".$history->ladder->abbreviation.".jpg"; @endphp
+@section('body-feature-image', '/images/feature/feature-' . $history->ladder->abbreviation . '.jpg')
 
-    <div class="feature" style="background: url({{ $featureImage }})">
+@section('feature')
+    <div class="feature">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-sm-8 col-lg-6">
@@ -27,7 +27,7 @@
 @endsection
 
 @section('content')
-    <section class="mt-4">
+    <section class="pt-4">
         <div class="container">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -80,29 +80,34 @@
 
             <section class="mt-4 ladder-info">
                 <div>
-                    <button type="button" class="btn btn-secondary btn-md" data-toggle="modal" data-target="#openLadderRules">
+                    <button type="button" class="btn btn-secondary d-flex" data-bs-toggle="modal" data-bs-target="#openLadderRules">
+                        <span class="material-symbols-outlined pe-3">
+                            gavel
+                        </span>
                         Ladder Rules
                     </button>
-                    @include('ladders.components.modal-ladder-rules')
+
                 </div>
 
                 @if ($history->ladder->qmLadderRules->ladder_discord != null)
                     <div>
-                        <a href="{{ $history->ladder->qmLadderRules->ladder_discord }}" class="btn btn-secondary btn-md">
-                            <i class="bi bi-discord"></i> {{ $history->ladder->name }} Discord
+                        <a href="{{ $history->ladder->qmLadderRules->ladder_discord }}" class="btn btn-secondary">
+                            <i class="bi bi-discord pe-2"></i> {{ $history->ladder->name }} Discord
                         </a>
                     </div>
                 @endif
 
-                <div class="dropdown">
-                    <button type="button" class="btn btn-secondary dropdown-toggle btn-md" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-industry fa-fw" aria-hidden="true" style="margin-right:1rem;"></i> Previous Ladders <span class="caret"></span>
+                <div class="dropdown d-flex">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="material-symbols-outlined icon">
+                            military_tech
+                        </span>
                     </button>
-                    <ul class="dropdown-menu secondary">
+                    <ul class="dropdown-menu">
                         @foreach ($ladders_previous as $previous)
                             <li>
-                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}">
-                                    Rankings - {{ $previous->short }}
+                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}" class="dropdown-item">
+                                    {{ $previous->short }}
                                 </a>
                             </li>
                         @endforeach
@@ -112,19 +117,16 @@
                 <form>
                     <div class="form-group" method="GET">
                         <div class="search" style="position:relative;">
-                            <label for="search-input" style="position: absolute;left: 12px;top: 7px;">
-                                <i class="fa fa-search" aria-hidden="true"></i>
-                            </label>
-                            <input class="form-control" name="search" value="{{ $search }}" placeholder="Player username..." style="padding-left:40px;" />
+                            <input class="form-control" name="search" value="{{ $search }}" placeholder="Search by Player..." />
                         </div>
+                        @if ($search)
+                            <small>
+                                Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
+                                <a href="?search=">Clear?</a>
+                            </small>
+                        @endif
                     </div>
                 </form>
-                @if ($search)
-                    <small>
-                        Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
-                        <a href="?search=">Clear?</a>
-                    </small>
-                @endif
             </section>
 
             <section class="mt-5 mb-5">
@@ -270,6 +272,9 @@
             </section>
         </div>
     </section>
+
+    @include('ladders.components.modal-ladder-rules')
+
 @endsection
 
 @if ($history->ends > Carbon\Carbon::now())

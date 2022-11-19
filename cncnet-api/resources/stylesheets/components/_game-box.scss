@@ -103,10 +103,11 @@ $dcColour: #b50000;
 .game-box .details .title,
 .game-box .details .status
 {
-    font-weight: 400;
     margin-bottom: 0;
     line-height: 1.5;
-    font-size: 14px;
+    font-size: 1rem;
+    color: silver;
+    font-weight: normal;
 }
 
 .game-box .details .status
@@ -122,20 +123,18 @@ $dcColour: #b50000;
 
 .game-box .won .points 
 {
-    font-weight: 600;
+    color: $primary;
 }
 
 .game-box .lost .points 
 {
     color: $lostColour;
-    font-weight: 600;
 }
 
 .game-box .vs 
 {
-    margin: 0;
     font-size: 21px;
-    color: #fff;
+    color: #525252;
     font-weight: 600;
     font-style: italic;
 }
@@ -145,6 +144,13 @@ $dcColour: #b50000;
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.game-box .player h5 
+{
+    font-size: 1rem;
+    color: silver;
+    font-weight: normal;
 }
 
 .game-box .player.player-order-0 .player-faction

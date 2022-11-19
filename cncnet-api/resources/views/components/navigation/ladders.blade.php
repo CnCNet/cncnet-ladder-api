@@ -3,7 +3,7 @@
         <span class="material-symbols-outlined icon">
             military_tech
         </span>
-        <span class="ms-2 me-2 text text-uppercase">
+        <span class="ps-2 ms-2 me-2 text text-uppercase">
             Ladders
         </span>
     </a>

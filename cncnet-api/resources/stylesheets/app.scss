@@ -12,11 +12,7 @@
         "components/game-icons";
 
         
-//
-// Pages
-@import "pages/ladder-listing/index",
-        "pages/player-detail/index";
-
+@import "global";
 
 // 
 // Ladder specific
@@ -28,11 +24,16 @@
 @import "components/avatar",
         "components/countries",
         "components/qm-stats",
-        "components/game-box";
+        "components/game-box",
+        "components/factions";
 
 
 //
 // Pages
-@import "pages/ladder-listing/index",
-        "pages/player-detail/index",
-        "pages/ladder-index";
+@import "pages/ladder-listing",
+        "pages/player-detail",
+        "pages/ladder-index",
+        "pages/ladder-account";
+
+
+@import "ladder-global";

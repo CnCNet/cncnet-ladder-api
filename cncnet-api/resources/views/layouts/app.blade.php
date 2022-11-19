@@ -38,7 +38,14 @@
     <script src="/js/lottie.js"></script>
 </head>
 
-<body class='@yield('body-class')'>
+<body class="@yield('body-class') @hasSection('body-feature-image')
+body-feature-image
+@endif">
+
+    @hasSection('body-feature-image')
+        <div class="feature-image" style="background-image:url(@yield('body-feature-image'))"></div>
+    @endif
+
     @include('components.navigation.navbar')
 
     @yield('feature')

@@ -12,6 +12,9 @@
 
     <ul class="dropdown-menu dropdown-menu-end" style="">
         @if ($user)
+            <li>
+                <h4 class=" dropdown-header text-uppercase">Hi {{ $user->name }}</h4>
+            </li>
             @if ($user->canEditAnyLadders())
                 <li>
                     <a href="/admin/" class="dropdown-item">Admin</a>
@@ -23,6 +26,9 @@
             </li>
             <li><a href="/auth/logout" class="dropdown-item">Logout</a></li>
         @else
+            <li>
+                <h4 class=" dropdown-header text-uppercase">Ladder Account</h4>
+            </li>
             <li><a href="/auth/login" class="dropdown-item">Login</a></li>
             <li><a href="/auth/register" class="dropdown-item">Register account</a></li>
         @endif

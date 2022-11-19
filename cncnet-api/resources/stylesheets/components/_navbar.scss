@@ -1,6 +1,18 @@
 .navbar 
 {
     font-family: $font-oswald;
+
+    background: #030304;
+
+    @media(max-width: $lg-width)
+    {
+        padding: 2rem 1rem;
+    }
+
+    @media(min-width: $lg-width)
+    {
+        background: linear-gradient(180deg, #000000d1, transparent);
+    }
 }
 
 .navbar .dropdown-toggle::after
@@ -15,7 +27,8 @@
 
 .navbar .nav-item .nav-link 
 {
-    color: #d3d2d2;
+    color: #fff;
+    text-shadow: 0px 1px #0000005e;
 
     // Dropdown chevron
     &:after
@@ -58,9 +71,15 @@
         justify-content: center;
         width: 50px;
         height: 50px;
-        background: #0e1018;
+        background: #0e101836;
         border-radius: 100%;
     }
+}
+
+// Stops js jumping
+.navbar .nav-item .online 
+{
+    min-width: 40px;
 }
 
 .navbar .dropdown-header 

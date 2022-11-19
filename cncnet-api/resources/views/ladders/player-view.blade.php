@@ -35,6 +35,7 @@
     </div>
 @endsection --}}
 
+
 @section('content')
 
     <div class="player player-view">

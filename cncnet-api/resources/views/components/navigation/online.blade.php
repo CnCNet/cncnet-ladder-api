@@ -3,6 +3,6 @@
         <span class="material-symbols-outlined icon">
             bar_chart
         </span>
-        <span class="online ms-2 me-2 text">...</span> Players Online
+        <span class="online ms-2 me-2 text ps-2">...</span> Players Online
     </a>
 </li>

@@ -51,7 +51,7 @@
   --bs-dark-rgb: 33, 37, 41;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
-  --bs-body-color-rgb: 79, 80, 84;
+  --bs-body-color-rgb: 160, 160, 161;
   --bs-body-bg-rgb: 7, 8, 12;
   --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -60,7 +60,7 @@
   --bs-body-font-size: 1rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
-  --bs-body-color: #4f5054;
+  --bs-body-color: #a0a0a1;
   --bs-body-bg: #07080c;
   --bs-border-width: 1px;
   --bs-border-style: solid;
@@ -2701,7 +2701,7 @@ progress {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #4f5054;
+  color: #a0a0a1;
   background-color: #0c0e14;
   background-clip: padding-box;
   border: 0 solid #ced4da;
@@ -2721,7 +2721,7 @@ progress {
   cursor: pointer;
 }
 .form-control:focus {
-  color: #4f5054;
+  color: #a0a0a1;
   background-color: #0c0e14;
   border-color: #80ffc5;
   outline: 0;
@@ -2742,7 +2742,7 @@ progress {
   padding: 0.7rem 0.75rem;
   margin: -0.7rem -0.75rem;
   margin-inline-end: 0.75rem;
-  color: #4f5054;
+  color: #a0a0a1;
   background-color: #e9ecef;
   pointer-events: none;
   border-color: inherit;
@@ -2767,7 +2767,7 @@ progress {
   padding: 0.7rem 0;
   margin-bottom: 0;
   line-height: 1.5;
-  color: #4f5054;
+  color: #a0a0a1;
   background-color: transparent;
   border: solid transparent;
   border-width: 0 0;
@@ -2844,7 +2844,7 @@ textarea.form-control-lg {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #4f5054;
+  color: #a0a0a1;
   background-color: #0c0e14;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
@@ -2874,7 +2874,7 @@ textarea.form-control-lg {
 }
 .form-select:-moz-focusring {
   color: transparent;
-  text-shadow: 0 0 0 #4f5054;
+  text-shadow: 0 0 0 #a0a0a1;
 }
 
 .form-select-sm {
@@ -3200,7 +3200,7 @@ textarea.form-control-lg {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.5;
-  color: #4f5054;
+  color: #a0a0a1;
   text-align: center;
   white-space: nowrap;
   background-color: #e9ecef;
@@ -3443,7 +3443,7 @@ textarea.form-control-lg {
   --bs-btn-font-size: 1.2rem;
   --bs-btn-font-weight: 400;
   --bs-btn-line-height: 1.5;
-  --bs-btn-color: #4f5054;
+  --bs-btn-color: #a0a0a1;
   --bs-btn-bg: transparent;
   --bs-btn-border-width: 0;
   --bs-btn-border-color: transparent;
@@ -4397,7 +4397,7 @@ textarea.form-control-lg {
 .navbar {
   --bs-navbar-padding-x: 0;
   --bs-navbar-padding-y: 0.5rem;
-  --bs-navbar-color: #4f5054;
+  --bs-navbar-color: #a0a0a1;
   --bs-navbar-hover-color: rgba(0, 0, 0, 0.7);
   --bs-navbar-disabled-color: rgba(0, 0, 0, 0.3);
   --bs-navbar-active-color: rgba(0, 0, 0, 0.9);
@@ -4410,7 +4410,7 @@ textarea.form-control-lg {
   --bs-navbar-toggler-padding-y: 0.25rem;
   --bs-navbar-toggler-padding-x: 0.75rem;
   --bs-navbar-toggler-font-size: 1.25rem;
-  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%234f5054' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23a0a0a1' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
   --bs-navbar-toggler-border-color: rgba(0, 0, 0, 0.1);
   --bs-navbar-toggler-border-radius: 0.375rem;
   --bs-navbar-toggler-focus-width: 0.25rem;
@@ -4807,14 +4807,14 @@ textarea.form-control-lg {
 }
 
 .navbar-dark {
-  --bs-navbar-color: #4f5054;
-  --bs-navbar-hover-color: #74767b;
+  --bs-navbar-color: #a0a0a1;
+  --bs-navbar-hover-color: #c6c6c7;
   --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
   --bs-navbar-active-color: #fff;
   --bs-navbar-brand-color: #fff;
   --bs-navbar-brand-hover-color: #fff;
   --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);
-  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%234f5054' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+  --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23a0a0a1' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
 }
 
 .card {
@@ -5000,7 +5000,7 @@ textarea.form-control-lg {
 }
 
 .accordion {
-  --bs-accordion-color: #4f5054;
+  --bs-accordion-color: #a0a0a1;
   --bs-accordion-bg: #07080c;
   --bs-accordion-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
   --bs-accordion-border-color: var(--bs-border-color);
@@ -5009,9 +5009,9 @@ textarea.form-control-lg {
   --bs-accordion-inner-border-radius: calc(0.375rem - 1px);
   --bs-accordion-btn-padding-x: 1.25rem;
   --bs-accordion-btn-padding-y: 1rem;
-  --bs-accordion-btn-color: #4f5054;
+  --bs-accordion-btn-color: #a0a0a1;
   --bs-accordion-btn-bg: var(--bs-accordion-bg);
-  --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234f5054'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  --bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23a0a0a1'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
   --bs-accordion-btn-icon-width: 1.25rem;
   --bs-accordion-btn-icon-transform: rotate(-180deg);
   --bs-accordion-btn-icon-transition: transform 0.2s ease-in-out;
@@ -5170,7 +5170,7 @@ textarea.form-control-lg {
   --bs-pagination-padding-x: 0.75rem;
   --bs-pagination-padding-y: 0.375rem;
   --bs-pagination-font-size: 1rem;
-  --bs-pagination-color: #4f5054;
+  --bs-pagination-color: #a0a0a1;
   --bs-pagination-bg: #0c0e14;
   --bs-pagination-border-width: 1px;
   --bs-pagination-border-color: transparent;
@@ -5178,7 +5178,7 @@ textarea.form-control-lg {
   --bs-pagination-hover-color: #a4aaba;
   --bs-pagination-hover-bg: transparent;
   --bs-pagination-hover-border-color: transparent;
-  --bs-pagination-focus-color: #4f5054;
+  --bs-pagination-focus-color: #a0a0a1;
   --bs-pagination-focus-bg: #0c0e14;
   --bs-pagination-focus-box-shadow: 0 0 0 0.25rem rgba(0, 255, 138, 0.25);
   --bs-pagination-active-color: #fff;
@@ -5460,7 +5460,7 @@ textarea.form-control-lg {
   --bs-list-group-action-color: #495057;
   --bs-list-group-action-hover-color: #495057;
   --bs-list-group-action-hover-bg: #f8f9fa;
-  --bs-list-group-action-active-color: #4f5054;
+  --bs-list-group-action-active-color: #a0a0a1;
   --bs-list-group-action-active-bg: #e9ecef;
   --bs-list-group-disabled-color: #6c757d;
   --bs-list-group-disabled-bg: #fff;
@@ -5805,14 +5805,14 @@ textarea.form-control-lg {
   width: 1em;
   height: 1em;
   padding: 0.25em 0.25em;
-  color: #4f5054;
-  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%234f5054'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+  color: #a0a0a1;
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23a0a0a1'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
   border: 0;
   border-radius: 0.375rem;
   opacity: 0.5;
 }
 .btn-close:hover {
-  color: #4f5054;
+  color: #a0a0a1;
   text-decoration: none;
   opacity: 0.75;
 }
@@ -5903,7 +5903,7 @@ textarea.form-control-lg {
   --bs-modal-width: 500px;
   --bs-modal-padding: 1rem;
   --bs-modal-margin: 0.5rem;
-  --bs-modal-color: #4f5054;
+  --bs-modal-color: #a0a0a1;
   --bs-modal-bg: #0c0e14;
   --bs-modal-border-color: transparent;
   --bs-modal-border-width: 1px;
@@ -6197,7 +6197,7 @@ textarea.form-control-lg {
   --bs-tooltip-padding-y: 0.25rem;
   --bs-tooltip-margin: ;
   --bs-tooltip-font-size: 1rem;
-  --bs-tooltip-color: #4f5054;
+  --bs-tooltip-color: #a0a0a1;
   --bs-tooltip-bg: #0c0e14;
   --bs-tooltip-border-radius: 0.375rem;
   --bs-tooltip-opacity: 1;
@@ -6310,7 +6310,7 @@ textarea.form-control-lg {
   --bs-popover-header-bg: #f0f0f0;
   --bs-popover-body-padding-x: 1rem;
   --bs-popover-body-padding-y: 1rem;
-  --bs-popover-body-color: #4f5054;
+  --bs-popover-body-color: #a0a0a1;
   --bs-popover-arrow-width: 1rem;
   --bs-popover-arrow-height: 0.5rem;
   --bs-popover-arrow-border: var(--bs-popover-border-color);
@@ -6723,7 +6723,7 @@ textarea.form-control-lg {
   --bs-offcanvas-height: 30vh;
   --bs-offcanvas-padding-x: 1rem;
   --bs-offcanvas-padding-y: 1rem;
-  --bs-offcanvas-color: #4f5054;
+  --bs-offcanvas-color: #a0a0a1;
   --bs-offcanvas-bg: #0c0e14;
   --bs-offcanvas-border-width: 1px;
   --bs-offcanvas-border-color: transparent;
@@ -19246,7 +19246,7 @@ a {
 }
 
 .dropdown-toggle::after {
-  color: #4f5054;
+  color: #a0a0a1;
 }
 
 .dropdown-divider {
@@ -19286,6 +19286,17 @@ a {
 
 .navbar {
   font-family: "Oswald", sans-serif;
+  background: #030304;
+}
+@media (max-width: 992px) {
+  .navbar {
+    padding: 2rem 1rem;
+  }
+}
+@media (min-width: 992px) {
+  .navbar {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8196078431), transparent);
+  }
 }
 
 .navbar .dropdown-toggle::after {
@@ -19297,7 +19308,8 @@ a {
 }
 
 .navbar .nav-item .nav-link {
-  color: #d3d2d2;
+  color: #fff;
+  text-shadow: 0px 1px rgba(0, 0, 0, 0.368627451);
 }
 .navbar .nav-item .nav-link:after {
   color: #ececec;
@@ -19326,10 +19338,14 @@ a {
     justify-content: center;
     width: 50px;
     height: 50px;
-    background: #0e1018;
+    background: rgba(14, 16, 24, 0.2117647059);
     border-radius: 100%;
   }
 }
+.navbar .nav-item .online {
+  min-width: 40px;
+}
+
 .navbar .dropdown-header {
   font-family: "Oswald", sans-serif;
   color: #cbcbcb;
@@ -19397,444 +19413,26 @@ a {
   background-position: -275px;
 }
 
-.ladder-listing .player-profile {
-  position: relative;
-  transition: ease 250ms;
-}
-
-.ladder-listing .player-profile .player-stat {
-  position: relative;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.ladder-listing .player-profile .most-used-country {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 60px;
-  height: 60px;
-  background-size: 100%;
-  background-repeat: no-repeat;
-  border-radius: 100%;
-}
-.ladder-listing .player-profile .most-used-country:before {
-  content: "";
-  width: 80%;
-  height: 80%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.ladder-listing .player-profile .player-rank {
-  display: flex;
-  text-align: center;
-  align-items: center;
-  justify-content: center;
-}
-@media (min-width: 992px) {
-  .ladder-listing .player-profile .player-rank {
-    width: 60px;
-  }
-}
-
-.ladder-listing .player-profile .player-avatar {
-  display: flex;
-  align-items: center;
-}
-.ladder-listing .player-profile .player-avatar.avatar-container {
-  max-width: 100%;
-  max-height: 100%;
-}
-@media (max-width: 768px) {
-  .ladder-listing .player-profile .player-avatar {
-    position: absolute;
-    top: 0;
-    right: 0;
-  }
-}
-
-.ladder-listing .player-profile-info {
-  position: relative;
-  font-size: 1rem;
-}
-@media (max-width: 768px) {
-  .ladder-listing .player-profile-info {
-    padding-top: 1rem;
-  }
-}
-
-.ladder-listing .player-profile-info .player-social {
-  display: none;
-}
-.ladder-listing .player-profile-info .player-social a {
-  display: inline-block;
-  padding: 5px 10px;
-}
-@media (min-width: 992px) {
-  .ladder-listing .player-profile-info .player-social {
-    display: flex;
-    width: 150px;
-  }
-}
-
-.ladder-listing .player-profile-info .player-stat {
-  position: relative;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-.ladder-listing .player-profile-info .player-stat span {
-  display: block;
-  height: 10px;
-  width: 100%;
-  color: #333746;
-  text-transform: uppercase;
-  font-size: 0.8rem;
-}
-
-@media (min-width: 992px) {
-  .player-profile .player-faction {
-    width: 50px;
-  }
-  .ladder-listing .player-profile .player-country {
-    padding-right: 0;
-    padding-left: 0;
-  }
-  .ladder-listing .player-profile .player-username {
-    width: 200px;
-    word-break: break-word;
-  }
-  .ladder-listing .player-profile-info .player-points {
-    width: 100px;
-  }
-  .ladder-listing .player-profile-info .player-wins {
-    width: 85px;
-  }
-  .ladder-listing .player-profile-info .player-losses {
-    width: 85px;
-  }
-  .ladder-listing .player-profile-info .player-games {
-    width: 100px;
-  }
-}
-.ladder-listing {
-  background: #07080c;
-}
-
-.ladder-listing .player-row {
-  background: #13161f;
-  color: #b5c9e0;
-}
-.ladder-listing .player-row a {
-  color: #fff;
-  transition: all ease 350ms;
-}
-.ladder-listing .player-row a:hover {
-  color: #fff;
-}
-@media (min-width: 992px) {
-  .ladder-listing .player-row a {
-    color: #b5c9e0;
-  }
-}
-
-@media (max-width: 992px) {
-  .ladder-listing .player-row .player-rank {
-    color: #fff;
-  }
-}
-.ladder-listing .player-row-header {
-  color: #fdfdfd;
-  font-size: 1rem;
-}
-@media (max-width: 1200px) {
-  .ladder-listing .player-row-header {
-    display: none;
-  }
-}
-
-.ladder-listing .player-row:nth-child(2n+3) {
-  background: #1f2331;
-}
-
-.ladder-listing .qm-stats .stat {
-  background: #0b0d14;
-  border: 1px solid #0b0d14;
-}
-
-.ladder-listing .player-row .avatar {
-  background-color: #1f2331;
-}
-
-.ladder-listing .player-row .player-profile-info .player-stat span {
-  color: #333746;
-}
-
-.ladder-listing .player-row.rank-1 {
-  background: rgba(0, 255, 138, 0.4);
-  border: 1px solid rgba(0, 255, 138, 0.6196078431);
-}
-.ladder-listing .player-row.rank-1 * {
-  color: #fff;
-}
-.ladder-listing .player-row.rank-1 .player-stat span {
-  color: #fff;
-}
-
-.ladder-listing .ladder-info {
-  display: flex;
-  flex-wrap: wrap;
-}
-.ladder-listing .ladder-info div {
-  margin-right: 1rem;
-}
-
-.ladder-listing .ladder-player-listing {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-}
-
-.ladder-listing .ladder-player-listing .player-row {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  border-radius: 4px;
-  font-weight: 600;
-  font-size: 18px;
-  padding-bottom: 20px;
-  padding-top: 20px;
-  margin-bottom: 1rem;
-}
-@media (min-width: 992px) {
-  .ladder-listing .ladder-player-listing .player-row {
-    margin-bottom: auto;
-    padding-bottom: 5px;
-    padding-top: 5px;
-    flex-direction: row;
-  }
-}
-
-.ladder-listing .ladder-player-listing .player-row .player-link {
-  display: none;
-  align-items: center;
-  justify-content: center;
+body.body-feature-image .feature-image {
   position: absolute;
   top: 0;
-  bottom: 0;
+  left: 0;
   right: 0;
-  width: 50px;
-  height: 100%;
-  transition: ease 250ms;
-}
-.ladder-listing .ladder-player-listing .player-row .player-link:hover {
-  color: #fff;
-}
-@media (min-width: 1200px) {
-  .ladder-listing .ladder-player-listing .player-row .player-link {
-    display: flex;
-  }
-}
-
-.ladder-player-listing .player-profile,
-.ladder-player-listing .player-profile-info {
-  display: flex;
-  align-items: center;
   width: 100%;
+  height: 600px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  z-index: -1;
+  background-attachment: fixed;
 }
 
-@media (min-width: 992px) {
-  .ladder-player-listing .player-profile-info {
-    justify-content: flex-end;
-    margin-right: 50px;
-  }
-}
-.player-row-header {
-  display: flex;
-  justify-content: space-around;
-  text-transform: uppercase;
-  font-weight: 600;
-  padding: 1rem;
-  font-size: 1.5rem;
+main {
+  background: #08090e;
+  position: relative;
 }
 
-.player-row-header .player-avatar {
-  width: 150px;
-}
-
-.player-row-header .player-rank {
-  width: 80px;
-}
-
-.player-row-header .player-username {
-  width: 200px;
-}
-
-.player-row-header .player-games {
-  width: 80px;
-}
-@media (min-width: 1200px) {
-  .player-row-header .player-games {
-    margin-right: 50px;
-  }
-}
-
-.player-row-header .player-wins {
-  width: 85px;
-}
-
-.player-row-header .player-losses {
-  width: 85px;
-}
-
-.player-row-header .player-points {
-  width: 100px;
-}
-
-.player-row-header .player-social {
-  width: 150px;
-  margin-left: auto;
-  margin-right: 1rem;
-}
-
-.player-row-header .filter-link {
-  color: #fff;
-}
-
-body.body-player-detail .feature-component {
-  padding-top: 15rem;
-  padding-bottom: 15rem;
-}
-
-.player-detail {
-  width: 90%;
-  background: #0a0b10;
-  padding: 2rem;
-  margin: auto;
-}
-
-.player-detail .player-header {
-  display: flex;
-  flex-direction: column;
-}
-
-.player-detail .player-stats {
-  display: flex;
-  flex-direction: column;
-}
-@media (min-width: 1200px) {
-  .player-detail .player-stats {
-    flex-direction: row;
-  }
-}
-
-.player-detail .player-stats-drilldown {
-  width: 300px;
-  max-width: 100%;
-}
-
-.player-detail .stats-wrap {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.player-detail .stats-wrap .stat-item {
-  width: 100%;
-}
-@media (min-width: 567px) {
-  .player-detail .stats-wrap .stat-item {
-    width: 50%;
-  }
-}
-.player-detail .stats-wrap .stat-item .name {
-  padding-right: 0.5rem;
-}
-
-.player-detail .faction-name {
-  display: flex;
-}
-
-.player-detail .player-overall-stats {
-  display: flex;
-  flex-grow: 1;
-  flex-direction: column;
-}
-@media (min-width: 768px) {
-  .player-detail .player-overall-stats {
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: flex-start;
-  }
-}
-@media (min-width: 1200px) {
-  .player-detail .player-overall-stats {
-    flex-wrap: nowrap;
-    justify-content: space-around;
-    flex-direction: row;
-  }
-}
-
-.player-detail .player-achievements {
-  display: flex;
-}
-
-.player-detail .player-profile {
-  display: flex;
-  flex-direction: column;
-}
-
-.player-detail .player-avatar {
-  background: #13161e;
-  border-radius: 100%;
-  margin-right: auto;
-}
-
-.player-detail .player-social a {
-  padding: 1rem;
-}
-.player-detail .player-social a:hover {
-  color: #00ff8a;
-}
-
-.player-detail .player-factions-table th {
-  border: 0;
-  padding-left: 0;
-  font-weight: normal;
-}
-.player-detail .player-factions-table td {
-  border: 0;
-  font-weight: normal;
-}
-
-.player-detail .stat-column {
-  padding-bottom: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid #292929;
-  border-bottom: 1px solid #292929;
-}
-@media (min-width: 768px) {
-  .player-detail .stat-column {
-    padding: 2rem;
-    border-top: none;
-    border-bottom: none;
-  }
-}
-@media (min-width: 1200px) {
-  .player-detail .stat-column {
-    margin-left: 1rem;
-    margin-right: 1rem;
-  }
-}
-
-.player-detail .stat-column .stat-title {
-  margin-bottom: 2rem;
-}
-
-.player-detail canvas#gamesPlayed {
-  max-width: 100%;
+.highlight {
+  color: #53ff85;
 }
 
 .avatar {
@@ -20162,10 +19760,11 @@ body.body-player-detail .feature-component {
 
 .game-box .details .title,
 .game-box .details .status {
-  font-weight: 400;
   margin-bottom: 0;
   line-height: 1.5;
-  font-size: 14px;
+  font-size: 1rem;
+  color: silver;
+  font-weight: normal;
 }
 
 .game-box .details .status {
@@ -20178,18 +19777,16 @@ body.body-player-detail .feature-component {
 }
 
 .game-box .won .points {
-  font-weight: 600;
+  color: #00ff8a;
 }
 
 .game-box .lost .points {
   color: #03bcd4;
-  font-weight: 600;
 }
 
 .game-box .vs {
-  margin: 0;
   font-size: 21px;
-  color: #fff;
+  color: #525252;
   font-weight: 600;
   font-style: italic;
 }
@@ -20200,6 +19797,12 @@ body.body-player-detail .feature-component {
   align-items: center;
 }
 
+.game-box .player h5, .game-box .player .h5 {
+  font-size: 1rem;
+  color: silver;
+  font-weight: normal;
+}
+
 .game-box .player.player-order-0 .player-faction {
   margin-right: auto;
 }
@@ -20207,6 +19810,103 @@ body.body-player-detail .feature-component {
 .game-box .player.player-order-1 .player-faction {
   margin-left: auto;
   order: 1;
+}
+
+.player-faction {
+  display: flex;
+  width: 60px;
+  height: 25px;
+  position: relative;
+}
+.player-faction:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: no-repeat;
+}
+
+.player-faction-kr::before,
+.player-faction-korea::before {
+  background-image: url(../images/game-icons/korea.png);
+}
+
+.player-faction-um:before,
+.player-faction-america:before {
+  background-image: url(../images/game-icons/america.png);
+}
+
+.player-faction-cu:before,
+.player-faction-cuba:before {
+  background-image: url(../images/game-icons/cuba.png);
+}
+
+.player-faction-iq:before,
+.player-faction-iraq:before {
+  background-image: url(../images/game-icons/iraq.png);
+}
+
+.player-faction-fr:before,
+.player-faction-france:before {
+  background-image: url(../images/game-icons/france.png);
+}
+
+.player-faction-yuri:before {
+  background-image: url(../images/game-icons/yuri.png);
+}
+
+.player-faction-de:before,
+.player-faction-germany:before {
+  background-image: url(../images/game-icons/germany.png);
+}
+
+.player-faction-gb:before,
+.player-faction-great-britain:before,
+.player-faction-great:before {
+  background-image: url(../images/game-icons/great_britain.png);
+}
+
+.player-faction-ly:before,
+.player-faction-libya:before {
+  background-image: url(../images/game-icons/libya.png);
+}
+
+.player-faction-ru:before,
+.player-faction-russia:before {
+  background-image: url(../images/game-icons/russia.png);
+}
+
+.ra .player-faction-spain:before,
+.ra .player-faction-england:before,
+.ra .player-faction-germany:before,
+.ra .player-faction-america:before,
+.ra .player-faction-greece:before {
+  background-image: url(../images/hud/ra_allies.png);
+  background-size: contain;
+  background-position: center;
+}
+
+.ra .player-faction-russia:before,
+.ra .player-faction-uss:before,
+.ra .player-faction-ita:before,
+.ra .player-faction-ukraine:before {
+  background-image: url(../images/hud/ra_soviet.png);
+  background-size: contain;
+  background-position: center;
+}
+
+.player-faction-gdi:before {
+  background-image: url(../images/hud/ts_gdi.png);
+  background-size: contain;
+  background-position: center;
+}
+
+.player-faction-nod:before {
+  background-image: url(../images/hud/ts_nod.png);
+  background-size: contain;
+  background-position: center;
 }
 
 .ladder-listing .player-profile {
@@ -20330,10 +20030,6 @@ body.body-player-detail .feature-component {
     width: 100px;
   }
 }
-.ladder-listing {
-  background: #07080c;
-}
-
 .ladder-listing .player-row {
   background: #13161f;
   color: #b5c9e0;
@@ -20516,19 +20212,36 @@ body.body-player-detail .feature-component {
   color: #fff;
 }
 
-body.body-player-detail .feature-component {
-  padding-top: 15rem;
-  padding-bottom: 15rem;
+body.body-player-detail {
+  background-color: #030304;
+}
+
+body.body-player-detail main {
+  background: transparent;
+  position: relative;
+}
+@media (min-width: 992px) {
+  body.body-player-detail main {
+    margin-top: 350px;
+  }
 }
 
 .player-detail {
-  width: 90%;
-  background: #0a0b10;
   padding: 2rem;
+  color: #b7b7b7;
   margin: auto;
+  width: 90%;
+  background: #030304;
+}
+@media (min-width: 992px) {
+  .player-detail {
+    margin-top: -50px;
+    padding-top: 50px;
+  }
 }
 
 .player-detail .player-header {
+  position: relative;
   display: flex;
   flex-direction: column;
 }
@@ -20589,6 +20302,11 @@ body.body-player-detail .feature-component {
   }
 }
 
+@media (min-width: 768px) {
+  .player-overall-stats .column {
+    width: 33%;
+  }
+}
 .player-detail .player-achievements {
   display: flex;
 }
@@ -20596,16 +20314,32 @@ body.body-player-detail .feature-component {
 .player-detail .player-profile {
   display: flex;
   flex-direction: column;
+  margin-bottom: 2rem;
+}
+@media (min-width: 992px) {
+  .player-detail .player-profile {
+    flex-direction: row;
+  }
+}
+
+.player-detail .player-profile .username {
+  color: #fff;
 }
 
 .player-detail .player-avatar {
   background: #13161e;
   border-radius: 100%;
-  margin-right: auto;
+  width: 150px;
+}
+.player-detail .player-avatar .icon {
+  font-size: 3.5rem;
+  color: #222630;
 }
 
 .player-detail .player-social a {
-  padding: 1rem;
+  padding: 0.5rem;
+  color: #767676;
+  font-size: 1.1rem;
 }
 .player-detail .player-social a:hover {
   color: #00ff8a;
@@ -20615,10 +20349,12 @@ body.body-player-detail .feature-component {
   border: 0;
   padding-left: 0;
   font-weight: normal;
+  color: #b7b7b7;
 }
 .player-detail .player-factions-table td {
   border: 0;
   font-weight: normal;
+  color: #b7b7b7;
 }
 
 .player-detail .stat-column {
@@ -20641,15 +20377,254 @@ body.body-player-detail .feature-component {
   }
 }
 
-.player-detail .stat-column .stat-title {
-  margin-bottom: 2rem;
+.player-detail .stat-title {
+  margin-bottom: 1rem;
+  color: #efefef;
 }
 
 .player-detail canvas#gamesPlayed {
   max-width: 100%;
 }
 
-.ladder-index .ladder-link {
+.player-detail .map-stats {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+.player-detail .map-row-container {
+  display: flex;
+  flex-direction: column;
+  background: #0a0a0a;
+  border-radius: 4px;
+  padding: 15px;
+  margin: 5px;
+}
+
+.player-detail .map-row-container .map-row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.player-detail .map-stats .map-preview {
+  width: 100px;
+  height: 70px;
+  margin: 0 15px 0 0;
+  background-size: 100%;
+  background-repeat: no-repeat;
+}
+
+.player-detail .count.won {
+  color: #00ff8a;
+  font-weight: bold;
+}
+
+.player-detail .count.lost {
+  color: #0f64ff;
+  font-weight: bold;
+}
+
+.player-detail .count {
+  color: grey;
+}
+
+.ladder-account .account-player-listings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .ladder-account .account-player-listings {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+}
+.ladder-account .player-listing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 5px 15px;
+  border: 2px solid #101010;
+  border-radius: 10px;
+}
+.ladder-account .player-listing i {
+  padding: 5px 0;
+}
+.ladder-account .player-listing.active, .ladder-account .player-listing.new:hover {
+  border: 2px solid rgb(83, 255, 133);
+}
+.ladder-account .player-listing .card .form-control {
+  width: 65%;
+  font-size: 12px;
+  color: silver;
+}
+.ladder-account .player-listing .card .btn-submit {
+  background: #000;
+  color: silver;
+}
+.ladder-account .player-listing .username {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  height: 100px;
+}
+.ladder-account .player-listing .card {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+.ladder-account .player-listing .username-status > p,
+.ladder-account .player-listing .card > p {
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  color: #5d5d5d;
+  font-weight: 600;
+}
+.ladder-account .player-listing .username-status {
+  width: 100%;
+}
+.ladder-account .player-listing form#usernameStatus {
+  margin-top: 15px;
+}
+.ladder-account .clan-box {
+  display: flex;
+  flex-direction: column;
+  background: #080808;
+  padding: 15px 25px;
+  border-radius: 5px;
+  border: 1px solid #0e0e0e;
+}
+.ladder-account .clan-box label {
+  color: #0068d2;
+}
+.ladder-account .clan-box h2, .ladder-account .clan-box .h2 {
+  text-transform: uppercase;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+.ladder-account .clan-box p,
+.ladder-account .clan-box ul {
+  font-size: 15px;
+}
+.ladder-account .clan-listings {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .ladder-account .clan-listings {
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+}
+.ladder-account .clan-listing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  width: 50%;
+  background: #131313;
+  margin: 5px;
+  padding: 5px 15px;
+  border: 2px solid #101010;
+  border-radius: 10px;
+}
+.ladder-account .clan-listing {
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .ladder-account .clan-listing {
+    width: 45%;
+  }
+}
+.ladder-account .clan-listing i {
+  padding: 5px 0;
+}
+.ladder-account .clan-listing.active, .ladder-account .clan-listing.new:hover {
+  border: 2px solid rgb(83, 255, 133);
+}
+.ladder-account .clan-listing .card .form-control {
+  width: 65%;
+  font-size: 12px;
+  color: silver;
+}
+.ladder-account .clan-listing .card .btn-submit {
+  background: #000;
+  color: silver;
+}
+.ladder-account .clan-listing .username {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  height: 40px;
+}
+.ladder-account .clan-listing .new-clan {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  height: 213px;
+}
+.ladder-account .clan-listing .btn-activate {
+  font-size: 13px;
+  font-weight: 600;
+  background: #0068d2;
+  color: #fff;
+  border: 0;
+}
+.ladder-account .clan-listing .card {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+.ladder-account .clan-listing .card > p {
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  color: #5d5d5d;
+  font-weight: 600;
+}
+.ladder-account .clan-listing .clan-status > p,
+.ladder-account .clan-listing .card > p {
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  color: #5d5d5d;
+  font-weight: 600;
+}
+.ladder-account .clan-listing .clan-status {
+  width: 100%;
+}
+.ladder-account .clan-username button.reject {
+  background-color: black;
+  border-color: black;
+}
+.ladder-link {
   display: flex;
   width: 100%;
   height: 300px;
@@ -20657,7 +20632,7 @@ body.body-player-detail .feature-component {
   padding-bottom: 1rem;
 }
 
-.ladder-index .ladder-cover {
+.ladder-cover {
   display: flex;
   flex-direction: column;
   align-items: center;

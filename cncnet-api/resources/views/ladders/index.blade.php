@@ -1,14 +1,10 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
 
-@section('cover')
-    /images/feature/feature-index.jpg
-@endsection
+@section('body-feature-image', '/images/feature/feature-index.jpg')
 
 @section('feature')
-    @php $featureImage = "/images/feature/feature-index.jpg"; @endphp
-
-    <div class="feature pt-5 pb-5" style="background: url({{ $featureImage }})">
+    <div class="feature pt-5 pb-5">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
@@ -16,13 +12,14 @@
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Rankings</span>
                     </h1>
-                    <p class="lead text-uppercase">
-                        <small>Battle in <strong>1vs1</strong> ranked matches in our monthly ladders</small>
+
+                    <p class="lead">
+                        Compete with players from all over the world in our <strong>1vs1</strong> ranked matches
                     </p>
 
                     @if (!\Auth::user())
                         <div class="mt-4">
-                            <a type="submit" class="btn btn-primary px-4 me-sm-3" href="/auth/register">Signup</a>
+                            <a type="submit" class="btn btn-primary px-4 me-sm-3" href="/auth/register">Register</a>
                             <a type="submit" class="btn btn-outline" href="/auth/login">Login</a>
                         </div>
                     @endif
@@ -43,7 +40,7 @@
                                 <div class="ladder-cover cover-{{ $history->ladder->abbreviation }} text-center"
                                     style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover.png' }}')">
                                     <h1>{{ $history->ladder->name }}</h1>
-                                    <p>
+                                    <p class="m-0">
                                         <strong>1vs1 Ranked Match</strong><br />
                                         {{ Carbon\Carbon::parse($history->starts)->format('F Y') }}
                                     </p>
