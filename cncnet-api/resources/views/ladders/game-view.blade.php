@@ -139,7 +139,7 @@
 
                                     @if ($k == 0)
                                         @if ($userIsMod && $thisGameReport->id != $gameReport->id)
-                                            <a class="btn btn-sm btn-primary"
+                                            <a class="btn btn-md btn-primary"
                                                 href="{{ action('LadderController@getLadderGame', ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
                                         @elseif ($userIsMod && $thisGameReport->id == $gameReport->id && !$thisGameReport->best_report)
                                             <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">
@@ -348,25 +348,25 @@
                                         <h5>{{ $thisGameReport->pings_received }}/{{ $thisGameReport->pings_sent }}</h5>
                                     </div>
                                     <div class="col-md-2  admin-data">
-                                        <h5>
+                                        <p>
                                             @if ($thisGameReport->oos)
                                                 Yes
                                             @else
                                                 No
                                             @endif
-                                        </h5>
+                                        </p>
                                     </div>
                                     <div class="col-md-2  admin-data">
-                                        <h5>
+                                        <p>
                                             @if ($thisGameReport->finished)
                                                 Yes
                                             @else
                                                 No
                                             @endif
-                                        </h5>
+                                        </p>
                                     </div>
                                     <div class="col-md-2 admin-data">
-                                        <h5><a href="/dmp/{{ $game->id }}.{{ $history->ladder->id }}.{{ $thisGameReport->player_id }}.dmp">dmp</a></h5>
+                                        <p><a href="/dmp/{{ $game->id }}.{{ $history->ladder->id }}.{{ $thisGameReport->player_id }}.dmp">dmp</a></p>
                                     </div>
                                 </div>
                             @endforeach
@@ -384,24 +384,24 @@
 
                                             @foreach ($qmConnectionStats as $qmStat)
                                                 @if ($pgr->player_id == $qmStat->player_id)
-                                                    <h5>{{ $qmStat->ipAddress->address }}:{{ $qmStat->port }} <strong>{{ $qmStat->rtt }}ms</strong></h5>
+                                                    <p>{{ $qmStat->ipAddress->address }}:{{ $qmStat->port }} <strong>{{ $qmStat->rtt }}ms</strong></p>
                                                 @endif
                                             @endforeach
                                             <hr>
                                             @foreach ($qmMatchStates as $qmState)
                                                 @if ($qmState->player_id == $pgr->player_id)
-                                                    <h5>{{ $qmState->created_at }} <strong>{{ $qmState->state->name }}</strong></h5>
+                                                    <p>{{ $qmState->created_at }} <strong>{{ $qmState->state->name }}</strong></p>
                                                 @endif
                                             @endforeach
                                             <hr>
                                             @foreach ($qmMatchPlayers as $qmp)
                                                 @if ($qmp->player_id == $pgr->player_id)
-                                                    <h5>Version: {{ $qmp->version->value }} {{ $qmp->platform->value }}</h5>
-                                                    <h5>Queue Time: {{ $game->qmMatch->created_at->diff($qmp->created_at)->format('%i') }} Minutes</h5>
-                                                    <h5 style="overflow-wrap: break-word;">DDraw Hash: @if ($qmp->ddraw)
+                                                    <p>Version: {{ $qmp->version->value }} {{ $qmp->platform->value }}</p>
+                                                    <p>Queue Time: {{ $game->qmMatch->created_at->diff($qmp->created_at)->format('%i') }} Minutes</p>
+                                                    <p style="overflow-wrap: break-word;">DDraw Hash: @if ($qmp->ddraw)
                                                             {{ $qmp->ddraw->value }}
                                                         @endif
-                                                    </h5>
+                                                    </p>
                                                 @endif
                                             @endforeach
                                     </div>
