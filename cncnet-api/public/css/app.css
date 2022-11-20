@@ -72,8 +72,8 @@
   --bs-border-radius-xl: 1rem;
   --bs-border-radius-2xl: 2rem;
   --bs-border-radius-pill: 50rem;
-  --bs-link-color: #00ff8a;
-  --bs-link-hover-color: #00cc6e;
+  --bs-link-color: #838383;
+  --bs-link-hover-color: #fff;
   --bs-code-color: #d63384;
   --bs-highlight-bg: #fff3cd;
 }
@@ -19426,6 +19426,10 @@ body.body-feature-image .feature-image {
   background-attachment: fixed;
 }
 
+a {
+  transition: 250ms ease all;
+}
+
 main {
   background: #08090e;
   position: relative;
@@ -19433,6 +19437,44 @@ main {
 
 .highlight {
   color: #53ff85;
+}
+
+footer {
+  font-family: "Oswald", sans-serif;
+  background: #0a0c10;
+  padding: 4rem 0;
+  margin-top: 2rem;
+}
+
+footer a {
+  color: #838383;
+}
+footer a:hover {
+  color: #fff;
+}
+
+footer .social {
+  display: flex;
+  flex-wrap: wrap;
+}
+footer .social a {
+  padding: 0.5rem;
+  font-size: 1.2rem;
+}
+
+footer .sponsor .sponsor-copy {
+  color: #565656;
+  font-size: 0.9rem;
+  padding: 0.2rem 0;
+  font-style: italic;
+}
+
+footer .sponsor img {
+  transition: 250ms ease all;
+  opacity: 0.5;
+}
+footer .sponsor img:hover {
+  opacity: 1;
 }
 
 .avatar {

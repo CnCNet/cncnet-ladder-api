@@ -25,12 +25,9 @@
     <meta name="theme-color" content="#ffffff">
     <meta name="color-scheme" content="dark">
     <title>@yield('title') - CnCNet</title>
-
     @yield('meta')
     @yield('css')
     @yield('head')
-
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
@@ -54,15 +51,16 @@ body-feature-image
         @yield('content')
     </main>
 
+    @include('components.footer')
     @yield('footer')
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
     </script>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="/js/cncnet-online.js"></script>
     <script>
         let tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
         let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
     </script>
-    <script src="/js/cncnet-online.js"></script>
 </body>
 
 </html>
