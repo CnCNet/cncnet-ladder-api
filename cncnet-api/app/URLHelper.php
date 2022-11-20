@@ -42,4 +42,22 @@ class URLHelper
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-1.mp4";
         }
     }
+
+    public static function getVideoPosterUrlByAbbrev($abbrev)
+    {
+        switch ($abbrev)
+        {
+            case "yr":
+            case "ra2":
+            case "blitz":
+                return "/images/posters/red-alert-2.jpg";
+                break;
+
+            case "ts":
+                return "/images/posters/tiberian-sun.jpg";
+
+            case "ra":
+                return "/images/posters/red-alert-1.jpg";
+        }
+    }
 }

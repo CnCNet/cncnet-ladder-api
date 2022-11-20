@@ -48,7 +48,7 @@ body-feature-image
 
     @hasSection('feature-video')
         <div class="page-video-feature">
-            <div class="video">
+            <div class="video" style="background-image:url( @yield('feature-video-poster') )">
                 <video autoplay="true" loop="" muted="" preload="none" src="@yield('feature-video')">
                 </video>
             </div>
