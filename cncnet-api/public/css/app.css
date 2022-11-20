@@ -19287,6 +19287,7 @@ a {
 .navbar .nav-item .nav-link {
   color: #fff;
   text-shadow: 0px 1px rgba(0, 0, 0, 0.368627451);
+  font-weight: 500;
 }
 .navbar .nav-item .nav-link:after {
   color: #ececec;
@@ -23636,6 +23637,12 @@ body.body-player-detail .page-image-feature {
   background-color: black;
   border-color: black;
 }
+.ladder-admin .player-box.player-card {
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .game-detail {
   /* Game Detail */
   /* Extra small devices (phones, less than 768px) */
@@ -23972,4 +23979,8 @@ body.body-player-detail .page-image-feature {
   background-repeat: no-repeat;
   background-position: 80%;
   background-size: cover;
+}
+
+.hidden {
+  display: none;
 }

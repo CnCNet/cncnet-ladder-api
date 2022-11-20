@@ -43,7 +43,7 @@
 @endsection
 
 @section('content')
-    <section>
+    <section class="mt-4 pt-4">
         <div class="container">
 
             <div class="row">

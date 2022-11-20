@@ -22,18 +22,15 @@
     <section class="pt-4">
         <div class="container">
             <div>
-
                 <div class="row">
                     <div class="col-md-4">
-                        <a href="/admin/users" class="profile-link">
-                            <div class="player-box player-card">
-                                <h3>Users</h3>
-                                <p>Manage everything to do with Users</p>
-                                <ul class="list-unstyled">
-                                    <li><a href="/admin/users" class="btn btn-md btn-secondary">User List</a></li>
-                                </ul>
-                            </div>
-                        </a>
+                        <div class="player-box player-card">
+                            <h3>Users</h3>
+                            <p>Manage everything to do with Users</p>
+                            <ul class="list-unstyled">
+                                <li><a href="/admin/users" class="btn btn-md btn-secondary">User List</a></li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="col-md-4">
@@ -42,9 +39,11 @@
                                 <h3>Games</h3>
                                 <p>Manage maps, rules, and all things related to the ladder</p>
 
-                                <ul class="list-unstyled">
+                                <ul class="list-styled">
                                     @foreach ($all_ladders as $ladder)
-                                        <li><a href="/admin/setup/{{ $ladder->id }}/edit">{{ $ladder->name }}</a></li>
+                                        <li>
+                                            <a href="/admin/setup/{{ $ladder->id }}/edit">{{ $ladder->name }}</a>
+                                        </li>
                                     @endforeach
                                 </ul>
                                 @if ($user->isGod())
@@ -59,7 +58,7 @@
                                 <h3>Game Schemas</h3>
                                 <p>Manage Object Lists And Sides for games</p>
 
-                                <ul class="list-unstyled">
+                                <ul class="list-styled">
                                     @foreach ($schemas as $schema)
                                         <li><a href="/admin/schema/{{ $schema->id }}">{{ $schema->name }}</a></li>
                                     @endforeach
@@ -75,7 +74,7 @@
 
                                 <label for="ladders_label">Ladder</label>
 
-                                <select name="ladder_dropdown" id="ladder_dropdown" class="form-control">
+                                <select name="ladder_dropdown" id="ladder_dropdown" class="form-control border">
                                     @foreach ($ladders as $ladder)
                                         <option value="{{ $ladder->abbreviation }}"> {{ $ladder->abbreviation }} </option>
                                     @endforeach
