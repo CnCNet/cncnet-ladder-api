@@ -20024,15 +20024,15 @@ footer .sponsor img:hover {
   background: rgb(0, 0, 0);
   color: #b7b7b7;
   font-weight: bold;
-  font-size: 11px;
+  font-size: 1rem;
   text-shadow: 0px 1px black;
   text-align: center;
   line-height: normal;
   display: block;
   position: absolute;
   width: 100%;
-  bottom: -15px;
-  height: 15px;
+  bottom: -20px;
+  height: 20px;
 }
 
 .yr-cameo {
@@ -23245,6 +23245,10 @@ body.body-player-detail .page-image-feature {
   }
 }
 
+.player-detail .avatar-container {
+  border-bottom: 1px solid rgba(192, 192, 192, 0.3490196078);
+}
+
 .player-detail .player-header {
   position: relative;
   display: flex;
@@ -23652,6 +23656,9 @@ body.body-player-detail .page-image-feature {
   background: url(../images/textures/dark-pattern.jpg);
   margin: 0 auto;
 }
+.game-detail .feature-map img {
+  max-width: 100%;
+}
 .game-detail .game .rank {
   font-size: 70px;
   font-weight: 600;
@@ -23722,6 +23729,8 @@ body.body-player-detail .page-image-feature {
 }
 .game-detail .stats-box {
   min-height: 63px;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 .game-detail .profile-listing .rank, .game-detail .profile-detail .rank {
   position: absolute;

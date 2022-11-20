@@ -22,6 +22,11 @@
         margin: 0 auto;
     }
 
+    .feature-map img 
+    {
+        max-width: 100%;
+    }
+    
     .game .rank
     {
         font-size: 70px;
@@ -121,6 +126,8 @@
     .stats-box
     {
         min-height: 63px;
+        margin-bottom: 1rem;
+        margin-top: 1rem;
     }
 
     .profile-listing .rank, .profile-detail .rank

@@ -63,7 +63,7 @@
     <div class="game-detail">
         <div class="game {{ $g }}">
 
-            <section class="game-statistics">
+            <section class="game-statistics mb-3">
                 <div class="game-details">
                     <div class="container" style="position:relative;padding: 60px 0;">
                         <? $hasWash = false; ?>
@@ -206,7 +206,7 @@
                         <?php $map = \App\Map::where('hash', '=', $game->hash)->first(); ?>
                         @if ($map)
                             <div class="feature-map">
-                                <img src="/images/maps/{{ $history->ladder->abbreviation }}/{{ $map->hash . '.png' }}">
+                                <img src="https://ladder.cncnet.org/images/maps/{{ $history->ladder->abbreviation }}/{{ $map->hash . '.png' }}">
                             </div>
                         @endif
                     </div>
