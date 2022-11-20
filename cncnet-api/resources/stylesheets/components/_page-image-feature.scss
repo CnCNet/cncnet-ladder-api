@@ -1,0 +1,20 @@
+.page-image-feature
+{
+    padding-top: 130px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    text-align: center;
+
+    & img 
+    {
+        margin: auto;
+        max-width: 100%;
+    }
+
+    @media(min-width: $lg-width)
+    {
+        text-align: left;
+        padding-top: 100px;
+    }
+}
+

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Ladder Login')
-@section('body-feature-image', '/images/feature/feature-index.jpg')
+@section('feature-image', '/images/feature/feature-index.jpg')
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -23,31 +23,31 @@
     </div>
 @endsection
 
-@section('content')
-    <section class="pt-4">
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
         <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="/">
-                            <span class="material-symbols-outlined">
-                                home
-                            </span>
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="">
-                            <span class="material-symbols-outlined icon pe-3">
-                                person
-                            </span>
-                            Login
-                        </a>
-                    </li>
-                </ol>
-            </nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        Login
+                    </a>
+                </li>
+            </ol>
         </div>
-    </section>
+    </nav>
+@endsection
 
+@section('content')
     <section class="pt-4">
         <div class="container">
             <div class="row">

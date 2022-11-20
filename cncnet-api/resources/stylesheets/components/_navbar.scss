@@ -1,7 +1,7 @@
 .navbar 
 {
+    position: absolute;
     font-family: $font-oswald;
-
     background: #030304;
 
     @media(max-width: $lg-width)

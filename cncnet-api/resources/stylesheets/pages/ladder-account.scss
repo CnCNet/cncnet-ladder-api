@@ -8,6 +8,7 @@
         flex-wrap: wrap;
         align-items: center;
         justify-content: center;
+        flex-grow: 1;
     }
 
     @media(min-width: $md-width)
@@ -29,6 +30,9 @@
         padding: 5px 15px;
         border: 2px solid #101010;
         border-radius: 10px;
+
+        padding: 1rem;
+        flex-grow: 1;
     }
 
     .player-listing i

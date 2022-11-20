@@ -1,6 +1,10 @@
 <div class="game-box">
     <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map or '' }}.png)">
-        <a href="{{ $url or '' }}" class="status status-{{ $status }}"></a>
+        <a href="{{ $url or '' }}" class="status status-{{ $status }}">
+            <span class="material-symbols-outlined">
+                swords
+            </span>
+        </a>
     </div>
 
     <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game">

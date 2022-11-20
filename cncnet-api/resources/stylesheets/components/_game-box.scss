@@ -12,6 +12,7 @@ $dcColour: #b50000;
 {
     border-radius: 5px;
     border: 2px solid transparent;
+    margin-bottom: 1rem;
 }
 
 .game-box .preview
@@ -33,58 +34,45 @@ $dcColour: #b50000;
 .game-box .preview .status 
 {
     position: absolute;
-    background: #000;
     top: 10px;
     right: 10px;
     width: 50px;
     height: 50px;
-    border-radius: 50%;
-    display: table;
-    text-align: center;
-    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #050505;
+    border-radius: 100%;
     font-size: 20px;
 }
 
-.game-box .preview .status:before 
+.game-box .preview .status-lost
 {
-    font-family: FontAwesome;
-    display: table-cell;
-    vertical-align: middle;
-}
-
-.game-box .preview .status-lost:before
-{
-    content: "\f185";
     color: $lostColour;
 }
 
-.game-box .preview .status-won:before
+.game-box .preview .status-won
 {
-    content: "\f091";
     color: $wonColour;
 }
 
-.game-box .preview .status-draw:before
+.game-box .preview .status-draw
 {
-    content: "\f2b5";
     color: $wonColour;
 }
 
-.game-box .preview .status-dc:before
+.game-box .preview .status-dc
 {
-    content: "\f1e6";
     color: $dcColour;
 }
 
-.game-box .preview .status-live:before
+.game-box .preview .status-live
 {
-    content: "\f1e8";
     color: $wonColour;
 }
 
-.game-box .preview .status-progress:before
+.game-box .preview .status-progress
 {
-    content: "\f1e8";
     color: #636363;
 }
 

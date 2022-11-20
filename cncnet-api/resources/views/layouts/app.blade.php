@@ -38,17 +38,24 @@
 <body class="@yield('body-class') @hasSection('body-feature-image')
 body-feature-image
 @endif">
-
-    @hasSection('body-feature-image')
-        <div class="feature-image" style="background-image:url(@yield('body-feature-image'))"></div>
-    @endif
-
     @include('components.navigation.navbar')
 
-    @yield('feature')
+    @hasSection('feature-image')
+        <div class="page-image-feature" style="background-image:url(@yield('feature-image'))">
+            @yield('feature')
+        </div>
+    @endif
+
+    @hasSection('feature-video')
+        <div class="page-video-feature">
+            @yield('feature')
+        </div>
+    @endif
+
 
     <main class="main">
         @yield('content')
+        @yield('breadcrumb')
     </main>
 
     @include('components.footer')

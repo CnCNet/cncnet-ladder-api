@@ -10,32 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 @endsection
 
-{{-- @section('feature')
-    <div class="game">
-        <div class="feature-background sub-feature-background">
-            <div class="container">
-                <div class="row text-center">
-                    <div class="col-md-8 col-md-offset-2">
-                        <h1>
-                            {{ $history->ladder->name }}
-                        </h1>
-                        <p>
-                            CnCNet Ladders <strong>1vs1</strong>
-                        </p>
-                        <p>
-                            <a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation }}" class="previous-link">
-                                <i class="fa fa-caret-left" aria-hidden="true"></i>
-                                <i class="fa fa-caret-left" aria-hidden="true"></i>
-                            </a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection --}}
-
-
 @section('content')
 
     <div class="player player-view">

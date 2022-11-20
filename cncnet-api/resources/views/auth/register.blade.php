@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Ladder Sign up')
-@section('body-feature-image', '/images/feature/feature-td.jpg')
+@section('feature-image', '/images/feature/feature-td.jpg')
 
 @section('feature')
     <div class="feature">

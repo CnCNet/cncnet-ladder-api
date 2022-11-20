@@ -1,5 +1,3 @@
-@if ($history->ladder->abbreviation != 'ra' && $history->ladder->abbreviation != 'ts')
-
     <table class="table player-factions-table">
         <thead>
             <tr>
@@ -34,4 +32,3 @@
 
         </tbody>
     </table>
-@endif

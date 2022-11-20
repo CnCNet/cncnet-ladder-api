@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder Setup')
 
-@section('body-feature-image', '/images/feature/feature-index.jpg')
+@section('feature-image', '/images/feature/feature-index.jpg')
 
 @section('feature')
     <div class="feature pt-5 pb-5">

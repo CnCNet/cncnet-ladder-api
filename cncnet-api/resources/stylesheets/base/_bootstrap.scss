@@ -126,33 +126,3 @@ a
     border-color: #000000;
 }
 
-
-// Breadcrumb
-.breadcrumb-item + .breadcrumb-item::before
-{
-    padding: 1rem 0;
-    background: #0a0c10;
-    color: #2c3038;
-}
-
-.breadcrumb-item a
-{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    border-radius: 4px;
-    color: #6c6f76;
-    transition: 350ms all ease;
-    background: #0a0c10;
-
-    &:hover 
-    {
-        color: #fff;
-    }
-}
-
-.breadcrumb-item + .breadcrumb-item
-{
-    padding-left: 0;
-}

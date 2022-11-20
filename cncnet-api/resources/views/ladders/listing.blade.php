@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name . ' Ladder')
-@section('body-feature-image', '/images/feature/feature-' . $history->ladder->abbreviation . '.jpg')
+@section('feature-image', '/images/feature/feature-' . $history->ladder->abbreviation . '.jpg')
 
 @section('feature')
     <div class="feature">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12 col-sm-8 col-lg-6">
+                <div class="col-12 col-lg-6">
                     <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
@@ -25,36 +25,36 @@
     </div>
 @endsection
 
-@section('content')
-    <section class="pt-4">
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
         <div class="container">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item">
-                        <a href="/">
-                            <span class="material-symbols-outlined">
-                                home
-                            </span>
-                        </a>
-                    </li>
-                    <li class="breadcrumb-item">
-                        <a href="">
-                            <span class="material-symbols-outlined icon pe-3">
-                                military_tech
-                            </span>
-                            Ladders
-                        </a>
-                    </li>
-                </ol>
-            </nav>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <a href="">
+                        <span class="material-symbols-outlined icon pe-3">
+                            military_tech
+                        </span>
+                        Ladders
+                    </a>
+                </li>
+            </ol>
         </div>
-    </section>
+    </nav>
+@endsection
 
+@section('content')
     <section class="ladder-listing game-{{ $history->ladder->abbreviation }}">
         <div class="container">
 
             @if ($history->ladder->abbreviation == 'blitz')
-                <div class="qm-stats">
+                <div class="qm-stats mt-4">
                     <a class="stat blue" href="https://youtu.be/n_xWvNxO55c" target="_blank" style="z-index:1;" title="How-To Setup & Play Blitz Online">
                         <div class="text-center">
                             <i class="fa fa-youtube fa-fw"></i>
@@ -85,7 +85,6 @@
                         </span>
                         Ladder Rules
                     </button>
-
                 </div>
 
                 @if ($history->ladder->qmLadderRules->ladder_discord != null)
@@ -112,20 +111,6 @@
                         @endforeach
                     </ul>
                 </div>
-
-                <form>
-                    <div class="form-group" method="GET">
-                        <div class="search" style="position:relative;">
-                            <input class="form-control" name="search" value="{{ $search }}" placeholder="Search by Player..." />
-                        </div>
-                        @if ($search)
-                            <small>
-                                Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
-                                <a href="?search=">Clear?</a>
-                            </small>
-                        @endif
-                    </div>
-                </form>
             </section>
 
             <section class="mt-5 mb-5">
@@ -138,22 +123,24 @@
 
             @include('ladders.components.past-ladders')
 
-            <section class="mt-5 mb-5">
-                <div class="row">
-                    <div class="header">
-                        <div class="col-md-12">
-                            <h5>
-                                <strong>1vs1</strong>
-                                Recent Games
-                                <small>
-                                    <a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games' }}">View All Games</a>
-                                </small>
-                            </h5>
+            @if (!$search)
+                <section class="mt-5 mb-5">
+                    <div class="row">
+                        <div class="header">
+                            <div class="col-md-12">
+                                <h5>
+                                    <strong>1vs1</strong>
+                                    Recent Games
+                                    <small>
+                                        <a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games' }}">View All Games</a>
+                                    </small>
+                                </h5>
+                            </div>
                         </div>
                     </div>
-                </div>
-                @include('components.global-recent-games', ['games' => $games])
-            </section>
+                    @include('components.global-recent-games', ['games' => $games])
+                </section>
+            @endif
 
             <section>
                 <div class="row">
@@ -212,7 +199,24 @@
                             </p>
                         @endif
 
-                        @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                        <div class="d-flex mb-2">
+                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                            <div class="ms-auto">
+                                <form>
+                                    <div class="form-group" method="GET">
+                                        <div class="search" style="position:relative;">
+                                            <input class="form-control border" name="search" value="{{ $search }}" placeholder="Search by Player..." />
+                                        </div>
+                                        @if ($search)
+                                            <small>
+                                                Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
+                                                <a href="?search=">Clear?</a>
+                                            </small>
+                                        @endif
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
 
                         <div class="ladder-player-listing" id="listing">
                             <div class="player-row-header">
@@ -264,8 +268,9 @@
                             @endforeach
                         </div>
 
-                        @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
-
+                        <div class="mt-5">
+                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                        </div>
                     </div>
                 </div>
             </section>

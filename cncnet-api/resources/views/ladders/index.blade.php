@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-@section('body-feature-image', '/images/feature/feature-index.jpg')
+@section('feature-image', '/images/feature/feature-index.jpg')
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -13,7 +13,7 @@
                     </h1>
 
                     <p class="lead">
-                        Compete with players from all over the world in our <strong>1vs1</strong> ranked matches
+                        Compete against players all over the world in our <strong>1vs1</strong> ranked ladders
                     </p>
 
                     @if (!\Auth::user())
@@ -26,6 +26,22 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
 @endsection
 
 @section('content')
