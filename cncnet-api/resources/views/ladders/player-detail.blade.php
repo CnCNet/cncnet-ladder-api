@@ -3,6 +3,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 @endsection
+
 @section('title', $ladderPlayer->username)
 @section('body-class', 'body-player-detail')
 @section('feature-image', '/images/feature/feature-' . $history->ladder->abbreviation . '.jpg')
@@ -29,7 +30,6 @@
         </div>
     </div>
 @endsection
-
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -146,8 +146,10 @@
                     <h3>Player achievements</h3>
                 </div> --}}
             </section>
-
         </div>
+
+        @include('ladders.player-view-moderation')
+
         <section>
             <section class="mt-5">
                 <div class="container">

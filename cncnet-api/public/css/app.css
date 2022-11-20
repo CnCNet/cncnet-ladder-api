@@ -19272,7 +19272,7 @@ a {
 }
 @media (min-width: 992px) {
   .navbar {
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.8196078431), transparent);
+    background: linear-gradient(180deg, rgb(0, 0, 0), transparent);
   }
 }
 
