@@ -483,20 +483,24 @@ class LadderService
     }
 
     /**
-     * Return matches which have spawned in last $minutes minutes. 
+     * Return matches which have spawned in last $createdAfter minutes
      * Note: This could include matches which have finished as well.
      */
-    public function getRecentSpawnedMatches($ladder_id, $minutes)
+    public function getRecentSpawnedMatches($ladder_id, $createdAfter)
     {
-        return \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
+            return \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
             ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
             ->join('qm_match_players as qmp', 'qm_matches.id', '=', 'qmp.qm_match_id')
             ->join('players as p', 'qmp.player_id', '=', 'p.id')->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
-            ->where('qms.state_type_id', 5)
+            ->join('sides', function($join)
+            {
+                $join->on('sides.ladder_id', '=', 'qmp.ladder_id');
+                $join->on('sides.local_id', '=', 'qmp.actual_side');
+            })
             ->where('qm_matches.ladder_id', $ladder_id)
-            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($minutes))
+            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($createdAfter))
             ->groupBy('qmp.id')
-            ->select("qm_matches.id", "p.username as player", "qm_maps.description as map")
+            ->select("qm_matches.id", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.username as player", "qm_maps.description as map")
             ->get();
     }
 
@@ -506,7 +510,13 @@ class LadderService
     public function getRecentFinishedMatches($ladder_id, $minutes) {
         return \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
         ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
-        ->where('qms.state_type_id', 1)
+        ->where(function($where)
+        {
+            $where->where('qms.state_type_id', 1);
+            $where->orWhere('qms.state_type_id', 3);
+            $where->orWhere('qms.state_type_id', 6);
+            $where->orWhere('qms.state_type_id', 7);
+        })
         ->where('qm_matches.ladder_id', $ladder_id)
         ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($minutes))
         ->select("qm_matches.id")

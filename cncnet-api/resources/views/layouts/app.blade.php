@@ -12,7 +12,7 @@
     <meta name="author" content="CnCNet">
     <meta name="google-site-verification" content="UACqC83TaSFSDZsv31UMLMgzDKasIAdB7IEGP9IUSEM" />
     <meta property="og:title" content="@yield('title') - CnCNet" />
-    <meta property="og:image" content="https://cncnet.org/images/meta.png" />
+    <meta property="og:image" content="/images/meta.png" />
     <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:type" content="website" />
 

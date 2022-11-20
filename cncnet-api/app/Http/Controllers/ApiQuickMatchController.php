@@ -11,11 +11,12 @@ use \App\Http\Services\AuthService;
 use \App\PlayerActiveHandle;
 use \Carbon\Carbon;
 use DB;
-use Log;
 use \App\Commands\FindOpponent;
 use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
 use \App\SpawnOptionType;
+use DateTime;
+use Illuminate\Support\Facades\Log;
 
 class ApiQuickMatchController extends Controller
 {
@@ -72,6 +73,24 @@ class ApiQuickMatchController extends Controller
      */
     public function getActiveMatches(Request $request, $ladderAbbrev = null)
     {
+        $games = [];
+        if ($ladderAbbrev == "all")
+        {
+            foreach ($this->ladderService->getLadders() as $ladder)
+            {
+                $res = $this->getActiveMatchesByLadder($ladder->abbreviation);
+                $games[$ladder->abbreviation] = $res;
+            }
+        } else
+        {
+            $games[$ladderAbbrev] = $this->getActiveMatchesByLadder($ladderAbbrev);
+        }
+
+        return $games;
+    }
+
+    private function getActiveMatchesByLadder($ladderAbbrev)
+    {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
 
         if ($ladder == null)
@@ -80,10 +99,10 @@ class ApiQuickMatchController extends Controller
         $ladder_id = $ladder->id;
 
         //get all QMs that whose games have spawned. (state_type_id == 5)
-        $qms = $this->ladderService->getRecentSpawnedMatches($ladder_id, 15);
+        $qms = $this->ladderService->getRecentSpawnedMatches($ladder_id, 20);
 
         //get all QMs that have finished recently.  (state_type_id == 1)
-        $finishedQms = $this->ladderService->getRecentFinishedMatches($ladder_id, 15);
+        $finishedQms = $this->ladderService->getRecentFinishedMatches($ladder_id, 20);
 
         $finishedQmsArr = [];
         $finishedQms->map(function ($qm) use (&$finishedQmsArr)
@@ -104,17 +123,40 @@ class ApiQuickMatchController extends Controller
 
         $qm_id = -1;
         $player1 = "";
+        $player2 = "";
+        $player1_side = "";
+
+        Log::info(($qms2->count() / 2) . " num active games in ladder " . $ladder->name);
         foreach ($qms2 as $qm)
         {
+            $dt = new DateTime($qm->qm_match_created_at);
+
             //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
             if ($qm_id != $qm->id)
             {
+                if (Carbon::now()->diffInSeconds($dt) <= 120)
+                {
+                    $player1 = "Player 1";
+                } else
+                {
+                    $player1 = $qm->player;
+                }
                 $qm_id = $qm->id;
-                $player1 = $qm->player;
+                $player1_side = $qm->faction;
             }
             else
             {
-                $games[] = $player1 . " vs " . $qm->player . " on " . $qm->map;
+                if (Carbon::now()->diffInSeconds($dt) <= 120)
+                {
+                    $player2 = "Player 2";
+                } else
+                {
+                    $player2 = $qm->player;
+                }
+
+                $duration = Carbon::now()->diff($dt);
+                $duration_formatted = $duration->format('%i mins %s sec');
+                $games[] = $player1 . " (" . $player1_side . ") vs " . $player2 . " (" . $qm->faction . ") on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
             }
         }
 

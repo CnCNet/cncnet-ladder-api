@@ -174,6 +174,11 @@ class AdminController extends Controller
         }
         else
         {
+            if ($sov == null)
+            {
+                $sov = new \App\SpawnOptionValue;
+            }
+
             $sov->ladder_id = $request->ladder_id;
             $sov->qm_map_id = $request->qm_map_id;
             $sov->spawn_option_id = $request->spawn_option_id;

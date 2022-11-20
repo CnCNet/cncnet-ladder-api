@@ -182,7 +182,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             {
                 return "https://ladder.cncnet.org/" . $this->avatar_path;
             }
-            return asset($this->avatar_path);
+            return asset($this->avatar_path, true);
         }
         return null;
     }

@@ -5,12 +5,8 @@
                 <h5 class="modal-title">Edit Map Pool</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
 
-                <form method="POST" action="remove" onsubmit="return confirm('This action will delete the whole map pool and all maps permanently.');">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                    <button type="submit" class="btn btn-danger btn-md">Delete</button>
-                </form>
+            <div class="modal-body">
                 <form method="POST" action="rename">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
@@ -20,10 +16,14 @@
                     </div>
 
                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary btn-md">Rename</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>
 
+                <form method="POST" action="remove" onsubmit="return confirm('This action will delete the whole map pool and all maps permanently.');">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
             </div>
         </div>
     </div>
