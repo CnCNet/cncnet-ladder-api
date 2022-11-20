@@ -49,9 +49,9 @@
 
                 @if ($statsPlayerOfTheDay)
                     <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsPlayerOfTheDay->username); ?>
-                    <a class="stat gold" style="position:relative" href="{{ $url }}" title="{{ $statsPlayerOfTheDay->username }}">
+                    <a class="stat gold potd" style="position:relative" href="{{ $url }}" title="{{ $statsPlayerOfTheDay->username }}">
                         <div class="text-center">
-                            <div class="fa" style="width: 35px;">
+                            <div class="icon icon-crown pt-4">
                                 @include('icons.crown', [
                                     'colour' => '#ffcd00',
                                 ])

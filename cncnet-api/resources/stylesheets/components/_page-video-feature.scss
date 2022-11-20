@@ -1,9 +1,10 @@
-.page-image-feature
+.page-video-feature
 {
     padding-top: 130px;
     background-size: cover;
     background-repeat: no-repeat;
     text-align: center;
+    position: relative;
     overflow: hidden;
 
     & img 
@@ -19,3 +20,13 @@
     }
 }
 
+.page-video-feature .video 
+{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: -1;
+    opacity: 0.5;
+}

@@ -48,10 +48,13 @@ body-feature-image
 
     @hasSection('feature-video')
         <div class="page-video-feature">
+            <div class="video">
+                <video autoplay="true" loop="" muted="" preload="none" src="@yield('feature-video')">
+                </video>
+            </div>
             @yield('feature')
         </div>
     @endif
-
 
     <main class="main">
         @yield('content')

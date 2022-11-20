@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-@section('feature-image', '/images/feature/feature-index.jpg')
+{{-- @section('feature-image', '/images/feature/feature-index.jpg') --}}
+@section('feature-video', '//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4')
 
 @section('feature')
     <div class="feature pt-5 pb-5">

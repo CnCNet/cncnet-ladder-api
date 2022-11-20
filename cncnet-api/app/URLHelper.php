@@ -24,4 +24,22 @@ class URLHelper
     {
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation;
     }
+
+    public static function getVideoUrlbyAbbrev($abbrev)
+    {
+        switch ($abbrev)
+        {
+            case "yr":
+            case "ra2":
+            case "blitz":
+                return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4";
+                break;
+
+            case "ts":
+                return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/tiberian-sun.mp4";
+
+            case "ra":
+                return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-1.mp4";
+        }
+    }
 }

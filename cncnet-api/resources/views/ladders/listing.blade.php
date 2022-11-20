@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name . ' Ladder')
-@section('feature-image', '/images/feature/feature-' . $history->ladder->abbreviation . '.jpg')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 
 @section('feature')
     <div class="feature">

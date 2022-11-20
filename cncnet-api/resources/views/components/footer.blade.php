@@ -73,8 +73,12 @@
         </div>
 
         <div class="row">
-            <div class="col-md-12 text-end">
-                <div>
+            <div class="col-md-6">
+                <h6 class="mt-2">Special thanks</h6>
+                <a href="https://www.youtube.com/c/NoStringsPrd" class="link">NoStringsPrd</a> for allowing the use of his videos.
+            </div>
+            <div class="col-md-6 text-end">
+                <div class="mt-5">
                     Copyright &copy; CnCNet 2009 - {{ Date('Y') }}</div>
                 </col>
                 <div class="d-flex justify-content-end">

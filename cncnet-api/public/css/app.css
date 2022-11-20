@@ -19395,6 +19395,7 @@ a {
   background-size: cover;
   background-repeat: no-repeat;
   text-align: center;
+  overflow: hidden;
 }
 .page-image-feature img {
   margin: auto;
@@ -19405,6 +19406,35 @@ a {
     text-align: left;
     padding-top: 100px;
   }
+}
+
+.page-video-feature {
+  padding-top: 130px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.page-video-feature img {
+  margin: auto;
+  max-width: 100%;
+}
+@media (min-width: 992px) {
+  .page-video-feature {
+    text-align: left;
+    padding-top: 100px;
+  }
+}
+
+.page-video-feature .video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: -1;
+  opacity: 0.5;
 }
 
 .breadcrumb-nav {
@@ -19454,6 +19484,11 @@ a {
 
 a {
   transition: 250ms ease all;
+}
+
+a.link {
+  color: silver;
+  text-decoration: underline;
 }
 
 main {
@@ -19713,6 +19748,16 @@ footer .sponsor img:hover {
 .qm-stats .stat.gold h4,
 .qm-stats .stat.gold .h4 {
   color: #ffcd00;
+}
+
+.qm-stats .stat.gold .value {
+  color: #facc00;
+}
+
+.qm-stats .potd .icon {
+  width: 35px;
+  padding-bottom: 1rem;
+  margin: auto;
 }
 
 .qm-stats .stat {
@@ -23135,7 +23180,7 @@ footer .sponsor img:hover {
 }
 
 .player-row-header .player-rank {
-  width: 80px;
+  width: 4rem;
 }
 
 .player-row-header .player-username {
