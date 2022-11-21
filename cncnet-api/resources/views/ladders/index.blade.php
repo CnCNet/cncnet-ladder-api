@@ -19,8 +19,8 @@
 
                     @if (!\Auth::user())
                         <div class="mt-4">
-                            <a type="submit" class="btn btn-primary px-4 me-sm-3" href="/auth/register">Register</a>
-                            <a type="submit" class="btn btn-outline" href="/auth/login">Login</a>
+                            <a class="btn btn--outline-primary me-2 btn-animated btn-animated-center btn-size-lg" href="/auth/login">Register</a>
+                            <a class="btn btn--outline-secondary btn-animated btn-animated-center btn-size-lg" href="/auth/login">Login</a>
                         </div>
                     @endif
                 </div>
@@ -51,7 +51,7 @@
             <div class="container">
                 <div class="row">
                     @foreach ($ladders as $history)
-                        <div class="col-4">
+                        <div class="col-12 col-lg-4">
                             <a href="/ladder/{{ $history->short . '/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
                                 <div class="ladder-cover cover-{{ $history->ladder->abbreviation }} text-center"
                                     style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover.png' }}')">

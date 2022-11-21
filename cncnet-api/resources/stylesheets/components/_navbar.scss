@@ -100,16 +100,16 @@
 {
     background: #07080c;
     padding: 1rem;
-
+    min-width: 250px;
+    max-width: 100%;
     transition: 250ms ease all;
 
     .dropdown-item 
     {
         padding: 0.2rem 1rem;
         border-radius: 4px;
-        font-size: 0.85rem;
+        font-size: 1rem;
         text-transform: uppercase;
-        font-weight: 500;
     }
 
     .nav-title 
