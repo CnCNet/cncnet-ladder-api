@@ -16,25 +16,17 @@ $xxxl-width: 1600px;
 
 // 
 // Bootstrap Overrides
-
 $enable-cssgrid: true;
-
-// Colours
 $primary:  #00ff8a;
 $secondary: #13161e;
 $success: $primary;
 $warning:#ffb700;
 $danger: #420006;
-
 $generic-bg: #0c0e14;;
-
 $body-bg: #07080c;
-// $body-color: #7c8091;
 $body-color: #a0a0a1;
-$link-color: #838383;
+$link-color: #e5e5e5;
 $link-hover-color: #fff;
-
-
 $text-light-color: #ececec;
 
 $font-family-base: $font-roboto;
@@ -47,7 +39,6 @@ $btn-padding-y: 0.95rem;
 $btn-padding-x: 2rem;
 $btn-font-weight: 400;
 $btn-font-size: 1rem;
-
 
 // Navbar
 $navbar-light-color: $body-color;
@@ -74,6 +65,7 @@ $dropdown-link-hover-color: lighten($dropdown-color, 5%);
 $pagination-bg: $generic-bg;
 $pagination-color:  $body-color;
 $pagination-border-color: transparent;
+$pagination-border-radius: 0;
 $pagination-hover-color: lighten(#798199, 15%);
 $pagination-hover-bg: transparent;
 $pagination-hover-border-color:transparent;

@@ -139,7 +139,7 @@
                             </div>
                         </div>
                     </div>
-                    @include('components.global-recent-games', ['games' => $games])
+                    @include('ladders.components.listing-recent-games', ['games' => $games])
                 </section>
             @endif
 
@@ -200,7 +200,7 @@
                             </p>
                         @endif
 
-                        <div class="d-flex mb-2">
+                        <div class="d-flex flex-column d-sm-flex flex-sm-row">
                             @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
                             <div class="ms-auto">
                                 <form>

@@ -153,3 +153,36 @@
 {
     color: #fff;
 }
+
+.ladder-listing .swiper-btn-next,
+.ladder-listing .swiper-btn-prev
+{
+    display: none;
+
+    @media(min-width: $md-width)
+    {
+        display:block;
+    }
+}
+
+.ladder-listing .swiper-btn-prev 
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -50px;
+    font-size: 2rem;
+    color: silver;
+    padding-left: 0;
+}
+
+.ladder-listing .swiper-btn-next 
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -50px;
+    font-size: 2rem;
+    color: silver;
+    padding-right: 0;
+}

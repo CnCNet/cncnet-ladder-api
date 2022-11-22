@@ -15,13 +15,6 @@
                     <p class="lead">
                         {{ $clan->name }}
                     </p>
-
-                    @if (!\Auth::user())
-                        <div class="mt-4">
-                            <a type="submit" class="btn btn-primary px-4 me-sm-3" href="/auth/register">Register</a>
-                            <a type="submit" class="btn btn-outline" href="/auth/login">Login</a>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>

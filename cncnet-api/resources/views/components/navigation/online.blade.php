@@ -1,5 +1,5 @@
 <li class="nav-item">
-    <a class="nav-link d-flex align-items-center me-1 ms-1 ps-2 pe-4 status-text" href="https://cncnet.org/status">
+    <a class="nav-link d-flex align-items-center me-1 ms-1 ps-2 pe-4 status-text text-uppercase" href="https://cncnet.org/status">
         <span class="material-symbols-outlined icon">
             bar_chart
         </span>

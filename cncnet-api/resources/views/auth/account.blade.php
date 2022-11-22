@@ -17,7 +17,7 @@
                     <p class="lead">Manage everything to do with your CnCNet Ladder Account here.</p>
 
                     @if (isset($userSettings))
-                        <a href="account/settings" class="btn btn-outline">User Settings</a>
+                        <a href="account/settings" class="btn btn-outline btn-size-lg">User Settings</a>
                     @endif
                 </div>
             </div>

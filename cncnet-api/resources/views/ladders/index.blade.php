@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-{{-- @section('feature-image', '/images/feature/feature-index.jpg') --}}
 @section('feature-video', '//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4')
 
 @section('feature')
@@ -19,8 +18,8 @@
 
                     @if (!\Auth::user())
                         <div class="mt-4">
-                            <a class="btn btn--outline-primary me-2 btn-animated btn-animated-center btn-size-lg" href="/auth/login">Register</a>
-                            <a class="btn btn--outline-secondary btn-animated btn-animated-center btn-size-lg" href="/auth/login">Login</a>
+                            <a class="btn btn--outline-primary me-3 btn-size-lg" href="/auth/login">Register</a>
+                            <a class="btn btn--outline-secondary btn-size-lg" href="/auth/login">Login</a>
                         </div>
                     @endif
                 </div>

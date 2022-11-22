@@ -30,6 +30,7 @@
     color: #fff;
     text-shadow: 0px 1px #0000005e;
     font-weight: 500;
+    transition: ease 350ms;
 
     // Dropdown chevron
     &:after
@@ -39,10 +40,10 @@
 
     &:hover 
     {
-        color: #fff;
+        color: $primary;
         &:after 
         {
-            color: #fff;
+            color: $primary;
         }
     }
 }

@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder Login')
-@section('feature-image', '/images/feature/feature-index.jpg')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -11,12 +12,6 @@
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Login</span>
                     </h1>
-                    @if (!\Auth::user())
-                        <div class="mt-4">
-                            <a type="submit" class="btn btn-primary px-4 me-sm-3" href="/auth/register">Register</a>
-                            <a type="submit" class="btn btn-outline" href="/auth/login">Login</a>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
@@ -51,7 +46,7 @@
     <section class="pt-4">
         <div class="container">
             <div class="row">
-                <div class="col-6 m-auto">
+                <div class="col-md-6 m-auto">
 
                     <form class="" method="POST" action="/auth/login">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -88,7 +83,7 @@
                         <hr class="my-4">
 
                         <p>
-                            <a href="/password/email">Forgot your password?</a>
+                            <a href="/password/email">Forgot your password?</a> or <a href="/password/email">create an account?</a>
                         </p>
                     </form>
                 </div>

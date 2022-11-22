@@ -9,77 +9,83 @@
     color: #888b97;
 }
 
-.btn.btn--outline-primary
+.btn--outline-primary 
 {
-    box-shadow: inset 0 0 0px 2px #71ffd1;
-    background: transparent;
-    color: #71ffd1;
-}
+    border: 2px solid #53ffbe;
+    color: #00ffd1;
+    background: linear-gradient(90deg, #00fffc0d 0%, #00ffd000 100%);
+    border-radius: 6px;
+    box-shadow: -1px 1px 0 1px #53fff2;
+    border-left: transparent;
+    border-bottom: transparent;
+    border-right: 2px solid;
+    transition: all 250ms ease;
 
-.btn.btn--outline-secondary
-{
-    box-shadow: inset 0 0 0px 2px #747474;
-    background: transparent;
-    color: silver;
-}
-
-.btn-animated 
-{
-    // Required, since we're setting absolute on pseudo-elements
-    position: relative;
-    vertical-align: middle;
-
-    &::before,
-    &::after 
-    {
-        box-sizing: inherit;
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-    }
-}
-
-.btn-animated-center 
-{
     &:hover 
     {
-        color: currentColor;
-    }
-
-    // Set up base styles, we're going to scale instead of animating width/height
-    &::before,
-    &::after 
-    {
-        top: 0;
-        left: 0;
-        height: 100%;
-        width: 100%;
-        transform-origin: center; // Ensure scaling is done from the center (expands outwards)
-    }
-
-    // scale3d(<scale-horizontal>, <scale-vertical>, <scale-depth>);
-    &::before 
-    {
-        border-top: 2px solid currentColor;
-        border-bottom: 2px solid currentColor;
-        transform: scale3d(0,1,1); // Shrink only width
-    }
-
-    &::after 
-    {
-        border-left: 2px solid currentColor;
-        border-right: 2px solid currentColor;
-        transform: scale3d(1,0,1); // Shrink only height
-    }
-
-    &:hover::before,
-    &:hover::after 
-    {
-        transform: scale3d(1,1,1); // Show full-size
-        transition: transform 0.5s;
+        border: 2px solid #fff;
+        border-left: transparent;
+        border-bottom: transparent;
+        border-right: 2px solid;
+        color: #fff;
+        box-shadow: -1px 1px 0 1px #fff;
     }
 }
+
+.btn--outline-secondary 
+{
+    border: 2px solid #f1f1f173;
+    color: #c1c1c1;
+    background: linear-gradient(90deg, rgba(0, 255, 252, 0.0509803922) 0%, rgba(0, 255, 208, 0) 100%);
+    border-radius: 6px;
+    box-shadow: -1px 1px 0 1px #f1f1f173;
+    border-left: transparent;
+    border-bottom: transparent;
+    border-right: 2px solid #f1f1f173;
+    background: linear-gradient(90deg, rgb(167 167 167 / 14%) 0%, rgb(82 82 82 / 8%) 100%);
+
+    &:hover 
+    {
+        border: 2px solid #fff;
+        border-left: transparent;
+        border-bottom: transparent;
+        border-right: 2px solid;
+        color: #fff;
+        box-shadow: -1px 1px 0 1px #fff;
+    }
+}
+
+.btn-primary:active,
+.btn-outline:active,
+:not(.btn-check) + .btn-outline:active,
+:not(.btn-check) + .btn-primary:active
+{
+    background-color: transparent;
+    border-color: #fff;
+    color: #fff;
+    box-shadow: -1px 1px 0 1px #fff;
+}
+
+.btn-primary
+{
+    @extend .btn--outline-primary;
+
+    &:hover 
+    {
+        background: rgba(0, 0, 0, 0.021);
+    }
+}
+
+.btn-outline
+{
+    @extend .btn--outline-secondary;
+
+    &:hover 
+    {
+        background: rgba(0, 0, 0, 0.021);
+    }
+}
+
 
 // 
 // Sizing

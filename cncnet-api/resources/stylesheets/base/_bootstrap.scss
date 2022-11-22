@@ -55,7 +55,10 @@
 
 // 
 // Oveerrides that don't follow variables
-
+.navbar-toggler
+{
+    border-color: transparent;
+}
 
 // Forms
 .form-check-input
@@ -80,6 +83,10 @@
 a 
 {
     text-decoration: none;
+    &:hover 
+    {
+        color: #fff;
+    }
 }
 
 
