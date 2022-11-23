@@ -10,11 +10,11 @@
 }
 
 :root {
-  --bs-blue: #0d6efd;
+  --bs-blue: #03bcd4;
   --bs-indigo: #6610f2;
   --bs-purple: #6f42c1;
   --bs-pink: #d63384;
-  --bs-red: #dc3545;
+  --bs-red: #ff0000;
   --bs-orange: #fd7e14;
   --bs-yellow: #ffc107;
   --bs-green: #198754;
@@ -24415,318 +24415,153 @@ body.body-player-detail .page-image-feature {
   padding-bottom: 2rem;
 }
 
-.game-detail {
-  /* Game Detail */
-  /* Extra small devices (phones, less than 768px) */
-  /* No media query since this is the default in Bootstrap */
-  /* Small devices (tablets, 768px and up) */
-  /* Medium devices (desktops, 992px and up) */
-}
-.game-detail .game .game-statistics {
-  padding: 0;
+.game-detail .map-preview {
   position: relative;
-}
-.game-detail .game .feature-background {
-  padding-bottom: 0 !important;
-  color: #fff;
-  font-size: 15px;
-}
-.game-detail .game-details {
-  background: url(../images/textures/dark-pattern.jpg);
-  margin: 0 auto;
-}
-.game-detail .feature-map img {
-  max-width: 100%;
-}
-.game-detail .game .rank {
-  font-size: 70px;
-  font-weight: 600;
-}
-.game-detail .game .rank span {
-  font-size: 65%;
-  letter-spacing: -1px;
-  font-weight: 500;
-}
-.game-detail .game .dark-texture:before {
-  background: none;
-}
-.game-detail h3.game-intro a, .game-detail .game-intro.h3 a {
-  color: #fff;
-}
-.game-detail h3.game-intro a:hover, .game-detail .game-intro.h3 a:hover {
-  color: #00ff8a;
-}
-.game-detail h3.game-intro > span:first-child:after, .game-detail .game-intro.h3 > span:first-child:after {
-  content: " vs ";
-  font-size: 42px;
-  font-weight: bold;
-  padding: 15px;
-  text-transform: uppercase;
-}
-.game-detail .profile-link,
-.game-detail .profile-link:hover {
-  display: block;
-  text-decoration: none;
-}
-.game-detail .profile-detail {
-  position: relative;
-  background: #080808;
-  padding: 30px 50px;
-  border-radius: 5px;
-  margin: 15px 0;
-  border: 1px solid #060606;
-}
-.game-detail .player-avatar {
-  width: 150px;
-  height: 150px;
-  background: #121212;
-  border-radius: 100%;
-  margin-bottom: 2rem;
-}
-.game-detail .player-avatar .icon {
-  font-size: 3.5rem;
-  color: #222630;
-}
-.game-detail .profile-stats-breakdown {
-  position: relative;
-  background: #080808;
-  padding: 10px;
-  border-radius: 5px;
-  margin: 15px 0;
-}
-.game-detail .player-colour {
-  height: 15px;
-  margin-top: -20px;
-  margin-bottom: -20px;
-}
-.game-detail .stats-row {
-  padding: 20px 0;
-  border-bottom: 1px solid #151515;
-}
-.game-detail .row.stats-row h4, .game-detail .row.stats-row .h4 {
-  color: #a2a2a2;
-}
-.game-detail .stats-box {
-  min-height: 63px;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-.game-detail .profile-listing .rank, .game-detail .profile-detail .rank {
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  font-size: 54px;
-  color: rgb(255, 255, 255);
-}
-.game-detail .username {
-  color: rgb(255, 255, 255);
-  font-weight: bold;
-}
-.game-detail .profile-detail .points {
-  color: rgb(255, 255, 255);
-}
-.game-detail .player-panel-blue {
-  background: linear-gradient(135deg, #000c2d 1%, #001266 51%, #001b7c 100%);
-  border: 1px solid #0036d8;
-}
-.game-detail .player-panel-red {
-  background: linear-gradient(135deg, #870000 0%, #b20000 51%, #6b0001 100%);
-  border: 1px solid #ce0000;
-}
-.game-detail .player-panel-orange {
-  background: linear-gradient(135deg, #ed8200 0%, #ed6600 51%, #c96100 100%);
-  border: 1px solid #ff7000;
-}
-.game-detail .player-panel-yellow {
-  background: linear-gradient(135deg, #ffed51 1%, #ffe500 51%, #fcde00 100%);
-  border: 1px solid #ffe400;
-}
-.game-detail .player-panel-yellow h3, .game-detail .player-panel-yellow .h3,
-.game-detail .player-panel-yellow p {
-  color: #000;
-}
-.game-detail .player-panel-teal {
-  background: linear-gradient(135deg, #00c9f2 1%, #00b1dd 51%, #008dce 100%);
-}
-.game-detail .player-panel-purple {
-  background: linear-gradient(135deg, #3000f4 1%, #7500ea 51%, #8500f2 100%);
-}
-.game-detail .player-panel-pink {
-  background: linear-gradient(135deg, #f74ff7 1%, #af00bf 51%, #b2009d 100%);
-  border: 1px solid #e900f3;
-}
-.game-detail .faction {
-  position: absolute;
+  width: 768px;
+  height: 304px;
   background-repeat: no-repeat;
-  height: 100%;
-  bottom: 0;
-  top: 0;
-  background-size: 50%;
-}
-.game-detail .faction-left {
-  background-position: center center;
-  left: 30px;
-}
-.game-detail .faction-right {
-  background-position: center center;
-  right: 30px;
-}
-.game-detail .faction-great,
-.game-detail .faction-america,
-.game-detail .faction-korea,
-.game-detail .faction-france,
-.game-detail .faction-germany,
-.game-detail .faction-great-britain {
-  background-image: url(../images/hud/allied.png);
-  width: 200px;
-}
-.game-detail .faction-iraq,
-.game-detail .faction-cuba,
-.game-detail .faction-russia,
-.game-detail .faction-libya {
-  background-image: url(../images/hud/soviet.png);
-  width: 150px;
-}
-.game-detail .faction-yuri {
-  background-image: url(../images/hud/yuri.png);
-  width: 150px;
-}
-.game-detail .ra .faction-russia,
-.game-detail .ra .faction-uss,
-.game-detail .ra .faction-ita,
-.game-detail .ra .faction-ukraine {
-  background-image: url(../images/hud/ra_soviet.png);
   background-size: 100%;
-  width: 140px;
 }
-.game-detail .ra .faction-spain,
-.game-detail .ra .faction-england,
-.game-detail .ra .faction-germany,
-.game-detail .ra .faction-france,
-.game-detail .ra .faction-greece {
-  background-image: url(../images/hud/ra_allies.png);
-  background-size: 100%;
-  width: 140px;
-}
-.game-detail .faction-gdi {
-  background-image: url(../images/hud/ts_gdi.png);
-  width: 150px;
-}
-.game-detail .faction-nod {
-  background-image: url(../images/hud/ts_nod.png);
-  width: 150px;
-}
-@media (min-width: 992px) {
-  .game-detail .faction {
-    background-size: auto;
-  }
-  .game-detail .faction-great,
-  .game-detail .faction-america,
-  .game-detail .faction-korea,
-  .game-detail .faction-france,
-  .game-detail .faction-germany,
-  .game-detail .faction-iraq,
-  .game-detail .faction-cuba,
-  .game-detail .faction-russia,
-  .game-detail .faction-libya,
-  .game-detail .faction-germany,
-  .game-detail .faction-uss,
-  .game-detail .faction-ita,
-  .game-detail .faction-spa,
-  .game-detail .faction-eng,
-  .game-detail .faction-ger,
-  .game-detail .faction-fra,
-  .game-detail .faction-gre,
-  .game-detail .faction-gdi,
-  .game-detail .faction-nod {
-    background-size: 100%;
-  }
-}
-.game-detail .country {
+
+.game-detail .player {
+  font-family: "Oswald", sans-serif;
   position: absolute;
-  right: 30px;
-  bottom: 25px;
-  font-size: 45px;
-}
-.game-detail .game .game-intro {
-  position: relative;
-}
-.game-detail .game .player-vs {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-}
-.game-detail .game .player-vs h3, .game-detail .game .player-vs .h3 {
-  margin: 0;
-}
-.game-detail .game .player-vs .game-intro {
-  width: 100%;
-}
-.game-detail .game .player-vs .vs {
-  width: 100%;
-  text-align: center;
-  color: #4e4e4e;
-  font-size: 31px;
-  font-weight: bold;
-  font-style: italic;
-}
-.game-detail .game .game-status-icon {
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.8784313725), rgba(4, 4, 4, 0.7019607843));
+  color: #fff;
   display: flex;
   align-items: center;
-  justify-content: center;
+  height: 60px;
+  border-top: 0;
+  border-radius: 4px;
+  border-radius: 10px;
 }
-.game-detail .game .game-status-icon i {
-  font-size: 35px;
+
+.game-detail .player-red {
+  border: 2px solid #c30000;
+  box-shadow: 0px -2px #ff2222;
+  border-top: 0;
 }
-.game-detail .game .faction-left,
-.game-detail .game .faction-right {
-  width: 13%;
+
+.game-detail .player-yellow {
+  border: 2px solid #ffba00;
+  box-shadow: 0px -2px #ffcc00;
+  border-top: 0;
 }
-.game-detail .game .game-intro {
+
+.game-detail .player .status-lost {
+  color: #ff0000;
+  font-weight: 400;
+}
+
+.game-detail .player .status-won {
+  color: #00ff84;
+  font-weight: 400;
+}
+
+.game-detail .player .status {
+  font-size: 0.85rem;
+}
+
+.game-detail .player .username {
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+.game-detail .player .player-details {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.game-detail .player .player-avatar {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.game-detail .game-players {
   display: flex;
-  align-items: center;
   justify-content: space-around;
-}
-.game-detail .game .vs {
-  animation: vs-flash 6s forwards infinite;
-}
-@keyframes vs-flash {
-  0% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-    color: #fff;
-  }
-  100% {
-    opacity: 0.3;
-  }
+  flex-direction: column;
+  align-items: center;
 }
 @media (min-width: 768px) {
-  .game-detail .game .player-vs {
-    display: flex;
-    justify-content: space-evenly;
+  .game-detail .game-players {
     flex-direction: row;
-    width: 70%;
-    margin: 0 auto;
-    max-width: 100%;
-  }
-  .game-detail .game .player-vs .game-intro {
-    width: 50%;
-  }
-  .game-detail .game .player-vs .vs {
-    width: 5%;
   }
 }
-.game-detail .game-details-list {
-  margin-top: 20px;
-  font-size: 17px;
+
+.game-detail .game-players .player-vs {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
 }
-.game-detail .game-details-list li {
-  padding: 4px 0;
+
+.game-detail .player-card {
+  display: flex;
+}
+
+.game-detail .player-card .player-details {
+  display: flex;
+  flex-direction: column;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.game-detail .player-card .username {
+  color: #fff;
+}
+
+.game-detail .player-card .points {
+  font-weight: 500;
+}
+
+.game-detail .player-card .points.won {
+  color: #00ff84;
+}
+
+.game-detail .player-card .points.lost {
+  color: #ff0000;
+}
+
+.game-detail .player-card-right .player-avatar {
+  order: 1;
+}
+
+.game-detail .player-card .player-avatar {
+  border: 2px solid #121212;
+  border-radius: 100%;
+  box-shadow: 0px 4px 0 0 #202020;
+}
+.game-detail .player-card .player-avatar .icon {
+  color: silver;
+  font-size: 2rem;
+}
+
+.game-detail .stats-breakdown {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+}
+@media (min-width: 992px) {
+  .game-detail .stats-breakdown {
+    flex-direction: row;
+  }
+}
+
+.game-detail .stats {
+  display: flex;
+  flex-direction: column;
+}
+
+.game-detail .stats .cameo-row {
+  min-height: 150px;
+  background: #161616;
+  padding: 2rem;
+}
+
+.game-detail .stats .cameo-title {
+  margin-bottom: 1rem;
+  color: #646464;
 }
 
 .ladder-link {

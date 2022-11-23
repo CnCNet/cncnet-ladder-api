@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-@section('feature-video', '//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
