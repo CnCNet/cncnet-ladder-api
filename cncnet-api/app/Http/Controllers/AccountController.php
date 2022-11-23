@@ -345,8 +345,18 @@ class AccountController extends Controller
             $user->removeAvatar();
         }
 
+        $new_discord_profile = $request->discord_profile;
+
+        $existing_discord_profile = \App\User::where('discord_profile', '=', $new_discord_profile)->first();
+
+        if ($existing_discord_profile !== null)
+        {
+            $request->session()->flash('error', "This discord profile is already being used by another user.");
+            return redirect()->back();
+        }
+
         # Social profiles
-        $user->discord_profile = $request->discord_profile;
+        $user->discord_profile = $new_discord_profile;
         $user->youtube_profile = $request->youtube_profile;
         $user->twitch_profile = $request->twitch_profile;
 
