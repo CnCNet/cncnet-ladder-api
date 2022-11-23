@@ -81,7 +81,8 @@ class ApiQuickMatchController extends Controller
                 $res = $this->getActiveMatchesByLadder($ladder->abbreviation);
                 $games[$ladder->abbreviation] = $res;
             }
-        } else
+        }
+        else
         {
             $games[$ladderAbbrev] = $this->getActiveMatchesByLadder($ladderAbbrev);
         }
@@ -137,7 +138,8 @@ class ApiQuickMatchController extends Controller
                 if (Carbon::now()->diffInSeconds($dt) <= 120)
                 {
                     $player1 = "Player 1";
-                } else
+                }
+                else
                 {
                     $player1 = $qm->player;
                 }
@@ -149,7 +151,8 @@ class ApiQuickMatchController extends Controller
                 if (Carbon::now()->diffInSeconds($dt) <= 120)
                 {
                     $player2 = "Player 2";
-                } else
+                }
+                else
                 {
                     $player2 = $qm->player;
                 }
@@ -598,6 +601,37 @@ class ApiQuickMatchController extends Controller
                 return array("type" => "error", "description" => "unknown type: {$request->type}");
                 break;
         }
+    }
+
+    public function getPlayerRankings($count = 50)
+    {
+
+        $month = Carbon::now()->format('m');
+        $year = Carbon::now()->format('Y');
+
+        $rankings = [];
+
+        foreach ($this->ladderService->getLadders() as $ladder)
+        {
+            $history = \App\LadderHistory::where('short', '=', $month . "-" . $year)
+                ->where('ladder_id', $ladder->id)
+                ->first();
+
+            if ($history == null)
+                continue;
+
+            $pc = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
+                ->join('players as p', 'player_caches.player_id', '=', 'p.id')
+                ->join('users as u', 'p.user_id', '=', 'u.id')
+                ->orderBy('player_caches.points', 'DESC')
+                ->select('u.discord_profile as discord_name', 'player_caches.*')
+                ->limit($count)
+                ->get();
+ 
+            $rankings[strtoupper($ladder->abbreviation)] = $pc;
+        }
+
+        return $rankings;
     }
 }
 
