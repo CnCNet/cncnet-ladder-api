@@ -156,9 +156,12 @@
         <div class="match-details text-center mt-5">
             <h4>{{ $game->scen }}</h4>
             <p>
-                <strong>Duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
+                <strong>Date played:</strong> {{ $gameReport->created_at->diffForHumans() }} - <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
+                <br />
+                <strong>Game duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
                 <br />
                 <strong>FPS:</strong> {{ $gameReport->fps }}
+
                 @if ($gameReport !== null)
                     @if ($gameReport->oos)
                         <br />
