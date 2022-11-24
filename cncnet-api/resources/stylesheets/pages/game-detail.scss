@@ -1,8 +1,6 @@
 .game-detail .map-preview 
 {
     position: relative;
-    width: 768px;
-    height: 304px;
     background-repeat: no-repeat;
     background-size: 100%;
 }
@@ -35,19 +33,19 @@
     border-top: 0;
 }
 
-.game-detail .player .status-lost 
+.game-detail .status-lost 
 {
     color: $red;
-    font-weight: 400;
+    font-weight: 500;
 }
 
-.game-detail .player .status-won 
+.game-detail .status-won 
 {
     color: #00ff84;
-    font-weight: 400;
+    font-weight: 500;
 }
 
-.game-detail .player .status 
+.game-detail .status 
 {
     font-size: 0.85rem;
 }
@@ -93,9 +91,18 @@
 
 
 // Player cards
+.game-detail .game-players-container 
+{
+    position: relative;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background: linear-gradient(118deg, #0e0e0e, transparent);
+}
+
 .game-detail .player-card 
 {
     display: flex;
+    position: relative;
 }
 
 .game-detail .player-card .player-details
@@ -108,18 +115,18 @@
     justify-content: center;
 }
 
-.game-detail .player-card .username 
-{
-    color: #fff;
-}
-
 .game-detail .player-card .points { font-weight: 500; }
 .game-detail .player-card .points.won { color: #00ff84; }
 .game-detail .player-card .points.lost { color: $red; }
 
-.game-detail .player-card-right .player-avatar 
+.game-detail .player-card-right .player-details 
 {
-    order: 1;
+    order: -1;
+}
+
+.game-detail .player-card .username 
+{
+    color: #fff;
 }
 
 .game-detail .player-card .player-avatar 
@@ -152,6 +159,13 @@
 {
     display: flex;
     flex-direction: column;
+    background: #161616;
+    
+    @media(min-width: $lg-width)
+    {
+        padding: 2rem;
+        width: 45%;
+    }
 }
 
 .game-detail .stats .cameo-row 
@@ -165,4 +179,13 @@
 {
     margin-bottom: 1rem;
     color: #646464;
+}
+
+
+// Admin styles
+.game-admin .player-vs 
+{
+    padding: 1rem;
+    display: flex;
+    justify-content: space-around;
 }

@@ -10,7 +10,10 @@
     $webWayPoint2_Y = $ratioY * (131 - $mapStartY);
 @endphp
 
-<div class="map-preview" style="background-image:url('{{ $mapPreview }}'); width: {{ $webMapWidth }}px; height: {{ $webMapHeight }}px">
+<div class="map-preview d-lg-none">
+    <img src="{{ $mapPreview }}" style="max-width:100%" />
+</div>
+<div class="map-preview d-none d-lg-flex" style="background-image:url('{{ $mapPreview }}'); width: {{ $webMapWidth }}px; height: {{ $webMapHeight }}px">
     @foreach ($playerGameReports as $k => $pgr)
         @php $gameStats = $pgr->stats; @endphp
         @php $player = $pgr->player()->first(); @endphp
@@ -20,7 +23,6 @@
         @php $webWayPointY = $k == 0 ?  $webWayPoint1_Y: $webWayPoint2_Y; @endphp
 
         <div class="player player-{{ $gameStats->colour($gameStats->col) }}" style="left: {{ $webWayPointX }}px; top: {{ $webWayPointY }}px;">
-
             <div class="player-avatar">
                 @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 35])
             </div>

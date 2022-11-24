@@ -12,7 +12,7 @@
 
 <div class="container">
     <div class="d-flex justify-content-center">
-        @include('ladders.components.game.map-preview', [
+        @include('ladders.game._map-preview', [
             'playerGameReports' => $playerGameReports,
             'mapStartX' => $mapStartX,
             'mapStartY' => $mapStartY,
