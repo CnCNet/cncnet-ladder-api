@@ -17,4 +17,9 @@ class Map extends Model
     {
         return $this->belongsTo('App\Ladder');
     }
+
+    public function mapHeaders()
+    {
+        return $this->hasOne('App\MapHeader');
+    }
 }
