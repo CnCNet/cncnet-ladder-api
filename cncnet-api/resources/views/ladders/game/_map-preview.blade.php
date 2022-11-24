@@ -10,12 +10,6 @@
     $webWayPoint2_Y = $ratioY * (131 - $mapStartY);
 @endphp
 
-<div class="map-preview">
-    <img src="{{ $mapPreview }}" style="max-width:100%" />
-</div>
-
-{{--  Uncomment when we have Map Data
-
 <div class="map-preview d-lg-none">
     <img src="{{ $mapPreview }}" style="max-width:100%" />
 </div>
@@ -50,4 +44,4 @@
             </div>
         </div>
     @endforeach
-</div> --}}
+</div>
