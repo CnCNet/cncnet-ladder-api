@@ -253,13 +253,13 @@ body.body-player-detail .page-image-feature
 .player-detail .count.won 
 {
     color: $primary;
-    font-weight: bold;
+    font-weight: 500;
 }
 
 .player-detail .count.lost 
 {
-    color: #0f64ff;
-    font-weight: bold;
+    color: $blue;
+    font-weight: 500;
 }
 
 .player-detail .count 

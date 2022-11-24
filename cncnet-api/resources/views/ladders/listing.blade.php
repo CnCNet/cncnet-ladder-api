@@ -53,38 +53,28 @@
 @section('content')
     <section class="ladder-listing game-{{ $history->ladder->abbreviation }}">
         <div class="container">
-
             @if ($history->ladder->abbreviation == 'blitz')
-                <div class="qm-stats mt-4">
-                    <a class="stat blue" href="https://youtu.be/n_xWvNxO55c" target="_blank" style="z-index:1;" title="How-To Setup & Play Blitz Online">
-                        <div class="text-center">
-                            <i class="fa fa-youtube fa-fw"></i>
-                            <h4>How-To Setup & Play Blitz Online</h4>
-                        </div>
-                        <div class="text-center">
-                            <div class="value">Watch on YouTube </div>
-                        </div>
-                    </a>
+                <section class="useful-links d-md-flex mt-4">
+                    <div class="me-3">
+                        <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-primary btn-size-md" target="_blank">
+                            <i class="bi bi-youtube pe-2"></i> How-To Play Blitz Online
+                        </a>
+                    </div>
 
-                    <a class="stat blue" href="https://youtu.be/EPDCaucx5qA" target="_blank" style="z-index:1;" title="Tips & Tricks for New Blitz Players">
-                        <div class="text-center">
-                            <i class="fa fa-youtube fa-fw fa-2x"></i>
-                            <h4>Tips & Tricks for New Blitz Players</h4>
-                        </div>
-                        <div class="text-center">
-                            <div class="value">Watch on YouTube </div>
-                        </div>
-                    </a>
-                </div>
+                    <div>
+                        <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-primary btn-size-md" target="_blank">
+                            <i class="bi bi-youtube pe-2"></i> Tips & Tricks - New Blitz Players
+                        </a>
+                    </div>
+                </section>
             @endif
-
             <section class="mt-4 ladder-info">
                 <div>
                     <button type="button" class="btn btn-secondary d-flex" data-bs-toggle="modal" data-bs-target="#openLadderRules">
                         <span class="material-symbols-outlined pe-3">
                             gavel
                         </span>
-                        Ladder Rules
+                        Rules
                     </button>
                 </div>
 
@@ -98,15 +88,16 @@
 
                 <div class="dropdown d-flex">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="material-symbols-outlined icon">
+                        <span class="material-symbols-outlined icon pe-3">
                             military_tech
                         </span>
+                        History
                     </button>
                     <ul class="dropdown-menu">
                         @foreach ($ladders_previous as $previous)
                             <li>
                                 <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}" class="dropdown-item">
-                                    {{ $previous->short }}
+                                    {{ $previous->starts->format('M - Y') }}
                                 </a>
                             </li>
                         @endforeach

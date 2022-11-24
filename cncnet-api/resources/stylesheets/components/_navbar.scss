@@ -48,6 +48,11 @@
     }
 }
 
+.navbar .dropdown-menu a:hover
+{
+    color: $primary;
+}
+
 
 @media(max-width: $lg-width)
 {

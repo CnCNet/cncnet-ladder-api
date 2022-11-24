@@ -57,7 +57,6 @@
 
 .btn-primary:active,
 .btn-outline:active,
-.btn:first-child:active,
 :not(.btn-check) + .btn-outline:active,
 :not(.btn-check) + .btn-primary:active
 {
@@ -65,6 +64,12 @@
     border-color: #fff;
     color: #fff;
     box-shadow: -1px 1px 0 1px #fff;
+}
+
+.btn:active,
+.btn.btn-secondary:active
+{
+    box-shadow: none;
 }
 
 .btn-primary

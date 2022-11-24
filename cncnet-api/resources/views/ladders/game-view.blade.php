@@ -116,7 +116,9 @@
 
                             <div class="player-details">
                                 <h2 class="username">
-                                    {{ $player->username }}
+                                    <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
+                                        {{ $player->username }}
+                                    </a>
                                 </h2>
 
                                 <h5 class="rank pb-1">
@@ -137,11 +139,6 @@
                                         @endif
                                         {{ $pgr->points }}
                                     </div>
-                                </div>
-                                <div class="d-flex mt-3">
-                                    <a class="btn btn-primary btn-sm" title="View {{ $player->username }}'s profile" href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}">
-                                        Profile
-                                    </a>
                                 </div>
                             </div>
                         </div>

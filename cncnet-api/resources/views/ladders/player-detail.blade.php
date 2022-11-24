@@ -1,12 +1,13 @@
 @extends('layouts.app')
 @section('head')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="/js/chart.min.js"></script>
+    <script src="/js/chartjs-adapter-date-fns.bundle.min.js"></script>
 @endsection
 
 @section('title', $ladderPlayer->username)
 @section('body-class', 'body-player-detail')
-@section('feature-image', '/images/feature/feature-' . $history->ladder->abbreviation . '.jpg')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
 @section('feature')
     <div class="feature">

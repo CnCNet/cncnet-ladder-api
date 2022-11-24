@@ -19960,6 +19960,10 @@ button.swiper-pagination-bullet {
   color: #00ff8a;
 }
 
+.navbar .dropdown-menu a:hover {
+  color: #00ff8a;
+}
+
 @media (max-width: 992px) {
   .navbar .nav-item {
     width: 100%;
@@ -20212,13 +20216,17 @@ button.swiper-pagination-bullet {
 
 .btn-primary:active,
 .btn-outline:active,
-.btn:first-child:active,
 :not(.btn-check) + .btn-outline:active,
 :not(.btn-check) + .btn-primary:active {
   background-color: transparent;
   border-color: #fff;
   color: #fff;
   box-shadow: -1px 1px 0 1px #fff;
+}
+
+.btn:active,
+.btn.btn-secondary:active {
+  box-shadow: none;
 }
 
 .btn-primary:hover {
@@ -23860,6 +23868,7 @@ footer .sponsor img:hover {
 }
 .ladder-listing .ladder-info div {
   margin-right: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .ladder-listing .ladder-info .btn .icon {
@@ -24221,12 +24230,12 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .count.won {
   color: #00ff8a;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .player-detail .count.lost {
-  color: #0f64ff;
-  font-weight: bold;
+  color: #03bcd4;
+  font-weight: 500;
 }
 
 .player-detail .count {
@@ -24548,10 +24557,6 @@ body.body-player-detail .page-image-feature {
 
 .game-detail .player-card-right .player-details {
   order: -1;
-}
-
-.game-detail .player-card .username {
-  color: #fff;
 }
 
 .game-detail .player-card .player-avatar {

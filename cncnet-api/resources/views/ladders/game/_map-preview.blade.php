@@ -10,6 +10,12 @@
     $webWayPoint2_Y = $ratioY * (131 - $mapStartY);
 @endphp
 
+<div class="map-preview">
+    <img src="{{ $mapPreview }}" style="max-width:100%" />
+</div>
+
+{{--  Uncomment when we have Map Data
+
 <div class="map-preview d-lg-none">
     <img src="{{ $mapPreview }}" style="max-width:100%" />
 </div>
@@ -18,7 +24,6 @@
         @php $gameStats = $pgr->stats; @endphp
         @php $player = $pgr->player()->first(); @endphp
 
-        {{-- TODO waypoints by player --}}
         @php $webWayPointX = $k == 0 ?  $webWayPoint1_X: $webWayPoint2_X; @endphp
         @php $webWayPointY = $k == 0 ?  $webWayPoint1_Y: $webWayPoint2_Y; @endphp
 
@@ -45,4 +50,4 @@
             </div>
         </div>
     @endforeach
-</div>
+</div> --}}

@@ -17,8 +17,10 @@
                                       </div>
                                   </a>
                               </div>
-                              <h2 class="username text-center">
-                                  {{ $player->username }}
+                              <h2 class="username text-center mt-2 me-2">
+                                  <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
+                                      {{ $player->username }}
+                                  </a>
                               </h2>
                               <h3 class="text-center status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
                                   @if ($pgr->won)
