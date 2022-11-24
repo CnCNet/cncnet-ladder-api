@@ -20212,6 +20212,7 @@ button.swiper-pagination-bullet {
 
 .btn-primary:active,
 .btn-outline:active,
+.btn:first-child:active,
 :not(.btn-check) + .btn-outline:active,
 :not(.btn-check) + .btn-primary:active {
   background-color: transparent;

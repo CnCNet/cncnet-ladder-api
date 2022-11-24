@@ -119,7 +119,7 @@
                             <div class="column">
                                 <h5 class="stat-title">Top factions played</h5>
                                 <div>
-                                    @include('ladders.components.player-factions')
+                                    @include('ladders.player._player-factions')
                                 </div>
                             </div>
                         @endif
@@ -127,7 +127,7 @@
                         <div class="column">
                             <h5 class="stat-title">Played this month</h5>
                             <div>
-                                @include('ladders.components.player-chart')
+                                @include('ladders.player._player-chart')
                             </div>
                         </div>
                     </div>
@@ -148,7 +148,7 @@
             </section>
         </div>
 
-        @include('ladders.player-view-moderation')
+        @include('ladders.player._player-admin-tools')
 
         <section>
             <section class="mt-5">
@@ -166,7 +166,7 @@
             <section class="player-maps pt-5 pb-5">
                 <div class="container">
                     <div class="row">
-                        @include('ladders.components.player-map-stats')
+                        @include('ladders.player._player-map-stats')
                     </div>
                 </div>
             </section>

@@ -135,11 +135,9 @@
                                     <td>{{ $ban->expires }}</td>
                                     <td></td>
                                 @endif
-                                <td>
-                                    <a href="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}" class="btn btn-primary btn-sm"
-                                        style="background-color: var(--bs-btn-bg)">Edit</a>
-                                </td>
-
+                                    <td>
+                                        <a href="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}" class="btn btn-primary btn-sm" ">Edit</a>
+                                    </td>
                             </tr>
                         @endforeach
                     </tbody>

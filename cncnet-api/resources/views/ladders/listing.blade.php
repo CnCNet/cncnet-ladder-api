@@ -115,14 +115,14 @@
             </section>
 
             <section class="mt-5 mb-5">
-                @include('ladders.components.qm-stats', [
+                @include('ladders.listing._qm-stats', [
                     'stats' => $stats,
                     'history' => $history,
                     'statsPlayerOfTheDay' => $statsPlayerOfTheDay,
                 ])
             </section>
 
-            @include('ladders.components.past-ladders')
+            @include('ladders.listing._past-ladders')
 
             @if (!$search)
                 <section class="mt-5 mb-5">
@@ -139,7 +139,7 @@
                             </div>
                         </div>
                     </div>
-                    @include('ladders.components.listing-recent-games', ['games' => $games])
+                    @include('ladders.listing._recent-games', ['games' => $games])
                 </section>
             @endif
 
@@ -278,7 +278,7 @@
         </div>
     </section>
 
-    @include('ladders.components.modal-ladder-rules')
+    @include('ladders.listing._modal-ladder-rules')
 
 @endsection
 
