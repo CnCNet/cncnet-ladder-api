@@ -92,7 +92,10 @@
                             <div class="d-flex align-items-center">
                                 <div>
                                     <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
-                                    <p class="text-muted mb-0"> {{ gmdate('H:i:s', $gameReport->duration) }}</p>
+                                    <p class="text-muted mb-0">{{ gmdate('H:i:s', $gameReport->duration) }}</p>
+                                    <p class="text-muted mb-0">
+                                        {{ $gameReport->created_at->diffForHumans() }}
+                                    </p>
                                 </div>
                             </div>
                         </td>
