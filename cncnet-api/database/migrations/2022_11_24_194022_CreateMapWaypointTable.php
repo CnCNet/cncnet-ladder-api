@@ -15,14 +15,14 @@ class CreateMapWaypointTable extends Migration
         Schema::dropIfExists('map_waypoints');
 
         Schema::create('map_waypoints', function (Blueprint $table)
-		{
-			$table->increments('id');
-			$table->integer('index')->unsigned();
+        {
+            $table->increments('id');
+            $table->integer('index')->unsigned();
             $table->integer('x')->unsigned();
             $table->integer('y')->unsigned();
             $table->integer('map_header_id')->unsigned();
             $table->foreign('map_header_id')->references('id')->on('map_headers')->onDelete('cascade');
-		});
+        });
     }
 
     /**
