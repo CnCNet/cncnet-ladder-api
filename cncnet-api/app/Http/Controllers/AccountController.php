@@ -347,9 +347,10 @@ class AccountController extends Controller
 
         $new_discord_profile = $request->discord_profile;
 
-        $existing_discord_profile = \App\User::where('discord_profile', '=', $new_discord_profile)->first();
+        $user_with_discord_profile = \App\User::where('discord_profile', '=', $new_discord_profile)->first();
 
-        if ($existing_discord_profile !== null)
+        //if a user already has this discord profile, and the user with the discord profile is not the current user, exit
+        if ($user_with_discord_profile !== null && $user->id !== $user_with_discord_profile->id)
         {
             $request->session()->flash('error', "This discord profile is already being used by another user.");
             return redirect()->back();
