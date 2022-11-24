@@ -193,4 +193,48 @@ class StatsService
         }
         return null;
     }
+
+    public function getPlayerMatchups($player, $history)
+    {
+        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5, function () use ($player, $history)
+        {
+            $now = $history->starts;
+            $from = $now->copy()->startOfMonth()->toDateTimeString();
+            $to = $now->copy()->endOfMonth()->toDateTimeString();
+
+            $playerGames = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->get();
+
+            $matchupResults = [];
+            foreach ($playerGames as $pg)
+            {
+                $gamesWon = $player->playerGames()
+                    ->where("ladder_history_id", $history->id)
+                    ->whereBetween("player_game_reports.created_at", [$from, $to])
+                    ->where("won", true)
+                    ->count();
+
+                $gamesLost = $player->playerGames()
+                    ->where("ladder_history_id", $history->id)
+                    ->whereBetween("player_game_reports.created_at", [$from, $to])
+                    ->where("won", false)
+                    ->count();
+
+                $total = $player->playerGames()
+                    ->where("ladder_history_id", $history->id)
+                    ->whereBetween("player_game_reports.created_at", [$from, $to])
+                    ->count();
+
+                $matchupResults[$pg->cty] =
+                    [
+                        "won" => $sideCountWon,
+                        "lost" => $sideCountLost,
+                        "total" => $total
+                    ];
+            }
+            return $matchupResults;
+        });
+    }
 }
