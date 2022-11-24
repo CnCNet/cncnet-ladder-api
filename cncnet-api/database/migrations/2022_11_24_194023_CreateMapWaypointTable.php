@@ -12,12 +12,10 @@ class CreateMapWaypointTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('map_waypoints');
-
         Schema::create('map_waypoints', function (Blueprint $table)
         {
             $table->increments('id');
-            $table->integer('index')->unsigned();
+            $table->integer('bit_idx')->unsigned();
             $table->integer('x')->unsigned();
             $table->integer('y')->unsigned();
             $table->integer('map_header_id')->unsigned();

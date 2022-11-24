@@ -1,0 +1,1922 @@
+{
+  "a823762f2aac55ee5b24f636f81d7764ac681a20" : {
+    "width" : 96,
+    "height" : 94,
+    "startX" : 210,
+    "startY" : 55,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 234,
+      "y" : 114
+    }, {
+      "index" : 2,
+      "x" : 282,
+      "y" : 92
+    }, {
+      "index" : 3,
+      "x" : 235,
+      "y" : 76
+    }, {
+      "index" : 4,
+      "x" : 277,
+      "y" : 129
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "c2226219e62ba599ea73b37c82ad9d0b9e8082db" : {
+    "width" : 95,
+    "height" : 66,
+    "startX" : 209,
+    "startY" : 58,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 214,
+      "y" : 76
+    }, {
+      "index" : 2,
+      "x" : 295,
+      "y" : 78
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "f3038c4cc4ac43131cbf5a6fdb072bd67a782598" : {
+    "width" : 71,
+    "height" : 80,
+    "startX" : 220,
+    "startY" : 45,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 276,
+      "y" : 112
+    }, {
+      "index" : 2,
+      "x" : 276,
+      "y" : 55
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "7da1b63cdba3c5a97ab28d2d6abf16a14ffdcff3" : {
+    "width" : 65,
+    "height" : 71,
+    "startX" : 223,
+    "startY" : 45,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 231,
+      "y" : 72
+    }, {
+      "index" : 2,
+      "x" : 282,
+      "y" : 89
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "ffe59ccf68fd743ee8849c615af84180396c8e67" : {
+    "width" : 85,
+    "height" : 102,
+    "startX" : 213,
+    "startY" : 52,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 227,
+      "y" : 95
+    }, {
+      "index" : 2,
+      "x" : 291,
+      "y" : 100
+    }, {
+      "index" : 3,
+      "x" : 260,
+      "y" : 143
+    }, {
+      "index" : 4,
+      "x" : 252,
+      "y" : 64
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "41120e5b6571a56916aff14a39d053e2fb167179" : {
+    "width" : 93,
+    "height" : 109,
+    "startX" : 209,
+    "startY" : 54,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 285,
+      "y" : 76
+    }, {
+      "index" : 2,
+      "x" : 216,
+      "y" : 131
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "14486db097fdae778a0bd4dadeaad541f33117c0" : {
+    "width" : 75,
+    "height" : 96,
+    "startX" : 219,
+    "startY" : 48,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 232,
+      "y" : 79
+    }, {
+      "index" : 2,
+      "x" : 244,
+      "y" : 118
+    }, {
+      "index" : 3,
+      "x" : 287,
+      "y" : 70
+    }, {
+      "index" : 4,
+      "x" : 283,
+      "y" : 124
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "2f11a7459c9951fbfd6b5bbd73cccd7cf9b0bf5c" : {
+    "width" : 80,
+    "height" : 111,
+    "startX" : 216,
+    "startY" : 48,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 223,
+      "y" : 60
+    }, {
+      "index" : 2,
+      "x" : 268,
+      "y" : 134
+    }, {
+      "index" : 3,
+      "x" : 227,
+      "y" : 132
+    }, {
+      "index" : 4,
+      "x" : 273,
+      "y" : 65
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "3c47f7934fac4c3e0cca68d72bf5ece5256c4c96" : {
+    "width" : 65,
+    "height" : 67,
+    "startX" : 223,
+    "startY" : 40,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 229,
+      "y" : 93
+    }, {
+      "index" : 2,
+      "x" : 278,
+      "y" : 47
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "7e19fffb5a97ef5cd0105c18ebd28bc1fe012616" : {
+    "width" : 74,
+    "height" : 76,
+    "startX" : 219,
+    "startY" : 44,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 278,
+      "y" : 103
+    }, {
+      "index" : 2,
+      "x" : 278,
+      "y" : 62
+    }, {
+      "index" : 3,
+      "x" : 234,
+      "y" : 66
+    }, {
+      "index" : 4,
+      "x" : 234,
+      "y" : 102
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "2d36b87ca3e3d529ecc21962892e70f4fb1ee4c9" : {
+    "width" : 60,
+    "height" : 85,
+    "startX" : 226,
+    "startY" : 37,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 232,
+      "y" : 88
+    }, {
+      "index" : 2,
+      "x" : 278,
+      "y" : 78
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "61b03ec87788727082a3a75340e00a3504d60262" : {
+    "width" : 80,
+    "height" : 68,
+    "startX" : 216,
+    "startY" : 51,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 224,
+      "y" : 95
+    }, {
+      "index" : 2,
+      "x" : 287,
+      "y" : 95
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "93cb314548772f7c471673b8d71cb8223725ad4e" : {
+    "width" : 72,
+    "height" : 101,
+    "startX" : 220,
+    "startY" : 48,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 282,
+      "y" : 131
+    }, {
+      "index" : 2,
+      "x" : 231,
+      "y" : 124
+    }, {
+      "index" : 3,
+      "x" : 234,
+      "y" : 74
+    }, {
+      "index" : 4,
+      "x" : 281,
+      "y" : 62
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "3fca4a1ffffc6a5d19868837e625a5ee8a5658f1" : {
+    "width" : 85,
+    "height" : 84,
+    "startX" : 213,
+    "startY" : 50,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 293,
+      "y" : 128
+    }, {
+      "index" : 2,
+      "x" : 218,
+      "y" : 58
+    }, {
+      "index" : 3,
+      "x" : 219,
+      "y" : 128
+    }, {
+      "index" : 4,
+      "x" : 294,
+      "y" : 58
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "b10ac7396c5798e12adc1c6c04c0b8f5df048da3" : {
+    "width" : 96,
+    "height" : 92,
+    "startX" : 208,
+    "startY" : 56,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 226,
+      "y" : 70
+    }, {
+      "index" : 2,
+      "x" : 288,
+      "y" : 131
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "df42c124fd1510b44dfb5a5797a3de2c734e8361" : {
+    "width" : 75,
+    "height" : 71,
+    "startX" : 218,
+    "startY" : 49,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 235,
+      "y" : 105
+    }, {
+      "index" : 2,
+      "x" : 234,
+      "y" : 54
+    }, {
+      "index" : 3,
+      "x" : 280,
+      "y" : 54
+    }, {
+      "index" : 4,
+      "x" : 279,
+      "y" : 103
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "daef8a59785f070a6242db3bbc1336b2e23ade9f" : {
+    "width" : 83,
+    "height" : 87,
+    "startX" : 214,
+    "startY" : 49,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 286,
+      "y" : 119
+    }, {
+      "index" : 2,
+      "x" : 227,
+      "y" : 63
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "b8acc906f300442a1ca6939f0b1585baa6fa9ec1" : {
+    "width" : 100,
+    "height" : 105,
+    "startX" : 206,
+    "startY" : 64,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 224,
+      "y" : 152
+    }, {
+      "index" : 2,
+      "x" : 280,
+      "y" : 147
+    }, {
+      "index" : 3,
+      "x" : 231,
+      "y" : 86
+    }, {
+      "index" : 4,
+      "x" : 278,
+      "y" : 78
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "0bf0c32ad20b664a514709b37b76908eab54fd86" : {
+    "width" : 95,
+    "height" : 75,
+    "startX" : 208,
+    "startY" : 55,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 221,
+      "y" : 64
+    }, {
+      "index" : 2,
+      "x" : 286,
+      "y" : 117
+    }, {
+      "index" : 3,
+      "x" : 220,
+      "y" : 110
+    }, {
+      "index" : 4,
+      "x" : 287,
+      "y" : 68
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "3b7a5dbc8c79eeb4507e1f17786db55b90157ee9" : {
+    "width" : 93,
+    "height" : 91,
+    "startX" : 209,
+    "startY" : 54,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 295,
+      "y" : 109
+    }, {
+      "index" : 2,
+      "x" : 263,
+      "y" : 131
+    }, {
+      "index" : 3,
+      "x" : 217,
+      "y" : 93
+    }, {
+      "index" : 4,
+      "x" : 256,
+      "y" : 61
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "e67aac49606a6f8e89a3e56b69b9c991372e090f" : {
+    "width" : 89,
+    "height" : 90,
+    "startX" : 211,
+    "startY" : 56,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 278,
+      "y" : 73
+    }, {
+      "index" : 2,
+      "x" : 234,
+      "y" : 65
+    }, {
+      "index" : 3,
+      "x" : 234,
+      "y" : 126
+    }, {
+      "index" : 4,
+      "x" : 277,
+      "y" : 122
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "19585e6e1dbec84ffeaa28ec26caf69a7126c7dc" : {
+    "width" : 95,
+    "height" : 85,
+    "startX" : 208,
+    "startY" : 55,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 221,
+      "y" : 67
+    }, {
+      "index" : 2,
+      "x" : 287,
+      "y" : 120
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "b7f71abf16cfbfdb086f04d402465270426a3b9d" : {
+    "width" : 77,
+    "height" : 49,
+    "startX" : 217,
+    "startY" : 48,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 226,
+      "y" : 70
+    }, {
+      "index" : 2,
+      "x" : 283,
+      "y" : 70
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "b15d945bf79147005bc7506fb52e87a2f5ac9658" : {
+    "width" : 80,
+    "height" : 81,
+    "startX" : 216,
+    "startY" : 49,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 238,
+      "y" : 107
+    }, {
+      "index" : 2,
+      "x" : 273,
+      "y" : 76
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "3557d693fa6768b91afa0f096aaa7ccc57b808ba" : {
+    "width" : 83,
+    "height" : 90,
+    "startX" : 214,
+    "startY" : 56,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 234,
+      "y" : 61
+    }, {
+      "index" : 2,
+      "x" : 283,
+      "y" : 61
+    }, {
+      "index" : 3,
+      "x" : 272,
+      "y" : 135
+    }, {
+      "index" : 4,
+      "x" : 221,
+      "y" : 122
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "d3797ec3d3e29cfa2ac81f9e08c9e7ebab142952" : {
+    "width" : 85,
+    "height" : 112,
+    "startX" : 213,
+    "startY" : 52,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 224,
+      "y" : 139
+    }, {
+      "index" : 2,
+      "x" : 238,
+      "y" : 65
+    }, {
+      "index" : 3,
+      "x" : 285,
+      "y" : 71
+    }, {
+      "index" : 4,
+      "x" : 278,
+      "y" : 144
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "84d6a66e52767d985cb5325107482f6714663add" : {
+    "width" : 78,
+    "height" : 74,
+    "startX" : 217,
+    "startY" : 49,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 284,
+      "y" : 79
+    }, {
+      "index" : 2,
+      "x" : 286,
+      "y" : 99
+    }, {
+      "index" : 3,
+      "x" : 223,
+      "y" : 74
+    }, {
+      "index" : 4,
+      "x" : 222,
+      "y" : 93
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "71521c1af9d118ae7af43f512ecb1d28712ebfc6" : {
+    "width" : 55,
+    "height" : 56,
+    "startX" : 228,
+    "startY" : 37,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 256,
+      "y" : 47
+    }, {
+      "index" : 2,
+      "x" : 256,
+      "y" : 86
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "5c7994e57795a6e7e6dfc83a138683be623c042f" : {
+    "width" : 85,
+    "height" : 99,
+    "startX" : 213,
+    "startY" : 51,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 255,
+      "y" : 128
+    }, {
+      "index" : 2,
+      "x" : 221,
+      "y" : 66
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "b7d13fa9706265523ada6a123c4038d8cca5869c" : {
+    "width" : 79,
+    "height" : 79,
+    "startX" : 216,
+    "startY" : 49,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 225,
+      "y" : 62
+    }, {
+      "index" : 2,
+      "x" : 280,
+      "y" : 60
+    }, {
+      "index" : 3,
+      "x" : 278,
+      "y" : 111
+    }, {
+      "index" : 4,
+      "x" : 223,
+      "y" : 117
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "977d712c135aba5a48bd173cac1a769eaf17dbad" : {
+    "width" : 87,
+    "height" : 96,
+    "startX" : 212,
+    "startY" : 52,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 223,
+      "y" : 57
+    }, {
+      "index" : 2,
+      "x" : 294,
+      "y" : 57
+    }, {
+      "index" : 3,
+      "x" : 218,
+      "y" : 139
+    }, {
+      "index" : 4,
+      "x" : 284,
+      "y" : 125
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "3e1a6efe2370f1b26419ece66672b52bf98dc131" : {
+    "width" : 90,
+    "height" : 102,
+    "startX" : 211,
+    "startY" : 55,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 230,
+      "y" : 67
+    }, {
+      "index" : 2,
+      "x" : 280,
+      "y" : 67
+    }, {
+      "index" : 3,
+      "x" : 229,
+      "y" : 138
+    }, {
+      "index" : 4,
+      "x" : 280,
+      "y" : 139
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "68657090cb6b765dbaef376d727d9bc235f4b803" : {
+    "width" : 64,
+    "height" : 126,
+    "startX" : 224,
+    "startY" : 42,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 271,
+      "y" : 128
+    }, {
+      "index" : 2,
+      "x" : 264,
+      "y" : 145
+    }, {
+      "index" : 3,
+      "x" : 271,
+      "y" : 83
+    }, {
+      "index" : 4,
+      "x" : 264,
+      "y" : 64
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "3408d95f805db3710d910206669e856e7216e588" : {
+    "width" : 94,
+    "height" : 86,
+    "startX" : 209,
+    "startY" : 57,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 235,
+      "y" : 78
+    }, {
+      "index" : 2,
+      "x" : 231,
+      "y" : 124
+    }, {
+      "index" : 3,
+      "x" : 284,
+      "y" : 124
+    }, {
+      "index" : 4,
+      "x" : 283,
+      "y" : 83
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "7e40159ffa09bef3d9e36f43f89a13dedeab56ec" : {
+    "width" : 93,
+    "height" : 72,
+    "startX" : 209,
+    "startY" : 56,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 221,
+      "y" : 73
+    }, {
+      "index" : 2,
+      "x" : 290,
+      "y" : 70
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "64e35bfbf9881812884f29d4498704a6e33ce695" : {
+    "width" : 73,
+    "height" : 79,
+    "startX" : 219,
+    "startY" : 45,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 270,
+      "y" : 120
+    }, {
+      "index" : 2,
+      "x" : 234,
+      "y" : 58
+    }, {
+      "index" : 3,
+      "x" : 272,
+      "y" : 49
+    }, {
+      "index" : 4,
+      "x" : 236,
+      "y" : 111
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "e583be6df64140609f089a067e1f9781f9c07ffa" : {
+    "width" : 86,
+    "height" : 105,
+    "startX" : 213,
+    "startY" : 54,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 228,
+      "y" : 84
+    }, {
+      "index" : 2,
+      "x" : 278,
+      "y" : 77
+    }, {
+      "index" : 3,
+      "x" : 279,
+      "y" : 140
+    }, {
+      "index" : 4,
+      "x" : 228,
+      "y" : 137
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "0c6f12d027f875f6fee77374ab419d7a06a0d01f" : {
+    "width" : 93,
+    "height" : 88,
+    "startX" : 209,
+    "startY" : 55,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 222,
+      "y" : 73
+    }, {
+      "index" : 2,
+      "x" : 223,
+      "y" : 124
+    }, {
+      "index" : 3,
+      "x" : 286,
+      "y" : 72
+    }, {
+      "index" : 4,
+      "x" : 284,
+      "y" : 125
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "02a1cc92df1334d99a34cab92fb6f12763170f9e" : {
+    "width" : 60,
+    "height" : 60,
+    "startX" : 226,
+    "startY" : 39,
+    "numStartingPoints" : 6,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 231,
+      "y" : 47
+    }, {
+      "index" : 2,
+      "x" : 231,
+      "y" : 66
+    }, {
+      "index" : 3,
+      "x" : 231,
+      "y" : 87
+    }, {
+      "index" : 4,
+      "x" : 281,
+      "y" : 47
+    }, {
+      "index" : 5,
+      "x" : 281,
+      "y" : 66
+    }, {
+      "index" : 6,
+      "x" : 281,
+      "y" : 86
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "bbf27e9f274138420a67925c771aa6aad5792306" : {
+    "width" : 150,
+    "height" : 71,
+    "startX" : 181,
+    "startY" : 85,
+    "numStartingPoints" : 8,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 187,
+      "y" : 141
+    }, {
+      "index" : 2,
+      "x" : 189,
+      "y" : 99
+    }, {
+      "index" : 3,
+      "x" : 210,
+      "y" : 91
+    }, {
+      "index" : 4,
+      "x" : 210,
+      "y" : 146
+    }, {
+      "index" : 5,
+      "x" : 300,
+      "y" : 151
+    }, {
+      "index" : 6,
+      "x" : 294,
+      "y" : 92
+    }, {
+      "index" : 7,
+      "x" : 322,
+      "y" : 96
+    }, {
+      "index" : 8,
+      "x" : 324,
+      "y" : 142
+    } ]
+  },
+  "9ef9f21e7d77f5b71ed2103ae5f31bd83572e746" : {
+    "width" : 55,
+    "height" : 52,
+    "startX" : 228,
+    "startY" : 35,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 259,
+      "y" : 82
+    }, {
+      "index" : 2,
+      "x" : 234,
+      "y" : 56
+    }, {
+      "index" : 3,
+      "x" : 254,
+      "y" : 43
+    }, {
+      "index" : 4,
+      "x" : 277,
+      "y" : 66
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "b53f2a1c29331529b3c38bf17ca0d55d334f516a" : {
+    "width" : 80,
+    "height" : 96,
+    "startX" : 216,
+    "startY" : 47,
+    "numStartingPoints" : 2,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 275,
+      "y" : 134
+    }, {
+      "index" : 2,
+      "x" : 236,
+      "y" : 65
+    }, {
+      "index" : 3,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 4,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "f93aa024380e8f18f046099d0fb042b444e46ca2" : {
+    "width" : 82,
+    "height" : 97,
+    "startX" : 214,
+    "startY" : 49,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 227,
+      "y" : 62
+    }, {
+      "index" : 2,
+      "x" : 226,
+      "y" : 124
+    }, {
+      "index" : 3,
+      "x" : 282,
+      "y" : 63
+    }, {
+      "index" : 4,
+      "x" : 283,
+      "y" : 128
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "11787c14911652661a2023ec36421f5bdcbcc888" : {
+    "width" : 95,
+    "height" : 81,
+    "startX" : 208,
+    "startY" : 57,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 225,
+      "y" : 84
+    }, {
+      "index" : 2,
+      "x" : 257,
+      "y" : 70
+    }, {
+      "index" : 3,
+      "x" : 289,
+      "y" : 96
+    }, {
+      "index" : 4,
+      "x" : 262,
+      "y" : 122
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "077fa3a65e7a9d7ec13b30103b90bdd217b14b63" : {
+    "width" : 75,
+    "height" : 74,
+    "startX" : 218,
+    "startY" : 45,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 225,
+      "y" : 51
+    }, {
+      "index" : 2,
+      "x" : 284,
+      "y" : 51
+    }, {
+      "index" : 3,
+      "x" : 229,
+      "y" : 115
+    }, {
+      "index" : 4,
+      "x" : 281,
+      "y" : 110
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "2a2ad0700fa7d7d98fc9d1a302d6f03c477f2cea" : {
+    "width" : 95,
+    "height" : 119,
+    "startX" : 208,
+    "startY" : 55,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 221,
+      "y" : 92
+    }, {
+      "index" : 2,
+      "x" : 220,
+      "y" : 139
+    }, {
+      "index" : 3,
+      "x" : 288,
+      "y" : 90
+    }, {
+      "index" : 4,
+      "x" : 293,
+      "y" : 127
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "3cef8cd2040c24ce639bbef4e7771fd5a2908909" : {
+    "width" : 75,
+    "height" : 72,
+    "startX" : 218,
+    "startY" : 46,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 259,
+      "y" : 111
+    }, {
+      "index" : 2,
+      "x" : 286,
+      "y" : 68
+    }, {
+      "index" : 3,
+      "x" : 223,
+      "y" : 103
+    }, {
+      "index" : 4,
+      "x" : 256,
+      "y" : 59
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  },
+  "15c411095b645674709e494af8b69ff862132f01" : {
+    "width" : 89,
+    "height" : 94,
+    "startX" : 211,
+    "startY" : 54,
+    "numStartingPoints" : 4,
+    "waypoints" : [ {
+      "index" : 1,
+      "x" : 225,
+      "y" : 69
+    }, {
+      "index" : 2,
+      "x" : 287,
+      "y" : 74
+    }, {
+      "index" : 3,
+      "x" : 287,
+      "y" : 132
+    }, {
+      "index" : 4,
+      "x" : 223,
+      "y" : 133
+    }, {
+      "index" : 5,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 6,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 7,
+      "x" : 0,
+      "y" : 0
+    }, {
+      "index" : 8,
+      "x" : 0,
+      "y" : 0
+    } ]
+  }
+}

@@ -12,8 +12,6 @@ class CreateMapHeaderTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('map_headers');
-
         Schema::create('map_headers', function (Blueprint $table)
         {
             $table->increments('id');
