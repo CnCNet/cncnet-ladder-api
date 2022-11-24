@@ -35,13 +35,13 @@
 
 .game-detail .status-lost 
 {
-    color: $red;
+    color: $game-lost;
     font-weight: 500;
 }
 
 .game-detail .status-won 
 {
-    color: #00ff84;
+    color: $game-won;
     font-weight: 500;
 }
 
@@ -116,8 +116,8 @@
 }
 
 .game-detail .player-card .points { font-weight: 500; }
-.game-detail .player-card .points.won { color: #00ff84; }
-.game-detail .player-card .points.lost { color: $red; }
+.game-detail .player-card .points.won { color: $game-won; }
+.game-detail .player-card .points.lost { color: $game-lost; }
 
 .game-detail .player-card-right .player-details 
 {
@@ -154,7 +154,7 @@
 {
     display: flex;
     flex-direction: column;
-    background: #161616;
+    background: #0c0c0c;
     
     @media(min-width: $lg-width)
     {
@@ -166,7 +166,7 @@
 .game-detail .stats .cameo-row 
 {
     min-height: 150px;
-    background: #161616;
+    background: #0c0c0c;
     padding: 2rem;
 }
 

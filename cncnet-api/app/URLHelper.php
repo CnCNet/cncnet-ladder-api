@@ -16,6 +16,17 @@ class URLHelper
     }
 
     /**
+     * Returns player profile url
+     * @param mixed $history 
+     * @param mixed $player 
+     * @return string 
+     */
+    public static function getGameUrl($history, $gameId)
+    {
+        return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/games/" . $gameId;
+    }
+
+    /**
      * Returns ladder url from history obj
      * @param mixed $history 
      * @return string 

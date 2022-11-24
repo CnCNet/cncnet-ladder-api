@@ -155,11 +155,15 @@
             <section class="mt-5">
                 <div class="container">
                     <div class="row">
-                        @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
-                        @include('components.player-recent-games', ['player' => $ladderPlayer, 'games' => $games])
-                    </div>
-                    <div class="row pt-3 pb-3">
-                        @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+                        <div class="col-md-12">
+                            <div class="mb-2">
+                                @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+                            </div>
+                            @include('ladders.player._games', ['player' => $ladderPlayer, 'games' => $games])
+                            <div class="mt-2">
+                                @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -171,6 +175,7 @@
                     </div>
                 </div>
             </section>
+        </section>
     </div>
 @endsection
 

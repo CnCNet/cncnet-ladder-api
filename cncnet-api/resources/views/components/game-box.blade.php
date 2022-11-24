@@ -7,7 +7,7 @@
         </a>
     </div>
 
-    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game">
+    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game" data-timestamp="{{ $date->timestamp }}">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
             <small class="status text-capitalize">{{ $status . ' ' . $date->diffForHumans() }}</small>

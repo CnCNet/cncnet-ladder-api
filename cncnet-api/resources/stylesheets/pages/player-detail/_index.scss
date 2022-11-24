@@ -16,13 +16,12 @@ body.body-player-detail .page-image-feature
 
 .player-detail 
 {
-    padding: 2rem;
     color: #b7b7b7;
     margin: auto;
     width: 90%;
     background: #030304;
     margin-top: -50px;
-
+    
     @media(min-width: $lg-width)
     {
         padding-top: 50px;
@@ -39,6 +38,8 @@ body.body-player-detail .page-image-feature
     position: relative;
     display: flex;
     flex-direction: column;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 
 .player-detail .player-stats 
@@ -258,11 +259,89 @@ body.body-player-detail .page-image-feature
 
 .player-detail .count.lost 
 {
-    color: $blue;
+    color: $game-lost;
     font-weight: 500;
 }
 
 .player-detail .count 
 {
     color: grey;
+}
+
+
+// Games rows
+
+.player-detail .games-table 
+{
+    background: linear-gradient(290deg, #262626, transparent);
+
+    tr
+    {
+        transition: ease 250ms all;
+    }
+    tr:hover 
+    {
+        background: #00000061;
+    }
+}
+
+.player-detail .games-table .td-versus
+{
+    background: #00000061;
+
+    .vs 
+    {
+        font-family: $font-impact;
+        font-style: italic;
+    }
+}
+
+.player-detail .games-table .game-status 
+{
+    width: 85px;
+}
+
+.player-detail .games-table .game-status.status-lost .points
+{
+    color: $game-lost;
+}
+
+.player-detail .games-table .game-status.status-lost .status-text
+{
+    color: $game-lost;
+    font-weight: 500;
+}
+
+.player-detail .games-table .game-status.status-won .status-text
+{
+    color: $primary;
+    font-weight: 500;
+}
+
+.player-detail .games-table .game-status.status-won .points
+{
+    color: $primary;
+}
+
+.player-detail .games-table .player-username 
+{
+    width: 120px;
+}
+
+.player-detail .games-table .player-row 
+{
+    display: flex;
+    align-items: center;
+}
+
+.player-detail .games-table .td-player
+{
+    width: 15%;
+}
+
+.player-detail .games-table .td-versus
+{   
+    width: 15%;
+    padding-left: 2rem;
+    padding-right: 2rem;
 }

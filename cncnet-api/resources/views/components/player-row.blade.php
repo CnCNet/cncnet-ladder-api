@@ -69,6 +69,6 @@
         <div class="player-games player-stat">{{ $totalGames }} <span>games</span></div>
     </div>
     <a href="{{ $url }}" class="player-link">
-        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+        <i class="bi bi-chevron-right"></i>
     </a>
 </div>
