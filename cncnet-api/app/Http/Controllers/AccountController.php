@@ -353,7 +353,7 @@ class AccountController extends Controller
         if ($userWithDiscordProfile !== null && $user->id !== $userWithDiscordProfile->id)
         {
             // Check its not just an empty string
-            if (strlen($userWithDiscordProfile) > 0 && $userWithDiscordProfile->discord_profile != "")
+            if (strlen($userWithDiscordProfile->discord_profile) > 0)
             {
                 $request->session()->flash('error', "This discord profile is already being used by another user.");
                 return redirect()->back();
