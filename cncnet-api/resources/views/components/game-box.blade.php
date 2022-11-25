@@ -7,7 +7,7 @@
         </a>
     </div>
 
-    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" title="View game" data-timestamp="{{ $date->timestamp }}">
+    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" data-timestamp="{{ $date->timestamp }}" title="View game">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
             <small class="status text-capitalize">{{ $status . ' ' . $date->diffForHumans() }}</small>
@@ -39,9 +39,7 @@
                     <h5>
                         {{ $gamePlayer->player->username }}
                         <span class="points">
-                            @if ($gamePlayer->points >= 0)
-                                +
-                            @endif{{ $gamePlayer->points }}
+                            {{ $gamePlayer->points >= 0 ? "+$gamePlayer->points" : $gamePlayer->points }}
                         </span>
                     </h5>
                 </div>

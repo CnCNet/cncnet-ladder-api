@@ -20214,19 +20214,16 @@ button.swiper-pagination-bullet {
   box-shadow: -1px 1px 0 1px #fff;
 }
 
-.btn-primary:active,
-.btn-outline:active,
-:not(.btn-check) + .btn-outline:active,
-:not(.btn-check) + .btn-primary:active {
-  background-color: transparent;
-  border-color: #fff;
-  color: #fff;
-  box-shadow: -1px 1px 0 1px #fff;
+.btn-secondary:active {
+  box-shadow: none;
 }
 
-.btn:active,
-.btn.btn-secondary:active {
-  box-shadow: none;
+.btn-primary:active,
+.btn-outline:active {
+  background-color: transparent !important;
+  border-color: #fff !important;
+  color: #fff !important;
+  box-shadow: -1px 1px 0 1px #fff !important;
 }
 
 .btn-primary:hover {
@@ -20658,9 +20655,10 @@ footer .sponsor img:hover {
 
 .game-box .vs {
   font-size: 21px;
-  color: #525252;
-  font-weight: 600;
+  color: #ededed;
+  font-weight: 400;
   font-style: italic;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
 }
 
 .game-box .player {
@@ -24257,8 +24255,11 @@ body.body-player-detail .page-image-feature {
   background: rgba(0, 0, 0, 0.3803921569);
 }
 .player-detail .games-table .td-versus .vs {
-  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: 1.2rem;
+  color: #ededed;
+  font-weight: 400;
   font-style: italic;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
 }
 
 .player-detail .games-table .game-status {
@@ -24571,7 +24572,7 @@ body.body-player-detail .page-image-feature {
   flex-direction: column;
   align-items: center;
 }
-@media (min-width: 768px) {
+@media (min-width: 992px) {
   .game-detail .game-players {
     flex-direction: row;
   }
@@ -24580,6 +24581,17 @@ body.body-player-detail .page-image-feature {
 .game-detail .game-players .player-vs {
   margin-top: 2rem;
   margin-bottom: 2rem;
+}
+.game-detail .game-players .player-vs h1, .game-detail .game-players .player-vs .h1 {
+  color: #ededed;
+  font-weight: 400;
+  font-style: italic;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+}
+@media (min-width: 992px) {
+  .game-detail .game-players .player-vs h1, .game-detail .game-players .player-vs .h1 {
+    font-size: 3rem;
+  }
 }
 
 .game-detail .game-players-container {

@@ -55,22 +55,20 @@
     }
 }
 
-.btn-primary:active,
-.btn-outline:active,
-:not(.btn-check) + .btn-outline:active,
-:not(.btn-check) + .btn-primary:active
-{
-    background-color: transparent;
-    border-color: #fff;
-    color: #fff;
-    box-shadow: -1px 1px 0 1px #fff;
-}
-
-.btn:active,
-.btn.btn-secondary:active
+.btn-secondary:active 
 {
     box-shadow: none;
 }
+
+.btn-primary:active,
+.btn-outline:active
+{
+    background-color: transparent!important;
+    border-color: #fff!important;
+    color: #fff!important;
+    box-shadow: -1px 1px 0 1px #fff!important;
+}
+
 
 .btn-primary
 {

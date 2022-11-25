@@ -291,8 +291,11 @@ body.body-player-detail .page-image-feature
 
     .vs 
     {
-        font-family: $font-impact;
+        font-size: 1.2rem;
+        color: #ededed;
+        font-weight: 400;
         font-style: italic;
+        font-family: $font-impact;
     }
 }
 
