@@ -4,10 +4,10 @@
     // TODO: Map data needed
     $webMapWidth = 768;
     $webMapHeight = 447;
-    $mapStartX = 209;
-    $mapStartY = 54;
-    $mapWidth = 93;
-    $mapHeight = 109;
+    $mapStartX = $map->mapHeaders->startX ?? -1;
+    $mapStartY = $map->mapHeaders->startY ?? -1;
+    $mapWidth = $map->mapHeaders->width ?? -1;
+    $mapHeight = $map->mapHeaders->height ?? -1;
 @endphp
 
 <div class="container">
@@ -19,8 +19,6 @@
             'mapPreview' => $mapPreview,
             'mapWidth' => $mapWidth,
             'mapHeight' => $mapHeight,
-            'webMapWidth' => $webMapWidth,
-            'webMapHeight' => $webMapHeight,
         ])
     </div>
 </div>
