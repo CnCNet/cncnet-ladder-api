@@ -10,6 +10,7 @@ use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;
 use App\User;
 use Exception;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 
 class LadderController extends Controller
@@ -53,7 +54,6 @@ class LadderController extends Controller
 
         $user = $request->user();
         $userIsMod = $user != null && $user->isLadderMod($history->ladder);
-
 
         return view(
             "ladders.index",
