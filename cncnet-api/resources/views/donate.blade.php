@@ -108,7 +108,7 @@
                         <li>
                             <p>
                                 Developed ladder enhancements such as: reduce map repeats, remove point filter, creation of
-                                RA2/Blitz/SFJ ladders, and general ladder maintenance.
+                                RA2/Blitz ladders, and general ladder maintenance.
                             </p>
                         </li>
                     </ul>
