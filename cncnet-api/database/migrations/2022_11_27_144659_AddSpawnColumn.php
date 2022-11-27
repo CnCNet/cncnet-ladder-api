@@ -12,10 +12,10 @@ class AddSpawnColumn extends Migration
      */
     public function up()
     {
-        Schema::table('player_game_reports', function(Blueprint $table)
-		{
+        Schema::table('player_game_reports', function (Blueprint $table)
+        {
             $table->integer('spawn')->nullable();
-		});
+        });
     }
 
     /**
@@ -25,9 +25,9 @@ class AddSpawnColumn extends Migration
      */
     public function down()
     {
-        Schema::table('player_game_reports', function(Blueprint $table)
-		{
+        Schema::table('player_game_reports', function (Blueprint $table)
+        {
             $table->dropColumn('spawn');
-		});
+        });
     }
 }
