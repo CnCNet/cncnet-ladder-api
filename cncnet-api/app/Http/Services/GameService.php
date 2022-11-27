@@ -1,5 +1,7 @@
 <?php namespace App\Http\Services;
 
+use Illuminate\Support\Facades\Log;
+
 class GameService
 {
     private $maxPlayers;
@@ -13,6 +15,8 @@ class GameService
 
     public function saveGameStats($result, $gameId, $playerId, $ladder, $cncnetGame)
     {
+        Log::info(json_encode($result));
+
         $game = \App\Game::where("id", "=", $gameId)->first();
 
 
@@ -103,6 +107,8 @@ class GameService
             $cid = substr($key, -1); // Current Index
             $property = substr($key, 0, -1); // Property without index
 
+            // Log::info("key '" . $key . "' property: '" . $property . "'" . ", cid: '" .$cid . "'");
+
             if (is_numeric($cid) && $cid >= 0 && $cid < 8)
             {
                 if (in_array(strtolower($property),  $playerStats[$cid]->gameStatsColumns))
@@ -145,7 +151,9 @@ class GameService
                 case "CON":
                     $playerGameReports[$cid]->disconnected = $value["value"];
                     break;
-
+                case "BSP": //starting spawn
+                    $playerGameReports[$cid]->spawn = $value["value"];
+                    break;
                 case "SID": // hack for Red Alert
                     if (!is_numeric($value["value"]))
                     {
