@@ -1,14 +1,16 @@
 @php
     $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->abbreviation . '/' . $map->hash . '.png';
     
-    // TODO: Map data needed
-    $webMapWidth = 768;
-    $webMapHeight = 447;
+    $mapPreviewSize = getimagesize($mapPreview);
+    $webMapWidth = $mapPreviewSize[0];
+    $webMapHeight = $mapPreviewSize[1];
+    
     $mapStartX = $map->mapHeaders->startX ?? -1;
     $mapStartY = $map->mapHeaders->startY ?? -1;
     $mapWidth = $map->mapHeaders->width ?? -1;
     $mapHeight = $map->mapHeaders->height ?? -1;
-    $mapWaypoints = $map->mapHeaders()->mapWaypoints ?? [];
+    $ratioX = $webMapWidth / $mapWidth;
+    $ratioY = $webMapHeight / $mapHeight;
 @endphp
 
 <div class="container">
@@ -20,6 +22,8 @@
             'mapPreview' => $mapPreview,
             'mapWidth' => $mapWidth,
             'mapHeight' => $mapHeight,
+            'ratioX' => $ratioX,
+            'ratioY' => $ratioY,
         ])
     </div>
 </div>

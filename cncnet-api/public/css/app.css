@@ -24520,10 +24520,22 @@ body.body-player-detail .page-image-feature {
   color: #fff;
   display: flex;
   align-items: center;
-  height: 60px;
   border-top: 0;
   border-radius: 4px;
   border-radius: 10px;
+  padding-right: 2rem;
+  height: 60px;
+}
+
+.game-detail .player .player-start-position {
+  position: absolute;
+  bottom: 4px;
+  right: 0;
+  font-size: 0.8rem;
+  width: 20px;
+  text-align: center;
+  font-weight: 500;
+  color: #fff;
 }
 
 .game-detail .player-red {

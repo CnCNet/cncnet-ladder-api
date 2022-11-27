@@ -88,6 +88,14 @@
                             </a>
                         @endif
                     </div>
+                    @if ($playerOfTheDayAward)
+                        <div class="pt-4 ml-auto">
+                            @include('ladders.player._award-player-of-the-day', [
+                                'wins' => $playerOfTheDayAward->wins,
+                                'username' => $playerOfTheDayAward->username,
+                            ])
+                        </div>
+                    @endif
                 </div>
 
                 <div class="player-stats">
@@ -132,15 +140,6 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div>
-                    @if ($playerOfTheDayAward)
-                        @include('ladders.components.award-player-of-the-day', [
-                            'wins' => $playerOfTheDayAward->wins,
-                            'username' => $playerOfTheDayAward->username,
-                        ])
-                    @endif
                 </div>
 
                 {{-- <div class="player-achievements">
