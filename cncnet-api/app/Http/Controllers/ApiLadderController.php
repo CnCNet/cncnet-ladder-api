@@ -13,8 +13,6 @@ use Log;
 use Illuminate\Support\Facades\Cache;
 use \App;
 
-use Illuminate\Support\Facades\Log;
-
 class ApiLadderController extends Controller
 {
     private $ladderService;
@@ -69,8 +67,6 @@ class ApiLadderController extends Controller
         $ladder = App\Ladder::find($ladderId);
         $player = App\Player::find($playerId);
         $game = App\Game::find($gameId);
-
-        Log::info("Processing game for player: " . $player->username);
 
         // Game stats result
         $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder);
