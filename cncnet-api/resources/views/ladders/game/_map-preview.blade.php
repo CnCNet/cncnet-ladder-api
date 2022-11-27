@@ -18,30 +18,43 @@
         @php $gameStats = $pgr->stats; @endphp
         @php $player = $pgr->player()->first(); @endphp
 
-        @php $webWayPointX = $k == 0 ?  $webWayPoint1_X: $webWayPoint2_X; @endphp
-        @php $webWayPointY = $k == 0 ?  $webWayPoint1_Y: $webWayPoint2_Y; @endphp
+        @php
+            $playerSpawnPosition = isset($pgr->spawn) ? $pgr->spawn : -1;
+            if ($playerSpawnPosition == -1) {
+                $x = -1;
+                $y = -1;
+            } else {
+                $waypoints = $map->mapHeaders->waypoints->where('bit_idx', $playerSpawnPosition)->first();
+                $x = $ratioX * ($position->x - $mapStartX);
+                $y = $ratioY * ($position->y - $mapStartY);
+            }
+        @endphp
 
-        <div class="player player-{{ $gameStats->colour($gameStats->col) }}" style="left: {{ $webWayPointX }}px; top: {{ $webWayPointY }}px;">
-            <div class="player-avatar">
-                @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 35])
+        @if ($playerSpawnPosition == -1)
+            <div style="display: none" class="no-spawn">
+            @else
+                <div class="player player-{{ $gameStats->colour($gameStats->col) }}" style="left: {{ $x }}px; top: {{ $y }}px;">
+        @endif
+        <div class="player-avatar">
+            @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 35])
+        </div>
+
+        <div class="player-details">
+            <div class="username">
+                {{ $player->username }}
             </div>
-
-            <div class="player-details">
-                <div class="username">
-                    {{ $player->username }}
-                </div>
-                <div class="status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
-                    @if ($pgr->won)
-                        Won
-                    @elseif($pgr->draw)
-                        Draw
-                    @elseif($pgr->disconnected)
-                        Disconnected
-                    @else
-                        Lost
-                    @endif
-                </div>
+            <div class="status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
+                @if ($pgr->won)
+                    Won
+                @elseif($pgr->draw)
+                    Draw
+                @elseif($pgr->disconnected)
+                    Disconnected
+                @else
+                    Lost
+                @endif
             </div>
         </div>
-    @endforeach
+</div>
+@endforeach
 </div>

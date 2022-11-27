@@ -8,6 +8,7 @@
     $mapStartY = $map->mapHeaders->startY ?? -1;
     $mapWidth = $map->mapHeaders->width ?? -1;
     $mapHeight = $map->mapHeaders->height ?? -1;
+    $mapWaypoints = $map->mapHeaders()->mapWaypoints ?? [];
 @endphp
 
 <div class="container">
