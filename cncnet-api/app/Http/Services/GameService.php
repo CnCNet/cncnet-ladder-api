@@ -145,7 +145,9 @@ class GameService
                 case "CON":
                     $playerGameReports[$cid]->disconnected = $value["value"];
                     break;
-
+                case "BSP": //starting spawn
+                    $playerGameReports[$cid]->spawn = $cid;
+                    break;
                 case "SID": // hack for Red Alert
                     if (!is_numeric($value["value"]))
                     {

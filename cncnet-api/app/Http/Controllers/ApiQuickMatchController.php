@@ -16,7 +16,6 @@ use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
 use \App\SpawnOptionType;
 use DateTime;
-use Illuminate\Support\Facades\Log;
 
 class ApiQuickMatchController extends Controller
 {
@@ -127,7 +126,6 @@ class ApiQuickMatchController extends Controller
         $player2 = "";
         $player1_side = "";
 
-        Log::info(($qms2->count() / 2) . " num active games in ladder " . $ladder->name);
         foreach ($qms2 as $qm)
         {
             $dt = new DateTime($qm->qm_match_created_at);
