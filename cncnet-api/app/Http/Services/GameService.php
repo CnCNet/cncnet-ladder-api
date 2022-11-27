@@ -103,8 +103,6 @@ class GameService
             $cid = substr($key, -1); // Current Index
             $property = substr($key, 0, -1); // Property without index
 
-            // Log::info("key '" . $key . "' property: '" . $property . "'" . ", cid: '" .$cid . "'");
-
             if (is_numeric($cid) && $cid >= 0 && $cid < 8)
             {
                 if (in_array(strtolower($property),  $playerStats[$cid]->gameStatsColumns))
