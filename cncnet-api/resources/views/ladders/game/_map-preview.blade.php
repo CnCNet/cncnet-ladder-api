@@ -12,10 +12,16 @@
             # Player positions plotted onto map preview
             $playerX = 0;
             $playerY = 0;
-            $playerSpawnPosition = isset($pgr->spawn) ? $pgr->spawn : -1;
+            
+            // Unsure if pgr spawn records 0-7 or 1-8
+            $playerSpawnPosition = isset($pgr->spawn) ? $pgr->spawn + 1 : -1;
             
             if ($playerSpawnPosition !== -1) {
-                $position = $map->mapHeaders->waypoints->where('bit_idx', $playerSpawnPosition)->first();
+                $position = $map->mapHeaders
+                    ->waypoints()
+                    ->where('bit_idx', $playerSpawnPosition)
+                    ->first();
+            
                 if ($position) {
                     $playerX = $ratioX * ($position->x - $mapStartX);
                     $playerY = $ratioY * ($position->y - $mapStartY);
@@ -25,7 +31,7 @@
         @endphp
 
         @if ($hasValidSpawnData)
-            <div class="player player-{{ $gameStats->colour($gameStats->col) }}" style="left: {{ $playerX }}px; top: {{ $playerY }}px;">
+            <div class="player player-{{ $gameStats->colour($gameStats->col) }}" style="left: calc({{ $playerX }}px - 152px/2); top: calc({{ $playerY }}px - 60px/2); width: 152px;">
                 <div class="player-avatar">
                     @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 35])
                 </div>
