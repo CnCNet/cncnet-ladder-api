@@ -36,6 +36,15 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation;
     }
 
+    /**
+     * @param mixed $history 
+     * @return string 
+     */
+    public static function getAccountLadderUrl($history)
+    {
+        return "/account/" . $history->ladder->abbreviation . "/list";
+    }
+
     public static function getVideoUrlbyAbbrev($abbrev)
     {
         switch ($abbrev)
@@ -70,5 +79,10 @@ class URLHelper
             case "ra":
                 return "/images/posters/red-alert-1.jpg";
         }
+    }
+
+    public static function getLadderLogoByAbbrev($abbrev)
+    {
+        return "/images/games/{$abbrev}/logo.png";
     }
 }

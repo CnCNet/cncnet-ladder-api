@@ -108,3 +108,9 @@ a
     background-color: #000;
     border-color: #000000;
 }
+
+// Override
+b, strong 
+{
+    font-weight: 500;
+}

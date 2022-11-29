@@ -1,7 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Ladder Account')
 @section('body-class', 'ladder-account')
-@section('feature-image', '/images/feature/feature-index.jpg')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($ladder->abbreviation))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($ladder->abbreviation))
 
 @section('feature')
     <div class="feature pt-5 pb-5">

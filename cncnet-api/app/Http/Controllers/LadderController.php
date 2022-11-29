@@ -28,41 +28,12 @@ class LadderController extends Controller
 
     public function getLadders(Request $request)
     {
-        $games = ["ra", "ts", "yr"];
-        $prevWinners = [];
-        $prevLadders = [];
-
-        foreach ($games as $game)
-        {
-            $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($game, 5)->splice(0, 1);
-        }
-
-        foreach ($prevLadders as $h)
-        {
-            foreach ($h as $history)
-            {
-                $prevWinners[] = [
-                    "game" => $history->ladder->game,
-                    "short" => $history->short,
-                    "full" => $history->ladder->name,
-                    "abbreviation" => $history->ladder->abbreviation,
-                    "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
-                ];
-            }
-        }
-
-        $user = $request->user();
-        $userIsMod = $user != null && $user->isLadderMod($history->ladder);
-
         return view(
             "ladders.index",
-            array(
+            [
                 "ladders" => $this->ladderService->getLatestLadders(),
-                "ladders_winners" => $prevWinners,
-                "userIsMod" => $userIsMod,
                 "clan_ladders" => $this->ladderService->getLatestClanLadders()
-            )
+            ]
         );
     }
 

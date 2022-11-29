@@ -13,14 +13,10 @@
             $playerX = 0;
             $playerY = 0;
             
-            // Unsure if pgr spawn records 0-7 or 1-8
             $playerSpawnPosition = isset($pgr->spawn) ? $pgr->spawn + 1 : -1;
             
             if ($playerSpawnPosition !== -1) {
-                $position = $map->mapHeaders
-                    ->waypoints()
-                    ->where('bit_idx', $playerSpawnPosition)
-                    ->first();
+                $position = $map->mapHeaders->waypoints->where('bit_idx', $playerSpawnPosition)->first();
             
                 if ($position) {
                     $playerX = $ratioX * ($position->x - $mapStartX);
