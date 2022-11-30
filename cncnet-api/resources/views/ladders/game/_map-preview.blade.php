@@ -9,23 +9,40 @@
             $gameStats = $pgr->stats;
             $player = $pgr->player()->first();
             
+            # Player visual box width
+            $playerWebBoxWidth = 152;
+            $playerWebBoxHeight = 60;
+            
             # Player positions plotted onto map preview
             $playerX = 0;
             $playerY = 0;
-            $playerSpawnPosition = isset($pgr->spawn) ? $pgr->spawn : -1;
+            
+            $playerSpawnPosition = isset($pgr->spawn) ? $pgr->spawn + 1 : -1;
             
             if ($playerSpawnPosition !== -1) {
                 $position = $map->mapHeaders->waypoints->where('bit_idx', $playerSpawnPosition)->first();
+            
                 if ($position) {
                     $playerX = $ratioX * ($position->x - $mapStartX);
                     $playerY = $ratioY * ($position->y - $mapStartY);
+            
+                    # I'm not sure i even understand, seems to work for the moment...
+                    $xBounds = $webMapWidth - $playerWebBoxWidth;
+                    if ($playerX > $xBounds) {
+                        $playerX = $xBounds;
+                    }
+            
                     $hasValidSpawnData = true;
                 }
             }
+            
+            $shouldCalcY = $playerY > 60;
         @endphp
 
         @if ($hasValidSpawnData)
-            <div class="player player-{{ $gameStats->colour($gameStats->col) }}" style="left: {{ $playerX }}px; top: {{ $playerY }}px;">
+            <div class="player player-{{ $gameStats->colour($gameStats->col) }}"
+                style="width: {{ $playerWebBoxWidth }}px; height: {{ $playerWebBoxHeight }}px; left: {{ $playerX }}px; top: @if ($shouldCalcY) calc({{ $playerY }}px - 60px/2);@else {{ $playerY }}px; @endif":
+                $playerY }}">
                 <div class="player-avatar">
                     @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 35])
                 </div>

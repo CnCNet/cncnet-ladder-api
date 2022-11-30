@@ -49,20 +49,19 @@
     <div class="ladder-index">
         <section class="pt-5 pb-5">
             <div class="container">
-                <div class="row">
+                <h3>
+                    <span class="material-symbols-outlined icon">
+                        military_tech
+                    </span>
+                    <strong>1vs1</strong> Ladders
+                </h3>
+
+                <div class="d-flex flex-wrap">
                     @foreach ($ladders as $history)
-                        <div class="col-12 col-lg-4">
-                            <a href="/ladder/{{ $history->short . '/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                                <div class="ladder-cover cover-{{ $history->ladder->abbreviation }} text-center"
-                                    style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover.png' }}')">
-                                    <h1>{{ $history->ladder->name }}</h1>
-                                    <p class="m-0">
-                                        <strong>1vs1 Ranked Match</strong><br />
-                                        {{ Carbon\Carbon::parse($history->starts)->format('F Y') }}
-                                    </p>
-                                </div>
-                            </a>
-                        </div>
+                        @include('components.ladder-box', [
+                            'history' => $history,
+                            'url' => \App\URLHelper::getLadderUrl($history),
+                        ])
                     @endforeach
                 </div>
             </div>
