@@ -71,23 +71,24 @@ class LadderController extends Controller
                 ->paginate(45);
         }
 
-        $data = array(
+        $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
+            ->where('local_id', '>=', 0)
+            ->orderBy('local_id', 'asc')
+            ->lists('name');
+
+        $data = [
+            "history" => $history,
+            "tier" => $request->tier,
+            "search" => $request->search,
+            "sides" => $sides,
             "stats" => $this->statsService->getQmStats($request->game),
             "statsPlayerOfTheDay" => $statsPlayerOfTheDay,
+            "players" => $players,
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
             "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game, 16),
-            "history" => $history,
-            "players" => $players,
-            "userIsMod" => $userIsMod,
-            "cards" => \App\Card::orderBy('id', 'asc')->lists('short'),
-            "tier" => $request->tier,
-            "search" => $request->search,
-            "sides" => \App\Side::where('ladder_id', '=', $history->ladder_id)
-                ->where('local_id', '>=', 0)
-                ->orderBy('local_id', 'asc')->lists('name')
-        );
+        ];
 
         return view("ladders.listing", $data);
     }

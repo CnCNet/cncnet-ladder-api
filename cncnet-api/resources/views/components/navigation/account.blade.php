@@ -8,6 +8,14 @@
                 person
             </span>
         @endif
+
+        <span class="ps-2 ms-2 me-2 text text-uppercase d-block d-md-none">
+            @if ($user)
+                {{ $user->name }}
+            @else
+                Your account
+            @endif
+        </span>
     </a>
 
     <ul class="dropdown-menu dropdown-menu-end" style="">

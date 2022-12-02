@@ -88,16 +88,16 @@
 
                 <div class="dropdown d-flex">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="material-symbols-outlined icon pe-3">
-                            military_tech
+                        <span class="material-symbols-outlined icon me-2">
+                            hotel_class
                         </span>
-                        History
+                        Hall of Fame
                     </button>
                     <ul class="dropdown-menu">
                         @foreach ($ladders_previous as $previous)
                             <li>
                                 <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}" class="dropdown-item">
-                                    {{ $previous->starts->format('M - Y') }}
+                                    {{ $previous->starts->format('Y - F') }}
                                 </a>
                             </li>
                         @endforeach

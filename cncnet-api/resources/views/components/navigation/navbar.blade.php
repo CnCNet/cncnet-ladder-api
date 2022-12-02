@@ -30,6 +30,7 @@
 
         <div class="collapse navbar-collapse position-relative align-items-center" id="mobileNav">
             <ul class="navbar-nav ms-auto align-items-center">
+                @include('components.navigation.hof')
                 @include('components.navigation.ladders')
                 @include('components.navigation.online')
                 @include('components.navigation.account')

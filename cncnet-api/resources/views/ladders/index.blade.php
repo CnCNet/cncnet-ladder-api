@@ -14,7 +14,7 @@
                     </h1>
 
                     <p class="lead">
-                        Compete against players all over the world in our <strong>1vs1</strong> ranked ladders
+                        Compete in <strong>1vs1</strong> ranked matches with players all over the world.
                     </p>
 
                     @if (!\Auth::user())
@@ -50,13 +50,10 @@
         <section class="pt-5 pb-5">
             <div class="container">
                 <h3>
-                    <span class="material-symbols-outlined icon">
-                        military_tech
-                    </span>
                     <strong>1vs1</strong> Ladders
                 </h3>
 
-                <div class="d-flex flex-wrap">
+                <div class="d-flex flex-wrap mt-4">
                     @foreach ($ladders as $history)
                         @include('components.ladder-box', [
                             'history' => $history,

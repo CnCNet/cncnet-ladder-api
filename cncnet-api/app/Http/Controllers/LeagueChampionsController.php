@@ -22,6 +22,7 @@ class LeagueChampionsController extends Controller
         $prevWinners = [];
         $prevLadders = [];
 
+
         $ladder = Ladder::where("abbreviation", $game)->first();
         $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($game, 10)->splice(0, 9);
 
@@ -29,13 +30,23 @@ class LeagueChampionsController extends Controller
         {
             foreach ($h as $history)
             {
+                # Default
+                $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
+                    ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+                    ->where('player_name', 'like', '%' . $request->search . '%')
+                    ->orderBy('points', 'desc')
+                    ->get()
+                    ->splice(0, 20);
+
+                $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
+                    ->where('local_id', '>=', 0)
+                    ->orderBy('local_id', 'asc')
+                    ->lists('name');
+
                 $prevWinners[] = [
-                    "game" => $history->ladder->game,
-                    "short" => $history->short,
-                    "full" => $history->ladder->name,
-                    "abbreviation" => $history->ladder->abbreviation,
-                    "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 20)
+                    "history" => $history,
+                    "players" => $players,
+                    "sides" => $sides
                 ];
             }
         }

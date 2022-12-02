@@ -151,6 +151,12 @@
     order: -1;
 }
 
+.game-detail .player-card-right .faction 
+{
+    order: 1;
+    margin-left: 0.5rem;
+}
+
 .game-detail .player-card .player-avatar 
 {
     border: 2px solid #121212;

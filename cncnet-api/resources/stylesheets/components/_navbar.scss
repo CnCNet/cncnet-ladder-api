@@ -15,6 +15,11 @@
     }
 }
 
+.navbar ul.dropdown-menu li:nth-child(1) .dropdown-header 
+{
+    padding-top: 0.5rem;
+}
+
 .navbar .dropdown-toggle::after
 {
     color: #fefeff;
@@ -95,16 +100,12 @@
     color: #cbcbcb;
     padding-bottom: 1rem;
     padding-top: 1.5rem;
-}
-
-.navbar-expand-lg .navbar-nav .dropdown-menu
-{
-    padding-top: 0;
+    font-size: 1rem;
 }
 
 .navbar .dropdown-menu 
 {
-    background: #07080c;
+    background: #0e1116;
     padding: 1rem;
     min-width: 250px;
     max-width: 100%;

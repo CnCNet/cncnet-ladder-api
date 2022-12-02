@@ -36,13 +36,14 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation;
     }
 
-    /**
-     * @param mixed $history 
-     * @return string 
-     */
     public static function getAccountLadderUrl($history)
     {
         return "/account/" . $history->ladder->abbreviation . "/list";
+    }
+
+    public static function getChampionsLadderUrl($history)
+    {
+        return "/ladder-champions/" . $history->abbreviation;
     }
 
     public static function getVideoUrlbyAbbrev($abbrev)

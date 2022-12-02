@@ -12,9 +12,10 @@
         <li>
             <h4 class="dropdown-header text-uppercase">1 vs 1 Ladders</h4>
         </li>
+
         @foreach ($ladders as $history)
             <li>
-                <a href="/ladder/{{ $history->short . '/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
+                <a href="{{ \App\URLHelper::getLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
                     <span class="d-flex align-items-center">
                         <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
                         {{ $history->ladder->name }}
@@ -32,7 +33,7 @@
 
             @foreach ($private_ladders as $private)
                 <li>
-                    <a href="/ladder/{{ $private->short . '/' . $private->ladder->abbreviation }}/" title="{{ $private->ladder->name }}" class="dropdown-item">
+                    <a href="{{ \App\URLHelper::getLadderUrl($history) }}" title="{{ $private->ladder->name }}" class="dropdown-item">
                         <span class="d-flex align-items-center">
                             <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
                             {{ $private->ladder->name }}
@@ -42,7 +43,7 @@
             @endforeach
         @endif
 
-        @if (isset($private_ladders))
+        @if (isset($clan_ladders))
 
             @if (count($clan_ladders) > 0)
                 <li>
@@ -66,7 +67,7 @@
         </li>
         @foreach ($ladders as $history)
             <li>
-                <a href="/ladder-champions/{{ $history->abbreviation }}/" title="{{ $history->ladder->name }}" class="dropdown-item">
+                <a href="{{ \App\URLHelper::getChampionsLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
 
                     <span class="d-flex align-items-center">
                         <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>

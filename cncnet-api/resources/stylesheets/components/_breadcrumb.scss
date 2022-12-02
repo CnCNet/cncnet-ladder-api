@@ -7,13 +7,14 @@
     left: 0;
     right: 0;
     width: 100%;
-    background: #0a0c10;
+    background: #0e1116;
     box-shadow: 1px -3px 2px 0px #0000003d;
     z-index: 5;
 
     padding-left: 0.5rem;
     padding-right: 0.5rem;
 }
+
 
 .breadcrumb-nav .breadcrumb 
 {
@@ -23,7 +24,7 @@
 .breadcrumb-item + .breadcrumb-item::before
 {
     padding: 1rem 0;
-    background: #0a0c10;
+    background: #0e1116;
     color: #2c3038;
 }
 
@@ -36,7 +37,7 @@
     border-radius: 4px;
     color: #6c6f76;
     transition: 350ms all ease;
-    background: #0a0c10;
+    background: #0e1116;
 
     &:hover 
     {

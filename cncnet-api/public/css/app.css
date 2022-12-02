@@ -19940,6 +19940,10 @@ button.swiper-pagination-bullet {
   }
 }
 
+.navbar ul.dropdown-menu li:nth-child(1) .dropdown-header {
+  padding-top: 0.5rem;
+}
+
 .navbar .dropdown-toggle::after {
   color: #fefeff;
 }
@@ -19998,14 +20002,11 @@ button.swiper-pagination-bullet {
   color: #cbcbcb;
   padding-bottom: 1rem;
   padding-top: 1.5rem;
-}
-
-.navbar-expand-lg .navbar-nav .dropdown-menu {
-  padding-top: 0;
+  font-size: 1rem;
 }
 
 .navbar .dropdown-menu {
-  background: #07080c;
+  background: #0e1116;
   padding: 1rem;
   min-width: 250px;
   max-width: 100%;
@@ -20130,7 +20131,7 @@ button.swiper-pagination-bullet {
   left: 0;
   right: 0;
   width: 100%;
-  background: #0a0c10;
+  background: #0e1116;
   box-shadow: 1px -3px 2px 0px rgba(0, 0, 0, 0.2392156863);
   z-index: 5;
   padding-left: 0.5rem;
@@ -20143,7 +20144,7 @@ button.swiper-pagination-bullet {
 
 .breadcrumb-item + .breadcrumb-item::before {
   padding: 1rem 0;
-  background: #0a0c10;
+  background: #0e1116;
   color: #2c3038;
 }
 
@@ -20155,7 +20156,7 @@ button.swiper-pagination-bullet {
   border-radius: 4px;
   color: #6c6f76;
   transition: 350ms all ease;
-  background: #0a0c10;
+  background: #0e1116;
 }
 .breadcrumb-item a:hover {
   color: #fff;
@@ -23683,27 +23684,40 @@ footer .sponsor img:hover {
   background-position: -7380px 0;
 }
 
-.video-ladder-link {
+.game-box-ladder-link {
   position: relative;
   overflow: hidden;
   max-width: 100%;
   width: 100%;
-  height: 350px;
+  height: 450px;
   border-radius: 10px;
-  background-size: cover;
-  background-image: url(../images/feature/ra2.jpg);
   font-family: "Oswald", sans-serif;
   transition: ease 250ms all;
-  margin: 0.5rem;
-  box-shadow: 0px 2px 1px 1px #464646;
-  transform: translateY(0px);
+  box-shadow: 0px 2px 1px 1px #202020;
 }
-@media (min-width: 992px) {
-  .video-ladder-link {
-    width: calc(33% - 1rem);
+@media (min-width: 768px) {
+  .game-box-ladder-link {
+    width: calc(40% - 1rem);
+    height: 550px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
-.video-ladder-link:before {
+@media (min-width: 992px) {
+  .game-box-ladder-link {
+    width: calc(20% - 1rem);
+  }
+}
+.game-box-ladder-link:hover .game-box-ladder-link-bg {
+  opacity: 1;
+}
+
+.game-box-ladder-link-bg {
+  background-position: 0 0;
+  transition: ease all 450ms;
+}
+
+.game-box-ladder-link-bg::before {
   content: "";
   position: absolute;
   top: 0;
@@ -23716,25 +23730,22 @@ footer .sponsor img:hover {
   transition: ease 350ms all;
 }
 
-.video-ladder-link:hover {
-  box-shadow: 0px 2px 1px 1px #efefef;
-}
-.video-ladder-link:hover .logo {
-  transform: scale(1.1);
-}
-
-.video-ladder-link .logo {
+.game-box-ladder-link .logo {
+  display: flex;
   position: relative;
   width: 300px;
+  height: 100px;
   max-width: 100%;
-  height: 120px;
-  transition: ease 250ms all;
+  text-align: center;
+  padding-bottom: 1rem;
 }
-.video-ladder-link .logo img {
+.game-box-ladder-link .logo img {
+  width: 190px;
   max-width: 100%;
+  margin: auto;
 }
 
-.video-ladder-link .ladder-description {
+.game-box-ladder-link .ladder-description {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23744,39 +23755,40 @@ footer .sponsor img:hover {
   left: 0;
   right: 0;
   width: 100%;
-  height: 100%;
   z-index: 1;
 }
 
-.video-ladder-link.bg-ra2 {
+.game-box-ladder-link .game-box-ladder-link-bg {
+  background-size: cover;
   background-image: url(../images/feature/ra2.jpg);
-}
-.video-ladder-link.bg-ra2 .logo {
-  width: 250px;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  opacity: 0.5;
 }
 
-.video-ladder-link.bg-yr {
+.game-box-ladder-link .game-box-ladder-link-bg.bg-ra2 {
+  background-image: url(../images/feature/ra2.jpg);
+  background-position: 0 -100px;
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-yr {
   background-image: url(../images/feature/yr.jpg);
 }
-.video-ladder-link.bg-yr .logo {
-  width: 350px;
-}
 
-.video-ladder-link.bg-blitz {
+.game-box-ladder-link .game-box-ladder-link-bg.bg-blitz {
   background-image: url(../images/feature/blitz.jpg);
 }
-.video-ladder-link.bg-blitz .logo {
-  width: 250px;
-}
 
-.video-ladder-link.bg-ts {
+.game-box-ladder-link .game-box-ladder-link-bg.bg-ts {
   background-image: url(../images/feature/ts.jpg);
 }
-.video-ladder-link.bg-ts .logo {
-  width: 250px;
-}
 
-.video-ladder-link.bg-ra {
+.game-box-ladder-link .game-box-ladder-link-bg.bg-ra {
   background-image: url(../images/feature/ra.jpg);
 }
 
@@ -24742,6 +24754,11 @@ body.body-player-detail .page-image-feature {
 
 .game-detail .player-card-right .player-details {
   order: -1;
+}
+
+.game-detail .player-card-right .faction {
+  order: 1;
+  margin-left: 0.5rem;
 }
 
 .game-detail .player-card .player-avatar {
