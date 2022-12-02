@@ -1,5 +1,7 @@
 <?php namespace App\Http\Services;
 
+use Illuminate\Support\Facades\Log;
+
 class GameService
 {
     private $maxPlayers;
@@ -14,7 +16,6 @@ class GameService
     public function saveGameStats($result, $gameId, $playerId, $ladder, $cncnetGame)
     {
         $game = \App\Game::where("id", "=", $gameId)->first();
-
 
         $player = \App\Player::where("id", "=", $playerId)->first();
 
