@@ -68,10 +68,6 @@ body-feature-image
     </script>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script src="/js/cncnet-online.js"></script>
-    <script>
-        let tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        let tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-    </script>
     @yield('js')
 </body>
 
