@@ -2,13 +2,17 @@
     <table class="games-table table align-middle mb-0">
         <tbody>
             @foreach ($games as $gameReport)
-                @php $pgr = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)->get(); @endphp
-                @php $gr = \App\GameReport::where('id', $gameReport->game_report_id)->first(); @endphp
-                @php $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id); @endphp
+                @php
+                    $pgr = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)->get();
+                    $gr = \App\GameReport::where('id', $gameReport->game_report_id)->first();
+                    $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id);
+                @endphp
 
                 @foreach ($pgr as $k => $gameReportPlayer)
-                    @php $player = $gameReportPlayer->player()->first(); @endphp
-                    @php $playerUrl = \App\URLHelper::getPlayerProfileUrl($history, $gameReportPlayer->player->username); @endphp
+                    @php
+                        $player = $gameReportPlayer->player()->first();
+                        $playerUrl = \App\URLHelper::getPlayerProfileUrl($history, $gameReportPlayer->player->username);
+                    @endphp
 
                     @if ($k == 0)
                         <tr class="align-middle">

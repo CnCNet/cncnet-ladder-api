@@ -222,7 +222,6 @@
     </section>
 
     @include('ladders.listing._modal-ladder-rules')
-
 @endsection
 
 @if ($history->ends > Carbon\Carbon::now())

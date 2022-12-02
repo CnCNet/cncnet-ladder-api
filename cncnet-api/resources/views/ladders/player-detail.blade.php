@@ -4,7 +4,7 @@
     <script src="/js/chartjs-adapter-date-fns.bundle.min.js"></script>
 @endsection
 
-@section('title', $ladderPlayer->username)
+@section('title', 'Viewing - ' . $ladderPlayer->username)
 @section('body-class', 'body-player-detail')
 @section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
@@ -19,8 +19,8 @@
 
                 <div class="col-12 col-lg-6">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
-                        <span>Ladder Rankings</span>
+                        <strong class="fw-bold"> {{ $ladderPlayer->username }}</strong> <br />
+                        <span>{{ $history->ladder->name }}</span>
                     </h1>
 
                     <p class="lead text-uppercase">
@@ -44,11 +44,19 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                    <a href="/ladder">
                         <span class="material-symbols-outlined icon pe-3">
                             military_tech
                         </span>
                         Ladders
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                        <span class="material-symbols-outlined icon pe-3">
+                            military_tech
+                        </span>
+                        {{ $history->ladder->name }}
                     </a>
                 </li>
                 <li class="breadcrumb-item active">

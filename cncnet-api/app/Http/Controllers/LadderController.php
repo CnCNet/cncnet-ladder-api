@@ -249,15 +249,13 @@ class LadderController extends Controller
         # Awards
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
 
-        # Achievements
-        $achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
+        # Achievements (Views still todo)
+        #$achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
 
         return view(
             "ladders.player-detail",
             array(
                 "mod" => $mod,
-                "ladders" => $this->ladderService->getLatestLadders(),
-                "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "history" => $history,
                 "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
                 "player" => $ladderPlayer['player'],
@@ -274,8 +272,8 @@ class LadderController extends Controller
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $userPlayer,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "achievementProgress" => $achievementProgress,
-                "achievements" => $history->ladder->achievements
+                #"achievementProgress" => $achievementProgress,
+                #"achievements" => $history->ladder->achievements
             )
         );
     }
