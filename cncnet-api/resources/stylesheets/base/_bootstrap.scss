@@ -114,3 +114,29 @@ b, strong
 {
     font-weight: 500;
 }
+
+.alert-danger 
+{
+    --bs-alert-color: #eb3647;
+    --bs-alert-bg: #1a0405;
+    --bs-alert-border-color: #1a0405;
+}
+
+.alert-warning 
+{
+    --bs-alert-color: #eb6d36;
+    --bs-alert-bg: #3c1305;
+    --bs-alert-border-color: #3c1305;
+}
+
+.alert-success 
+{
+    --bs-alert-color: #36ebad;
+    --bs-alert-bg: #041a13;
+    --bs-alert-border-color: #041a13;
+}
+
+h1,h2,h3,h4,h5,h6
+{
+    font-weight: 300;
+}

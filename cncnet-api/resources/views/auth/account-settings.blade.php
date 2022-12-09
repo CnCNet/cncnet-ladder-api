@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Account')
-
-@section('feature-image', '/images/feature/feature-index.jpg')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -59,7 +59,7 @@
                     <div class="form-group">
                         <div class="checkbox">
                             @if (isset($userSettings))
-                                <h4>Ladder Point Filter</h4>
+                                <h3>Ladder Point Filter</h3>
                                 <p>
                                     Disable the Point Filter to match against any player on the ladder regardless of your rank.<br />
                                     Opponents will also need it disabled.
@@ -83,7 +83,7 @@
                         <h4>Ladder Avatar Disabled</h4>
                     @else
                         <div class="form-group mt-5">
-                            <h4>Ladder Avatar</h4>
+                            <h3>Ladder Avatar</h3>
                             <p>
                                 <strong>Recommended dimensions are 300x300. Max file size: 1mb.<br /> File types allowed: jpg, png </strong>
                             </p>
@@ -109,7 +109,7 @@
                     @endif
 
                     <div class="form-group mt-4 mb-4">
-                        <h4>Social profiles</h4>
+                        <h3>Social profiles</h3>
 
                         <p>
                             These will be shown on all your ladder profiles. Do not enter URLs.

@@ -173,7 +173,7 @@
 
                         <div class="account-player-listings grid">
                             @foreach ($players as $player)
-                                <div class="col-md-4 player-listing {{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'active' : '' }}">
+                                <div class="col-md-6 player-listing {{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'active' : '' }}">
                                     <div class="username">
                                         <i class="icon icon-game icon-{{ $player->ladder()->first()->abbreviation }}"></i>
                                         <h4>
@@ -191,7 +191,7 @@
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                             <input type="hidden" name="username" value="{{ $player->username }}" />
 
-                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                            <div class="d-flex">
                                                 <a href="/api/v1/ladder/{{ $player->ladder()->first()->abbreviation }}/player/{{ $player->username }}/webview" target="_blank"
                                                     class="btn btn-secondary btn-md">
                                                     OBS Stream Profile

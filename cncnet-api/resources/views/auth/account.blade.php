@@ -55,7 +55,7 @@
         <div class="container">
             <div class="row">
                 @if (!$user->email_verified)
-                    <div class="col-md-12 tutorial">
+                    <div class="col-md-12 tutorial mt-2 mb-2">
                         <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
                         <div class="text-center">
                             <form class="form" method="POST" name="verify" action="/account/verify">
@@ -77,12 +77,12 @@
             <div class="pt-4">
                 <div class="row">
                     <div class="mt-2 mb-2">
-                        <h3>
+                        <h2 class="mb-4 mt-4">
                             <span class="material-symbols-outlined icon">
                                 military_tech
                             </span>
                             <strong>1vs1</strong> Ladders
-                        </h3>
+                        </h2>
 
                         <div class="d-flex flex-wrap">
                             @foreach ($ladders as $history)
@@ -95,12 +95,12 @@
                     </div>
 
                     <div class="mt-2 mb-2">
-                        <h3>
+                        <h2 class="mb-4 mt-4">
                             <span class="material-symbols-outlined icon">
                                 military_tech
                             </span>
                             <strong>Private</strong> Ladders
-                        </h3>
+                        </h2>
                         <div class="d-flex flex-wrap">
                             @foreach ($private_ladders as $history)
                                 @include('components.ladder-box', [
@@ -113,12 +113,12 @@
                     </div>
 
                     <div class="mt-2 mb-2">
-                        <h3>
+                        <h2 class="mb-4 mt-4">
                             <span class="material-symbols-outlined icon">
                                 military_tech
                             </span>
                             <strong>Clan</strong> Ladders
-                        </h3>
+                        </h2>
                         <div class="d-flex flex-wrap">
                             @foreach ($clan_ladders as $history)
                                 @include('components.ladder-box', [

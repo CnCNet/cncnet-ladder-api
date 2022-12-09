@@ -19253,6 +19253,28 @@ b, strong {
   font-weight: 500;
 }
 
+.alert-danger {
+  --bs-alert-color: #eb3647;
+  --bs-alert-bg: #1a0405;
+  --bs-alert-border-color: #1a0405;
+}
+
+.alert-warning {
+  --bs-alert-color: #eb6d36;
+  --bs-alert-bg: #3c1305;
+  --bs-alert-border-color: #3c1305;
+}
+
+.alert-success {
+  --bs-alert-color: #36ebad;
+  --bs-alert-bg: #041a13;
+  --bs-alert-border-color: #041a13;
+}
+
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
+  font-weight: 300;
+}
+
 /**
  * Swiper 8.4.5
  * Most modern mobile touch slider and framework with hardware accelerated transitions
@@ -20003,6 +20025,7 @@ button.swiper-pagination-bullet {
   padding-bottom: 1rem;
   padding-top: 1.5rem;
   font-size: 1rem;
+  font-weight: 500;
 }
 
 .navbar .dropdown-menu {
@@ -23694,6 +23717,7 @@ footer .sponsor img:hover {
   font-family: "Oswald", sans-serif;
   transition: ease 250ms all;
   box-shadow: 0px 2px 1px 1px #202020;
+  margin-bottom: 1rem;
 }
 @media (min-width: 768px) {
   .game-box-ladder-link {
@@ -23734,15 +23758,22 @@ footer .sponsor img:hover {
   display: flex;
   position: relative;
   width: 300px;
-  height: 100px;
   max-width: 100%;
   text-align: center;
   padding-bottom: 1rem;
 }
 .game-box-ladder-link .logo img {
-  width: 190px;
+  width: 250px;
   max-width: 100%;
   margin: auto;
+}
+@media (min-width: 768px) {
+  .game-box-ladder-link .logo {
+    height: 100px;
+  }
+  .game-box-ladder-link .logo img {
+    width: 190px;
+  }
 }
 
 .game-box-ladder-link .ladder-description {
@@ -24431,8 +24462,7 @@ body.body-player-detail .page-image-feature {
   align-items: center;
   position: relative;
   overflow: hidden;
-  padding: 5px 15px;
-  border: 2px solid #101010;
+  border: 2px solid #262626;
   border-radius: 10px;
   padding: 1rem;
 }
@@ -24440,7 +24470,7 @@ body.body-player-detail .page-image-feature {
   padding: 5px 0;
 }
 .ladder-account .player-listing.active, .ladder-account .player-listing.new:hover {
-  border: 2px solid rgb(83, 255, 133);
+  border: 2px solid rgb(115, 255, 242);
 }
 .ladder-account .player-listing .card .form-control {
   width: 65%;

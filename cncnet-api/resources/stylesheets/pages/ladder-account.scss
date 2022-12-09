@@ -27,8 +27,7 @@
         align-items: center;
         position: relative;
         overflow: hidden;
-        padding: 5px 15px;
-        border: 2px solid #101010;
+        border: 2px solid #262626;
         border-radius: 10px;
         padding: 1rem;
     }
@@ -40,7 +39,7 @@
 
     .player-listing.active, .player-listing.new:hover
     {
-        border: 2px solid rgb(83 255 133);
+        border: 2px solid rgb(115 255 242);
     }
 
     .player-listing .card .form-control

@@ -9,6 +9,7 @@
     font-family: $font-oswald;
     transition: ease 250ms all;
     box-shadow: 0px 2px 1px 1px #202020;
+    margin-bottom: 1rem;
 
     @media(min-width: $md-width)
     {
@@ -54,16 +55,25 @@
     display: flex;
     position: relative;
     width: 300px;
-    height: 100px;
     max-width: 100%;
     text-align: center;
     padding-bottom: 1rem;
-
+    
     & img 
     {
-        width: 190px;
+        width: 250px;
         max-width: 100%;
         margin: auto;
+    }
+
+    @media(min-width: $md-width)
+    {
+        height: 100px;
+
+        & img 
+        {
+            width: 190px;
+        }
     }
 }
 
