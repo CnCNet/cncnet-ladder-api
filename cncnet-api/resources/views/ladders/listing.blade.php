@@ -120,13 +120,13 @@
                     <div class="row">
                         <div class="header">
                             <div class="col-md-12">
-                                <h5>
+                                <h4>
                                     <strong>1vs1</strong>
                                     Recent Games
                                     <small>
                                         <a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games' }}">View All Games</a>
                                     </small>
-                                </h5>
+                                </h4>
                             </div>
                         </div>
                     </div>

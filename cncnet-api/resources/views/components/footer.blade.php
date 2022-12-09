@@ -2,7 +2,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <h3>{{ trans('footer.footer_games') }}</h3>
+                <h3><strong>{{ trans('footer.footer_games') }}</strong></h3>
                 <ul class="list-unstyled">
                     <li><a href="//cncnet.org/command-and-conquer">Command &amp; Conquer</a></li>
                     <li><a href="//cncnet.org/red-alert">Red Alert</a></li>
@@ -18,7 +18,7 @@
             </div>
 
             <div class="col-md-4">
-                <h3>{{ trans('footer.footer_support') }}</h3>
+                <h3><strong>{{ trans('footer.footer_support') }}</strong></h3>
                 <ul class="list-unstyled">
                     <li><a href="//forums.cncnet.org" title="{{ trans('footer.footer_support') }}">{{ trans('footer.footer_support') }}</a></li>
                     <li><a href="https://cncnet.org/developers" title="Developers">Developers</a></li>
@@ -27,7 +27,7 @@
             </div>
 
             <div class="col-md-4">
-                <h3>{{ trans('footer.footer_support_us') }}</h3>
+                <h3><strong>{{ trans('footer.footer_support_us') }}</strong></h3>
                 <p>{{ trans('footer.footer_support_us_description') }}</p>
 
                 <div class="social">
@@ -99,11 +99,6 @@
                 </div>
                 <div class="sponsors text-end">
                     <div class="sponsor">
-                        <div class="sponsor-copy">
-                            <p class="m-0">
-                                Lobbies kindly provided by
-                            </p>
-                        </div>
                         <a href="http://gamesurge.net" target="_blank" title="GameSurge">
                             <img src="/images/gamesurge.png" alt="GameSurge Logo" width="100" />
                         </a>
