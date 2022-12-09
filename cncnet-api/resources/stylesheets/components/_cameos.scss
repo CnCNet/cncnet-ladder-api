@@ -1,0 +1,815 @@
+﻿.cameo-tile 
+{
+    float: left;
+    width: 64px;
+    height: 48px;
+    margin-bottom: 2rem;
+    margin-right: 5px;
+    position: relative;
+}
+
+.cameo-tile .number 
+{
+    background: rgb(0, 0, 0);
+    color: #b7b7b7;
+    font-weight: bold;
+    font-size: 1rem;
+    text-shadow: 0px 1px black;
+    text-align: center;
+    line-height: normal;
+    display: block;
+    position: absolute;
+    width: 100%;
+    bottom: -20px;
+    height: 20px;
+}
+
+.yr-cameo
+{
+    background-image: url(../images/cameos/yr-cameo.png);
+    background-repeat: no-repeat;
+    background-position: top left;
+    width: 60px;
+    height: 48px;
+}
+
+.ra2-cameo
+{
+    background-image: url(../images/cameos/ra2-cameo.png);
+    background-repeat: no-repeat;
+    background-position: top left;
+    width: 60px;
+    height: 48px;
+}
+
+.sfj-cameo
+{
+    background-image: url(../images/cameos/sfj-cameo.png);
+    background-repeat: no-repeat;
+    background-position: top left;
+    width: 60px;
+    height: 48px;
+}
+
+.blitz-cameo
+{
+    background-image: url(../images/cameos/blitz-cameo.png);
+    background-repeat: no-repeat;
+    background-position: top left;
+    width: 60px;
+    height: 48px;
+}
+
+.cameo-blank 
+{
+    display: none;
+}
+
+.cameo-tile span.x 
+{
+    position: absolute;
+    color: red;
+    font-weight: bold;
+    font-size: 10px;
+    right: 5px;
+}
+
+.ts-cameo
+{
+    background-image: url(../images/cameos/ts-cameo.png);
+    background-repeat: no-repeat;
+    background-position: -5888px 0; // MISSING ICON
+    width: 60px;
+    height: 48px;
+}
+
+.ra-cameo
+{
+    background-image: url(../images/cameos/ra-cameo.png);
+    background-repeat: no-repeat;
+    background-position: -5888px 0; // MISSING ICON
+    width: 64px; 
+    height: 48px;
+}
+
+// RA 
+.ra-cameo.cameo-1tnkicon { background-position: 0 0; } 
+.ra-cameo.cameo-2tnkicon { background-position: -64px 0; } 
+.ra-cameo.cameo-3tnkicon { background-position: -128px 0; } 
+.ra-cameo.cameo-4tnkicon { background-position: -192px 0; } 
+.ra-cameo.cameo-afldicon { background-position: -256px 0; } 
+.ra-cameo.cameo-agunicon { background-position: -320px 0; } 
+.ra-cameo.cameo-ant1icon { background-position: -384px 0; } 
+.ra-cameo.cameo-ant2icon { background-position: -448px 0; } 
+.ra-cameo.cameo-ant3icon { background-position: -512px 0; } 
+.ra-cameo.cameo-apcicon { background-position: -576px 0; } 
+.ra-cameo.cameo-apwricon { background-position: -640px 0; } 
+.ra-cameo.cameo-artyicon { background-position: -704px 0; } 
+.ra-cameo.cameo-atekicon { background-position: -768px 0; } 
+.ra-cameo.cameo-atomicon { background-position: -832px 0; } 
+.ra-cameo.cameo-badricon { background-position: -896px 0; } 
+.ra-cameo.cameo-barricon { background-position: -960px 0; } 
+.ra-cameo.cameo-pticon { background-position: -1024px 0; } 
+.ra-cameo.cameo-brikicon { background-position: -1088px 0; } 
+.ra-cameo.cameo-caicon { background-position: -1152px 0; } 
+.ra-cameo.cameo-carricon { background-position: -1216px 0; } 
+.ra-cameo.cameo-ctnkicon { background-position: -1280px 0; } 
+.ra-cameo.cameo-ddicon { background-position: -1344px 0; } 
+.ra-cameo.cameo-dogicon { background-position: -1408px 0; } 
+.ra-cameo.cameo-domeicon { background-position: -1472px 0; } 
+.ra-cameo.cameo-domficon { background-position: -1536px 0; } 
+.ra-cameo.cameo-dtrkicon { background-position: -1600px 0; } 
+.ra-cameo.cameo-e1icon { background-position: -1664px 0; } 
+.ra-cameo.cameo-e2icon { background-position: -1728px 0; } 
+.ra-cameo.cameo-e3icon { background-position: -1792px 0; } 
+.ra-cameo.cameo-e4icon { background-position: -1856px 0; } 
+.ra-cameo.cameo-e6icon { background-position: -1920px 0; } 
+.ra-cameo.cameo-e7icon { background-position: -1984px 0; } 
+.ra-cameo.cameo-facficon { background-position: -2048px 0; } 
+.ra-cameo.cameo-facticon { background-position: -2112px 0; } 
+.ra-cameo.cameo-fencicon { background-position: -2176px 0; } 
+.ra-cameo.cameo-fixicon { background-position: -2240px 0; } 
+.ra-cameo.cameo-fturicon { background-position: -2304px 0; } 
+.ra-cameo.cameo-gapicon { background-position: -2368px 0; } 
+.ra-cameo.cameo-gpssicon { background-position: -2432px 0; } 
+.ra-cameo.cameo-gunicon { background-position: -2496px 0; } 
+.ra-cameo.cameo-harvicon { background-position: -2560px 0; } 
+.ra-cameo.cameo-hboxicon { background-position: -2624px 0; } 
+.ra-cameo.cameo-heliicon { background-position: -2688px 0; } 
+.ra-cameo.cameo-hindicon { background-position: -2752px 0; } 
+.ra-cameo.cameo-hpadicon { background-position: -2816px 0; } 
+.ra-cameo.cameo-infxicon { background-position: -2880px 0; } 
+.ra-cameo.cameo-ironicon { background-position: -2944px 0; } 
+.ra-cameo.cameo-jeepicon { background-position: -3008px 0; } 
+.ra-cameo.cameo-kennicon { background-position: -3072px 0; } 
+.ra-cameo.cameo-lar1icon { background-position: -3136px 0; } 
+.ra-cameo.cameo-lar2icon { background-position: -3200px 0; } 
+.ra-cameo.cameo-lsticon { background-position: -3264px 0; } 
+.ra-cameo.cameo-mcvicon { background-position: -3328px 0; } 
+.ra-cameo.cameo-mechicon { background-position: -3392px 0; } 
+.ra-cameo.cameo-mediicon { background-position: -3456px 0; } 
+.ra-cameo.cameo-mggicon { background-position: -3520px 0; } 
+.ra-cameo.cameo-migicon { background-position: -3584px 0; } 
+.ra-cameo.cameo-mnlyicon { background-position: -3648px 0; } 
+.ra-cameo.cameo-mrjicon { background-position: -3712px 0; } 
+.ra-cameo.cameo-msloicon { background-position: -3776px 0; } 
+.ra-cameo.cameo-msubicon { background-position: -3840px 0; } 
+.ra-cameo.cameo-pbmbicon { background-position: -3904px 0; } 
+.ra-cameo.cameo-pboxicon { background-position: -3968px 0; } 
+.ra-cameo.cameo-pdoxicon { background-position: -4032px 0; } 
+.ra-cameo.cameo-pinficon { background-position: -4096px 0; } 
+.ra-cameo.cameo-powricon { background-position: -4160px 0; } 
+.ra-cameo.cameo-procicon { background-position: -4224px 0; } 
+.ra-cameo.cameo-qtnkicon { background-position: -4288px 0; } 
+.ra-cameo.cameo-queeicon { background-position: -4352px 0; } 
+.ra-cameo.cameo-samicon { background-position: -4416px 0; } 
+.ra-cameo.cameo-sbagicon { background-position: -4480px 0; } 
+.ra-cameo.cameo-shokicon { background-position: -4544px 0; } 
+.ra-cameo.cameo-siloicon { background-position: -4608px 0; } 
+.ra-cameo.cameo-smigicon { background-position: -4672px 0; } 
+.ra-cameo.cameo-sonricon { background-position: -4736px 0; } 
+.ra-cameo.cameo-speficon { background-position: -4800px 0; } 
+.ra-cameo.cameo-spenicon { background-position: -4864px 0; } 
+.ra-cameo.cameo-spyicon { background-position: -4928px 0; } 
+.ra-cameo.cameo-ssicon { background-position: -4992px 0; } 
+.ra-cameo.cameo-stekicon { background-position: -5056px 0; } 
+.ra-cameo.cameo-stnkicon { background-position: -5120px 0; } 
+.ra-cameo.cameo-syrdicon { background-position: -5184px 0; } 
+.ra-cameo.cameo-syrficon { background-position: -5248px 0; } 
+.ra-cameo.cameo-tenticon { background-position: -5312px 0; } 
+.ra-cameo.cameo-thficon { background-position: -5376px 0; } 
+.ra-cameo.cameo-tranicon { background-position: -5440px 0; } 
+.ra-cameo.cameo-trukicon { background-position: -5504px 0; } 
+.ra-cameo.cameo-tslaicon { background-position: -5568px 0; } 
+.ra-cameo.cameo-ttnkicon { background-position: -5632px 0; } 
+.ra-cameo.cameo-u2icon { background-position: -5696px 0; } 
+.ra-cameo.cameo-v2rlicon { background-position: -5760px 0; } 
+.ra-cameo.cameo-warpicon { background-position: -5824px 0; } 
+.ra-cameo.cameo-weaficon { background-position: -5888px 0; } 
+.ra-cameo.cameo-weapicon { background-position: -5952px 0; } 
+.ra-cameo.cameo-xxicon { background-position: -6016px 0; } 
+.ra-cameo.cameo-yakicon { background-position: -6080px 0; } 
+
+
+// TS
+
+.ts-cameo.cameo-apchicon { background-position: 0 0; } 
+.ts-cameo.cameo-apcicon { background-position: -64px 0; } 
+.ts-cameo.cameo-apwricon { background-position: -128px 0; } 
+.ts-cameo.cameo-artyicon { background-position: -192px 0; } 
+.ts-cameo.cameo-batricon { background-position: -256px 0; } 
+.ts-cameo.cameo-bggyicon { background-position: -320px 0; } 
+.ts-cameo.cameo-brrkicon { background-position: -384px 0; } 
+.ts-cameo.cameo-chamicon { background-position: -448px 0; } 
+.ts-cameo.cameo-chemicon { background-position: -512px 0; } 
+.ts-cameo.cameo-clckicon { background-position: -576px 0; } 
+.ts-cameo.cameo-crryicon { background-position: -640px 0; } 
+.ts-cameo.cameo-cybcicon { background-position: -704px 0; } 
+.ts-cameo.cameo-cybiicon { background-position: -768px 0; } 
+.ts-cameo.cameo-cyclicon { background-position: -832px 0; } 
+.ts-cameo.cameo-detnicon { background-position: -896px 0; } 
+.ts-cameo.cameo-e2icon { background-position: -960px 0; } 
+.ts-cameo.cameo-e4icon { background-position: -1024px 0; } 
+.ts-cameo.cameo-facticon { background-position: -1088px 0; } 
+.ts-cameo.cameo-fsdicon { background-position: -1152px 0; } 
+.ts-cameo.cameo-fspicon { background-position: -1216px 0; } 
+.ts-cameo.cameo-fstdicon { background-position: -1280px 0; } 
+.ts-cameo.cameo-gat2icon { background-position: -1344px 0; } 
+.ts-cameo.cameo-gateicon { background-position: -1408px 0; } 
+.ts-cameo.cameo-gbayicon { background-position: -1472px 0; } 
+.ts-cameo.cameo-gdi_e1icon { background-position: -1536px 0; } 
+.ts-cameo.cameo-gdi_empicon { background-position: -1600px 0; } 
+.ts-cameo.cameo-gdi_engnicon { background-position: -1664px 0; } 
+.ts-cameo.cameo-gdi_fixicon { background-position: -1728px 0; } 
+.ts-cameo.cameo-gdi_harvicon { background-position: -1792px 0; } 
+.ts-cameo.cameo-gdi_limpicon { background-position: -1856px 0; } 
+.ts-cameo.cameo-gdi_lpsticon { background-position: -1920px 0; } 
+.ts-cameo.cameo-gdi_mcvicon { background-position: -1984px 0; } 
+.ts-cameo.cameo-gdi_mwaricon { background-position: -2048px 0; } 
+.ts-cameo.cameo-gdi_reficon { background-position: -2112px 0; } 
+.ts-cameo.cameo-gdi_siloicon { background-position: -2176px 0; } 
+.ts-cameo.cameo-gosticon { background-position: -2240px 0; } 
+.ts-cameo.cameo-handicon { background-position: -2304px 0; } 
+.ts-cameo.cameo-heliicon { background-position: -2368px 0; } 
+.ts-cameo.cameo-hmecicon { background-position: -2432px 0; } 
+.ts-cameo.cameo-hovricon { background-position: -2496px 0; } 
+.ts-cameo.cameo-ioncicon { background-position: -2560px 0; } 
+.ts-cameo.cameo-jjeticon { background-position: -2624px 0; } 
+.ts-cameo.cameo-juggicon { background-position: -2688px 0; } 
+.ts-cameo.cameo-lasricon { background-position: -2752px 0; } 
+.ts-cameo.cameo-liteicon { background-position: -2816px 0; } 
+.ts-cameo.cameo-mediicon { background-position: -2880px 0; } 
+.ts-cameo.cameo-mempicon { background-position: -2944px 0; } 
+.ts-cameo.cameo-metricon { background-position: -3008px 0; } 
+.ts-cameo.cameo-mltiicon { background-position: -3072px 0; } 
+.ts-cameo.cameo-mmchicon { background-position: -3136px 0; } 
+.ts-cameo.cameo-msslicon { background-position: -3200px 0; } 
+.ts-cameo.cameo-mstlicon { background-position: -3264px 0; } 
+.ts-cameo.cameo-mutcicon { background-position: -3328px 0; } 
+.ts-cameo.cameo-nga2icon { background-position: -3392px 0; } 
+.ts-cameo.cameo-ngaticon { background-position: -3456px 0; } 
+.ts-cameo.cameo-nhpdicon { background-position: -3520px 0; } 
+.ts-cameo.cameo-nod_e1icon { background-position: -3584px 0; } 
+.ts-cameo.cameo-nod_empicon { background-position: -3648px 0; } 
+.ts-cameo.cameo-nod_engnicon { background-position: -3712px 0; } 
+.ts-cameo.cameo-nod_harvicon { background-position: -3776px 0; } 
+.ts-cameo.cameo-nod_limpicon { background-position: -3840px 0; } 
+.ts-cameo.cameo-nod_lpsticon { background-position: -3904px 0; } 
+.ts-cameo.cameo-nod_mcvicon { background-position: -3968px 0; } 
+.ts-cameo.cameo-nod_mwaricon { background-position: -4032px 0; } 
+.ts-cameo.cameo-nod_reficon { background-position: -4096px 0; } 
+.ts-cameo.cameo-nod_siloicon { background-position: -4160px 0; } 
+.ts-cameo.cameo-npwricon { background-position: -4224px 0; } 
+.ts-cameo.cameo-nradicon { background-position: -4288px 0; } 
+.ts-cameo.cameo-ntchicon { background-position: -4352px 0; } 
+.ts-cameo.cameo-nwalicon { background-position: -4416px 0; } 
+.ts-cameo.cameo-nwepicon { background-position: -4480px 0; } 
+.ts-cameo.cameo-obliicon { background-position: -4544px 0; } 
+.ts-cameo.cameo-obmbicon { background-position: -4608px 0; } 
+.ts-cameo.cameo-orcaicon { background-position: -4672px 0; } 
+.ts-cameo.cameo-otrnicon { background-position: -4736px 0; } 
+.ts-cameo.cameo-paveicon { background-position: -4800px 0; } 
+.ts-cameo.cameo-plticon { background-position: -4864px 0; } 
+.ts-cameo.cameo-plugicon { background-position: -4928px 0; } 
+.ts-cameo.cameo-podsicon { background-position: -4992px 0; } 
+.ts-cameo.cameo-powricon { background-position: -5056px 0; } 
+.ts-cameo.cameo-proicon { background-position: -5120px 0; } 
+.ts-cameo.cameo-pulsicon { background-position: -5184px 0; } 
+.ts-cameo.cameo-rad1icon { background-position: -5248px 0; } 
+.ts-cameo.cameo-rad2icon { background-position: -5312px 0; } 
+.ts-cameo.cameo-rad3icon { background-position: -5376px 0; } 
+.ts-cameo.cameo-radricon { background-position: -5440px 0; } 
+.ts-cameo.cameo-rboticon { background-position: -5504px 0; } 
+.ts-cameo.cameo-reapicon { background-position: -5568px 0; } 
+.ts-cameo.cameo-samicon { background-position: -5632px 0; } 
+.ts-cameo.cameo-sapcicon { background-position: -5696px 0; } 
+.ts-cameo.cameo-sbagicon { background-position: -5760px 0; } 
+.ts-cameo.cameo-seekicon { background-position: -5824px 0; } 
+.ts-cameo.cameo-smchicon { background-position: -5888px 0; } 
+.ts-cameo.cameo-soniicon { background-position: -5952px 0; } 
+.ts-cameo.cameo-spoticon { background-position: -6016px 0; } 
+.ts-cameo.cameo-stnkicon { background-position: -6080px 0; } 
+.ts-cameo.cameo-subticon { background-position: -6144px 0; } 
+.ts-cameo.cameo-techicon { background-position: -6208px 0; } 
+.ts-cameo.cameo-tickicon { background-position: -6272px 0; } 
+.ts-cameo.cameo-tmplicon { background-position: -6336px 0; } 
+.ts-cameo.cameo-towricon { background-position: -6400px 0; } 
+.ts-cameo.cameo-turbicon { background-position: -6464px 0; } 
+.ts-cameo.cameo-twr1icon { background-position: -6528px 0; } 
+.ts-cameo.cameo-twr2icon { background-position: -6592px 0; } 
+.ts-cameo.cameo-twr3icon { background-position: -6656px 0; } 
+.ts-cameo.cameo-umagicon { background-position: -6720px 0; } 
+.ts-cameo.cameo-wallicon { background-position: -6784px 0; } 
+.ts-cameo.cameo-wasticon { background-position: -6848px 0; } 
+.ts-cameo.cameo-weapicon { background-position: -6912px 0; } 
+.ts-cameo.cameo-weaticon { background-position: -6976px 0; } 
+.ts-cameo.cameo-weedicon { background-position: -7040px 0; } 
+.ts-cameo.cameo-xxicon { background-position: -7104px 0; } 
+
+// YR
+
+.yr-cameo.cameo-adogicon { background-position: 0 0; } 
+.yr-cameo.cameo-agisicon { background-position: -60px 0; } 
+.yr-cameo.cameo-ahrvicon { background-position: -120px 0; } 
+.yr-cameo.cameo-asaticon { background-position: -180px 0; } 
+.yr-cameo.cameo-ayaricon { background-position: -240px 0; } 
+.yr-cameo.cameo-bfrticon { background-position: -300px 0; } 
+.yr-cameo.cameo-bnkricon { background-position: -360px 0; } 
+.yr-cameo.cameo-brckicon { background-position: -420px 0; } 
+.yr-cameo.cameo-brisicon { background-position: -480px 0; } 
+.yr-cameo.cameo-brrkicon { background-position: -540px 0; } 
+.yr-cameo.cameo-bruticon { background-position: -600px 0; } 
+.yr-cameo.cameo-bsubicon { background-position: -660px 0; } 
+.yr-cameo.cameo-caosicon { background-position: -720px 0; } 
+.yr-cameo.cameo-carricon { background-position: -780px 0; } 
+.yr-cameo.cameo-ccomicon { background-position: -840px 0; } 
+.yr-cameo.cameo-citwlicon { background-position: -900px 0; } 
+.yr-cameo.cameo-clegicon { background-position: -960px 0; } 
+.yr-cameo.cameo-clonicon { background-position: -1020px 0; } 
+.yr-cameo.cameo-csphicon { background-position: -1080px 0; } 
+.yr-cameo.cameo-desoicon { background-position: -1140px 0; } 
+.yr-cameo.cameo-desticon { background-position: -1200px 0; } 
+.yr-cameo.cameo-diskicon { background-position: -1260px 0; } 
+.yr-cameo.cameo-dlphicon { background-position: -1320px 0; } 
+.yr-cameo.cameo-dogicon { background-position: -1380px 0; } 
+.yr-cameo.cameo-dredicon { background-position: -1440px 0; } 
+.yr-cameo.cameo-dronicon { background-position: -1500px 0; } 
+.yr-cameo.cameo-e2icon { background-position: -1560px 0; } 
+.yr-cameo.cameo-engnicon { background-position: -1620px 0; } 
+.yr-cameo.cameo-fixicon { background-position: -1680px 0; } 
+.yr-cameo.cameo-flakicon { background-position: -1740px 0; } 
+.yr-cameo.cameo-flkticon { background-position: -1800px 0; } 
+.yr-cameo.cameo-fvicon { background-position: -1860px 0; } 
+.yr-cameo.cameo-gapicon { background-position: -1920px 0; } 
+.yr-cameo.cameo-gcanicon { background-position: -1980px 0; } 
+.yr-cameo.cameo-gdgiicon { background-position: -2040px 0; } 
+.yr-cameo.cameo-ggunicon { background-position: -2100px 0; } 
+.yr-cameo.cameo-giicon { background-position: -2160px 0; } 
+.yr-cameo.cameo-gorep { background-position: -2220px 0; } 
+.yr-cameo.cameo-grndicon { background-position: -2280px 0; } 
+.yr-cameo.cameo-gtncicon { background-position: -2340px 0; } 
+.yr-cameo.cameo-gtnkicon { background-position: -2400px 0; } 
+.yr-cameo.cameo-gwepicon { background-position: -2460px 0; } 
+.yr-cameo.cameo-handicon { background-position: -2520px 0; } 
+.yr-cameo.cameo-harvicon { background-position: -2580px 0; } 
+.yr-cameo.cameo-heliicon { background-position: -2640px 0; } 
+.yr-cameo.cameo-hovricon { background-position: -2700px 0; } 
+.yr-cameo.cameo-htkicon { background-position: -2760px 0; } 
+.yr-cameo.cameo-htnkicon { background-position: -2820px 0; } 
+.yr-cameo.cameo-indpicon { background-position: -2880px 0; } 
+.yr-cameo.cameo-initicon { background-position: -2940px 0; } 
+.yr-cameo.cameo-ironicon { background-position: -3000px 0; } 
+.yr-cameo.cameo-ivanicon { background-position: -3060px 0; } 
+.yr-cameo.cameo-ivncicon { background-position: -3120px 0; } 
+.yr-cameo.cameo-jjeticon { background-position: -3180px 0; } 
+.yr-cameo.cameo-landicon { background-position: -3240px 0; } 
+.yr-cameo.cameo-ltnkicon { background-position: -3300px 0; } 
+.yr-cameo.cameo-lunricon { background-position: -3360px 0; } 
+.yr-cameo.cameo-mcvicon { background-position: -3420px 0; } 
+.yr-cameo.cameo-mindicon { background-position: -3480px 0; } 
+.yr-cameo.cameo-msslicon { background-position: -3540px 0; } 
+.yr-cameo.cameo-mtnkicon { background-position: -3600px 0; }
+.yr-cameo.cameo-npwricon { background-position: -3660px 0; } 
+.yr-cameo.cameo-nradicon { background-position: -3720px 0; } 
+.yr-cameo.cameo-nrcticon { background-position: -3780px 0; } 
+.yr-cameo.cameo-nreficon { background-position: -3840px 0; } 
+.yr-cameo.cameo-ntchicon { background-position: -3900px 0; } 
+.yr-cameo.cameo-nwalicon { background-position: -3960px 0; } 
+.yr-cameo.cameo-nwepicon { background-position: -4020px 0; } 
+.yr-cameo.cameo-pillicon { background-position: -4080px 0; } 
+.yr-cameo.cameo-plticon { background-position: -4140px 0; } 
+.yr-cameo.cameo-powricon { background-position: -4200px 0; } 
+.yr-cameo.cameo-prisicon { background-position: -4260px 0; } 
+.yr-cameo.cameo-psicicon { background-position: -4320px 0; } 
+.yr-cameo.cameo-psisicon { background-position: -4380px 0; } 
+.yr-cameo.cameo-psyticon { background-position: -4440px 0; } 
+.yr-cameo.cameo-pupticon { background-position: -4500px 0; } 
+.yr-cameo.cameo-rbccicon { background-position: -4560px 0; } 
+.yr-cameo.cameo-reficon { background-position: -4620px 0; } 
+.yr-cameo.cameo-rfixicon { background-position: -4680px 0; } 
+.yr-cameo.cameo-roboicon { background-position: -4740px 0; } 
+.yr-cameo.cameo-rtnkicon { background-position: -4800px 0; } 
+.yr-cameo.cameo-samicon { background-position: -4860px 0; } 
+.yr-cameo.cameo-sapcicon { background-position: -4920px 0; } 
+.yr-cameo.cameo-schpicon { background-position: -4980px 0; } 
+.yr-cameo.cameo-sealicon { background-position: -5040px 0; } 
+.yr-cameo.cameo-shadicon { background-position: -5100px 0; } 
+.yr-cameo.cameo-shkicon { background-position: -5160px 0; } 
+.yr-cameo.cameo-smcvicon { background-position: -5220px 0; } 
+.yr-cameo.cameo-sminicon { background-position: -5280px 0; } 
+.yr-cameo.cameo-snipicon { background-position: -5340px 0; } 
+.yr-cameo.cameo-spyicon { background-position: -5400px 0; } 
+.yr-cameo.cameo-sqdicon { background-position: -5460px 0; } 
+.yr-cameo.cameo-sreficon { background-position: -5520px 0; } 
+.yr-cameo.cameo-subicon { background-position: -5580px 0; } 
+.yr-cameo.cameo-tanyicon { background-position: -5640px 0; } 
+.yr-cameo.cameo-tbnkicon { background-position: -5700px 0; } 
+.yr-cameo.cameo-techicon { background-position: -5760px 0; } 
+.yr-cameo.cameo-teleicon { background-position: -5820px 0; } 
+.yr-cameo.cameo-tnkdicon { background-position: -5880px 0; } 
+.yr-cameo.cameo-dtruckicon { background-position: -5940px 0; } 
+.yr-cameo.cameo-trsticon { background-position: -6000px 0; } 
+.yr-cameo.cameo-tslaicon { background-position: -6060px 0; } 
+.yr-cameo.cameo-ttnkicon { background-position: -6120px 0; } 
+.yr-cameo.cameo-v3icon { background-position: -6180px 0; } 
+.yr-cameo.cameo-vrusicon { background-position: -6240px 0; } 
+.yr-cameo.cameo-wallicon { background-position: -6300px 0; } 
+.yr-cameo.cameo-wethicon { background-position: -6360px 0; } 
+.yr-cameo.cameo-yardicon { background-position: -6420px 0; } 
+.yr-cameo.cameo-yclnicon { background-position: -6480px 0; } 
+.yr-cameo.cameo-yengicon { background-position: -6540px 0; } 
+.yr-cameo.cameo-yhvricon { background-position: -6600px 0; } 
+.yr-cameo.cameo-ypvicon { background-position: -6660px 0; } 
+.yr-cameo.cameo-ypwricon { background-position: -6720px 0; } 
+.yr-cameo.cameo-ytchicon { background-position: -6780px 0; } 
+.yr-cameo.cameo-ytnkicon { background-position: -6840px 0; } 
+.yr-cameo.cameo-yurpicon { background-position: -6900px 0; } 
+.yr-cameo.cameo-ywepicon { background-position: -6960px 0; } 
+.yr-cameo.cameo-yyrdicon { background-position: -7020px 0; } 
+.yr-cameo.cameo-zepicon { background-position: -7080px 0; } 
+.yr-cameo.cameo-beagicon { background-position: -7140px 0; } 
+.yr-cameo.cameo-bplnicon { background-position: -7200px 0; } 
+.yr-cameo.cameo-falcicon { background-position: -7260px 0; } 
+.yr-cameo.cameo-spypicon { background-position: -7320px 0; }
+.yr-cameo.cameo-psybicon { background-position: -7380px 0; }
+
+// RA2
+
+.ra2-cameo.cameo-adogicon { background-position: 0 0; } 
+.ra2-cameo.cameo-agisicon { background-position: -60px 0; } 
+.ra2-cameo.cameo-ahrvicon { background-position: -120px 0; } 
+.ra2-cameo.cameo-asaticon { background-position: -180px 0; } 
+.ra2-cameo.cameo-ayaricon { background-position: -240px 0; } 
+.ra2-cameo.cameo-bfrticon { background-position: -300px 0; } 
+.ra2-cameo.cameo-bnkricon { background-position: -360px 0; } 
+.ra2-cameo.cameo-brckicon { background-position: -420px 0; } 
+.ra2-cameo.cameo-brisicon { background-position: -480px 0; } 
+.ra2-cameo.cameo-brrkicon { background-position: -540px 0; } 
+.ra2-cameo.cameo-bruticon { background-position: -600px 0; } 
+.ra2-cameo.cameo-bsubicon { background-position: -660px 0; } 
+.ra2-cameo.cameo-caosicon { background-position: -720px 0; } 
+.ra2-cameo.cameo-carricon { background-position: -780px 0; } 
+.ra2-cameo.cameo-ccomicon { background-position: -840px 0; } 
+.ra2-cameo.cameo-citwlicon { background-position: -900px 0; } 
+.ra2-cameo.cameo-clegicon { background-position: -960px 0; } 
+.ra2-cameo.cameo-clonicon { background-position: -1020px 0; } 
+.ra2-cameo.cameo-csphicon { background-position: -1080px 0; } 
+.ra2-cameo.cameo-desoicon { background-position: -1140px 0; } 
+.ra2-cameo.cameo-desticon { background-position: -1200px 0; } 
+.ra2-cameo.cameo-diskicon { background-position: -1260px 0; } 
+.ra2-cameo.cameo-dlphicon { background-position: -1320px 0; } 
+.ra2-cameo.cameo-dogicon { background-position: -1380px 0; } 
+.ra2-cameo.cameo-dredicon { background-position: -1440px 0; } 
+.ra2-cameo.cameo-dronicon { background-position: -1500px 0; } 
+.ra2-cameo.cameo-e2icon { background-position: -1560px 0; } 
+.ra2-cameo.cameo-engnicon { background-position: -1620px 0; } 
+.ra2-cameo.cameo-fixicon { background-position: -1680px 0; } 
+.ra2-cameo.cameo-flakicon { background-position: -1740px 0; } 
+.ra2-cameo.cameo-flkticon { background-position: -1800px 0; } 
+.ra2-cameo.cameo-fvicon { background-position: -1860px 0; } 
+.ra2-cameo.cameo-gapicon { background-position: -1920px 0; } 
+.ra2-cameo.cameo-gcanicon { background-position: -1980px 0; } 
+.ra2-cameo.cameo-gdgiicon { background-position: -2040px 0; } 
+.ra2-cameo.cameo-ggunicon { background-position: -2100px 0; } 
+.ra2-cameo.cameo-giicon { background-position: -2160px 0; } 
+.ra2-cameo.cameo-gorep { background-position: -2220px 0; } 
+.ra2-cameo.cameo-grndicon { background-position: -2280px 0; } 
+.ra2-cameo.cameo-gtncicon { background-position: -2340px 0; } 
+.ra2-cameo.cameo-gtnkicon { background-position: -2400px 0; } 
+.ra2-cameo.cameo-gwepicon { background-position: -2460px 0; } 
+.ra2-cameo.cameo-handicon { background-position: -2520px 0; } 
+.ra2-cameo.cameo-harvicon { background-position: -2580px 0; } 
+.ra2-cameo.cameo-heliicon { background-position: -2640px 0; } 
+.ra2-cameo.cameo-hovricon { background-position: -2700px 0; } 
+.ra2-cameo.cameo-htkicon { background-position: -2760px 0; } 
+.ra2-cameo.cameo-htnkicon { background-position: -2820px 0; } 
+.ra2-cameo.cameo-indpicon { background-position: -2880px 0; } 
+.ra2-cameo.cameo-initicon { background-position: -2940px 0; } 
+.ra2-cameo.cameo-ironicon { background-position: -3000px 0; } 
+.ra2-cameo.cameo-ivanicon { background-position: -3060px 0; } 
+.ra2-cameo.cameo-ivncicon { background-position: -3120px 0; } 
+.ra2-cameo.cameo-jjeticon { background-position: -3180px 0; } 
+.ra2-cameo.cameo-landicon { background-position: -3240px 0; } 
+.ra2-cameo.cameo-ltnkicon { background-position: -3300px 0; } 
+.ra2-cameo.cameo-lunricon { background-position: -3360px 0; } 
+.ra2-cameo.cameo-mcvicon { background-position: -3420px 0; } 
+.ra2-cameo.cameo-mindicon { background-position: -3480px 0; } 
+.ra2-cameo.cameo-msslicon { background-position: -3540px 0; } 
+.ra2-cameo.cameo-mtnkicon { background-position: -3600px 0; }
+.ra2-cameo.cameo-npwricon { background-position: -3660px 0; } 
+.ra2-cameo.cameo-nradicon { background-position: -3720px 0; } 
+.ra2-cameo.cameo-nrcticon { background-position: -3780px 0; } 
+.ra2-cameo.cameo-nreficon { background-position: -3840px 0; } 
+.ra2-cameo.cameo-ntchicon { background-position: -3900px 0; } 
+.ra2-cameo.cameo-nwalicon { background-position: -3960px 0; } 
+.ra2-cameo.cameo-nwepicon { background-position: -4020px 0; } 
+.ra2-cameo.cameo-pillicon { background-position: -4080px 0; } 
+.ra2-cameo.cameo-plticon { background-position: -4140px 0; } 
+.ra2-cameo.cameo-powricon { background-position: -4200px 0; } 
+.ra2-cameo.cameo-prisicon { background-position: -4260px 0; } 
+.ra2-cameo.cameo-psicicon { background-position: -4320px 0; } 
+.ra2-cameo.cameo-psisicon { background-position: -4380px 0; } 
+.ra2-cameo.cameo-psyticon { background-position: -4440px 0; } 
+.ra2-cameo.cameo-pupticon { background-position: -4500px 0; } 
+.ra2-cameo.cameo-rbccicon { background-position: -4560px 0; } 
+.ra2-cameo.cameo-reficon { background-position: -4620px 0; } 
+.ra2-cameo.cameo-rfixicon { background-position: -4680px 0; } 
+.ra2-cameo.cameo-roboicon { background-position: -4740px 0; } 
+.ra2-cameo.cameo-rtnkicon { background-position: -4800px 0; } 
+.ra2-cameo.cameo-samicon { background-position: -4860px 0; } 
+.ra2-cameo.cameo-sapcicon { background-position: -4920px 0; } 
+.ra2-cameo.cameo-schpicon { background-position: -4980px 0; } 
+.ra2-cameo.cameo-sealicon { background-position: -5040px 0; } 
+.ra2-cameo.cameo-shadicon { background-position: -5100px 0; } 
+.ra2-cameo.cameo-shkicon { background-position: -5160px 0; } 
+.ra2-cameo.cameo-smcvicon { background-position: -5220px 0; } 
+.ra2-cameo.cameo-sminicon { background-position: -5280px 0; } 
+.ra2-cameo.cameo-snipicon { background-position: -5340px 0; } 
+.ra2-cameo.cameo-spyicon { background-position: -5400px 0; } 
+.ra2-cameo.cameo-sqdicon { background-position: -5460px 0; } 
+.ra2-cameo.cameo-sreficon { background-position: -5520px 0; } 
+.ra2-cameo.cameo-subicon { background-position: -5580px 0; } 
+.ra2-cameo.cameo-tanyicon { background-position: -5640px 0; } 
+.ra2-cameo.cameo-tbnkicon { background-position: -5700px 0; } 
+.ra2-cameo.cameo-techicon { background-position: -5760px 0; } 
+.ra2-cameo.cameo-teleicon { background-position: -5820px 0; } 
+.ra2-cameo.cameo-tnkdicon { background-position: -5880px 0; } 
+.ra2-cameo.cameo-dtruckicon { background-position: -5940px 0; } 
+.ra2-cameo.cameo-trsticon { background-position: -6000px 0; } 
+.ra2-cameo.cameo-tslaicon { background-position: -6060px 0; } 
+.ra2-cameo.cameo-ttnkicon { background-position: -6120px 0; } 
+.ra2-cameo.cameo-v3icon { background-position: -6180px 0; } 
+.ra2-cameo.cameo-vrusicon { background-position: -6240px 0; } 
+.ra2-cameo.cameo-wallicon { background-position: -6300px 0; } 
+.ra2-cameo.cameo-wethicon { background-position: -6360px 0; } 
+.ra2-cameo.cameo-yardicon { background-position: -6420px 0; } 
+.ra2-cameo.cameo-yclnicon { background-position: -6480px 0; } 
+.ra2-cameo.cameo-yengicon { background-position: -6540px 0; } 
+.ra2-cameo.cameo-yhvricon { background-position: -6600px 0; } 
+.ra2-cameo.cameo-ypvicon { background-position: -6660px 0; } 
+.ra2-cameo.cameo-ypwricon { background-position: -6720px 0; } 
+.ra2-cameo.cameo-ytchicon { background-position: -6780px 0; } 
+.ra2-cameo.cameo-ytnkicon { background-position: -6840px 0; } 
+.ra2-cameo.cameo-yurpicon { background-position: -6900px 0; } 
+.ra2-cameo.cameo-ywepicon { background-position: -6960px 0; } 
+.ra2-cameo.cameo-yyrdicon { background-position: -7020px 0; } 
+.ra2-cameo.cameo-zepicon { background-position: -7080px 0; } 
+.ra2-cameo.cameo-beagicon { background-position: -7140px 0; } 
+.ra2-cameo.cameo-bplnicon { background-position: -7200px 0; } 
+.ra2-cameo.cameo-falcicon { background-position: -7260px 0; } 
+.ra2-cameo.cameo-spypicon { background-position: -7320px 0; }
+.ra2-cameo.cameo-psybicon { background-position: -7380px 0; }
+
+// SFJ
+
+.sfj-cameo.cameo-adogicon { background-position: 0 0; } 
+.sfj-cameo.cameo-agisicon { background-position: -60px 0; } 
+.sfj-cameo.cameo-ahrvicon { background-position: -120px 0; } 
+.sfj-cameo.cameo-asaticon { background-position: -180px 0; } 
+.sfj-cameo.cameo-ayaricon { background-position: -240px 0; } 
+.sfj-cameo.cameo-bfrticon { background-position: -300px 0; } 
+.sfj-cameo.cameo-bnkricon { background-position: -360px 0; } 
+.sfj-cameo.cameo-brckicon { background-position: -420px 0; } 
+.sfj-cameo.cameo-brisicon { background-position: -480px 0; } 
+.sfj-cameo.cameo-brrkicon { background-position: -540px 0; } 
+.sfj-cameo.cameo-bruticon { background-position: -600px 0; } 
+.sfj-cameo.cameo-bsubicon { background-position: -660px 0; } 
+.sfj-cameo.cameo-caosicon { background-position: -720px 0; } 
+.sfj-cameo.cameo-carricon { background-position: -780px 0; } 
+.sfj-cameo.cameo-ccomicon { background-position: -840px 0; } 
+.sfj-cameo.cameo-citwlicon { background-position: -900px 0; } 
+.sfj-cameo.cameo-clegicon { background-position: -960px 0; } 
+.sfj-cameo.cameo-clonicon { background-position: -1020px 0; } 
+.sfj-cameo.cameo-csphicon { background-position: -1080px 0; } 
+.sfj-cameo.cameo-desoicon { background-position: -1140px 0; } 
+.sfj-cameo.cameo-desticon { background-position: -1200px 0; } 
+.sfj-cameo.cameo-diskicon { background-position: -1260px 0; } 
+.sfj-cameo.cameo-dlphicon { background-position: -1320px 0; } 
+.sfj-cameo.cameo-dogicon { background-position: -1380px 0; } 
+.sfj-cameo.cameo-dredicon { background-position: -1440px 0; } 
+.sfj-cameo.cameo-dronicon { background-position: -1500px 0; } 
+.sfj-cameo.cameo-e2icon { background-position: -1560px 0; } 
+.sfj-cameo.cameo-engnicon { background-position: -1620px 0; } 
+.sfj-cameo.cameo-fixicon { background-position: -1680px 0; } 
+.sfj-cameo.cameo-flakicon { background-position: -1740px 0; } 
+.sfj-cameo.cameo-flkticon { background-position: -1800px 0; } 
+.sfj-cameo.cameo-fvicon { background-position: -1860px 0; } 
+.sfj-cameo.cameo-gapicon { background-position: -1920px 0; } 
+.sfj-cameo.cameo-gcanicon { background-position: -1980px 0; } 
+.sfj-cameo.cameo-gdgiicon { background-position: -2040px 0; } 
+.sfj-cameo.cameo-ggunicon { background-position: -2100px 0; } 
+.sfj-cameo.cameo-giicon { background-position: -2160px 0; } 
+.sfj-cameo.cameo-gorep { background-position: -2220px 0; } 
+.sfj-cameo.cameo-grndicon { background-position: -2280px 0; } 
+.sfj-cameo.cameo-gtncicon { background-position: -2340px 0; } 
+.sfj-cameo.cameo-gtnkicon { background-position: -2400px 0; } 
+.sfj-cameo.cameo-gwepicon { background-position: -2460px 0; } 
+.sfj-cameo.cameo-handicon { background-position: -2520px 0; } 
+.sfj-cameo.cameo-harvicon { background-position: -2580px 0; } 
+.sfj-cameo.cameo-heliicon { background-position: -2640px 0; } 
+.sfj-cameo.cameo-hovricon { background-position: -2700px 0; } 
+.sfj-cameo.cameo-htkicon { background-position: -2760px 0; } 
+.sfj-cameo.cameo-htnkicon { background-position: -2820px 0; } 
+.sfj-cameo.cameo-indpicon { background-position: -2880px 0; } 
+.sfj-cameo.cameo-initicon { background-position: -2940px 0; } 
+.sfj-cameo.cameo-ironicon { background-position: -3000px 0; } 
+.sfj-cameo.cameo-ivanicon { background-position: -3060px 0; } 
+.sfj-cameo.cameo-ivncicon { background-position: -3120px 0; } 
+.sfj-cameo.cameo-jjeticon { background-position: -3180px 0; } 
+.sfj-cameo.cameo-landicon { background-position: -3240px 0; } 
+.sfj-cameo.cameo-ltnkicon { background-position: -3300px 0; } 
+.sfj-cameo.cameo-lunricon { background-position: -3360px 0; } 
+.sfj-cameo.cameo-mcvicon { background-position: -3420px 0; } 
+.sfj-cameo.cameo-mindicon { background-position: -3480px 0; } 
+.sfj-cameo.cameo-msslicon { background-position: -3540px 0; } 
+.sfj-cameo.cameo-mtnkicon { background-position: -3600px 0; }
+.sfj-cameo.cameo-npwricon { background-position: -3660px 0; } 
+.sfj-cameo.cameo-nradicon { background-position: -3720px 0; } 
+.sfj-cameo.cameo-nrcticon { background-position: -3780px 0; } 
+.sfj-cameo.cameo-nreficon { background-position: -3840px 0; } 
+.sfj-cameo.cameo-ntchicon { background-position: -3900px 0; } 
+.sfj-cameo.cameo-nwalicon { background-position: -3960px 0; } 
+.sfj-cameo.cameo-nwepicon { background-position: -4020px 0; } 
+.sfj-cameo.cameo-pillicon { background-position: -4080px 0; } 
+.sfj-cameo.cameo-plticon { background-position: -4140px 0; } 
+.sfj-cameo.cameo-powricon { background-position: -4200px 0; } 
+.sfj-cameo.cameo-prisicon { background-position: -4260px 0; } 
+.sfj-cameo.cameo-psicicon { background-position: -4320px 0; } 
+.sfj-cameo.cameo-psisicon { background-position: -4380px 0; } 
+.sfj-cameo.cameo-psyticon { background-position: -4440px 0; } 
+.sfj-cameo.cameo-pupticon { background-position: -4500px 0; } 
+.sfj-cameo.cameo-rbccicon { background-position: -4560px 0; } 
+.sfj-cameo.cameo-reficon { background-position: -4620px 0; } 
+.sfj-cameo.cameo-rfixicon { background-position: -4680px 0; } 
+.sfj-cameo.cameo-roboicon { background-position: -4740px 0; } 
+.sfj-cameo.cameo-rtnkicon { background-position: -4800px 0; } 
+.sfj-cameo.cameo-samicon { background-position: -4860px 0; } 
+.sfj-cameo.cameo-sapcicon { background-position: -4920px 0; } 
+.sfj-cameo.cameo-schpicon { background-position: -4980px 0; } 
+.sfj-cameo.cameo-sealicon { background-position: -5040px 0; } 
+.sfj-cameo.cameo-shadicon { background-position: -5100px 0; } 
+.sfj-cameo.cameo-shkicon { background-position: -5160px 0; } 
+.sfj-cameo.cameo-smcvicon { background-position: -5220px 0; } 
+.sfj-cameo.cameo-sminicon { background-position: -5280px 0; } 
+.sfj-cameo.cameo-snipicon { background-position: -5340px 0; } 
+.sfj-cameo.cameo-spyicon { background-position: -5400px 0; } 
+.sfj-cameo.cameo-sqdicon { background-position: -5460px 0; } 
+.sfj-cameo.cameo-sreficon { background-position: -5520px 0; } 
+.sfj-cameo.cameo-subicon { background-position: -5580px 0; } 
+.sfj-cameo.cameo-tanyicon { background-position: -5640px 0; } 
+.sfj-cameo.cameo-tbnkicon { background-position: -5700px 0; } 
+.sfj-cameo.cameo-techicon { background-position: -5760px 0; } 
+.sfj-cameo.cameo-teleicon { background-position: -5820px 0; } 
+.sfj-cameo.cameo-tnkdicon { background-position: -5880px 0; } 
+.sfj-cameo.cameo-dtruckicon { background-position: -5940px 0; } 
+.sfj-cameo.cameo-trsticon { background-position: -6000px 0; } 
+.sfj-cameo.cameo-tslaicon { background-position: -6060px 0; } 
+.sfj-cameo.cameo-ttnkicon { background-position: -6120px 0; } 
+.sfj-cameo.cameo-v3icon { background-position: -6180px 0; } 
+.sfj-cameo.cameo-vrusicon { background-position: -6240px 0; } 
+.sfj-cameo.cameo-wallicon { background-position: -6300px 0; } 
+.sfj-cameo.cameo-wethicon { background-position: -6360px 0; } 
+.sfj-cameo.cameo-yardicon { background-position: -6420px 0; } 
+.sfj-cameo.cameo-yclnicon { background-position: -6480px 0; } 
+.sfj-cameo.cameo-yengicon { background-position: -6540px 0; } 
+.sfj-cameo.cameo-yhvricon { background-position: -6600px 0; } 
+.sfj-cameo.cameo-ypvicon { background-position: -6660px 0; } 
+.sfj-cameo.cameo-ypwricon { background-position: -6720px 0; } 
+.sfj-cameo.cameo-ytchicon { background-position: -6780px 0; } 
+.sfj-cameo.cameo-ytnkicon { background-position: -6840px 0; } 
+.sfj-cameo.cameo-yurpicon { background-position: -6900px 0; } 
+.sfj-cameo.cameo-ywepicon { background-position: -6960px 0; } 
+.sfj-cameo.cameo-yyrdicon { background-position: -7020px 0; } 
+.sfj-cameo.cameo-zepicon { background-position: -7080px 0; } 
+.sfj-cameo.cameo-beagicon { background-position: -7140px 0; } 
+.sfj-cameo.cameo-bplnicon { background-position: -7200px 0; } 
+.sfj-cameo.cameo-falcicon { background-position: -7260px 0; } 
+.sfj-cameo.cameo-spypicon { background-position: -7320px 0; } 
+.sfj-cameo.cameo-psybicon { background-position: -7380px 0; }
+
+// Blitz
+
+.blitz-cameo.cameo-adogicon { background-position: 0 0; } 
+.blitz-cameo.cameo-agisicon { background-position: -60px 0; } 
+.blitz-cameo.cameo-ahrvicon { background-position: -120px 0; } 
+.blitz-cameo.cameo-asaticon { background-position: -180px 0; } 
+.blitz-cameo.cameo-ayaricon { background-position: -240px 0; } 
+.blitz-cameo.cameo-bfrticon { background-position: -300px 0; } 
+.blitz-cameo.cameo-bnkricon { background-position: -360px 0; } 
+.blitz-cameo.cameo-brckicon { background-position: -420px 0; } 
+.blitz-cameo.cameo-brisicon { background-position: -480px 0; } 
+.blitz-cameo.cameo-brrkicon { background-position: -540px 0; } 
+.blitz-cameo.cameo-bruticon { background-position: -600px 0; } 
+.blitz-cameo.cameo-bsubicon { background-position: -660px 0; } 
+.blitz-cameo.cameo-caosicon { background-position: -720px 0; } 
+.blitz-cameo.cameo-carricon { background-position: -780px 0; } 
+.blitz-cameo.cameo-ccomicon { background-position: -840px 0; } 
+.blitz-cameo.cameo-citwlicon { background-position: -900px 0; } 
+.blitz-cameo.cameo-clegicon { background-position: -960px 0; } 
+.blitz-cameo.cameo-clonicon { background-position: -1020px 0; } 
+.blitz-cameo.cameo-csphicon { background-position: -1080px 0; } 
+.blitz-cameo.cameo-desoicon { background-position: -1140px 0; } 
+.blitz-cameo.cameo-desticon { background-position: -1200px 0; } 
+.blitz-cameo.cameo-diskicon { background-position: -1260px 0; } 
+.blitz-cameo.cameo-dlphicon { background-position: -1320px 0; } 
+.blitz-cameo.cameo-dogicon { background-position: -1380px 0; } 
+.blitz-cameo.cameo-dredicon { background-position: -1440px 0; } 
+.blitz-cameo.cameo-dronicon { background-position: -1500px 0; } 
+.blitz-cameo.cameo-e2icon { background-position: -1560px 0; } 
+.blitz-cameo.cameo-engnicon { background-position: -1620px 0; } 
+.blitz-cameo.cameo-fixicon { background-position: -1680px 0; } 
+.blitz-cameo.cameo-flakicon { background-position: -1740px 0; } 
+.blitz-cameo.cameo-flkticon { background-position: -1800px 0; } 
+.blitz-cameo.cameo-fvicon { background-position: -1860px 0; } 
+.blitz-cameo.cameo-gapicon { background-position: -1920px 0; } 
+.blitz-cameo.cameo-gcanicon { background-position: -1980px 0; } 
+.blitz-cameo.cameo-gdgiicon { background-position: -2040px 0; } 
+.blitz-cameo.cameo-ggunicon { background-position: -2100px 0; } 
+.blitz-cameo.cameo-giicon { background-position: -2160px 0; } 
+.blitz-cameo.cameo-gorep { background-position: -2220px 0; } 
+.blitz-cameo.cameo-grndicon { background-position: -2280px 0; } 
+.blitz-cameo.cameo-gtncicon { background-position: -2340px 0; } 
+.blitz-cameo.cameo-gtnkicon { background-position: -2400px 0; } 
+.blitz-cameo.cameo-gwepicon { background-position: -2460px 0; } 
+.blitz-cameo.cameo-handicon { background-position: -2520px 0; } 
+.blitz-cameo.cameo-harvicon { background-position: -2580px 0; } 
+.blitz-cameo.cameo-heliicon { background-position: -2640px 0; } 
+.blitz-cameo.cameo-hovricon { background-position: -2700px 0; } 
+.blitz-cameo.cameo-htkicon { background-position: -2760px 0; } 
+.blitz-cameo.cameo-htnkicon { background-position: -2820px 0; } 
+.blitz-cameo.cameo-indpicon { background-position: -2880px 0; } 
+.blitz-cameo.cameo-initicon { background-position: -2940px 0; } 
+.blitz-cameo.cameo-ironicon { background-position: -3000px 0; } 
+.blitz-cameo.cameo-ivanicon { background-position: -3060px 0; } 
+.blitz-cameo.cameo-ivncicon { background-position: -3120px 0; } 
+.blitz-cameo.cameo-jjeticon { background-position: -3180px 0; } 
+.blitz-cameo.cameo-landicon { background-position: -3240px 0; } 
+.blitz-cameo.cameo-ltnkicon { background-position: -3300px 0; } 
+.blitz-cameo.cameo-lunricon { background-position: -3360px 0; } 
+.blitz-cameo.cameo-mcvicon { background-position: -3420px 0; } 
+.blitz-cameo.cameo-mindicon { background-position: -3480px 0; } 
+.blitz-cameo.cameo-msslicon { background-position: -3540px 0; } 
+.blitz-cameo.cameo-mtnkicon { background-position: -3600px 0; }
+.blitz-cameo.cameo-npwricon { background-position: -3660px 0; } 
+.blitz-cameo.cameo-nradicon { background-position: -3720px 0; } 
+.blitz-cameo.cameo-nrcticon { background-position: -3780px 0; } 
+.blitz-cameo.cameo-nreficon { background-position: -3840px 0; } 
+.blitz-cameo.cameo-ntchicon { background-position: -3900px 0; } 
+.blitz-cameo.cameo-nwalicon { background-position: -3960px 0; } 
+.blitz-cameo.cameo-nwepicon { background-position: -4020px 0; } 
+.blitz-cameo.cameo-pillicon { background-position: -4080px 0; } 
+.blitz-cameo.cameo-plticon { background-position: -4140px 0; } 
+.blitz-cameo.cameo-powricon { background-position: -4200px 0; } 
+.blitz-cameo.cameo-prisicon { background-position: -4260px 0; } 
+.blitz-cameo.cameo-psicicon { background-position: -4320px 0; } 
+.blitz-cameo.cameo-psisicon { background-position: -4380px 0; } 
+.blitz-cameo.cameo-psyticon { background-position: -4440px 0; } 
+.blitz-cameo.cameo-pupticon { background-position: -4500px 0; } 
+.blitz-cameo.cameo-rbccicon { background-position: -4560px 0; } 
+.blitz-cameo.cameo-reficon { background-position: -4620px 0; } 
+.blitz-cameo.cameo-rfixicon { background-position: -4680px 0; } 
+.blitz-cameo.cameo-roboicon { background-position: -4740px 0; } 
+.blitz-cameo.cameo-rtnkicon { background-position: -4800px 0; } 
+.blitz-cameo.cameo-samicon { background-position: -4860px 0; } 
+.blitz-cameo.cameo-sapcicon { background-position: -4920px 0; } 
+.blitz-cameo.cameo-schpicon { background-position: -4980px 0; } 
+.blitz-cameo.cameo-sealicon { background-position: -5040px 0; } 
+.blitz-cameo.cameo-shadicon { background-position: -5100px 0; } 
+.blitz-cameo.cameo-shkicon { background-position: -5160px 0; } 
+.blitz-cameo.cameo-smcvicon { background-position: -5220px 0; } 
+.blitz-cameo.cameo-sminicon { background-position: -5280px 0; } 
+.blitz-cameo.cameo-snipicon { background-position: -5340px 0; } 
+.blitz-cameo.cameo-spyicon { background-position: -5400px 0; } 
+.blitz-cameo.cameo-sqdicon { background-position: -5460px 0; } 
+.blitz-cameo.cameo-sreficon { background-position: -5520px 0; } 
+.blitz-cameo.cameo-subicon { background-position: -5580px 0; } 
+.blitz-cameo.cameo-tanyicon { background-position: -5640px 0; } 
+.blitz-cameo.cameo-tbnkicon { background-position: -5700px 0; } 
+.blitz-cameo.cameo-techicon { background-position: -5760px 0; } 
+.blitz-cameo.cameo-teleicon { background-position: -5820px 0; } 
+.blitz-cameo.cameo-tnkdicon { background-position: -5880px 0; } 
+.blitz-cameo.cameo-dtruckicon { background-position: -5940px 0; } 
+.blitz-cameo.cameo-trsticon { background-position: -6000px 0; } 
+.blitz-cameo.cameo-tslaicon { background-position: -6060px 0; } 
+.blitz-cameo.cameo-ttnkicon { background-position: -6120px 0; } 
+.blitz-cameo.cameo-v3icon { background-position: -6180px 0; } 
+.blitz-cameo.cameo-vrusicon { background-position: -6240px 0; } 
+.blitz-cameo.cameo-wallicon { background-position: -6300px 0; } 
+.blitz-cameo.cameo-wethicon { background-position: -6360px 0; } 
+.blitz-cameo.cameo-yardicon { background-position: -6420px 0; } 
+.blitz-cameo.cameo-yclnicon { background-position: -6480px 0; } 
+.blitz-cameo.cameo-yengicon { background-position: -6540px 0; } 
+.blitz-cameo.cameo-yhvricon { background-position: -6600px 0; } 
+.blitz-cameo.cameo-ypvicon { background-position: -6660px 0; } 
+.blitz-cameo.cameo-ypwricon { background-position: -6720px 0; } 
+.blitz-cameo.cameo-ytchicon { background-position: -6780px 0; } 
+.blitz-cameo.cameo-ytnkicon { background-position: -6840px 0; } 
+.blitz-cameo.cameo-yurpicon { background-position: -6900px 0; } 
+.blitz-cameo.cameo-ywepicon { background-position: -6960px 0; } 
+.blitz-cameo.cameo-yyrdicon { background-position: -7020px 0; } 
+.blitz-cameo.cameo-zepicon { background-position: -7080px 0; } 
+.blitz-cameo.cameo-beagicon { background-position: -7140px 0; } 
+.blitz-cameo.cameo-bplnicon { background-position: -7200px 0; } 
+.blitz-cameo.cameo-falcicon { background-position: -7260px 0; } 
+.blitz-cameo.cameo-spypicon { background-position: -7320px 0; } 
+.blitz-cameo.cameo-psybicon { background-position: -7380px 0; }

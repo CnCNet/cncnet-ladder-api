@@ -10,6 +10,7 @@ use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;
 use App\User;
 use Exception;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 
 class LadderController extends Controller
@@ -27,42 +28,12 @@ class LadderController extends Controller
 
     public function getLadders(Request $request)
     {
-        $games = ["ra", "ts", "yr"];
-        $prevWinners = [];
-        $prevLadders = [];
-
-        foreach ($games as $game)
-        {
-            $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($game, 5)->splice(0, 1);
-        }
-
-        foreach ($prevLadders as $h)
-        {
-            foreach ($h as $history)
-            {
-                $prevWinners[] = [
-                    "game" => $history->ladder->game,
-                    "short" => $history->short,
-                    "full" => $history->ladder->name,
-                    "abbreviation" => $history->ladder->abbreviation,
-                    "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
-                ];
-            }
-        }
-
-        $user = $request->user();
-        $userIsMod = $user != null && $user->isLadderMod($history->ladder);
-
-
         return view(
             "ladders.index",
-            array(
+            [
                 "ladders" => $this->ladderService->getLatestLadders(),
-                "ladders_winners" => $prevWinners,
-                "userIsMod" => $userIsMod,
                 "clan_ladders" => $this->ladderService->getLatestClanLadders()
-            )
+            ]
         );
     }
 
@@ -100,23 +71,24 @@ class LadderController extends Controller
                 ->paginate(45);
         }
 
-        $data = array(
+        $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
+            ->where('local_id', '>=', 0)
+            ->orderBy('local_id', 'asc')
+            ->lists('name');
+
+        $data = [
+            "history" => $history,
+            "tier" => $request->tier,
+            "search" => $request->search,
+            "sides" => $sides,
             "stats" => $this->statsService->getQmStats($request->game),
             "statsPlayerOfTheDay" => $statsPlayerOfTheDay,
+            "players" => $players,
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
-            "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game),
-            "history" => $history,
-            "players" => $players,
-            "userIsMod" => $userIsMod,
-            "cards" => \App\Card::orderBy('id', 'asc')->lists('short'),
-            "tier" => $request->tier,
-            "search" => $request->search,
-            "sides" => \App\Side::where('ladder_id', '=', $history->ladder_id)
-                ->where('local_id', '>=', 0)
-                ->orderBy('local_id', 'asc')->lists('name')
-        );
+            "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game, 16),
+        ];
 
         return view("ladders.listing", $data);
     }
@@ -277,15 +249,13 @@ class LadderController extends Controller
         # Awards
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
 
-        # Achievements
-        $achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
+        # Achievements (Views still todo)
+        #$achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
 
         return view(
-            "ladders.player-view",
+            "ladders.player-detail",
             array(
                 "mod" => $mod,
-                "ladders" => $this->ladderService->getLatestLadders(),
-                "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "history" => $history,
                 "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
                 "player" => $ladderPlayer['player'],
@@ -302,8 +272,8 @@ class LadderController extends Controller
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $userPlayer,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "achievementProgress" => $achievementProgress,
-                "achievements" => $history->ladder->achievements
+                #"achievementProgress" => $achievementProgress,
+                #"achievements" => $history->ladder->achievements
             )
         );
     }

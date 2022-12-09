@@ -1,0 +1,132 @@
+.game-box-ladder-link 
+{
+    position: relative;
+    overflow: hidden;
+    max-width: 100%;
+    width: 100%;
+    height: 450px;
+    border-radius: 10px;
+    font-family: $font-oswald;
+    transition: ease 250ms all;
+    box-shadow: 0px 2px 1px 1px #202020;
+    margin-bottom: 1rem;
+
+    @media(min-width: $md-width)
+    {
+        width: calc(40% - 1rem);
+        height: 550px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    @media(min-width: $lg-width)
+    {
+        width: calc(20% - 1rem);
+    }
+
+    &:hover .game-box-ladder-link-bg
+    {
+        opacity: 1;
+    }
+}
+
+.game-box-ladder-link-bg
+{
+    background-position: 0 0;
+    transition: ease all 450ms;
+}
+
+.game-box-ladder-link-bg::before
+{
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(0deg, black, transparent);
+    transition: ease 350ms all;
+}
+
+.game-box-ladder-link .logo 
+{
+    display: flex;
+    position: relative;
+    width: 300px;
+    max-width: 100%;
+    text-align: center;
+    padding-bottom: 1rem;
+    
+    & img 
+    {
+        width: 250px;
+        max-width: 100%;
+        margin: auto;
+    }
+
+    @media(min-width: $md-width)
+    {
+        height: 100px;
+
+        & img 
+        {
+            width: 190px;
+        }
+    }
+}
+
+.game-box-ladder-link .ladder-description 
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1;
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg 
+{
+    background-size: cover;
+    background-image: url(../images/feature/ra2.jpg);
+    width: 100%;
+    height:100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.5;
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-ra2 
+{
+    background-image: url(../images/feature/ra2.jpg);
+    background-position: 0 -100px;
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-yr 
+{
+    background-image: url(../images/feature/yr.jpg);
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-blitz 
+{
+    background-image: url(../images/feature/blitz.jpg);
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-ts 
+{
+    background-image: url(../images/feature/ts.jpg);
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-ra 
+{
+    background-image: url(../images/feature/ra.jpg);
+}

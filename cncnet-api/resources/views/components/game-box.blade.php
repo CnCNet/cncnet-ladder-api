@@ -1,6 +1,10 @@
 <div class="game-box">
     <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map or '' }}.png)">
-        <a href="{{ $url or '' }}" class="status status-{{ $status }}"></a>
+        <a href="{{ $url or '' }}" class="status status-{{ $status }}">
+            <span class="material-symbols-outlined">
+                swords
+            </span>
+        </a>
     </div>
 
     <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" data-timestamp="{{ $date->timestamp }}" title="View game">
@@ -35,9 +39,7 @@
                     <h5>
                         {{ $gamePlayer->player->username }}
                         <span class="points">
-                            @if ($gamePlayer->points >= 0)
-                                +
-                            @endif{{ $gamePlayer->points }}
+                            {{ $gamePlayer->points >= 0 ? "+$gamePlayer->points" : $gamePlayer->points }}
                         </span>
                     </h5>
                 </div>

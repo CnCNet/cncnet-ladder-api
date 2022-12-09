@@ -1,0 +1,216 @@
+.game-detail .map-preview 
+{
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: 100%;
+    overflow: hidden;
+}
+
+.game-detail .player 
+{
+    font-family: $font-oswald;
+    position: absolute;
+    background: linear-gradient(0deg, #000000e0, #040404b3);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    border-top: 0;
+    border-radius: 4px;
+    border-radius: 10px;
+    padding-right: 2rem;
+    height: 60px;
+}
+
+.game-detail .player .player-start-position 
+{
+    position: absolute;
+    bottom: 4px;
+    right: 0;
+    font-size: 0.8rem;
+    width: 20px;
+    text-align: center;
+    font-weight: 500;
+    color: #fff;
+}
+
+.game-detail .player-red 
+{
+    border: 2px solid #c30000;
+    box-shadow: 0px -2px #ff2222;
+    border-top: 0;
+}
+
+.game-detail .player-yellow 
+{
+    border: 2px solid #ffba00;
+    box-shadow: 0px -2px #ffcc00;
+    border-top: 0;
+}
+
+.game-detail .status-lost 
+{
+    color: $game-lost;
+    font-weight: 500;
+}
+
+.game-detail .status-won 
+{
+    color: $game-won;
+    font-weight: 500;
+}
+
+.game-detail .player .username 
+{
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.game-detail .player .player-details 
+{
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.game-detail .player .player-avatar 
+{
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+
+// Game players
+.game-detail .game-players 
+{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+
+    @media(min-width: $lg-width)
+    {
+        flex-direction: row;
+    }
+}
+
+.game-detail .game-players .player-vs 
+{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+    h1 
+    {
+        color: #ededed;
+        font-weight: 400;
+        font-style: italic;
+        font-family: $font-impact;
+
+        @media(min-width: $lg-width)
+        {
+            font-size: 3rem;
+        }
+    }
+}
+
+
+// Player cards
+.game-detail .game-players-container 
+{
+    position: relative;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    background: linear-gradient(118deg, #0e0e0e, transparent);
+}
+
+.game-detail .player-card 
+{
+    display: flex;
+    position: relative;
+}
+
+.game-detail .player-card .player-details
+{
+    display: flex;
+    flex-direction: column;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.game-detail .player-card .points { font-weight: 500; }
+.game-detail .player-card .points.won { color: $game-won; }
+.game-detail .player-card .points.lost { color: $game-lost; }
+
+.game-detail .player-card-right .player-details 
+{
+    order: -1;
+}
+
+.game-detail .player-card-right .faction 
+{
+    order: 1;
+    margin-left: 0.5rem;
+}
+
+.game-detail .player-card .player-avatar 
+{
+    border: 2px solid #121212;
+    border-radius: 100%;
+    box-shadow: 0px 4px 0 0 #202020;
+    
+    .icon 
+    {
+        color: silver;
+        font-size: 2rem;
+    }
+}
+
+// Cameo / Stats breakdown
+.game-detail .stats-breakdown
+{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+
+    @media(min-width: $lg-width)
+    {
+        flex-direction: row;
+    }
+}
+
+.game-detail .stats 
+{
+    display: flex;
+    flex-direction: column;
+    background: #0c0c0c;
+    
+    @media(min-width: $lg-width)
+    {
+        padding: 2rem;
+        width: 45%;
+    }
+}
+
+.game-detail .stats .cameo-row 
+{
+    min-height: 150px;
+    background: #0c0c0c;
+    padding: 2rem;
+}
+
+.game-detail .stats .cameo-title 
+{
+    margin-bottom: 1rem;
+    color: #646464;
+
+    & * { font-weight: 500; color: silver;}
+}
+
+
+// Admin styles
+.game-admin .player-vs 
+{
+    padding: 1rem;
+    display: flex;
+    justify-content: space-around;
+}

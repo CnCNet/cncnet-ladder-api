@@ -1,0 +1,44 @@
+.icon-game
+{
+    position: relative;
+}
+
+.icon-game:before
+{
+    content: "";
+    display: inline-block;
+    background-image: url(../images/games/icons.png);
+    background-repeat: no-repeat;
+    width: 25px;
+    height: 25px;
+}
+
+.icon-ra:before
+{
+    background-position: calc(0px);
+}
+
+.icon-yr:before
+{
+    background-position: calc(-25px * 3);
+}
+
+.icon-ts:before
+{
+    background-position: calc(-25px * 1);
+}
+
+.icon-ra2:before
+{
+    background-position: calc(-25px * 9);
+}
+
+.icon-blitz:before
+{
+    background-position: calc(-25px * 10);
+}
+
+.icon-sfj:before
+{
+    background-position: calc(-25px * 11);
+}

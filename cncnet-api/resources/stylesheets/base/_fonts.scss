@@ -1,0 +1,39 @@
+// 
+// Fonts
+$font-roboto: 'Roboto', sans-serif;
+$font-oswald: 'Oswald', sans-serif;
+
+%font-primary-light
+{
+    font-family: $font-roboto;
+    font-weight: 300;
+}
+
+%font-primary
+{
+    font-family: $font-roboto;
+}
+
+%font-primary-bold
+{
+    font-family: $font-roboto;
+    font-weight: 700;
+}
+
+%font-secondary-light
+{
+    font-family: $font-oswald;
+    font-weight: 200;
+}
+
+%font-secondary 
+{
+    font-family: $font-oswald;
+    font-weight: 300;
+}
+
+%font-secondary-bold
+{
+    font-family: $font-oswald;
+    font-weight: 500;
+}

@@ -142,25 +142,17 @@ class FindOpponent extends Command implements ShouldQueue
             if ($userSettings->disabledPointFilter && $oppUserSettings->disabledPointFilter)
             {
                 // both players have the point filter disabled, we will ignore the point filter
-                Log::info("FindOpponent ** Ignoring point filter for " . $qmPlayer->player->username . ' and ' . $oppPlayer->username);
                 $opponentEntriesFiltered->add($opponentEntry);
             }
             else
             {
-                Log::info("FindOpponent ** Applying point filter for : " . $qmPlayer->player->username . ' and ' . $oppPlayer->username);
-
                 //(updated_at - created_at) / 60 = seconds duration player has been waiting in queue
                 $points_time = ((strtotime($qEntry->updated_at) - strtotime($qEntry->created_at))) * $ladder_rules->points_per_second;
 
                 //is the opponent within the point filter
                 if ($points_time + $ladder_rules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
                 {
-                    Log::info("FindOpponent ** Players in point range : " . $qmPlayer->player->username . ' and ' . $oppPlayer->username);
                     $opponentEntriesFiltered->add($opponentEntry);
-                }
-                else
-                {
-                    Log::info("FindOpponent ** Players not in point range : " . $qmPlayer->player->username . ' and ' . $oppPlayer->username);
                 }
             }
         }
@@ -292,8 +284,6 @@ class FindOpponent extends Command implements ShouldQueue
             $qmMatch->ladder_id = $qmPlayer->ladder_id;
             $qmMatch->qm_map_id = $common_qm_maps[$randomMapIndex]->id;
             $qmMatch->seed = mt_rand(-2147483647, 2147483647);
-
-            Log::info("FindOpponent ** Create Game on map " . $common_qm_maps[$randomMapIndex]->description);
 
             // Create the Game
             $game = \App\Game::genQmEntry($qmMatch);

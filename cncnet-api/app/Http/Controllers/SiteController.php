@@ -15,4 +15,9 @@ class SiteController extends Controller
     {
         return view("donate");
     }
+
+    public function getStyleguide(Request $request)
+    {
+        return view("styleguide", ["ladders" => []]);
+    }
 }

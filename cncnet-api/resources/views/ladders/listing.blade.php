@@ -1,314 +1,229 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name . ' Ladder')
-
-@section('cover')
-/images/feature/feature-{{ $history->ladder->abbreviation }}.jpg
-@endsection
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
 @section('feature')
-<div class="feature-background sub-feature-background {{ $history->ladder->abbreviation }}">
-    <div class="container">
+    <div class="feature">
+        <div class="container px-4 py-5 text-light">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-12 col-lg-6">
+                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                </div>
 
-        <div class="ladder-header">
-            <div class="ladder-title">
-                <h1 class="text-uppercase">
-                    <strong>{{ $history->ladder->name }}</strong>
-                    <br /><span>Ladder Rankings</span>
-                    <small>{{ $history->starts->format('F Y') }} - 1vs1 QUICK MATCH</small>
-                </h1>
+                <div class="col-12 col-lg-6">
+                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
+                        <span>Ladder Rankings</span>
+                    </h1>
 
-                <a href="/ladder" class="previous-link">
-                    <i class="fa fa-caret-left" aria-hidden="true"></i>
-                    <i class="fa fa-caret-left" aria-hidden="true"></i>
-                </a>
-            </div>
-
-            <div class="ladder-logo">
-                <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" />
+                    <p class="lead text-uppercase">
+                        <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
+@endsection
+
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item active">
+                    <a href="">
+                        <span class="material-symbols-outlined icon pe-3">
+                            military_tech
+                        </span>
+                        Ladders
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
 @endsection
 
 @section('content')
-<section class="ladder-listing game-{{ $history->ladder->abbreviation }}">
-    <div class="container">
-
-        @if ($history->ladder->abbreviation == 'blitz')
-        <div class="qm-stats">
-            <a class="stat blue" href="https://youtu.be/n_xWvNxO55c" target="_blank" style="z-index:1;" title="How-To Setup & Play Blitz Online">
-                <div class="text-center">
-                    <i class="fa fa-youtube fa-fw"></i>
-                    <h4>How-To Setup & Play Blitz Online</h4>
-                </div>
-                <div class="text-center">
-                    <div class="value">Watch on YouTube </div>
-                </div>
-            </a>
-
-            <a class="stat blue" href="https://youtu.be/EPDCaucx5qA" target="_blank" style="z-index:1;" title="Tips & Tricks for New Blitz Players">
-                <div class="text-center">
-                    <i class="fa fa-youtube fa-fw fa-2x"></i>
-                    <h4>Tips & Tricks for New Blitz Players</h4>
-                </div>
-                <div class="text-center">
-                    <div class="value">Watch on YouTube </div>
-                </div>
-            </a>
-        </div>
-        @endif
-
-        <div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#openLadderRules"> Ladder Rules </button>
-        </div>
-
-        @if ($history->ladder->qmLadderRules->ladder_discord != null )
-        <div style="display: flex;">
-            <h4>Join the {{ $history->ladder->name }} <strong>Discord</strong>!</h4>
-            <a style="padding-left: 20px" href="{{ $history->ladder->qmLadderRules->ladder_discord }}"><img src="/images/discord_logo.png"></a>
-        </div>
-        @endif
-
-        <div class="modal fade" id="openLadderRules" tabIndex="-1" role="dialog">
-            <div class="modal-dialog modal-md" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h3 class="modal-title"> {{ $history->ladder->name }} Ladder Rules </h3>
+    <section class="ladder-listing game-{{ $history->ladder->abbreviation }}">
+        <div class="container">
+            @if ($history->ladder->abbreviation == 'blitz')
+                <section class="useful-links d-md-flex mt-4">
+                    <div class="me-3">
+                        <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-primary btn-size-md" target="_blank">
+                            <i class="bi bi-youtube pe-2"></i> How-To Play Blitz Online
+                        </a>
                     </div>
-                    <div class="modal-body clearfix">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-12 player-box player-card" style="padding:8px;margin:8px;">
-                                    <textarea id="{{ $history->ladder->id }}_ladder_rules_message" name="ladder_rules_message" cols="10" rows="20" class="form-control">{{ $history->ladder->qmLadderRules->ladder_rules_message }}</textarea>
-                                </div>
-                            </div>
-                        </div>
+
+                    <div>
+                        <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-primary btn-size-md" target="_blank">
+                            <i class="bi bi-youtube pe-2"></i> Tips & Tricks - New Blitz Players
+                        </a>
                     </div>
+                </section>
+            @endif
+            <section class="mt-4 ladder-info">
+                <div>
+                    <button type="button" class="btn btn-secondary d-flex" data-bs-toggle="modal" data-bs-target="#openLadderRules">
+                        <span class="material-symbols-outlined pe-3">
+                            gavel
+                        </span>
+                        Rules
+                    </button>
                 </div>
-            </div>
-        </div>
 
-        @include('components.stats', [
-        'stats' => $stats,
-        'history' => $history,
-        'statsPlayerOfTheDay' => $statsPlayerOfTheDay,
-        ])
-        <?php $date = \Carbon\Carbon::parse($history->ends); ?>
-
-        @if ($date->isPast() && ($search === null || $search == ''))
-        <h2><strong>{{ $date->format('m/Y') }}</strong> League Champions!</h2>
-        <div class="feature">
-            <div class="row">
-                <?php $winners = $players->slice(0, 2); ?>
-                @foreach ($winners as $k => $winner)
-                <div class="col-xs-12 col-md-6">
-                    <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-masters.png' }}')">
-                        <div class="details tier-league-cards">
-                            <div class="type">
-                                <h1 class="lead"><strong>{{ $winner->player_name }}</strong></h1>
-                                <h2><strong>Rank #{{ $k + 1 }}</strong></h2>
-                                <ul class="list-inline" style="font-size: 14px;">
-                                    <li>
-                                        Wins
-                                        <i class="fa fa-level-up"></i> {{ $winner->wins }}
-                                    </li>
-                                    <li>
-                                        Games
-                                        <i class="fa fa-diamond"></i> {{ $winner->games }}
-                                    </li>
-                                </ul>
-                                @if ($k > 0)
-                                <small>Runner up of the
-                                    @else
-                                    <small>Champion of the
-                                        @endif
-                                        <strong>{{ $date->format('m/Y') }}</strong> {{ $history->abbreviation }} League</small>
-                            </div>
-                        </div>
+                @if ($history->ladder->qmLadderRules->ladder_discord != null)
+                    <div>
+                        <a href="{{ $history->ladder->qmLadderRules->ladder_discord }}" class="btn btn-secondary">
+                            <i class="bi bi-discord pe-2"></i> {{ $history->ladder->name }} Discord
+                        </a>
                     </div>
+                @endif
+
+                <div class="dropdown d-flex">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="material-symbols-outlined icon me-2">
+                            hotel_class
+                        </span>
+                        Hall of Fame
+                    </button>
+                    <ul class="dropdown-menu">
+                        @foreach ($ladders_previous as $previous)
+                            <li>
+                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}" class="dropdown-item">
+                                    {{ $previous->starts->format('Y - F') }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
-                @endforeach
-            </div>
-        </div>
-        @endif
+            </section>
 
-        <div class="feature">
-            <div class="row">
-                <div class="header">
-                    <div class="col-md-12">
-                        <h3><strong>1vs1</strong> Recent Games
-                            <small>
-                                <a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games' }}">View All Games</a>
-                            </small>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <section class="mt-5 mb-5">
+                @include('ladders.listing._qm-stats', [
+                    'stats' => $stats,
+                    'history' => $history,
+                    'statsPlayerOfTheDay' => $statsPlayerOfTheDay,
+                ])
+            </section>
 
-        @include('components.global-recent-games', ['games' => $games])
+            @include('ladders.listing._past-ladders')
 
-        <div class="feature">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="header">
-                        <div class="row">
-                            <div class="col-md-3">
-                                @if ($history->ladder->qmLadderRules->tier2_rating > 0)
-                                @if ($tier == 1 || $tier === null)
-                                <h3><strong>1vs1</strong> Masters League Rankings</h3>
-                                @elseif($tier == 2)
-                                <h3><strong>1vs1</strong> Contenders League Rankings</h3>
-                                @endif
-                                @endif
-                            </div>
-
-                            <div class="col-md-9 text-right">
-                                <ul class="list-inline">
-                                    <li>
-                                        <div class="btn-group filter">
-                                            <button type="button" class="btn btn-secondary dropdown-toggle text-uppercase" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 15px;">
-                                                <i class="fa fa-industry fa-fw" aria-hidden="true" style="margin-right: 5px;"></i> Previous Month <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu">
-                                                @foreach ($ladders_previous as $previous)
-                                                <li>
-                                                    <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}">
-                                                        Rankings - {{ $previous->short }}
-                                                    </a>
-                                                </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <form>
-                                            <div class="form-group" method="GET">
-                                                <div class="search" style="position:relative;">
-                                                    <label for="search-input" style="position: absolute;left: 12px;top: 7px;">
-                                                        <i class="fa fa-search" aria-hidden="true"></i>
-                                                    </label>
-                                                    <input class="form-control" name="search" value="{{ $search }}" placeholder="Player username..." style="padding-left:40px;" />
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </li>
-                                </ul>
-                                <div class="text-right">
-                                    @if ($search)
+            @if (!$search)
+                <section class="mt-5 mb-5">
+                    <div class="row">
+                        <div class="header">
+                            <div class="col-md-12">
+                                <h4>
+                                    <strong>1vs1</strong>
+                                    Recent Games
                                     <small>
-                                        Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
-                                        <a href="?search=">Clear?</a>
+                                        <a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games' }}">View All Games</a>
                                     </small>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    @include('ladders.listing._recent-games', ['games' => $games])
+                </section>
+            @endif
+
+            <section>
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="header">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    @if ($history->ladder->qmLadderRules->tier2_rating > 0)
+                                        @if ($tier == 1 || $tier === null)
+                                            <h3><strong>1vs1</strong> Masters League Rankings</h3>
+                                        @elseif($tier == 2)
+                                            <h3><strong>1vs1</strong> Contenders League Rankings</h3>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
                         </div>
 
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                {{ $players->appends(request()->query())->links() }}
-                            </div>
-                        </div>
-                    </div>
-
-                    @if ($history->ladder->qmLadderRules->tier2_rating > 0)
-                    <div class="feature" style="margin-top: -25px;">
-                        <div class="row">
-                            <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                                <a href="/ladder/{{ $history->short . '/1/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                                    <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-masters.png' }}')">
-                                        <div class="details tier-league-cards">
-                                            <div class="type">
-                                                <h1>Masters <strong>League</strong></h1>
-                                                <p class="lead">1<strong>vs</strong>1</p>
+                        @if ($history->ladder->qmLadderRules->tier2_rating > 0)
+                            <div class="feature" style="margin-top: -25px;">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
+                                        <a href="/ladder/{{ $history->short . '/1/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
+                                            <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}"
+                                                style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-masters.png' }}')">
+                                                <div class="details tier-league-cards">
+                                                    <div class="type">
+                                                        <h1>Masters <strong>League</strong></h1>
+                                                        <p class="lead">1<strong>vs</strong>1</p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
-                                </a>
-                            </div>
-                            <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                                <a href="/ladder/{{ $history->short . '/2/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                                    <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-contenders.png' }}')">
-                                        <div class="details tier-league-cards">
-                                            <div class="type">
-                                                <h1>Contenders <strong>League</strong></h1>
-                                                <p class="lead">1<strong>vs</strong>1</p>
+                                    <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
+                                        <a href="/ladder/{{ $history->short . '/2/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
+                                            <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}"
+                                                style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-contenders.png' }}')">
+                                                <div class="details tier-league-cards">
+                                                    <div class="type">
+                                                        <h1>Contenders <strong>League</strong></h1>
+                                                        <p class="lead">1<strong>vs</strong>1</p>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
-                                </a>
+                                </div>
+                            </div>
+                        @endif
+
+                        @if (request()->input('filterBy') == 'games')
+                            <p>
+                                You are ordering by game count, <a href="?#listing">reset by rank?</a>
+                            </p>
+                        @endif
+
+                        <div class="d-flex flex-column d-sm-flex flex-sm-row">
+                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                            <div class="ms-auto">
+                                <form>
+                                    <div class="form-group" method="GET">
+                                        <div class="search" style="position:relative;">
+                                            <input class="form-control border" name="search" value="{{ $search }}" placeholder="Search by Player..." />
+                                        </div>
+                                        @if ($search)
+                                            <small>
+                                                Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
+                                                <a href="?search=">Clear?</a>
+                                            </small>
+                                        @endif
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                    </div>
-                    @endif
 
-                    @if (request()->input('filterBy') == 'games')
-                    <p>
-                        You are ordering by game count, <a href="?#listing">reset by rank?</a>
-                    </p>
-                    @endif
+                        @include('ladders.listing._ladder-table', ['players' => $players])
 
-                    <div class="ladder-player-listing" id="listing">
-                        <div class="player-row-header">
-                            <div class="player-rank">
-                                Rank
-                            </div>
-                            <div class="player-avatar">
-                                Name
-                            </div>
-                            <div class="player-social">
-                                Social
-                            </div>
-                            <div class="player-points">Points</div>
-                            <div class="player-wins">Won</div>
-                            <div class="player-losses">Lost</div>
-
-                            @if (request()->input('orderBy') == 'desc')
-                            <a class="player-games filter-link" href="?filterBy=games&orderBy=asc#listing">
-                                Games
-                                <i class="fa fa-chevron-up" aria-hidden="true"></i>
-                            </a>
-                            @else
-                            <a class="player-games filter-link" href="?filterBy=games&orderBy=desc#listing">
-                                Games
-                                <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                            </a>
-                            @endif
-                        </div>
-
-                        @foreach ($players as $k => $playerCache)
-                        @include('components/player-row', [
-                        'username' => $playerCache->player_name,
-                        'points' => $playerCache->points,
-                        'rank' => $playerCache->rank(),
-                        'wins' => $playerCache->wins,
-                        'losses' => $playerCache->games - $playerCache->wins,
-                        'totalGames' => $playerCache->games,
-                        'game' => $history->ladder->game,
-                        'url' => \App\URLHelper::getPlayerProfileUrl($history, $playerCache->player_name),
-                        'avatar' => $playerCache->player->user->getUserAvatar(),
-                        'twitch' => $playerCache->player->user->getTwitchProfile(),
-                        'youtube' => $playerCache->player->user->getYouTubeProfile(),
-                        'discord' => $playerCache->player->user->getDiscordProfile(),
-                        ])
-                        @endforeach
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12 text-center">
-                            {{ $players->appends(request()->query())->links() }}
+                        <div class="mt-5">
+                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
-    </div>
-</section>
+    </section>
+
+    @include('ladders.listing._modal-ladder-rules')
 @endsection
 
 @if ($history->ends > Carbon\Carbon::now())
-@include('components.countdown', ['target' => $history->ends->toISO8601String()])
+    @include('components.countdown', ['target' => $history->ends->toISO8601String()])
 @endif

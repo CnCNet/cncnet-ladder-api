@@ -1,16 +1,14 @@
 {
-  "private": true,
   "devDependencies": {
     "gulp": "^4.0.2",
-    "gulp-sass": "^3.2.1",
-    "gulp-autoprefixer": "^6.1.0"
+    "gulp-sass": "^5.1.0",
+    "sass": "^1.56.1"
   },
   "scripts": {
-    "watch": "gulp"
+    "dev": "gulp compile"
   },
-  "dependencies": {},
-  "browserslist": [
-    ">1%",
-    "last 2 versions"
-  ]
+  "dependencies": {
+    "bootstrap": "^5.2.2",
+    "bootstrap-icons": "^1.10.2"
+  }
 }

@@ -1,0 +1,153 @@
+
+.ladder-listing .player-profile 
+{
+    position: relative;
+
+    transition: ease 250ms;
+}
+
+.ladder-listing .player-profile .player-stat
+{
+    position: relative;
+    padding-left: 1rem;
+    padding-right: 1rem;
+} 
+
+.ladder-listing .player-profile .most-used-country
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    border-radius: 100%;
+
+    &:before 
+    {
+        content: "";
+        width: 80%;
+        height: 80%;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+}
+
+.ladder-listing .player-profile .player-rank 
+{
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+
+    @media(min-width: $lg-width)
+    {
+        width: 60px;
+    }
+}
+
+.ladder-listing .player-profile .player-avatar
+{
+    display: flex;
+    align-items: center;
+    
+    &.avatar-container 
+    {
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    @media(max-width: $md-width)
+    {
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
+
+.ladder-listing .player-profile-info 
+{
+    position: relative;
+    font-size: 1rem;
+
+    @media(max-width: $md-width)
+    {
+        padding-top: 1rem;
+    }
+}
+
+.ladder-listing .player-profile-info .player-social 
+{
+    display: none;
+
+    & a 
+    {
+        display: inline-block;
+        padding: 5px 10px;
+    }
+
+    @media(min-width: $lg-width)
+    {
+        display: flex;
+        width: 150px;
+    }
+}
+
+.ladder-listing .player-profile-info .player-stat 
+{
+    position: relative;
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    & span 
+    {
+        display: block;
+        height: 10px;
+        width: 100%;
+        color: #333746;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+}
+
+@media(min-width: $lg-width)
+{
+    .player-profile .player-faction 
+    {
+        width: 50px;
+    }
+
+    .ladder-listing  .player-profile .player-country 
+    {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .ladder-listing .player-profile .player-username 
+    {
+        width: 200px;
+        word-break: break-word;
+    }
+
+    .ladder-listing .player-profile-info .player-points 
+    {
+        width: 100px;
+    }
+
+    .ladder-listing .player-profile-info .player-wins 
+    {
+        width: 85px;
+    }
+
+    .ladder-listing .player-profile-info .player-losses 
+    {
+        width: 85px;
+    }
+
+    .ladder-listing  .player-profile-info .player-games 
+    {
+        width: 100px;
+    }
+}
