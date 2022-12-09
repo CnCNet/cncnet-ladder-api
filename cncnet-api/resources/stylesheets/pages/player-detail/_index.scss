@@ -233,14 +233,12 @@ body.body-player-detail .page-image-feature
 
 .player-detail .map-row-container .map-row 
 {
-    display: -webkit-box;
-    display: -ms-flexbox;
     display: flex;
 }
 
 .player-detail .map-stats .map-preview 
 {
-    width: 100px;
+    width: 150px;
     height: 70px;
     margin: 0 15px 0 0;
     background-size: 100%;

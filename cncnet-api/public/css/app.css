@@ -19271,10 +19271,6 @@ b, strong {
   --bs-alert-border-color: #041a13;
 }
 
-h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
-  font-weight: 300;
-}
-
 /**
  * Swiper 8.4.5
  * Most modern mobile touch slider and framework with hardware accelerated transitions
@@ -24354,13 +24350,11 @@ body.body-player-detail .page-image-feature {
 }
 
 .player-detail .map-row-container .map-row {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
 }
 
 .player-detail .map-stats .map-preview {
-  width: 100px;
+  width: 150px;
   height: 70px;
   margin: 0 15px 0 0;
   background-size: 100%;
@@ -24698,10 +24692,6 @@ body.body-player-detail .page-image-feature {
   font-weight: 500;
 }
 
-.game-detail .status {
-  font-size: 0.85rem;
-}
-
 .game-detail .player .username {
   font-size: 0.95rem;
   font-weight: 400;
@@ -24829,6 +24819,10 @@ body.body-player-detail .page-image-feature {
 .game-detail .stats .cameo-title {
   margin-bottom: 1rem;
   color: #646464;
+}
+.game-detail .stats .cameo-title * {
+  font-weight: 500;
+  color: silver;
 }
 
 .game-admin .player-vs {

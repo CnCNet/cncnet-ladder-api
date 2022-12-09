@@ -59,11 +59,6 @@
     font-weight: 500;
 }
 
-.game-detail .status 
-{
-    font-size: 0.85rem;
-}
-
 .game-detail .player .username 
 {
     font-size: 0.95rem;
@@ -207,6 +202,8 @@
 {
     margin-bottom: 1rem;
     color: #646464;
+
+    & * { font-weight: 500; color: silver;}
 }
 
 

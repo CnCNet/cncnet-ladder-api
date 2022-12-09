@@ -1,6 +1,6 @@
-<h3>Player map stats</h3>
+<h4>Player map stats</h4>
 
-<div class="map-stats">
+<div class="map-stats grid">
     @foreach ($playerWinLossByMaps as $mapName => $v)
         <div class="map-row-container">
             <div class="map-name">
