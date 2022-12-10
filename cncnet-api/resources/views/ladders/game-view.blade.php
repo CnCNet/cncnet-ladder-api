@@ -80,7 +80,7 @@
 @endsection
 
 @section('content')
-    @if (\Auth::user() && \Auth::user()->isAdmin())
+    @if (\Auth::user() && \Auth::user()->isModerator())
         <div class="container mt-5 mb-5">
             <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
                 Show admin tools
