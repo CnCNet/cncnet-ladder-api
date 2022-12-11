@@ -50,6 +50,9 @@
         <section class="pt-5 pb-5">
             <div class="container">
                 <h3>
+                    <span class="material-symbols-outlined icon">
+                        military_tech
+                    </span>
                     <strong>1vs1</strong> Ladders
                 </h3>
 

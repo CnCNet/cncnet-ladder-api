@@ -26,7 +26,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             military_tech
                         </span>
-                        Ladders
+                        {{ $history->ladder->name }}
                     </a>
                 </li>
                 <li class="breadcrumb-item active">
@@ -73,6 +73,24 @@
                     <p class="text-uppercase">
                         {{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong>
                     </p>
+
+                    <div class="mini-breadcrumb d-none d-lg-flex">
+                        <div class="mini-breadcrumb-item">
+                            <a href="/" class="">
+                                <span class="material-symbols-outlined">
+                                    home
+                                </span>
+                            </a>
+                        </div>
+                        <div class="mini-breadcrumb-item">
+                            <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                                <span class="material-symbols-outlined icon">
+                                    military_tech
+                                </span>
+                                {{ $history->ladder->name }}
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

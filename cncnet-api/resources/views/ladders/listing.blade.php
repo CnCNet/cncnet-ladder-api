@@ -42,7 +42,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             military_tech
                         </span>
-                        Ladders
+                        {{ $history->ladder->name }}
                     </a>
                 </li>
             </ol>

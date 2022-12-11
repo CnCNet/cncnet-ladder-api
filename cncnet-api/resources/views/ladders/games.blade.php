@@ -68,9 +68,11 @@
                 </div>
             @endif
 
-            @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
-            @include('components.global-recent-games', ['games' => $games])
-            @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+            <div class="mt-3">
+                @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+                @include('components.global-recent-games', ['games' => $games])
+                @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+            </div>
         </div>
     </section>
 @endsection
