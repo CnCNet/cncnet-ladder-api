@@ -20015,6 +20015,16 @@ button.swiper-pagination-bullet {
   min-width: 40px;
 }
 
+.nav-item .icon {
+  max-width: 50px;
+  overflow: hidden;
+}
+
+body.loaded .nav-item .icon {
+  max-width: 100%;
+  overflow: visible;
+}
+
 .navbar .dropdown-header {
   font-family: "Oswald", sans-serif;
   color: #cbcbcb;
@@ -20162,23 +20172,33 @@ button.swiper-pagination-bullet {
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
-  padding: 1rem 0;
   background: #0e1116;
   color: #2c3038;
+  padding: 0.5rem 0;
+}
+@media (min-width: 768px) {
+  .breadcrumb-item + .breadcrumb-item::before {
+    padding: 1rem 0;
+  }
 }
 
 .breadcrumb-item a {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem;
   border-radius: 4px;
   color: #6c6f76;
   transition: 350ms all ease;
   background: #0e1116;
+  padding: 0.5rem;
 }
 .breadcrumb-item a:hover {
   color: #fff;
+}
+@media (min-width: 768px) {
+  .breadcrumb-item a {
+    padding: 1rem;
+  }
 }
 
 .breadcrumb-item + .breadcrumb-item {
@@ -20189,6 +20209,17 @@ button.swiper-pagination-bullet {
   color: #f4f4f5;
 }
 
+@media (max-width: 768px) {
+  .breadcrumb-item {
+    font-size: 0.8rem;
+  }
+  .breadcrumb-item span,
+  .breadcrumb-item i {
+    width: 20px;
+    height: 20px;
+    font-size: 1.1rem;
+  }
+}
 .btn {
   text-transform: uppercase;
   border-radius: 0;
@@ -20327,6 +20358,16 @@ footer .sponsor img {
 }
 footer .sponsor img:hover {
   opacity: 1;
+}
+
+.material-symbols-outlined {
+  max-width: 40px;
+  overflow: hidden;
+}
+
+body.loaded .material-symbols-outlined {
+  max-width: 100%;
+  overflow: visible;
 }
 
 .avatar {
@@ -23817,6 +23858,33 @@ footer .sponsor img:hover {
 
 .game-box-ladder-link .game-box-ladder-link-bg.bg-ra {
   background-image: url(../images/feature/ra.jpg);
+}
+
+.mini-breadcrumb {
+  display: flex;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.mini-breadcrumb-item {
+  display: flex;
+  align-items: center;
+  padding-right: 1rem;
+}
+.mini-breadcrumb-item a {
+  display: flex;
+  align-items: center;
+}
+.mini-breadcrumb-item span {
+  padding-right: 0.5rem;
+}
+
+.mini-breadcrumb-item + .mini-breadcrumb-item::before {
+  float: left;
+  padding-right: var(--bs-breadcrumb-item-padding-x);
+  color: var(--bs-breadcrumb-divider-color);
+  content: var(--bs-breadcrumb-divider, "/");
+  margin-right: 1rem;
 }
 
 .ladder-listing .player-profile {

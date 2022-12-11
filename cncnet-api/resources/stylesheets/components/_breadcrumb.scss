@@ -23,9 +23,15 @@
 
 .breadcrumb-item + .breadcrumb-item::before
 {
-    padding: 1rem 0;
     background: #0e1116;
     color: #2c3038;
+
+    padding: 0.5rem 0;
+
+    @media(min-width: $md-width)
+    {
+        padding: 1rem 0;
+    }
 }
 
 .breadcrumb-item a
@@ -33,15 +39,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
     border-radius: 4px;
     color: #6c6f76;
     transition: 350ms all ease;
     background: #0e1116;
+    
+    padding: 0.5rem;
 
     &:hover 
     {
         color: #fff;
+    }
+
+    @media(min-width: $md-width)
+    {
+        padding: 1rem;
     }
 }
 
@@ -53,4 +65,20 @@
 .breadcrumb-item.active a 
 {
     color: #f4f4f5;
+}
+
+@media(max-width: $md-width)
+{
+    .breadcrumb-item
+    {
+        font-size: 0.8rem;
+    }
+
+    .breadcrumb-item span,
+    .breadcrumb-item i 
+    {
+        width: 20px;
+        height: 20px;
+        font-size: 1.1rem;
+    }
 }

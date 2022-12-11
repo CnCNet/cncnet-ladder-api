@@ -67,3 +67,17 @@ footer .sponsor img
     opacity: 0.5;
     &:hover { opacity: 1;}
 }
+
+
+// Icon font jump
+.material-symbols-outlined
+{
+    max-width: 40px;
+    overflow: hidden;
+}
+
+body.loaded .material-symbols-outlined
+{
+    max-width: 100%;
+    overflow: visible;
+}

@@ -26,6 +26,24 @@
                     <p class="lead text-uppercase">
                         <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
                     </p>
+
+                    <div class="mini-breadcrumb d-none d-lg-flex">
+                        <div class="mini-breadcrumb-item">
+                            <a href="/" class="">
+                                <span class="material-symbols-outlined">
+                                    home
+                                </span>
+                            </a>
+                        </div>
+                        <div class="mini-breadcrumb-item">
+                            <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                                <span class="material-symbols-outlined icon">
+                                    military_tech
+                                </span>
+                                {{ $history->ladder->name }}
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

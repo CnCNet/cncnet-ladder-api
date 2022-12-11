@@ -69,6 +69,12 @@ body-feature-image
     <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
     <script src="/js/cncnet-online.js"></script>
     @yield('js')
+
+    <script>
+        window.addEventListener("load", (event) => {
+            document.body.classList.add("loaded");
+        });
+    </script>
 </body>
 
 </html>

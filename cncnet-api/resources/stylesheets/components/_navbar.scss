@@ -94,6 +94,18 @@
     min-width: 40px;
 }
 
+.nav-item .icon
+{
+    max-width: 50px;
+    overflow: hidden;
+}
+
+body.loaded .nav-item .icon 
+{
+    max-width: 100%;
+    overflow: visible;
+}
+
 .navbar .dropdown-header 
 {
     font-family: $font-oswald;
