@@ -1,17 +1,80 @@
 <div class="table-responsive">
     <table class="games-table table align-middle mb-0">
         <tbody>
+
             @foreach ($games as $gameReport)
                 @php
-                    $pgr = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)->get();
-                    $gr = \App\GameReport::where('id', $gameReport->game_report_id)->first();
                     $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id);
+                    
+                    $playerGameReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
+                        ->where('player_id', '=', $player->id)
+                        ->first();
+                    
+                    $playerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $player->username);
+                    
+                    $opponentPlayerReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
+                        ->where('player_id', '!=', $player->id)
+                        ->first();
+                    
+                    $opponentPlayerUrl = \App\URLHelper::getPlayerProfileUrl($history, $opponentPlayerReport->player->username);
+                    
                 @endphp
 
-                @foreach ($pgr as $k => $gameReportPlayer)
+                <tr class="align-middle">
+                    <td class="td-player">
+                        @include('ladders.player._games-player-row', [
+                            'profileUrl' => $playerProfileUrl,
+                            'username' => $playerGameReport->player->username,
+                            'avatar' => $playerGameReport->player->user->getUserAvatar(),
+                            'playerGameReport' => $playerGameReport,
+                        ])
+                    </td>
+
+                    <td class="td-versus">
+                        <div class="d-flex align-items-center justify-content-center text-center">
+                            <span class="vs">Vs</span>
+                        </div>
+                    </td>
+
+                    <td class="td-player td-player-opponent">
+                        @include('ladders.player._games-player-row', [
+                            'profileUrl' => $opponentPlayerUrl,
+                            'username' => $opponentPlayerReport->player->username,
+                            'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
+                            'playerGameReport' => $opponentPlayerReport,
+                        ])
+                    </td>
+
+                    <td class="td-game-details">
+                        <div class="d-flex align-items-center game-details">
+                            <div>
+                                <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
+                                <p class="text-muted mb-0">{{ gmdate('H:i:s', $gameReport->duration) }}</p>
+                                <p class="text-muted mb-0">
+                                    {{ $gameReport->created_at->diffForHumans() }}
+                                </p>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div class="d-flex align-items-center">
+                            @php $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->abbreviation . '/' . $gameReport->hash . '.png'; @endphp
+                            <div class="map-preview" style="background-image:url({{ $mapPreview }})">
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="td-link">
+                        <a href="{{ $gameUrl }}" class="game-link">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </td>
+                </tr>
+
+
+                {{-- @foreach ($pgr as $k => $gameReportPlayer)
                     @php
-                        $player = $gameReportPlayer->player()->first();
-                        $playerUrl = \App\URLHelper::getPlayerProfileUrl($history, $gameReportPlayer->player->username);
                     @endphp
 
                     @if ($k == 0)
@@ -114,7 +177,7 @@
                         </td>
                         </tr>
                     @endif
-                @endforeach
+                @endforeach --}}
             @endforeach
         </tbody>
     </table>

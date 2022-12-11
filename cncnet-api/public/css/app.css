@@ -24396,6 +24396,84 @@ body.body-player-detail .page-image-feature {
   font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
 }
 
+.player-detail .games-table .player-container {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .player-detail .games-table .player-container {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .player-detail .td-player-opponent .player-points {
+    order: -1;
+    padding-left: 1rem;
+  }
+}
+
+.player-detail .games-table .player-username {
+  width: 120px;
+}
+
+.player-detail .games-table .player-row {
+  display: flex;
+  align-items: center;
+}
+
+.player-detail .games-table .player-points {
+  display: flex;
+  align-items: center;
+  padding-top: 1rem;
+}
+@media (min-width: 768px) {
+  .player-detail .games-table .player-points {
+    padding-top: 0;
+  }
+}
+
+.player-detail .games-table .td-player {
+  width: 15%;
+}
+
+.player-detail .games-table .td-versus {
+  width: 5%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.player-detail .games-table .game-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.player-detail .games-table .td-link {
+  position: relative;
+  padding: 2rem;
+}
+
+.player-detail .games-table .game-details {
+  width: 200px;
+}
+
+.player-detail .games-table .map-preview {
+  width: 150px;
+  height: 100px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .player-detail .games-table .game-status {
   width: 85px;
 }
@@ -24416,25 +24494,6 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .games-table .game-status.status-won .points {
   color: #00ff8a;
-}
-
-.player-detail .games-table .player-username {
-  width: 120px;
-}
-
-.player-detail .games-table .player-row {
-  display: flex;
-  align-items: center;
-}
-
-.player-detail .games-table .td-player {
-  width: 15%;
-}
-
-.player-detail .games-table .td-versus {
-  width: 15%;
-  padding-left: 2rem;
-  padding-right: 2rem;
 }
 
 .ladder-account .account-player-listings {

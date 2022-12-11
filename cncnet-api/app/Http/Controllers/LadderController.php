@@ -224,6 +224,7 @@ class LadderController extends Controller
             ->where("ladder_history_id", "=", $history->id)
             ->orderBy('created_at', 'DESC')
             ->paginate(24);
+
         $playerUser = $player->user;
 
         $bans = [];
