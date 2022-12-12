@@ -54,8 +54,8 @@
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
                         <div class="form-floating mb-3">
-                            <input id="username" type="email" class="form-control" name="name" value="{{ old('name') }}">
-                            <label for="username">Username</label>
+                            <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}">
+                            <label for="name">Name</label>
                         </div>
 
                         <div class="form-floating mb-3">
@@ -69,7 +69,7 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input id="password_confirmation" type="password_confirmation" class="form-control" name="password" value="{{ old('password_confirmation') }}">
+                            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" value="{{ old('password_confirmation') }}">
                             <label for="password_confirmation">Password (confirmed)</label>
                         </div>
 

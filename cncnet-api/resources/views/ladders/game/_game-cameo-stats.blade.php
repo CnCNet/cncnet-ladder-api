@@ -34,6 +34,9 @@
                                   @endif
                               </h3>
                           </div>
+                          <div class="text-center">
+                              <strong>Funds Left: </strong> {{ $gameStats->crd }}
+                          </div>
 
                           @foreach ($heaps as $heap)
                               <div>

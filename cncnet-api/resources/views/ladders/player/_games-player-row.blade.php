@@ -1,12 +1,12 @@
  <div class="player-container">
      <div class="player-row">
          <div class="me-3">
-             <a href="{{ $playerProfileUrl }}" title="View {{ $playerGameReport->player->username }}'s profile">
+             <a href="{{ $profileUrl }}" title="View {{ $playerGameReport->player->username }}'s profile">
                  @include('components.avatar', ['avatar' => $playerGameReport->player->user->getUserAvatar(), 'size' => 45])
              </a>
          </div>
          <div class="player-username">
-             <a href="{{ $playerUrl or '' }}" title="View {{ $playerGameReport->player->username }}'s profile">
+             <a href="{{ $profileUrl or '' }}" title="View {{ $playerGameReport->player->username }}'s profile">
                  <p class="fw-bold mb-1">{{ $playerGameReport->player->username }}</p>
              </a>
          </div>
