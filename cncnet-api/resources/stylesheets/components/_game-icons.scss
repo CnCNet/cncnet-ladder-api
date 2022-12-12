@@ -64,3 +64,15 @@
     width: 25px;
     height: 25px;
 }
+
+.icon-ra:before
+{
+    content: "";
+    display: inline-block;
+    background-image: url(../images/games/ra/ra-icon.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 25px;
+    height: 25px;
+}
