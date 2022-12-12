@@ -19966,10 +19966,6 @@ button.swiper-pagination-bullet {
   color: #fefeff;
 }
 
-.navbar .icon-game {
-  transform: scale(0.8);
-}
-
 .navbar .nav-item .nav-link {
   color: #fff;
   text-shadow: 0px 1px rgba(0, 0, 0, 0.368627451);
@@ -20071,16 +20067,8 @@ body.loaded .nav-item .icon {
   background-position: 0px;
 }
 
-.icon-yr:before {
-  background-position: -75px;
-}
-
 .icon-ts:before {
   background-position: -25px;
-}
-
-.icon-ra2:before {
-  background-position: -225px;
 }
 
 .icon-blitz:before {
@@ -20089,6 +20077,28 @@ body.loaded .nav-item .icon {
 
 .icon-sfj:before {
   background-position: -275px;
+}
+
+.icon-yr:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/yr/yr-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+}
+
+.icon-ra2:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/ra2/ra2-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
 }
 
 .page-image-feature {
@@ -20749,8 +20759,8 @@ body.loaded .material-symbols-outlined {
 
 .player-faction {
   display: flex;
-  width: 60px;
-  height: 25px;
+  width: 83.3333333333px;
+  height: 41.6666666667px;
   position: relative;
 }
 .player-faction:before {
@@ -20761,6 +20771,7 @@ body.loaded .material-symbols-outlined {
   right: 0;
   bottom: 0;
   background-repeat: no-repeat;
+  background-size: 80%;
 }
 
 .player-faction-kr::before,
@@ -23902,16 +23913,16 @@ body.loaded .material-symbols-outlined {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 28px;
   background-size: 100%;
   background-repeat: no-repeat;
   border-radius: 100%;
 }
 .ladder-listing .player-profile .most-used-country:before {
   content: "";
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -24475,6 +24486,11 @@ body.body-player-detail .page-image-feature {
   }
 }
 
+.player-detail .games-table .player-container .player-faction {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}
+
 @media (min-width: 768px) {
   .player-detail .td-player-opponent .player-points {
     order: -1;
@@ -24562,6 +24578,16 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .games-table .game-status.status-won .points {
   color: #00ff8a;
+}
+
+.ladder-account .username .icon-yr:before {
+  width: 50px;
+  height: 50px;
+}
+
+.ladder-account .username .icon-ra2:before {
+  width: 50px;
+  height: 50px;
 }
 
 .ladder-account .account-player-listings {
