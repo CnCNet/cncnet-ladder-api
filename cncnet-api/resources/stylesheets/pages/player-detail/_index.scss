@@ -335,8 +335,10 @@ body.body-player-detail .page-image-feature
 .player-detail .games-table .player-points 
 {
     display: flex;
+    flex-direction: column;
     align-items: center;
     padding-top: 1rem;
+    text-align: center;
 
     @media(min-width: $md-width)
     {

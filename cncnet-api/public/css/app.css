@@ -20772,6 +20772,7 @@ body.loaded .material-symbols-outlined {
   bottom: 0;
   background-repeat: no-repeat;
   background-size: 80%;
+  background-position: center;
 }
 
 .player-faction-kr::before,
@@ -24509,8 +24510,10 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .games-table .player-points {
   display: flex;
+  flex-direction: column;
   align-items: center;
   padding-top: 1rem;
+  text-align: center;
 }
 @media (min-width: 768px) {
   .player-detail .games-table .player-points {
