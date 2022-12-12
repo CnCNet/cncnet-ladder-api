@@ -20067,10 +20067,6 @@ body.loaded .nav-item .icon {
   background-position: 0px;
 }
 
-.icon-ts:before {
-  background-position: -25px;
-}
-
 .icon-blitz:before {
   background-position: -250px;
 }
@@ -20094,6 +20090,17 @@ body.loaded .nav-item .icon {
   content: "";
   display: inline-block;
   background-image: url(../images/games/ra2/ra2-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+}
+
+.icon-ts:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/ts/ts-icon.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
