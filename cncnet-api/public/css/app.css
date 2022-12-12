@@ -20759,8 +20759,8 @@ body.loaded .material-symbols-outlined {
 
 .player-faction {
   display: flex;
-  width: 83.3333333333px;
-  height: 41.6666666667px;
+  width: 60px;
+  height: 25px;
   position: relative;
 }
 .player-faction:before {
@@ -24487,11 +24487,6 @@ body.body-player-detail .page-image-feature {
   }
 }
 
-.player-detail .games-table .player-container .player-faction {
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
 @media (min-width: 768px) {
   .player-detail .td-player-opponent .player-points {
     order: -1;
@@ -24510,7 +24505,6 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .games-table .player-points {
   display: flex;
-  flex-direction: column;
   align-items: center;
   padding-top: 1rem;
   text-align: center;
