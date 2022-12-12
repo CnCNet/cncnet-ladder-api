@@ -148,7 +148,7 @@
                                         @if ($pgr->stats)
                                             @php $playerStats2 = \App\Stats2::where("id", $pgr->stats->id)->first(); @endphp
                                             @php $playerCountry = $playerStats2->faction($history->ladder->game, $pgr->stats->cty); @endphp
-                                            <div class="player-faction player-faction-{{ $playerCountry }}"></div>
+                                            <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                                         @endif
                                     </div>
                                     <div class="points {{ $pgr->won ? 'won' : 'lost' }}">
