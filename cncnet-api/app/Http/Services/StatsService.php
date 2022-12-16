@@ -210,20 +210,21 @@ class StatsService
             $matchupResults = [];
             foreach ($playerGameReports as $pgr)
             {
-                $opponentName = \App\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
+                    continue;
+
+                $opponent = \App\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
                     ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
                     ->where('p.id', '!=', $player->id)
                     ->where('gr.valid', true)
                     ->where('gr.best_report', true)
                     ->select('p.username')
-                    ->first()
-                    ->username;
+                    ->first();
 
-                if ($opponentName == null)
+                if ($opponent == null)
                     continue;
 
-                if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
-                    continue;
+                $opponentName = $opponent->username;
 
                 if (!array_key_exists($opponentName, $matchupResults))
                 {
