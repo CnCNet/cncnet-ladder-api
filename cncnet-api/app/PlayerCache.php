@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Helpers\FactionHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class PlayerCache extends Model
@@ -44,5 +45,10 @@ class PlayerCache extends Model
             $pcu->player_cache_id = $this->id;
             $pcu->save();
         }
+    }
+
+    public function mostPlayedFactionNameByLadderHistory($history)
+    {
+        return FactionHelper::getPlayersCommonlyPlayedFactionByHistory($history, $this);
     }
 }

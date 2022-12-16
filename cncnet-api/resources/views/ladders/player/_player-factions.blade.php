@@ -12,8 +12,9 @@
                 <tr>
                     <th scope="row">
                         <div class="faction-name" style="margin-right:2rem;">
-                            <div class="player-faction player-faction-{{ \App\Stats2::getCountryById($faction) }}"></div>
-                            {{ \App\Stats2::getCountryNameById($faction) }}
+                            @php $faction = \App\Helpers\FactionHelper::getFactionCountryByHistory($history, $faction); @endphp
+                            <div class="{{ $history->ladder->game }} player-faction player-faction-{{ strtolower($faction) }}"></div>
+                            {{ $faction }}
                         </div>
                     </th>
                     @foreach ($winLossArr as $k => $v)
