@@ -12,7 +12,6 @@ use App\User;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class LadderController extends Controller
 {
