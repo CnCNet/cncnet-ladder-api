@@ -20766,6 +20766,10 @@ body.loaded .material-symbols-outlined {
   font-weight: normal;
 }
 
+.game-box .player .player-faction {
+  width: 24%;
+}
+
 .game-box .player.player-order-0 .player-faction {
   margin-right: auto;
 }
@@ -24024,7 +24028,7 @@ body.loaded .material-symbols-outlined {
 
 @media (min-width: 992px) {
   .player-profile .player-faction {
-    width: 50px;
+    width: 64px;
   }
   .ladder-listing .player-profile .player-country {
     padding-right: 0;
@@ -24143,8 +24147,8 @@ body.loaded .material-symbols-outlined {
 @media (min-width: 992px) {
   .ladder-listing .ladder-player-listing .player-row {
     margin-bottom: auto;
-    padding-bottom: 5px;
-    padding-top: 5px;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
     flex-direction: row;
   }
 }
@@ -24334,6 +24338,13 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .faction-name {
   display: flex;
+  align-items: center;
+}
+
+.player-detail .faction-name .player-faction {
+  width: 50px;
+  height: 24px;
+  margin-right: 1rem;
 }
 
 .player-detail .player-overall-stats {
@@ -24940,6 +24951,8 @@ body.body-player-detail .page-image-feature {
 
 .game-detail .player-card .points {
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 .game-detail .player-card .points.won {
@@ -24948,6 +24961,11 @@ body.body-player-detail .page-image-feature {
 
 .game-detail .player-card .points.lost {
   color: #03bcd4;
+}
+
+.game-detail .player-card .faction {
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
 }
 
 .game-detail .player-card-right .player-details {

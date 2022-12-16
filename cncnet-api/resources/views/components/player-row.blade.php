@@ -1,25 +1,3 @@
-@php
-    $countryName = '';
-    $side = null;
-    
-    if ($game == 'yr') {
-        $side = \App\Side::where('local_id', $playerCache->country)
-            ->where('ladder_id', $history->ladder->id)
-            ->first();
-    } else {
-        if ($playerCache->side !== null) {
-            if (array_key_exists($playerCache->side, $sides)) {
-                $countryName = $sides[$playerCache->side];
-            }
-        }
-    }
-    
-    if ($side !== null) {
-        $countryName = $side->name;
-    }
-    dd($side, $countryName);
-@endphp
-
 <div class="player-row rank-{{ $rank }}">
     <div class="player-profile d-flex d-lg-none">
         <div class="player-rank player-stat">
@@ -43,8 +21,8 @@
         </a>
 
         <a class="player-country player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
-            @if ($countryName)
-                <div class="most-used-country country-{{ $game }}-{{ strtolower($countryName) }}"></div>
+            @if ($mostPlayedFaction)
+                <div class="{{ $game }} player-faction player-faction-{{ strtolower($mostPlayedFaction) }}"></div>
             @endif
         </a>
         <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">

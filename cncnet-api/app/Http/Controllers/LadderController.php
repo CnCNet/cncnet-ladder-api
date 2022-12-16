@@ -44,9 +44,6 @@ class LadderController extends Controller
         if ($history === null)
             abort(404);
 
-        $user = $request->user();
-        $userIsMod = $user != null && $user->isLadderMod($history->ladder);
-
         # Stats
         $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
 

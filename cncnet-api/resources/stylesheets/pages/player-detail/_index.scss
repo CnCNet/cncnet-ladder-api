@@ -82,6 +82,14 @@ body.body-player-detail .page-image-feature
 .player-detail .faction-name 
 {
     display: flex;
+    align-items: center;
+}
+
+.player-detail .faction-name .player-faction 
+{
+    width: 50px;
+    height: 24px;
+    margin-right: 1rem;
 }
 
 .player-detail .player-overall-stats 
