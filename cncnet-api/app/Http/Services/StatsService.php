@@ -10,6 +10,7 @@ use \App\QmMatchPlayer;
 use \App\QmMatch;
 use App\StatsCache;
 use \Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class StatsService
 {
@@ -202,38 +203,43 @@ class StatsService
             $from = $now->copy()->startOfMonth()->toDateTimeString();
             $to = $now->copy()->endOfMonth()->toDateTimeString();
 
-            $playerGames = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
+            $playerGameReports = $player->playerGames()
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
                 ->get();
 
             $matchupResults = [];
-            foreach ($playerGames as $pg)
+            foreach ($playerGameReports as $pgr)
             {
-                $gamesWon = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("won", true)
-                    ->count();
+                $opponentName = \App\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                    ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
+                    ->where('p.id', '!=', $player->id)
+                    ->where('gr.valid', true)
+                    ->where('gr.best_report', true)
+                    ->select('p.username')
+                    ->first()
+                    ->username;
 
-                $gamesLost = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("won", false)
-                    ->count();
+                if ($opponentName == null)
+                    continue;
 
-                $total = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->count();
+                if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
+                    continue;
 
-                $matchupResults[$pg->cty] =
-                    [
-                        "won" => $sideCountWon,
-                        "lost" => $sideCountLost,
-                        "total" => $total
-                    ];
+                if (!array_key_exists($opponentName, $matchupResults))
+                {
+                    $matchupResults[$opponentName] = [];
+                    $matchupResults[$opponentName]["won"] = 0;
+                    $matchupResults[$opponentName]["lost"] = 0;
+                    $matchupResults[$opponentName]["total"] = 0;
+                }
+
+                if ($pgr->won)
+                    $matchupResults[$opponentName]["won"] = $matchupResults[$opponentName]["won"] + 1;
+                else
+                    $matchupResults[$opponentName]["lost"] = $matchupResults[$opponentName]["lost"] + 1;
+                $matchupResults[$opponentName]["total"] = $matchupResults[$opponentName]["total"] + 1;
             }
+
             return $matchupResults;
         });
     }

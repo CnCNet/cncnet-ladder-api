@@ -12,6 +12,7 @@ use App\User;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class LadderController extends Controller
 {
@@ -253,6 +254,8 @@ class LadderController extends Controller
         # Achievements (Views still todo)
         #$achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
 
+        $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
+
         return view(
             "ladders.player-detail",
             array(
@@ -273,6 +276,7 @@ class LadderController extends Controller
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $userPlayer,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
+                "playerMatchups" => $playerMatchups
                 #"achievementProgress" => $achievementProgress,
                 #"achievements" => $history->ladder->achievements
             )

@@ -193,6 +193,13 @@
                 </div>
             </section>
 
+            <section class="player-vs-player pt-5 pb-5">
+                <div class="container">
+                    <div class="row">
+                        @include('ladders.player._player-vs-player-matchups')
+                    </div>
+                </div>
+            </section>
             <section class="player-maps pt-5 pb-5">
                 <div class="container">
                     <div class="row">
