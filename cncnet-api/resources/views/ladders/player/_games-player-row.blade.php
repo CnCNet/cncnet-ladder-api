@@ -2,7 +2,7 @@
      <div class="player-row">
          <div class="me-3">
              <a href="{{ $profileUrl }}" title="View {{ $playerGameReport->player->username }}'s profile">
-                 @include('components.avatar', ['avatar' => $playerGameReport->player->user->getUserAvatar(), 'size' => 45])
+                 @include('components.avatar', ['avatar' => $playerGameReport->player->user->getUserAvatar(), 'size' => 55])
              </a>
          </div>
          <div class="player-username">
@@ -11,7 +11,6 @@
              </a>
          </div>
      </div>
-
      @if ($playerGameReport->stats)
          <div class="player-points d-flex">
              @php $playerStats2 = \App\Stats2::where("id", $playerGameReport->stats->id)->first(); @endphp

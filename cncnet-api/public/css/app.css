@@ -20777,8 +20777,8 @@ body.loaded .material-symbols-outlined {
 
 .player-faction {
   display: flex;
-  width: 60px;
-  height: 25px;
+  width: 80px;
+  height: 38px;
   position: relative;
 }
 .player-faction:before {
@@ -20789,7 +20789,7 @@ body.loaded .material-symbols-outlined {
   right: 0;
   bottom: 0;
   background-repeat: no-repeat;
-  background-size: 80%;
+  background-size: contain;
   background-position: center;
 }
 
@@ -24489,7 +24489,7 @@ body.body-player-detail .page-image-feature {
   transition: ease 250ms all;
 }
 .player-detail .games-table tr:hover {
-  background: rgba(0, 0, 0, 0.3803921569);
+  background: rgba(48, 48, 48, 0.38);
 }
 
 .player-detail .games-table .td-versus {
@@ -24546,6 +24546,11 @@ body.body-player-detail .page-image-feature {
   width: 15%;
 }
 
+@media (max-width: 768px) {
+  .player-detail .games-table .td-player .player-faction {
+    width: 20%;
+  }
+}
 .player-detail .games-table .td-versus {
   width: 5%;
   padding-left: 2rem;
@@ -24571,7 +24576,7 @@ body.body-player-detail .page-image-feature {
 }
 
 .player-detail .games-table .game-details {
-  width: 200px;
+  font-size: 0.9rem;
 }
 
 .player-detail .games-table .map-preview {

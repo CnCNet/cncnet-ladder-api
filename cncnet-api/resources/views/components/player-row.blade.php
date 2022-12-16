@@ -17,6 +17,7 @@
     if ($side !== null) {
         $countryName = $side->name;
     }
+    dd($side, $countryName);
 @endphp
 
 <div class="player-row rank-{{ $rank }}">
