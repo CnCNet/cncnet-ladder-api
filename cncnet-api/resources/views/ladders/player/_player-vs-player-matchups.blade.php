@@ -5,7 +5,7 @@
             <th scope="col">Opponent</th>
             <th scope="col">{{$player->username}} Wins</th>
             <th scope="col">{{$player->username}} Losses</th>
-            <th scope="col">Played</th>
+            <th scope="col">Total games</th>
         </tr>
     </thead>
     <tbody>
