@@ -39,6 +39,7 @@
             'losses' => $playerCache->games - $playerCache->wins,
             'totalGames' => $playerCache->games,
             'game' => $history->ladder->game,
+            'mostPlayedFaction' => $playerCache->mostPlayedFactionNameByLadderHistory($history),
             'url' => \App\URLHelper::getPlayerProfileUrl($history, $playerCache->player_name),
             'avatar' => $playerCache->player->user->getUserAvatar(),
             'twitch' => $playerCache->player->user->getTwitchProfile(),

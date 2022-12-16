@@ -98,7 +98,7 @@
 @endsection
 
 @section('content')
-    @if (\Auth::user() && \Auth::user()->isLadderMod($history))
+    @if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder))
         <div class="container mt-5 mb-5">
             <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
                 Show admin tools
@@ -148,7 +148,7 @@
                                         @if ($pgr->stats)
                                             @php $playerStats2 = \App\Stats2::where("id", $pgr->stats->id)->first(); @endphp
                                             @php $playerCountry = $playerStats2->faction($history->ladder->game, $pgr->stats->cty); @endphp
-                                            <div class="player-faction player-faction-{{ $playerCountry }}"></div>
+                                            <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                                         @endif
                                     </div>
                                     <div class="points {{ $pgr->won ? 'won' : 'lost' }}">

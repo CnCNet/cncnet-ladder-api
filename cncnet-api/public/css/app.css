@@ -19966,10 +19966,6 @@ button.swiper-pagination-bullet {
   color: #fefeff;
 }
 
-.navbar .icon-game {
-  transform: scale(0.8);
-}
-
 .navbar .nav-item .nav-link {
   color: #fff;
   text-shadow: 0px 1px rgba(0, 0, 0, 0.368627451);
@@ -20071,24 +20067,56 @@ body.loaded .nav-item .icon {
   background-position: 0px;
 }
 
-.icon-yr:before {
-  background-position: -75px;
-}
-
-.icon-ts:before {
-  background-position: -25px;
-}
-
-.icon-ra2:before {
-  background-position: -225px;
-}
-
 .icon-blitz:before {
   background-position: -250px;
 }
 
 .icon-sfj:before {
   background-position: -275px;
+}
+
+.icon-yr:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/yr/yr-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+}
+
+.icon-ra2:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/ra2/ra2-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+}
+
+.icon-ts:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/ts/ts-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+}
+
+.icon-ra:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/ra/ra-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
 }
 
 .page-image-feature {
@@ -20738,6 +20766,10 @@ body.loaded .material-symbols-outlined {
   font-weight: normal;
 }
 
+.game-box .player .player-faction {
+  width: 24%;
+}
+
 .game-box .player.player-order-0 .player-faction {
   margin-right: auto;
 }
@@ -20749,8 +20781,8 @@ body.loaded .material-symbols-outlined {
 
 .player-faction {
   display: flex;
-  width: 60px;
-  height: 25px;
+  width: 80px;
+  height: 38px;
   position: relative;
 }
 .player-faction:before {
@@ -20761,6 +20793,8 @@ body.loaded .material-symbols-outlined {
   right: 0;
   bottom: 0;
   background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
 }
 
 .player-faction-kr::before,
@@ -20813,23 +20847,32 @@ body.loaded .material-symbols-outlined {
   background-image: url(../images/game-icons/russia.png);
 }
 
-.ra .player-faction-spain:before,
-.ra .player-faction-england:before,
-.ra .player-faction-germany:before,
-.ra .player-faction-america:before,
-.ra .player-faction-greece:before {
-  background-image: url(../images/hud/ra_allies.png);
-  background-size: contain;
-  background-position: center;
+.ra.player-faction-spain:before {
+  background-image: url(../images/game-icons/ra-spain.png);
 }
 
-.ra .player-faction-russia:before,
-.ra .player-faction-uss:before,
-.ra .player-faction-ita:before,
-.ra .player-faction-ukraine:before {
-  background-image: url(../images/hud/ra_soviet.png);
-  background-size: contain;
-  background-position: center;
+.ra.player-faction-england:before {
+  background-image: url(../images/game-icons/ra-greatbritain.png);
+}
+
+.ra.player-faction-germany:before {
+  background-image: url(../images/game-icons/ra-germany.png);
+}
+
+.ra.player-faction-greece:before {
+  background-image: url(../images/game-icons/ra-greece.png);
+}
+
+.ra.player-faction-russia:before {
+  background-image: url(../images/game-icons/ra-russia.png);
+}
+
+.ra.player-faction-ukraine:before {
+  background-image: url(../images/game-icons/ra-ukraine.png);
+}
+
+.ra.player-faction-uss:before {
+  background-image: url(../images/game-icons/ra-uss.png);
 }
 
 .player-faction-gdi:before {
@@ -23902,16 +23945,16 @@ body.loaded .material-symbols-outlined {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 28px;
   background-size: 100%;
   background-repeat: no-repeat;
   border-radius: 100%;
 }
 .ladder-listing .player-profile .most-used-country:before {
   content: "";
-  width: 80%;
-  height: 80%;
+  width: 100%;
+  height: 100%;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -23985,7 +24028,7 @@ body.loaded .material-symbols-outlined {
 
 @media (min-width: 992px) {
   .player-profile .player-faction {
-    width: 50px;
+    width: 64px;
   }
   .ladder-listing .player-profile .player-country {
     padding-right: 0;
@@ -24104,8 +24147,8 @@ body.loaded .material-symbols-outlined {
 @media (min-width: 992px) {
   .ladder-listing .ladder-player-listing .player-row {
     margin-bottom: auto;
-    padding-bottom: 5px;
-    padding-top: 5px;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
     flex-direction: row;
   }
 }
@@ -24295,6 +24338,13 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .faction-name {
   display: flex;
+  align-items: center;
+}
+
+.player-detail .faction-name .player-faction {
+  width: 50px;
+  height: 24px;
+  margin-right: 1rem;
 }
 
 .player-detail .player-overall-stats {
@@ -24450,7 +24500,7 @@ body.body-player-detail .page-image-feature {
   transition: ease 250ms all;
 }
 .player-detail .games-table tr:hover {
-  background: rgba(0, 0, 0, 0.3803921569);
+  background: rgba(48, 48, 48, 0.38);
 }
 
 .player-detail .games-table .td-versus {
@@ -24495,6 +24545,7 @@ body.body-player-detail .page-image-feature {
   display: flex;
   align-items: center;
   padding-top: 1rem;
+  text-align: center;
 }
 @media (min-width: 768px) {
   .player-detail .games-table .player-points {
@@ -24502,8 +24553,14 @@ body.body-player-detail .page-image-feature {
   }
 }
 
-.player-detail .games-table .td-player {
-  width: 15%;
+@media (max-width: 768px) {
+  .player-detail .games-table .td-player .player-faction {
+    width: 20%;
+  }
+}
+.player-detail .games-table .td-player .player-faction {
+  width: 60px;
+  height: 30px;
 }
 
 .player-detail .games-table .td-versus {
@@ -24531,7 +24588,7 @@ body.body-player-detail .page-image-feature {
 }
 
 .player-detail .games-table .game-details {
-  width: 200px;
+  font-size: 0.9rem;
 }
 
 .player-detail .games-table .map-preview {
@@ -24562,6 +24619,16 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .games-table .game-status.status-won .points {
   color: #00ff8a;
+}
+
+.ladder-account .username .icon-yr:before {
+  width: 50px;
+  height: 50px;
+}
+
+.ladder-account .username .icon-ra2:before {
+  width: 50px;
+  height: 50px;
 }
 
 .ladder-account .account-player-listings {
@@ -24885,6 +24952,8 @@ body.body-player-detail .page-image-feature {
 
 .game-detail .player-card .points {
   font-weight: 500;
+  display: flex;
+  align-items: center;
 }
 
 .game-detail .player-card .points.won {
@@ -24893,6 +24962,11 @@ body.body-player-detail .page-image-feature {
 
 .game-detail .player-card .points.lost {
   color: #03bcd4;
+}
+
+.game-detail .player-card .faction {
+  padding-left: 0.4rem;
+  padding-right: 0.4rem;
 }
 
 .game-detail .player-card-right .player-details {

@@ -150,14 +150,12 @@
                             </div>
                         </div>
 
-                        @if ($history->ladder->abbreviation != 'ra' && $history->ladder->abbreviation != 'ts')
-                            <div class="column">
-                                <h5 class="stat-title">Top factions played</h5>
-                                <div>
-                                    @include('ladders.player._player-factions')
-                                </div>
+                        <div class="column">
+                            <h5 class="stat-title">Top factions played</h5>
+                            <div>
+                                @include('ladders.player._player-factions')
                             </div>
-                        @endif
+                        </div>
 
                         <div class="column">
                             <h5 class="stat-title">Played this month</h5>
@@ -193,6 +191,13 @@
                 </div>
             </section>
 
+            <section class="player-vs-player pt-5 pb-5">
+                <div class="container">
+                    <div class="row">
+                        @include('ladders.player._player-vs-player-matchups')
+                    </div>
+                </div>
+            </section>
             <section class="player-maps pt-5 pb-5">
                 <div class="container">
                     <div class="row">

@@ -82,6 +82,14 @@ body.body-player-detail .page-image-feature
 .player-detail .faction-name 
 {
     display: flex;
+    align-items: center;
+}
+
+.player-detail .faction-name .player-faction 
+{
+    width: 50px;
+    height: 24px;
+    margin-right: 1rem;
 }
 
 .player-detail .player-overall-stats 
@@ -275,7 +283,7 @@ body.body-player-detail .page-image-feature
     }
     tr:hover 
     {
-        background: #00000061;
+        background: rgb(48 48 48 / 38%);
     }
 }
 
@@ -331,6 +339,7 @@ body.body-player-detail .page-image-feature
     display: flex;
     align-items: center;
     padding-top: 1rem;
+    text-align: center;
 
     @media(min-width: $md-width)
     {
@@ -338,9 +347,18 @@ body.body-player-detail .page-image-feature
     }
 }
 
-.player-detail .games-table .td-player
+@media(max-width: $md-width)
 {
-    width: 15%;
+    .player-detail .games-table .td-player .player-faction
+    {
+        width: 20%;
+    }
+}
+
+.player-detail .games-table .td-player .player-faction
+{
+    width: 60px;
+    height: 30px;
 }
 
 .player-detail .games-table .td-versus
@@ -372,7 +390,7 @@ body.body-player-detail .page-image-feature
 
 .player-detail .games-table .game-details
 {
-    width: 200px;
+    font-size: 0.9rem;
 }
 
 .player-detail .games-table .map-preview 

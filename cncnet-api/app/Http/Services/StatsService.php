@@ -10,6 +10,7 @@ use \App\QmMatchPlayer;
 use \App\QmMatch;
 use App\StatsCache;
 use \Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class StatsService
 {
@@ -59,44 +60,97 @@ class StatsService
             $from = $now->copy()->startOfMonth()->toDateTimeString();
             $to = $now->copy()->endOfMonth()->toDateTimeString();
 
-            $playerGames = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->groupBy("cty")
-                ->get();
-
-            $factionResults = [];
-            foreach ($playerGames as $pg)
+            if ($history->ladder->game == "yr")
             {
-                $sideCountWon = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("cty", $pg->cty)
-                    ->where("won", true)
-                    ->count();
-
-                $sideCountLost = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("cty", $pg->cty)
-                    ->where("won", false)
-                    ->count();
-
-                $total = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("cty", $pg->cty)
-                    ->count();
-
-                $factionResults[$pg->cty] =
-                    [
-                        "won" => $sideCountWon,
-                        "lost" => $sideCountLost,
-                        "total" => $total
-                    ];
+                $factionResults = $this->getFactionResultsForYR($player, $history, $from, $to);
             }
+            else
+            {
+                $factionResults = $this->getFactionResults($player, $history, $from, $to);
+            }
+
             return $factionResults;
         });
+    }
+
+    private function getFactionResults($player, $history, $from, $to)
+    {
+        $playerGames = $player->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->whereBetween("player_game_reports.created_at", [$from, $to])
+            ->groupBy("sid")
+            ->get();
+
+        foreach ($playerGames as $pg)
+        {
+            $sideCountWon = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("sid", $pg->sid)
+                ->where("won", true)
+                ->count();
+
+            $sideCountLost = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("sid", $pg->sid)
+                ->where("won", false)
+                ->count();
+
+            $total = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("sid", $pg->sid)
+                ->count();
+
+            $factionResults[$pg->sid] =
+                [
+                    "won" => $sideCountWon,
+                    "lost" => $sideCountLost,
+                    "total" => $total
+                ];
+        }
+        return $factionResults;
+    }
+
+    private function getFactionResultsForYR($player, $history, $from, $to)
+    {
+        $playerGames = $player->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->whereBetween("player_game_reports.created_at", [$from, $to])
+            ->groupBy("cty")
+            ->get();
+
+        foreach ($playerGames as $pg)
+        {
+            $sideCountWon = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("cty", $pg->cty)
+                ->where("won", true)
+                ->count();
+
+            $sideCountLost = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("cty", $pg->cty)
+                ->where("won", false)
+                ->count();
+
+            $total = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("cty", $pg->cty)
+                ->count();
+
+            $factionResults[$pg->cty] =
+                [
+                    "won" => $sideCountWon,
+                    "lost" => $sideCountLost,
+                    "total" => $total
+                ];
+        }
+        return $factionResults;
     }
 
     public function getMapWinLossByPlayer($player, $history)
@@ -192,5 +246,55 @@ class StatsService
             }
         }
         return null;
+    }
+
+    public function getPlayerMatchups($player, $history)
+    {
+        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5, function () use ($player, $history)
+        {
+            $now = $history->starts;
+            $from = $now->copy()->startOfMonth()->toDateTimeString();
+            $to = $now->copy()->endOfMonth()->toDateTimeString();
+
+            $playerGameReports = $player->playerGames()
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->get();
+
+            $matchupResults = [];
+            foreach ($playerGameReports as $pgr)
+            {
+                if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
+                    continue;
+
+                $opponent = \App\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                    ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
+                    ->where('p.id', '!=', $player->id)
+                    ->where('gr.valid', true)
+                    ->where('gr.best_report', true)
+                    ->select('p.username')
+                    ->first();
+
+                if ($opponent == null)
+                    continue;
+
+                $opponentName = $opponent->username;
+
+                if (!array_key_exists($opponentName, $matchupResults))
+                {
+                    $matchupResults[$opponentName] = [];
+                    $matchupResults[$opponentName]["won"] = 0;
+                    $matchupResults[$opponentName]["lost"] = 0;
+                    $matchupResults[$opponentName]["total"] = 0;
+                }
+
+                if ($pgr->won)
+                    $matchupResults[$opponentName]["won"] = $matchupResults[$opponentName]["won"] + 1;
+                else
+                    $matchupResults[$opponentName]["lost"] = $matchupResults[$opponentName]["lost"] + 1;
+                $matchupResults[$opponentName]["total"] = $matchupResults[$opponentName]["total"] + 1;
+            }
+
+            return $matchupResults;
+        });
     }
 }

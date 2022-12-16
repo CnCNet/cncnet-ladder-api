@@ -1,8 +1,8 @@
 .player-faction
 {
     display: flex;
-    width: 60px;
-    height: 25px;
+    width: 80px;
+    height: 38px;
     position: relative;
 
     &:before 
@@ -14,6 +14,8 @@
         right: 0;
         bottom: 0;
         background-repeat: no-repeat;
+        background-size: contain;
+        background-position: center;
     }
 }
 
@@ -78,27 +80,40 @@
 }
 
 
-
 // RA
-.ra .player-faction-spain:before,
-.ra .player-faction-england:before,
-.ra .player-faction-germany:before,
-.ra .player-faction-america:before,
-.ra .player-faction-greece:before
+.ra.player-faction-spain:before
 {
-     background-image: url(../images/hud/ra_allies.png);
-     background-size: contain;
-     background-position: center;
+    background-image: url(../images/game-icons/ra-spain.png);
 }
 
-.ra .player-faction-russia:before,
-.ra .player-faction-uss:before,
-.ra .player-faction-ita:before,
-.ra .player-faction-ukraine:before
+.ra.player-faction-england:before
 {
-    background-image: url(../images/hud/ra_soviet.png);
-    background-size: contain;
-    background-position: center;
+    background-image: url(../images/game-icons/ra-greatbritain.png);
+}
+
+.ra.player-faction-germany:before
+{
+    background-image: url(../images/game-icons/ra-germany.png);
+}
+
+.ra.player-faction-greece:before
+{
+    background-image: url(../images/game-icons/ra-greece.png);
+}
+
+.ra.player-faction-russia:before
+{
+    background-image: url(../images/game-icons/ra-russia.png);
+}
+
+.ra.player-faction-ukraine:before
+{
+    background-image: url(../images/game-icons/ra-ukraine.png);
+}
+
+.ra.player-faction-uss:before
+{
+    background-image: url(../images/game-icons/ra-uss.png);
 }
 
 

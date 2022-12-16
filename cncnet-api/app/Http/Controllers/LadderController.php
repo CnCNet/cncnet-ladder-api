@@ -44,9 +44,6 @@ class LadderController extends Controller
         if ($history === null)
             abort(404);
 
-        $user = $request->user();
-        $userIsMod = $user != null && $user->isLadderMod($history->ladder);
-
         # Stats
         $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
 
@@ -253,6 +250,8 @@ class LadderController extends Controller
         # Achievements (Views still todo)
         #$achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
 
+        $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
+
         return view(
             "ladders.player-detail",
             array(
@@ -273,6 +272,7 @@ class LadderController extends Controller
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $userPlayer,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
+                "playerMatchups" => $playerMatchups
                 #"achievementProgress" => $achievementProgress,
                 #"achievements" => $history->ladder->achievements
             )
