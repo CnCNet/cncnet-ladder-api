@@ -1,0 +1,32 @@
+.mini-breadcrumb 
+{
+    display: flex;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+.mini-breadcrumb-item 
+{
+    display: flex;
+    align-items: center;
+    padding-right: 1rem;
+
+    & a 
+    {
+        display: flex;
+        align-items: center;
+    }
+    & span 
+    {
+        padding-right: 0.5rem;
+    }
+}
+
+.mini-breadcrumb-item  + .mini-breadcrumb-item::before
+{
+    float: left;
+    padding-right: var(--bs-breadcrumb-item-padding-x);
+    color: var(--bs-breadcrumb-divider-color);
+    content: var(--bs-breadcrumb-divider, "/") /* rtl: var(--bs-breadcrumb-divider, "/") */;
+    margin-right: 1rem;
+}

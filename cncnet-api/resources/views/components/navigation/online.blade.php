@@ -1,0 +1,11 @@
+<li class="nav-item">
+    <a class="nav-link d-flex align-items-center me-1 ms-1 ps-2 pe-4 status-text text-uppercase" href="https://cncnet.org/status">
+        <span class="material-symbols-outlined icon">
+            bar_chart
+        </span>
+
+        <span class="online ms-2 me-2 text ps-2">...</span>
+        <span class="d-block d-xl-none">Online</span>
+        <span class="d-none d-xl-block">Players Online</span>
+    </a>
+</li>

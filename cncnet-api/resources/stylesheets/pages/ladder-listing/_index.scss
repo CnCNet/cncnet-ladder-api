@@ -1,0 +1,189 @@
+// Theme for each ladder listing
+@import 
+    "_player-profile",
+    "themes/_base";
+
+.ladder-listing  .ladder-info 
+{
+    display: flex;
+    flex-wrap: wrap;
+
+    & div 
+    {
+        margin-right: 1rem;
+        margin-bottom: 0.5rem;
+    }
+}
+
+.ladder-listing .ladder-info .btn .icon
+{
+    font-size: 1rem;
+    transform: scale(1.5);
+}
+
+.ladder-listing .ladder-player-listing
+{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.ladder-listing .ladder-player-listing .player-row
+{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 18px;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    margin-bottom: 1rem;
+
+    @media(min-width: $lg-width)
+    {
+        margin-bottom: auto;
+        padding-bottom: 5px;
+        padding-top: 5px;
+        flex-direction: row;
+    }
+}
+
+.ladder-listing .ladder-player-listing .player-row .player-link 
+{
+    display: none;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 50px;
+    height: 100%;
+    transition: ease 250ms;
+    
+    &:hover 
+    {
+        color: #fff;
+    }
+
+    @media(min-width: $xl-width)
+    {
+        display: flex;
+    }
+}
+
+.ladder-player-listing .player-profile,
+.ladder-player-listing .player-profile-info
+{
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+@media(min-width: $lg-width)
+{
+    .ladder-player-listing .player-profile-info
+    {
+        justify-content: flex-end;
+        margin-right: 50px;
+    }
+}
+
+// Table colum names
+.player-row-header
+{
+    display: flex;
+    justify-content: space-around;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 1rem;
+    font-size: 1.5rem;
+}
+
+.player-row-header .player-avatar
+{
+    width: 150px;
+}
+
+.player-row-header .player-rank 
+{
+    width: 4rem;
+}
+
+.player-row-header .player-username 
+{
+    width: 200px;
+}
+
+.player-row-header .player-games 
+{
+    width: 80px;
+
+    @media(min-width: $xl-width)
+    {
+        margin-right: 50px;
+    }
+}
+
+.player-row-header .player-wins 
+{
+    width: 85px;
+}
+
+.player-row-header .player-losses
+{
+    width: 85px;
+}
+
+.player-row-header .player-points 
+{
+    width: 100px;
+}
+
+.player-row-header .player-social 
+{
+    width: 150px;
+    margin-left: auto;
+    margin-right: 1rem;
+}
+
+.player-row-header .filter-link
+{
+    color: #fff;
+}
+
+.ladder-listing .swiper-btn-next,
+.ladder-listing .swiper-btn-prev
+{
+    display: none;
+
+    @media(min-width: $md-width)
+    {
+        display:block;
+    }
+}
+
+.ladder-listing .swiper-btn-prev 
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -50px;
+    font-size: 2rem;
+    color: silver;
+    padding-left: 0;
+}
+
+.ladder-listing .swiper-btn-next 
+{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -50px;
+    font-size: 2rem;
+    color: silver;
+    padding-right: 0;
+}

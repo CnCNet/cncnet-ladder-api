@@ -20,25 +20,25 @@
             }
 
             var gameDetailText = document.querySelector(".online .status-" + prefix);
-            if(gameDetailText != null)
+            if (gameDetailText != null)
             {
                 gameDetailText.innerText = games[game];
             }
 
             var gameDetailTotalText = document.querySelector(".status-cncnet.online .number");
-            if(gameDetailTotalText != null)
+            if (gameDetailTotalText != null)
             {
                 gameDetailTotalText.innerText = games[game];
             }
 
             var totalText = document.querySelector(".status-text .online");
-            if(totalText != null)
+            if (totalText != null)
             {
                 totalText.innerText = games[game];
             }
         }
     }
-    
+
     onGetGames();
     setInterval(onGetGames, 60000);
 })();

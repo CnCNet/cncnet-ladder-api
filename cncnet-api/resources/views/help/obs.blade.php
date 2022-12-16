@@ -14,7 +14,7 @@
                         CnCNet <strong>Help Guides</strong>
                     </h1>
                     <p>
-                        OBS Stream Profile Quick Match Stats
+                        OBS Stream Profile Ranked Match Stats
                     </p>
                 </div>
             </div>
@@ -36,14 +36,13 @@
         .step {
             margin-bottom: 4rem;
         }
-
     </style>
 
     <section class="light-texture game-detail">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h2>How to show Quick Match Stats in OBS streams</h2>
+                    <h2>How to show Ranked Match Stats in OBS streams</h2>
                 </div>
             </div>
 

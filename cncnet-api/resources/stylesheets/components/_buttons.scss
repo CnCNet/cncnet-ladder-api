@@ -1,0 +1,105 @@
+.btn 
+{
+    text-transform: uppercase;
+    border-radius: 0;
+}
+
+.btn-secondary 
+{
+    color: #888b97;
+}
+
+.btn--outline-primary 
+{
+    border: 2px solid #53ffbe;
+    color: #00ffd1;
+    background: linear-gradient(90deg, #00fffc0d 0%, #00ffd000 100%);
+    border-radius: 6px;
+    box-shadow: -1px 1px 0 1px #53fff2;
+    border-left: transparent;
+    border-bottom: transparent;
+    border-right: 2px solid;
+    transition: all 250ms ease;
+
+    &:hover 
+    {
+        border: 2px solid #fff;
+        border-left: transparent;
+        border-bottom: transparent;
+        border-right: 2px solid;
+        color: #fff;
+        box-shadow: -1px 1px 0 1px #fff;
+    }
+}
+
+.btn--outline-secondary 
+{
+    border: 2px solid #f1f1f173;
+    color: #c1c1c1;
+    background: linear-gradient(90deg, rgba(0, 255, 252, 0.0509803922) 0%, rgba(0, 255, 208, 0) 100%);
+    border-radius: 6px;
+    box-shadow: -1px 1px 0 1px #f1f1f173;
+    border-left: transparent;
+    border-bottom: transparent;
+    border-right: 2px solid #f1f1f173;
+    background: linear-gradient(90deg, rgb(167 167 167 / 14%) 0%, rgb(82 82 82 / 8%) 100%);
+
+    &:hover 
+    {
+        border: 2px solid #fff;
+        border-left: transparent;
+        border-bottom: transparent;
+        border-right: 2px solid;
+        color: #fff;
+        box-shadow: -1px 1px 0 1px #fff;
+    }
+}
+
+.btn-secondary:active 
+{
+    box-shadow: none;
+}
+
+.btn-primary:active,
+.btn-outline:active
+{
+    background-color: transparent!important;
+    border-color: #fff!important;
+    color: #fff!important;
+    box-shadow: -1px 1px 0 1px #fff!important;
+}
+
+
+.btn-primary
+{
+    @extend .btn--outline-primary;
+
+    &:hover 
+    {
+        background: rgba(0, 0, 0, 0.021);
+    }
+}
+
+.btn-outline
+{
+    @extend .btn--outline-secondary;
+
+    &:hover 
+    {
+        background: rgba(0, 0, 0, 0.021);
+    }
+}
+
+
+// 
+// Sizing
+.btn.btn-size-md 
+{
+    padding: 0.5rem 1.4rem;
+    font-size: 0.95rem;
+}
+
+.btn.btn-size-lg 
+{
+    font-size: 1.2rem;
+}

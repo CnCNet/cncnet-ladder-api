@@ -53,6 +53,41 @@ class Stats2 extends Model
         return Stats2::getCountryById($side);
     }
 
+    public static function getCountryNameById($side)
+    {
+        if ($side === null)
+        {
+            return "";
+        }
+
+        switch ($side)
+        {
+            case 0:
+                return "America";
+            case 1:
+                return "Korea";
+            case 2:
+                return "France";
+            case 3:
+                return "Germany";
+            case 4:
+                return "Great Britain";
+            case 5:
+                return "Libya";
+            case 6:
+                return "Iraq";
+            case 7:
+                return "Cuba";
+            case 8:
+                return "Russia";
+            case 9:
+                return "Yuri";
+            default:
+                return "";
+        }
+        return "";
+    }
+
     public static function getCountryById($side)
     {
         if ($side === null)

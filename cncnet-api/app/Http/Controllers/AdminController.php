@@ -43,12 +43,14 @@ class AdminController extends Controller
         if ($ladder == null)
             abort(404);
 
+        $matches = \App\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
+            ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')
+            ->orderBy('qm_canceled_matches.created_at', 'DESC')
+            ->select("qm_canceled_matches.*", "p.username")
+            ->paginate(50);
+
         return view("admin.canceled-matches", [
-            "canceled_matches" => \App\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
-                ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')
-                ->orderBy('qm_canceled_matches.created_at', 'DESC')
-                ->select("qm_canceled_matches.*", "p.username")
-                ->get(),
+            "canceled_matches" => $matches,
             "ladder" => $ladder
         ]);
     }
@@ -172,6 +174,11 @@ class AdminController extends Controller
         }
         else
         {
+            if ($sov == null)
+            {
+                $sov = new \App\SpawnOptionValue;
+            }
+
             $sov->ladder_id = $request->ladder_id;
             $sov->qm_map_id = $request->qm_map_id;
             $sov->spawn_option_id = $request->spawn_option_id;

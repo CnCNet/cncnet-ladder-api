@@ -1,0 +1,154 @@
+﻿$lostColour: #03bcd4;
+$wonColour: #00ec00;
+$drawColour: #e96b1e;
+$dcColour: #b50000;
+
+.game-box-link:hover 
+{
+    text-decoration: none;
+}
+
+.game-box 
+{
+    border-radius: 5px;
+    border: 2px solid transparent;
+    margin-bottom: 1rem;
+}
+
+.game-box .preview
+{
+    position: relative;
+    height: 180px;
+    background-repeat: no-repeat;
+    background-color: #000;
+    border-radius: 5px 5px 0 0;
+    transition: all 4s;
+    transition-delay: 0.1s;
+}
+
+.game-box .preview:hover 
+{
+    background-position: 50% 100%;
+}
+
+.game-box .preview .status 
+{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #050505;
+    border-radius: 100%;
+    font-size: 20px;
+}
+
+.game-box .preview .status-lost
+{
+    color: $lostColour;
+}
+
+.game-box .preview .status-won
+{
+    color: $wonColour;
+}
+
+.game-box .preview .status-draw
+{
+    color: $wonColour;
+}
+
+.game-box .preview .status-dc
+{
+    color: $dcColour;
+}
+
+.game-box .preview .status-live
+{
+    color: $wonColour;
+}
+
+.game-box .preview .status-progress
+{
+    color: #636363;
+}
+
+.game-box .details
+{
+    padding: 15px;
+    background: #000 url(/images/textures/pattern-repeat.png);
+}
+
+.game-box .footer 
+{
+    padding: 15px;
+    background: #000;
+}
+
+.game-box .details .title,
+.game-box .details .status
+{
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 1rem;
+    color: silver;
+    font-weight: normal;
+}
+
+.game-box .details .status
+{
+    font-size: 12px;
+    color: #797979;
+}
+
+.game-box .details .status.online 
+{
+    color: #00ec00;
+}
+
+.game-box .won .points 
+{
+    color: $primary;
+}
+
+.game-box .lost .points 
+{
+    color: $lostColour;
+}
+
+.game-box .vs 
+{
+    font-size: 21px;
+    color: #ededed;
+    font-weight: 400;
+    font-style: italic;
+    font-family: $font-impact;
+}
+
+.game-box .player 
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game-box .player h5 
+{
+    font-size: 1rem;
+    color: silver;
+    font-weight: normal;
+}
+
+.game-box .player.player-order-0 .player-faction
+{
+    margin-right: auto;
+}
+
+.game-box .player.player-order-1 .player-faction
+{
+    margin-left: auto;
+    order: 1;
+}

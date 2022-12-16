@@ -1,38 +1,49 @@
 @extends('layouts.app')
 @section('title', 'Account')
-
-@section('cover')
-    /images/feature/feature-td.jpg
-@endsection
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-    <div class="feature-background sub-feature-background">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-8 col-md-offset-2">
-                    <h1>
-                        Account Settings
+    <div class="feature pt-5 pb-5">
+        <div class="container px-4 py-5 text-light">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-12">
+                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                        <strong class="fw-bold">Ladder</strong>
+                        <span>Account Settings</span>
                     </h1>
-
-                    <a href="/account" class="previous-link">
-                        <i class="fa fa-caret-left" aria-hidden="true"></i>
-                        <i class="fa fa-caret-left" aria-hidden="true"></i>
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 @endsection
 
-@section('content')
-    <style>
-        .form-group {
-            padding-bottom: 10px;
-            padding-top: 10px;
-        }
-    </style>
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/account">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        {{ $user->name }}'s account
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+@endsection
 
-    <section class="cncnet-features dark-texture">
+@section('content')
+    <section class="mt-4 pt-4">
         <div class="container">
 
             <div class="row">
@@ -42,18 +53,13 @@
             </div>
 
             <div class="col-md-12">
-
-                <a href="/account" class="previous-link">
-                    <i class="fa fa-caret-left" aria-hidden="true"></i> Back to account
-                </a>
-
                 <form method="POST" action="/account/settings" enctype="multipart/form-data">
                     {{ csrf_field() }}
 
                     <div class="form-group">
                         <div class="checkbox">
                             @if (isset($userSettings))
-                                <p class="lead" style="margin-bottom:0">Ladder Point Filter</p>
+                                <h3>Ladder Point Filter</h3>
                                 <p>
                                     Disable the Point Filter to match against any player on the ladder regardless of your rank.<br />
                                     Opponents will also need it disabled.
@@ -74,10 +80,10 @@
                 --}}
 
                     @if ($user->getIsAllowedToUploadAvatar() == false)
-                        <p class="lead" style="margin-bottom:0">Ladder Avatar Disabled</p>
+                        <h4>Ladder Avatar Disabled</h4>
                     @else
-                        <div class="form-group">
-                            <p class="lead" style="margin-bottom:0">Ladder Avatar</p>
+                        <div class="form-group mt-5">
+                            <h3>Ladder Avatar</h3>
                             <p>
                                 <strong>Recommended dimensions are 300x300. Max file size: 1mb.<br /> File types allowed: jpg, png </strong>
                             </p>
@@ -102,31 +108,30 @@
                         </div>
                     @endif
 
-                    <div class="form-group">
-                        <p class="lead" style="margin-bottom:0;">
-                            Your social profiles
-                        </p>
-                        <p style="margin: 0;">
+                    <div class="form-group mt-4 mb-4">
+                        <h3>Social profiles</h3>
+
+                        <p>
                             These will be shown on all your ladder profiles. Do not enter URLs.
                         </p>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="twitch">Twitch username, e.g. <strong>myTwitchUsername</strong></label>
                         <input id="twitch" type="text" class="form-control" name="twitch_profile" value="{{ $user->twitch_profile }}" placeholder="Enter your Twitch username only" />
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="discord">Discord username, E.g. user#9999</label>
                         <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}" placeholder="Enter your Discord username only" />
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group mt-2">
                         <label for="youtube">YouTube channel name e.g. <strong>myYouTubeChannel</strong></label>
                         <input id="youtube" type="text" class="form-control" name="youtube_profile" value="{{ $user->youtube_profile }}" placeholder="Enter your YouTube username only" />
                     </div>
 
-                    <div>
+                    <div class="form-group mt-2 mb-2">
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>
                 </form>

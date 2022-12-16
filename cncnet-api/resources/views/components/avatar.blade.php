@@ -2,7 +2,9 @@
 <div class="avatar-container" style="width: {{ $size }}px; height: {{ $size }}px;">
     <div class="avatar" style="background-image: url({{ $avatar }});">
         @if (!$avatar)
-            @include('icons.user')
+            <span class="material-symbols-outlined icon">
+                person
+            </span>
         @endif
     </div>
 </div>

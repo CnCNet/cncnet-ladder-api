@@ -1,0 +1,414 @@
+body.body-player-detail
+{
+    background-color: #030304;
+}
+
+body.body-player-detail main 
+{
+    background: transparent;
+    position: relative;
+}
+
+body.body-player-detail .page-image-feature
+{
+    padding-bottom: 50px;
+}
+
+.player-detail 
+{
+    color: #b7b7b7;
+    margin: auto;
+    width: 90%;
+    background: linear-gradient(45deg, #181818, black);
+    margin-top: -50px;
+    padding-top: 50px;
+}
+
+.player-detail .avatar-container 
+{
+    border-bottom: 1px solid #c0c0c059;
+}
+
+.player-detail .player-header 
+{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.player-detail .player-stats 
+{
+    display: flex;
+    flex-direction: column;
+
+    @media(min-width: $xl-width)
+    {
+        flex-direction: row;
+    }
+}
+
+.player-detail .player-stats-drilldown
+{
+    width: 300px;
+    max-width: 100%;
+}
+
+.player-detail .stats-wrap 
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.player-detail .stats-wrap .stat-item 
+{
+    width: 100%;
+
+    @extend %font-secondary;
+
+    @media(min-width: $sm-width)
+    {
+        width: 50%;
+    }
+
+    & .name 
+    {
+        @extend %font-secondary-bold;
+        padding-right: 0.5rem;
+    }
+}
+
+.player-detail .faction-name 
+{
+    display: flex;
+}
+
+.player-detail .player-overall-stats 
+{
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+
+    @media(min-width: $md-width)
+    {
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    @media(min-width: $xl-width)
+    {
+        flex-wrap: nowrap;
+        justify-content: space-around;
+        flex-direction: row;
+    }
+}
+
+@media(min-width: $md-width)
+{
+    .player-overall-stats .column
+    {
+        width: 33%;
+    }
+}
+
+.player-detail .player-achievements 
+{
+    display: flex;
+}
+
+.player-detail .player-profile 
+{
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    
+    @media(min-width: $lg-width)
+    {
+        flex-direction: row;
+    }
+}
+
+.player-detail .player-profile .username 
+{
+    color: #fff;
+}
+
+.player-detail .player-avatar 
+{
+    background: #08090c;
+    border-radius: 100%;
+    width: 150px;
+
+    .icon 
+    {
+        font-size: 3.5rem;
+        color: #222630;
+    }
+}
+
+.player-detail .player-social a 
+{
+    padding: 0.5rem;
+    color: #767676;
+    font-size: 1.1rem;
+    &:hover { color: $primary;} 
+}
+
+.player-detail .player-factions-table 
+{
+    @extend %font-secondary;
+    th 
+    {
+        border: 0;
+        padding-left: 0;
+        font-weight: normal;
+        color: #b7b7b7;
+    }
+
+    td 
+    {
+        border: 0;
+        font-weight: normal;
+        color: #b7b7b7;
+    }
+}
+
+// Stat columss specific to player detail pages
+.player-detail .stat-column
+{
+    padding-bottom: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #292929;
+    border-bottom: 1px solid #292929;
+
+    @media(min-width: $md-width)
+    {
+        padding: 2rem;
+        border-top: none;
+        border-bottom: none;
+    }
+
+    @media(min-width: $xl-width)
+    {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+}
+
+.player-detail .stat-title
+{
+    margin-bottom: 1rem;
+    color: #efefef;
+}
+
+
+// Chart
+.player-detail canvas#gamesPlayed 
+{
+    max-width: 100%;
+}
+
+
+// Map stats
+
+.player-detail .map-stats 
+{
+    display: flex;
+    flex-wrap: wrap;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.player-detail .map-row-container
+{
+    display: flex;
+    flex-direction: column;
+    background: #0a0a0a;
+    border-radius: 4px;
+    padding: 15px;
+    margin: 5px;
+}
+
+.player-detail .map-row-container .map-row 
+{
+    display: flex;
+}
+
+.player-detail .map-stats .map-preview 
+{
+    width: 150px;
+    height: 70px;
+    margin: 0 15px 0 0;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+
+.player-detail .count.won 
+{
+    color: $primary;
+    font-weight: 500;
+}
+
+.player-detail .count.lost 
+{
+    color: $game-lost;
+    font-weight: 500;
+}
+
+.player-detail .count 
+{
+    color: grey;
+}
+
+
+// Games rows
+
+.player-detail .games-table 
+{
+    background: linear-gradient(290deg, #262626, transparent);
+
+    tr
+    {
+        transition: ease 250ms all;
+    }
+    tr:hover 
+    {
+        background: #00000061;
+    }
+}
+
+.player-detail .games-table .td-versus
+{
+    background: #00000061;
+
+    .vs 
+    {
+        font-size: 1.2rem;
+        color: #ededed;
+        font-weight: 400;
+        font-style: italic;
+        font-family: $font-impact;
+    }
+}
+
+.player-detail .games-table .player-container 
+{
+    display: flex;
+    flex-direction: column;
+
+    @media(min-width: $md-width)
+    {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+.player-detail .td-player-opponent .player-points 
+{
+
+    @media(min-width: $md-width)
+    {
+        order: -1;
+        padding-left: 1rem;
+    }
+}
+
+.player-detail .games-table .player-username 
+{
+    width: 120px;
+}
+
+.player-detail .games-table .player-row 
+{
+    display: flex;
+    align-items: center;
+}
+
+.player-detail .games-table .player-points 
+{
+    display: flex;
+    align-items: center;
+    padding-top: 1rem;
+
+    @media(min-width: $md-width)
+    {
+        padding-top: 0;
+    }
+}
+
+.player-detail .games-table .td-player
+{
+    width: 15%;
+}
+
+.player-detail .games-table .td-versus
+{   
+    width: 5%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.player-detail .games-table .game-link
+{   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.player-detail .games-table .td-link 
+{
+    position: relative;
+    padding: 2rem;
+}
+
+.player-detail .games-table .game-details
+{
+    width: 200px;
+}
+
+.player-detail .games-table .map-preview 
+{
+    width: 150px;
+    height: 100px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+// Game states
+.player-detail .games-table .game-status 
+{
+    width: 85px;
+}
+
+.player-detail .games-table .game-status.status-lost .points
+{
+    color: $game-lost;
+}
+
+.player-detail .games-table .game-status.status-lost .status-text
+{
+    color: $game-lost;
+    font-weight: 500;
+}
+
+.player-detail .games-table .game-status.status-won .status-text
+{
+    color: $primary;
+    font-weight: 500;
+}
+
+.player-detail .games-table .game-status.status-won .points
+{
+    color: $primary;
+}

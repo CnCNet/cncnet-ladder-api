@@ -20,7 +20,7 @@
 @endphp
 
 <div class="player-row rank-{{ $rank }}">
-    <div class="player-profile visible-xs">
+    <div class="player-profile d-flex d-lg-none">
         <div class="player-rank player-stat">
             #{{ $rank or 'Unranked' }}
         </div>
@@ -32,12 +32,12 @@
         </a>
     </div>
 
-    <div class="player-profile hidden-xs">
+    <div class="player-profile d-none d-lg-flex">
         <div class="player-rank player-stat">
             #{{ $rank or 'Unranked' }}
         </div>
 
-        <a class="player-avatar player-stat hidden-xs" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+        <a class="player-avatar player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             @include('components.avatar', ['avatar' => $avatar, 'size' => 50])
         </a>
 
@@ -46,7 +46,7 @@
                 <div class="most-used-country country-{{ $game }}-{{ strtolower($countryName) }}"></div>
             @endif
         </a>
-        <a class="player-username player-stat hidden-xs" href="{{ $url }}" title="Go to {{ $username }}'s profile">
+        <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             {{ $username or '' }}
         </a>
     </div>
@@ -54,10 +54,10 @@
     <div class="player-profile-info">
         <div class="player-social">
             @if ($twitch)
-                <a href="{{ $twitch }}"><i class="fa fa-twitch fa-lg"></i></a>
+                <a href="{{ $twitch }}"><i class="bi bi-twitch"></i></a>
             @endif
             @if ($youtube)
-                <a href="{{ $youtube }}"><i class="fa fa-youtube fa-lg"></i></a>
+                <a href="{{ $youtube }}"<i class="bi bi-youtube"></i></a>
             @endif
             {{-- @if ($discord)
             <a href=" {{ $discord }}"><i class="fa fa-discord"></i></a>
@@ -69,6 +69,6 @@
         <div class="player-games player-stat">{{ $totalGames }} <span>games</span></div>
     </div>
     <a href="{{ $url }}" class="player-link">
-        <i class="fa fa-chevron-right" aria-hidden="true"></i>
+        <i class="bi bi-chevron-right"></i>
     </a>
 </div>

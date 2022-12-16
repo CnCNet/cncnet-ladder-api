@@ -1,90 +1,93 @@
 @extends('layouts.app')
 @section('title', 'Ladder Login')
-
-@section('cover')
-/images/feature/feature-td.jpg
-@endsection
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-<div class="feature-background sub-feature-background">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-md-8 col-md-offset-2">
-                <h1>
-                    Ladder Account Login
-                </h1>
-                <p class="text-uppercase">
-                   Play. Compete. <strong>Conquer.</strong>
-                </p>
+    <div class="feature pt-5 pb-5">
+        <div class="container px-4 py-5 text-light">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-12">
+                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                        <strong class="fw-bold">CnCNet</strong>
+                        <span>Ladder Login</span>
+                    </h1>
+                </div>
             </div>
         </div>
     </div>
-</div>
+@endsection
+
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        Login
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
 @endsection
 
 @section('content')
-<section class="light-texture game-detail supported-games">
-    <div class="container">
-	    <div class="row">
-		    <div class="col-md-8 col-md-offset-2">
-                <h2>Login to your Ladder Account</h2>
-                <p>Note: This is different to your CnCNet Forum Account</p>
-                <br/>
-			    <div class="panel panel-default">
-				    <div class="panel-heading">Login</div>
-				    <div class="panel-body">
-					    @if (count($errors) > 0)
-						    <div class="alert alert-danger">
-							    <strong>Whoops!</strong> There were some problems with your input.<br><br>
-							    <ul>
-								    @foreach ($errors->all() as $error)
-									    <li>{{ $error }}</li>
-								    @endforeach
-							    </ul>
-						    </div>
-					    @endif
+    <section class="pt-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 m-auto">
 
-					    <form class="form-horizontal" role="form" method="POST" action="/auth/login">
-						    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <form class="" method="POST" action="/auth/login">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
 
-						    <div class="form-group">
-							    <label class="col-md-4 control-label">E-Mail Address</label>
-							    <div class="col-md-6">
-								    <input type="email" class="form-control" name="email" value="{{ old('email') }}">
-							    </div>
-						    </div>
+                        @if (count($errors) > 0)
+                            <div class="alert alert-danger">
+                                <strong>Whoops!</strong> There were some problems with your input.<br><br>
+                                <ul>
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
 
-						    <div class="form-group">
-							    <label class="col-md-4 control-label">Password</label>
-							    <div class="col-md-6">
-								    <input type="password" class="form-control" name="password">
-							    </div>
-						    </div>
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email" value="{{ old('email') }}">
+                            <label for="floatingInput">Email address</label>
+                        </div>
 
-						    <div class="form-group">
-							    <div class="col-md-6 col-md-offset-4">
-								    <div class="checkbox">
-									    <label>
-										    <input type="checkbox" name="remember"> Remember Me
-									    </label>
-								    </div>
-							    </div>
-						    </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+                            <label for="floatingPassword">Password</label>
+                        </div>
 
-						    <div class="form-group">
-							    <div class="col-md-6 col-md-offset-4">
-								    <button type="submit" class="btn btn-primary btn-lg" style="margin-right: 15px;">
-									    Login
-								    </button>
+                        <div class="checkbox mb-3">
+                            <label>
+                                <input type="checkbox" name="remember" value="remember-me"> Remember me
+                            </label>
+                        </div>
 
-								    <a href="/password/email">Forgot Your Password?</a>
-							    </div>
-						    </div>
-					    </form>
-				    </div>
-			    </div>
-		    </div>
-	    </div>
-    </div>
-</section>
+                        <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
+
+                        <hr class="my-4">
+
+                        <p>
+                            <a href="/password/email">Forgot your password?</a> or <a href="/auth/register">create an account?</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
 @endsection

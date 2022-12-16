@@ -1,0 +1,84 @@
+
+// Breadcrumb
+.breadcrumb-nav
+{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: #0e1116;
+    box-shadow: 1px -3px 2px 0px rgb(0 0 0 / 0%);
+    z-index: 5;
+
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+
+.breadcrumb-nav .breadcrumb 
+{
+    margin-bottom: 0;
+}
+
+.breadcrumb-item + .breadcrumb-item::before
+{
+    background: #0e1116;
+    color: #2c3038;
+
+    padding: 0.5rem 0;
+
+    @media(min-width: $md-width)
+    {
+        padding: 1rem 0;
+    }
+}
+
+.breadcrumb-item a
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #6c6f76;
+    transition: 350ms all ease;
+    background: #0e1116;
+    
+    padding: 0.5rem;
+
+    &:hover 
+    {
+        color: #fff;
+    }
+
+    @media(min-width: $md-width)
+    {
+        padding: 1rem;
+    }
+}
+
+.breadcrumb-item + .breadcrumb-item
+{
+    padding-left: 0;
+}
+
+.breadcrumb-item.active a 
+{
+    color: #f4f4f5;
+}
+
+@media(max-width: $md-width)
+{
+    .breadcrumb-item
+    {
+        font-size: 0.8rem;
+    }
+
+    .breadcrumb-item span,
+    .breadcrumb-item i 
+    {
+        width: 20px;
+        height: 20px;
+        font-size: 1.1rem;
+    }
+}

@@ -1,0 +1,142 @@
+.navbar 
+{
+    position: absolute;
+    font-family: $font-oswald;
+    background: #030304;
+
+    @media(max-width: $lg-width)
+    {
+        padding: 0.5rem;
+    }
+
+    @media(min-width: $lg-width)
+    {
+        background: linear-gradient(180deg, rgb(0 0 0), transparent);
+    }
+}
+
+.navbar ul.dropdown-menu li:nth-child(1) .dropdown-header 
+{
+    padding-top: 0.5rem;
+}
+
+.navbar .dropdown-toggle::after
+{
+    color: #fefeff;
+}
+
+.navbar .icon-game 
+{
+    transform: scale(0.8);
+}
+
+.navbar .nav-item .nav-link 
+{
+    color: #fff;
+    text-shadow: 0px 1px #0000005e;
+    font-weight: 500;
+    transition: ease 350ms;
+
+    // Dropdown chevron
+    &:after
+    {
+        color: #ececec;
+    }
+
+    &:hover 
+    {
+        color: $primary;
+        &:after 
+        {
+            color: $primary;
+        }
+    }
+}
+
+.navbar .dropdown-menu a:hover
+{
+    color: $primary;
+}
+
+
+@media(max-width: $lg-width)
+{
+    .navbar .nav-item
+    {
+        width: 100%;
+        padding: 1rem;
+    }
+}
+
+@media(min-width: $lg-width)
+{
+    .navbar .nav-item 
+    {
+        font-size: 1.1rem;
+        padding: 1rem;
+    }
+
+    .nav-item .icon 
+    {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: #0e101836;
+        border-radius: 100%;
+    }
+}
+
+// Stops js jumping
+.navbar .nav-item .online 
+{
+    min-width: 40px;
+}
+
+.nav-item .icon
+{
+    max-width: 50px;
+    overflow: hidden;
+}
+
+body.loaded .nav-item .icon 
+{
+    max-width: 100%;
+    overflow: visible;
+}
+
+.navbar .dropdown-header 
+{
+    font-family: $font-oswald;
+    color: #cbcbcb;
+    padding-bottom: 1rem;
+    padding-top: 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.navbar .dropdown-menu 
+{
+    background: #0e1116;
+    padding: 1rem;
+    min-width: 250px;
+    max-width: 100%;
+    transition: 250ms ease all;
+
+    .dropdown-item 
+    {
+        padding: 0.2rem 1rem;
+        border-radius: 4px;
+        font-size: 1rem;
+        text-transform: uppercase;
+    }
+
+    .nav-title 
+    {
+        padding: 1rem;
+        text-transform: uppercase;
+        font-weight: 600;
+        color: #7e818b;
+    }
+}

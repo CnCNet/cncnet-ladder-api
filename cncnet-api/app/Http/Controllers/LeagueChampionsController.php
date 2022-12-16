@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use \Carbon\Carbon;
 use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
+use App\Ladder;
 
 class LeagueChampionsController extends Controller
 {
@@ -20,30 +22,44 @@ class LeagueChampionsController extends Controller
         $prevWinners = [];
         $prevLadders = [];
 
-        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($game, 5)->splice(0,9);
+
+        $ladder = Ladder::where("abbreviation", $game)->first();
+        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($game, 10)->splice(0, 9);
 
         foreach ($prevLadders as $h)
         {
-            foreach($h as $history)
+            foreach ($h as $history)
             {
+                # Default
+                $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
+                    ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+                    ->where('player_name', 'like', '%' . $request->search . '%')
+                    ->orderBy('points', 'desc')
+                    ->get()
+                    ->splice(0, 20);
+
+                $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
+                    ->where('local_id', '>=', 0)
+                    ->orderBy('local_id', 'asc')
+                    ->lists('name');
+
                 $prevWinners[] = [
-                    "game" => $history->ladder->game,
-                    "short" => $history->short,
-                    "full" => $history->ladder->name,
-                    "abbreviation" => $history->ladder->abbreviation,
-                    "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0,10)
+                    "history" => $history,
+                    "players" => $players,
+                    "sides" => $sides
                 ];
             }
         }
 
-        return view("champions.index",
-        array
-        (
-            "abbreviation" => $game,
-            "ladders_winners" => $prevWinners,
-            "ladders" => $this->ladderService->getLatestLadders(),
-            "clan_ladders" => $this->ladderService->getLatestClanLadders()
-        ));
+        return view(
+            "champions.index",
+            [
+                "ladder" => $ladder,
+                "abbreviation" => $game,
+                "ladders_winners" => $prevWinners,
+                "ladders" => $this->ladderService->getLatestLadders(),
+                "clan_ladders" => $this->ladderService->getLatestClanLadders()
+            ]
+        );
     }
 }

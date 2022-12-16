@@ -1,26 +1,29 @@
-'use strict';
+let { gulp, watch, series, src, dest } = require('gulp');
+let sass = require('gulp-sass')(require('sass'));
 
-const gulp = require("gulp");
-const sass = require("gulp-sass");
-const autoprefixer = require("gulp-autoprefixer");
-
-// Watch files
-function watchFiles() 
+function compileSassFiles(done)
 {
-    gulp.watch(["./resources/sass/**/*"], css);
+    src("./resources/stylesheets/*.scss")
+
+        // Apply sass on the files found
+        .pipe(sass())
+
+        // Log errors from the sass
+        .on("error", sass.logError)
+
+        // Destination for the compiled file(s)
+        .pipe(dest("./public/css"));
+
+    done();
 }
 
-function css()
+exports.compile = function (done)
 {
-    return gulp
-        .src("./resources/sass/ladder.scss")
-        .pipe(sass({
-            outputStyle: "compressed"
-        }).on("error", sass.logError))
-        .pipe(autoprefixer())
-        .pipe(gulp.dest("./public/css/"));
+    watch(
+        'resources/stylesheets/**/*.scss',
+        {
+            ignoreInitial: false
+        },
+        compileSassFiles
+    );
 }
-
-const watch = gulp.parallel(css, watchFiles);
-
-exports.default = watch;

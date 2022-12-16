@@ -1,0 +1,83 @@
+a 
+{
+    transition: 250ms ease all;
+}
+
+a.link 
+{
+    color: silver;
+    text-decoration: underline;
+}
+
+main 
+{
+    background: #08090e;
+    position: relative;
+}
+
+body 
+{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.highlight 
+{
+    color: #53ff85;
+}
+
+footer 
+{
+    font-family: $font-oswald;
+    background: #0a0c10;
+    padding: 4rem 0;
+    margin-top: 2rem;
+}
+
+footer a 
+{
+    color: #838383;
+    &:hover { color: #fff;}
+}
+
+footer .social 
+{
+    display: flex;
+    flex-wrap: wrap;
+    
+    a 
+    {
+        padding: 0.5rem;
+        font-size: 1.2rem;
+    }
+}
+
+footer .sponsor .sponsor-copy 
+{
+    color: #565656;
+    font-size: 0.9rem;
+    padding: 0.2rem 0;
+    font-style: italic;
+}
+
+footer .sponsor img 
+{
+    transition: 250ms ease all;
+    opacity: 0.5;
+    &:hover { opacity: 1;}
+}
+
+
+// Icon font jump
+.material-symbols-outlined
+{
+    max-width: 40px;
+    overflow: hidden;
+}
+
+body.loaded .material-symbols-outlined
+{
+    max-width: 100%;
+    overflow: visible;
+}
