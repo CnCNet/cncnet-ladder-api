@@ -24553,15 +24553,16 @@ body.body-player-detail .page-image-feature {
   }
 }
 
-.player-detail .games-table .td-player {
-  width: 15%;
-}
-
 @media (max-width: 768px) {
   .player-detail .games-table .td-player .player-faction {
     width: 20%;
   }
 }
+.player-detail .games-table .td-player .player-faction {
+  width: 60px;
+  height: 30px;
+}
+
 .player-detail .games-table .td-versus {
   width: 5%;
   padding-left: 2rem;

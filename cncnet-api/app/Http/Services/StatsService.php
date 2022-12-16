@@ -59,44 +59,97 @@ class StatsService
             $from = $now->copy()->startOfMonth()->toDateTimeString();
             $to = $now->copy()->endOfMonth()->toDateTimeString();
 
-            $playerGames = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->groupBy("cty")
-                ->get();
-
-            $factionResults = [];
-            foreach ($playerGames as $pg)
+            if ($history->ladder->game == "yr")
             {
-                $sideCountWon = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("cty", $pg->cty)
-                    ->where("won", true)
-                    ->count();
-
-                $sideCountLost = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("cty", $pg->cty)
-                    ->where("won", false)
-                    ->count();
-
-                $total = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("cty", $pg->cty)
-                    ->count();
-
-                $factionResults[$pg->cty] =
-                    [
-                        "won" => $sideCountWon,
-                        "lost" => $sideCountLost,
-                        "total" => $total
-                    ];
+                $factionResults = $this->getFactionResultsForYR($player, $history, $from, $to);
             }
+            else
+            {
+                $factionResults = $this->getFactionResults($player, $history, $from, $to);
+            }
+
             return $factionResults;
         });
+    }
+
+    private function getFactionResults($player, $history, $from, $to)
+    {
+        $playerGames = $player->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->whereBetween("player_game_reports.created_at", [$from, $to])
+            ->groupBy("sid")
+            ->get();
+
+        foreach ($playerGames as $pg)
+        {
+            $sideCountWon = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("sid", $pg->sid)
+                ->where("won", true)
+                ->count();
+
+            $sideCountLost = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("sid", $pg->sid)
+                ->where("won", false)
+                ->count();
+
+            $total = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("sid", $pg->sid)
+                ->count();
+
+            $factionResults[$pg->sid] =
+                [
+                    "won" => $sideCountWon,
+                    "lost" => $sideCountLost,
+                    "total" => $total
+                ];
+        }
+        return $factionResults;
+    }
+
+    private function getFactionResultsForYR($player, $history, $from, $to)
+    {
+        $playerGames = $player->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->whereBetween("player_game_reports.created_at", [$from, $to])
+            ->groupBy("cty")
+            ->get();
+
+        foreach ($playerGames as $pg)
+        {
+            $sideCountWon = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("cty", $pg->cty)
+                ->where("won", true)
+                ->count();
+
+            $sideCountLost = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("cty", $pg->cty)
+                ->where("won", false)
+                ->count();
+
+            $total = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("cty", $pg->cty)
+                ->count();
+
+            $factionResults[$pg->cty] =
+                [
+                    "won" => $sideCountWon,
+                    "lost" => $sideCountLost,
+                    "total" => $total
+                ];
+        }
+        return $factionResults;
     }
 
     public function getMapWinLossByPlayer($player, $history)

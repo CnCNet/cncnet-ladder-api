@@ -347,17 +347,18 @@ body.body-player-detail .page-image-feature
     }
 }
 
-.player-detail .games-table .td-player
-{
-    width: 15%;
-}
-
 @media(max-width: $md-width)
 {
     .player-detail .games-table .td-player .player-faction
     {
         width: 20%;
     }
+}
+
+.player-detail .games-table .td-player .player-faction
+{
+    width: 60px;
+    height: 30px;
 }
 
 .player-detail .games-table .td-versus

@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Side;
+
 class FactionHelper
 {
 
@@ -29,5 +31,13 @@ class FactionHelper
 
         $countryName = $side->name ?? '';
         return $countryName;
+    }
+
+    public static function getFactionCountryByHistory($history, $faction)
+    {
+        $side = Side::where('local_id', $faction)
+            ->where('ladder_id', $history->ladder->id)
+            ->first();
+        return $side->name ?? "";
     }
 }
