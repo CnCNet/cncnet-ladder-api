@@ -24552,10 +24552,12 @@ body.body-player-detail .page-image-feature {
   align-items: center;
   padding-top: 1rem;
   text-align: center;
+  justify-content: center;
 }
 @media (min-width: 768px) {
   .player-detail .games-table .player-points {
     padding-top: 0;
+    justify-content: flex-start;
   }
 }
 
@@ -24595,6 +24597,7 @@ body.body-player-detail .page-image-feature {
 
 .player-detail .games-table .game-details {
   font-size: 0.9rem;
+  width: 150px;
 }
 
 .player-detail .games-table .map-preview {
