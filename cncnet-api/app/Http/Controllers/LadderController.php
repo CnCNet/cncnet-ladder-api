@@ -31,6 +31,7 @@ class LadderController extends Controller
         return view(
             "ladders.index",
             [
+                "laddersComingSoon" => $this->ladderService->getOfflineLadders(),
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders()
             ]

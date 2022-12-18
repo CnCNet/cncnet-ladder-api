@@ -20054,31 +20054,65 @@ body.loaded .nav-item .icon {
   position: relative;
 }
 
-.icon-game:before {
+.icon-ss:before {
   content: "";
   display: inline-block;
-  background-image: url(../images/games/icons.png);
+  background-image: url(../images/games/ss/ss-icon.png);
   background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   width: 25px;
   height: 25px;
 }
 
-.icon-ra:before {
-  background-position: 0px;
+.icon-td:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/td/td-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
 }
 
-.icon-blitz:before {
-  background-position: -250px;
-}
-
-.icon-sfj:before {
-  background-position: -275px;
+.icon-d2k:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/d2k/d2k-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
 }
 
 .icon-yr:before {
   content: "";
   display: inline-block;
   background-image: url(../images/games/yr/yr-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+}
+
+.icon-mo:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/mo/mo-icon.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  width: 25px;
+  height: 25px;
+}
+
+.icon-blitz:before {
+  content: "";
+  display: inline-block;
+  background-image: url(../images/games/blitz/blitz-icon.png);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -23880,6 +23914,22 @@ body.loaded .material-symbols-outlined {
   right: 0;
   bottom: 0;
   opacity: 0.5;
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-td {
+  background-image: url(../images/feature/td.jpg);
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-ss {
+  background-image: url(../images/feature/ss.jpg);
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-mo {
+  background-image: url(../images/feature/mo.jpg);
+}
+
+.game-box-ladder-link .game-box-ladder-link-bg.bg-d2k {
+  background-image: url(../images/feature/d2k.jpg);
 }
 
 .game-box-ladder-link .game-box-ladder-link-bg.bg-ra2 {

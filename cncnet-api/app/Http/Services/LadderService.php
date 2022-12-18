@@ -74,6 +74,28 @@ class LadderService
                 ->whereNotNull("ladder.id")
                 ->where('ladder.clans_allowed', '=', false)
                 ->where('ladder.private', '=', false)
+                ->where('ladder.is_offline', '=', false)
+                ->orderBy('ladder.order', 'ASC')
+                ->get();
+        });
+    }
+
+    public function getOfflineLadders()
+    {
+        return Cache::remember("ladderService::getOfflineLadders", 1, function ()
+        {
+            $date = Carbon::now();
+
+            $start = $date->startOfMonth()->toDateTimeString();
+            $end = $date->endOfMonth()->toDateTimeString();
+
+            return \App\LadderHistory::leftJoin("ladders as ladder", "ladder.id", "=", "ladder_history.ladder_id")
+                ->where("ladder_history.starts", "=", $start)
+                ->where("ladder_history.ends", "=", $end)
+                ->whereNotNull("ladder.id")
+                ->where('ladder.clans_allowed', '=', false)
+                ->where('ladder.private', '=', false)
+                ->where('ladder.is_offline', '=', true)
                 ->orderBy('ladder.order', 'ASC')
                 ->get();
         });

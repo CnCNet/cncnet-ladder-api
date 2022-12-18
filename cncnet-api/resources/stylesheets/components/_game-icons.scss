@@ -3,37 +3,72 @@
     position: relative;
 }
 
-.icon-game:before
+// New icons
+.icon-ss:before
 {
     content: "";
     display: inline-block;
-    background-image: url(../images/games/icons.png);
+    background-image: url(../images/games/ss/ss-icon.png);
     background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     width: 25px;
     height: 25px;
 }
 
-.icon-ra:before
+.icon-td:before
 {
-    background-position: calc(0px);
+    content: "";
+    display: inline-block;
+    background-image: url(../images/games/td/td-icon.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 25px;
+    height: 25px;
 }
 
-.icon-blitz:before
+.icon-d2k:before
 {
-    background-position: calc(-25px * 10);
+    content: "";
+    display: inline-block;
+    background-image: url(../images/games/d2k/d2k-icon.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 25px;
+    height: 25px;
 }
 
-.icon-sfj:before
-{
-    background-position: calc(-25px * 11);
-}
-
-// New icons
 .icon-yr:before
 {
     content: "";
     display: inline-block;
     background-image: url(../images/games/yr/yr-icon.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 25px;
+    height: 25px;
+}
+
+.icon-mo:before
+{
+    content: "";
+    display: inline-block;
+    background-image: url(../images/games/mo/mo-icon.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 25px;
+    height: 25px;
+}
+
+.icon-blitz:before
+{
+    content: "";
+    display: inline-block;
+    background-image: url(../images/games/blitz/blitz-icon.png);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;

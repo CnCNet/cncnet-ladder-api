@@ -7,7 +7,11 @@
         <div class="text-center mt-2">
             <h5>{{ $history->ladder->name }} 1vs1 Ladder</h5>
             <p>
-                {{ Carbon\Carbon::parse($history->starts)->format('F Y') }}
+                @if (isset($comingSoon))
+                    Coming soon
+                @else
+                    {{ Carbon\Carbon::parse($history->starts)->format('F Y') }}
+                @endif
             </p>
         </div>
     </div>
