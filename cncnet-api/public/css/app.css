@@ -20613,11 +20613,11 @@ body.loaded .material-symbols-outlined {
 .qm-stats .stat.gold,
 .qm-stats .stat.gold h4,
 .qm-stats .stat.gold .h4 {
-  color: #ffcd00;
+  color: #ffc31b;
 }
 
 .qm-stats .stat.gold .value {
-  color: #facc00;
+  color: #ffc31b;
 }
 
 .qm-stats .potd .icon {
@@ -25075,7 +25075,5 @@ body.body-player-detail .page-image-feature {
 }
 
 .player-of-the-day-award {
-  background: -webkit-linear-gradient(288deg, #fad000, #ff8b28 80%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffc31b;
 }
