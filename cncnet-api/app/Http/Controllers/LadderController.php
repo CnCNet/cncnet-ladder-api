@@ -205,6 +205,7 @@ class LadderController extends Controller
                 "qmMatchStates" => $qmMatchStates,
                 "qmConnectionStats" => $qmConnectionStats,
                 "qmMatchPlayers" => $qmMatchPlayers,
+                "date" => $date,
             ]
         );
     }

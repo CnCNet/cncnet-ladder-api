@@ -74,6 +74,8 @@ class StatsService
             $from = $now->copy()->startOfMonth()->toDateTimeString();
             $to = $now->copy()->endOfMonth()->toDateTimeString();
 
+            $factionResults = [];
+
             if ($history->ladder->game == "yr")
             {
                 $factionResults = $this->getFactionResultsForYR($player, $history, $from, $to);
