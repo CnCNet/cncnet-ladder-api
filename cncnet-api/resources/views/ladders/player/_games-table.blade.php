@@ -22,7 +22,7 @@
 
                 <tr class="align-middle">
                     <td class="td-player">
-                        @include('ladders.player._games-player-row', [
+                        @include('ladders.components._games-player-row', [
                             'profileUrl' => $playerProfileUrl,
                             'username' => $playerGameReport->player->username,
                             'avatar' => $playerGameReport->player->user->getUserAvatar(),
@@ -37,7 +37,7 @@
                     </td>
 
                     <td class="td-player td-player-opponent">
-                        @include('ladders.player._games-player-row', [
+                        @include('ladders.components._games-player-row', [
                             'profileUrl' => $opponentPlayerUrl,
                             'username' => $opponentPlayerReport->player->username,
                             'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),

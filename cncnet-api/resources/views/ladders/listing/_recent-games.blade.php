@@ -8,7 +8,7 @@
                 <div class="swiper-slide">
                     <?php $pp = $game->playerGameReports()->first(); ?>
 
-                    @include('components/game-box', [
+                    @include('ladders.listing._game-box', [
                         'url' => '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id,
                         'game' => $history->ladder->abbreviation,
                         'gamePlayers' => $game->playerGameReports(),

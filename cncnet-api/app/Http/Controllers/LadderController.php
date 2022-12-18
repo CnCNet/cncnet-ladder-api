@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CountableObjectHeap;
 use App\Http\Services\ChartService;
 use \Carbon\Carbon;
 use App\LadderHistory;
@@ -121,15 +122,15 @@ class LadderController extends Controller
         }
 
         return view(
-            "ladders.games",
-            array(
+            "ladders.games-listing",
+            [
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
                 "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
                 "games" => $games,
                 "userIsMod" => $userIsMod,
                 "errorGames" => $errorGames
-            )
+            ]
         );
     }
 
@@ -151,7 +152,9 @@ class LadderController extends Controller
         $user = $request->user();
 
         if ($game == null)
-            return "No game";
+        {
+            abort(404, "Game not found");
+        }
 
         if ($user !== null && $user->isLadderMod($history->ladder))
         {
@@ -165,13 +168,18 @@ class LadderController extends Controller
         }
 
         if ($reportId !== null)
+        {
             $gameReport = $game->allReports()->where('game_reports.id', '=', $reportId)->first();
+        }
         else
+        {
             $gameReport = $game->report;
+        }
 
         $qmMatchStates = [];
         $qmConnectionStats = [];
         $qmMatchPlayers = [];
+
         if ($userIsMod)
         {
             $qmMatchStates = $game->qmMatch ? $game->qmMatch->states : [];
@@ -179,25 +187,25 @@ class LadderController extends Controller
             $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
         }
 
+        $playerGameReports = $gameReport->playerGameReports()->get() ?? [];
+        $heaps = CountableObjectHeap::all();
+
         return view(
-            'ladders.game-view',
-            array(
+            'ladders.game-detail',
+            [
                 "game" => $game,
                 "gameReport" => $gameReport,
                 "allGameReports" => $allGameReports,
-                "playerGameReports" => $gameReport !== null ? $gameReport->playerGameReports()->get() : [],
+                "playerGameReports" => $playerGameReports,
                 "history" => $history,
-                "ladders" => $this->ladderService->getLatestLadders(),
-                "clan_ladders" => $this->ladderService->getLatestClanLadders(),
-                "heaps" => \App\CountableObjectHeap::all(),
+                "heaps" => $heaps,
                 "user" => $user,
                 "userIsMod" => $userIsMod,
-                "date" => $date,
                 "cncnetGame" => $cncnetGame,
                 "qmMatchStates" => $qmMatchStates,
                 "qmConnectionStats" => $qmConnectionStats,
                 "qmMatchPlayers" => $qmMatchPlayers,
-            )
+            ]
         );
     }
 

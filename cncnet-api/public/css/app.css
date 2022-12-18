@@ -23936,6 +23936,137 @@ body.loaded .material-symbols-outlined {
   margin-right: 1rem;
 }
 
+.games-table {
+  background: linear-gradient(290deg, #262626, transparent);
+}
+.games-table tr {
+  transition: ease 250ms all;
+}
+.games-table tr:hover {
+  background: rgba(48, 48, 48, 0.38);
+}
+
+.games-table .td-versus {
+  background: rgba(0, 0, 0, 0.3803921569);
+}
+.games-table .td-versus .vs {
+  font-size: 1.2rem;
+  color: #ededed;
+  font-weight: 400;
+  font-style: italic;
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+}
+
+.games-table .player-container {
+  display: flex;
+  flex-direction: column;
+}
+@media (min-width: 768px) {
+  .games-table .player-container {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .games-table .td-player-opponent .player-points {
+    order: -1;
+    padding-left: 1rem;
+  }
+}
+
+.games-table .player-username {
+  width: 120px;
+}
+
+.games-table .player-row {
+  display: flex;
+  align-items: center;
+}
+
+.games-table .player-points {
+  display: flex;
+  align-items: center;
+  padding-top: 1rem;
+  text-align: center;
+  justify-content: center;
+}
+@media (min-width: 768px) {
+  .games-table .player-points {
+    padding-top: 0;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 768px) {
+  .games-table .td-player .player-faction {
+    width: 20%;
+  }
+}
+.games-table .td-player .player-faction {
+  width: 65px;
+  height: 33px;
+}
+
+.games-table .td-versus {
+  width: 5%;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.games-table .game-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.games-table .td-link {
+  position: relative;
+  padding: 2rem;
+}
+
+.games-table .game-details {
+  font-size: 0.9rem;
+  width: 150px;
+}
+
+.games-table .map-preview {
+  width: 150px;
+  height: 100px;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.games-table .game-status {
+  width: 85px;
+}
+
+.games-table .game-status.status-lost .points {
+  color: #03bcd4;
+}
+
+.games-table .game-status.status-lost .status-text {
+  color: #03bcd4;
+  font-weight: 500;
+}
+
+.games-table .game-status.status-won .status-text {
+  color: #00ff8a;
+  font-weight: 500;
+}
+
+.games-table .game-status.status-won .points {
+  color: #00ff8a;
+}
+
 .ladder-listing .player-profile {
   position: relative;
   transition: ease 250ms;
@@ -24499,137 +24630,6 @@ body.body-player-detail .page-image-feature {
   color: grey;
 }
 
-.player-detail .games-table {
-  background: linear-gradient(290deg, #262626, transparent);
-}
-.player-detail .games-table tr {
-  transition: ease 250ms all;
-}
-.player-detail .games-table tr:hover {
-  background: rgba(48, 48, 48, 0.38);
-}
-
-.player-detail .games-table .td-versus {
-  background: rgba(0, 0, 0, 0.3803921569);
-}
-.player-detail .games-table .td-versus .vs {
-  font-size: 1.2rem;
-  color: #ededed;
-  font-weight: 400;
-  font-style: italic;
-  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
-}
-
-.player-detail .games-table .player-container {
-  display: flex;
-  flex-direction: column;
-}
-@media (min-width: 768px) {
-  .player-detail .games-table .player-container {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-@media (min-width: 768px) {
-  .player-detail .td-player-opponent .player-points {
-    order: -1;
-    padding-left: 1rem;
-  }
-}
-
-.player-detail .games-table .player-username {
-  width: 120px;
-}
-
-.player-detail .games-table .player-row {
-  display: flex;
-  align-items: center;
-}
-
-.player-detail .games-table .player-points {
-  display: flex;
-  align-items: center;
-  padding-top: 1rem;
-  text-align: center;
-  justify-content: center;
-}
-@media (min-width: 768px) {
-  .player-detail .games-table .player-points {
-    padding-top: 0;
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 768px) {
-  .player-detail .games-table .td-player .player-faction {
-    width: 20%;
-  }
-}
-.player-detail .games-table .td-player .player-faction {
-  width: 65px;
-  height: 33px;
-}
-
-.player-detail .games-table .td-versus {
-  width: 5%;
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.player-detail .games-table .game-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.player-detail .games-table .td-link {
-  position: relative;
-  padding: 2rem;
-}
-
-.player-detail .games-table .game-details {
-  font-size: 0.9rem;
-  width: 150px;
-}
-
-.player-detail .games-table .map-preview {
-  width: 150px;
-  height: 100px;
-  background-size: 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.player-detail .games-table .game-status {
-  width: 85px;
-}
-
-.player-detail .games-table .game-status.status-lost .points {
-  color: #03bcd4;
-}
-
-.player-detail .games-table .game-status.status-lost .status-text {
-  color: #03bcd4;
-  font-weight: 500;
-}
-
-.player-detail .games-table .game-status.status-won .status-text {
-  color: #00ff8a;
-  font-weight: 500;
-}
-
-.player-detail .games-table .game-status.status-won .points {
-  color: #00ff8a;
-}
-
 .ladder-account .username .icon-yr:before {
   width: 50px;
   height: 50px;
@@ -25072,4 +25072,10 @@ body.body-player-detail .page-image-feature {
 
 .form-group {
   margin-bottom: 15px;
+}
+
+.player-of-the-day-award {
+  background: -webkit-linear-gradient(288deg, #fad000, #ff8b28 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }

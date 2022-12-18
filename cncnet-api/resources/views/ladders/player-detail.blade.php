@@ -115,7 +115,7 @@
                         @endif
                     </div>
                     @if ($playerOfTheDayAward)
-                        <div class="pt-4 ml-auto">
+                        <div class="pt-4 ms-auto ml-auto">
                             @include('ladders.player._award-player-of-the-day', [
                                 'wins' => $playerOfTheDayAward->wins,
                                 'username' => $playerOfTheDayAward->username,
@@ -182,7 +182,7 @@
                             <div class="mb-2">
                                 @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
                             </div>
-                            @include('ladders.player._games', ['player' => $ladderPlayer, 'games' => $games])
+                            @include('ladders.player._games-table', ['player' => $ladderPlayer, 'games' => $games])
                             <div class="mt-2">
                                 @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
                             </div>
