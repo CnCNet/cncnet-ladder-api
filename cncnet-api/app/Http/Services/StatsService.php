@@ -23,27 +23,41 @@ class StatsService
 
     public function getQmStats($ladderAbbrev)
     {
-        return Cache::remember("statsRequest/$ladderAbbrev", 5, function () use ($ladderAbbrev)
+        return Cache::remember("getQmStats/$ladderAbbrev", 5, function () use ($ladderAbbrev)
         {
+            $startOfMonth = Carbon::now()->startOfMonth();
+            $endOfMonth = Carbon::now()->endOfMonth();
+
             $timediff = Carbon::now()->subHour()->toDateTimeString();
             $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
+
             $recentMatchedPlayers = QmMatchPlayer::where("created_at", ">", $timediff)
                 ->where("ladder_id", "=", $ladder_id)
                 ->count();
+
             $queuedPlayers = QmMatchPlayer::where("ladder_id", "=", $ladder_id)->whereNull("qm_match_id")->count();
+
             $recentMatches = QmMatch::where("created_at", ">", $timediff)
                 ->where("ladder_id", "=", $ladder_id)
                 ->count();
 
             $activeGames = QmMatch::where("updated_at", ">", Carbon::now()->subMinute(2))
-                ->where("ladder_id", "=", $ladder_id)->count();
+                ->where("ladder_id", "=", $ladder_id)
+                ->count();
 
             $past24hMatches = QmMatch::where("updated_at", ">", Carbon::now()->subDay(1))
-                ->where("ladder_id", "=", $ladder_id)->count();
+                ->where("ladder_id", "=", $ladder_id)
+                ->count();
+
+            $matchesByMonth = QmMatch::where("updated_at", ">", $startOfMonth)
+                ->where("updated_at", "<", $endOfMonth)
+                ->where("ladder_id", "=", $ladder_id)
+                ->count();
 
             return [
                 "recentMatchedPlayers" => $recentMatchedPlayers,
                 "queuedPlayers" => $queuedPlayers,
+                "matchesByMonth" => $matchesByMonth,
                 "past24hMatches" => $past24hMatches,
                 "recentMatches" => $recentMatches,
                 "activeMatches"   => $activeGames,

@@ -8,7 +8,20 @@
     <div class="row">
         <div class="col-md-12">
             <div class="qm-stats">
-                <div class="stat green">
+                <div class="stat purple">
+                    <div class="text-center">
+                        <span class="material-symbols-outlined">
+                            insights
+                        </span>
+                        <h5>Games this Month</h5>
+                    </div>
+                    <div class="text-center">
+                        <div class="value">{{ $stats['matchesByMonth'] }} </div>
+                        <div><small>(This month so far)</small></div>
+                    </div>
+                </div>
+
+                <div class="stat pink">
                     <div class="text-center">
                         <span class="material-symbols-outlined">
                             insights
@@ -21,7 +34,7 @@
                     </div>
                 </div>
 
-                <div class="stat purple">
+                <div class="stat magenta">
                     <div class="text-center">
                         <span class="material-symbols-outlined">
                             group
@@ -31,19 +44,6 @@
                     <div class="text-center">
                         <div class="value">{{ $stats['queuedPlayers'] }}</div>
                         <div><small>(Right now)</small></div>
-                    </div>
-                </div>
-
-                <div class="stat blue">
-                    <div class="text-center">
-                        <span class="material-symbols-outlined">
-                            swords
-                        </span>
-                        <h5>Recently Matched</h5>
-                    </div>
-                    <div class="text-center">
-                        <div class="value">{{ $stats['recentMatchedPlayers'] }}</div>
-                        <div><small>(Last 60 minutes)</small></div>
                     </div>
                 </div>
 

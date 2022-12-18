@@ -20586,9 +20586,15 @@ body.loaded .material-symbols-outlined {
     padding: 20px 80px;
   }
 }
-.qm-stats .stat.green,
-.qm-stats .stat.green h4,
-.qm-stats .stat.green .h4 {
+.qm-stats .stat.purple,
+.qm-stats .stat.purple h4,
+.qm-stats .stat.purple .h4 {
+  color: #9600f4;
+}
+
+.qm-stats .stat.pink,
+.qm-stats .stat.pink h4,
+.qm-stats .stat.pink .h4 {
   color: #ff005e;
 }
 
@@ -20598,9 +20604,9 @@ body.loaded .material-symbols-outlined {
   color: #00e7ff;
 }
 
-.qm-stats .stat.purple,
-.qm-stats .stat.purple h4,
-.qm-stats .stat.purple .h4 {
+.qm-stats .stat.magenta,
+.qm-stats .stat.magenta h4,
+.qm-stats .stat.magenta .h4 {
   color: #ff00c8;
 }
 
@@ -24559,8 +24565,8 @@ body.body-player-detail .page-image-feature {
   }
 }
 .player-detail .games-table .td-player .player-faction {
-  width: 60px;
-  height: 30px;
+  width: 65px;
+  height: 33px;
 }
 
 .player-detail .games-table .td-versus {

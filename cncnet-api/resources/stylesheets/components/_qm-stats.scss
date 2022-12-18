@@ -40,8 +40,14 @@
 }
 
 // Colours
-.qm-stats .stat.green,
-.qm-stats .stat.green h4
+.qm-stats .stat.purple,
+.qm-stats .stat.purple h4 
+{
+    color: #9600f4;
+}
+
+.qm-stats .stat.pink,
+.qm-stats .stat.pink h4
 {
     color: #ff005e;
 }
@@ -52,8 +58,8 @@
     color: #00e7ff;
 }
 
-.qm-stats .stat.purple,
-.qm-stats .stat.purple h4
+.qm-stats .stat.magenta,
+.qm-stats .stat.magenta h4
 {
     color: #ff00c8;
 }
