@@ -33,7 +33,7 @@
             slidesPerView: 4,
             spaceBetween: 30,
             autoplay: {
-                delay: 2500,
+                delay: 4500,
                 disableOnInteraction: true,
             },
             breakpoints: {
