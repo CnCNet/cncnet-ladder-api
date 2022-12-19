@@ -6,7 +6,7 @@
                 
                 $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->id);
                 $playerGameReports = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)->get();
-                
+                $timestamp = $gameReport->created_at->timestamp;
                 $teamAReport = null;
                 $teamBReport = null;
                 
@@ -27,7 +27,7 @@
                 }
                 ?>
 
-                <tr class="align-middle">
+                <tr class="align-middle" data-timestamp="{{ $timestamp }}">
                     <td class="td-player">
                         @include('ladders.components._games-player-row', [
                             'profileUrl' => $playerProfileUrl,

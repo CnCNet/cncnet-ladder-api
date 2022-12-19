@@ -5,6 +5,7 @@
             @foreach ($games as $gameReport)
                 @php
                     $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id);
+                    $timestamp = $gameReport->created_at->timestamp;
                     
                     $playerGameReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
                         ->where('player_id', '=', $player->id)
@@ -20,7 +21,7 @@
                     
                 @endphp
 
-                <tr class="align-middle">
+                <tr class="align-middle" data-timestamp="{{ $timestamp }}">
                     <td class="td-player">
                         @include('ladders.components._games-player-row', [
                             'profileUrl' => $playerProfileUrl,
