@@ -5,7 +5,7 @@
             @foreach ($games as $gameReport)
                 @php
                     $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id);
-                    $timestamp = $gameReport->updated_at->timestamp;
+                    $timestamp = $gameReport->gameReport->updated_at->timestamp;
                     
                     $playerGameReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
                         ->where('player_id', '=', $player->id)
@@ -52,7 +52,7 @@
                                 <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
                                 <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->duration) }}</p>
                                 <p class="text-muted mb-0">
-                                    Played: {{ $gameReport->updated_at->diffForHumans() }}
+                                    Played: {{ $gameReport->gameReport->updated_at->diffForHumans() }}
                                 </p>
                                 <p class="text-muted mb-0">
                                     FPS: {{ $gameReport->fps }}
