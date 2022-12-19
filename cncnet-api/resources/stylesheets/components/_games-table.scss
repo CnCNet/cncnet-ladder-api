@@ -64,7 +64,6 @@
 {
     display: flex;
     align-items: center;
-    padding-top: 1rem;
     text-align: center;
     justify-content: center;
 
@@ -75,18 +74,15 @@
     }
 }
 
-@media(max-width: $md-width)
-{
-    .games-table .td-player .player-faction
-    {
-        width: 20%;
-    }
-}
-
 .games-table .td-player .player-faction
 {
-    width: 65px;
-    height: 33px;
+    width: 20%;
+
+    @media(min-width: $md-width)
+    {
+        width: 65px;
+        height: 33px;
+    }
 }
 
 .games-table .td-versus
