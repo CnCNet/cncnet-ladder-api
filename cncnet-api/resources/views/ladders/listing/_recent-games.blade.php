@@ -17,7 +17,7 @@
                         'points' => $pp,
                         'map' => $game->hash,
                         'title' => $game->scen,
-                        'date' => $game->created_at,
+                        'date' => $game->updated_at,
                     ])
                 </div>
             @endforeach

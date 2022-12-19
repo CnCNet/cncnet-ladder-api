@@ -6,7 +6,7 @@
                 
                 $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->id);
                 $playerGameReports = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)->get();
-                $timestamp = $gameReport->created_at->timestamp;
+                $timestamp = $gameReport->updated_at->timestamp;
                 $teamAReport = null;
                 $teamBReport = null;
                 
@@ -57,7 +57,7 @@
                                 <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
                                 <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->duration) }}</p>
                                 <p class="text-muted mb-0">
-                                    Played: {{ $gameReport->created_at->diffForHumans() }}
+                                    Played: {{ $gameReport->updated_at->diffForHumans() }}
                                 </p>
                                 <p class="text-muted mb-0">
                                     FPS: {{ $teamAReport->gameReport->fps }}
