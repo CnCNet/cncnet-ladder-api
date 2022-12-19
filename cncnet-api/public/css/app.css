@@ -23988,17 +23988,19 @@ body.loaded .material-symbols-outlined {
   display: flex;
   align-items: center;
   text-align: center;
-  justify-content: center;
+  margin-left: 25px;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 @media (min-width: 768px) {
   .games-table .player-points {
     padding-top: 0;
-    justify-content: flex-start;
+    padding-bottom: 0;
   }
 }
 
 .games-table .td-player .player-faction {
-  width: 20%;
+  width: 28%;
 }
 @media (min-width: 768px) {
   .games-table .td-player .player-faction {
