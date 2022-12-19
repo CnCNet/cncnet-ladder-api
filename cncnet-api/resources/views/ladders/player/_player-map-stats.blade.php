@@ -7,7 +7,7 @@
                 <h5>{{ $mapName }}</h5>
             </div>
             <div class="map-row">
-                <div class="map-preview" style="background-image:url(/images/maps/{{ $history->ladder->abbreviation }}/{{ $v['preview'] }}.png)"></div>
+                <div class="map-preview" style="background-image:url(https://ladder.cncnet.org/images/maps/{{ $history->ladder->abbreviation }}/{{ $v['preview'] }}.png)"></div>
                 <div class="counts">
                     <div class="count won">
                         x{{ $v['won'] }} wins
