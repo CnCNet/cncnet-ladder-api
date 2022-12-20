@@ -480,6 +480,7 @@ class LadderService
         return \App\AchievementProgress::leftJoin('achievements as a', 'achievements_progress.achievement_id', '=', 'a.id')
             ->where('user_id', $user_id)
             ->where('a.ladder_id', $ladder_id)
+            ->orderBy("achievements_progress.updated_at", "DESC")
             ->get();
     }
 

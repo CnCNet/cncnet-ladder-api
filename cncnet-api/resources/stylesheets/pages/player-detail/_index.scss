@@ -269,3 +269,15 @@ body.body-player-detail .page-image-feature
 {
     color: grey;
 }
+
+.player-achievements 
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.player-achievements .achievement-tile
+{
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+}

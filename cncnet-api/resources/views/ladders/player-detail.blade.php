@@ -166,9 +166,24 @@
                     </div>
                 </div>
 
-                {{-- <div class="player-achievements">
-                    <h3>Player achievements</h3>
-                </div> --}}
+                <div class="player-achievements">
+                    <h5>Achievements</h5>
+                </div>
+                <div class="player-achievements">
+                    @foreach ($achievementProgress as $achievement)
+                        @if ($achievement->cameo)
+                            <div class="achievement-tile achievement-purple" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ $achievement->achievement_name }}">
+                                <div class="achievement-image">
+                                    <div class="cameo blitz-cameo cameo-tile cameo-{{ $achievement->cameo }}">
+                                    </div>
+                                </div>
+                                <div class="achievement-description">
+                                    {{ $achievement->achievement_description }}
+                                </div>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
             </section>
         </div>
 

@@ -135,3 +135,42 @@ b, strong
     --bs-alert-bg: #041a13;
     --bs-alert-border-color: #041a13;
 }
+
+.popover-header
+{
+    background: #33353c;
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
+    @extend %font-primary;
+}
+
+.popover-body
+{
+    background: #33353c;
+    color: silver;
+    font-weight: 300;
+    font-size: 0.9rem;
+    border: 2px solid #33353c;
+    border-radius: 4px;
+    @extend %font-primary;
+}
+
+.bs-popover-auto[data-popper-placement^=right] > .popover-arrow::after
+{
+    border-right-color: #4e4f55;
+}
+
+.bs-popover-auto[data-popper-placement^=left] > .popover-arrow::after
+{
+    border-left-color: #4e4f55;
+}
+
+.bs-popover-auto[data-popper-placement^=top] > .popover-arrow::after
+{
+    border-top-color: #4e4f55;
+}
+.bs-popover-auto[data-popper-placement^=bottom] > .popover-arrow::after
+{
+    border-bottom-color: #4e4f55;
+}
