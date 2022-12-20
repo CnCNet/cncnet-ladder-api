@@ -1,5 +1,5 @@
 @if ($paginator->lastPage() > 1)
-    <nav aria-label="Paginate ladder results">
+    <nav aria-label="Paginate ladder results" style="overflow:hidden;">
         <ul class="pagination">
 
             @php
@@ -14,8 +14,8 @@
                     $nextIndex = $paginator->currentPage() + 1;
                 }
                 
-                $limitCount = $paginator->currentPage() + 5;
-                if ($paginator->currentPage() + 5 >= $paginator->lastPage()) {
+                $limitCount = $paginator->currentPage() + 10;
+                if ($limitCount >= $paginator->lastPage()) {
                     $limitCount = $paginator->lastPage();
                 }
             @endphp

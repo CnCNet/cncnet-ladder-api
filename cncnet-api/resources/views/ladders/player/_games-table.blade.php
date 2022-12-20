@@ -5,6 +5,7 @@
             @foreach ($games as $gameReport)
                 @php
                     $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id);
+                    $timestamp = $gameReport->gameReport->updated_at->timestamp;
                     
                     $playerGameReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
                         ->where('player_id', '=', $player->id)
@@ -20,9 +21,9 @@
                     
                 @endphp
 
-                <tr class="align-middle">
+                <tr class="align-middle" data-timestamp="{{ $timestamp }}">
                     <td class="td-player">
-                        @include('ladders.player._games-player-row', [
+                        @include('ladders.components._games-player-row', [
                             'profileUrl' => $playerProfileUrl,
                             'username' => $playerGameReport->player->username,
                             'avatar' => $playerGameReport->player->user->getUserAvatar(),
@@ -37,7 +38,7 @@
                     </td>
 
                     <td class="td-player td-player-opponent">
-                        @include('ladders.player._games-player-row', [
+                        @include('ladders.components._games-player-row', [
                             'profileUrl' => $opponentPlayerUrl,
                             'username' => $opponentPlayerReport->player->username,
                             'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
@@ -51,7 +52,7 @@
                                 <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
                                 <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->duration) }}</p>
                                 <p class="text-muted mb-0">
-                                    Played: {{ $gameReport->created_at->diffForHumans() }}
+                                    Played: {{ $gameReport->gameReport->updated_at->diffForHumans() }}
                                 </p>
                                 <p class="text-muted mb-0">
                                     FPS: {{ $gameReport->fps }}

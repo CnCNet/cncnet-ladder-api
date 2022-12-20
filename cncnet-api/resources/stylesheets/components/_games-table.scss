@@ -1,0 +1,159 @@
+// Games rows
+.games-table 
+{
+    background: linear-gradient(290deg, #262626, transparent);
+
+    tr
+    {
+        transition: ease 250ms all;
+    }
+    tr:hover 
+    {
+        background: rgb(48 48 48 / 38%);
+    }
+}
+
+.games-table .td-versus
+{
+    background: #00000061;
+
+    .vs 
+    {
+        font-size: 1.2rem;
+        color: #ededed;
+        font-weight: 400;
+        font-style: italic;
+        font-family: $font-impact;
+    }
+}
+
+.games-table .player-container 
+{
+    display: flex;
+    flex-direction: column;
+
+    @media(min-width: $md-width)
+    {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+.games-table .td-player-opponent .player-points 
+{
+
+    @media(min-width: $md-width)
+    {
+        order: -1;
+        padding-left: 1rem;
+    }
+}
+
+.games-table .player-username 
+{
+    width: 120px;
+}
+
+.games-table .player-row 
+{
+    display: flex;
+    align-items: center;
+}
+
+.games-table .player-points 
+{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin-left: 25px; // half of avatar
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+
+    @media(min-width: $md-width)
+    {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+}
+
+.games-table .td-player .player-faction
+{
+    width: 28%;
+
+    @media(min-width: $md-width)
+    {
+        width: 65px;
+        height: 33px;
+    }
+}
+
+.games-table .td-versus
+{   
+    width: 5%;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+
+.games-table .game-link
+{   
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.games-table .td-link 
+{
+    position: relative;
+    padding: 2rem;
+}
+
+.games-table .game-details
+{
+    font-size: 0.9rem;
+    width: 150px;
+}
+
+.games-table .map-preview 
+{
+    width: 150px;
+    height: 100px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+
+// Game states
+.games-table .game-status 
+{
+    width: 85px;
+}
+
+.games-table .game-status.status-lost .points
+{
+    color: $game-lost;
+}
+
+.games-table .game-status.status-lost .status-text
+{
+    color: $game-lost;
+    font-weight: 500;
+}
+
+.games-table .game-status.status-won .status-text
+{
+    color: $primary;
+    font-weight: 500;
+}
+
+.games-table .game-status.status-won .points
+{
+    color: $primary;
+}

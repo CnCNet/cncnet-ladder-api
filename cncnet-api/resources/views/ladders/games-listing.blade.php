@@ -20,6 +20,24 @@
                         <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
                     </p>
                 </div>
+
+                <div class="mini-breadcrumb d-none d-lg-flex">
+                    <div class="mini-breadcrumb-item">
+                        <a href="/" class="">
+                            <span class="material-symbols-outlined">
+                                home
+                            </span>
+                        </a>
+                    </div>
+                    <div class="mini-breadcrumb-item">
+                        <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                            <span class="material-symbols-outlined icon">
+                                military_tech
+                            </span>
+                            {{ $history->ladder->name }}
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -68,10 +86,18 @@
                 </div>
             @endif
 
-            <div class="mt-3">
-                @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
-                @include('components.global-recent-games', ['games' => $games])
-                @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="mb-2 mt-4">
+                        @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+                    </div>
+
+                    @include('ladders.game._games-table', ['games' => $games])
+
+                    <div class="mt-2">
+                        @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
+                    </div>
+                </div>
             </div>
         </div>
     </section>

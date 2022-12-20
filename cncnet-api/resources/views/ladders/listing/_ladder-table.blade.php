@@ -31,7 +31,7 @@
     </div>
 
     @foreach ($players as $k => $playerCache)
-        @include('components/player-row', [
+        @include('ladders.listing._player-row', [
             'username' => $playerCache->player_name,
             'points' => $playerCache->points,
             'rank' => $playerCache->rank(),
