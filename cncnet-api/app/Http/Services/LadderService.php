@@ -471,18 +471,6 @@ class LadderService
         }
     }
 
-    /**
-     * Return user's progress towards achievements, if any.
-     * Resulting set may not include all achievements as there could be achievements the user has not made any progress towards.
-     */
-    public function getAchievementProgress($ladder_id, $user_id)
-    {
-        return \App\AchievementProgress::leftJoin('achievements as a', 'achievements_progress.achievement_id', '=', 'a.id')
-            ->where('user_id', $user_id)
-            ->where('a.ladder_id', $ladder_id)
-            ->orderBy("achievements_progress.updated_at", "DESC")
-            ->get();
-    }
 
     /**
      * Return matches which have spawned in last $createdAfter minutes

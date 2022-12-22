@@ -1,14 +1,10 @@
 @charset "UTF-8";
-.popover-body, .popover-header {
-  font-family: "Roboto", sans-serif;
-}
-
-.player-detail .player-factions-table, .player-detail .stats-wrap .stat-item {
+.player-detail .player-factions-table, .player-detail .stats-wrap .stat-item, .achievement-tile .achievement-description, .popover-body, .popover-header {
   font-family: "Oswald", sans-serif;
   font-weight: 300;
 }
 
-.player-detail .stats-wrap .stat-item .name, .achievement-tile .number, .achievement-tile .achievement-description {
+.player-detail .stats-wrap .stat-item .name, .achievement-tile .number {
   font-family: "Oswald", sans-serif;
   font-weight: 500;
 }
@@ -19275,11 +19271,16 @@ b, strong {
   --bs-alert-border-color: #041a13;
 }
 
+.popover {
+  background: transparent;
+}
+
 .popover-header {
   background: #33353c;
   color: white;
-  font-weight: 500;
   font-size: 1rem;
+  border: none;
+  border-radius: 4px 4px 0 0;
 }
 
 .popover-body {
@@ -19288,7 +19289,7 @@ b, strong {
   font-weight: 300;
   font-size: 0.9rem;
   border: 2px solid #33353c;
-  border-radius: 4px;
+  border-radius: 0 0 4px 4px;
 }
 
 .bs-popover-auto[data-popper-placement^=right] > .popover-arrow::after {
@@ -24108,7 +24109,10 @@ body.loaded .material-symbols-outlined {
   display: flex;
   position: relative;
   border-radius: 6px;
-  padding: 0.8rem;
+  padding: 1rem;
+  transition: 350ms ease all;
+  margin: 0.5rem;
+  width: 350px;
 }
 
 .achievement-tile .achievement-image {
@@ -24116,16 +24120,23 @@ body.loaded .material-symbols-outlined {
   display: flex;
   align-items: center;
   margin-right: 1rem;
+  width: 50px;
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .achievement-tile .achievement-description {
   display: flex;
-  align-items: center;
-  width: 80px;
+  flex-direction: column;
   margin-left: 0;
-  font-size: 0.95em;
-  line-height: 1.1;
+  font-size: 1rem;
+  line-height: 1.25;
   z-index: 3;
+}
+
+.achievement-tile.achievement-unlocked .achievement-description {
+  color: #fff;
 }
 
 .achievement-tile .cameo {
@@ -24149,17 +24160,94 @@ body.loaded .material-symbols-outlined {
   bottom: 0;
   border-radius: 4px;
   z-index: 2;
-  opacity: 0.2;
+  opacity: 0.05;
   background: linear-gradient(160deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 47%, rgba(255, 228, 165, 0) 47%);
 }
 
-.achievement-purple {
-  background: linear-gradient(45deg, #000352, #9a00fa);
-  box-shadow: 2px 2px rgba(110, 0, 255, 0.64);
+.achievement-locked {
+  opacity: 0.7;
 }
-.achievement-purple .achievement-description,
-.achievement-purple .number {
-  color: #e0deff;
+
+.no-cameo .achievement-image {
+  width: 50px;
+  height: 50px;
+}
+
+.achievement-tile .locked {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  color: white;
+  padding-right: 1rem;
+  border: 1px solid #202020;
+  border-radius: 4px;
+}
+
+.achievement-td .achievement-image {
+  background-image: url("../images/achievements/td.png");
+}
+
+.achievement-ra .achievement-image {
+  background-image: url("../images/achievements/ra.png");
+}
+
+.achievement-ts .achievement-image {
+  background-image: url("../images/achievements/ts.png");
+}
+
+.achievement-ra2 .achievement-image {
+  background-image: url("../images/achievements/ra2.png");
+}
+
+.achievement-soviet .achievement-image {
+  background-image: url("../images/achievements/soviet.png");
+}
+
+.achievement-allied .achievement-image {
+  background-image: url("../images/achievements/allied.png");
+}
+
+.achievement-yuri .achievement-image {
+  background-image: url("../images/achievements/yuri.png");
+}
+
+.achievement-unlocked {
+  background-image: linear-gradient(332deg, #53ff85, rgba(0, 181, 250, 0.38));
+  box-shadow: 2px 2px rgba(0, 55, 124, 0.64);
+}
+
+.achievement-unlocked.achievement-soviet {
+  background: linear-gradient(45deg, #540000, rgba(62, 0, 0, 0.38));
+  box-shadow: 2px 2px rgba(56, 0, 0, 0.64);
+}
+.achievement-unlocked.achievement-soviet:hover {
+  background: linear-gradient(45deg, #9f0000, rgba(62, 0, 0, 0.38));
+  box-shadow: 2px 2px rgba(56, 0, 0, 0.64);
+}
+
+.achievement-unlocked.achievement-allied {
+  background: linear-gradient(45deg, #001b4c, rgba(0, 65, 250, 0.3803921569));
+  box-shadow: 2px 2px rgba(0, 10, 56, 0.64);
+}
+.achievement-unlocked.achievement-allied:hover {
+  background: linear-gradient(45deg, #001b4c, #0041fa);
+}
+
+.achievement-unlocked.achievement-yuri {
+  background: linear-gradient(45deg, #36004c, rgba(85, 0, 250, 0.38));
+  box-shadow: 2px 2px rgba(47, 0, 56, 0.64);
+}
+.achievement-unlocked.achievement-yuri:hover {
+  background: linear-gradient(45deg, #6b0097, rgba(124, 70, 231, 0.38));
 }
 
 .achievement-bronze {
@@ -24529,7 +24617,7 @@ body.body-player-detail .page-image-feature {
   color: #b7b7b7;
   margin: auto;
   width: 90%;
-  background: linear-gradient(45deg, #181818, black);
+  background: linear-gradient(45deg, #181818, #0c0c0c);
   margin-top: -50px;
   padding-top: 50px;
 }

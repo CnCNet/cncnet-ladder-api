@@ -14,7 +14,8 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
@@ -166,23 +167,31 @@
                     </div>
                 </div>
 
+                <h5 class="d-flex align-items-center">
+                    <span class="material-symbols-outlined icon pe-2">
+                        stars
+                    </span>
+                    <strong class="pe-1">Recent Achievements</strong>
+                </h5>
+
                 <div class="player-achievements">
-                    <h5>Achievements</h5>
-                </div>
-                <div class="player-achievements">
-                    @foreach ($achievementProgress as $achievement)
-                        @if ($achievement->cameo)
-                            <div class="achievement-tile achievement-purple" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{{ $achievement->achievement_name }}">
-                                <div class="achievement-image">
-                                    <div class="cameo blitz-cameo cameo-tile cameo-{{ $achievement->cameo }}">
-                                    </div>
-                                </div>
-                                <div class="achievement-description">
-                                    {{ $achievement->achievement_description }}
-                                </div>
-                            </div>
-                        @endif
+                    @foreach ($achievements as $achievement)
+                        @include('ladders.components._achievement-tile', [
+                            'cameo' => $achievement->cameo,
+                            'name' => $achievement->achievement_name,
+                            'description' => $achievement->achievement_description,
+                            'unlocked' => true,
+                            'abbreviation' => $history->ladder->abbreviation,
+                            'tag' => $achievement->tag,
+                        ])
                     @endforeach
+                </div>
+
+                <div class="ms-2 mt-2 mb-2">
+                    <a href="{{ \App\URLHelper::getPlayerProfileAchievementsUrl($history, $ladderPlayer->username) }}" title="View all achievements"
+                        class="btn btn-outline btn-size-md">
+                        View All Achievements
+                    </a>
                 </div>
             </section>
         </div>

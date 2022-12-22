@@ -136,13 +136,19 @@ b, strong
     --bs-alert-border-color: #041a13;
 }
 
+.popover
+{
+    background: transparent;
+}
+
 .popover-header
 {
     background: #33353c;
     color: white;
-    font-weight: 500;
     font-size: 1rem;
-    @extend %font-primary;
+    border: none;
+    border-radius: 4px 4px 0 0;
+    @extend %font-secondary;
 }
 
 .popover-body
@@ -152,8 +158,8 @@ b, strong
     font-weight: 300;
     font-size: 0.9rem;
     border: 2px solid #33353c;
-    border-radius: 4px;
-    @extend %font-primary;
+    @extend %font-secondary;
+    border-radius: 0 0 4px 4px;
 }
 
 .bs-popover-auto[data-popper-placement^=right] > .popover-arrow::after
