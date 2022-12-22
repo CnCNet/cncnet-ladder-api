@@ -24221,8 +24221,8 @@ body.loaded .material-symbols-outlined {
 }
 
 .achievement-unlocked {
-  background-image: linear-gradient(332deg, #53ff85, rgba(0, 181, 250, 0.38));
-  box-shadow: 2px 2px rgba(0, 55, 124, 0.64);
+  background-image: linear-gradient(332deg, rgba(255, 165, 0, 0), rgba(0, 255, 138, 0.52));
+  box-shadow: 2px 2px rgba(11, 48, 18, 0.64);
 }
 
 .achievement-unlocked.achievement-soviet {
@@ -24250,14 +24250,26 @@ body.loaded .material-symbols-outlined {
   background: linear-gradient(45deg, #6b0097, rgba(124, 70, 231, 0.38));
 }
 
-.achievement-bronze {
-  border: 1px solid #461503;
-  background: linear-gradient(278deg, #341103, #ab4721);
-  box-shadow: 2px 2px rgba(60, 60, 60, 0.64);
+.achievement-progress {
+  --bs-progress-bg: #2a2a2a;
+  border-radius: 2px;
+  position: relative;
 }
-.achievement-bronze .achievement-description,
-.achievement-bronze .number {
-  color: #ffffff;
+
+.achievement-progress .progress-bar {
+  background-color: #c1c1c1;
+}
+
+.achievement-progress .text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
 }
 
 .ladder-listing .player-profile {

@@ -167,12 +167,23 @@
                     </div>
                 </div>
 
-                <h5 class="d-flex align-items-center">
-                    <span class="material-symbols-outlined icon pe-2">
-                        stars
-                    </span>
-                    <strong class="pe-1">Recent Achievements</strong>
-                </h5>
+                <div class="d-flex align-items-center">
+                    <h5 class="d-flex align-items-center">
+                        <span class="material-symbols-outlined icon pe-2">
+                            stars
+                        </span>
+                        <strong class="pe-1">Recent Achievements</strong>
+                    </h5>
+                </div>
+
+                <div class="ms-1 me-3 d-flex align-items-center mb-2">
+                    <div class="achievement-progress progress" style="width:150px;">
+                        <div class="progress-bar" role="progressbar" aria-label="Default striped example"
+                            aria-valuenow="{{ $achievementsCount['percentage'] }}" aria-valuemin="0" aria-valuemax="100"
+                            style="width: {{ $achievementsCount['percentage'] }}%"></div>
+                    </div>
+                    <small class="ms-1">{{ $achievementsCount['unlockedCount'] }}/{{ $achievementsCount['totalToUnlock'] }} unlocked</small>
+                </div>
 
                 <div class="player-achievements">
                     @foreach ($achievements as $achievement)

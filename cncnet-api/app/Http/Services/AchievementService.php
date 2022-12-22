@@ -22,6 +22,21 @@ class AchievementService
             ->get();
     }
 
+    public function getProgressCountsByUser($history, $user)
+    {
+        $total = Achievement::where("ladder_id", $history->ladder->id)->count();
+        $unlocked = AchievementProgress::leftJoin("achievements as a", "achievements_progress.achievement_id", "=", "a.id")
+            ->where("user_id", "=", $user->id)
+            ->where("a.ladder_id", "=", $history->ladder->id)
+            ->count();
+
+        return [
+            "totalToUnlock" => $total,
+            "unlockedCount" => $unlocked,
+            "percentage" => $unlocked / $total * 100
+        ];
+    }
+
     public function groupedByTag($history, $user)
     {
         $groupedByTags = [];

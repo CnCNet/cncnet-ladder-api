@@ -263,6 +263,7 @@ class LadderController extends Controller
         $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
         $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $userPlayer, 3);
+        $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $userPlayer);
 
         return view(
             "ladders.player-detail",
@@ -285,7 +286,8 @@ class LadderController extends Controller
                 "userPlayer" => $userPlayer,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
                 "playerMatchups" => $playerMatchups,
-                "achievements" => $recentAchievements
+                "achievements" => $recentAchievements,
+                "achievementsCount" => $achievementProgressCounts
             ]
         );
     }
