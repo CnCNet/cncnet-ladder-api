@@ -1,5 +1,6 @@
 <div class="achievement-tile {{ $cameo ? 'no-cameo' : '' }} {{ $unlocked == null ? 'achievement-locked' : 'achievement-unlocked' }} {{ \App\AchievementTag::getAchievementNameByTag($tag) }}"
-    data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-title="{{ $name }}" data-bs-content="{{ $description }}">
+    data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-title="{{ $name }}" data-bs-content="{{ $description }}"
+    data-bs-placement="top">
     <div class="achievement-image">
         @if ($cameo)
             <div class="cameo {{ $abbreviation }}-cameo cameo-tile cameo-{{ $cameo }}">

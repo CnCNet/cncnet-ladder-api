@@ -19272,23 +19272,24 @@ b, strong {
 }
 
 .popover {
-  background: transparent;
+  background: linear-gradient(180deg, #303030, #343434);
 }
 
 .popover-header {
-  background: #33353c;
+  background: transparent;
   color: white;
-  font-size: 1rem;
+  font-size: 1.1rem;
   border: none;
   border-radius: 4px 4px 0 0;
+  padding-bottom: 0;
 }
 
 .popover-body {
-  background: #33353c;
+  background: transparent;
   color: silver;
   font-weight: 300;
-  font-size: 0.9rem;
-  border: 2px solid #33353c;
+  font-size: 1rem;
+  border: 0;
   border-radius: 0 0 4px 4px;
 }
 
@@ -24113,6 +24114,7 @@ body.loaded .material-symbols-outlined {
   transition: 350ms ease all;
   margin: 0.5rem;
   width: 350px;
+  max-width: 100%;
 }
 
 .achievement-tile .achievement-image {
@@ -24120,8 +24122,8 @@ body.loaded .material-symbols-outlined {
   display: flex;
   align-items: center;
   margin-right: 1rem;
-  width: 50px;
-  background-size: 100%;
+  width: 60px;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -24169,8 +24171,8 @@ body.loaded .material-symbols-outlined {
 }
 
 .no-cameo .achievement-image {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 40px;
 }
 
 .achievement-tile .locked {
@@ -24714,10 +24716,6 @@ body.body-player-detail .page-image-feature {
     width: 33%;
   }
 }
-.player-detail .player-achievements {
-  display: flex;
-}
-
 .player-detail .player-profile {
   display: flex;
   flex-direction: column;
@@ -24836,8 +24834,8 @@ body.body-player-detail .page-image-feature {
 }
 
 .player-achievements {
-  display: flex;
-  flex-wrap: wrap;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .player-achievements .achievement-tile {

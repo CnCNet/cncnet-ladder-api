@@ -138,26 +138,27 @@ b, strong
 
 .popover
 {
-    background: transparent;
+    background: linear-gradient(180deg, #303030, #343434);
 }
 
 .popover-header
 {
-    background: #33353c;
+    background: transparent;
     color: white;
-    font-size: 1rem;
+    font-size: 1.1rem;
     border: none;
     border-radius: 4px 4px 0 0;
+    padding-bottom: 0;
     @extend %font-secondary;
 }
 
 .popover-body
 {
-    background: #33353c;
+    background: transparent;
     color: silver;
     font-weight: 300;
-    font-size: 0.9rem;
-    border: 2px solid #33353c;
+    font-size: 1rem;
+    border: 0;
     @extend %font-secondary;
     border-radius: 0 0 4px 4px;
 }

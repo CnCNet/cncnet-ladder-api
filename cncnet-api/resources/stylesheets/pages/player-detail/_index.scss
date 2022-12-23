@@ -121,11 +121,6 @@ body.body-player-detail .page-image-feature
     }
 }
 
-.player-detail .player-achievements 
-{
-    display: flex;
-}
-
 .player-detail .player-profile 
 {
     display: flex;
@@ -272,8 +267,8 @@ body.body-player-detail .page-image-feature
 
 .player-achievements 
 {
-    display: flex;
-    flex-wrap: wrap;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 .player-achievements .achievement-tile
