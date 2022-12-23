@@ -12,6 +12,8 @@ class CreateAchievementTables extends Migration
 	 */
 	public function up()
 	{
+		Schema::dropIfExists('achievements');
+
 		Schema::create('achievements', function (Blueprint $table)
 		{
 			$table->increments('id');
