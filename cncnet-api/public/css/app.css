@@ -24108,6 +24108,7 @@ body.loaded .material-symbols-outlined {
 
 .achievement-tile {
   display: flex;
+  align-items: center;
   position: relative;
   border-radius: 6px;
   padding: 1rem;
@@ -24123,7 +24124,8 @@ body.loaded .material-symbols-outlined {
   align-items: center;
   margin-right: 1rem;
   width: 60px;
-  background-size: contain;
+  height: 60px;
+  background-size: 100%;
   background-position: center;
   background-repeat: no-repeat;
 }
@@ -24166,16 +24168,11 @@ body.loaded .material-symbols-outlined {
   background: linear-gradient(160deg, rgb(255, 255, 255) 0%, rgb(255, 255, 255) 47%, rgba(255, 228, 165, 0) 47%);
 }
 
-.achievement-locked {
+.achievement-tile.achievement-locked {
   opacity: 0.7;
 }
 
-.no-cameo .achievement-image {
-  width: 60px;
-  height: 40px;
-}
-
-.achievement-tile .locked {
+.achievement-tile.achievement-locked .locked {
   display: flex;
   align-items: center;
   justify-content: flex-end;

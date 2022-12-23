@@ -1,6 +1,7 @@
 .achievement-tile
 {
     display: flex;
+    align-items: center;
     position: relative;
     border-radius: 6px;
     padding: 1rem;
@@ -17,7 +18,8 @@
     align-items: center;
     margin-right: 1rem;
     width: 60px;
-    background-size: contain;
+    height: 60px;
+    background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
 }
@@ -67,22 +69,12 @@
     background: linear-gradient(160deg, rgb(255 255 255) 0%, rgb(255 255 255) 47%, #ffe4a500 47%);
 }
 
-.achievement-locked 
+.achievement-tile.achievement-locked 
 {
     opacity: 0.7;
-
-    // And overlay with lock icon
 }
 
-
-// Different achievement types by tag
-.no-cameo .achievement-image
-{
-    width: 60px;
-    height: 40px;
-}
-
-.achievement-tile .locked 
+.achievement-tile.achievement-locked .locked 
 {
     display: flex;
     align-items: center;
