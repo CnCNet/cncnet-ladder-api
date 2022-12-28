@@ -14,12 +14,14 @@ class AchievementService
 
     public function getRecentlyUnlockedAchievements($history, $user, $limit = 5)
     {
-        return AchievementProgress::leftJoin("achievements as a", "achievements_progress.achievement_id", "=", "a.id")
+        $recentlyUnlocked = AchievementProgress::leftJoin("achievements as a", "achievements_progress.achievement_id", "=", "a.id")
             ->where("user_id", "=", $user->id)
             ->where("a.ladder_id", "=", $history->ladder->id)
+            ->where("achievements_progress.achievement_unlocked_date", "!=", null)
             ->orderBy("achievements_progress.achievement_unlocked_date", "=", "DESC")
             ->limit($limit)
             ->get();
+        return $recentlyUnlocked;
     }
 
     public function getProgressCountsByUser($history, $user)
@@ -28,6 +30,7 @@ class AchievementService
         $unlocked = AchievementProgress::leftJoin("achievements as a", "achievements_progress.achievement_id", "=", "a.id")
             ->where("user_id", "=", $user->id)
             ->where("a.ladder_id", "=", $history->ladder->id)
+            ->where("achievements_progress.achievement_unlocked_date", "!=", null)
             ->count();
 
         return [
@@ -55,12 +58,10 @@ class AchievementService
         return $groupedByTags;
     }
 
-    private function groupAchievementsByTag($achievements)
-    {
-    }
-
     private function getAchievementProgress($achievementId, $userId)
     {
-        return AchievementProgress::where("achievement_id", $achievementId)->where("user_id", $userId)->first();
+        return AchievementProgress::where("achievement_id", $achievementId)->where("user_id", $userId)
+            ->where("achievement_unlocked_date", "!=", null)
+            ->first();
     }
 }
