@@ -2,7 +2,7 @@
     <div class="container">
         <div class="btn-group">
             <a href="/" class="btn pe-1 ps-0">
-                <img src="/images/cncnet-logo.png" alt="CnCNet Logo" width="55px" />
+                <img src="/images/cncnet-logo.png" alt="CnCNet Logo" width="63px" />
             </a>
 
             <button type="button" class="btn dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
@@ -24,7 +24,8 @@
             </ul>
         </div>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-controls="mobileNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileNav" aria-controls="mobileNav"
+            aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 

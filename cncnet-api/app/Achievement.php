@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Helpers\GameHelper;
 use Illuminate\Database\Eloquent\Model;
 
 class Achievement extends Model
@@ -13,5 +14,12 @@ class Achievement extends Model
     public function ladder()
     {
         return $this->belongsTo('App\Ladder');
+    }
+
+    public static function getFactionTypeFromTag($tag)
+    {
+        switch ($tag)
+        {
+        }
     }
 }

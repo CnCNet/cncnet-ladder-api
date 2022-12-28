@@ -3,28 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\CountableObjectHeap;
+use App\Http\Services\AchievementService;
 use App\Http\Services\ChartService;
 use \Carbon\Carbon;
 use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;
+use App\Player;
 use App\User;
-use Exception;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Cache;
 
 class LadderController extends Controller
 {
     private $ladderService;
     private $statsService;
     private $chartService;
+    private $achievementService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
         $this->statsService = new StatsService();
         $this->chartService = new ChartService();
+        $this->achievementService = new AchievementService();
     }
 
     public function getLadders(Request $request)
@@ -214,17 +215,22 @@ class LadderController extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
 
-        $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
-            ->where("username", "=", $username)->first();
+        $player = Player::where("ladder_id", "=", $history->ladder->id)
+            ->where("username", "=", $username)
+            ->first();
 
         if ($player == null)
-            return "No Player";
+        {
+            abort(404, "No player found");
+        }
 
         $user = $request->user();
 
         $userIsMod = false;
         if ($user !== null && $user->isLadderMod($player->ladder))
+        {
             $userIsMod = true;
+        }
 
         $games = $player->playerGames()
             ->where("ladder_history_id", "=", $history->id)
@@ -240,7 +246,9 @@ class LadderController extends Controller
             $alerts = $player->alerts;
             $ban = $playerUser->getBan();
             if ($ban)
+            {
                 $bans[] = $ban;
+            }
         }
         $mod = $request->user();
 
@@ -252,18 +260,14 @@ class LadderController extends Controller
         $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
         $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
-
-        # Awards
-        $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
-
-        # Achievements (Views still todo)
-        #$achievementProgress = $this->ladderService->getAchievementProgress($history->ladder_id, $player->user->id);
-
         $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
+        $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
+        $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $userPlayer, 3);
+        $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $userPlayer);
 
         return view(
             "ladders.player-detail",
-            array(
+            [
                 "mod" => $mod,
                 "history" => $history,
                 "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
@@ -281,10 +285,38 @@ class LadderController extends Controller
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $userPlayer,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "playerMatchups" => $playerMatchups
-                #"achievementProgress" => $achievementProgress,
-                #"achievements" => $history->ladder->achievements
-            )
+                "playerMatchups" => $playerMatchups,
+                "achievements" => $recentAchievements,
+                "achievementsCount" => $achievementProgressCounts
+            ]
+        );
+    }
+
+    public function getPlayerAchievementsPage(Request $request, $date = null, $cncnetGame = null, $username = null)
+    {
+        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+
+        $player = Player::where("ladder_id", "=", $history->ladder->id)
+            ->where("username", "=", $username)
+            ->first();
+
+        if ($player == null)
+        {
+            abort(404, "No player found");
+        }
+
+        $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
+        $userPlayer = User::where("id", $player->user_id)->first();
+        $achievements = $this->achievementService->groupedByTag($history, $userPlayer);
+
+        return view(
+            "ladders.player-detail-achievements",
+            [
+                "userPlayer" => $userPlayer,
+                "history" => $history,
+                "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
+                "achievements" => $achievements
+            ]
         );
     }
 

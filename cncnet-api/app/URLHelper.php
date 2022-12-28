@@ -15,6 +15,11 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/player/" . $playerUsername;
     }
 
+    public static function getPlayerProfileAchievementsUrl($history, $playerUsername)
+    {
+        return URLHelper::getPlayerProfileUrl($history, $playerUsername) . "/achievements";
+    }
+
     /**
      * Returns player profile url
      * @param mixed $history 

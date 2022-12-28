@@ -102,7 +102,9 @@ class ApiLadderController extends Controller
 
         //achievements
         $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
-        $this->updateAchievements($playerId, $ladderId, $stats);
+
+        if ($ladderId == 8 && $player->user->isLadderMod($ladder)) //toggle achievements on for Blitz ladder only, TODO remove
+            $this->updateAchievements($playerId, $history->ladder, $stats);
 
         return response()->json(['success' => $status], 200);
     }
@@ -547,7 +549,7 @@ class ApiLadderController extends Controller
         return $map_vetos;
     }
 
-    private function updateAchievements($playerId, $ladderId, $stats)
+    private function updateAchievements($playerId, $ladder, $stats)
     {
         if ($stats === null)
             return;
@@ -556,19 +558,10 @@ class ApiLadderController extends Controller
 
         //fetch achievements that have not been unlocked for this ladder
         $lockedAchievements = \App\Achievement::leftJoin('achievements_progress as ap', 'ap.achievement_id', '=', 'achievements.id')
-            ->where('ladder_id', $ladderId)
+            ->where('ladder_id', $ladder->id)
             ->whereNull('achievement_unlocked_date')
             ->select("achievements.*")
             ->get();
-
-        //play qm games achievement
-        $lockedAchievement = $lockedAchievements->filter(function ($value)
-        {
-            return $value->tag === 'Win QM Games';
-        })->sortBy('unlock_count')->first();
-
-        if ($lockedAchievement !== null)
-            $this->achievementCheck($user, $lockedAchievement, 1);
 
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
@@ -621,11 +614,11 @@ class ApiLadderController extends Controller
         $won = $pgr->wonOrDisco();
 
         //update player won achievement
-        if ($won == 1)
+        if ($won)
         {
-            $lockedAchievement = $lockedAchievements->filter(function ($value)
+            $lockedAchievement = $lockedAchievements->filter(function ($value) use (&$ladder)
             {
-                return $value->tag === 'Win QM Games';
+                return $value->tag === 'Win ' . $ladder->abbreviation . ' QM Games';
             })->sortBy('unlock_count')->first();
 
             if ($lockedAchievement !== null)

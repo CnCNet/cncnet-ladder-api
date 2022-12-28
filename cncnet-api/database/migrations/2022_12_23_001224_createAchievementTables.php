@@ -12,6 +12,9 @@ class CreateAchievementTables extends Migration
 	 */
 	public function up()
 	{
+		Schema::dropIfExists('achievements_progress');
+		Schema::dropIfExists('achievements');
+
 		Schema::create('achievements', function (Blueprint $table)
 		{
 			$table->increments('id');
@@ -83,6 +86,13 @@ class CreateAchievementTables extends Migration
 				$arr = ['Soviet', 'Allied', 'Yuri'];
 				foreach ($arr as $faction)
 				{
+
+					if ($faction == 'Yuri' && $ladderId == 8)
+						continue;
+
+					if ($faction == 'Yuri' && $ladderId == 5)
+						continue;
+
 					$map = [
 						10 => $faction . ' Noob',
 						25 => $faction . ' Recruit',
@@ -1329,30 +1339,33 @@ class CreateAchievementTables extends Migration
 			}
 		}
 
-		//Build Harriers achievements
-		$map = [
-			5 => 'Noob',
-			20 => 'Recruit',
-			45 => 'Captain',
-			80 => 'Veteran',
-			150 => 'Master',
-			300 => 'Legend',
-			500 => 'Elite'
-		];
-		foreach ($map as $key => $val)
+		if ($ladderId !== 8) //don't create this achievement for blitz ladder, blitz doesn't have harriers
 		{
-			$a = new \App\Achievement();
-			$a->ladder_id = $ladderId;
-			$a->order = $order++;
-			$a->tag = 'Build Harriers';
-			$a->achievement_type = $type;
-			$a->achievement_name = 'Harriers ' . $val;
-			$a->achievement_description = 'Build ' . $key . ' Harriers';
-			$a->heap_name = 'UNB';
-			$a->object_name = 'ORCA';
-			$a->cameo = 'orcaicon';
-			$a->unlock_count = $key;
-			$a->save();
+			//Build Harriers achievements
+			$map = [
+				5 => 'Noob',
+				20 => 'Recruit',
+				45 => 'Captain',
+				80 => 'Veteran',
+				150 => 'Master',
+				300 => 'Legend',
+				500 => 'Elite'
+			];
+			foreach ($map as $key => $val)
+			{
+				$a = new \App\Achievement();
+				$a->ladder_id = $ladderId;
+				$a->order = $order++;
+				$a->tag = 'Build Harriers';
+				$a->achievement_type = $type;
+				$a->achievement_name = 'Harriers ' . $val;
+				$a->achievement_description = 'Build ' . $key . ' Harriers';
+				$a->heap_name = 'UNB';
+				$a->object_name = 'ORCA';
+				$a->cameo = 'orcaicon';
+				$a->unlock_count = $key;
+				$a->save();
+			}
 		}
 
 		//Build Black Eagles achievements
