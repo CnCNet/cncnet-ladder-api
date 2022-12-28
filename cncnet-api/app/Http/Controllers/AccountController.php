@@ -320,7 +320,7 @@ class AccountController extends Controller
     public function updateUserSettings(Request $request)
     {
         $this->validate($request, [
-            "avatar" => "image|mimes:jpg,jpeg,png,gif|max:1000",
+            "avatar" => "image|mimes:jpg,jpeg,png,gif|max:2000",
             "discord_profile" => "string",
             "youtube_profile" => "string",
             "twitch_profile" => "string"
