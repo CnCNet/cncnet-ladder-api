@@ -320,7 +320,7 @@ class AccountController extends Controller
     public function updateUserSettings(Request $request)
     {
         $this->validate($request, [
-            "avatar" => "image|mimes:jpg,jpeg,png|max:1000",
+            "avatar" => "image|mimes:jpg,jpeg,png,gif|max:1000",
             "discord_profile" => "string",
             "youtube_profile" => "string",
             "twitch_profile" => "string"
@@ -369,10 +369,20 @@ class AccountController extends Controller
         # User Avatar
         if ($request->hasFile("avatar"))
         {
-            $avatar = Image::make($request->file('avatar')->getRealPath())->resize(300, 300)->encode("png");
-            $hash = md5($avatar->__toString());
-            $path = "avatars/{$user->id}/{$hash}.png";
-            Storage::put($path, $avatar);
+            $file = $request->file("avatar");
+            if ($file->getClientOriginalExtension() == "gif")
+            {
+                $hash = md5($file->__toString());
+                $path = "avatars/{$user->id}/{$hash}.gif";
+                copy($file->getRealPath(), $path);
+            }
+            else
+            {
+                $avatar = Image::make($request->file('avatar')->getRealPath())->resize(300, 300)->encode("png");
+                $hash = md5($avatar->__toString());
+                $path = "avatars/{$user->id}/{$hash}.png";
+                Storage::put($path, $avatar);
+            }
 
             $user->avatar_path = $path;
         }
