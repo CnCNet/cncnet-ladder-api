@@ -168,52 +168,51 @@
                 </div>
 
                 <!-- Toggle achievements on for Blitz ladder only, TODO remove -->
-                @if($history->ladder->id == 8)
-                <div class="player-achievements">
-                    <div class="d-flex align-items-center">
-                        <h5 class="d-flex align-items-center">
-                            <span class="material-symbols-outlined icon pe-2">
-                                stars
-                            </span>
-                            <strong class="pe-1">Recent Achievements</strong>
-                        </h5>
-                    </div>
-
-                    <div class="ms-1 me-3 d-flex align-items-center mb-2">
-                        <div class="achievement-progress progress" style="width:150px;">
-                            <div class="progress-bar" role="progressbar" aria-label="Default striped example"
-                                aria-valuenow="{{ $achievementsCount['percentage'] }}" aria-valuemin="0" aria-valuemax="100"
-                                style="width: {{ $achievementsCount['percentage'] }}%">
-                            </div>
+                @if ($history->ladder->id == 8)
+                    <div class="player-achievements">
+                        <div class="d-flex align-items-center">
+                            <h5 class="d-flex align-items-center">
+                                <span class="material-symbols-outlined icon pe-2">
+                                    stars
+                                </span>
+                                <strong class="pe-1">Recent Achievements</strong>
+                            </h5>
                         </div>
-                        <small class="ms-1">{{ $achievementsCount['unlockedCount'] }}/{{ $achievementsCount['totalToUnlock'] }} unlocked</small>
-                    </div>
 
-                    <div class="d-flex flex-wrap">
-                        @foreach ($achievements as $achievement)
-                            @include('ladders.components._achievement-tile', [
-                                'cameo' => $achievement->cameo,
-                                'name' => $achievement->achievement_name,
-                                'description' => $achievement->achievement_description,
-                                'unlocked' => true,
-                                'abbreviation' => $history->ladder->abbreviation,
-                                'tag' => $achievement->tag,
-                            ])
-                        @endforeach
-                    </div>
+                        <div class="ms-1 me-3 d-flex align-items-center mb-2">
+                            <div class="achievement-progress progress" style="width:150px;">
+                                <div class="progress-bar" role="progressbar" aria-label="Default striped example"
+                                    aria-valuenow="{{ $achievementsCount['percentage'] }}" aria-valuemin="0" aria-valuemax="100"
+                                    style="width: {{ $achievementsCount['percentage'] }}%">
+                                </div>
+                            </div>
+                            <small class="ms-1">{{ $achievementsCount['unlockedCount'] }}/{{ $achievementsCount['totalToUnlock'] }} unlocked</small>
+                        </div>
 
-                    <div class="ms-2 mt-2 mb-2">
-                        <a href="{{ \App\URLHelper::getPlayerProfileAchievementsUrl($history, $ladderPlayer->username) }}" title="View all achievements"
-                            class="btn btn-outline btn-size-md">
-                            View All Achievements
-                        </a>
+                        <div class="d-flex flex-wrap">
+                            @foreach ($achievements as $achievement)
+                                @include('ladders.components._achievement-tile', [
+                                    'cameo' => $achievement->cameo,
+                                    'name' => $achievement->achievement_name,
+                                    'description' => $achievement->achievement_description,
+                                    'unlocked' => true,
+                                    'abbreviation' => $history->ladder->abbreviation,
+                                    'tag' => $achievement->tag,
+                                ])
+                            @endforeach
+                        </div>
+
+                        <div class="ms-2 mt-2 mb-2">
+                            <a href="{{ \App\URLHelper::getPlayerProfileAchievementsUrl($history, $ladderPlayer->username) }}"
+                                title="View all achievements" class="btn btn-outline btn-size-md">
+                                View All Achievements
+                            </a>
+                        </div>
                     </div>
-                </div>
                 @endif
+                @include('ladders.player._player-admin-tools')
             </section>
         </div>
-
-        @include('ladders.player._player-admin-tools')
 
         <section>
             <section class="mt-5">

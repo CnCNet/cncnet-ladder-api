@@ -3,12 +3,14 @@
         <div class="d-flex">
             @if ($userIsMod)
                 <div>
-                    <a href="/admin/moderate/{{ $ladderId }}/player/{{ $ladderPlayer->id }}" class="btn btn-sm btn-outline me-2">Moderation Actions</a>
+                    <a href="/admin/moderate/{{ $ladderId }}/player/{{ $ladderPlayer->id }}" class="btn btn-secondary btn-size-md me-3">Moderation
+                        Actions</a>
                 </div>
             @endif
 
             @if (isset($mod) && $mod->isLadderAdmin($player['ladder']))
-                <button type="button" class="btn btn-sm btn-outline" data-bs-toggle="modal" data-bs-target="#submitLaundryService">Laundry Service</button>
+                <button type="button" class="btn btn-secondary btn-size-md" data-bs-toggle="modal" data-bs-target="#submitLaundryService">Laundry
+                    Service</button>
 
                 <div class="modal fade" id="submitLaundryService" tabIndex="-1" role="dialog">
                     <div class="modal-dialog">
@@ -34,7 +36,8 @@
 
                                 @if ($player->laundered($history))
                                     <div style="padding-top: 5px; display: inline-block" class="mt-2">
-                                        <form method="POST" action="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/undoLaundry">
+                                        <form method="POST"
+                                            action="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/undoLaundry">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input name="player_id" type="hidden" value="{{ $player->id }}" />
                                             <input name="ladderHistory_id" type="hidden" value="{{ $history->id }}" />
