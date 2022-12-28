@@ -142,6 +142,7 @@
                                     @php
                                         $a = $achievementArr['achievement'];
                                         $unlocked = $achievementArr['unlocked'];
+                                        $unlockedProgress = $achievementArr['unlockedProgress'];
                                     @endphp
 
                                     @include('ladders.components._achievement-tile', [
@@ -149,6 +150,8 @@
                                         'name' => $a->achievement_name,
                                         'description' => $a->achievement_description,
                                         'unlocked' => $unlocked,
+                                        'unlockedDate' => isset($unlocked) ? $unlocked->achievement_unlocked_date : null,
+                                        'unlockedProgress' => $unlockedProgress,
                                         'abbreviation' => $history->ladder->abbreviation,
                                         'tag' => $tag,
                                     ])

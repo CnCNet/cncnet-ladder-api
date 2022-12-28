@@ -196,6 +196,7 @@
                                     'name' => $achievement->achievement_name,
                                     'description' => $achievement->achievement_description,
                                     'unlocked' => true,
+                                    'unlockedDate' => $achievement->achievement_unlocked_date,
                                     'abbreviation' => $history->ladder->abbreviation,
                                     'tag' => $achievement->tag,
                                 ])
