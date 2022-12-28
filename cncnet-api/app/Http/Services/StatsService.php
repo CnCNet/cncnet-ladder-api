@@ -131,6 +131,7 @@ class StatsService
 
     private function getFactionResultsForYR($player, $history, $from, $to)
     {
+        $factionResults = [];
         $playerGames = $player->playerGames()
             ->where("ladder_history_id", $history->id)
             ->whereBetween("player_game_reports.created_at", [$from, $to])
