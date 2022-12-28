@@ -12,7 +12,40 @@ class AchievementMissingCameo extends Migration
      */
     public function up()
     {
-        //
+        $a = \App\Achievement::where('cameo', 'shkticon')->get();
+        $a->map(function ($ach) {
+            $ach->cameo = 'shkicon';
+            $ach->save();
+            return $ach;
+        });
+
+        $a = \App\Achievement::where('cameo', 'terroricon')->get();
+        $a->map(function ($ach) {
+            $ach->cameo = 'trsticon';
+            $ach->save();
+            return $ach;
+        });
+
+        $a = \App\Achievement::where('cameo', 'e1icon')->get();
+        $a->map(function ($ach) {
+            $ach->cameo = 'giicon';
+            $ach->save();
+            return $ach;
+        });
+
+        $a = \App\Achievement::where('cameo', 'gosticon')->get();
+        $a->map(function ($ach) {
+            $ach->cameo = 'sealicon';
+            $ach->save();
+            return $ach;
+        });
+
+        $a = \App\Achievement::where('cameo', 'orcaicon')->get();
+        $a->map(function ($ach) {
+            $ach->cameo = 'falcicon';
+            $ach->save();
+            return $ach;
+        });
     }
 
     /**
