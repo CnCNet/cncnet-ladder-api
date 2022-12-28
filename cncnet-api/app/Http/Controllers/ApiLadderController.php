@@ -724,6 +724,9 @@ class ApiLadderController extends Controller
      */
     private function achievementCheck($user, $lockedAchievement, $count)
     {
+        if ($lockedAchievement == null)
+            return;
+            
         $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
             ->where('user_id', $user->id)
             ->first();
