@@ -290,7 +290,7 @@ class CreateAchievementTables extends Migration
 			$a->achievement_description = 'Build ' . $key . ' Tesla Troopers';
 			$a->heap_name = 'UNB';
 			$a->object_name = 'SHK';
-			$a->cameo = 'shkticon';
+			$a->cameo = 'shkicon';
 			$a->unlock_count = $key;
 			$a->save();
 		}
@@ -368,7 +368,7 @@ class CreateAchievementTables extends Migration
 			$a->achievement_description = 'Build ' . $key . ' Terrorists';
 			$a->heap_name = 'UNB';
 			$a->object_name = 'TERROR';
-			$a->cameo = 'terroricon';
+			$a->cameo = 'trsticon';
 			$a->unlock_count = $key;
 			$a->save();
 		}
@@ -987,7 +987,7 @@ class CreateAchievementTables extends Migration
 			$a->achievement_description = 'Build ' . $key . ' GIs';
 			$a->heap_name = 'UNB';
 			$a->object_name = 'E1';
-			$a->cameo = 'e1icon';
+			$a->cameo = 'giicon';
 			$a->unlock_count = $key;
 			$a->save();
 		}
@@ -1096,7 +1096,7 @@ class CreateAchievementTables extends Migration
 				$a->achievement_description = 'Build ' . $key . ' Navy Seals';
 				$a->heap_name = 'UNB';
 				$a->object_name = 'GHOST';
-				$a->cameo = 'gosticon';
+				$a->cameo = 'sealicon';
 				$a->unlock_count = $key;
 				$a->save();
 			}
@@ -1362,7 +1362,7 @@ class CreateAchievementTables extends Migration
 				$a->achievement_description = 'Build ' . $key . ' Harriers';
 				$a->heap_name = 'UNB';
 				$a->object_name = 'ORCA';
-				$a->cameo = 'orcaicon';
+				$a->cameo = 'falcicon';
 				$a->unlock_count = $key;
 				$a->save();
 			}
@@ -1697,27 +1697,29 @@ class CreateAchievementTables extends Migration
 				$a->save();
 			}
 		}
-
-		//Build Harriers achievements
-		$map = [
-			5 => 'Noob',
-			12 => 'Veteran',
-			24 => 'Elite'
-		];
-		foreach ($map as $key => $val)
+		if ($ladderId !== 8)
 		{
-			$a = new \App\Achievement();
-			$a->ladder_id = $ladderId;
-			$a->order = $order++;
-			$a->tag = 'Build Harriers';
-			$a->achievement_type = $type;
-			$a->achievement_name = 'Harriers ' . $val;
-			$a->achievement_description = 'Build ' . $key . ' Harriers in one game';
-			$a->heap_name = 'UNB';
-			$a->object_name = 'ORCA';
-			$a->cameo = 'orcaicon';
-			$a->unlock_count = $key;
-			$a->save();
+			//Build Harriers achievements
+			$map = [
+				5 => 'Noob',
+				12 => 'Veteran',
+				24 => 'Elite'
+			];
+			foreach ($map as $key => $val)
+			{
+				$a = new \App\Achievement();
+				$a->ladder_id = $ladderId;
+				$a->order = $order++;
+				$a->tag = 'Build Harriers';
+				$a->achievement_type = $type;
+				$a->achievement_name = 'Harriers ' . $val;
+				$a->achievement_description = 'Build ' . $key . ' Harriers in one game';
+				$a->heap_name = 'UNB';
+				$a->object_name = 'ORCA';
+				$a->cameo = 'orcaicon';
+				$a->unlock_count = $key;
+				$a->save();
+			}
 		}
 
 		//Build Black Eagles achievements
