@@ -11,6 +11,12 @@
     <div class="achievement-description">
         <div><strong>{{ $name }}</strong></div>
         <div>{{ $description }}</div>
+        @if ($unlockedDate)
+            @php
+                $date = new \Carbon\Carbon($unlockedDate);
+            @endphp
+            <div>Unlocked {{ $date->diffForHumans() }} </div>
+        @endif
     </div>
 
     @if ($unlocked == null)

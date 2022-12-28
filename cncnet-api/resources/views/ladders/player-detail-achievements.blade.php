@@ -149,6 +149,7 @@
                                         'name' => $a->achievement_name,
                                         'description' => $a->achievement_description,
                                         'unlocked' => $unlocked,
+                                        'unlockedDate' => isset($unlocked) ? $unlocked->achievement_unlocked_date : null,
                                         'abbreviation' => $history->ladder->abbreviation,
                                         'tag' => $tag,
                                     ])
