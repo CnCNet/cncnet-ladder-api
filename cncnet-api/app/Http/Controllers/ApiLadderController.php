@@ -664,7 +664,58 @@ class ApiLadderController extends Controller
                     $this->achievementCheck($user, $lockedAchievement, 1);
                 }
             }
+
+            //win 'x' amount of QMs in one month
+            $lockedAchievement = $lockedAchievements->filter(function ($value)
+            {
+                return $value->tag === 'Win QM Games in One Month';
+            })->sortBy('unlock_count')->first();
+
+            $this->monthlyAchievement($user, $lockedAchievement, 1);
         }
+
+        //play 'x' amount of QMs in one month
+        $lockedAchievement = $lockedAchievements->filter(function ($value)
+        {
+            return $value->tag === 'Play Games in one Month';
+        })->sortBy('unlock_count')->first();
+
+        $this->monthlyAchievement($user, $lockedAchievement, 1);
+    }
+
+    private function monthlyAchievement($user, $lockedAchievement, $count)
+    {
+        if ($lockedAchievement == null)
+            return;
+
+        $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($lockedAchievementProgress == null)
+        {
+            $lockedAchievementProgress = new \App\AchievementProgress();
+            $lockedAchievementProgress->achievement_id = $lockedAchievement->id;
+            $lockedAchievementProgress->user_id = $user->id;
+            $lockedAchievementProgress->save();
+        }
+
+        $currentMonth = Carbon::now()->month; //get the month this game was played in
+
+        $lastUpdateMonth = $lockedAchievementProgress->updated_at->month; //get the month that the most recent game was played in
+
+        if ($lastUpdateMonth != $currentMonth) //current game was played in a different month, set count to 0
+            $lockedAchievementProgress->count = 0;
+
+
+        $lockedAchievementProgress->count += $count;
+
+        if ($lockedAchievementProgress->count >= $lockedAchievement->unlock_count)
+        {
+            $lockedAchievementProgress->count = $lockedAchievement->unlock_count; //since user has hit or exceeded the required unlock count, set their count to the unlock count
+            $lockedAchievementProgress->achievement_unlocked_date = Carbon::now();
+        }
+        $lockedAchievementProgress->save();
     }
 
     /**
