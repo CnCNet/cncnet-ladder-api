@@ -12,10 +12,10 @@ class LadderRulesPtFilterThreshold extends Migration
      */
     public function up()
     {
-        Schema::table('qm_ladder_rules', function(Blueprint $table)
-		{
+        Schema::table('qm_ladder_rules', function (Blueprint $table)
+        {
             $table->integer('point_filter_rank_threshold')->default(50); //QM player must be at least this rank for 'disable pt filter' to be applied
-		});
+        });
     }
 
     /**
