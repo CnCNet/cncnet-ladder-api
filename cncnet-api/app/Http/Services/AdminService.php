@@ -53,6 +53,7 @@ class AdminService
         $ladderRule->all_sides = $request->all_sides;
         $ladderRule->allowed_sides = implode(",", $request->allowed_sides);
         $ladderRule->reduce_map_repeats = $request->reduce_map_repeats;
+        $ladderRule->point_filter_rank_threshold = $request->point_filter_rank_threshold;
         $ladderRule->ladder_rules_message = $request->ladder_rules_message;
         $ladderRule->ladder_discord = $request->ladder_discord;
         $ladderRule->save();

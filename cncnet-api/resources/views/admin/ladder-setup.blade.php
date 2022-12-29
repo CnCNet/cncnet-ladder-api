@@ -376,6 +376,12 @@
                                                 </div>
 
                                                 <div class="form-group">
+                                                    <label for="{{ $rule->ladder_id }}_point_filter_rank_threshold">Min Rank for Pt Filter</label>
+                                                    <input id="{{ $rule->ladder_id }}_point_filter_rank_threshold" min="0" type="number" name="point_filter_rank_threshold" class="form-control"
+                                                        value="{{ $rule->point_filter_rank_threshold }}" />
+                                                </div>
+
+                                                <div class="form-group">
                                                     <?php $sideIdsAllowed = explode(',', $rule->allowed_sides); ?>
                                                     <label>Allowed Sides</label>
                                                     <div class="overflow-auto" style="height: 250px; overflow: auto; background: black;">
