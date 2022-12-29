@@ -35,8 +35,8 @@ class MapPoolController extends Controller
 
         $qmMap->map_pool_id = $request->map_pool_id;
         $qmMap->map_id = $request->map_id;
-        $qmMap->description = $request->description;
-        $qmMap->admin_description = $request->admin_description;
+        $qmMap->description = trim($request->description);
+        $qmMap->admin_description = trim($request->admin_description);
         $qmMap->bit_idx = $request->bit_idx;
         $qmMap->valid = $request->valid;
         $qmMap->rejectable = $request->rejectable == "on" ? true : false;
@@ -45,6 +45,13 @@ class MapPoolController extends Controller
         $qmMap->spawn_order = $request->spawn_order;
         $qmMap->team1_spawn_order = $request->team1_spawn_order;
         $qmMap->team2_spawn_order = $request->team2_spawn_order;
+
+        if (empty($qmMap->description) || empty($qmMap->admin_description))
+        {
+            $request->session()->flash('error', "Empty name provided");
+            return redirect()->back(); 
+        }
+
         $qmMap->save();
 
         $request->session()->flash('success', $message);
@@ -76,7 +83,14 @@ class MapPoolController extends Controller
 
         $map->ladder_id = $request->ladder_id;
         $map->hash = $request->hash;
-        $map->name = $request->name;
+        $map->name = trim($request->name);
+
+        if (empty($map->name))
+        {
+            $request->session()->flash('error', "Empty map name provided");
+            return redirect()->back(); 
+        }
+
         $map->save();
         $request->session()->flash('success', "Map Saved");
 
@@ -125,7 +139,14 @@ class MapPoolController extends Controller
     public function cloneMapPool(Request $request, $ladderId)
     {
         $mapPool = new MapPool;
-        $mapPool->name = $request->name;
+        $mapPool->name = trim($request->name);
+
+        if (empty($mapPool->name))
+        {
+            $request->session()->flash('error', "Empty map pool name provided");
+            return redirect()->back(); 
+        }
+
         $mapPool->ladder_id = $ladderId;
         $mapPool->save();
 
