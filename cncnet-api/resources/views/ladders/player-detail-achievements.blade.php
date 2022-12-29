@@ -87,7 +87,7 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="">
+                    <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $ladderPlayer->username) }}">
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
@@ -110,57 +110,53 @@
 @section('content')
     <div class="player-detail">
         <div class="container">
-            <section class="player-header">
-                <div class="player-profile">
-                    <div class="player-avatar me-5">
-                        @include('components.avatar', ['avatar' => $userPlayer->getUserAvatar(), 'size' => 150])
-                    </div>
-                    <div class="player-rank pt-3 me-5">
-                        <h1 class="username">{{ $ladderPlayer->username }}</h1>
-                        <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $ladderPlayer->rank }}</h3>
-                    </div>
-                    <div class="player-social pt-4 me-5">
-                        @if ($userPlayer->getTwitchProfile())
-                            <a href="{{ $userPlayer->getTwitchProfile() }}">
-                                <i class="bi bi-twitch"></i>
-                            </a>
-                        @endif
-                        @if ($userPlayer->getYouTubeProfile())
-                            <a href="{{ $userPlayer->getYouTubeProfile() }}">
-                                <i class="bi bi-youtube"></i>
-                            </a>
-                        @endif
-                    </div>
+            <div class="player-profile">
+                <div class="player-avatar me-5">
+                    @include('components.avatar', ['avatar' => $userPlayer->getUserAvatar(), 'size' => 150])
                 </div>
+                <div class="player-rank pt-3 me-5">
+                    <h1 class="username">{{ $ladderPlayer->username }}</h1>
+                    <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $ladderPlayer->rank }}</h3>
+                </div>
+                <div class="player-social pt-4 me-5">
+                    @if ($userPlayer->getTwitchProfile())
+                        <a href="{{ $userPlayer->getTwitchProfile() }}">
+                            <i class="bi bi-twitch"></i>
+                        </a>
+                    @endif
+                    @if ($userPlayer->getYouTubeProfile())
+                        <a href="{{ $userPlayer->getYouTubeProfile() }}">
+                            <i class="bi bi-youtube"></i>
+                        </a>
+                    @endif
+                </div>
+            </div>
 
-                @foreach ($achievements as $tag => $achievement)
-                    <div style="display:flex; flex-wrap:wrap;">
-                        <h5 class="stat-title mt-5 mb-3">{{ $tag }}</h5>
-                        <div style="display: flex; flex-wrap:wrap">
-                            @foreach ($achievement as $achievementArr)
-                                <div class="flex">
-                                    @php
-                                        $a = $achievementArr['achievement'];
-                                        $unlocked = $achievementArr['unlocked'];
-                                        $unlockedProgress = $achievementArr['unlockedProgress'];
-                                    @endphp
+            @foreach ($achievements as $tag => $achievement)
+                <h5 class="stat-title mt-5 mb-3">{{ $tag }}</h5>
+                <div class="achievement-container">
+                    @foreach ($achievement as $achievementArr)
+                        <div class="achievement-row">
+                            @php
+                                $a = $achievementArr['achievement'];
+                                $unlocked = $achievementArr['unlocked'];
+                                $unlockedProgress = $achievementArr['unlockedProgress'];
+                            @endphp
 
-                                    @include('ladders.components._achievement-tile', [
-                                        'cameo' => $a->cameo,
-                                        'name' => $a->achievement_name,
-                                        'description' => $a->achievement_description,
-                                        'unlocked' => $unlocked,
-                                        'unlockedDate' => isset($unlocked) ? $unlocked->achievement_unlocked_date : null,
-                                        'unlockedProgress' => $unlockedProgress,
-                                        'abbreviation' => $history->ladder->abbreviation,
-                                        'tag' => $tag,
-                                    ])
-                                </div>
-                            @endforeach
+                            @include('ladders.components._achievement-tile', [
+                                'cameo' => $a->cameo,
+                                'name' => $a->achievement_name,
+                                'description' => $a->achievement_description,
+                                'unlocked' => $unlocked,
+                                'unlockedDate' => isset($unlocked) ? $unlocked->achievement_unlocked_date : null,
+                                'unlockedProgress' => $unlockedProgress,
+                                'abbreviation' => $history->ladder->abbreviation,
+                                'tag' => $tag,
+                            ])
                         </div>
-                    </div>
-                @endforeach
-            </section>
+                    @endforeach
+                </div>
+            @endforeach
         </div>
     </div>
 @endsection

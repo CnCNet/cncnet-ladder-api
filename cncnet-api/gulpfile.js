@@ -6,7 +6,7 @@ function compileSassFiles(done)
     src("./resources/stylesheets/*.scss")
 
         // Apply sass on the files found
-        .pipe(sass())
+        .pipe(sass({ outputStyle: "compressed" }))
 
         // Log errors from the sass
         .on("error", sass.logError)

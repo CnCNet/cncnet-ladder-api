@@ -23,7 +23,6 @@
     color: white;
 }
 
-
 .achievement-tile
 {
     display: flex;
@@ -218,4 +217,17 @@
     {
         background: linear-gradient(45deg, #6b0097, rgb(124 70 231 / 38%));
     }
+}
+
+.achievement-container 
+{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.achievement-row
+{
+    width: 350px;
+    max-width: 100%;
+    display: flex;
 }
