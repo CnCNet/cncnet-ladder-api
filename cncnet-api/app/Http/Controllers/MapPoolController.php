@@ -130,16 +130,16 @@ class MapPoolController extends Controller
         if ($ini == null)
             return "Failure parsing INI from file";
 
-        $ladderAbbreviation = \App\Ladder::where('id', $ladderId)->first()->abbreviation;
+        $ladderGame = \App\Ladder::where('id', $ladderId)->first()->game;
 
-        if ($ladderAbbreviation == 'ra')
+        if ($ladderGame == "ra")
             $this->parseRaMapHeaders($ini, $mapId);
-        if ($ladderAbbreviation == 'ts')
+        else if ($ladderGame == "ts")
             $this->parseTsMapHeaders($ini, $mapId);
-        else if ($ladderAbbreviation == 'ra2' || $ladderAbbreviation == 'yr' || $ladderAbbreviation == 'blitz')
+        else if ($ladderGame == "yr")
             $this->parseYrMapHeaders($ini, $mapId);
         else
-            return "Map headers not supported for ladder " . $ladderAbbreviation;
+            return "Map headers not supported for ladder game: " . $ladderGame;
     }
 
     private function parseRaMapHeaders($ini, $mapId)
@@ -157,7 +157,7 @@ class MapPoolController extends Controller
         $mapHeader->startY = $header["Y"];
         $mapHeader->save();
 
-        $waypoints = $ini['Waypoint'];
+        $waypoints = $ini['Waypoints'];
         if ($waypoints == null)
             return "No 'Waypoints' section found from INI";
 
@@ -194,7 +194,7 @@ class MapPoolController extends Controller
         $mapHeader->startY = intval(explode(",", $localSize)[1]);
         $mapHeader->save();
 
-        $waypoints = $ini['Waypoint'];
+        $waypoints = $ini['Waypoints'];
         if ($waypoints == null)
             return "No 'Waypoints' section found from INI";
 
