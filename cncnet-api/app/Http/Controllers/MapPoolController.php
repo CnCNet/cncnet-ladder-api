@@ -61,9 +61,9 @@ class MapPoolController extends Controller
     {
         $this->validate($request, [
             'map_id' => 'required',
-            'hash'   => 'required|min:40|max:40',
             'name'   => 'string',
-            'mapImage' => 'image|required'
+            'mapImage' => 'image|required',
+            'mapFile' => 'required'
         ]);
 
         if ($request->map_id == 'new')
@@ -80,8 +80,17 @@ class MapPoolController extends Controller
             }
         }
 
+        $mapFile = $request->file('mapFile');
+        if (!$this->str_ends_with($mapFile->getClientOriginalName(), ".map"))
+        {
+            $request->session()->flash('error', "Map file does not end in .map");
+            return redirect()->back();
+        }
+
+        $hash = sha1_file($mapFile);
+
         $map->ladder_id = $request->ladder_id;
-        $map->hash = $request->hash;
+        $map->hash = $hash;
         $map->name = trim($request->name);
 
         if (empty($map->name))
@@ -101,9 +110,12 @@ class MapPoolController extends Controller
             $request->file('mapImage')->move($filepath, $filename);
         }
 
-        if ($request->hasFile('mapFile'))
+        $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id);
+
+        if ($errMessage != null && !empty($errMessage))
         {
-            $this->parseMapHeaders($request->mapFile, $map->id);
+            $request->session()->flash('error', $errMessage);
+            return redirect()->back();
         }
 
         return redirect()->back()->withInput();
@@ -111,20 +123,15 @@ class MapPoolController extends Controller
 
     private function parseMapHeaders($fileName, $mapId)
     {
-        if (!$this->str_ends_with($fileName, ".map"))
-        {
-            return;
-        }
-
         $val = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
 
         if ($val == null)
-            return;
+            return "Failure parsing INI from file";
 
         $header = $val['Header']; //we want the map header data
 
         if ($header == null)
-            return;
+            return "No header section found from INI";
 
         $mapHeader = new \App\MapHeader();
         $mapHeader->map_id = $mapId;
@@ -136,11 +143,11 @@ class MapPoolController extends Controller
         $mapHeader->save();
 
         //create the map waypoints
-        for ($i = 1; $i <=8; $i++)
+        for ($i = 1; $i <= 8; $i++)
         {
             $wayPointValue = $header['Waypoint' . $i];
-            $x = explode($wayPointValue, ",")[0];
-            $y = explode($wayPointValue, ",")[1];
+            $x = explode(',', $wayPointValue)[0];
+            $y = explode(',', $wayPointValue)[1];
 
             $mapWaypoint = new \App\MapWaypoint();
             $mapWaypoint->x = $x;
