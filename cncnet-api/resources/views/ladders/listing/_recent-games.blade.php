@@ -5,7 +5,7 @@
     <div class="swiper js-game-listings">
         <div class="swiper-wrapper">
             @foreach ($games as $game)
-                <div class="swiper-slide">
+                <div class="swiper-slide" data-swiper-autoplay="8000">
                     <?php $pp = $game->playerGameReports()->first(); ?>
 
                     @include('ladders.listing._game-box', [
@@ -30,10 +30,11 @@
     <script src="/js/swiper.js"></script>
     <script>
         var swiper = new Swiper(".js-game-listings", {
-            slidesPerView: 4,
+            slidesPerView: 3,
+            speed: 3000,
             spaceBetween: 30,
+            loop: false,
             autoplay: {
-                delay: 4500,
                 disableOnInteraction: true,
             },
             breakpoints: {
