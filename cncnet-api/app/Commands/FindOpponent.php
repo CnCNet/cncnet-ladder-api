@@ -148,7 +148,8 @@ class FindOpponent extends Command implements ShouldQueue
                 $oppPlayerRank = $oppPlayer->rank($history);
 
                 //do both players' rank meet the minimum rank required for no pt filter to apply
-                if ($playerRank <= $ladder_rules->point_filter_rank_threshold && $oppPlayerRank <= $ladder_rules->point_filter_rank_threshold)
+                $rankDiff = abs($playerRank - $oppPlayerRank);
+                if ($rankDiff <= $ladder_rules->point_filter_rank_threshold)
                 {
                     Log::info("FindOpponent ** Players meet the min pt filter rank p1: " . $playerRank . ", p2: " . $oppPlayerRank);
                     $ptFilterOff = true;
@@ -156,7 +157,6 @@ class FindOpponent extends Command implements ShouldQueue
                 {
                     Log::info("FindOpponent ** Players do not meet the min pt filter rank. p1: " . $playerRank . ", p2: " . $oppPlayerRank);
                 }
-                   
             }
 
             if ($ptFilterOff)
