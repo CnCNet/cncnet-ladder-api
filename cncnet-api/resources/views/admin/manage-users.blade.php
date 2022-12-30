@@ -13,12 +13,52 @@
                     </h1>
                 </div>
             </div>
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/" class="">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="/admin" class="">
+                        <span class="material-symbols-outlined">
+                            admin_panel_settings
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
 
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin">
+                        <span class="material-symbols-outlined pe-3">
+                            admin_panel_settings
+                        </span>
+                        Admin
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+@endsection
+
 @section('content')
-    <div class="admin-users">
+    <div class="admin-users mt-5">
         <section class="light-texture game-detail supported-games">
             <div class="container">
                 <div class="feature">
@@ -38,7 +78,8 @@
                                         <input type="hidden" name="userId" value="{{ $userId }}" />
                                         <input type="hidden" name="hostname" value="{{ $hostname }}" />
 
-                                        <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}" style="height: 50px" />
+                                        <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}"
+                                            style="height: 50px" />
                                         <a href="?" style="color: silver;padding: 5px;margin-bottom: 5px; display: block;float: right;">
                                             Clear search
                                         </a>

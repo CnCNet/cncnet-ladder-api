@@ -45,7 +45,8 @@
 
                                         <p>
                                             <label>
-                                                <input id="restrictAvatarUpload" type="checkbox" name="restrictAvatarUpload" {{ $user->getIsAllowedToUploadAvatar() ? 'checked' : '' }} />
+                                                <input id="restrictAvatarUpload" type="checkbox" name="restrictAvatarUpload"
+                                                    {{ $user->getIsAllowedToUploadAvatar() ? 'checked' : '' }} />
                                                 User allowed to upload Avatar?
                                             </label>
                                         </p>

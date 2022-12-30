@@ -82,37 +82,44 @@
                                     <div class="form-group col-4">
                                         <div class="form-group col-md-12">
                                             <label for="{{ $map->id }}_description"> Description </label>
-                                            <input type="text" id="{{ $map->id }}_description" name="description" value="{{ $map->description }}" class="form-control" />
+                                            <input type="text" id="{{ $map->id }}_description" name="description"
+                                                value="{{ $map->description }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="{{ $map->id }}_admin_description"> Admin Description </label>
-                                            <input type="text" id="{{ $map->id }}_admin_description" name="admin_description" value="{{ $map->admin_description }}" class="form-control" />
+                                            <input type="text" id="{{ $map->id }}_admin_description" name="admin_description"
+                                                value="{{ $map->admin_description }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="{{ $map->id }}_spawn_order">spawn_order</label>
-                                            <input type="text" id="{{ $map->id }}_spawn_order" name="spawn_order" value="{{ $map->spawn_order }}" class="form-control" />
+                                            <input type="text" id="{{ $map->id }}_spawn_order" name="spawn_order"
+                                                value="{{ $map->spawn_order }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="{{ $map->id }}_team1_spawn_order">team1</label>
-                                            <input type="text" id="{{ $map->id }}_team1_spawn_order" name="team1_spawn_order" value="{{ $map->team1_spawn_order }} " class="form-control" />
+                                            <input type="text" id="{{ $map->id }}_team1_spawn_order" name="team1_spawn_order"
+                                                value="{{ $map->team1_spawn_order }} " class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="{{ $map->id }}_team2_spawn_order">team2</label>
-                                            <input type="text" id="{{ $map->id }}_team2_spawn_order" name="team2_spawn_order" value="{{ $map->team2_spawn_order }}" class="form-control" />
+                                            <input type="text" id="{{ $map->id }}_team2_spawn_order" name="team2_spawn_order"
+                                                value="{{ $map->team2_spawn_order }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-12">
                                             <label for="{{ $map->id }}_map"> map </label>
                                             <select id="{{ $map->id }}_map" name="map_id" class="form-control map-selector"></select>
-                                            <button type="button" class="btn btn-primary btn-md" id="editMaps" data-bs-toggle="modal" data-bs-target="#editLadderMap">
+                                            <button type="button" class="btn btn-primary btn-md" id="editMaps" data-bs-toggle="modal"
+                                                data-bs-target="#editLadderMap">
                                                 Edit/New
                                             </button>
                                             @if ($ladderMaps->count() == 0)
-                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cloneLadderMaps"> Clone </button>
+                                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                                    data-bs-target="#cloneLadderMaps"> Clone </button>
                                             @endif
                                         </div>
                                     </div>
@@ -122,11 +129,12 @@
                                             <?php $sideIdsAllowed = array_map('intval', explode(',', $map->allowed_sides)); ?>
                                             <label>Allowed Sides</label>
 
-                                            <div class="overflow-auto" style="height: 250px; overflow: auto; background: #0c0e14; border-radius: 4px; padding: 1rem;">
+                                            <div class="overflow-auto"
+                                                style="height: 250px; overflow: auto; background: #0c0e14; border-radius: 4px; padding: 1rem;">
                                                 @foreach ($sides as $side)
                                                     <div>
-                                                        <input id="side_{{ $side->id }}" type="checkbox" name="allowed_sides[]" value="{{ $side->local_id }}"
-                                                            @if (in_array($side->local_id, $sideIdsAllowed)) checked @endif />
+                                                        <input id="side_{{ $side->id }}" type="checkbox" name="allowed_sides[]"
+                                                            value="{{ $side->local_id }}" @if (in_array($side->local_id, $sideIdsAllowed)) checked @endif />
                                                         <label for="side_{{ $side->id }}">{{ $side->name }}</label>
                                                     </div>
                                                 @endforeach
@@ -134,12 +142,14 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <input id="{{ $map->id }}_rejectable" type="checkbox" name="rejectable" @if ($map->rejectable) checked @endif />
+                                            <input id="{{ $map->id }}_rejectable" type="checkbox" name="rejectable"
+                                                @if ($map->rejectable) checked @endif />
                                             <label for="{{ $map->id }}_rejectable"> Rejectable</label>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <input id="default_reject_{{ $map->id }}" type="checkbox" name="default_reject" @if ($map->default_reject) checked @endif />
+                                            <input id="default_reject_{{ $map->id }}" type="checkbox" name="default_reject"
+                                                @if ($map->default_reject) checked @endif />
                                             <label for="default_reject_{{ $map->id }}"> Rejected By Default</label>
                                         </div>
 
@@ -160,10 +170,12 @@
                                     @endforeach
                                 @endif
                             </select>
-                            <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#editOptions_{{ $map->id }}">
+                            <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal"
+                                data-bs-target="#editOptions_{{ $map->id }}">
                                 Edit
                             </button>
-                            <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#newOptions_{{ $map->id }}">
+                            <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal"
+                                data-bs-target="#newOptions_{{ $map->id }}">
                                 New
                             </button>
                         </div>
@@ -296,7 +308,8 @@
         (function() {
             let mps = document.getElementById("mapPoolSelector");
             mps.onchange = function() {
-                document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" + ladderMaps[maps[this.value].map_id].hash + ".png";
+                document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" + ladderMaps[maps[this.value].map_id].hash +
+                    ".png";
                 let hideList = document.querySelectorAll("div.map");
                 for (let i = 0; i < hideList.length; i++) {
                     if (!hideList[i].classList.contains("hidden"))

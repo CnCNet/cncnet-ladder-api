@@ -14,8 +14,48 @@
                     </h1>
                 </div>
             </div>
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/" class="">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="/admin" class="">
+                        <span class="material-symbols-outlined">
+                            admin_panel_settings
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+@endsection
+
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin">
+                        <span class="material-symbols-outlined pe-3">
+                            admin_panel_settings
+                        </span>
+                        Admin
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
 @endsection
 
 @section('content')
@@ -42,8 +82,8 @@
                                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                         <input type="hidden" id="ladder_admin_id" name="ladder_admin_id" value="{{ $admin->id }}">
                                                         @if ($user->isGod())
-                                                            <button type="submit" id="remove_admin_{{ $admin->id }}" style="margin: 0 0" class="btn btn-link btn-sm" data-toggle="tooltip"
-                                                                data-placement="top" title="Remove">
+                                                            <button type="submit" id="remove_admin_{{ $admin->id }}" style="margin: 0 0"
+                                                                class="btn btn-link btn-sm" data-toggle="tooltip" data-placement="top" title="Remove">
                                                                 Remove
                                                             </button>
                                                         @endif
@@ -57,7 +97,8 @@
                                         @if ($user->isGod())
                                             <form method="POST" action="add/admin">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="text" id="email" name="email" class="form-control border mt-2" placeholder="newAXdmin@email.com" />
+                                                <input type="text" id="email" name="email" class="form-control border mt-2"
+                                                    placeholder="newAXdmin@email.com" />
                                                 <button type="submit" class="btn btn-primary btn-md mt-2">Add</button>
                                             </form>
                                         @endif
@@ -73,8 +114,8 @@
                                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                         <input type="hidden" id="ladder_admin_id" name="ladder_admin_id" value="{{ $mod->id }}">
                                                         @if ($user->isGod() || $user->isLadderAdmin($ladder))
-                                                            <button type="submit" id="remove_mod_{{ $mod->id }}" style="margin: 0 0" class="btn btn-link btn-sm" data-toggle="tooltip"
-                                                                data-placement="top" title="Remove">
+                                                            <button type="submit" id="remove_mod_{{ $mod->id }}" style="margin: 0 0"
+                                                                class="btn btn-link btn-sm" data-toggle="tooltip" data-placement="top" title="Remove">
                                                                 Remove
                                                             </button>
                                                         @endif
@@ -87,7 +128,8 @@
                                         @if ($user->isGod() || $user->isLadderAdmin($ladder))
                                             <form method="POST" action="add/moderator">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="text" id="email" name="email" class="form-control mt-2 border" placeholder="newMod@email.com" />
+                                                <input type="text" id="email" name="email" class="form-control mt-2 border"
+                                                    placeholder="newMod@email.com" />
                                                 <button type="submit" class="btn btn-primary btn-md mt-2">Add</button>
                                             </form>
                                         @endif
@@ -100,10 +142,11 @@
                                                 <div style="white-space: nowrap;">
                                                     <form method="POST" action="remove/tester">
                                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                        <input type="hidden" id="ladder_admin_id" name="ladder_admin_id" value="{{ $tester->id }}">
+                                                        <input type="hidden" id="ladder_admin_id" name="ladder_admin_id"
+                                                            value="{{ $tester->id }}">
                                                         @if ($user->isGod() || $user->isLadderAdmin($ladder) || $user->isLadderMod($ladder))
-                                                            <button type="submit" id="remove_tester_{{ $tester->id }}" style="margin: 0 0" class="btn btn-link btn-sm" data-toggle="tooltip"
-                                                                data-placement="top" title="Remove">
+                                                            <button type="submit" id="remove_tester_{{ $tester->id }}" style="margin: 0 0"
+                                                                class="btn btn-link btn-sm" data-toggle="tooltip" data-placement="top" title="Remove">
                                                                 Remove
                                                             </button>
                                                         @endif
@@ -116,7 +159,8 @@
                                         @if ($user->isGod() || $user->isLadderAdmin($ladder) || $user->isLadderMod($ladder))
                                             <form method="POST" action="add/tester">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="text" id="email" name="email" class="form-control border" placeholder="newTester@email.com" />
+                                                <input type="text" id="email" name="email" class="form-control border"
+                                                    placeholder="newTester@email.com" />
                                                 <button type="submit" class="btn btn-primary btn-md mt-2">Add</button>
                                             </form>
                                         @endif
@@ -131,7 +175,8 @@
                                                 @endforeach
                                                 <option value="new">&lt;new></option>
                                             </select>
-                                            <button type="button" class="btn btn-primary btn-md mt-2" data-bs-toggle="modal" data-bs-target="#editAlert">Edit</button>
+                                            <button type="button" class="btn btn-primary btn-md mt-2" data-bs-toggle="modal"
+                                                data-bs-target="#editAlert">Edit</button>
                                         </div>
                                     @endif
 
@@ -146,17 +191,20 @@
 
                                             <div class="form-group">
                                                 <label for="ladder_name">Ladder Name</label>
-                                                <input id="ladder_name" name="name" type="text" class="form-control" value="{{ $ladder->name }}" />
+                                                <input id="ladder_name" name="name" type="text" class="form-control"
+                                                    value="{{ $ladder->name }}" />
                                             </div>
 
                                             <div class="form-group col-md-6" style="padding-left: 0;">
                                                 <label for="abbreviation">Abbreviation</label>
-                                                <input id="ladder_abbreviation" name="abbreviation" type="text" class="form-control" value="{{ $ladder->abbreviation }}" />
+                                                <input id="ladder_abbreviation" name="abbreviation" type="text" class="form-control"
+                                                    value="{{ $ladder->abbreviation }}" />
                                             </div>
 
                                             <div class="form-group col-md-6" style="padding-right: 0;">
                                                 <label for="ladder_game">Game</label>
-                                                <input id="ladder_game" name="game" type="text" class="form-control" value="{{ $ladder->game }}" />
+                                                <input id="ladder_game" name="game" type="text" class="form-control"
+                                                    value="{{ $ladder->game }}" />
                                             </div>
 
                                             <div class="form-group">
@@ -164,7 +212,8 @@
                                                 <select name="game_object_schema_id" id="gameObjectSchema" class="form-control">
                                                     <option value=""></option>
                                                     @foreach ($objectSchemas as $gos)
-                                                        <option value="{{ $gos->id }}" @if ($ladder->game_object_schema_id == $gos->id) selected @endif>{{ $gos->name }}</option>
+                                                        <option value="{{ $gos->id }}" @if ($ladder->game_object_schema_id == $gos->id) selected @endif>
+                                                            {{ $gos->name }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -196,8 +245,8 @@
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <div class="form-group col-md-4" style="padding-left: 0;">
                                                 <label for="local_id">Index</label>
-                                                <input id="local_id" name="local_id" type="number" maxlength="3" size="3" class="form-control border"
-                                                    value="{{ $ladder->sides()->max('local_id') + 1 }}" />
+                                                <input id="local_id" name="local_id" type="number" maxlength="3" size="3"
+                                                    class="form-control border" value="{{ $ladder->sides()->max('local_id') + 1 }}" />
                                             </div>
                                             <div class="form-group col-md-8 mt-2" style="padding-right: 0;">
                                                 <label for="name">Side Name</label>
@@ -246,15 +295,19 @@
                                                 </select>
                                             </div>
                                             <button type="submit" class="btn btn-secondary btn-md">Set</button>
-                                            <a type="button" class="btn btn-secondary btn-md" id="editMapPool" href="mappool/{{ $ladder->map_pool_id }}/edit">Edit</a>
+                                            <a type="button" class="btn btn-secondary btn-md" id="editMapPool"
+                                                href="mappool/{{ $ladder->map_pool_id }}/edit">Edit</a>
                                         </form>
-                                        <button type="button" class="btn btn-secondary btn-md" data-bs-toggle="modal" data-bs-target="#newMapPool"> New </button>
-                                        <button type="button" class="btn btn-secondary btn-md" id="doClone" data-bs-toggle="modal" data-bs-target="#cloneMapPool"> Clone </button>
+                                        <button type="button" class="btn btn-secondary btn-md" data-bs-toggle="modal" data-bs-target="#newMapPool">
+                                            New </button>
+                                        <button type="button" class="btn btn-secondary btn-md" id="doClone" data-bs-toggle="modal"
+                                            data-bs-target="#cloneMapPool"> Clone </button>
                                     </div>
 
                                     <select id="optionList" size=12" class="form-control" style="margin-bottom: 8px">
                                         @foreach ($ladder->spawnOptionValues as $sov)
-                                            <option value="{{ $sov->id }}">{{ $sov->spawnOption->name->string }} : {{ $sov->value->string }}</option>
+                                            <option value="{{ $sov->id }}">{{ $sov->spawnOption->name->string }} : {{ $sov->value->string }}
+                                            </option>
                                         @endforeach
                                     </select>
 
@@ -295,40 +348,44 @@
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_player_count">Player Count</label>
-                                                    <input id="{{ $rule->ladder_id }}_player_count" type="number" name="player_count" class="form-control" value="{{ $rule->player_count }}" />
+                                                    <input id="{{ $rule->ladder_id }}_player_count" type="number" name="player_count"
+                                                        class="form-control" value="{{ $rule->player_count }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_map_vetoes">Map Vetoes</label>
-                                                    <input id="{{ $rule->ladder_id }}_map_vetoes" type="number" name="map_vetoes" class="form-control" value="{{ $rule->map_vetoes }}" />
+                                                    <input id="{{ $rule->ladder_id }}_map_vetoes" type="number" name="map_vetoes"
+                                                        class="form-control" value="{{ $rule->map_vetoes }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_difference">Matchup rating filter</label>
-                                                    <input id="{{ $rule->ladder_id }}_difference" type="number" name="max_difference" class="form-control" value="{{ $rule->max_difference }}" />
+                                                    <input id="{{ $rule->ladder_id }}_difference" type="number" name="max_difference"
+                                                        class="form-control" value="{{ $rule->max_difference }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_rating_per_second">Filter - rating per q-second</label>
-                                                    <input id="{{ $rule->ladder_id }}_rating_per_second" type="number" step="0.05" name="rating_per_second" class="form-control"
-                                                        value="{{ $rule->rating_per_second }}" />
+                                                    <input id="{{ $rule->ladder_id }}_rating_per_second" type="number" step="0.05"
+                                                        name="rating_per_second" class="form-control" value="{{ $rule->rating_per_second }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_point_difference">Matchup points filter</label>
-                                                    <input id="{{ $rule->ladder_id }}_point_difference" type="number" name="max_points_difference" class="form-control"
-                                                        value="{{ $rule->max_points_difference }}" />
+                                                    <input id="{{ $rule->ladder_id }}_point_difference" type="number" name="max_points_difference"
+                                                        class="form-control" value="{{ $rule->max_points_difference }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_points_per_second">Filter - points per q-second</label>
-                                                    <input id="{{ $rule->ladder_id }}_points_per_second" type="number" step="0.05" name="points_per_second" class="form-control"
-                                                        value="{{ $rule->points_per_second }}" />
+                                                    <input id="{{ $rule->ladder_id }}_points_per_second" type="number" step="0.05"
+                                                        name="points_per_second" class="form-control" value="{{ $rule->points_per_second }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_bail_time">Bail Time</label>
-                                                    <input id="{{ $rule->ladder_id }}_bail_time" type="number" name="bail_time" class="form-control" value="{{ $rule->bail_time }}" />
+                                                    <input id="{{ $rule->ladder_id }}_bail_time" type="number" name="bail_time" class="form-control"
+                                                        value="{{ $rule->bail_time }}" />
                                                 </div>
 
                                                 <div class="form-group">
@@ -341,23 +398,27 @@
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->use_elo_points }}_use_elo_points">Use Elo for Points</label>
-                                                    <input id="{{ $rule->use_elo_points }}_use_elo_points" type="number" min="0" max="1" name="use_elo_points" class="form-control"
+                                                    <input id="{{ $rule->use_elo_points }}_use_elo_points" type="number" min="0"
+                                                        max="1" name="use_elo_points" class="form-control"
                                                         value="{{ $rule->use_elo_points }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->wol_k }}_use_elo_points">WOL Points K Value</label>
-                                                    <input id="{{ $rule->wol_k }}_use_elo_points" type="number" min="0" name="wol_k" class="form-control" value="{{ $rule->wol_k }}" />
+                                                    <input id="{{ $rule->wol_k }}_use_elo_points" type="number" min="0" name="wol_k"
+                                                        class="form-control" value="{{ $rule->wol_k }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_bail_fps">Bail FPS</label>
-                                                    <input id="{{ $rule->ladder_id }}_bail_fps" type="number" name="bail_fps" class="form-control" value="{{ $rule->bail_fps }}" />
+                                                    <input id="{{ $rule->ladder_id }}_bail_fps" type="number" name="bail_fps" class="form-control"
+                                                        value="{{ $rule->bail_fps }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_tier2_rating">Tier 2 If Rating Below</label>
-                                                    <input id="{{ $rule->ladder_id }}_tier2_rating" type="number" name="tier2_rating" class="form-control" value="{{ $rule->tier2_rating }}" />
+                                                    <input id="{{ $rule->ladder_id }}_tier2_rating" type="number" name="tier2_rating"
+                                                        class="form-control" value="{{ $rule->tier2_rating }}" />
                                                 </div>
 
                                                 <?php $sides = \App\Side::where('ladder_id', '=', $rule->ladder_id)
@@ -366,18 +427,21 @@
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_sides">Random Sides</label>
-                                                    <input id="{{ $rule->ladder_id }}_sides" name="all_sides" type="text" class="form-control" value="{{ $rule->all_sides }}" />
+                                                    <input id="{{ $rule->ladder_id }}_sides" name="all_sides" type="text" class="form-control"
+                                                        value="{{ $rule->all_sides }}" />
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_reduce_map_repeats">Reduce Map Repeats</label>
-                                                    <input id="{{ $rule->ladder_id }}_reduce_map_repeats" min="0" type="number" name="reduce_map_repeats" class="form-control"
-                                                        value="{{ $rule->reduce_map_repeats }}" />
+                                                    <input id="{{ $rule->ladder_id }}_reduce_map_repeats" min="0" type="number"
+                                                        name="reduce_map_repeats" class="form-control" value="{{ $rule->reduce_map_repeats }}" />
                                                 </div>
 
                                                 <div class="form-group">
-                                                    <label for="{{ $rule->ladder_id }}_point_filter_rank_threshold">Min Rank for Pt Filter to be Disabled</label>
-                                                    <input id="{{ $rule->ladder_id }}_point_filter_rank_threshold" min="0" type="number" name="point_filter_rank_threshold" class="form-control"
+                                                    <label for="{{ $rule->ladder_id }}_point_filter_rank_threshold">Min Rank for Pt Filter to be
+                                                        Disabled</label>
+                                                    <input id="{{ $rule->ladder_id }}_point_filter_rank_threshold" min="0" type="number"
+                                                        name="point_filter_rank_threshold" class="form-control"
                                                         value="{{ $rule->point_filter_rank_threshold }}" />
                                                 </div>
 
@@ -387,8 +451,8 @@
                                                     <div class="overflow-auto" style="height: 250px; overflow: auto; background: black;">
                                                         @foreach ($sides as $side)
                                                             <div>
-                                                                <input id="side_{{ $side->id }}" type="checkbox" name="allowed_sides[]" value="{{ $side->local_id }}"
-                                                                    @if (in_array($side->local_id, $sideIdsAllowed)) checked @endif />
+                                                                <input id="side_{{ $side->id }}" type="checkbox" name="allowed_sides[]"
+                                                                    value="{{ $side->local_id }}" @if (in_array($side->local_id, $sideIdsAllowed)) checked @endif />
                                                                 <label for="side_{{ $side->id }}">{{ $side->name }}</label>
                                                             </div>
                                                         @endforeach
@@ -397,18 +461,20 @@
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_ladder_rules_message">Ladder Rules Message</label>
-                                                    <textarea id="{{ $rule->ladder_id }}_ladder_rules_message" name="ladder_rules_message" cols="10" rows="20" class="form-control" value="{{ $rule->ladder_rules_message }}">{{ $rule->ladder_rules_message }}</textarea>
+                                                    <textarea id="{{ $rule->ladder_id }}_ladder_rules_message" name="ladder_rules_message" cols="10" rows="20" class="form-control"
+                                                        value="{{ $rule->ladder_rules_message }}">{{ $rule->ladder_rules_message }}</textarea>
                                                 </div>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_ladder_discord">Ladder Discord Url</label>
-                                                    <input id="{{ $rule->ladder_id }}_ladder_discord" type="text" name="ladder_discord" class="form-control"
-                                                        value="{{ $rule->ladder_discord }}" />
+                                                    <input id="{{ $rule->ladder_id }}_ladder_discord" type="text" name="ladder_discord"
+                                                        class="form-control" value="{{ $rule->ladder_discord }}" />
                                                 </div>
 
                                                 <button type="submit" class="btn btn-primary">Save</button>
                                             </form>
-                                            <form method="POST" action="rules" onsubmit="return confirm('This action will delete the quick match rules permanently.');">
+                                            <form method="POST" action="rules"
+                                                onsubmit="return confirm('This action will delete the quick match rules permanently.');">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="hidden" name="id" value="{{ $rule->id }}">
 

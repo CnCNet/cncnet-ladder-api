@@ -14,8 +14,49 @@
                     </h1>
                 </div>
             </div>
+
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/" class="">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="/admin" class="">
+                        <span class="material-symbols-outlined">
+                            admin_panel_settings
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+@endsection
+
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin">
+                        <span class="material-symbols-outlined pe-3">
+                            admin_panel_settings
+                        </span>
+                        Admin
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
 @endsection
 
 @section('content')
@@ -47,7 +88,8 @@
                                     @endforeach
                                 </ul>
                                 @if ($user->isGod())
-                                    <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#newLadder">New Ladder</button>
+                                    <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal" data-bs-target="#newLadder">New
+                                        Ladder</button>
                                 @endif
                             </div>
                         </div>
@@ -80,7 +122,8 @@
                                     @endforeach
                                 </select>
 
-                                <a id="canceledMatchesLink" href="canceledMatches/{{ $ladders[0]->abbreviation }}" class="btn btn-md btn-secondary mt-2">View</a>
+                                <a id="canceledMatchesLink" href="/admin/canceledMatches/{{ $ladders[0]->abbreviation }}"
+                                    class="btn btn-md btn-secondary mt-2">View</a>
                             </div>
                         </div>
                     </div>
@@ -156,7 +199,7 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg">Create</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
                 </form>
             </div>
         </div>

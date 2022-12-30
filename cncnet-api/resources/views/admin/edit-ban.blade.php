@@ -17,6 +17,30 @@
     </div>
 @endsection
 
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin">
+                        <span class="material-symbols-outlined pe-3">
+                            admin_panel_settings
+                        </span>
+                        Admin
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+@endsection
+
 @section('content')
     <?php $card = \App\Card::find($player->card_id); ?>
 
