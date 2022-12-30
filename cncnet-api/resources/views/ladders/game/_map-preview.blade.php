@@ -2,7 +2,8 @@
     <img src="{{ $mapPreview }}" style="max-width:100%" />
 </div>
 
-<div class="map-preview d-none d-lg-flex" style="background-image:url('{{ $mapPreview }}'); width: {{ $webMapWidth }}px; height: {{ $webMapHeight }}px">
+<div class="map-preview d-none d-lg-flex"
+    style="background-image:url('{{ $mapPreview }}'); width: {{ $webMapWidth }}px; height: {{ $webMapHeight }}px">
     @foreach ($playerGameReports as $k => $pgr)
         @php
             $hasValidSpawnData = false;
@@ -20,19 +21,22 @@
             $playerSpawnPosition = isset($pgr->spawn) ? $pgr->spawn + 1 : -1;
             
             if ($playerSpawnPosition !== -1) {
-                $position = $map->mapHeaders->waypoints->where('bit_idx', $playerSpawnPosition)->first();
+                if (isset($map->mapHeaders)) {
+                    $position = $map->mapHeaders->waypoints->where('bit_idx', $playerSpawnPosition)->first();
             
-                if ($position) {
-                    $playerX = $ratioX * ($position->x - $mapStartX);
-                    $playerY = $ratioY * ($position->y - $mapStartY);
+                    if ($position) {
+                        $playerX = $ratioX * ($position->x - $mapStartX);
+                        $playerY = $ratioY * ($position->y - $mapStartY);
             
-                    # I'm not sure i even understand, seems to work for the moment...
-                    $xBounds = $webMapWidth - $playerWebBoxWidth;
-                    if ($playerX > $xBounds) {
-                        $playerX = $xBounds;
+                        # I'm not sure i even understand, seems to work for the moment...
+                        # I think this needs to come out and be handled with JS
+                        $xBounds = $webMapWidth - $playerWebBoxWidth;
+                        if ($playerX > $xBounds) {
+                            $playerX = $xBounds;
+                        }
+            
+                        $hasValidSpawnData = true;
                     }
-            
-                    $hasValidSpawnData = true;
                 }
             }
             
