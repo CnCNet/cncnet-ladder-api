@@ -32,13 +32,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="text_map_new_hash"> SHA1 Hash </label>
-                        <textarea id="ladderMapHash" rows=1 name="hash" class="form-control"></textarea>
+                        <label for="ladderMapImage"> Upload Image </label>
+                        <input type="file" name="mapImage" id="ladderMapImage" />
                     </div>
 
                     <div class="form-group">
-                        <label for="ladderMapImage"> Upload Image </label>
-                        <input type="file" name="mapImage" id="ladderMapImage" />
+                        <label for="ladderMapFile"> Upload Map File </label>
+                        <input type="file" name="mapFile" id="ladderMapFile" />
                     </div>
 
                     <button type="submit" class="btn btn-primary">Update</button>

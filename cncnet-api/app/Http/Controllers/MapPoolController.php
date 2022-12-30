@@ -9,7 +9,6 @@ use \App\User;
 use \App\MapPool;
 use \App\Ladder;
 use \App\SpawnOptionString;
-
 use Illuminate\Http\Request;
 
 class MapPoolController extends Controller
@@ -49,7 +48,7 @@ class MapPoolController extends Controller
         if (empty($qmMap->description) || empty($qmMap->admin_description))
         {
             $request->session()->flash('error', "Empty name provided");
-            return redirect()->back(); 
+            return redirect()->back();
         }
 
         $qmMap->save();
@@ -62,9 +61,9 @@ class MapPoolController extends Controller
     {
         $this->validate($request, [
             'map_id' => 'required',
-            'hash'   => 'required|min:40|max:40',
             'name'   => 'string',
-            'mapImage' => 'image'
+            'mapImage' => 'image|required',
+            'mapFile' => 'required'
         ]);
 
         if ($request->map_id == 'new')
@@ -81,14 +80,25 @@ class MapPoolController extends Controller
             }
         }
 
+        $ladder_id = $request->ladder_id;
+
+        $mapFile = $request->file('mapFile');
+        if (!$this->str_ends_with($mapFile->getClientOriginalName(), ".map"))
+        {
+            $request->session()->flash('error', "Map file does not end in .map");
+            return redirect()->back();
+        }
+
+        $hash = sha1_file($mapFile);
+
         $map->ladder_id = $request->ladder_id;
-        $map->hash = $request->hash;
+        $map->hash = $hash;
         $map->name = trim($request->name);
 
         if (empty($map->name))
         {
             $request->session()->flash('error', "Empty map name provided");
-            return redirect()->back(); 
+            return redirect()->back();
         }
 
         $map->save();
@@ -102,7 +112,150 @@ class MapPoolController extends Controller
             $request->file('mapImage')->move($filepath, $filename);
         }
 
+        $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id, $ladder_id);
+
+        if ($errMessage != null && !empty($errMessage))
+        {
+            $request->session()->flash('error', $errMessage);
+            return redirect()->back();
+        }
+
         return redirect()->back()->withInput();
+    }
+
+    private function parseMapHeaders($fileName, $mapId, $ladderId)
+    {
+        $ini = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
+
+        if ($ini == null)
+            return "Failure parsing INI from file";
+
+        $ladderGame = \App\Ladder::where('id', $ladderId)->first()->game;
+
+        if ($ladderGame == "ra")
+            $this->parseRaMapHeaders($ini, $mapId);
+        else if ($ladderGame == "ts")
+            $this->parseTsMapHeaders($ini, $mapId);
+        else if ($ladderGame == "yr")
+            $this->parseYrMapHeaders($ini, $mapId);
+        else
+            return "Map headers not supported for ladder game: " . $ladderGame;
+    }
+
+    private function parseRaMapHeaders($ini, $mapId)
+    {
+        $header = $ini['Map']; //we want the map header data
+
+        if ($header == null)
+            return "No 'Map' section found from INI";
+
+        $mapHeader = new \App\MapHeader();
+        $mapHeader->map_id = $mapId;
+        $mapHeader->width = $header["Width"];
+        $mapHeader->height = $header["Height"];
+        $mapHeader->startX = $header["X"];
+        $mapHeader->startY = $header["Y"];
+        $mapHeader->save();
+
+        $waypoints = $ini['Waypoints'];
+        if ($waypoints == null)
+            return "No 'Waypoints' section found from INI";
+
+        //create the map waypoints
+        for ($i = 0; $i <= 7; $i++)
+        {
+            $wayPointValue = $waypoints[$i];
+            $x = intval($wayPointValue % 128);
+            $y = intval($wayPointValue / 128);
+
+            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint->x = $x;
+            $mapWaypoint->y = $y;
+            $mapWaypoint->bit_idx = $i;
+            $mapWaypoint->map_header_id = $mapHeader->id;
+            $mapWaypoint->save();
+        }
+    }
+
+    private function parseTsMapHeaders($ini, $mapId)
+    {
+        $header = $ini['Map']; //we want the map header data
+
+        if ($header == null)
+            return "No 'Map' section found from INI";
+
+        $localSize = $header["LocalSize"];
+
+        $mapHeader = new \App\MapHeader();
+        $mapHeader->map_id = $mapId;
+        $mapHeader->width = intval(explode(",", $localSize)[2]);
+        $mapHeader->height = intval(explode(",", $localSize)[3]);
+        $mapHeader->startX = intval(explode(",", $localSize)[0]);
+        $mapHeader->startY = intval(explode(",", $localSize)[1]);
+        $mapHeader->save();
+
+        $waypoints = $ini['Waypoints'];
+        if ($waypoints == null)
+            return "No 'Waypoints' section found from INI";
+
+        //create the map waypoints
+        for ($i = 0; $i <= 7; $i++)
+        {
+            $wayPointValue = $waypoints[$i];
+            $x = intval($wayPointValue % 1000);
+            $y = intval($wayPointValue / 1000);
+
+            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint->x = $x;
+            $mapWaypoint->y = $y;
+            $mapWaypoint->bit_idx = $i;
+            $mapWaypoint->map_header_id = $mapHeader->id;
+            $mapWaypoint->save();
+        }
+    }
+
+    private function parseYrMapHeaders($ini, $mapId)
+    {
+        $header = $ini['Header']; //we want the map header data
+
+        if ($header == null)
+            return "No header section found from INI";
+
+        $mapHeader = new \App\MapHeader();
+        $mapHeader->map_id = $mapId;
+        $mapHeader->width = intval($header["Width"]);
+        $mapHeader->height = intval($header["Height"]);
+        $mapHeader->startX = intval($header["StartX"]);
+        $mapHeader->startY = intval($header["StartY"]);
+        $mapHeader->numStartingPoints = intval($header["NumberStartingPoints"]);
+        $mapHeader->save();
+
+        //create the map waypoints
+        for ($i = 1; $i <= 8; $i++)
+        {
+            $wayPointValue = $header['Waypoint' . $i];
+            $x = intval(explode(',', $wayPointValue)[0]);
+            $y = intval(explode(',', $wayPointValue)[1]);
+
+            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint->x = $x;
+            $mapWaypoint->y = $y;
+            $mapWaypoint->bit_idx = $i;
+            $mapWaypoint->map_header_id = $mapHeader->id;
+            $mapWaypoint->save();
+        }
+    }
+
+    private function str_ends_with(string $string, string $substring): bool
+    {
+        $len = strlen($substring);
+
+        if ($len == 0)
+        {
+            return true;
+        }
+
+        return substr($string, -$len) === $substring;
     }
 
     public function removeMapPool(Request $request, $ladderId, $mapPoolId)
@@ -144,7 +297,7 @@ class MapPoolController extends Controller
         if (empty($mapPool->name))
         {
             $request->session()->flash('error', "Empty map pool name provided");
-            return redirect()->back(); 
+            return redirect()->back();
         }
 
         $mapPool->ladder_id = $ladderId;
