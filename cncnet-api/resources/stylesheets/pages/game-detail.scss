@@ -16,21 +16,45 @@
     align-items: center;
     border-top: 0;
     border-radius: 4px;
-    border-radius: 10px;
     padding-right: 2rem;
+    min-width: 160px;
     height: 60px;
 }
 
-.game-detail .player .player-start-position 
+// Player
+.game-detail .player-marker 
 {
     position: absolute;
-    bottom: 4px;
-    right: 0;
-    font-size: 0.8rem;
-    width: 20px;
+    width:30px; 
+    height: 30px; 
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.game-detail .player-marker .player-start-position 
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    width: 100%;
+    height: 100%;
+    font-size: 1rem;
     text-align: center;
     font-weight: 500;
     color: #fff;
+    border-radius: 100%;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.8784313725), rgba(4, 4, 4, 0.7019607843));
+}
+
+.game-detail .player-marker .player-start-position.red 
+{
+    border: 2px solid #c30000;
+}
+
+.game-detail .player-marker .player-start-position.yellow 
+{
+    border: 2px solid #ffba00;
 }
 
 .game-detail .player-red 
@@ -69,6 +93,21 @@
 {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+}
+
+.game-detail .player .player-details .faction 
+{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding-right: 0.2rem;
+    padding-bottom: 0.2rem;
+
+    .player-faction 
+    {
+        width: 40px;
+        height: 19px;
+    }
 }
 
 .game-detail .player .player-avatar 
