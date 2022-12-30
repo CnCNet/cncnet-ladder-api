@@ -9,7 +9,6 @@ use \App\User;
 use \App\MapPool;
 use \App\Ladder;
 use \App\SpawnOptionString;
-
 use Illuminate\Http\Request;
 
 class MapPoolController extends Controller
@@ -49,7 +48,7 @@ class MapPoolController extends Controller
         if (empty($qmMap->description) || empty($qmMap->admin_description))
         {
             $request->session()->flash('error', "Empty name provided");
-            return redirect()->back(); 
+            return redirect()->back();
         }
 
         $qmMap->save();
@@ -64,7 +63,7 @@ class MapPoolController extends Controller
             'map_id' => 'required',
             'hash'   => 'required|min:40|max:40',
             'name'   => 'string',
-            'mapImage' => 'image'
+            'mapImage' => 'image|required'
         ]);
 
         if ($request->map_id == 'new')
@@ -88,7 +87,7 @@ class MapPoolController extends Controller
         if (empty($map->name))
         {
             $request->session()->flash('error', "Empty map name provided");
-            return redirect()->back(); 
+            return redirect()->back();
         }
 
         $map->save();
@@ -102,7 +101,66 @@ class MapPoolController extends Controller
             $request->file('mapImage')->move($filepath, $filename);
         }
 
+        if ($request->hasFile('mapFile'))
+        {
+            $this->parseMapHeaders($request->mapFile, $map->id);
+        }
+
         return redirect()->back()->withInput();
+    }
+
+    private function parseMapHeaders($fileName, $mapId)
+    {
+        if (!$this->str_ends_with($fileName, ".map"))
+        {
+            return;
+        }
+
+        $val = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
+
+        if ($val == null)
+            return;
+
+        $header = $val['Header']; //we want the map header data
+
+        if ($header == null)
+            return;
+
+        $mapHeader = new \App\MapHeader();
+        $mapHeader->map_id = $mapId;
+        $mapHeader->width = $header["Width"];
+        $mapHeader->height = $header["Height"];
+        $mapHeader->startX = $header["StartX"];
+        $mapHeader->startY = $header["StartY"];
+        $mapHeader->numStartingPoints = $header["NumberStartingPoints"];
+        $mapHeader->save();
+
+        //create the map waypoints
+        for ($i = 1; $i <=8; $i++)
+        {
+            $wayPointValue = $header['Waypoint' . $i];
+            $x = explode($wayPointValue, ",")[0];
+            $y = explode($wayPointValue, ",")[1];
+
+            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint->x = $x;
+            $mapWaypoint->y = $y;
+            $mapWaypoint->bit_idx = $i;
+            $mapWaypoint->map_header_id = $mapHeader->id;
+            $mapWaypoint->save();
+        }
+    }
+
+    private function str_ends_with(string $string, string $substring): bool
+    {
+        $len = strlen($substring);
+
+        if ($len == 0)
+        {
+            return true;
+        }
+
+        return substr($string, -$len) === $substring;
     }
 
     public function removeMapPool(Request $request, $ladderId, $mapPoolId)
@@ -144,7 +202,7 @@ class MapPoolController extends Controller
         if (empty($mapPool->name))
         {
             $request->session()->flash('error', "Empty map pool name provided");
-            return redirect()->back(); 
+            return redirect()->back();
         }
 
         $mapPool->ladder_id = $ladderId;

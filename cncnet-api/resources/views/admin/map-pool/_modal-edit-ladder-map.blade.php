@@ -41,6 +41,11 @@
                         <input type="file" name="mapImage" id="ladderMapImage" />
                     </div>
 
+                    <div class="form-group">
+                        <label for="ladderMapFile"> Upload Map File </label>
+                        <input type="file" name="mapFile" id="ladderMapFile" />
+                    </div>
+
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
 
