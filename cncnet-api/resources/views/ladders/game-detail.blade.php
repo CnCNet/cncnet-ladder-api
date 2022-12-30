@@ -51,7 +51,8 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
@@ -126,7 +127,8 @@
                         @php $points = $playerCache ? $playerCache->points : 0;@endphp
 
                         <div class="player-card {{ $k == 1 ? 'player-card-right' : '' }}">
-                            <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
+                            <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                title="View {{ $player->username }}'s profile">
                                 <div class="player-avatar">
                                     @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 150])
                                 </div>
@@ -134,7 +136,8 @@
 
                             <div class="player-details">
                                 <h2 class="username">
-                                    <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
+                                    <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                        title="View {{ $player->username }}'s profile">
                                         {{ $player->username }}
                                     </a>
                                 </h2>
@@ -192,8 +195,9 @@
             </p>
         </div>
 
-        @include('ladders.game._map-with-players', [
+        @include('ladders.game._map-preview-with-players', [
             'map' => $map,
+            'playerGameReports' => $playerGameReports,
         ])
 
         @include('ladders.game._game-cameo-stats', [

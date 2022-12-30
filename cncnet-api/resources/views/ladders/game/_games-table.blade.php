@@ -51,6 +51,7 @@
                             'playerGameReport' => $teamBReport,
                         ])
                     </td>
+
                     <td class="td-game-details">
                         <div class="d-flex align-items-center game-details">
                             <div>
