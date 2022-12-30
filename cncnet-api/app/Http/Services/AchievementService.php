@@ -33,6 +33,11 @@ class AchievementService
             ->where("achievements_progress.achievement_unlocked_date", "!=", null)
             ->count();
 
+        if ($total == 0)
+        {
+            return null;
+        }
+
         return [
             "totalToUnlock" => $total,
             "unlockedCount" => $unlocked,
