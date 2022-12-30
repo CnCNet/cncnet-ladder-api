@@ -80,6 +80,8 @@ class MapPoolController extends Controller
             }
         }
 
+        $ladder_id = $request->ladder_id;
+
         $mapFile = $request->file('mapFile');
         if (!$this->str_ends_with($mapFile->getClientOriginalName(), ".map"))
         {
@@ -110,7 +112,7 @@ class MapPoolController extends Controller
             $request->file('mapImage')->move($filepath, $filename);
         }
 
-        $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id);
+        $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id, $ladder_id);
 
         if ($errMessage != null && !empty($errMessage))
         {
@@ -121,33 +123,119 @@ class MapPoolController extends Controller
         return redirect()->back()->withInput();
     }
 
-    private function parseMapHeaders($fileName, $mapId)
+    private function parseMapHeaders($fileName, $mapId, $ladderId)
     {
-        $val = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
+        $ini = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
 
-        if ($val == null)
+        if ($ini == null)
             return "Failure parsing INI from file";
 
-        $header = $val['Header']; //we want the map header data
+        $ladderAbbreviation = \App\Ladder::where('id', $ladderId)->first()->abbreviation;
+
+        if ($ladderAbbreviation == 'ra')
+            $this->parseRaMapHeaders($ini, $mapId);
+        if ($ladderAbbreviation == 'ts')
+            $this->parseTsMapHeaders($ini, $mapId);
+        else if ($ladderAbbreviation == 'ra2' || $ladderAbbreviation == 'yr' || $ladderAbbreviation == 'blitz')
+            $this->parseYrMapHeaders($ini, $mapId);
+        else
+            return "Map headers not supported for ladder " . $ladderAbbreviation;
+    }
+
+    private function parseRaMapHeaders($ini, $mapId)
+    {
+        $header = $ini['Map']; //we want the map header data
+
+        if ($header == null)
+            return "No 'Map' section found from INI";
+
+        $mapHeader = new \App\MapHeader();
+        $mapHeader->map_id = $mapId;
+        $mapHeader->width = $header["Width"];
+        $mapHeader->height = $header["Height"];
+        $mapHeader->startX = $header["X"];
+        $mapHeader->startY = $header["Y"];
+        $mapHeader->save();
+
+        $waypoints = $ini['Waypoint'];
+        if ($waypoints == null)
+            return "No 'Waypoints' section found from INI";
+
+        //create the map waypoints
+        for ($i = 0; $i <= 7; $i++)
+        {
+            $wayPointValue = $waypoints[$i];
+            $x = intval($wayPointValue % 128);
+            $y = intval($wayPointValue / 128);
+
+            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint->x = $x;
+            $mapWaypoint->y = $y;
+            $mapWaypoint->bit_idx = $i;
+            $mapWaypoint->map_header_id = $mapHeader->id;
+            $mapWaypoint->save();
+        }
+    }
+
+    private function parseTsMapHeaders($ini, $mapId)
+    {
+        $header = $ini['Map']; //we want the map header data
+
+        if ($header == null)
+            return "No 'Map' section found from INI";
+
+        $localSize = $header["LocalSize"];
+
+        $mapHeader = new \App\MapHeader();
+        $mapHeader->map_id = $mapId;
+        $mapHeader->width = intval(explode(",", $localSize)[2]);
+        $mapHeader->height = intval(explode(",", $localSize)[3]);
+        $mapHeader->startX = intval(explode(",", $localSize)[0]);
+        $mapHeader->startY = intval(explode(",", $localSize)[1]);
+        $mapHeader->save();
+
+        $waypoints = $ini['Waypoint'];
+        if ($waypoints == null)
+            return "No 'Waypoints' section found from INI";
+
+        //create the map waypoints
+        for ($i = 0; $i <= 7; $i++)
+        {
+            $wayPointValue = $waypoints[$i];
+            $x = intval($wayPointValue % 1000);
+            $y = intval($wayPointValue / 1000);
+
+            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint->x = $x;
+            $mapWaypoint->y = $y;
+            $mapWaypoint->bit_idx = $i;
+            $mapWaypoint->map_header_id = $mapHeader->id;
+            $mapWaypoint->save();
+        }
+    }
+
+    private function parseYrMapHeaders($ini, $mapId)
+    {
+        $header = $ini['Header']; //we want the map header data
 
         if ($header == null)
             return "No header section found from INI";
 
         $mapHeader = new \App\MapHeader();
         $mapHeader->map_id = $mapId;
-        $mapHeader->width = $header["Width"];
-        $mapHeader->height = $header["Height"];
-        $mapHeader->startX = $header["StartX"];
-        $mapHeader->startY = $header["StartY"];
-        $mapHeader->numStartingPoints = $header["NumberStartingPoints"];
+        $mapHeader->width = intval($header["Width"]);
+        $mapHeader->height = intval($header["Height"]);
+        $mapHeader->startX = intval($header["StartX"]);
+        $mapHeader->startY = intval($header["StartY"]);
+        $mapHeader->numStartingPoints = intval($header["NumberStartingPoints"]);
         $mapHeader->save();
 
         //create the map waypoints
         for ($i = 1; $i <= 8; $i++)
         {
             $wayPointValue = $header['Waypoint' . $i];
-            $x = explode(',', $wayPointValue)[0];
-            $y = explode(',', $wayPointValue)[1];
+            $x = intval(explode(',', $wayPointValue)[0]);
+            $y = intval(explode(',', $wayPointValue)[1]);
 
             $mapWaypoint = new \App\MapWaypoint();
             $mapWaypoint->x = $x;
