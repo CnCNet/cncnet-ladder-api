@@ -649,7 +649,6 @@ class ApiQuickMatchController extends Controller
                     ->orWhere('game_reports.fps', '<=', 0);
             })
             ->where('finished', '=', 1)
-            ->orderBy("games.id", "DESC")
             ->get()->count();
 
         $url = \App\URLHelper::getLadderUrl($ladderHistory) . '/games?errorGames=true';
