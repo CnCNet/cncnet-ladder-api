@@ -66,6 +66,8 @@
                 <tr>
                     <th>Ladder History</th>
                     <th>Game Id</th>
+                    <th>Player 1</th>
+                    <th>Player 2</th>
                     <th>Washed Date</th>
                     <th>Washed By</th>
                 </tr>
@@ -74,10 +76,16 @@
                 @foreach ($washed_games as $washed_game)
 
                 <?php $url = \App\URLHelper::getGameUrl($ladderHistory, $washed_game->game_id); ?>
+                <?php $p1 = \App\GameReport::where('game_id', $washed_game->game_id)->get()[0]->player->username; ?>
+                <?php $p2 = \App\GameReport::where('game_id', $washed_game->game_id)->get()[1]->player->username; ?>
 
+                <?php $p1Url = \App\URLHelper::getPlayerProfileUrl($ladderHistory, $p1); ?>
+                <?php $p2Url = \App\URLHelper::getPlayerProfileUrl($ladderHistory, $p2); ?>
                 <tr>
                     <td>{{ $ladderHistory->short }}</td>
                     <td><a href="{{ $url }}">{{ $washed_game->game_id }}</a></td>
+                    <td><a href="{{ $p1Url }}">{{ $p1 }}</a></td>
+                    <td><a href="{{ $p2Url }}">{{ $p2 }}</a></td>
                     <td>{{ $washed_game->created_at->format('F j, Y, g:i a T') }}</td>
                     <td>{{ $washed_game->user->name }}</td>
                 </tr>
