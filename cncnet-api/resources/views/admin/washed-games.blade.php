@@ -66,7 +66,7 @@
                 <tr>
                     <th>Ladder History</th>
                     <th>Game Id</th>
-                    <th>Created At</th>
+                    <th>Washed Date</th>
                     <th>Washed By</th>
                 </tr>
             </thead>
