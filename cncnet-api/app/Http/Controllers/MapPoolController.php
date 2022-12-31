@@ -91,6 +91,14 @@ class MapPoolController extends Controller
 
         $hash = sha1_file($mapFile);
 
+        //check if a map with this hash already exists, shouldn't be creating duplicate maps...
+        $existingMapsWithHash = \App\Map::where('hash', $hash)->where('ladder_id', $ladder_id)->first();
+        if ($existingMapsWithHash != null)
+        {
+            $request->session()->flash('error', "A map with this hash already exists: " . $existingMapsWithHash->name);
+            return redirect()->back();
+        }
+
         $map->ladder_id = $request->ladder_id;
         $map->hash = $hash;
         $map->name = trim($request->name);
