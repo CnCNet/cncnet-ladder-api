@@ -170,6 +170,7 @@ Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], func
     Route::get('/qm/ladder/{ladderAbbrev}/stats', 'ApiQuickMatchController@statsRequest');
     Route::get('/qm/ladder/{ladderAbbrev}/current_matches', 'ApiQuickMatchController@getActiveMatches');
     Route::get('/qm/ladder/rankings', 'ApiQuickMatchController@getPlayerRankings');
+    Route::get('/qm/ladder/{ladderAbbrev}/errored/games', 'ApiQuickMatchController@getErroredGames');
 });
 
 // Ladder Endpoints

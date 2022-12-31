@@ -80,7 +80,7 @@
         <div class="container">
             @if ($userIsMod && ($errorGames === null || $errorGames === false))
                 <div class="mb-4 mt-4">
-                    <a href="{{ \App\URLHelper::getLadderUrl($history) . '?errorGames=true' }}" class="btn btn-danger btn-md">
+                    <a href="{{ \App\URLHelper::getLadderUrl($history) . '/games?errorGames=true' }}" class="btn btn-danger btn-md">
                         View 0:03 Games
                     </a>
                 </div>
