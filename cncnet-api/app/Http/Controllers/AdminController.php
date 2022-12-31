@@ -55,6 +55,25 @@ class AdminController extends Controller
         ]);
     }
 
+    public function getWashedGames($ladderAbbreviation = null)
+    {
+        $ladder = \App\Ladder::where('abbreviation', $ladderAbbreviation)->first();
+
+        if ($ladder == null)
+            abort(404);
+
+        $ladderHistory = $ladder->currentHistory();
+
+        $washedGames = \App\GameAudit::where('game_audit.ladder_history_id', $ladderHistory->id)
+            ->orderBy('game_audit.created_at', 'DESC')
+            ->paginate(50);
+
+        return view("admin.washed-games", [
+            "washed_games" => $washedGames,
+            "ladderHistory" => $ladderHistory
+        ]);
+    }
+
     public function getLadderSetupIndex(Request $request, $ladderId = null)
     {
         $ladder = \App\Ladder::find($ladderId);
@@ -311,6 +330,7 @@ class AdminController extends Controller
         $this->ladderService->updatePlayerCache($gameReport);
         return redirect()->back();
     }
+
     public function washGame(Request $request)
     {
         $game = \App\Game::find($request->game_id);
@@ -337,6 +357,13 @@ class AdminController extends Controller
         $game->save();
         $gameReport->save();
         $this->ladderService->undoPlayerCache($gameReport);
+
+        //log the user who washed the game
+        $gameAudit = new \App\GameAudit;
+        $gameAudit->game_id = $game->id;
+        $gameAudit->user_id = $request->user()->id;
+        $gameAudit->ladder_history_id = $game->ladderHistory->id;
+        $gameAudit->save();
 
         return redirect()->back();
     }
