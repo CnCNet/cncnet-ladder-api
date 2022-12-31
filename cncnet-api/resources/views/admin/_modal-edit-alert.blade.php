@@ -13,7 +13,7 @@
 
                     <div class="form-group">
                         <label for="alertText">Alert Text</label>
-                        <textarea id="alertText" name="message" class="form-control border" rows="4" cols="50" value="{{ $alert->message }}">{{ $alert->message }}</textarea>
+                        <textarea id="alertText" name="message" class="form-control border" rows="4" cols="50"> @if(isset($alert) && $alert != null) {{ $alert->message }} @endif</textarea>
                     </div>
 
                     <div class="form-group">
