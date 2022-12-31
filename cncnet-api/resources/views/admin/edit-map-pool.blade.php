@@ -298,9 +298,9 @@
         (function() {
             document.getElementById("ladderMapSelector").onchange = function() {
                 let ladderMap = ladderMaps[this.value];
+
                 document.getElementById("ladderMapId").value = this.value;
                 document.getElementById("ladderMapName").value = ladderMap.name;
-                document.getElementById("ladderMapHash").value = ladderMap.hash;
                 document.getElementById("ladderMapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" + ladderMap.hash + ".png"
             };
         })();
