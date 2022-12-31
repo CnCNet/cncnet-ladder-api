@@ -711,9 +711,15 @@ class AdminController extends Controller
 
     public function editLadderAlert(Request $request, $ladderId)
     {
+        $this->validate($request, [
+            'message'   => 'string|required',
+            'expires_at' => 'required'
+        ]);
+
         $ladder = \App\Ladder::find($ladderId);
 
         $alert = \App\LadderAlert::find($request->id);
+        
         if ($request->submit == "delete")
         {
             $alert->delete();
@@ -725,6 +731,12 @@ class AdminController extends Controller
         {
             $alert = new \App\LadderAlert;
             $alert->ladder_id = $ladder->id;
+        }
+
+        if ($alert === null)
+        {
+            $request->session()->flash('error', "No alert found with id " . $request->id);
+            return redirect()->back();
         }
 
         $alert->message = $request->message;

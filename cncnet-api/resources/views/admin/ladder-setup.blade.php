@@ -511,23 +511,13 @@
 @section('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript">
-        @if ($user->isGod() || $user->isLadderAdmin($ladder))
-            let ladderAlerts = {
-                @foreach ($ladder->alerts as $alert)
-                    "{{ $alert->id }}": {
-                        "id": "{{ $alert->id }}",
-                        "message": {
-                            !!json_encode($alert - > message) !!
-                        },
-                        "expires_at": "{{ $alert->expires_at }}"
-                    },
-                @endforeach
-                "new": {
-                    "id": "new",
-                    "message": "",
-                    "expires_at": "{{ \Carbon\Carbon::now()->addMonth(1)->startOfMonth() }}"
-                }
-            };
+@if($user->isGod() || $user->isLadderAdmin($ladder))
+     let ladderAlerts = {
+         @foreach($ladder->alerts as $alert)
+         "{{$alert->id}}": { "id": "{{$alert->id}}", "message": {!! json_encode($alert->message) !!}, "expires_at": "{{$alert->expires_at}}"},
+         @endforeach
+         "new": { "id":"new", "message": "", "expires_at": "{{ \Carbon\Carbon::now()->addMonth(1)->startOfMonth()}}" }
+     };
         @else
             let ladderAlerts = {};
         @endif

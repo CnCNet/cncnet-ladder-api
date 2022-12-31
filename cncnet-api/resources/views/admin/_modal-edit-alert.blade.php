@@ -2,7 +2,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Clone Map Pool</h5>
+                <h5 class="modal-title">QM Alert</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -13,7 +13,7 @@
 
                     <div class="form-group">
                         <label for="alertText">Alert Text</label>
-                        <textarea id="alertText" name="message" class="form-control border" rows="4" cols="50"></textarea>
+                        <textarea id="alertText" name="message" class="form-control border" rows="4" cols="50" value="{{ $alert->message }}">{{ $alert->message }}</textarea>
                     </div>
 
                     <div class="form-group">
