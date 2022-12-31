@@ -625,11 +625,39 @@ class ApiQuickMatchController extends Controller
                 ->select('u.discord_profile as discord_name', 'player_caches.*')
                 ->limit($count)
                 ->get();
- 
+
             $rankings[strtoupper($ladder->abbreviation)] = $pc;
         }
 
         return $rankings;
+    }
+
+    public function getErroredGames($ladderAbbrev)
+    {
+        $ladder = \App\Ladder::where('abbreviation', $ladderAbbrev)->first();
+
+        if ($ladder == null)
+            return "Bad ladder abbreviation " . $ladderAbbrev;
+
+        $ladderHistory = $ladder->currentHistory();
+
+        $numErroredGames = \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
+            ->where("ladder_history_id", "=", $ladderHistory->id)
+            ->where(function ($query)
+            {
+                $query->where('game_reports.duration', '<=', 3)
+                    ->orWhere('game_reports.fps', '<=', 0);
+            })
+            ->where('finished', '=', 1)
+            ->get()->count();
+
+        $url = \App\URLHelper::getLadderUrl($ladderHistory) . '/games?errorGames=true';
+
+        $data = [];
+        $data["url"] = "https://ladder.cncnet.org" . $url;
+        $data["count"] = $numErroredGames;
+
+        return $data;
     }
 }
 
