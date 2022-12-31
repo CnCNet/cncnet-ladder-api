@@ -170,7 +170,7 @@
 
             ladderDropdown2.onchange = function() {
                 let value = ladderDropdown2.value
-                washLink.setAttribute("href", "admin/washedGames/" + value);
+                washLink.setAttribute("href", "washedGames/" + value);
             }
         })();
     </script>
