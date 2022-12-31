@@ -128,6 +128,25 @@
                         </div>
                     </div>
 
+                    <div class="col-md-4">
+                        <div class="profile-link">
+                            <div class="player-box player-card">
+                                <h3>Washed Games</h3>
+
+                                <label for="ladders_label">Ladder</label>
+
+                                <select name="ladder_dropdown2" id="ladder_dropdown2" class="form-control border">
+                                    @foreach ($ladders as $ladder)
+                                        <option value="{{ $ladder->abbreviation }}"> {{ $ladder->abbreviation }} </option>
+                                    @endforeach
+                                </select>
+
+                                <a id="washedGamesLink" href="/admin/washedGames/{{ $ladders[0]->abbreviation }}"
+                                    class="btn btn-md btn-secondary mt-2">View</a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -142,6 +161,16 @@
             ladderDropdown.onchange = function() {
                 let value = ladderDropdown.value
                 cancelLink.setAttribute("href", "canceledMatches/" + value);
+            }
+        })();
+
+        (function() {
+            let ladderDropdown2 = document.getElementById("ladder_dropdown2")
+            let washLink = document.getElementById("washedGamesLink")
+
+            ladderDropdown2.onchange = function() {
+                let value = ladderDropdown2.value
+                washLink.setAttribute("href", "admin/washedGames/" + value);
             }
         })();
     </script>
