@@ -203,7 +203,7 @@
                             </div>
                         </div>
 
-                        @if ($tier == 1)
+                        @if ($tier == null || $tier == 1)
                             <h3 class="mt-2 mb-4" style="color: #ffc700;">
                                 <i class="bi bi-trophy pe-3"></i> 1vs1 - Champions Players League
                             </h3>
