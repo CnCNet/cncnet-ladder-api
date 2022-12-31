@@ -42,44 +42,22 @@ class LadderController extends Controller
         );
     }
 
-    public function getLadderPlayerRatings(Request $request)
+    public function updatePlayerRatings(Request $request)
     {
         $results = [];
 
         $history = LadderHistory::find(679);
 
-        // $player = Player::where("id", 157968)->where("ladder_id", $history->ladder->id)->first();
-        // $playerHistory = $player->calculateTier($history);
-        // dd($player->rating->rating, $playerHistory);
-        // dd($player->calculateTier($history));
-
         $players = PlayerCache::where("ladder_history_id", $history->id)->get();
 
         foreach ($players as $player)
         {
-            # Test on kain
-            // if ($player->player_id == "157968")
-            // {
             $ph = $player->player->calculateTier($history);
             $player->tier = $ph->tier;
             $player->save();
-            if ($ph->tier == 2)
-            {
-                // echo $player;
-            }
-            // echo $ph->tier . "\n";
-            // }
-            // $player->save();
+
+            $results[] = $player;
         }
-
-
-
-        // $players = Player::where("ladder_id", "=", 1)->get();
-        // foreach ($players as $player)
-        // {
-        //     $rating = PlayerRating::where("player_id", $player->id)->first();
-        //     $results[$rating->rating][$player->id] = $player->username;
-        // }
 
         return $results;
     }
