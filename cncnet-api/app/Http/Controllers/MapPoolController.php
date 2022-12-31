@@ -62,12 +62,45 @@ class MapPoolController extends Controller
         $this->validate($request, [
             'map_id' => 'required',
             'name'   => 'string',
-            'mapImage' => 'image|required',
-            'mapFile' => 'required'
+            'mapImage' => 'image'
         ]);
+
+        $mapFile = $request->file('mapFile');
+        $hash = null;
+        if ($mapFile != null)
+        {
+            if (!$this->str_ends_with($mapFile->getClientOriginalName(), ".map"))
+            {
+                $request->session()->flash('error', "Map file does not end in .map");
+                return redirect()->back();
+            }
+
+            $hash = sha1_file($mapFile);
+        }
 
         if ($request->map_id == 'new')
         {
+            if ($mapFile == null)
+            {
+                $request->session()->flash('error', "Map file is required for new maps");
+                return redirect()->back();
+            }
+
+            //check if a map with this hash already exists, shouldn't be creating duplicate maps...
+            $existingMapsWithHash = \App\Map::where('hash', $hash)->where('ladder_id', $request->ladder_id)->first();
+
+            if ($existingMapsWithHash != null)
+            {
+                $request->session()->flash('error', "A map with this hash already exists: " . $existingMapsWithHash->name);
+                return redirect()->back();
+            }
+
+            if (!$request->hasFile('mapImage'))
+            {
+                $request->session()->flash('error', "Map image is required for new maps");
+                return redirect()->back();
+            }
+
             $map = new \App\Map;
         }
         else
@@ -80,27 +113,9 @@ class MapPoolController extends Controller
             }
         }
 
-        $ladder_id = $request->ladder_id;
-
-        $mapFile = $request->file('mapFile');
-        if (!$this->str_ends_with($mapFile->getClientOriginalName(), ".map"))
-        {
-            $request->session()->flash('error', "Map file does not end in .map");
-            return redirect()->back();
-        }
-
-        $hash = sha1_file($mapFile);
-
-        //check if a map with this hash already exists, shouldn't be creating duplicate maps...
-        $existingMapsWithHash = \App\Map::where('hash', $hash)->where('ladder_id', $ladder_id)->first();
-        if ($existingMapsWithHash != null)
-        {
-            $request->session()->flash('error', "A map with this hash already exists: " . $existingMapsWithHash->name);
-            return redirect()->back();
-        }
-
         $map->ladder_id = $request->ladder_id;
-        $map->hash = $hash;
+        if ($hash != null)
+            $map->hash = $hash;
         $map->name = trim($request->name);
 
         if (empty($map->name))
@@ -120,9 +135,10 @@ class MapPoolController extends Controller
             $request->file('mapImage')->move($filepath, $filename);
         }
 
-        $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id, $ladder_id);
+        if ($mapFile != null)
+            $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id, $request->ladder_id);
 
-        if ($errMessage != null && !empty($errMessage))
+        if (isset($errMessage) && $errMessage != null && !empty($errMessage))
         {
             $request->session()->flash('error', $errMessage);
             return redirect()->back();

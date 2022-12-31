@@ -1,4 +1,4 @@
-<div class="modal fade" id="editLadderMap" tabIndex="-1" role="dialog">
+<div class="modal fade modal-lg" id="editLadderMap" tabIndex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -14,7 +14,7 @@
 
                     <select id="ladderMapSelector" name="map_id" size="6" class="form-control map_pool">
                         @foreach ($ladderMaps as $map)
-                            <option value="{{ $map->id }}"> {{ $map->name }} </option>
+                            <option value="{{ $map->id }}"> {{ $map->name }} - {{ $map->hash}}</option>
                         @endforeach
                         <option value="new">&lt;new></option>
                     </select>
@@ -37,7 +37,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="ladderMapFile"> Upload Map File </label>
+                        <label for="ladderMapFile"> Upload Map File (.map) </label>
                         <input type="file" name="mapFile" id="ladderMapFile" />
                     </div>
 
