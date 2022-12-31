@@ -8,7 +8,8 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
@@ -96,7 +97,8 @@
                     <ul class="dropdown-menu">
                         @foreach ($ladders_previous as $previous)
                             <li>
-                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}" class="dropdown-item">
+                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}"
+                                    class="dropdown-item">
                                     {{ $previous->starts->format('Y - F') }}
                                 </a>
                             </li>
@@ -136,46 +138,36 @@
 
             <section>
                 <div class="row">
-
                     <div class="col-md-12">
-                        <div class="header">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    @if ($history->ladder->qmLadderRules->tier2_rating > 0)
-                                        @if ($tier == 1 || $tier === null)
-                                            <h3><strong>1vs1</strong> Masters League Rankings</h3>
-                                        @elseif($tier == 2)
-                                            <h3><strong>1vs1</strong> Contenders League Rankings</h3>
-                                        @endif
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
+
+                        <h3 class="mt-2 mb-4">
+                            <i class="bi bi-trophy pe-3"></i> Pick a league
+                        </h3>
 
                         @if ($history->ladder->qmLadderRules->tier2_rating > 0)
-                            <div class="feature" style="margin-top: -25px;">
+                            <div class="mt-2">
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                                        <a href="/ladder/{{ $history->short . '/1/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                                            <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}"
-                                                style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-masters.png' }}')">
+                                        <a href="/ladder/{{ $history->short . '/1/' . $history->ladder->abbreviation }}/"
+                                            title="{{ $history->ladder->name }}" class="ladder-link">
+                                            <div class="ladder-cover" style="background: black;">
                                                 <div class="details tier-league-cards">
                                                     <div class="type">
-                                                        <h1>Masters <strong>League</strong></h1>
-                                                        <p class="lead">1<strong>vs</strong>1</p>
+                                                        <i class="bi bi-trophy" style="font-size: 4rem;color: #ffc700;"></i>
+                                                        <h1>1vs1 - Champions Players <strong>League</strong></h1>
                                                     </div>
                                                 </div>
                                             </div>
                                         </a>
                                     </div>
                                     <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                                        <a href="/ladder/{{ $history->short . '/2/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                                            <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}"
-                                                style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-contenders.png' }}')">
+                                        <a href="/ladder/{{ $history->short . '/2/' . $history->ladder->abbreviation }}/"
+                                            title="{{ $history->ladder->name }}" class="ladder-link">
+                                            <div class="ladder-cover" style="background: black;">
                                                 <div class="details tier-league-cards">
                                                     <div class="type">
-                                                        <h1>Contenders <strong>League</strong></h1>
-                                                        <p class="lead">1<strong>vs</strong>1</p>
+                                                        <i class="bi bi-trophy" style="font-size: 4rem;color: #004bff;"></i>
+                                                        <h1>1vs1 - Contenders Players <strong>League</strong></h1>
                                                     </div>
                                                 </div>
                                             </div>
@@ -197,7 +189,8 @@
                                 <form>
                                     <div class="form-group" method="GET">
                                         <div class="search" style="position:relative;">
-                                            <input class="form-control border" name="search" value="{{ $search }}" placeholder="Search by Player..." />
+                                            <input class="form-control border" name="search" value="{{ $search }}"
+                                                placeholder="Search by Player..." />
                                         </div>
                                         @if ($search)
                                             <small>
@@ -209,6 +202,16 @@
                                 </form>
                             </div>
                         </div>
+
+                        @if ($tier == 1)
+                            <h3 class="mt-2 mb-4" style="color: #ffc700;">
+                                <i class="bi bi-trophy pe-3"></i> 1vs1 - Premier Players League
+                            </h3>
+                        @else
+                            <h3 class="mt-2 mb-4" style="color: #004bff;">
+                                <i class="bi bi-trophy pe-3"></i> 1vs1 - Contenders Players League
+                            </h3>
+                        @endif
 
                         @include('ladders.listing._ladder-table', ['players' => $players])
 
