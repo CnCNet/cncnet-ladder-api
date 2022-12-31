@@ -154,7 +154,7 @@
                                                 <div class="details tier-league-cards">
                                                     <div class="type">
                                                         <i class="bi bi-trophy" style="font-size: 4rem;color: #ffc700;"></i>
-                                                        <h1>1vs1 - Champions Players <strong>League</strong></h1>
+                                                        <h3>1vs1 - Champions Players <strong>League</strong></h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -167,7 +167,7 @@
                                                 <div class="details tier-league-cards">
                                                     <div class="type">
                                                         <i class="bi bi-trophy" style="font-size: 4rem;color: #004bff;"></i>
-                                                        <h1>1vs1 - Contenders Players <strong>League</strong></h1>
+                                                        <h3>1vs1 - Contenders Players <strong>League</strong></h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -205,7 +205,7 @@
 
                         @if ($tier == 1)
                             <h3 class="mt-2 mb-4" style="color: #ffc700;">
-                                <i class="bi bi-trophy pe-3"></i> 1vs1 - Premier Players League
+                                <i class="bi bi-trophy pe-3"></i> 1vs1 - Champions Players League
                             </h3>
                         @else
                             <h3 class="mt-2 mb-4" style="color: #004bff;">
