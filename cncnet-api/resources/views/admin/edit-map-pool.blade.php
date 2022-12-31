@@ -281,7 +281,7 @@
             @endforeach
             "new": {
                 "ladder_id": "{{ $ladder->id }}",
-                "name": "new map",
+                "name": "",
                 "hash": ""
             },
         };

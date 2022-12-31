@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use ErrorException;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use \Carbon\Carbon;
@@ -101,6 +102,12 @@ class MapPoolController extends Controller
                 return redirect()->back();
             }
 
+            if (!isset($request->name) || $request->name == null || empty($request->name))
+            {
+                $request->session()->flash('error', "Map name is required for new maps");
+                return redirect()->back();
+            }
+
             $map = new \App\Map;
         }
         else
@@ -116,7 +123,9 @@ class MapPoolController extends Controller
         $map->ladder_id = $request->ladder_id;
         if ($hash != null)
             $map->hash = $hash;
-        $map->name = trim($request->name);
+
+        if (isset($request->name) && $request->name != null && !empty($request->name))
+            $map->name = trim($request->name);
 
         if (empty($map->name))
         {
@@ -149,7 +158,13 @@ class MapPoolController extends Controller
 
     private function parseMapHeaders($fileName, $mapId, $ladderId)
     {
-        $ini = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
+        try 
+        {
+            $ini = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
+        } catch(ErrorException $e) 
+        {
+            return "Failed to parse map file, error: " . $e->getMessage();
+        }
 
         if ($ini == null)
             return "Failure parsing INI from file";
