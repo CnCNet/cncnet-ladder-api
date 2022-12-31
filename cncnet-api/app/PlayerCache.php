@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlayerCache extends Model
 {
-
     //
     public $timestamps = false;
 
@@ -23,7 +22,11 @@ class PlayerCache extends Model
 
     public function rank()
     {
-        $players = PlayerCache::where('ladder_history_id', '=', $this->history->id)->orderBy('points', 'desc')->get();
+        $players = PlayerCache::where('ladder_history_id', '=', $this->history->id)
+            ->where("tier", $this->tier)
+            ->orderBy('points', 'desc')
+            ->get();
+
         $count = 1;
 
         foreach ($players as $player)

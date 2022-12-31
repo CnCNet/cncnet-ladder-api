@@ -311,6 +311,7 @@ class AdminController extends Controller
         $this->ladderService->updatePlayerCache($gameReport);
         return redirect()->back();
     }
+
     public function washGame(Request $request)
     {
         $game = \App\Game::find($request->game_id);
@@ -719,7 +720,7 @@ class AdminController extends Controller
         $ladder = \App\Ladder::find($ladderId);
 
         $alert = \App\LadderAlert::find($request->id);
-        
+
         if ($request->submit == "delete")
         {
             $alert->delete();

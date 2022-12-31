@@ -15,6 +15,7 @@ Route::get('/styleguide', 'SiteController@getStyleguide');
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
     Route::get('/', 'LadderController@getLadders');
+    Route::get('/rating', 'LadderController@getLadderPlayerRatings');
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
     Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');

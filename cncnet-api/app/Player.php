@@ -311,38 +311,44 @@ class Player extends Model
         $pHist = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
         if ($pHist === null)
         {
-            $this->doTierStuff($history);
+            $this->calculateTier($history);
         }
         return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
     }
 
-    public function doTierStuff($history)
+    /**
+     * Updates new tier and returns player_history
+     * @param mixed $history 
+     * @return mixed PlayerHistory
+     */
+    public function calculateTier($history)
     {
-        $gameCount = $this->playerGameReports()->count();
-        $pHist = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
+        $playerHistory = PlayerHistory::where("player_id", $this->id)
+            ->where("ladder_history_id", $history->id)
+            ->first();
 
-        if ($pHist === null)
+        if ($playerHistory === null)
         {
-            $pHist = new \App\PlayerHistory;
-            $pHist->ladder_history_id = $history->id;
-            $pHist->player_id = $this->id;
+            $playerHistory = new \App\PlayerHistory;
+            $playerHistory->ladder_history_id = $history->id;
+            $playerHistory->player_id = $this->id;
+            $playerHistory->tier = 2;
+        }
 
-            $pHist->tier = 1;
-            if ($this->playerRating->rating <= $history->ladder->qmLadderRules->tier2_rating)
-            {
-                $pHist->tier = 2;
-            }
-            $pHist->save();
-        }
-        // If it's the first game of the month  or the 20th game we'll do ladder tier placement.
-        else if ($gameCount == 20)
+        if ($this->rating->rating > $history->ladder->qmLadderRules->tier2_rating)
         {
-            if ($this->rating->rating > $history->ladder->qmLadderRules->tier2_rating)
-                $pHist->tier = 1;
-            else
-                $pHist->tier = 2;
-            $pHist->save();
+            $playerHistory->tier = 1;
+            echo "FIRST TIER Player: $this->username " . $this->rating->rating . "<br/>";
         }
+        else
+        {
+            $playerHistory->tier = 2;
+            echo "SECOND TIER Player: $this->username " . $this->rating->rating . "<br/>";
+        }
+
+        $playerHistory->save();
+
+        return $playerHistory;
     }
 
     public function playerCache($history_id)

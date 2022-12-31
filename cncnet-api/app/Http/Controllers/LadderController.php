@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\StatsService;
 use App\Player;
+use App\PlayerCache;
+use App\PlayerHistory;
+use App\PlayerRating;
 use App\User;
 
 class LadderController extends Controller
@@ -39,12 +42,56 @@ class LadderController extends Controller
         );
     }
 
+    public function getLadderPlayerRatings(Request $request)
+    {
+        $results = [];
+
+        $history = LadderHistory::find(679);
+
+        // $player = Player::where("id", 157968)->where("ladder_id", $history->ladder->id)->first();
+        // $playerHistory = $player->calculateTier($history);
+        // dd($player->rating->rating, $playerHistory);
+        // dd($player->calculateTier($history));
+
+        $players = PlayerCache::where("ladder_history_id", $history->id)->get();
+
+        foreach ($players as $player)
+        {
+            # Test on kain
+            // if ($player->player_id == "157968")
+            // {
+            $ph = $player->player->calculateTier($history);
+            $player->tier = $ph->tier;
+            $player->save();
+            if ($ph->tier == 2)
+            {
+                // echo $player;
+            }
+            // echo $ph->tier . "\n";
+            // }
+            // $player->save();
+        }
+
+
+
+        // $players = Player::where("ladder_id", "=", 1)->get();
+        // foreach ($players as $player)
+        // {
+        //     $rating = PlayerRating::where("player_id", $player->id)->first();
+        //     $results[$rating->rating][$player->id] = $player->username;
+        // }
+
+        return $results;
+    }
+
     public function getLadderIndex(Request $request)
     {
         $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
 
         if ($history === null)
             abort(404);
+
+        $tier = $request->tier ?? 1; // Default to tier 1
 
         # Stats
         $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
@@ -55,7 +102,7 @@ class LadderController extends Controller
             $orderBy = $request->orderBy == "desc" ? "desc" : "asc";
 
             $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
-                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+                ->where('tier', $tier)
                 ->where('player_name', 'like', '%' . $request->search . '%')
                 ->orderBy('games', $orderBy)
                 ->paginate(45);
@@ -64,7 +111,7 @@ class LadderController extends Controller
         {
             # Default
             $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
-                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+                ->where('tier', $tier)
                 ->where('player_name', 'like', '%' . $request->search . '%')
                 ->orderBy('points', 'desc')
                 ->paginate(45);

@@ -422,6 +422,7 @@ class LadderService
         else
             return null;
     }
+
     public function undoPlayerCache($gameReport)
     {
         $history = $gameReport->game->ladderHistory;
@@ -449,7 +450,8 @@ class LadderService
         {
             $player = $playerGR->player;
             $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
-                ->where('player_id', '=', $player->id)->first();
+                ->where('player_id', '=', $player->id)
+                ->first();
 
             if ($pc === null)
             {

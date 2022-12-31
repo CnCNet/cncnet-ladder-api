@@ -332,7 +332,7 @@ class ApiLadderController extends Controller
                     $this->playerService->updatePlayerRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
             }
 
-            $playerGR->player->doTierStuff($history);
+            $playerGR->player->calculateTier($history);
             $playerGR->save();
 
             $pc = $playerGR->player->playerCache($history->id);
@@ -726,7 +726,7 @@ class ApiLadderController extends Controller
     {
         if ($lockedAchievement == null)
             return;
-            
+
         $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
             ->where('user_id', $user->id)
             ->first();
