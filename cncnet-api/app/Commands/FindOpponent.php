@@ -3,7 +3,7 @@
 namespace App\Commands;
 
 use App\Commands\Command;
-
+use App\PlayerCache;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
@@ -94,6 +94,7 @@ class FindOpponent extends Command implements ShouldQueue
         }
 
         $player = $qmPlayer->player;
+        $playerCache = PlayerCache::where("player_id", $player->id)->first();
 
         if ($player === null)
         {
@@ -137,7 +138,15 @@ class FindOpponent extends Command implements ShouldQueue
         foreach ($opponentEntries as $opponentEntry)
         {
             $oppPlayer = $opponentEntry->qmPlayer->player;
+            $oppPlayerCache = PlayerCache::where("player_id", $oppPlayer->id)->first();
             $oppUserSettings = $oppPlayer->user->userSettings; //opponent's point filter flag
+
+            # Checks players are in same league tier otherwise skip
+            if ($oppPlayerCache->tier !== $playerCache->tier)
+            {
+                Log::info("FindOpponent ** Players are in different tier " . $playerCache . ", p2: " . $oppPlayerCache);
+                continue;
+            }
 
             $ptFilterOff = false;
 
@@ -153,7 +162,8 @@ class FindOpponent extends Command implements ShouldQueue
                 {
                     Log::info("FindOpponent ** Players meet the min pt filter rank p1: " . $playerRank . ", p2: " . $oppPlayerRank);
                     $ptFilterOff = true;
-                } else 
+                }
+                else
                 {
                     Log::info("FindOpponent ** Players do not meet the min pt filter rank. p1: " . $playerRank . ", p2: " . $oppPlayerRank);
                 }
