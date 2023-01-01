@@ -29,45 +29,54 @@ class PlayerRatingService
             $playerHistory = new PlayerHistory();
             $playerHistory->ladder_history_id = $history->id;
             $playerHistory->player_id = $player->id;
-            $playerHistory->tier = 2;
-            $playerHistory->save();
-
-            # Assign a tier from player_ratings table
-            $playerRating = PlayerRating::where("player_id", $player->id)->first();
-            if ($playerRating)
-            {
-                $playerTier = $this->getTierByLadderRules($playerRating->rating, $history);
-            }
-            else
-            {
-                # We've no record of any player_ratings for this username
-                # Check other users player accounts for this game type and use that highest instead
-                $user = $player->user;
-                $anyOtherPlayerRating = Player::where("user_id", $user->id)
-                    ->where("ladder_id", $history->ladder->id)
-                    ->join("player_ratings as pr", "pr.player_id", "=", "players.id")
-                    ->orderBy("pr.rating", "DESC")
-                    ->first();
-
-                # Otherwise default to tier 2
-                if ($anyOtherPlayerRating == null)
-                {
-                    $playerTier = 2;
-                }
-
-                $playerTier = $this->getTierByLadderRules($anyOtherPlayerRating->rating, $history);
-            }
-
-            $playerHistory->tier = $playerTier;
+            $playerHistory->tier = $this->findUserPlayerTier($player, $history);
             $playerHistory->save();
         }
 
         return $playerHistory;
     }
 
+    private function findUserPlayerTier($player, $history)
+    {
+        $playerTier = null;
+
+        # Get the elo rating from player_ratings table
+        $playerRating = PlayerRating::where("player_id", $player->id)->first();
+        if ($playerRating)
+        {
+            $playerTier = $this->getTierByLadderRules($playerRating->rating, $history);
+        }
+        else
+        {
+            # We've no record of any player_ratings for this username
+            # Check other users player accounts for this game type and use that highest instead
+            $user = $player->user;
+            $usersOtherPlayerAccounts = Player::where("user_id", $user->id)
+                ->where("ladder_id", $history->ladder->id)
+                ->join("player_ratings as pr", "pr.player_id", "=", "players.id")
+                ->orderBy("pr.rating", "DESC")
+                ->first();
+
+            if ($usersOtherPlayerAccounts)
+            {
+                $playerTier = $this->getTierByLadderRules($usersOtherPlayerAccounts->rating, $history);
+            }
+            else
+            {
+                # Otherwise let the function decide based on a new signup
+                $playerTier = $this->getTierByLadderRules(PlayerRating::$DEFAULT_RATING, $history);
+            }
+        }
+        return $playerTier;
+    }
+
+    /**
+     * @param mixed $rating 
+     * @param mixed $history 
+     * @return int 
+     */
     private function getTierByLadderRules($rating, $history)
     {
-        # For now we only want Blitz to have tier leagues
         if ($history->abbreviation == "blitz")
         {
             # Default to tier 2 for new players signing up
