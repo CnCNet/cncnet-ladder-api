@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Helpers\GameHelper;
 use App\Player;
 use App\PlayerHistory;
 use App\PlayerRating;
@@ -44,7 +45,7 @@ class PlayerRatingService
         $playerRating = PlayerRating::where("player_id", $player->id)->first();
         if ($playerRating)
         {
-            $playerTier = $this->getTierByLadderRules($playerRating->rating, $history);
+            $playerTier = $this->getTierByLadderRules($playerRating->rating->rating, $history);
         }
         else
         {
@@ -77,7 +78,7 @@ class PlayerRatingService
      */
     private function getTierByLadderRules($rating, $history)
     {
-        if ($history->abbreviation == "blitz")
+        if ($history->ladder->abbreviation == GameHelper::$GAME_BLITZ)
         {
             # Default to tier 2 for new players signing up
             if ($rating == PlayerRating::$DEFAULT_RATING)

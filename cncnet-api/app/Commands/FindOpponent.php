@@ -3,22 +3,14 @@
 namespace App\Commands;
 
 use App\Commands\Command;
-use App\PlayerCache;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Bus\SelfHandling;
-use Illuminate\Contracts\Queue\ShouldBeQueued;
-use DB;
-use Carbon\Carbon;
-use App\QmMatch;
-use App\QmMatchPlayer;
 use App\QmQueueEntry;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
 class FindOpponent extends Command implements ShouldQueue
 {
-
     use InteractsWithQueue, SerializesModels;
 
     public $qEntryId = null;
@@ -94,7 +86,7 @@ class FindOpponent extends Command implements ShouldQueue
         }
 
         $player = $qmPlayer->player;
-        $playerCache = PlayerCache::where("player_id", $player->id)->first();
+        $playerHistory = $player->playerHistory($history);
 
         if ($player === null)
         {
@@ -103,7 +95,6 @@ class FindOpponent extends Command implements ShouldQueue
             return;
         }
 
-        $rating = $player->rating->rating;
         // map_bitfield is an old and unused bit of code
         $qmPlayer->map_bitfield = 0xffffffff;
 
@@ -138,13 +129,14 @@ class FindOpponent extends Command implements ShouldQueue
         foreach ($opponentEntries as $opponentEntry)
         {
             $oppPlayer = $opponentEntry->qmPlayer->player;
-            $oppPlayerCache = PlayerCache::where("player_id", $oppPlayer->id)->first();
+            $oppPlayerHistory = $oppPlayer->playerHistory($history);
+
             $oppUserSettings = $oppPlayer->user->userSettings; //opponent's point filter flag
 
             # Checks players are in same league tier otherwise skip
-            if ($oppPlayerCache->tier !== $playerCache->tier)
+            if ($oppPlayerHistory->tier !== $playerHistory->tier)
             {
-                Log::info("FindOpponent ** Players are in different tier " . $playerCache . ", p2: " . $oppPlayerCache);
+                Log::info("FindOpponent ** Players are in different tier " . $playerHistory . ", p2: " . $oppPlayerHistory);
                 continue;
             }
 
