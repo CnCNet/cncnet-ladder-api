@@ -46,23 +46,6 @@
 
 @section('content')
     <section>
-        <div class="container ">
-
-            <div class="mt-4 mb-4 pt-4">
-                <h2>
-                    <span class="material-symbols-outlined icon pe-3">
-                        settings
-                    </span>
-                    <strong>Account</strong> Settings
-                </h2>
-            </div>
-
-            <p class="lead">Manage your ladder account setting, including your Ladder Avatar, Social links and Points filter.</p>
-
-            @if (isset($userSettings))
-                <a href="account/settings" class="btn btn-outline btn-size-md">Ladder Account Settings</a>
-            @endif
-        </div>
         <div class="container">
             <div class="row">
                 @if (!$user->email_verified)
@@ -79,6 +62,23 @@
                 @endif
             </div>
 
+            <div class="mt-4 mb-4 pt-4">
+                <h2>
+                    <span class="material-symbols-outlined icon pe-2">
+                        settings
+                    </span>
+                    <strong>Account</strong> Settings
+                </h2>
+            </div>
+
+            <p class="lead">Manage all of your ladder account settings, including Ladder Avatar, Social links and Points filter.</p>
+
+            @if (isset($userSettings))
+                <a href="account/settings" class="btn btn-outline btn-size-md">Ladder Account Settings</a>
+            @endif
+        </div>
+
+        <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     @include('components.form-messages')

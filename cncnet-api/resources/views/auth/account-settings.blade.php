@@ -32,7 +32,7 @@
                     </a>
                 </div>
                 <div class="mini-breadcrumb-item">
-                    <a href="/">
+                    <a href="#">
                         <span class="material-symbols-outlined icon pe-3">
                             settings
                         </span>
@@ -64,7 +64,7 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="/">
+                    <a href="#">
                         <span class="material-symbols-outlined icon pe-3">
                             settings
                         </span>
@@ -131,7 +131,7 @@
                                 @if (isset($userSettings))
                                     <h3>Ladder Point Filter</h3>
                                     <p>
-                                        <strong style="color: #007bff;">Advanced Players Only! Disabling this as a new player is strongly
+                                        <strong class="highlight">Advanced Players Only! Disabling this as a new player is strongly
                                             discouraged.
                                         </strong>
                                     </p>
