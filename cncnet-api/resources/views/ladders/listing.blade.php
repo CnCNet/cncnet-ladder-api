@@ -137,91 +137,67 @@
             @endif
 
             <section>
-                <div class="row">
-                    <div class="col-md-12">
+                <h3 class="mt-2 mb-4">
+                    <i class="bi bi-trophy pe-3"></i> Pick a league
+                </h3>
 
-                        <h3 class="mt-2 mb-4">
-                            <i class="bi bi-trophy pe-3"></i> Pick a league
-                        </h3>
+                @if ($history->ladder->qmLadderRules->tier2_rating > 0)
+                    <div class="league-selection">
+                        <a href="{{ \App\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">
+                            <i class="bi bi-trophy league-icon"></i>
+                            <h3 class="league-title">1vs1 - Champions Players <strong>League</strong></h3>
+                        </a>
+                        <a href="{{ \App\UrlHelper::getLadderLeague($history, 2) }}" title="{{ $history->ladder->name }}" class="league-box tier-2">
+                            <i class="bi bi-trophy league-icon"></i>
+                            <h3 class="league-title">1vs1 - Contenders Players <strong>League</strong></h3>
+                        </a>
+                    </div>
+                @endif
 
-                        @if ($history->ladder->qmLadderRules->tier2_rating > 0)
-                            <div class="mt-2">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                                        <a href="/ladder/{{ $history->short . '/1/' . $history->ladder->abbreviation }}/"
-                                            title="{{ $history->ladder->name }}" class="ladder-link">
-                                            <div class="ladder-cover" style="background: black;">
-                                                <div class="details tier-league-cards">
-                                                    <div class="type">
-                                                        <i class="bi bi-trophy" style="font-size: 4rem;color: #ffc700;"></i>
-                                                        <h3>1vs1 - Champions Players <strong>League</strong></h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                                        <a href="/ladder/{{ $history->short . '/2/' . $history->ladder->abbreviation }}/"
-                                            title="{{ $history->ladder->name }}" class="ladder-link">
-                                            <div class="ladder-cover" style="background: black;">
-                                                <div class="details tier-league-cards">
-                                                    <div class="type">
-                                                        <i class="bi bi-trophy" style="font-size: 4rem;color: #004bff;"></i>
-                                                        <h3>1vs1 - Contenders Players <strong>League</strong></h3>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
+                @if (request()->input('filterBy') == 'games')
+                    <p>
+                        You are ordering by game count, <a href="?#listing">reset by rank?</a>
+                    </p>
+                @endif
+
+                <div class="d-flex flex-column d-sm-flex flex-sm-row">
+                    @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                    <div class="ms-auto">
+                        <form>
+                            <div class="form-group" method="GET">
+                                <div class="search" style="position:relative;">
+                                    <input class="form-control border" name="search" value="{{ $search }}" placeholder="Search by Player..." />
                                 </div>
+                                @if ($search)
+                                    <small>
+                                        Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
+                                        <a href="?search=">Clear?</a>
+                                    </small>
+                                @endif
                             </div>
-                        @endif
-
-                        @if (request()->input('filterBy') == 'games')
-                            <p>
-                                You are ordering by game count, <a href="?#listing">reset by rank?</a>
-                            </p>
-                        @endif
-
-                        <div class="d-flex flex-column d-sm-flex flex-sm-row">
-                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
-                            <div class="ms-auto">
-                                <form>
-                                    <div class="form-group" method="GET">
-                                        <div class="search" style="position:relative;">
-                                            <input class="form-control border" name="search" value="{{ $search }}"
-                                                placeholder="Search by Player..." />
-                                        </div>
-                                        @if ($search)
-                                            <small>
-                                                Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
-                                                <a href="?search=">Clear?</a>
-                                            </small>
-                                        @endif
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        @if ($tier == null || $tier == 1)
-                            <h3 class="mt-2 mb-4" style="color: #ffc700;">
-                                <i class="bi bi-trophy pe-3"></i> 1vs1 - Champions Players League
-                            </h3>
-                        @else
-                            <h3 class="mt-2 mb-4" style="color: #004bff;">
-                                <i class="bi bi-trophy pe-3"></i> 1vs1 - Contenders Players League
-                            </h3>
-                        @endif
-
-                        @include('ladders.listing._ladder-table', ['players' => $players])
-
-                        <div class="mt-5">
-                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
-                        </div>
+                        </form>
                     </div>
                 </div>
-            </section>
+
+                @if ($tier == null || $tier == 1)
+                    <h3 class="mt-2 mb-4">
+                        <i class="bi bi-trophy pe-3"></i> 1vs1 - Champions Players League
+                    </h3>
+                @else
+                    <h3 class="mt-2 mb-4">
+                        <i class="bi bi-trophy pe-3"></i> 1vs1 - Contenders Players League
+                    </h3>
+                @endif
+
+                @include('ladders.listing._ladder-table', ['players' => $players])
+
+                <div class="mt-5">
+                    @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                </div>
         </div>
+        </div>
+    </section>
+    </div>
     </section>
 
     @include('ladders.listing._modal-ladder-rules')

@@ -4,10 +4,16 @@ namespace App;
 
 class URLHelper
 {
+    public static function getLadderLeague($history, $tier)
+    {
+        return "/ladder/" . $history->short . "/" . $tier . "/" . $history->ladder->abbreviation;
+    }
+
+
     /**
-     * Returns player profile url
+     * 
      * @param mixed $history 
-     * @param mixed $player 
+     * @param mixed $playerUsername 
      * @return string 
      */
     public static function getPlayerProfileUrl($history, $playerUsername)
@@ -15,15 +21,23 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/player/" . $playerUsername;
     }
 
+
+    /**
+     * 
+     * @param mixed $history 
+     * @param mixed $playerUsername 
+     * @return string 
+     */
     public static function getPlayerProfileAchievementsUrl($history, $playerUsername)
     {
         return URLHelper::getPlayerProfileUrl($history, $playerUsername) . "/achievements";
     }
 
+
     /**
-     * Returns player profile url
+     * Get ladder game url
      * @param mixed $history 
-     * @param mixed $player 
+     * @param mixed $gameId 
      * @return string 
      */
     public static function getGameUrl($history, $gameId)
@@ -31,8 +45,9 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/games/" . $gameId;
     }
 
+
     /**
-     * Returns ladder url from history obj
+     * Return ladder url 
      * @param mixed $history 
      * @return string 
      */
@@ -41,16 +56,31 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation;
     }
 
+    /**
+     * 
+     * @param mixed $history 
+     * @return string 
+     */
     public static function getAccountLadderUrl($history)
     {
         return "/account/" . $history->ladder->abbreviation . "/list";
     }
 
+    /**
+     * 
+     * @param mixed $history 
+     * @return string 
+     */
     public static function getChampionsLadderUrl($history)
     {
         return "/ladder-champions/" . $history->abbreviation;
     }
 
+    /**
+     * 
+     * @param mixed $abbrev 
+     * @return string|void 
+     */
     public static function getVideoUrlbyAbbrev($abbrev)
     {
         switch ($abbrev)
@@ -69,6 +99,11 @@ class URLHelper
         }
     }
 
+    /**
+     * 
+     * @param mixed $abbrev 
+     * @return string|void 
+     */
     public static function getVideoPosterUrlByAbbrev($abbrev)
     {
         switch ($abbrev)
@@ -87,6 +122,11 @@ class URLHelper
         }
     }
 
+    /**
+     * 
+     * @param mixed $abbrev 
+     * @return string 
+     */
     public static function getLadderLogoByAbbrev($abbrev)
     {
         return "/images/games/{$abbrev}/logo.png";
