@@ -1,6 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Ladder Sign up')
-@section('feature-image', '/images/feature/feature-td.jpg')
+@section('title', 'Ladder Login')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature">
@@ -8,13 +9,10 @@
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">Sign up</strong>
-                        <br />
-                        <span>Ladder Rankings</span>
+                        <strong class="fw-bold">Register</strong>
                     </h1>
-
-                    <p class="lead text-uppercase">
-                        <strong>1 vs 1 Ranked Match</strong></small>
+                    <p class="lead">
+                        Sign up below to compete with others around the world.
                     </p>
                 </div>
             </div>
@@ -27,7 +25,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-8 m-auto">
-                    <h2 class="mb-2 pb-2">Create your CnCNet Ladder Account</h2>
+                    <h2 class="mb-2 pb-2">Create your Ladder Account</h2>
 
                     <h4>How to play</h4>
 
@@ -37,7 +35,6 @@
                         <li>Login to the CnCNet Quick Match client with your Ladder Account.</li>
                         <li>Click Quick Match and wait to play ladder games!</li>
                     </ol>
-
 
                     @if (count($errors) > 0)
                         <div class="alert alert-danger">
@@ -69,7 +66,8 @@
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" value="{{ old('password_confirmation') }}">
+                            <input id="password_confirmation" type="password" class="form-control" name="password_confirmation"
+                                value="{{ old('password_confirmation') }}">
                             <label for="password_confirmation">Password (confirmed)</label>
                         </div>
 
@@ -80,7 +78,8 @@
                                 <p class="mb-2">
                                     <small>
                                         By registering and using the Quick Match software and related sites,
-                                        you agree to the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp; Conditions</a>
+                                        you agree to the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp;
+                                            Conditions</a>
                                     </small>
                                 </p>
                                 <button type="submit" class="btn btn-primary">

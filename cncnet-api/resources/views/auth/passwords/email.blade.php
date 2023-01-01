@@ -1,6 +1,7 @@
 @extends('layouts.app')
-@section('title', 'Reset password')
-@section('feature-image', '/images/feature/feature-index.jpg')
+@section('title', 'Ladder Login')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -8,7 +9,7 @@
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">Reset Password</strong>
+                        <strong>Reset your password</strong>
                     </h1>
                 </div>
             </div>
@@ -25,11 +26,11 @@
                         <div class="panel-body">
                             @if (session('status'))
                                 <div class="alert alert-success">
-                                    {{ session('status') }}
+                                    Please check your email for further instructions
                                 </div>
                             @endif
 
-                            <form class="form-horizontal" role="form" method="POST" action="{{ secure_url('/password/email') }}">
+                            <form class="form-horizontal" role="form" method="POST" action="/password/email">
                                 {{ csrf_field() }}
 
                                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">

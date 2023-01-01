@@ -55,12 +55,12 @@
         <div class="container">
             <div class="row">
                 @if (!$user->email_verified)
-                    <div class="col-md-12 tutorial mt-2 mb-2">
-                        <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
+                    <div class="mt-4 mb-4">
+                        <h2 class="text-center mb-5 mt-5 "><strong>Verify Your Email Address Before You Can Play!</strong></h2>
                         <div class="text-center">
                             <form class="form" method="POST" name="verify" action="/account/verify">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-link">Click Here to Send a New Code</a>
+                                <button type="submit" class="btn btn-primary">Click Here to Send a New Email</a>
                                 </button>
                             </form>
                         </div>
@@ -83,6 +83,11 @@
                             </span>
                             <strong>1vs1</strong> Ladders
                         </h2>
+
+                        <p class="lead col-md-8 mb-4">
+                            For new Red Alert 2 or Yuri's Revenge players joining for the first time, consider playing in the "YR Blitz 1vs1 Ladder" to
+                            gain experience before playing Red Alert 2 & Yuri's Revenge Ladder matches.
+                        </p>
 
                         <div class="d-flex flex-wrap">
                             @foreach ($ladders as $history)
