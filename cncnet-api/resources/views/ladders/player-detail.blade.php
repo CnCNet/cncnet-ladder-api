@@ -103,6 +103,14 @@
                         <h1 class="username">{{ $ladderPlayer->username }}</h1>
                         <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $ladderPlayer->rank }}</h3>
                     </div>
+
+                    @if($userIsMod)
+                    <div>
+                        @include('ladders._modal-edit-player-name')
+                        <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName" data-bs-toggle="modal" data-bs-target="#editPlayerName"> Edit Player Name </button>
+                    </div>
+                    @endif
+
                     <div class="player-social pt-4 me-5">
                         @if ($userPlayer->getTwitchProfile())
                             <a href="{{ $userPlayer->getTwitchProfile() }}">
@@ -248,6 +256,7 @@
             </section>
         </section>
     </div>
+
 @endsection
 
 @if ($history->ends > Carbon\Carbon::now())
