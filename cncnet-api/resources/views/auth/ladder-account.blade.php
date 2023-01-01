@@ -15,6 +15,24 @@
                     </h1>
                 </div>
             </div>
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/account">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        {{ $user->name }}'s Account
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="">
+                        <span class="material-symbols-outlined icon">
+                            military_tech
+                        </span>
+                        Manage {{ $ladder->name }} Accounts
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -43,7 +61,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             military_tech
                         </span>
-                        Manage Accounts
+                        Manage {{ $ladder->name }} Accounts
                     </a>
                 </li>
             </ol>
@@ -54,24 +72,57 @@
 @section('content')
     <section class="pt-4">
         <div class="container">
-            <div class="row">
-                @if (!$user->email_verified)
-                    <div class="col-md-12 tutorial">
-                        <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
-                        <div class="text-center">
-                            <form class="form" method="POST" name="verify" action="/account/verify">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-link">Click Here to Send a New Code</a></button>
-                            </form>
-                        </div>
-                    </div>
-                @endif
-            </div>
 
             <div class="row">
                 <div class="col-md-12">
                     @include('components.form-messages')
                 </div>
+            </div>
+
+            <div class="row">
+                @if (!$user->email_verified)
+                    <div class="mt-4 mb-4">
+                        <h2 class="text-center mb-5 mt-5 "><strong>Verify Your Email Address Before You Can Play!</strong></h2>
+                        <div class="text-center">
+                            <form class="form" method="POST" name="verify" action="/account/verify">
+                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-primary">Click Here to Send a New Email</a>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    @if ($ladder->abbreviation == 'blitz')
+                        <h2 class="mt-4">New player to play Blitz?</h2>
+                        <p>Join the Discord and watch the videos below to get started!</p>
+                        <section class="useful-links d-md-flex mt-4">
+                            <div class="me-3">
+                                <a href="{{ $ladder->qmLadderRules->ladder_discord }}" class="btn btn-primary btn-size-md">
+                                    <i class="bi bi-discord pe-2"></i> {{ $ladder->name }} Discord
+                                </a>
+                            </div>
+
+                            <div class="me-3">
+                                <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-primary btn-size-md" target="_blank">
+                                    <i class="bi bi-youtube pe-2"></i> How-To Play Blitz Online
+                                </a>
+                            </div>
+
+                            <div>
+                                <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-primary btn-size-md" target="_blank">
+                                    <i class="bi bi-youtube pe-2"></i> Tips & Tricks - New Blitz Players
+                                </a>
+                            </div>
+                        </section>
+                    @elseif ($ladder->game == 'yr')
+                        <div class="me-3">
+                            <a href="{{ $ladder->qmLadderRules->ladder_discord }}" class="btn btn-primary btn-size-md">
+                                <i class="bi bi-discord pe-2"></i> {{ $ladder->name }} Discord
+                            </a>
+                        </div>
+                    @endif
+
+                @endif
             </div>
 
             <div class="row">
@@ -187,19 +238,19 @@
                                                 {{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'This username will appear in your Quick Match client. ' : 'Click "Play with this username" to add this username to your Quick Match client' }}
                                             </em>
                                         </p>
-                                        <form id="username-status" class="form-inline" method="POST" action="username-status">
+                                        <form id="username-status" class="form-inline text-center" method="POST" action="username-status">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                             <input type="hidden" name="username" value="{{ $player->username }}" />
 
-                                            <div class="d-flex">
-                                                <a href="/api/v1/ladder/{{ $player->ladder()->first()->abbreviation }}/player/{{ $player->username }}/webview" target="_blank"
-                                                    class="btn btn-secondary btn-md">
+                                            <div class="d-flex justify-content-center">
+                                                <a href="/api/v1/ladder/{{ $player->ladder()->first()->abbreviation }}/player/{{ $player->username }}/webview"
+                                                    target="_blank" class="btn btn-secondary btn-md me-3 btn-size-md">
                                                     OBS Stream Profile
                                                 </a>
 
                                                 @php $active = $activeHandles->where('player_id', $player->id)->count() > 0; @endphp
-                                                <button type="submit" class="btn {{ $active ? 'btn-primary' : 'btn-secondary' }} btn-md">
-                                                    {{ $active ? 'Deactivate' : 'Play with this username' }}
+                                                <button type="submit" class="btn {{ $active ? 'btn-primary' : 'btn-secondary' }} btn-size-md">
+                                                    {{ $active ? 'Deactivate' : 'Play with this username?' }}
                                                 </button>
                                             </div>
                                         </form>
@@ -318,7 +369,8 @@
             <div class="modal-dialog modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
                         <h3 class="modal-title">Create A New Clan!</h3>
                     </div>
                     <div class="modal-body clearfix">

@@ -14,50 +14,55 @@
                     <p>Editing {{ $user->name }}</p>
                 </div>
             </div>
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/" class="">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="/admin" class="">
+                        <span class="material-symbols-outlined">
+                            admin_panel_settings
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
 
 @section('content')
-    <div class="admin-users">
-        <section class="light-texture game-detail supported-games">
-            <div class="container">
-                <div class="feature">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 mt-5 mb-5">
+                <h2 class="mb-2">Edit {{ $user->name }}'s profile</h2>
 
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="players">
-                                <h2>Edit {{ $user->name }}'s profile</h2>
+                <form method="POST" action="/admin/users/edit/{{ $user->id }}">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="userId" value="{{ $user->id }}" />
 
-                                <div class="search" style="margin-bottom: 15px; max-width: 500px">
-                                    <form method="POST" action="/admin/users/edit/{{ $user->id }}">
-                                        {{ csrf_field() }}
-                                        <input type="hidden" name="userId" value="{{ $user->id }}" />
+                    @include('components.avatar', ['avatar' => $user->getUserAvatar()])
 
-                                        @include('components.avatar', ['avatar' => $user->getUserAvatar()])
+                    <p class="mt-2 mb-2">
+                        <label>
+                            <input id="removeUserAvatar" type="checkbox" name="removeUserAvatar" />
+                            Remove user avatar
+                        </label>
+                    </p>
 
-                                        <p>
-                                            <label>
-                                                <input id="removeUserAvatar" type="checkbox" name="removeUserAvatar" />
-                                                Remove user avatar
-                                            </label>
-                                        </p>
-
-                                        <p>
-                                            <label>
-                                                <input id="restrictAvatarUpload" type="checkbox" name="restrictAvatarUpload"
-                                                    {{ $user->getIsAllowedToUploadAvatar() ? 'checked' : '' }} />
-                                                User allowed to upload Avatar?
-                                            </label>
-                                        </p>
-                                        <button class="btn btn-primary">Update</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <p class="mt-2 mb-2">
+                        <label>
+                            <input id="restrictAvatarUpload" type="checkbox" name="restrictAvatarUpload"
+                                {{ $user->getIsAllowedToUploadAvatar() ? 'checked' : '' }} />
+                            User allowed to upload Avatar?
+                        </label>
+                    </p>
+                    <button class="btn btn-primary mt-2">Update User</button>
+                </form>
             </div>
-        </section>
+        </div>
     </div>
 @endsection

@@ -14,12 +14,6 @@
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Account</span>
                     </h1>
-
-                    <p class="lead">Manage everything to do with your CnCNet Ladder Account here.</p>
-
-                    @if (isset($userSettings))
-                        <a href="account/settings" class="btn btn-outline btn-size-lg">User Settings</a>
-                    @endif
                 </div>
             </div>
         </div>
@@ -55,12 +49,12 @@
         <div class="container">
             <div class="row">
                 @if (!$user->email_verified)
-                    <div class="col-md-12 tutorial mt-2 mb-2">
-                        <h2 class="text-center"><strong>Verify Your Email Address Before You Can Play!</strong></h2>
+                    <div class="mt-4 mb-4">
+                        <h2 class="text-center mb-5 mt-5 "><strong>Verify Your Email Address Before You Can Play!</strong></h2>
                         <div class="text-center">
                             <form class="form" method="POST" name="verify" action="/account/verify">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-link">Click Here to Send a New Code</a>
+                                <button type="submit" class="btn btn-primary">Click Here to Send a New Email</a>
                                 </button>
                             </form>
                         </div>
@@ -68,6 +62,23 @@
                 @endif
             </div>
 
+            <div class="mt-4 mb-4 pt-4">
+                <h2>
+                    <span class="material-symbols-outlined icon pe-2">
+                        settings
+                    </span>
+                    <strong>Account</strong> Settings
+                </h2>
+            </div>
+
+            <p class="lead">Manage all of your ladder account settings, including Ladder Avatar, Social links and Points filter.</p>
+
+            @if (isset($userSettings))
+                <a href="account/settings" class="btn btn-outline btn-size-md">Ladder Account Settings</a>
+            @endif
+        </div>
+
+        <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     @include('components.form-messages')
@@ -83,6 +94,11 @@
                             </span>
                             <strong>1vs1</strong> Ladders
                         </h2>
+
+                        <p class="lead col-md-8 mb-4">
+                            For new Red Alert 2 or Yuri's Revenge players joining for the first time, consider playing in the "YR Blitz 1vs1 Ladder" to
+                            gain experience before playing Red Alert 2 & Yuri's Revenge Ladder matches.
+                        </p>
 
                         <div class="d-flex flex-wrap">
                             @foreach ($ladders as $history)

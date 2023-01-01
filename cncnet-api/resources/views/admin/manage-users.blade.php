@@ -132,7 +132,7 @@
                                         Created: {{ $user->created_at->toDateString() }}
                                     </div>
 
-                                    <a href="users/edit/{{ $user->id }}" class="btn btn-primary">Edit user</a>
+                                    <a href="users/edit/{{ $user->id }}" class="btn btn-primary btn-size-md mt-2 mb-2">Edit user</a>
 
                                     @include('admin._duplicates', [$user, $hostname])
                                     @include('admin._bans', [$user])
