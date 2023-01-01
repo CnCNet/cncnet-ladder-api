@@ -13,8 +13,49 @@
                     </h1>
                 </div>
             </div>
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/" class="">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        Reset your password
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+@endsection
+
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        Reset your password
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
 @endsection
 
 @section('content')
