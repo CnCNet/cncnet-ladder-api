@@ -176,7 +176,7 @@
                 </div>
 
                 <!-- Toggle achievements on for Blitz ladder only, TODO remove -->
-                @if ($history->ladder->id == 8)
+                @if ($history->ladder->id == 8 || $history->ladder->id == 1)
                     <div class="player-achievements">
                         <div class="d-flex align-items-center">
                             <h5 class="d-flex align-items-center">
