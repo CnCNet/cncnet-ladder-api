@@ -63,7 +63,7 @@ class PlayerRatingService
             }
             else
             {
-                # Otherwise let the function decide based on a new signup
+                # Otherwise let the function decide based on a default elo rating
                 $playerTier = $this->getTierByLadderRules(PlayerRating::$DEFAULT_RATING, $history);
             }
         }
