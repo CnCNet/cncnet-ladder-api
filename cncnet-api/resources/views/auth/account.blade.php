@@ -14,12 +14,6 @@
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Account</span>
                     </h1>
-
-                    <p class="lead">Manage everything to do with your CnCNet Ladder Account here.</p>
-
-                    @if (isset($userSettings))
-                        <a href="account/settings" class="btn btn-outline btn-size-lg">User Settings</a>
-                    @endif
                 </div>
             </div>
         </div>
@@ -52,6 +46,23 @@
 
 @section('content')
     <section>
+        <div class="container ">
+
+            <div class="mt-4 mb-4 pt-4">
+                <h2>
+                    <span class="material-symbols-outlined icon pe-3">
+                        settings
+                    </span>
+                    <strong>Account</strong> Settings
+                </h2>
+            </div>
+
+            <p class="lead">Manage your ladder account setting, including your Ladder Avatar, Social links and Points filter.</p>
+
+            @if (isset($userSettings))
+                <a href="account/settings" class="btn btn-outline btn-size-md">Ladder Account Settings</a>
+            @endif
+        </div>
         <div class="container">
             <div class="row">
                 @if (!$user->email_verified)

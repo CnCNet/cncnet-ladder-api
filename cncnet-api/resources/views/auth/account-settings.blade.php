@@ -14,6 +14,32 @@
                     </h1>
                 </div>
             </div>
+
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="/account">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        {{ $user->name }}'s account
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined icon pe-3">
+                            settings
+                        </span>
+                        Account Settings
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 @endsection
@@ -37,6 +63,14 @@
                         {{ $user->name }}'s account
                     </a>
                 </li>
+                <li class="breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined icon pe-3">
+                            settings
+                        </span>
+                        Account Settings
+                    </a>
+                </li>
             </ol>
         </div>
     </nav>
@@ -52,89 +86,100 @@
                 </div>
             </div>
 
-            <div class="col-md-12">
-                <form method="POST" action="/account/settings" enctype="multipart/form-data">
-                    {{ csrf_field() }}
+            <div class="row">
+                <div class="col-md-12">
+                    <form method="POST" action="/account/settings" enctype="multipart/form-data">
+                        {{ csrf_field() }}
 
-                    <div class="form-group">
-                        <div class="checkbox">
-                            @if (isset($userSettings))
-                                <h3>Ladder Point Filter</h3>
-                                <p>
-                                    Disable the Point Filter to match against any player on the ladder regardless of your rank.<br />
-                                    Opponents will also need it disabled.
-                                </p>
-                                <p>
-                                    <label>
-                                        <input id="disablePointFilter" type="checkbox" name="disabledPointFilter" @if ($userSettings->disabledPointFilter) checked @endif />
-                                        Disable Point Filter &amp; Match with anyone
-                                    </label>
-                                </p>
-                            @endif
-                        </div>
-                    </div>
-
-                    {{-- TODO future functionality will use this value, no need to have users touch this yet
+                        {{-- TODO future functionality will use this value, no need to have users touch this yet
                     <input id="enableAnonymous" type="checkbox" name="enableAnonymous"  value="{{ $userSettings->enableAnonymous }}" @if ($userSettings->enableAnonymous) checked @endif />
                     <label for="enableAnonymous"> Enable Anonymity </label>
                 --}}
 
-                    @if ($user->getIsAllowedToUploadAvatar() == false)
-                        <h4>Ladder Avatar Disabled</h4>
-                    @else
-                        <div class="form-group mt-5">
-                            <h3>Ladder Avatar</h3>
-                            <p>
-                                <strong>Recommended dimensions are 300x300. Max file size: 1mb.<br /> File types allowed: jpg, png </strong>
-                            </p>
-                            <p>
-                                Avatars that are not deemed suitable by CnCNet will be removed without warning. <br />
-                                Inappropriate images and advertising is not allowed.
-                            </p>
+                        @if ($user->getIsAllowedToUploadAvatar() == false)
+                            <h4>Ladder Avatar Disabled</h4>
+                        @else
+                            <div class="form-group mb-5">
+                                <h3>Ladder Avatar</h3>
+                                <p>
+                                    <strong>Recommended dimensions are 300x300. Max file size: 1mb.<br /> File types allowed: jpg, png, gif </strong>
+                                </p>
+                                <p>
+                                    Avatars that are not deemed suitable by CnCNet will be removed without warning. <br />
+                                    Inappropriate images and advertising is not allowed.
+                                </p>
 
-                            <div>
-                                @include('components.avatar', ['avatar' => $user->getUserAvatar()])
+                                <div>
+                                    @include('components.avatar', ['avatar' => $user->getUserAvatar()])
+                                </div>
+
+                                <label for="avatar">Upload an avatar</label>
+                                <input type="file" id="avatar" name="avatar">
+
+                                @if ($user->getUserAvatar())
+                                    <br />
+                                    <label>
+                                        <input id="removeAvatar" type="checkbox" name="removeAvatar" />
+                                        Remove avatar?
+                                    </label>
+                                @endif
                             </div>
+                        @endif
 
-                            <label for="avatar">Upload an avatar</label>
-                            <input type="file" id="avatar" name="avatar">
-
-                            @if ($user->getUserAvatar())
-                                <label>
-                                    <input id="removeAvatar" type="checkbox" name="removeAvatar" />
-                                    Remove avatar?
-                                </label>
-                            @endif
+                        <div class="form-group mt-5 mb-5">
+                            <div class="checkbox">
+                                @if (isset($userSettings))
+                                    <h3>Ladder Point Filter</h3>
+                                    <p>
+                                        <strong style="color: #007bff;">Advanced Players Only! Disabling this as a new player is strongly
+                                            discouraged.
+                                        </strong>
+                                    </p>
+                                    <p>
+                                        Disabling the Point Filter will match you against any player on the ladder regardless of your rank. <br />
+                                        Opponents will also need it disabled.
+                                    </p>
+                                    <p>
+                                        <label>
+                                            <input id="disablePointFilter" type="checkbox" name="disabledPointFilter"
+                                                @if ($userSettings->disabledPointFilter) checked @endif />
+                                            Disable Point Filter &amp; Match with anyone
+                                        </label>
+                                    </p>
+                                @endif
+                            </div>
                         </div>
-                    @endif
 
-                    <div class="form-group mt-4 mb-4">
-                        <h3>Social profiles</h3>
+                        <div class="form-group">
+                            <h3>Social profiles</h3>
+                            <p>
+                                These will be shown on all your ladder profiles. Do not enter URLs.
+                            </p>
+                        </div>
 
-                        <p>
-                            These will be shown on all your ladder profiles. Do not enter URLs.
-                        </p>
-                    </div>
+                        <div class="form-group mt-2">
+                            <label for="twitch">Twitch username, e.g. <strong>myTwitchUsername</strong></label>
+                            <input id="twitch" type="text" class="form-control" name="twitch_profile" value="{{ $user->twitch_profile }}"
+                                placeholder="Enter your Twitch username only" />
+                        </div>
 
-                    <div class="form-group mt-2">
-                        <label for="twitch">Twitch username, e.g. <strong>myTwitchUsername</strong></label>
-                        <input id="twitch" type="text" class="form-control" name="twitch_profile" value="{{ $user->twitch_profile }}" placeholder="Enter your Twitch username only" />
-                    </div>
+                        <div class="form-group mt-2">
+                            <label for="discord">Discord username, E.g. user#9999</label>
+                            <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}"
+                                placeholder="Enter your Discord username only" />
+                        </div>
 
-                    <div class="form-group mt-2">
-                        <label for="discord">Discord username, E.g. user#9999</label>
-                        <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}" placeholder="Enter your Discord username only" />
-                    </div>
+                        <div class="form-group mt-2">
+                            <label for="youtube">YouTube channel name e.g. <strong>myYouTubeChannel</strong></label>
+                            <input id="youtube" type="text" class="form-control" name="youtube_profile" value="{{ $user->youtube_profile }}"
+                                placeholder="Enter your YouTube username only" />
+                        </div>
 
-                    <div class="form-group mt-2">
-                        <label for="youtube">YouTube channel name e.g. <strong>myYouTubeChannel</strong></label>
-                        <input id="youtube" type="text" class="form-control" name="youtube_profile" value="{{ $user->youtube_profile }}" placeholder="Enter your YouTube username only" />
-                    </div>
-
-                    <div class="form-group mt-2 mb-2">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                </form>
+                        <div class="form-group mt-2 mb-2">
+                            <button type="submit" class="btn btn-primary">Save</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </section>
