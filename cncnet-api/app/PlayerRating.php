@@ -1,13 +1,17 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Log;
 
 class PlayerRating extends Model
 {
+    public static $DEFAULT_RATING = 1200;
+
     public function __construct()
     {
-        $this->rating = 1200;
+        $this->rating = PlayerRating::$DEFAULT_RATING;
         $this->peak_rating = 0;
         $this->rated_games = 0;
     }

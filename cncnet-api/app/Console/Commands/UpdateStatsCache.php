@@ -6,8 +6,6 @@ use App\LadderHistory;
 use App\StatsCache;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class UpdateStatsCache extends Command
 {

@@ -10,12 +10,10 @@ Route::get('/', function ()
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
 Route::get('/help/obs', 'SiteController@getOBSHelp');
 Route::get('/donate', 'SiteController@getDonate');
-Route::get('/styleguide', 'SiteController@getStyleguide');
 
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
     Route::get('/', 'LadderController@getLadders');
-    Route::get('/rating', 'LadderController@updatePlayerRatings');
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
     Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');

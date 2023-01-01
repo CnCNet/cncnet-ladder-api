@@ -54,8 +54,9 @@ class UpdatePlayerCache extends Command
             $pc->player_id = $player->id;
             $pc->player_name = $player->username;
 
-            $pHist = $player->playerHistory($history);
-            $pc->tier = $pHist ? $pHist->tier : 1;
+            # PlayerHistory will never be null
+            $playerHistory = $player->playerHistory($history);
+            $pc->tier = $playerHistory->tier;
 
             $pc->card = $player->card_id;
             $pc->points = $player->points($history);

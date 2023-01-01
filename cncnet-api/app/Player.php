@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Services\PlayerRatingService;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
 use Log;
@@ -308,47 +309,25 @@ class Player extends Model
 
     public function playerHistory($history)
     {
-        $pHist = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
-        if ($pHist === null)
+        $playerHistory = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
+        if ($playerHistory === null)
         {
+            # If we have no history, we will create one and calculate tier
             $this->calculateTier($history);
         }
-        return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
+        return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
     }
 
     /**
-     * Updates new tier and returns player_history
+     * Create new player history and assign tier from player_ratings table
+     * 
      * @param mixed $history 
-     * @return mixed PlayerHistory
+     * @return void 
      */
     public function calculateTier($history)
     {
-        $playerHistory = PlayerHistory::where("player_id", $this->id)
-            ->where("ladder_history_id", $history->id)
-            ->first();
-
-        if ($playerHistory === null)
-        {
-            $playerHistory = new \App\PlayerHistory;
-            $playerHistory->ladder_history_id = $history->id;
-            $playerHistory->player_id = $this->id;
-            $playerHistory->tier = 2;
-        }
-
-        if ($this->rating->rating > $history->ladder->qmLadderRules->tier2_rating)
-        {
-            $playerHistory->tier = 1;
-            echo "FIRST TIER Player: $this->username " . $this->rating->rating . "<br/>";
-        }
-        else
-        {
-            $playerHistory->tier = 2;
-            echo "SECOND TIER Player: $this->username " . $this->rating->rating . "<br/>";
-        }
-
-        $playerHistory->save();
-
-        return $playerHistory;
+        $playerRatingService = new PlayerRatingService();
+        $playerRatingService->calculatePlayerTier($this, $history);
     }
 
     public function playerCache($history_id)

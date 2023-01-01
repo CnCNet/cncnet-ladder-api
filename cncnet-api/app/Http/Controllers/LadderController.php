@@ -9,11 +9,9 @@ use \Carbon\Carbon;
 use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
+use App\Http\Services\PlayerRatingService;
 use \App\Http\Services\StatsService;
 use App\Player;
-use App\PlayerCache;
-use App\PlayerHistory;
-use App\PlayerRating;
 use App\User;
 
 class LadderController extends Controller
@@ -40,26 +38,6 @@ class LadderController extends Controller
                 "clan_ladders" => $this->ladderService->getLatestClanLadders()
             ]
         );
-    }
-
-    public function updatePlayerRatings(Request $request)
-    {
-        $results = [];
-
-        $history = LadderHistory::find(679);
-
-        $players = PlayerCache::where("ladder_history_id", $history->id)->get();
-
-        foreach ($players as $player)
-        {
-            $ph = $player->player->calculateTier($history);
-            $player->tier = $ph->tier;
-            $player->save();
-
-            $results[] = $player;
-        }
-
-        return $results;
     }
 
     public function getLadderIndex(Request $request)
