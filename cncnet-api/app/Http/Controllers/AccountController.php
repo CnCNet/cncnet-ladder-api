@@ -257,18 +257,6 @@ class AccountController extends Controller
         return redirect()->back();
     }
 
-    public function updatePlayerCard(Request $request, $ladderAbbrev)
-    {
-        $this->validate($request, [
-            'cardId' => 'required|string',
-            'playerId' => 'required|string'
-        ]);
-
-        $user = \Auth::user();
-        $card = \App\Card::find($request->cardId);
-        return $this->playerService->updatePlayerCard($user, $card, $request->playerId);
-    }
-
     public function getNewVerification(Request $request)
     {
         return view('auth.verify');

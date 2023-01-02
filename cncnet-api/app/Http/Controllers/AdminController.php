@@ -12,7 +12,7 @@ use \App\Ladder;
 use \App\SpawnOptionString;
 use App\GameObjectSchema;
 use App\Helpers\GameHelper;
-use App\Http\Services\PlayerRatingService;
+use App\Http\Services\UserRatingService;
 use App\Player;
 use App\PlayerRating;
 use Illuminate\Support\Facades\Cache;
@@ -901,34 +901,47 @@ class AdminController extends Controller
         }
 
         $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
-        $players = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
-            ->where("ladder_id", $ladder->id)
-            ->where("username", "like", "%" . $request->search . "%")
-            ->orderBy("pr.rating", "DESC")
-            ->select(["players.*", "pr.rating", "pr.rated_games", "pr.peak_rating"])
-            ->paginate(200);
 
-        $tier2PlayerCount = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
+        $byPlayer = Player::where("username", "like", "%" . $request->search . "%")->first();
+
+        if ($request->search)
+        {
+            $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
+                ->orderBy("ur.rating", "DESC")
+                ->where("users.id", "=", $byPlayer->user_id)
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->paginate(50);
+        }
+        else
+        {
+            $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
+                ->orderBy("ur.rating", "DESC")
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->paginate(50);
+        }
+
+        $tier1PlayerCount = Player::join("user_ratings as ur", "ur.user_id", "=", "players.user_id")
             ->where("ladder_id", $ladder->id)
-            ->where("pr.rated_games", ">", 0)
-            ->where("pr.rating", "<", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
+            ->where("ur.rated_games", ">", 0)
+            ->where("ur.rating", "<", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
             ->count();
 
-        $tier1PlayerCount = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
+        $tier2PlayerCount = Player::join("user_ratings as ur", "ur.user_id", "=", "players.user_id")
             ->where("ladder_id", $ladder->id)
-            ->where("pr.rated_games", ">", 0)
-            ->where("pr.rating", ">", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
+            ->where("ur.rated_games", "<", 0)
+            ->where("ur.rating", ">", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
             ->count();
 
         $history = $ladder->currentHistory();
         $ladders = Ladder::all();
 
         return view("admin.players.ratings", [
+            "ladder" => $ladder,
+            "users" => $users,
             "ladders" => $ladders,
-            "players" => $players,
             "history" => $history,
-            "tier2Count" => $tier2PlayerCount,
             "tier1Count" => $tier1PlayerCount,
+            "tier2Count" => $tier2PlayerCount,
             "abbreviation" => $ladderAbbreviation,
             "search" => $request->search
         ]);
@@ -943,8 +956,8 @@ class AdminController extends Controller
         }
 
         $history = $ladder->currentHistory();
-        $playerRatingService = new PlayerRatingService();
-        $playerRatingService->recalculatePlayersTiersByLadderHistory($history);
+        $userRatingService = new UserRatingService();
+        $userRatingService->recalculatePlayersTiersByLadderHistory($history);
     }
 
     public function resetPlayerRating(Request $request, $abbreviation)
@@ -958,8 +971,8 @@ class AdminController extends Controller
             abort(400, "Player not found");
         }
 
-        $playerRatingService = new PlayerRatingService();
-        $playerRatingService->resetPlayerRating($player, $history);
+        $userRatingService = new UserRatingService();
+        $userRatingService->resetPlayerRating($player, $history);
 
         return redirect()->back();
     }

@@ -273,4 +273,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->hasMany('App\AchievementProgress', 'user_id');
     }
+
+    public function userRating()
+    {
+        return $this->hasOne('App\UserRating', 'user_id');
+    }
 }

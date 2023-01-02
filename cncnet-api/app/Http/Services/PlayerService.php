@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Player;
+use App\UserRating;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -14,7 +15,7 @@ class PlayerService
 
 
     /**
-     * Creates Player, PlayerRating and PlayerActiveHandle if the username is not taken.
+     * Creates Player, PlayerActiveHandle if the username is not taken.
      * Returns null if username taken.
      * @param mixed $username 
      * @param mixed $user 
@@ -29,6 +30,12 @@ class PlayerService
             ->where("ladder_id", "=", $ladderId)
             ->first();
 
+
+        if ($user->userRating == null)
+        {
+            UserRating::createNewFromLegacyPlayerRating($user);
+        }
+
         if ($player == null)
         {
             $player = new \App\Player();
@@ -36,10 +43,6 @@ class PlayerService
             $player->user_id = $user->id;
             $player->ladder_id = $ladderId;
             $player->save();
-
-            $prating = new \App\PlayerRating();
-            $prating->player_id = $player['id'];
-            $prating->save();
 
             $activeHandle = new \App\PlayerActiveHandle();
             $activeHandle->ladder_id = $ladderId;
@@ -58,7 +61,13 @@ class PlayerService
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
         $player = \App\Player::where("username", "=", $username)
-            ->where("ladder_id", "=", $ladderId)->first();
+            ->where("ladder_id", "=", $ladderId)
+            ->first();
+
+        if ($user->userRating == null)
+        {
+            UserRating::createNewFromLegacyPlayerRating($user);
+        }
 
         if ($player == null)
         {
@@ -68,46 +77,24 @@ class PlayerService
             $player->ladder_id = $ladderId;
             $player->save();
 
-            $prating = new \App\PlayerRating();
-            $prating->player_id = $player['id'];
-            $prating->save();
-
             return $player;
         }
 
         return null;
     }
 
-    public function updatePlayerCard($user, $card, $playerId)
+    public function findUserRatingByPlayerId($pid)
     {
-        if ($card == null)
+        $player = Player::find($pid);
+        $user = $player->user;
+        $userRating = $user->userRating;
+
+        if ($userRating == null)
         {
-            $request->session()->flash('error', 'There was a problem saving your profile card');
-            return redirect()->back();
+            $userRating = UserRating::createNewFromLegacyPlayerRating($user);
         }
 
-        // Check the playerId belongs to us
-        foreach ($user->usernames as $user)
-        {
-            if ($user->id == $playerId)
-            {
-                $player = \App\Player::find($user->id);
-                $player->card_id = $card->id;
-                $player->save();
-            }
-        }
-
-        return redirect()->back();
-    }
-
-    public function findPlayerById($id)
-    {
-        return \App\Player::find($id);
-    }
-
-    public function findPlayerRatingByPid($pid)
-    {
-        return \App\PlayerRating::where('player_id', '=', $pid)->first();
+        return $userRating;
     }
 
     public function findPlayerByUsername($name, $ladder)
@@ -135,12 +122,12 @@ class PlayerService
         $player->save();
     }
 
-    public function getEloKvalue($players)
+    public function getEloKvalue($users)
     {
         // For players with less than 10 games, K will be 32, otherwise 16
-        foreach ($players as $playerRating)
+        foreach ($users as $userRating)
         {
-            if ($playerRating->rated_games < 10)
+            if ($userRating->rated_games < 10)
             {
                 return 32;
             }
@@ -148,16 +135,16 @@ class PlayerService
         return 16;
     }
 
-    public function updatePlayerRating($playerID, $newRating)
+    public function updateUserRating($playerID, $newRating)
     {
-        $playerRating = $this->findPlayerRatingByPid($playerID);
-        if ($newRating > $playerRating->peak_rating)
+        $userRating = $this->findUserRatingByPlayerId($playerID);
+        if ($newRating > $userRating->peak_rating)
         {
-            $playerRating->peak_rating = $newRating;
+            $userRating->peak_rating = $newRating;
         }
 
-        $playerRating->rating = $newRating;
-        $playerRating->rated_games = $playerRating->rated_games + 1;
-        $playerRating->save();
+        $userRating->rating = $newRating;
+        $userRating->rated_games = $userRating->rated_games + 1;
+        $userRating->save();
     }
 }

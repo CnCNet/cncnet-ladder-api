@@ -68,11 +68,11 @@
                     <h3>Players Ratings - {{ $history->ladder->name }}</h3>
 
                     <div class="btn-group mb-5 mt-5">
-                        @foreach ($ladders as $ladder)
+                        @foreach ($ladders as $l)
                             <div>
-                                <a href="/admin/players/ratings/{{ $ladder->abbreviation }}"
-                                    class="btn me-3 btn-size-md {{ $abbreviation == $ladder->abbreviation ? 'btn-primary' : 'btn-outline' }}">
-                                    {{ $ladder->abbreviation }}
+                                <a href="/admin/players/ratings/{{ $l->abbreviation }}"
+                                    class="btn me-3 btn-size-md {{ $abbreviation == $l->abbreviation ? 'btn-primary' : 'btn-outline' }}">
+                                    {{ $l->abbreviation }}
                                 </a>
                             </div>
                         @endforeach
@@ -85,7 +85,7 @@
                         Update {{ $abbreviation }} Player Ratings
                     </a>
 
-                    @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                    @include('components.pagination.paginate', ['paginator' => $users->appends(request()->query())])
 
                     <p class="lead">
                         <?php if ($search) : ?>
@@ -110,38 +110,34 @@
                                     <th>Player</th>
                                     <th>Current Tier</th>
                                     <th>Current Rating</th>
-                                    <th>Player Game History</th>
                                     <th>Reset?</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($players as $player)
+                                @foreach ($users as $user)
                                     @php
-                                        $playerHistory = \App\PlayerHistory::where('player_id', $player->id)->get();
-                                        $currentTier = \App\PlayerRating::where('player_id', $player->id)->first();
+                                        $playersForLadder = \App\Player::where('ladder_id', $ladder->id)
+                                            ->where('user_id', $user->id)
+                                            ->get();
                                     @endphp
                                     <tr>
                                         <td>
-                                            {{ $player->username }}
-                                        </td>
-                                        <td>
-                                            {{ \App\Http\Services\PlayerRatingService::getTierByLadderRules($player->rating, $history) }}
-                                        </td>
-                                        <td>
-                                            Rating: {{ $player->rating }} <br />
-                                            Rated games:{{ $player->rated_games }}<br />
-                                            Peek rating: {{ $player->peak_rating }} <br />
-                                        </td>
-                                        <td>
-                                            @foreach ($playerHistory as $ph)
-                                                <div><strong>{{ $ph->ladderHistory->starts }}</strong> - Tier: {{ $ph->tier }} </div>
+                                            @foreach ($playersForLadder as $player)
+                                                <span class="me-3">{{ $player->username }}</span>
                                             @endforeach
                                         </td>
-
+                                        <td>
+                                            {{ \App\Http\Services\PlayerRatingService::getTierByLadderRules($user->rating, $history) }}
+                                        </td>
+                                        <td>
+                                            Rating: {{ $user->rating }} <br />
+                                            Rated games:{{ $user->rated_games }}<br />
+                                            Peek rating: {{ $user->peak_rating }} <br />
+                                        </td>
                                         <td>
                                             <form method="POST" action="/admin/players/ratings/{{ $abbreviation }}/reset/reset-player-rating">
                                                 {{ csrf_field() }}
-                                                <input type="hidden" name="player_id" value="{{ $player->id }}" />
+                                                {{-- <input type="hidden" name="player_id" value="{{ $user->id }}" /> --}}
                                                 <button type="submit" class="btn btn-outline btn-size-md">Reset Player Rating</button>
                                             </form>
                                         </td>
@@ -149,7 +145,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                        @include('components.pagination.paginate', ['paginator' => $users->appends(request()->query())])
                     </div>
                 </div>
             </div>

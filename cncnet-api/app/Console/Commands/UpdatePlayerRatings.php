@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Services\PlayerRatingService;
+use App\Http\Services\UserRatingService;
 use App\LadderHistory;
 use App\StatsCache;
 use Carbon\Carbon;
@@ -50,11 +50,11 @@ class UpdatePlayerRatings extends Command
             ->whereBetween("ends", [$end, $end])
             ->get();
 
-        $playerRatingService = new PlayerRatingService();
+        $userRatingService = new UserRatingService();
 
         foreach ($ladderHistories as $history)
         {
-            $playerRatingService->recalculatePlayersTiersByLadderHistory($history);
+            $userRatingService->recalculatePlayersTiersByLadderHistory($history);
         }
     }
 }

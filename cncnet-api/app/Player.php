@@ -2,7 +2,7 @@
 
 namespace App;
 
-use App\Http\Services\PlayerRatingService;
+use App\Http\Services\UserRatingService;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
 use Log;
@@ -313,8 +313,8 @@ class Player extends Model
 
         if ($playerHistory === null)
         {
-            $playerRatingService = new PlayerRatingService();
-            $playerTier = $playerRatingService->getPlayerTierFromLadderHistory($this, $history);
+            $userRatingService = new UserRatingService();
+            $playerTier = $userRatingService->getUserTier($this->user, $history);
 
             # If we have no history, we will create one and calculate tier
             $playerHistory = new PlayerHistory();

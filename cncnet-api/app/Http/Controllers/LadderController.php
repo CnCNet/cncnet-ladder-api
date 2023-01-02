@@ -9,11 +9,12 @@ use \Carbon\Carbon;
 use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
-use App\Http\Services\PlayerRatingService;
+use App\Http\Services\UserRatingService;
 use \App\Http\Services\StatsService;
 use App\Player;
 use App\PlayerHistory;
 use App\User;
+use App\UserRating;
 
 class LadderController extends Controller
 {
