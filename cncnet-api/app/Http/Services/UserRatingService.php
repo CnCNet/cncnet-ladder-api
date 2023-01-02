@@ -27,13 +27,7 @@ class UserRatingService
         {
             $player = $playerHistory->player;
             $user = $player->user;
-            $userRating = $user->userRating;
-
-            if ($userRating == null)
-            {
-                $userRating = UserRating::createNewFromLegacyPlayerRating($user);
-                echo "User rating was null, creating new based on playerRating" . $userRating . "\n";
-            }
+            $userRating = $user->getUserRating();
 
             $playerHistoryThisMonth = PlayerHistory::where("player_id", $player->id)
                 ->where("ladder_history_id", $history->id)

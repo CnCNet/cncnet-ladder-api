@@ -30,11 +30,7 @@ class PlayerService
             ->where("ladder_id", "=", $ladderId)
             ->first();
 
-
-        if ($user->userRating == null)
-        {
-            UserRating::createNewFromLegacyPlayerRating($user);
-        }
+        $user->getUserRating();
 
         if ($player == null)
         {
@@ -64,10 +60,7 @@ class PlayerService
             ->where("ladder_id", "=", $ladderId)
             ->first();
 
-        if ($user->userRating == null)
-        {
-            UserRating::createNewFromLegacyPlayerRating($user);
-        }
+        $user->getUserRating();
 
         if ($player == null)
         {
@@ -87,12 +80,7 @@ class PlayerService
     {
         $player = Player::find($pid);
         $user = $player->user;
-        $userRating = $user->userRating;
-
-        if ($userRating == null)
-        {
-            $userRating = UserRating::createNewFromLegacyPlayerRating($user);
-        }
+        $userRating = $user->getUserRating();
 
         return $userRating;
     }

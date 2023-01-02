@@ -3,9 +3,11 @@
 namespace App\Commands;
 
 use App\Commands\Command;
+use App\Http\Services\UserRatingService;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\QmQueueEntry;
+use App\UserRating;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
@@ -115,6 +117,7 @@ class FindOpponent extends Command implements ShouldQueue
          */
 
         $user = $qmPlayer->player->user;
+        $userTier = $user->getUserTier($history);
         $userSettings = $user->userSettings;
 
         # Fetch all opponents who are currently in queue for this ladder
@@ -128,13 +131,14 @@ class FindOpponent extends Command implements ShouldQueue
         foreach ($opponentEntries as $opponentEntry)
         {
             $oppPlayer = $opponentEntry->qmPlayer->player;
-            $oppPlayerHistory = $oppPlayer->playerHistory($history);
+            $oppUser = $oppPlayer->user;
+            $oppUserTier = $oppUser->getUserTier($history);
             $oppUserSettings = $oppPlayer->user->userSettings;
 
             # Checks players are in same league tier otherwise skip
-            if ($oppPlayerHistory->tier !== $playerHistory->tier)
+            if ($oppUserTier !== $userTier)
             {
-                Log::info("FindOpponent ** Players are in different tier " . $playerHistory . ", p2: " . $oppPlayerHistory);
+                Log::info("FindOpponent ** Players are in different tier.  P1:" . $oppUser . ":" . $oppUserSettings .  " - P2: " . $user . ":" . $userTier);
                 continue;
             }
 

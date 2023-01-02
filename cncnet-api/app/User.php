@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Services\UserRatingService;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -277,5 +278,20 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function userRating()
     {
         return $this->hasOne('App\UserRating', 'user_id');
+    }
+
+    public function getUserRating()
+    {
+        if ($this->userRating == null)
+        {
+            return UserRating::createNewFromLegacyPlayerRating($this);
+        }
+        return $this->userRating;
+    }
+
+    public function getUserTier($history)
+    {
+        $userRating = $this->getUserRating();
+        return UserRatingService::getTierByLadderRules($userRating, $history);
     }
 }
