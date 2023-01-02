@@ -41,6 +41,8 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => 
     Route::post('ladder/new', ['middleware' => 'auth', 'isGod' => true, 'uses' => 'LadderController@saveLadder']);
     Route::get('canceledMatches/{ladderAbbreviation}', 'AdminController@getCanceledMatches');
     Route::get('washedGames/{ladderAbbreviation}', 'AdminController@getWashedGames');
+    Route::get('players/ratings', 'AdminController@getPlayerRatings');
+    Route::get('players/ratings/{ladderAbbreviation}', 'AdminController@getPlayerRatings');
 });
 
 Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()

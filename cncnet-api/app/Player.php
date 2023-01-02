@@ -310,24 +310,21 @@ class Player extends Model
     public function playerHistory($history)
     {
         $playerHistory = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
+
         if ($playerHistory === null)
         {
-            # If we have no history, we will create one and calculate tier
-            $this->calculateTier($history);
-        }
-        return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
-    }
+            $playerRatingService = new PlayerRatingService();
+            $playerTier = $playerRatingService->getPlayerTierFromLadderHistory($this, $history);
 
-    /**
-     * Create new player history and assign tier from player_ratings table
-     * 
-     * @param mixed $history 
-     * @return void 
-     */
-    public function calculateTier($history)
-    {
-        $playerRatingService = new PlayerRatingService();
-        $playerRatingService->calculatePlayerTier($this, $history);
+            # If we have no history, we will create one and calculate tier
+            $playerHistory = new PlayerHistory();
+            $playerHistory->ladder_history_id = $history->id;
+            $playerHistory->player_id = $this->id;
+            $playerHistory->tier = $playerTier;
+            $playerHistory->save();
+        }
+
+        return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
     }
 
     public function playerCache($history_id)

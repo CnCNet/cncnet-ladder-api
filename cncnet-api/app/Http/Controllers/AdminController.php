@@ -11,6 +11,9 @@ use \App\MapPool;
 use \App\Ladder;
 use \App\SpawnOptionString;
 use App\GameObjectSchema;
+use App\Helpers\GameHelper;
+use App\Player;
+use App\PlayerRating;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -887,6 +890,30 @@ class AdminController extends Controller
 
         $request->session()->flash('success', "Player games have been reset");
         return redirect()->back();
+    }
+
+    public function getPlayerRatings(Request $request, $ladderAbbreviation = null)
+    {
+        if ($ladderAbbreviation == null)
+        {
+            $ladderAbbreviation = GameHelper::$GAME_BLITZ;
+        }
+
+        $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
+        $players = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
+            ->where("ladder_id", $ladder->id)
+            ->orderBy("pr.rating", "DESC")
+            ->select(["players.*", "pr.rating", "pr.rated_games", "pr.peak_rating"])
+            ->paginate(50);
+
+        $history = $ladder->currentHistory();
+        $ladders = Ladder::all();
+
+        return view("admin.players.ratings", [
+            "ladders" => $ladders,
+            "players" => $players,
+            "history" => $history
+        ]);
     }
 }
 
