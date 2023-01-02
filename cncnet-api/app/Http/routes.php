@@ -44,6 +44,7 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => 
     Route::get('players/ratings', 'AdminController@getPlayerRatings');
     Route::get('players/ratings/{ladderAbbreviation}', 'AdminController@getPlayerRatings');
     Route::get('players/ratings/{ladderAbbreviation}/update', 'AdminController@updatePlayerRatings');
+    Route::post('players/ratings/{ladderAbbreviation}/reset/reset-player-rating', 'AdminController@resetPlayerRating');
 });
 
 Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()

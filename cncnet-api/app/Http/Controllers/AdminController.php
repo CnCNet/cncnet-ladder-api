@@ -903,7 +903,7 @@ class AdminController extends Controller
         $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
         $players = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
             ->where("ladder_id", $ladder->id)
-            ->where("pr.rated_games", ">", 0)
+            ->where("username", "like", "%" . $request->search . "%")
             ->orderBy("pr.rating", "DESC")
             ->select(["players.*", "pr.rating", "pr.rated_games", "pr.peak_rating"])
             ->paginate(200);
@@ -929,7 +929,8 @@ class AdminController extends Controller
             "history" => $history,
             "tier2Count" => $tier2PlayerCount,
             "tier1Count" => $tier1PlayerCount,
-            "abbreviation" => $ladderAbbreviation
+            "abbreviation" => $ladderAbbreviation,
+            "search" => $request->search
         ]);
     }
 
@@ -944,6 +945,23 @@ class AdminController extends Controller
         $history = $ladder->currentHistory();
         $playerRatingService = new PlayerRatingService();
         $playerRatingService->recalculatePlayersTiersByLadderHistory($history);
+    }
+
+    public function resetPlayerRating(Request $request, $abbreviation)
+    {
+        $ladder = Ladder::where("abbreviation", $abbreviation)->first();
+        $history = $ladder->currentHistory();
+
+        $player = Player::find($request->player_id);
+        if ($player == null)
+        {
+            abort(400, "Player not found");
+        }
+
+        $playerRatingService = new PlayerRatingService();
+        $playerRatingService->resetPlayerRating($player, $history);
+
+        return redirect()->back();
     }
 }
 

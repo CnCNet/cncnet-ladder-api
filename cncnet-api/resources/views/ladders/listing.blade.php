@@ -140,12 +140,12 @@
                 @if ($history->ladder->qmLadderRules->tier2_rating > 0)
                     <div class="league-selection">
                         <a href="{{ \App\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">
-                            <i class="bi bi-trophy league-icon"></i>
-                            <h3 class="league-title">1vs1 - Champions Players <strong>League</strong></h3>
+                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(1) !!}
+                            <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(1) }}</h3>
                         </a>
                         <a href="{{ \App\UrlHelper::getLadderLeague($history, 2) }}" title="{{ $history->ladder->name }}" class="league-box tier-2">
-                            <i class="bi bi-shield-slash-fill league-icon"></i>
-                            <h3 class="league-title">1vs1 - Contenders Players <strong>League</strong></h3>
+                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(2) !!}
+                            <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(2) }}</h3>
                         </a>
                     </div>
                 @endif

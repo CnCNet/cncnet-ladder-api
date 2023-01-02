@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Helpers\GameHelper;
 use App\LadderHistory;
 use App\Player;
+use App\PlayerCache;
 use App\PlayerHistory;
 use App\PlayerRating;
 use Carbon\Carbon;
@@ -22,10 +23,10 @@ class PlayerRatingService
             ->where("ladder_id", $history->ladder->id)
             ->first();
 
-        $prevMonthPlayerHistories = PlayerHistory::where("ladder_history_id", $prevMonthHistory->id)
-            ->get();
+        $prevMonthPlayerHistories = PlayerHistory::where("ladder_history_id", $prevMonthHistory->id)->get();
 
-        $playerIdRatingsCompleted = [];
+        # Player ids we've updated and applied to this months ladder
+        $playerIdsRatingUpdated = [];
 
         # Check for last months players and apply to this months ratings first
         foreach ($prevMonthPlayerHistories as $ph)
@@ -53,16 +54,23 @@ class PlayerRatingService
                     echo "Applying to this months ladder: " . "$player->username" . " Now Tier: " . $playerHistoryThisMonth->tier . "<br/>";
                 }
 
-                $playerIdRatingsCompleted[] = $player->id;
+                # Update player cache for this month, only if it exists
+                $pc = PlayerCache::where("player_id", $player->id)->where("ladder_history_id", $history->id)->first();
+                if ($pc)
+                {
+                    $pc->tier = $ph->tier;
+                    $pc->save();
+                }
+
+                $playerIdsRatingUpdated[] = $player->id;
             }
         }
 
+        # Now we check players this month, calculate ratings excluding the ones we've done already from above
         $currentMonthPlayerHistories = PlayerHistory::where("ladder_history_id", $history->id)->get();
-
-        # Now we check players this month calculate ratings excluding the ones we've done above
         foreach ($currentMonthPlayerHistories as $ph)
         {
-            if (in_array($ph->player_id, $playerIdRatingsCompleted))
+            if (in_array($ph->player_id, $playerIdsRatingUpdated))
             {
                 echo "Skipping " . $ph->player->username . " as we've already applied their Tier from previous month above <br/>";
                 continue;
@@ -81,11 +89,48 @@ class PlayerRatingService
                 $ph->save();
 
                 echo "Player: " . $player->username . " Rating: " . $playerRating->rating . " Previous Tier:" . $prevTier . " New Tier: " . $ph->tier . "<br/>";
+
+                # Update player cache for this month, only if it exists
+                $pc = PlayerCache::where("player_id", $player->id)->where("ladder_history_id", $history->id)->first();
+                if ($pc)
+                {
+                    $pc->tier = $ph->tier;
+                    $pc->save();
+                }
             }
         }
     }
 
+    public function resetPlayerRating($player, $history)
+    {
+        $playerRating = PlayerRating::where("player_id", $player->id)->first();
 
+        if ($playerRating == null)
+        {
+            die("No player rating found");
+        }
+
+        $playerRating->rating = PlayerRating::$DEFAULT_RATING;
+        $playerRating->rated_games = 0;
+        $playerRating->peak_rating = 0;
+        $playerRating->save();
+
+        $playerHistory = PlayerHistory::where("ladder_history_id", $history->id)->where("player_id", $player->id)->first();
+        if ($playerHistory)
+        {
+            $playerHistory->tier = PlayerRatingService::getTierByLadderRules(PlayerRating::$DEFAULT_RATING, $history);
+            $playerHistory->save();
+        }
+
+        $playerCache = PlayerCache::where("player_id", $player->id)->where("ladder_history_id", $history->id)->first();
+        if ($playerCache)
+        {
+            $playerCache->tier = PlayerRatingService::getTierByLadderRules(PlayerRating::$DEFAULT_RATING, $history);
+            $playerCache->save();
+        }
+
+        return $playerRating;
+    }
 
     /**
      * 

@@ -87,6 +87,21 @@
 
                     @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
 
+                    <p class="lead">
+                        <?php if ($search) : ?>
+                        Searching for {{ $search }}
+                        <?php endif; ?>
+                    </p>
+
+                    <div class="search mb-2 mt-2">
+                        <form action="/admin/players/ratings/{{ $abbreviation }}">
+                            <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}"
+                                style="height: 50px" />
+                            <a href="?" style="color: silver;padding: 5px;margin-bottom: 5px; display: block;float: right;">
+                                Clear search
+                            </a>
+                        </form>
+                    </div>
 
                     <div class="table-responsive">
                         <table class="table">
@@ -96,6 +111,7 @@
                                     <th>Current Tier</th>
                                     <th>Current Rating</th>
                                     <th>Player Game History</th>
+                                    <th>Reset?</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -120,6 +136,14 @@
                                             @foreach ($playerHistory as $ph)
                                                 <div><strong>{{ $ph->ladderHistory->starts }}</strong> - Tier: {{ $ph->tier }} </div>
                                             @endforeach
+                                        </td>
+
+                                        <td>
+                                            <form method="POST" action="/admin/players/ratings/{{ $abbreviation }}/reset/reset-player-rating">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="player_id" value="{{ $player->id }}" />
+                                                <button type="submit" class="btn btn-outline btn-size-md">Reset Player Rating</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach
