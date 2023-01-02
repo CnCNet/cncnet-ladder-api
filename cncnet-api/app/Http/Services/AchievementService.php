@@ -21,6 +21,7 @@ class AchievementService
             ->orderBy("achievements_progress.achievement_unlocked_date", "=", "DESC")
             ->limit($limit)
             ->get();
+
         return $recentlyUnlocked;
     }
 

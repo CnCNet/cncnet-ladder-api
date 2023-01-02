@@ -2,26 +2,20 @@
 
 - `player_ratings` table contains elo rating. 
 - `player_histories` contains past `ladder_history_id`, `player_id` and `tier`.
-- `PlayerRatingService` has a `calculatePlayerTier()` to assign player tiers based on ladder settings. 
-Currently only Blitz will assign tiers, other ladders will only have 1 tier.
 
 
 ### How player tier is updated:
 
-1. `player_caches` is updated every hour via cron, see `UpdatePlayerCache`. In that it calls.
-```php
-$pc = \App\PlayerCache;
-$playerHistory = $player->playerHistory($history);
-$pc->tier = $playerHistory->tier;
-// ...
-$pc-save();
-```
+1. Monthly, `recalculatePlayersTiersByLadderHistory` is called.
+    - It gets all `player_histories` for the previous month.
+    - It takes the player ratings from that month. 
+    - It checks the tier 2 rating value set by the ladder admin page and compares it against their rating. If its below X, they're assigned tier 2.
 
-2. It calls `playerHistory()` on `\App\Player`. This checks for player_history for the the current ladder. 
-If its empty, it will create a new one for the month and assign a tier. 
+2. New players registering to the ladder will get 1200 as a base player_rating elo. It is also the ladder value that the ladder checks for Blitz. 
 
-3. By default it will check  the following before assigning a tier:
+3. If a user has a `player_rating` from a game like RA2 or YR, but does not have any for Blitz, it will take the highest rating from either game. This stops experienced players from RA2/YR coming into the wrong tier, if they've never played the ladder type before.
 
-- Check for other `player_ratings` a user owns across that game type (E.g yr) and take the highest rating from that. This stops experienced players from RA2/YR coming into the wrong league in Blitz if they've never played before.
+### Player ratings 
+1. Can be seen in the admin `/admin/players/ratings`
+2. In here, there is a "Update player ratings" button which will trigger the `recalculatePlayersTiersByLadderHistory` method.
 
-- Checks the players rating against the `Tier 2 If Rating Below` admin setting in the ladder. If a players elo rating is below this, they are moved to Tier 2, otherwise assigned Tier 1. 

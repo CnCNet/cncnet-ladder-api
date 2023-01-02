@@ -22,7 +22,8 @@ class PlayerRatingService
             ->where("ladder_id", $history->ladder->id)
             ->first();
 
-        $prevMonthPlayerHistories = PlayerHistory::where("ladder_history_id", $prevMonthHistory->id)->get();
+        $prevMonthPlayerHistories = PlayerHistory::where("ladder_history_id", $prevMonthHistory->id)
+            ->get();
 
         $playerIdRatingsCompleted = [];
 
