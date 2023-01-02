@@ -137,10 +137,6 @@
             @endif
 
             <section>
-                <h3 class="mt-2 mb-4">
-                    <i class="bi bi-trophy pe-3"></i> Pick a league
-                </h3>
-
                 @if ($history->ladder->qmLadderRules->tier2_rating > 0)
                     <div class="league-selection">
                         <a href="{{ \App\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">
@@ -148,7 +144,7 @@
                             <h3 class="league-title">1vs1 - Champions Players <strong>League</strong></h3>
                         </a>
                         <a href="{{ \App\UrlHelper::getLadderLeague($history, 2) }}" title="{{ $history->ladder->name }}" class="league-box tier-2">
-                            <i class="bi bi-trophy league-icon"></i>
+                            <i class="bi bi-shield-slash-fill league-icon"></i>
                             <h3 class="league-title">1vs1 - Contenders Players <strong>League</strong></h3>
                         </a>
                     </div>
@@ -185,7 +181,8 @@
                     </h3>
                 @else
                     <h3 class="mt-2 mb-4">
-                        <i class="bi bi-trophy pe-3"></i> 1vs1 - Contenders Players League
+                        <i class="bi bi-shield-slash-fill pe-3"></i>
+                        1vs1 - Contenders Players League
                     </h3>
                 @endif
 
