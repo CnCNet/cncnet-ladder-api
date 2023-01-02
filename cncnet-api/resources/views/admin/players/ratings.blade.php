@@ -10,7 +10,7 @@
                 <div class="col-12">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
                         <strong class="fw-bold">CnCNet</strong>
-                        <span>Player Ratings</span>
+                        <span>User Ratings</span>
                     </h1>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                         <span class="material-symbols-outlined">
                             admin_panel_settings
                         </span>
-                        Player Ratings
+                        User Ratings
                     </a>
                 </div>
             </div>
@@ -52,7 +52,7 @@
                         <span class="material-symbols-outlined pe-3">
                             admin_panel_settings
                         </span>
-                        Player Ratings
+                        User Ratings
                     </a>
                 </li>
             </ol>
@@ -79,7 +79,7 @@
                     </div>
 
                     <a href="/admin/players/ratings/{{ $abbreviation }}/update" class="btn mt-3 mb-3 btn-size-md btn-primary">
-                        Update {{ $abbreviation }} Player Ratings
+                        Update {{ $abbreviation }} User Ratings
                     </a>
 
                     @include('components.pagination.paginate', ['paginator' => $users->appends(request()->query())])

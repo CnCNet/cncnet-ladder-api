@@ -292,6 +292,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getUserTier($history)
     {
         $userRating = $this->getUserRating();
-        return UserRatingService::getTierByLadderRules($userRating, $history);
+        return UserRatingService::getTierByLadderRules($userRating->rating, $history);
     }
 }
