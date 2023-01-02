@@ -332,7 +332,6 @@ class ApiLadderController extends Controller
                     $this->playerService->updatePlayerRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
             }
 
-            $playerGR->player->calculateTier($history);
             $playerGR->save();
 
             $pc = $playerGR->player->playerCache($history->id);
