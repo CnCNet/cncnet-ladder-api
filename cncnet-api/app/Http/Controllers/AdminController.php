@@ -903,18 +903,20 @@ class AdminController extends Controller
         $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
         $players = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
             ->where("ladder_id", $ladder->id)
+            ->where("pr.rated_games", ">", 0)
             ->orderBy("pr.rating", "DESC")
             ->select(["players.*", "pr.rating", "pr.rated_games", "pr.peak_rating"])
             ->paginate(50);
 
-
         $tier2PlayerCount = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
             ->where("ladder_id", $ladder->id)
+            ->where("pr.rated_games", ">", 0)
             ->where("pr.rating", "<", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
             ->count();
 
         $tier1PlayerCount = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
             ->where("ladder_id", $ladder->id)
+            ->where("pr.rated_games", ">", 0)
             ->where("pr.rating", ">", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
             ->count();
 
