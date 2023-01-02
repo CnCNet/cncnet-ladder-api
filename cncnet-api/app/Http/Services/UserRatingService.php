@@ -16,8 +16,8 @@ class UserRatingService
         $startOfPreviousMonth = $now->copy()->subMonth(1)->startOfMonth();
         $endOfPreviousMonth = $now->copy()->subMonth(1)->endOfMonth();
 
-        $prevMonthHistory = LadderHistory::where("starts", $startOfPreviousMonth)
-            ->where("ends", $endOfPreviousMonth)
+        $prevMonthHistory = LadderHistory::where("starts", ">=", $startOfPreviousMonth)
+            ->where("ends", "<=", $endOfPreviousMonth)
             ->where("ladder_id", $history->ladder->id)
             ->first();
 

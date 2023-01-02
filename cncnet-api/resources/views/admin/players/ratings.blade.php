@@ -78,9 +78,6 @@
                         @endforeach
                     </div>
 
-                    <h4>Players in Tier 1: {{ $tier1Count }}</h4>
-                    <h4>Players in Tier 2: {{ $tier2Count }}</h4>
-
                     <a href="/admin/players/ratings/{{ $abbreviation }}/update" class="btn mt-3 mb-3 btn-size-md btn-primary">
                         Update {{ $abbreviation }} Player Ratings
                     </a>
@@ -127,7 +124,7 @@
                                             @endforeach
                                         </td>
                                         <td>
-                                            {{ \App\Http\Services\PlayerRatingService::getTierByLadderRules($user->rating, $history) }}
+                                            {{ \App\Http\Services\UserRatingService::getTierByLadderRules($user->rating, $history) }}
                                         </td>
                                         <td>
                                             Rating: {{ $user->rating }} <br />

@@ -15,6 +15,7 @@ use App\Helpers\GameHelper;
 use App\Http\Services\UserRatingService;
 use App\Player;
 use App\PlayerRating;
+use App\UserRating;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -920,18 +921,6 @@ class AdminController extends Controller
                 ->paginate(50);
         }
 
-        $tier1PlayerCount = Player::join("user_ratings as ur", "ur.user_id", "=", "players.user_id")
-            ->where("ladder_id", $ladder->id)
-            ->where("ur.rated_games", ">", 0)
-            ->where("ur.rating", "<", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
-            ->count();
-
-        $tier2PlayerCount = Player::join("user_ratings as ur", "ur.user_id", "=", "players.user_id")
-            ->where("ladder_id", $ladder->id)
-            ->where("ur.rated_games", "<", 0)
-            ->where("ur.rating", ">", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
-            ->count();
-
         $history = $ladder->currentHistory();
         $ladders = Ladder::all();
 
@@ -940,8 +929,6 @@ class AdminController extends Controller
             "users" => $users,
             "ladders" => $ladders,
             "history" => $history,
-            "tier1Count" => $tier1PlayerCount,
-            "tier2Count" => $tier2PlayerCount,
             "abbreviation" => $ladderAbbreviation,
             "search" => $request->search
         ]);

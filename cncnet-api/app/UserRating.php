@@ -10,7 +10,7 @@ class UserRating extends Model
 
     public function __construct()
     {
-        $this->rating = PlayerRating::$DEFAULT_RATING;
+        $this->rating = UserRating::$DEFAULT_RATING;
         $this->peak_rating = 0;
         $this->rated_games = 0;
     }
@@ -19,7 +19,6 @@ class UserRating extends Model
     {
         // Create default user rating
         $userRating = new UserRating();
-        $userRating->rating = UserRating::$DEFAULT_RATING;
         $userRating->user_id = $user->id;
         $userRating->save();
         return $userRating;
@@ -32,15 +31,14 @@ class UserRating extends Model
      */
     public static function createNewFromLegacyPlayerRating($user)
     {
-        # Take player rating based on most rated games
-        $playerRating = User::join("players as p", "p.user_id", "=", "users.id")
-            ->join("player_ratings as pr", "pr.player_id", "=", "p.id")
+        # Take based on highest rated rating
+        $playerRating = \App\User::join("players as p", "p.user_id", "=", "users.id")
             ->where("users.id", "=", $user->id)
-            ->orderBy("pr.rated_games", "DESC")
-            ->select("pr.*")
+            ->join("player_ratings as pr", "pr.player_id", "=", "p.id")
+            ->orderBy("pr.rating", "DESC")
             ->first();
 
-        if ($playerRating)
+        if ($playerRating !== null)
         {
             $userRating = new UserRating();
             $userRating->rating = $playerRating->rating;

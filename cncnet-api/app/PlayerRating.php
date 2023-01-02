@@ -11,6 +11,8 @@ class PlayerRating extends Model
 
     public function __construct()
     {
+        // NOTE: Phasing out PlayerRating in favour of UserRating
+
         $this->rating = PlayerRating::$DEFAULT_RATING;
         $this->peak_rating = 0;
         $this->rated_games = 0;
