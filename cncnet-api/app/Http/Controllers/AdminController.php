@@ -12,6 +12,7 @@ use \App\Ladder;
 use \App\SpawnOptionString;
 use App\GameObjectSchema;
 use App\Helpers\GameHelper;
+use App\Http\Services\PlayerRatingService;
 use App\Player;
 use App\PlayerRating;
 use Illuminate\Support\Facades\Cache;
@@ -906,14 +907,41 @@ class AdminController extends Controller
             ->select(["players.*", "pr.rating", "pr.rated_games", "pr.peak_rating"])
             ->paginate(50);
 
+
+        $tier2PlayerCount = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
+            ->where("ladder_id", $ladder->id)
+            ->where("pr.rating", "<", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
+            ->count();
+
+        $tier1PlayerCount = Player::join("player_ratings as pr", "pr.player_id", "=", "players.id")
+            ->where("ladder_id", $ladder->id)
+            ->where("pr.rating", ">", $ladder->currentHistory()->ladder->qmLadderRules->tier2_rating)
+            ->count();
+
         $history = $ladder->currentHistory();
         $ladders = Ladder::all();
 
         return view("admin.players.ratings", [
             "ladders" => $ladders,
             "players" => $players,
-            "history" => $history
+            "history" => $history,
+            "tier2Count" => $tier2PlayerCount,
+            "tier1Count" => $tier1PlayerCount,
+            "abbreviation" => $ladderAbbreviation
         ]);
+    }
+
+    public function updatePlayerRatings(Request $request, $ladderAbbreviation)
+    {
+        $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
+        if ($ladder == null)
+        {
+            abort(404, "Ladder not found");
+        }
+
+        $history = $ladder->currentHistory();
+        $playerRatingService = new PlayerRatingService();
+        $playerRatingService->recalculatePlayersTiersByLadderHistory($history);
     }
 }
 

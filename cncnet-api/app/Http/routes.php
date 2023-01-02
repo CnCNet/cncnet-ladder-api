@@ -43,6 +43,7 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => 
     Route::get('washedGames/{ladderAbbreviation}', 'AdminController@getWashedGames');
     Route::get('players/ratings', 'AdminController@getPlayerRatings');
     Route::get('players/ratings/{ladderAbbreviation}', 'AdminController@getPlayerRatings');
+    Route::get('players/ratings/{ladderAbbreviation}/update', 'AdminController@updatePlayerRatings');
 });
 
 Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()

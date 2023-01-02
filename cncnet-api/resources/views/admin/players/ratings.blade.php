@@ -65,21 +65,31 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
-                    <h3>Players Ratings</h3>
+                    <h3>Players Ratings - {{ $history->ladder->name }}</h3>
 
-                    <ul>
+                    <div class="btn-group mb-5 mt-5">
                         @foreach ($ladders as $ladder)
-                            <li><a href="/admin/players/ratings/{{ $ladder->abbreviation }}">{{ $ladder->name }}</a></li>
+                            <div>
+                                <a href="/admin/players/ratings/{{ $ladder->abbreviation }}"
+                                    class="btn me-3 btn-size-md {{ $abbreviation == $ladder->abbreviation ? 'btn-primary' : 'btn-outline' }}">
+                                    {{ $ladder->abbreviation }}
+                                </a>
+                            </div>
                         @endforeach
-                    </ul>
+                    </div>
+
+                    <h4>Players in Tier 1: {{ $tier1Count }}</h4>
+                    <h4>Players in Tier 2: {{ $tier2Count }}</h4>
 
                     @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+
 
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>Player</th>
+                                    <th>Current Tier</th>
                                     <th>Current Rating</th>
                                     <th>Player Game History</th>
                                 </tr>
@@ -93,6 +103,9 @@
                                     <tr>
                                         <td>
                                             {{ $player->username }}
+                                        </td>
+                                        <td>
+                                            {{ \App\Http\Services\PlayerRatingService::getTierByLadderRules($player->rating, $history) }}
                                         </td>
                                         <td>
                                             Rating: {{ $player->rating }} <br />
