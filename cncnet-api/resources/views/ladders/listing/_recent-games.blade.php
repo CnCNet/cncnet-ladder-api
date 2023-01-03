@@ -31,12 +31,9 @@
     <script>
         var swiper = new Swiper(".js-game-listings", {
             slidesPerView: 3,
-            speed: 3000,
             spaceBetween: 30,
             loop: false,
-            autoplay: {
-                disableOnInteraction: true,
-            },
+            autoplay: false,
             breakpoints: {
                 "@0.00": {
                     slidesPerView: 1,
