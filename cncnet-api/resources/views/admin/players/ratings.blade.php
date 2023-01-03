@@ -101,7 +101,7 @@
                     </div>
 
                     <p>
-                        Note: Changing a users elo rating will also move them into the appropriate tier for this month.
+                        Warning: Changing a users elo rating will also move them into the appropriate tier for this month.
                     </p>
 
                     <div class="table-responsive">

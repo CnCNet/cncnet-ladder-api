@@ -73,14 +73,14 @@ class UserRatingService
 
         # Update tier for this months player cache only
         $userPlayerIds = $user->usernames()->pluck("id");
-        $userTier = $user->getUserTier();
+        $userTier = $user->getUserTier($history);
 
         PlayerHistory::where("ladder_history_id", $history->id)
             ->whereIn("player_id", [$userPlayerIds])
             ->update(["tier" => $userTier]);
 
         PlayerCache::where("ladder_history_id", $history->id)
-            ->whereIn("ids", $userPlayerIds)
+            ->whereIn("player_id", $userPlayerIds)
             ->update(["tier" => $userTier]);
 
         return $userRating;
