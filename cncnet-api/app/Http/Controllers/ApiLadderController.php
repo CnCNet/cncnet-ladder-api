@@ -99,7 +99,7 @@ class ApiLadderController extends Controller
         // Achievements
         $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
 
-        if ($ladderId == 8) //toggle achievements on for Blitz ladder only, TODO remove
+        if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
             $this->updateAchievements($playerId, $history->ladder, $stats);
 
         return response()->json(['success' => $status], 200);

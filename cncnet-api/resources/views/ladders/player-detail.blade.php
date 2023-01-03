@@ -107,6 +107,14 @@
                             - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($userTier) }}
                         </div>
                     </div>
+
+                    @if($userIsMod)
+                    <div>
+                        @include('ladders._modal-edit-player-name')
+                        <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName" data-bs-toggle="modal" data-bs-target="#editPlayerName"> Edit Player Name </button>
+                    </div>
+                    @endif
+
                     <div class="player-social pt-4 me-5">
                         @if ($userPlayer->getTwitchProfile())
                             <a href="{{ $userPlayer->getTwitchProfile() }}">
@@ -172,7 +180,7 @@
                 </div>
 
                 <!-- Toggle achievements on for Blitz ladder only, TODO remove -->
-                @if ($history->ladder->id == 8)
+                @if ($history->ladder->id == 8 || $history->ladder->id == 1)
                     <div class="player-achievements">
                         <div class="d-flex align-items-center">
                             <h5 class="d-flex align-items-center">
@@ -252,6 +260,7 @@
             </section>
         </section>
     </div>
+
 @endsection
 
 @if ($history->ends > Carbon\Carbon::now())

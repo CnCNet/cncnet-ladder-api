@@ -654,11 +654,7 @@ class ApiQuickMatchController extends Controller
 
         $numErroredGames = \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
             ->where("ladder_history_id", "=", $ladderHistory->id)
-            ->where(function ($query)
-            {
-                $query->where('game_reports.duration', '<=', 3)
-                    ->orWhere('game_reports.fps', '<=', 0);
-            })
+            ->where('game_reports.duration', '<=', 3)
             ->where('finished', '=', 1)
             ->get()->count();
 

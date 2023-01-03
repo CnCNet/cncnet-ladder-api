@@ -109,6 +109,7 @@ Route::group(['prefix' => 'admin/moderate/{ladderId}', 'middleware' => 'auth', '
     Route::post('/player/{playerId}/alert', 'AdminController@editPlayerAlert');
     Route::post('/player/{playerId}/laundry', 'AdminController@laundryService');
     Route::post('/player/{playerId}/undoLaundry', 'AdminController@undoLaundryService');
+    Route::post('/player/{playerId}/editName', 'AdminController@editPlayerName');
 });
 
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()

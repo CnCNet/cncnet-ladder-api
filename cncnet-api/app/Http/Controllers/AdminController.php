@@ -965,6 +965,40 @@ class AdminController extends Controller
 
         return redirect()->back();
     }
+
+    public function editPlayerName(Request $request)
+    {
+        $this->validate($request, [
+            'player_name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
+        ]);
+
+        $player = \App\Player::where('id', $request->player_id)->first();
+
+        if ($player == null)
+            abort(400, "No player found with this player id");
+
+        $playerCaches = \App\PlayerCache::where('player_id', $player->id)->get();
+
+        if ($playerCaches == null || $playerCaches->count() == 0)
+            abort(400, "Error getting player data.");
+
+        $newName = $request->player_name;
+
+        $newName = trim($newName);
+        $player->username = $newName;
+        $player->save();
+
+        foreach ($playerCaches as $playerCache)
+        {
+            $playerCache->player_name = $player->username;
+            $playerCache->save();
+        }
+
+        $history = \App\LadderHistory::where('id', $request->history_id)->first();
+        $url = \App\URLHelper::getPlayerProfileUrl($history, $player->username);
+        $request->session()->flash('success', "Player name has been updated to " . $player->username);
+        return redirect()->to($url);
+    }
 }
 
 function ini_to_b($string)
