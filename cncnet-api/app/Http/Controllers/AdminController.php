@@ -905,7 +905,7 @@ class AdminController extends Controller
 
         $byPlayer = Player::where("username", "like", "%" . $request->search . "%")->first();
 
-        if ($request->search)
+        if ($byPlayer && $request->search)
         {
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
