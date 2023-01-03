@@ -9,9 +9,13 @@ use \Carbon\Carbon;
 use App\LadderHistory;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
+use App\Http\Services\UserRatingService;
 use \App\Http\Services\StatsService;
 use App\Player;
+use App\PlayerHistory;
+use App\QmCanceledMatch;
 use App\User;
+use App\UserRating;
 
 class LadderController extends Controller
 {
@@ -46,6 +50,8 @@ class LadderController extends Controller
         if ($history === null)
             abort(404);
 
+        $tier = $request->tier ?? 1; // Default to tier 1
+
         # Stats
         $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
 
@@ -54,19 +60,19 @@ class LadderController extends Controller
         {
             $orderBy = $request->orderBy == "desc" ? "desc" : "asc";
 
-            $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
-                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
-                ->where('player_name', 'like', '%' . $request->search . '%')
-                ->orderBy('games', $orderBy)
+            $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
+                ->where("tier", "=", $tier)
+                ->where("player_name", "like", "%" . $request->search . "%")
+                ->orderBy("games", $orderBy)
                 ->paginate(45);
         }
         else
         {
             # Default
-            $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
-                ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
-                ->where('player_name', 'like', '%' . $request->search . '%')
-                ->orderBy('points', 'desc')
+            $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
+                ->where("tier", "=", $tier)
+                ->where("player_name", "like", "%" . $request->search . "%")
+                ->orderBy("points", "desc")
                 ->paginate(45);
         }
 
@@ -254,6 +260,7 @@ class LadderController extends Controller
 
         $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
         $userPlayer = User::where("id", $player->user_id)->first();
+        $userTier = $playerUser->getUserTier($history);
 
         # Stats
         $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
@@ -278,6 +285,7 @@ class LadderController extends Controller
                 "ladderId" => $player->ladder->id,
                 "alerts" => $alerts,
                 "bans" => $bans,
+                "userTier" => $userTier,
                 "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
                 "playerFactionsByMonth" => $playerFactionsByMonth,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,

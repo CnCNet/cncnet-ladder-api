@@ -70,6 +70,7 @@
                             <p>Manage everything to do with Users</p>
                             <ul class="list-unstyled">
                                 <li><a href="/admin/users" class="btn btn-md btn-secondary">User List</a></li>
+                                <li><a href="/admin/players/ratings" class="btn btn-md btn-secondary mt-2">User Ratings</a></li>
                             </ul>
                         </div>
                     </div>
@@ -94,6 +95,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-4">
                         <div class="profile-link">
                             <div class="player-box player-card">
@@ -109,7 +111,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-4">
                         <div class="profile-link">
                             <div class="player-box player-card">
                                 <h3>Canceled Matches</h3>
@@ -128,7 +130,7 @@
                         </div>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-4 mt-4">
                         <div class="profile-link">
                             <div class="player-box player-card">
                                 <h3>Washed Games</h3>

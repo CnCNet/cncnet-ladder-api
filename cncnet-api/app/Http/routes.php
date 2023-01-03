@@ -10,7 +10,6 @@ Route::get('/', function ()
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
 Route::get('/help/obs', 'SiteController@getOBSHelp');
 Route::get('/donate', 'SiteController@getDonate');
-Route::get('/styleguide', 'SiteController@getStyleguide');
 
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
@@ -42,6 +41,11 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => 
     Route::post('ladder/new', ['middleware' => 'auth', 'isGod' => true, 'uses' => 'LadderController@saveLadder']);
     Route::get('canceledMatches/{ladderAbbreviation}', 'AdminController@getCanceledMatches');
     Route::get('washedGames/{ladderAbbreviation}', 'AdminController@getWashedGames');
+
+    Route::get('players/ratings', 'AdminController@getPlayerRatings');
+    Route::get('players/ratings/{ladderAbbreviation}', 'AdminController@getPlayerRatings');
+    Route::get('players/ratings/{ladderAbbreviation}/update', 'AdminController@updatePlayerRatings');
+    Route::post('players/ratings/{ladderAbbreviation}/update-user-rating', 'AdminController@changeUserRating');
 });
 
 Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
@@ -116,7 +120,6 @@ Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
     Route::post('/rename', 'AccountController@rename');
 
     Route::post('/{ladderAbbrev}/username', 'AccountController@createUsername');
-    Route::post('/{ladderAbbrev}/card', 'AccountController@updatePlayerCard');
     Route::get('/verify', 'AccountController@getNewVerification');
     Route::post('/verify', 'AccountController@createNewVerification');
     Route::get('/verify/{verify_token}', 'AccountController@verifyEmail');

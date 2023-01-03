@@ -3,7 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePlayerCacheUpdatesTable extends Migration {
+class CreatePlayerCacheUpdatesTable extends Migration
+{
 
     /**
      * Run the migrations.
@@ -12,12 +13,12 @@ class CreatePlayerCacheUpdatesTable extends Migration {
      */
     public function up()
     {
-	Schema::create('player_cache_updates', function(Blueprint $table)
-	    {
-                $table->increments('id');
-		$table->integer('player_cache_id');
-                $table->timestamps();
-	    });
+        Schema::create('player_cache_updates', function (Blueprint $table)
+        {
+            $table->increments('id');
+            $table->integer('player_cache_id');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -27,7 +28,6 @@ class CreatePlayerCacheUpdatesTable extends Migration {
      */
     public function down()
     {
-	Schema::drop('player_cache_updates');
+        Schema::drop('player_cache_updates');
     }
-
 }

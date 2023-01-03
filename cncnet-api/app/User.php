@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Services\UserRatingService;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
@@ -272,5 +273,30 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function achievements()
     {
         return $this->hasMany('App\AchievementProgress', 'user_id');
+    }
+
+    public function userRating()
+    {
+        return $this->hasOne('App\UserRating', 'user_id');
+    }
+
+    /**
+     * Create if null, and if ladder supplied grab elo from the player rating legacy table
+     * @param mixed $ladder 
+     * @return mixed 
+     */
+    public function getOrCreateUserRating()
+    {
+        if ($this->userRating == null)
+        {
+            return UserRating::createNewFromLegacyPlayerRating($this);
+        }
+        return $this->userRating;
+    }
+
+    public function getUserTier($history)
+    {
+        $userRating = $this->getOrCreateUserRating();
+        return UserRatingService::getTierByLadderRules($userRating->rating, $history);
     }
 }

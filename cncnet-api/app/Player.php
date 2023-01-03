@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Http\Services\UserRatingService;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
 use Log;
@@ -308,41 +309,22 @@ class Player extends Model
 
     public function playerHistory($history)
     {
-        $pHist = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
-        if ($pHist === null)
-        {
-            $this->doTierStuff($history);
-        }
-        return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
-    }
+        $playerHistory = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
 
-    public function doTierStuff($history)
-    {
-        $gameCount = $this->playerGameReports()->count();
-        $pHist = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->get()->first();
-
-        if ($pHist === null)
+        if ($playerHistory === null)
         {
-            $pHist = new \App\PlayerHistory;
-            $pHist->ladder_history_id = $history->id;
-            $pHist->player_id = $this->id;
+            $this->user->getOrCreateUserRating();
+            $userTier = $this->user->getUserTier($history);
 
-            $pHist->tier = 1;
-            if ($this->playerRating->rating <= $history->ladder->qmLadderRules->tier2_rating)
-            {
-                $pHist->tier = 2;
-            }
-            $pHist->save();
+            # If we have no history, we will create one and calculate tier
+            $playerHistory = new PlayerHistory();
+            $playerHistory->ladder_history_id = $history->id;
+            $playerHistory->player_id = $this->id;
+            $playerHistory->tier = $userTier;
+            $playerHistory->save();
         }
-        // If it's the first game of the month  or the 20th game we'll do ladder tier placement.
-        else if ($gameCount == 20)
-        {
-            if ($this->rating->rating > $history->ladder->qmLadderRules->tier2_rating)
-                $pHist->tier = 1;
-            else
-                $pHist->tier = 2;
-            $pHist->save();
-        }
+
+        return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
     }
 
     public function playerCache($history_id)

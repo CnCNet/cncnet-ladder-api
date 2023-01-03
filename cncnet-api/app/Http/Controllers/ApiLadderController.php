@@ -18,10 +18,6 @@ class ApiLadderController extends Controller
     private $ladderService;
     private $gameService;
     private $playerService;
-    private $pointService;
-    private $authService;
-
-    private $elo;
 
     public function __construct()
     {
@@ -100,7 +96,7 @@ class ApiLadderController extends Controller
         // Dispute handling
         $this->handleGameDispute($gameReport);
 
-        //achievements
+        // Achievements
         $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
 
         if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
@@ -258,8 +254,9 @@ class ApiLadderController extends Controller
 
             foreach ($playerGameReports as $pgr)
             {
-                $other = $this->playerService->findPlayerRatingByPid($pgr->player_id);
+                $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
                 $players[] = $other;
+
                 if ($pgr->local_team_id == $playerGR->local_team_id)
                 {
                     $ally_average += $other->rating;
@@ -274,21 +271,20 @@ class ApiLadderController extends Controller
                     $enemy_games += $pgr->player->totalGames($history);
                 }
             }
+
             $ally_average /= $ally_count;
             $enemy_average /= $enemy_count;
-
             $elo_k = $this->playerService->getEloKvalue($players);
-
             $points = null;
-
             $base_rating = $enemy_average > $ally_average ? $enemy_average : $ally_average;
 
             $gvc = 8;
             if ($history->ladder->qmLadderRules->use_elo_points)
+            {
                 $gvc = ceil(($base_rating * $enemy_average) / 230000);
+            }
 
             $wol_k = $history->ladder->qmLadderRules->wol_k;
-
             $diff = $enemy_points - $ally_points;
             $we = 1 / (pow(10, abs($diff) / 600) + 1);
             $we = $diff > 0 && $playerGR->wonOrDisco() ? 1 - $we : ($diff < 0 && !$playerGR->wonOrDisco() ? 1 - $we : $we);
@@ -305,12 +301,18 @@ class ApiLadderController extends Controller
                 $points = (new PointService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
                 $diff = (int)($points - $ally_average);
                 if (!$history->ladder->qmLadderRules->use_elo_points)
+                {
                     $diff = 0;
+                }
+
                 $playerGR->points = $gvc + $diff + $wol;
 
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
+
                 if ($gameReport->best_report)
-                    $this->playerService->updatePlayerRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
+                {
+                    $this->playerService->updateUserRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
+                }
             }
             else
             {
@@ -329,10 +331,14 @@ class ApiLadderController extends Controller
 
                 $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
                 if ($gameReport->best_report)
-                    $this->playerService->updatePlayerRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
+                {
+                    $this->playerService->updateUserRating(
+                        $playerGR->player_id,
+                        $eloAdjust->getNewRatings()["a"]
+                    );
+                }
             }
 
-            $playerGR->player->doTierStuff($history);
             $playerGR->save();
 
             $pc = $playerGR->player->playerCache($history->id);
@@ -726,7 +732,7 @@ class ApiLadderController extends Controller
     {
         if ($lockedAchievement == null)
             return;
-            
+
         $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
             ->where('user_id', $user->id)
             ->first();

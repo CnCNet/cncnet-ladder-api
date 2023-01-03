@@ -2,12 +2,13 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Services\UserRatingService;
 use App\LadderHistory;
 use App\StatsCache;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
-class UpdateStatsCache extends Command
+class UpdatePlayerRatings extends Command
 {
 
     /**
@@ -15,14 +16,14 @@ class UpdateStatsCache extends Command
      *
      * @var string
      */
-    protected $name = 'update_stats_cache';
+    protected $name = 'update_player_ratings';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Updates the stats cache on disk';
+    protected $description = 'Updates the player ratings';
 
     /**
      * Create a new command instance.
@@ -41,19 +42,18 @@ class UpdateStatsCache extends Command
      */
     public function handle()
     {
-        // Current ladder month only
         $now = Carbon::now();
         $start = $now->startOfMonth()->toDateTimeString();
         $end = $now->endOfMonth()->toDateTimeString();
+
         $ladderHistories = \App\LadderHistory::whereBetween("starts", [$start, $start])
             ->whereBetween("ends", [$end, $end])
             ->get();
 
-
+        $userRatingService = new UserRatingService();
         foreach ($ladderHistories as $history)
         {
-            echo "\n Setting setPlayersTodayCache for ladder history id: $history->id";
-            StatsCache::setPlayersTodayCache($history);
+            $userRatingService->calculateUserTiers($history);
         }
     }
 }

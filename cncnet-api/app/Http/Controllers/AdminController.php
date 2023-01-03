@@ -11,6 +11,11 @@ use \App\MapPool;
 use \App\Ladder;
 use \App\SpawnOptionString;
 use App\GameObjectSchema;
+use App\Helpers\GameHelper;
+use App\Http\Services\UserRatingService;
+use App\Player;
+use App\PlayerRating;
+use App\UserRating;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -746,7 +751,7 @@ class AdminController extends Controller
         $ladder = \App\Ladder::find($ladderId);
 
         $alert = \App\LadderAlert::find($request->id);
-        
+
         if ($request->submit == "delete")
         {
             $alert->delete();
@@ -886,6 +891,78 @@ class AdminController extends Controller
         $playerCache->save();
 
         $request->session()->flash('success', "Player games have been reset");
+        return redirect()->back();
+    }
+
+    public function getPlayerRatings(Request $request, $ladderAbbreviation = null)
+    {
+        if ($ladderAbbreviation == null)
+        {
+            $ladderAbbreviation = GameHelper::$GAME_BLITZ;
+        }
+
+        $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
+
+        $byPlayer = Player::where("username", "like", "%" . $request->search . "%")->first();
+
+        if ($request->search)
+        {
+            $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
+                ->orderBy("ur.rating", "DESC")
+                ->where("users.id", "=", $byPlayer->user_id)
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->paginate(50);
+        }
+        else
+        {
+            $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
+                ->orderBy("ur.rating", "DESC")
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->paginate(50);
+        }
+
+        $history = $ladder->currentHistory();
+        $ladders = Ladder::all();
+
+        return view("admin.players.ratings", [
+            "ladder" => $ladder,
+            "users" => $users,
+            "ladders" => $ladders,
+            "history" => $history,
+            "abbreviation" => $ladderAbbreviation,
+            "search" => $request->search
+        ]);
+    }
+
+    public function updatePlayerRatings(Request $request, $ladderAbbreviation)
+    {
+        $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
+        if ($ladder == null)
+        {
+            abort(404, "Ladder not found");
+        }
+
+        $history = $ladder->currentHistory();
+        $userRatingService = new UserRatingService();
+        $userRatingService->calculateUserTiers($history);
+
+        return redirect()->back();
+    }
+
+    public function changeUserRating(Request $request, $abbreviation)
+    {
+        $ladder = Ladder::where("abbreviation", $abbreviation)->first();
+        $history = $ladder->currentHistory();
+
+        $user = User::find($request->user_id);
+        if ($user == null)
+        {
+            abort(400, "Player not found");
+        }
+
+        $userRatingService = new UserRatingService();
+        $userRatingService->changeUserRating($user, $request->new_rating, $history);
+
         return redirect()->back();
     }
 

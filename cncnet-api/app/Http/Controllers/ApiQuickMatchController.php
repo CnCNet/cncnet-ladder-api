@@ -12,6 +12,7 @@ use \App\PlayerActiveHandle;
 use \Carbon\Carbon;
 use DB;
 use \App\Commands\FindOpponent;
+use App\PlayerRating;
 use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
 use \App\SpawnOptionType;
@@ -247,10 +248,18 @@ class ApiQuickMatchController extends Controller
                     "A verification code has been sent to {$player->user->email}.\n"
             );
         }
-        $rating = $player->rating()->first()->rating;
+
+        $rating = $player->rating()->first();
+        if ($rating == null)
+        {
+            $playerRating = new PlayerRating();
+            $playerRating->player_id = $player->id;
+            $playerRating->save();
+        }
 
         $qmPlayer = \App\QmMatchPlayer::where('player_id', $player->id)
-            ->where('waiting', true)->first();
+            ->where('waiting', true)
+            ->first();
 
         switch ($request->type)
         {
@@ -276,7 +285,9 @@ class ApiQuickMatchController extends Controller
                     $qmMatch = \App\QmMatch::where('seed', '=', $request->seed)
                         ->join('qm_match_players', 'qm_match_id', '=', 'qm_matches.id')
                         ->where('qm_match_players.player_id', '=', $player->id)
-                        ->select('qm_matches.*')->first();
+                        ->select('qm_matches.*')
+                        ->first();
+
                     if ($qmMatch !== null)
                     {
                         switch ($request->status)

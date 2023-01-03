@@ -8,7 +8,8 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
@@ -96,7 +97,8 @@
                     <ul class="dropdown-menu">
                         @foreach ($ladders_previous as $previous)
                             <li>
-                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}" class="dropdown-item">
+                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}"
+                                    class="dropdown-item">
                                     {{ $previous->starts->format('Y - F') }}
                                 </a>
                             </li>
@@ -135,90 +137,64 @@
             @endif
 
             <section>
-                <div class="row">
+                @if ($history->ladder->qmLadderRules->tier2_rating > 0)
+                    <div class="league-selection">
+                        <a href="{{ \App\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">
+                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(1) !!}
+                            <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(1) }}</h3>
+                        </a>
+                        <a href="{{ \App\UrlHelper::getLadderLeague($history, 2) }}" title="{{ $history->ladder->name }}" class="league-box tier-2">
+                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(2) !!}
+                            <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(2) }}</h3>
+                        </a>
+                    </div>
+                @endif
 
-                    <div class="col-md-12">
-                        <div class="header">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    @if ($history->ladder->qmLadderRules->tier2_rating > 0)
-                                        @if ($tier == 1 || $tier === null)
-                                            <h3><strong>1vs1</strong> Masters League Rankings</h3>
-                                        @elseif($tier == 2)
-                                            <h3><strong>1vs1</strong> Contenders League Rankings</h3>
-                                        @endif
-                                    @endif
+                @if (request()->input('filterBy') == 'games')
+                    <p>
+                        You are ordering by game count, <a href="?#listing">reset by rank?</a>
+                    </p>
+                @endif
+
+                <div class="d-flex flex-column d-sm-flex flex-sm-row">
+                    @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                    <div class="ms-auto">
+                        <form>
+                            <div class="form-group" method="GET">
+                                <div class="search" style="position:relative;">
+                                    <input class="form-control border" name="search" value="{{ $search }}" placeholder="Search by Player..." />
                                 </div>
+                                @if ($search)
+                                    <small>
+                                        Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
+                                        <a href="?search=">Clear?</a>
+                                    </small>
+                                @endif
                             </div>
-                        </div>
-
-                        @if ($history->ladder->qmLadderRules->tier2_rating > 0)
-                            <div class="feature" style="margin-top: -25px;">
-                                <div class="row">
-                                    <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                                        <a href="/ladder/{{ $history->short . '/1/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                                            <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}"
-                                                style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-masters.png' }}')">
-                                                <div class="details tier-league-cards">
-                                                    <div class="type">
-                                                        <h1>Masters <strong>League</strong></h1>
-                                                        <p class="lead">1<strong>vs</strong>1</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                    <div class="col-xs-12 col-sm-6 col-md-6" style="margin-bottom:20px">
-                                        <a href="/ladder/{{ $history->short . '/2/' . $history->ladder->abbreviation }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                                            <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}"
-                                                style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover-contenders.png' }}')">
-                                                <div class="details tier-league-cards">
-                                                    <div class="type">
-                                                        <h1>Contenders <strong>League</strong></h1>
-                                                        <p class="lead">1<strong>vs</strong>1</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        @endif
-
-                        @if (request()->input('filterBy') == 'games')
-                            <p>
-                                You are ordering by game count, <a href="?#listing">reset by rank?</a>
-                            </p>
-                        @endif
-
-                        <div class="d-flex flex-column d-sm-flex flex-sm-row">
-                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
-                            <div class="ms-auto">
-                                <form>
-                                    <div class="form-group" method="GET">
-                                        <div class="search" style="position:relative;">
-                                            <input class="form-control border" name="search" value="{{ $search }}" placeholder="Search by Player..." />
-                                        </div>
-                                        @if ($search)
-                                            <small>
-                                                Searching for <strong>{{ $search }}</strong> returned {{ count($players) }} results
-                                                <a href="?search=">Clear?</a>
-                                            </small>
-                                        @endif
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-
-                        @include('ladders.listing._ladder-table', ['players' => $players])
-
-                        <div class="mt-5">
-                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
-                        </div>
+                        </form>
                     </div>
                 </div>
-            </section>
+
+                @if ($tier == null || $tier == 1)
+                    <h3 class="mt-2 mb-4">
+                        <i class="bi bi-trophy pe-3"></i> 1vs1 - Champions Players League
+                    </h3>
+                @else
+                    <h3 class="mt-2 mb-4">
+                        <i class="bi bi-shield-slash-fill pe-3"></i>
+                        1vs1 - Contenders Players League
+                    </h3>
+                @endif
+
+                @include('ladders.listing._ladder-table', ['players' => $players])
+
+                <div class="mt-5">
+                    @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                </div>
         </div>
+        </div>
+    </section>
+    </div>
     </section>
 
     @include('ladders.listing._modal-ladder-rules')
