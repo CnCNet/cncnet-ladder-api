@@ -313,14 +313,14 @@ class Player extends Model
 
         if ($playerHistory === null)
         {
-            $userRatingService = new UserRatingService();
-            $playerTier = $userRatingService->getUserTier($this->user, $history);
+            $this->user->getOrCreateUserRating();
+            $userTier = $this->user->getUserTier($history);
 
             # If we have no history, we will create one and calculate tier
             $playerHistory = new PlayerHistory();
             $playerHistory->ladder_history_id = $history->id;
             $playerHistory->player_id = $this->id;
-            $playerHistory->tier = $playerTier;
+            $playerHistory->tier = $userTier;
             $playerHistory->save();
         }
 

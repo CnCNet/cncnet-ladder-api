@@ -33,11 +33,24 @@ class UserRatingService
             ->select("u.*")
             ->get();
 
-        foreach ($usersLastMonth as $u)
+        $usersThisMonth = PlayerHistory::where("ladder_history_id", $history->id)
+            ->join("players as p", "p.id", "=", "player_histories.player_id")
+            ->join("users as u", "u.id", "=", "p.user_id")
+            ->select("u.*")
+            ->get();
+
+        $this->updateUserRatings($usersLastMonth, $history);
+        $this->updateUserRatings($usersThisMonth, $history);
+    }
+
+    private function updateUserRatings($users, $history)
+    {
+        foreach ($users as $u)
         {
             $user = User::find($u->id);
 
-            $userRating = $user->getOrCreateUserRating($history->ladder); # Important to include this call as also creates if it doesnt' exist
+            # Important to include this userRating() call as also creates if it does not exist
+            $userRating = $user->getOrCreateUserRating($history->ladder);
             $userTier = $user->getUserTier($history);
             $userPlayerIds = $user->usernames()->pluck("id");
 

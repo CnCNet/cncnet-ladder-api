@@ -117,16 +117,29 @@
                             </thead>
                             <tbody>
                                 @foreach ($users as $user)
-                                    @php
-                                        $playersForLadder = \App\Player::where('ladder_id', $ladder->id)
-                                            ->where('user_id', $user->id)
-                                            ->get();
-                                    @endphp
                                     <tr>
-                                        <td>
-                                            @foreach ($playersForLadder as $player)
-                                                <span class="me-3">{{ $player->username }}</span>
+                                        <td width="50%">
+                                            @php
+                                                $usernames = $user
+                                                    ->usernames()
+                                                    ->where('ladder_id', $history->ladder->id)
+                                                    ->get();
+                                            @endphp
+                                            @foreach ($usernames as $player)
+                                                <span class="d-flex">
+                                                    <span class="me-1 icon-game icon-{{ $player->ladder->abbreviation }}"></span>
+                                                    <span class="me-3">
+                                                        <a
+                                                            href="{{ \App\URLHelper::getPlayerProfileUrl($player->ladder->currentHistory(), $player->username) }}">
+                                                            {{ $player->username }}
+                                                        </a>
+                                                    </span>
+                                                </span>
                                             @endforeach
+
+                                            @if (count($usernames) == 0)
+                                                No {{ $history->ladder->name }} usernames for this user
+                                            @endif
                                         </td>
                                         <td>
                                             {{ \App\Http\Services\UserRatingService::getTierByLadderRules($user->rating, $history) }}
