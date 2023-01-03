@@ -260,7 +260,7 @@ class LadderController extends Controller
 
         $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
         $userPlayer = User::where("id", $player->user_id)->first();
-        $playerTier = PlayerHistory::where("ladder_history_id", $history->id)->where("player_id", $player->id)->first()->tier ?? 1;
+        $userTier = $playerUser->getUserTier();
 
         # Stats
         $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
@@ -285,7 +285,7 @@ class LadderController extends Controller
                 "ladderId" => $player->ladder->id,
                 "alerts" => $alerts,
                 "bans" => $bans,
-                "playerTier" => $playerTier,
+                "userTier" => $userTier,
                 "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
                 "playerFactionsByMonth" => $playerFactionsByMonth,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,

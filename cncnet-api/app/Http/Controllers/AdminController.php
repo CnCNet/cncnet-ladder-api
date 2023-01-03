@@ -944,22 +944,24 @@ class AdminController extends Controller
 
         $history = $ladder->currentHistory();
         $userRatingService = new UserRatingService();
-        $userRatingService->recalculatePlayersTiersByLadderHistory($history);
+        $userRatingService->calculateUserTiers($history);
+
+        return redirect()->back();
     }
 
-    public function resetPlayerRating(Request $request, $abbreviation)
+    public function changeUserRating(Request $request, $abbreviation)
     {
         $ladder = Ladder::where("abbreviation", $abbreviation)->first();
         $history = $ladder->currentHistory();
 
-        $player = Player::find($request->player_id);
-        if ($player == null)
+        $user = User::find($request->user_id);
+        if ($user == null)
         {
             abort(400, "Player not found");
         }
 
         $userRatingService = new UserRatingService();
-        $userRatingService->resetPlayerRating($player, $history);
+        $userRatingService->changeUserRating($user, $request->new_rating, $history);
 
         return redirect()->back();
     }

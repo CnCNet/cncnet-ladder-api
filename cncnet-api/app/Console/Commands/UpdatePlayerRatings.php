@@ -42,19 +42,18 @@ class UpdatePlayerRatings extends Command
      */
     public function handle()
     {
-        // Current ladder month only
         $now = Carbon::now();
         $start = $now->startOfMonth()->toDateTimeString();
         $end = $now->endOfMonth()->toDateTimeString();
+
         $ladderHistories = \App\LadderHistory::whereBetween("starts", [$start, $start])
             ->whereBetween("ends", [$end, $end])
             ->get();
 
         $userRatingService = new UserRatingService();
-
         foreach ($ladderHistories as $history)
         {
-            $userRatingService->recalculatePlayersTiersByLadderHistory($history);
+            $userRatingService->calculateUserTiers($history);
         }
     }
 }

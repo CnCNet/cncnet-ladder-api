@@ -100,6 +100,10 @@
                         </form>
                     </div>
 
+                    <p>
+                        Note: Changing a users elo rating will also move them into the appropriate tier for this month.
+                    </p>
+
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
@@ -107,7 +111,8 @@
                                     <th>Player</th>
                                     <th>Current Tier</th>
                                     <th>Current Rating</th>
-                                    <th>Reset?</th>
+                                    <th>Change Elo
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -132,10 +137,11 @@
                                             Peek rating: {{ $user->peak_rating }} <br />
                                         </td>
                                         <td>
-                                            <form method="POST" action="/admin/players/ratings/{{ $abbreviation }}/reset/reset-player-rating">
+                                            <form method="POST" action="/admin/players/ratings/{{ $abbreviation }}/update-user-rating">
                                                 {{ csrf_field() }}
-                                                {{-- <input type="hidden" name="player_id" value="{{ $user->id }}" /> --}}
-                                                <button type="submit" class="btn btn-outline btn-size-md">Reset Player Rating</button>
+                                                <input type="hidden" name="user_id" value="{{ $user->id }}" />
+                                                <input type="number" name="new_rating" value="{{ $user->rating }}" class="form-control" />
+                                                <button type="submit" class="btn btn-outline btn-size-md">Save User Rating</button>
                                             </form>
                                         </td>
                                     </tr>

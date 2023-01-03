@@ -15,10 +15,12 @@ class UserRating extends Model
         $this->rated_games = 0;
     }
 
-    public static function createNew($user)
+    public static function createNew($user, $rating, $ratedGames, $peakRating)
     {
-        // Create default user rating
         $userRating = new UserRating();
+        $userRating->rating = $rating;
+        $userRating->rated_games = $ratedGames;
+        $userRating->peak_rating = $peakRating;
         $userRating->user_id = $user->id;
         $userRating->save();
         return $userRating;
@@ -29,35 +31,37 @@ class UserRating extends Model
      * @param mixed $user 
      * @return UserRating 
      */
-    public static function createNewFromLegacyPlayerRating($user, $ladderIds = null)
+    public static function createNewFromLegacyPlayerRating($user)
     {
-        if ($ladderIds == null)
+        $exists = UserRating::where("user_id", $user->id)->first();
+        if ($exists)
         {
-            $ladderIds = Ladder::all()->pluck("id");
+            return $exists;
         }
 
-        # Take based on highest rated rating
-        $playerRating = User::join("players as p", "p.user_id", "=", "users.id")
-            ->where("users.id", "=", $user->id)
-            ->whereIn("p.ladder_id", $ladderIds)
-            ->join("player_ratings as pr", "pr.player_id", "=", "p.id")
-            ->orderBy("pr.rated_games", "DESC")
-            ->orderBy("pr.rating", "DESC")
+        # Take player usernames from user 
+        $userPlayerIds = $user->usernames()->pluck("id")->toArray();
+
+        # Find legacy Player rating for all the nicks this user owns
+        # Grab highest rating with at least one rated game
+        $playerRating = PlayerRating::whereIn("player_id", $userPlayerIds)
+            ->where("rated_games", ">", 0)
+            ->orderBy("rating", "DESC")
+            ->select(["rating", "peak_rating", "rated_games"])
             ->first();
 
-        if ($playerRating !== null)
-        {
-            $userRating = new UserRating();
-            $userRating->rating = $playerRating->rating;
-            $userRating->rated_games = $playerRating->rated_games;
-            $userRating->peak_rating = $playerRating->peak_rating;
-            $userRating->user_id = $user->id;
-            $userRating->save();
+        $ratedGames = 0;
+        $peakRating = 0;
+        $rating = UserRating::$DEFAULT_RATING;
 
-            return $userRating;
+        if ($playerRating)
+        {
+            $rating = $playerRating->rating;
+            $ratedGames = $playerRating->rated_games;
+            $peakRating = $playerRating->peak_rating;
         }
 
-        return UserRating::createNew($user);
+        return UserRating::createNew($user, $rating, $ratedGames, $peakRating);
     }
 
     public function user()

@@ -3,122 +3,74 @@
 namespace App\Http\Services;
 
 use App\LadderHistory;
-use App\Player;
 use App\PlayerCache;
 use App\PlayerHistory;
 use App\User;
-use App\UserRating;
 use Carbon\Carbon;
 
 class UserRatingService
 {
-    public function recalculatePlayersTiersByLadderHistory($history)
+    /**
+     * Updates users tiers once a month (or when called from admin panel/cron)
+     * @param mixed $history 
+     * @return void 
+     */
+    public function calculateUserTiers($history)
     {
         # Update based on last months
         $lastMonth = Carbon::now();
-        $lastMonthStart = $lastMonth->copy()->startOfMonth();
-        $lastMonthEnd = $lastMonth->copy()->endOfMonth();
+        $lastMonthStart = $lastMonth->copy()->subMonth(1)->startOfMonth();
+        $lastMonthEnd = $lastMonth->copy()->subMonth(1)->endOfMonth();
 
         $historyLastMonth = LadderHistory::where("ladder_id", $history->ladder->id)
             ->where("starts", $lastMonthStart)
             ->where("ends", $lastMonthEnd)
             ->first();
 
-        $playersLastMonth = PlayerHistory::where("ladder_history_id", $historyLastMonth->id)
+        $usersLastMonth = PlayerHistory::where("ladder_history_id", $historyLastMonth->id)
             ->join("players as p", "p.id", "=", "player_histories.player_id")
-            ->select("p.*")
+            ->join("users as u", "u.id", "=", "p.user_id")
+            ->select("u.*")
             ->get();
 
-        $this->updateUserRatingsByPlayer($playersLastMonth, $history);
-
-        $excludeLastMonthPlayers = $playersLastMonth->pluck("id");
-
-        # Update players this months excluding last month
-        $playersThisMonth = PlayerHistory::where("ladder_history_id", $history->id)
-            ->join("players as p", "p.id", "=", "player_histories.player_id")
-            ->whereNotIn("p.id", $excludeLastMonthPlayers)
-            ->select("p.*")
-            ->get();
-
-        $this->updateUserRatingsByPlayer($playersThisMonth, $history);
-    }
-
-    private function updateUserRatingsByPlayer($players, $history)
-    {
-        foreach ($players as $player)
+        foreach ($usersLastMonth as $u)
         {
-            $user = User::find($player->user_id);
-            $userRating = $user->getUserRating($history->ladder);
+            $user = User::find($u->id);
+
+            $userRating = $user->getOrCreateUserRating($history->ladder); # Important to include this call as also creates if it doesnt' exist
             $userTier = $user->getUserTier($history);
+            $userPlayerIds = $user->usernames()->pluck("id");
 
-            $playerHistoryThisMonth = PlayerHistory::where("ladder_history_id", $history->id)
-                ->where("player_id", $player->id)
-                ->first();
+            PlayerHistory::where("ladder_history_id", $history->id)
+                ->whereIn("player_id", [$userPlayerIds])
+                ->update(["tier" => $userTier]);
 
-            if ($playerHistoryThisMonth)
-            {
-                $playerHistoryThisMonth->tier = $userTier;
-                $playerHistoryThisMonth->save();
-            }
-
-            # Update player cache for this month, only if it exists
-            $pc = PlayerCache::where("player_id", $player->id)
-                ->where("ladder_history_id", $history->id)
-                ->first();
-
-            if ($pc)
-            {
-                $pc->tier = $userTier;
-                $pc->save();
-            }
-
-            echo "Player :" . $player->username . " Tier: " . $userTier . " -- Rating: " . $userRating->rating . "<br/>";
+            PlayerCache::where("ladder_history_id", $history->id)
+                ->whereIn("player_id", $userPlayerIds)
+                ->update(["tier" => $userTier]);
         }
     }
 
-    public function resetUserRating($user, $history)
+    public function changeUserRating($user, $newRating, $history)
     {
-        $userRating = UserRating::where("user_id", $user->id)->first();
-
-        if ($userRating == null)
-        {
-            die("No user rating found");
-        }
-
-        $userRating->delete();
-        $userRating = UserRating::createNew($user);
+        # Update user rating
+        $userRating = $user->getOrCreateUserRating();
+        $userRating->rating = $newRating;
+        $userRating->save();
 
         # Update tier for this months player cache only
-        $players = $user->usernames;
-        foreach ($players as $player)
-        {
-            $playerCache = PlayerCache::where("player_id", $player->id)->where("ladder_history_id", $history->id)->first();
-            if ($playerCache)
-            {
-                $playerCache->tier = UserRatingService::getTierByLadderRules(UserRating::$DEFAULT_RATING, $history);
-                $playerCache->save();
-            }
-        }
+        $userPlayerIds = $user->usernames()->pluck("id");
+        $userTier = $user->getUserTier();
+
+        PlayerHistory::where("ladder_history_id", $history->id)
+            ->whereIn("player_id", [$userPlayerIds])
+            ->update(["tier" => $userTier]);
+
+        PlayerCache::where("ladder_history_id", $history->id)
+            ->whereIn("ids", $userPlayerIds)
+            ->update(["tier" => $userTier]);
 
         return $userRating;
-    }
-
-    /**
-     * 
-     * @param mixed $user 
-     * @param mixed $history 
-     * @return int 
-     */
-    public function getUserTier($user, $history)
-    {
-        # Get the elo rating from user_ratings table
-        $userRating = UserRating::where("user_id", $user->id)->first();
-        if ($userRating == null)
-        {
-            $userRating = UserRating::createNewFromLegacyPlayerRating($user);
-        }
-
-        return $this->getTierByLadderRules($userRating->rating, $history);
     }
 
 

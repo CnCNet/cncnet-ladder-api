@@ -281,28 +281,22 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Create if null, and if ladder supplied
-     * grab elo from that player rating
+     * Create if null, and if ladder supplied grab elo from the player rating legacy table
      * @param mixed $ladder 
      * @return mixed 
      */
-    public function getUserRating($ladder = null)
+    public function getOrCreateUserRating()
     {
         if ($this->userRating == null)
         {
-            $ladderIds = null;
-            if ($ladder)
-            {
-                $ladderIds = [$ladder->id];
-            }
-            return UserRating::createNewFromLegacyPlayerRating($this, $ladderIds);
+            return UserRating::createNewFromLegacyPlayerRating($this);
         }
         return $this->userRating;
     }
 
     public function getUserTier($history)
     {
-        $userRating = $this->getUserRating($history->ladder);
+        $userRating = $this->getOrCreateUserRating();
         return UserRatingService::getTierByLadderRules($userRating->rating, $history);
     }
 }

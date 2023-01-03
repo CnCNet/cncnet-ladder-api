@@ -103,8 +103,8 @@
                         <h1 class="username">{{ $ladderPlayer->username }}</h1>
                         <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $ladderPlayer->rank }}</h3>
                         <div>
-                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier($playerTier) !!}
-                            - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($playerTier) }}
+                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier($userTier) !!}
+                            - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($userTier) }}
                         </div>
                     </div>
                     <div class="player-social pt-4 me-5">
