@@ -138,7 +138,7 @@ class FindOpponent extends Command implements ShouldQueue
             # Checks players are in same league tier otherwise skip
             if ($oppUserTier !== $userTier)
             {
-                Log::info("FindOpponent ** Players are in different tier.  P1:" . $oppUser . ":" . $oppUserSettings .  " - P2: " . $user . ":" . $userTier);
+                Log::info("FindOpponent ** Players in different tiers for ladder " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserTier . ") VS  P2:" . $player->username . " (Tier: " . $userTier . ")");
                 continue;
             }
 
