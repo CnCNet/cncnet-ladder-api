@@ -29,12 +29,19 @@ class UserRating extends Model
      * @param mixed $user 
      * @return UserRating 
      */
-    public static function createNewFromLegacyPlayerRating($user)
+    public static function createNewFromLegacyPlayerRating($user, $ladderIds = null)
     {
+        if ($ladderIds == null)
+        {
+            $ladderIds = Ladder::all()->pluck("id");
+        }
+
         # Take based on highest rated rating
-        $playerRating = \App\User::join("players as p", "p.user_id", "=", "users.id")
+        $playerRating = User::join("players as p", "p.user_id", "=", "users.id")
             ->where("users.id", "=", $user->id)
+            ->whereIn("p.ladder_id", $ladderIds)
             ->join("player_ratings as pr", "pr.player_id", "=", "p.id")
+            ->orderBy("pr.rated_games", "DESC")
             ->orderBy("pr.rating", "DESC")
             ->first();
 

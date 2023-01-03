@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Ladder;
 use App\Player;
 use App\UserRating;
 use JWTAuth;
@@ -30,7 +31,8 @@ class PlayerService
             ->where("ladder_id", "=", $ladderId)
             ->first();
 
-        $user->getUserRating();
+        $ladder = Ladder::find($ladderId);
+        $user->getUserRating($ladder);
 
         if ($player == null)
         {
@@ -60,7 +62,8 @@ class PlayerService
             ->where("ladder_id", "=", $ladderId)
             ->first();
 
-        $user->getUserRating();
+        $ladder = Ladder::find($ladderId);
+        $user->getUserRating($ladder);
 
         if ($player == null)
         {

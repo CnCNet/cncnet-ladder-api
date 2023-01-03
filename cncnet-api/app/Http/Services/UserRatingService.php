@@ -3,8 +3,10 @@
 namespace App\Http\Services;
 
 use App\LadderHistory;
+use App\Player;
 use App\PlayerCache;
 use App\PlayerHistory;
+use App\User;
 use App\UserRating;
 use Carbon\Carbon;
 
@@ -12,47 +14,65 @@ class UserRatingService
 {
     public function recalculatePlayersTiersByLadderHistory($history)
     {
-        $now = Carbon::now();
-        $startOfPreviousMonth = $now->copy()->subMonth(1)->startOfMonth();
-        $endOfPreviousMonth = $now->copy()->subMonth(1)->endOfMonth();
+        # Update based on last months
+        $lastMonth = Carbon::now();
+        $lastMonthStart = $lastMonth->copy()->startOfMonth();
+        $lastMonthEnd = $lastMonth->copy()->endOfMonth();
 
-        $prevMonthHistory = LadderHistory::where("starts", ">=", $startOfPreviousMonth)
-            ->where("ends", "<=", $endOfPreviousMonth)
-            ->where("ladder_id", $history->ladder->id)
+        $historyLastMonth = LadderHistory::where("ladder_id", $history->ladder->id)
+            ->where("starts", $lastMonthStart)
+            ->where("ends", $lastMonthEnd)
             ->first();
 
-        $prevMonthPlayerHistories = PlayerHistory::where("ladder_history_id", $prevMonthHistory->id)->get();
+        $playersLastMonth = PlayerHistory::where("ladder_history_id", $historyLastMonth->id)
+            ->join("players as p", "p.id", "=", "player_histories.player_id")
+            ->select("p.*")
+            ->get();
 
-        foreach ($prevMonthPlayerHistories as $playerHistory)
+        $this->updateUserRatingsByPlayer($playersLastMonth, $history);
+
+        $excludeLastMonthPlayers = $playersLastMonth->pluck("id");
+
+        # Update players this months excluding last month
+        $playersThisMonth = PlayerHistory::where("ladder_history_id", $history->id)
+            ->join("players as p", "p.id", "=", "player_histories.player_id")
+            ->whereNotIn("p.id", $excludeLastMonthPlayers)
+            ->select("p.*")
+            ->get();
+
+        $this->updateUserRatingsByPlayer($playersThisMonth, $history);
+    }
+
+    private function updateUserRatingsByPlayer($players, $history)
+    {
+        foreach ($players as $player)
         {
-            $player = $playerHistory->player;
-            $user = $player->user;
-            $userRating = $user->getUserRating();
+            $user = User::find($player->user_id);
+            $userRating = $user->getUserRating($history->ladder);
+            $userTier = $user->getUserTier($history);
 
-            $playerHistoryThisMonth = PlayerHistory::where("player_id", $player->id)
-                ->where("ladder_history_id", $history->id)
+            $playerHistoryThisMonth = PlayerHistory::where("ladder_history_id", $history->id)
+                ->where("player_id", $player->id)
                 ->first();
 
             if ($playerHistoryThisMonth)
             {
-                $tier = UserRatingService::getTierByLadderRules($userRating->rating, $history);
-
-                $playerHistoryThisMonth->tier = $tier;
+                $playerHistoryThisMonth->tier = $userTier;
                 $playerHistoryThisMonth->save();
-
-                # Update player cache for this month, only if it exists
-                $pc = PlayerCache::where("player_id", $player->id)
-                    ->where("ladder_history_id", $history->id)
-                    ->first();
-
-                if ($pc)
-                {
-                    $pc->tier = $tier;
-                    $pc->save();
-                }
-
-                echo "<b>User:</b>: " . $user->name . " <b>Player:</b>: " . $player->username .  " <b>Rating:</b>: " . $userRating->rating . " <b>Tier:</b>" . $tier . "<br/>";
             }
+
+            # Update player cache for this month, only if it exists
+            $pc = PlayerCache::where("player_id", $player->id)
+                ->where("ladder_history_id", $history->id)
+                ->first();
+
+            if ($pc)
+            {
+                $pc->tier = $userTier;
+                $pc->save();
+            }
+
+            echo "Player :" . $player->username . " Tier: " . $userTier . " -- Rating: " . $userRating->rating . "<br/>";
         }
     }
 
