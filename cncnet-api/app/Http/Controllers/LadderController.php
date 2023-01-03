@@ -102,7 +102,7 @@ class LadderController extends Controller
         $user = $request->user();
         $userIsMod = false;
 
-        if ($user !== null && $user->isModerator())
+        if ($user !== null && $user->isLadderMod($history->ladder))
         {
             $userIsMod = true;
         }
