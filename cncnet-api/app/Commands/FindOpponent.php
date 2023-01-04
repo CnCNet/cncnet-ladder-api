@@ -319,6 +319,7 @@ class FindOpponent extends Command implements ShouldQueue
             $qmMatch->ladder_id = $qmPlayer->ladder_id;
             $qmMatch->qm_map_id = $common_qm_maps[$randomMapIndex]->id;
             $qmMatch->seed = mt_rand(-2147483647, 2147483647);
+            $qmMatch->tier = $user->getUserTier($history);
 
             # Create the Game
             $game = \App\Game::genQmEntry($qmMatch);
