@@ -32,7 +32,6 @@ class PlayerService
             ->first();
 
         $ladder = Ladder::find($ladderId);
-        $user->getOrCreateUserRating($ladder);
 
         if ($player == null)
         {
@@ -63,7 +62,6 @@ class PlayerService
             ->first();
 
         $ladder = Ladder::find($ladderId);
-        $user->getOrCreateUserRating($ladder);
 
         if ($player == null)
         {
