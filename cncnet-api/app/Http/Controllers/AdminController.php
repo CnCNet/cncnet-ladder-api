@@ -903,7 +903,9 @@ class AdminController extends Controller
 
         $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
 
-        $byPlayer = Player::where("username", "like", "%" . $request->search . "%")->first();
+        $byPlayer = Player::where("username", "like", "%" . $request->search . "%")
+            ->where("ladder_id", $ladder->id)
+            ->first();
 
         if ($byPlayer && $request->search)
         {
