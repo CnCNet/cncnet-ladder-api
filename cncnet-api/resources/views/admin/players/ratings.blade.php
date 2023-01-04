@@ -106,6 +106,8 @@
                         Warning: Changing a users elo rating will also move them into the appropriate tier for this month.
                     </p>
 
+                    <h3>Ratings for: {{ $history->starts->format('d M Y') }}</h3>
+
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
