@@ -52,10 +52,10 @@ class UserRatingService
             # Important to include this userRating() call as also creates if it does not exist
             $userRating = $user->getOrCreateUserRating($history->ladder);
             $userTier = $user->getUserTier($history);
-            $userPlayerIds = $user->usernames()->pluck("id");
+            $userPlayerIds = $user->usernames()->pluck("id")->toArray();
 
             PlayerHistory::where("ladder_history_id", $history->id)
-                ->whereIn("player_id", [$userPlayerIds])
+                ->whereIn("player_id", $userPlayerIds)
                 ->update(["tier" => $userTier]);
 
             PlayerCache::where("ladder_history_id", $history->id)
@@ -72,11 +72,11 @@ class UserRatingService
         $userRating->save();
 
         # Update tier for this months player cache only
-        $userPlayerIds = $user->usernames()->pluck("id");
+        $userPlayerIds = $user->usernames()->pluck("id")->toArray();
         $userTier = $user->getUserTier($history);
 
         PlayerHistory::where("ladder_history_id", $history->id)
-            ->whereIn("player_id", [$userPlayerIds])
+            ->whereIn("player_id", $userPlayerIds)
             ->update(["tier" => $userTier]);
 
         PlayerCache::where("ladder_history_id", $history->id)
