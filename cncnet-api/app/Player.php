@@ -5,9 +5,9 @@ namespace App;
 use App\Http\Services\UserRatingService;
 use Illuminate\Database\Eloquent\Model;
 use \Illuminate\Database\Eloquent\Collection;
-use Log;
 use \Carbon\Carbon;
 use DB;
+use Illuminate\Support\Facades\Log;
 
 class Player extends Model
 {
@@ -309,22 +309,38 @@ class Player extends Model
 
     public function playerHistory($history)
     {
-        $playerHistory = $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
+        $playerHistory = $this->playerHistories()
+            ->where('ladder_history_id', '=', $history->id)
+            ->first();
 
         if ($playerHistory === null)
         {
-            $this->user->getOrCreateUserRating();
-            $userTier = $this->user->getUserTier($history);
+            # Player history does not exist and thus no tier has been assigned/cached yet
+            $userTier = $this->user->getLiveUserTier($history);
 
-            # If we have no history, we will create one and calculate tier
+            # If we have no history, we will create one and insert users currently known tier
             $playerHistory = new PlayerHistory();
             $playerHistory->ladder_history_id = $history->id;
             $playerHistory->player_id = $this->id;
             $playerHistory->tier = $userTier;
             $playerHistory->save();
+
+            Log::info(
+                "Player ** playerHistory null. UserId: " . $this->user->id . " LadderHistoryId:" . $history->id . " New PlayerHistory: " . $playerHistory
+            );
         }
 
-        return $this->playerHistories()->where('ladder_history_id', '=', $history->id)->first();
+        return $playerHistory;
+    }
+
+    /**
+     * Fetches the players user tier in the ladder at this moment in time
+     * @param mixed $history 
+     * @return mixed 
+     */
+    public function getCachedPlayerTierByLadderHistory($history)
+    {
+        return $this->playerHistory($history)->tier;
     }
 
     public function playerCache($history_id)

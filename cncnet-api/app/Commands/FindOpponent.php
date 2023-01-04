@@ -87,7 +87,6 @@ class FindOpponent extends Command implements ShouldQueue
         }
 
         $player = $qmPlayer->player;
-        $playerHistory = $player->playerHistory($history);
 
         if ($player === null)
         {
@@ -117,7 +116,7 @@ class FindOpponent extends Command implements ShouldQueue
          */
 
         $user = $qmPlayer->player->user;
-        $userTier = $user->getUserTier($history);
+        $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
         $userSettings = $user->userSettings;
 
         # Fetch all opponents who are currently in queue for this ladder
@@ -131,14 +130,13 @@ class FindOpponent extends Command implements ShouldQueue
         foreach ($opponentEntries as $opponentEntry)
         {
             $oppPlayer = $opponentEntry->qmPlayer->player;
-            $oppUser = $oppPlayer->user;
-            $oppUserTier = $oppUser->getUserTier($history);
+            $oppUserPlayerTier = $oppPlayer->getCachedPlayerTierByLadderHistory($history);
             $oppUserSettings = $oppPlayer->user->userSettings;
 
             # Checks players are in same league tier otherwise skip
-            if ($oppUserTier !== $userTier)
+            if ($oppUserPlayerTier !== $userPlayerTier)
             {
-                Log::info("FindOpponent ** Players in different tiers for ladder " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserTier . ") VS  P2:" . $player->username . " (Tier: " . $userTier . ")");
+                Log::info("FindOpponent ** Players in different tiers for ladder " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $player->username . " (Tier: " . $userPlayerTier . ")");
                 continue;
             }
 
@@ -319,7 +317,7 @@ class FindOpponent extends Command implements ShouldQueue
             $qmMatch->ladder_id = $qmPlayer->ladder_id;
             $qmMatch->qm_map_id = $common_qm_maps[$randomMapIndex]->id;
             $qmMatch->seed = mt_rand(-2147483647, 2147483647);
-            $qmMatch->tier = $userTier;
+            $qmMatch->tier = $userPlayerTier;
 
             # Create the Game
             $game = \App\Game::genQmEntry($qmMatch);

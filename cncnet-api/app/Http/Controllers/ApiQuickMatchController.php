@@ -161,7 +161,9 @@ class ApiQuickMatchController extends Controller
 
             $player = \App\Player::where('id', $qm->player_id)->first();
             $user = $player->user;
-            $tier = $user->getUserTier($history);
+            $tier = $player->playerHistory($history)->tier;
+
+
             $tierName = LeagueHelper::getLeagueNameByTier($tier);
 
             //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
@@ -392,7 +394,7 @@ class ApiQuickMatchController extends Controller
                     $qmPlayer->player_id = $player->id;
                     $qmPlayer->ladder_id = $player->ladder_id;
                     $qmPlayer->map_bitfield = $request->map_bitfield;
-                    $qmPlayer->tier = $user->getUserTier($history);
+                    $qmPlayer->tier = $player->playerHistory($history)->tier;
                     $qmPlayer->waiting = true;
 
                     // color, chosen_side, actual_side and saving is done in the next if-statement

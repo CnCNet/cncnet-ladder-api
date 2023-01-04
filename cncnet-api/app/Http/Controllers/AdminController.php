@@ -966,12 +966,14 @@ class AdminController extends Controller
         $user = User::find($request->user_id);
         if ($user == null)
         {
-            abort(400, "Player not found");
+            $request->session()->flash('error', "User not found");
+            return redirect()->back();
         }
 
         $userRatingService = new UserRatingService();
         $userRatingService->changeUserRating($user, $request->new_rating, $history);
 
+        $request->session()->flash('success', "User rating updated");
         return redirect()->back();
     }
 

@@ -33,12 +33,6 @@ class UserRating extends Model
      */
     public static function createNewFromLegacyPlayerRating($user)
     {
-        $exists = UserRating::where("user_id", $user->id)->first();
-        if ($exists)
-        {
-            return $exists;
-        }
-
         # Take player usernames from user 
         $userPlayerIds = $user->usernames()->pluck("id")->toArray();
 

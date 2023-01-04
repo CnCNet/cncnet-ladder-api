@@ -42,6 +42,7 @@ class UpdatePlayerRatings extends Command
      */
     public function handle()
     {
+        /*
         $now = Carbon::now();
         $start = $now->startOfMonth()->toDateTimeString();
         $end = $now->endOfMonth()->toDateTimeString();
@@ -55,5 +56,7 @@ class UpdatePlayerRatings extends Command
         {
             $userRatingService->calculateUserTiers($history);
         }
+        */
+        echo "update_player_ratings - Disabled for now";
     }
 }

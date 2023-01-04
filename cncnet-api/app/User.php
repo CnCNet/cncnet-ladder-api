@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Support\Facades\Storage;
 use Mail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Support\Facades\Log;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, JWTSubject
 {
@@ -281,22 +282,39 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Create if null, and if ladder supplied grab elo from the player rating legacy table
-     * @param mixed $ladder 
+     * Returns live user rating or creates a new one if one doesn't exist yet
      * @return mixed 
      */
-    public function getOrCreateUserRating()
+    public function getOrCreateLiveUserRating()
     {
-        if ($this->userRating == null)
+        $userRating = UserRating::where("user_id", "=", $this->id)->first();
+        if ($userRating == null)
         {
-            return UserRating::createNewFromLegacyPlayerRating($this);
+            $userRating = UserRating::createNewFromLegacyPlayerRating($this);
+            Log::info("User ** getUserRating - Rating null creating new. UserId: " . $this->id  . " Created new user rating: " . $userRating);
         }
-        return $this->userRating;
+        return $userRating;
     }
 
-    public function getUserTier($history)
+    /**
+     * This will give you the users "live" tier calculation
+     * @param mixed $history 
+     * @return int 
+     */
+    public function getLiveUserTier($history)
     {
-        $userRating = $this->getOrCreateUserRating();
+        $userRating = $this->getOrCreateLiveUserRating();
         return UserRatingService::getTierByLadderRules($userRating->rating, $history);
+    }
+
+    /**
+     * This will give you the users "cached" tier rating for the supplied ladder history
+     * @param mixed $history 
+     * @param mixed $player 
+     * @return mixed 
+     */
+    public function getCachedUserTierByLadderHistoryAndPlayer($history, $player)
+    {
+        return $player->getCachedPlayerTierByLadderHistory($history);
     }
 }

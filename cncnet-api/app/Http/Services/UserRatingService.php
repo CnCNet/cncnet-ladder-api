@@ -49,9 +49,7 @@ class UserRatingService
         {
             $user = User::find($u->id);
 
-            # Important to include this userRating() call as also creates if it does not exist
-            $userRating = $user->getOrCreateUserRating($history->ladder);
-            $userTier = $user->getUserTier($history);
+            $userTier = $user->getLiveUserTier($history);
             $userPlayerIds = $user->usernames()->pluck("id")->toArray();
 
             PlayerHistory::where("ladder_history_id", $history->id)
@@ -66,14 +64,15 @@ class UserRatingService
 
     public function changeUserRating($user, $newRating, $history)
     {
-        # Update user rating
-        $userRating = $user->getOrCreateUserRating();
+        # Get live \App\UserRating
+        $userRating = $user->getOrCreateLiveUserRating();
         $userRating->rating = $newRating;
         $userRating->save();
 
-        # Update tier for this months player cache only
+        # Update tier for all players history and players cache for this month only
+        $userTier = $user->getLiveUserTier($history);
+
         $userPlayerIds = $user->usernames()->pluck("id")->toArray();
-        $userTier = $user->getUserTier($history);
 
         PlayerHistory::where("ladder_history_id", $history->id)
             ->whereIn("player_id", $userPlayerIds)

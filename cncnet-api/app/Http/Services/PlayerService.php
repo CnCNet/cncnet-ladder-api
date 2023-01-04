@@ -83,7 +83,7 @@ class PlayerService
     {
         $player = Player::find($pid);
         $user = $player->user;
-        $userRating = $user->getOrCreateUserRating();
+        $userRating = $user->getOrCreateLiveUserRating();
 
         return $userRating;
     }
@@ -91,7 +91,8 @@ class PlayerService
     public function findPlayerByUsername($name, $ladder)
     {
         return \App\Player::where("username", "=", $name)
-            ->where("ladder_id", "=", $ladder->id)->first();
+            ->where("ladder_id", "=", $ladder->id)
+            ->first();
     }
 
     public function updatePlayerStats($player, $points, $won = false)
