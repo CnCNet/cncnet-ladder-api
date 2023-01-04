@@ -49,7 +49,7 @@ class ApiQuickMatchController extends Controller
             $history = $ladder->currentHistory();
 
             $recentMatchedPlayers = \App\QmMatchPlayer::where('qm_match_players.created_at', '>', $timediff)
-                ->where('p.ladder_id', '=', $ladder_id)
+                ->where('ladder_id', '=', $ladder_id)
                 ->where('qm_match_players.tier', '=', $tierId)
                 ->count();
 
