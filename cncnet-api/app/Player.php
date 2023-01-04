@@ -309,11 +309,12 @@ class Player extends Model
 
     public function playerHistory($history)
     {
-        $playerHistory = $this->playerHistories()
-            ->where('ladder_history_id', '=', $history->id)
+        # Dont' trust these relationships functions
+        $playerHistory = PlayerHistory::where("ladder_history_id", $history->id)
+            ->where("player_id", $this->id)
             ->first();
 
-        if ($playerHistory === null)
+        if ($playerHistory == null)
         {
             # Player history does not exist and thus no tier has been assigned/cached yet
             $userTier = $this->user->getLiveUserTier($history);
@@ -326,7 +327,7 @@ class Player extends Model
             $playerHistory->save();
 
             Log::info(
-                "Player ** playerHistory null. UserId: " . $this->user->id . " LadderHistoryId:" . $history->id . " New PlayerHistory: " . $playerHistory
+                "Player ** playerHistory null. UserEmail: " . $this->user->email . " LadderHistoryId:" . $history->id . " New PlayerHistory: " . $playerHistory
             );
         }
 
