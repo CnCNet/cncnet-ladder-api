@@ -17,6 +17,8 @@ use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
 use \App\SpawnOptionType;
 use DateTime;
+use \App\Helpers\LeagueHelper;
+use Illuminate\Support\Facades\Log;
 
 class ApiQuickMatchController extends Controller
 {
@@ -37,25 +39,75 @@ class ApiQuickMatchController extends Controller
         return json_encode(DB::table("client_version")->where("platform", $platform)->first());
     }
 
-    public function statsRequest(Request $request, $ladderAbbrev = null)
+    public function statsRequest(Request $request, $ladderAbbrev = null, $tierId = 1)
     {
-        return Cache::remember("statsRequest/$ladderAbbrev", 1, function () use ($ladderAbbrev)
+        return Cache::remember("statsRequest/$ladderAbbrev/$tierId", 1, function () use (&$ladderAbbrev, &$tierId)
         {
             $timediff = Carbon::now()->subHour()->toDateTimeString();
-            $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
-            $recentMatchedPlayers = \App\QmMatchPlayer::where('created_at', '>', $timediff)
-                ->where('ladder_id', '=', $ladder_id)
-                ->count();
-            $queuedPlayers = \App\QmMatchPlayer::where('ladder_id', '=', $ladder_id)->whereNull('qm_match_id')->count();
-            $recentMatches = \App\QmMatch::where('created_at', '>', $timediff)
-                ->where('ladder_id', '=', $ladder_id)
-                ->count();
+            $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
+            $ladder_id = $ladder->id;
+            $history = $ladder->currentHistory();
 
-            $activeGames = \App\QmMatch::where('updated_at', '>', Carbon::now()->subMinute(2))
-                ->where('ladder_id', '=', $ladder_id)->count();
+            $recentMatchedPlayers = \App\QmMatchPlayer::join('players as p', 'qm_match_players.player_id', '=', 'p.id')
+                ->join('users', 'users.id', '=', 'p.user_id')
+                ->where('qm_match_players.created_at', '>', $timediff)
+                ->where('p.ladder_id', '=', $ladder_id)
+                ->get()
+                ->filter(function ($o) use (&$history, &$tierId)
+                {
+                    $user = \App\User::where('id', $o->user_id)->first();
+                    return $user->getUserTier($history) == $tierId;
+                })->count();
 
-            $past24hMatches = \App\QmMatch::where('updated_at', '>', Carbon::now()->subDay(1))
-                ->where('ladder_id', '=', $ladder_id)->count();
+            $queuedPlayers = \App\QmMatchPlayer::join('players as p', 'qm_match_players.player_id', '=', 'p.id')
+                ->join('users', 'users.id', '=', 'p.user_id')
+                ->where('qm_match_players.ladder_id', '=', $ladder_id)
+                ->whereNull('qm_match_id')
+                ->get()
+                ->filter(function ($o) use (&$history, &$tierId)
+                {
+                    $user = \App\User::where('id', $o->user_id)->first();
+                    return $user->getUserTier($history) == $tierId;
+                })->count();
+
+            $recentMatches = \App\QmMatch::join('qm_match_players', 'qm_matches.id', '=', 'qm_match_players.qm_match_id')
+                ->join('players as p', 'qm_match_players.player_id', '=', 'p.id')
+                ->join('users', 'users.id', '=', 'p.user_id')
+                ->where('qm_matches.created_at', '>', $timediff)
+                ->where('qm_matches.ladder_id', '=', $ladder_id)
+                ->get()
+                ->filter(function ($o) use (&$history, &$tierId)
+                {
+                    $user = \App\User::where('id', $o->user_id)->first();
+                    return $user->getUserTier($history) == $tierId;
+                })->count();
+
+            $activeGames = \App\QmMatch::join('qm_match_players', 'qm_matches.id', '=', 'qm_match_players.qm_match_id')
+                ->join('players as p', 'qm_match_players.player_id', '=', 'p.id')
+                ->join('users', 'users.id', '=', 'p.user_id')
+                ->where('qm_matches.created_at', '>', $timediff)
+                ->where('qm_matches.ladder_id', '=', $ladder_id)
+                ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
+                ->get()
+                ->filter(function ($o) use (&$history, &$tierId)
+                {
+                    $user = \App\User::where('id', $o->user_id)->first();
+                    return $user->getUserTier($history) == $tierId;
+                })->count();
+
+            $past24hMatches = \App\QmMatch::join('qm_match_players', 'qm_matches.id', '=', 'qm_match_players.qm_match_id')
+                ->join('players as p', 'qm_match_players.player_id', '=', 'p.id')
+                ->join('users', 'users.id', '=', 'p.user_id')
+                ->where('qm_matches.created_at', '>', $timediff)
+                ->where('qm_matches.ladder_id', '=', $ladder_id)
+                ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
+                ->where('qm_matches.updated_at', '>', Carbon::now()->subDay(1))
+                ->get()
+                ->filter(function ($o) use (&$history, &$tierId)
+                {
+                    $user = \App\User::where('id', $o->user_id)->first();
+                    return $user->getUserTier($history) == $tierId;
+                })->count();
 
             return [
                 'recentMatchedPlayers' => $recentMatchedPlayers,
@@ -78,13 +130,22 @@ class ApiQuickMatchController extends Controller
         {
             foreach ($this->ladderService->getLadders() as $ladder)
             {
-                $res = $this->getActiveMatchesByLadder($ladder->abbreviation);
-                $games[$ladder->abbreviation] = $res;
+                $results = $this->getActiveMatchesByLadder($ladder->abbreviation);
+
+                foreach ($results as $key => $val)
+                {
+                    $games[$ladder->abbreviation][$key] = $val;
+                }
             }
         }
         else
         {
-            $games[$ladderAbbrev] = $this->getActiveMatchesByLadder($ladderAbbrev);
+            $results = $this->getActiveMatchesByLadder($ladderAbbrev);
+
+            foreach ($results as $key => $val)
+            {
+                $games[$ladderAbbrev][$key] = $val;
+            }
         }
 
         return $games;
@@ -93,6 +154,7 @@ class ApiQuickMatchController extends Controller
     private function getActiveMatchesByLadder($ladderAbbrev)
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
+        $history = $ladder->currentHistory();
 
         if ($ladder == null)
             abort(400, "Invalid ladder provided");
@@ -112,15 +174,14 @@ class ApiQuickMatchController extends Controller
             return;
         })->values();
 
-        //i'm bad at sql so here is a janky work around to remove finished QMs
-
         //remove all QMs that have finished
         $qms2 = $qms->filter(function ($qm) use (&$finishedQmsArr)
         {
             return !in_array($qm->id, $finishedQmsArr);
         })->values();
 
-        $games = [];
+        $games["Champions Players League"] = [];
+        $games["Contenders Players League"] = [];
 
         $qm_id = -1;
         $player1 = "";
@@ -131,6 +192,11 @@ class ApiQuickMatchController extends Controller
         {
             $dt = new DateTime($qm->qm_match_created_at);
 
+            $player = \App\Player::where('id', $qm->player_id)->first();
+            $user = $player->user;
+            $tier = $user->getUserTier($history);
+            $tierName = LeagueHelper::getLeagueNameByTier($tier);
+
             //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
             if ($qm_id != $qm->id)
             {
@@ -140,7 +206,7 @@ class ApiQuickMatchController extends Controller
                 }
                 else
                 {
-                    $player1 = $qm->player;
+                    $player1 = $player->username;
                 }
                 $qm_id = $qm->id;
                 $player1_side = $qm->faction;
@@ -153,12 +219,12 @@ class ApiQuickMatchController extends Controller
                 }
                 else
                 {
-                    $player2 = $qm->player;
+                    $player2 = $player->username;
                 }
 
                 $duration = Carbon::now()->diff($dt);
                 $duration_formatted = $duration->format('%i mins %s sec');
-                $games[] = $player1 . " (" . $player1_side . ") vs " . $player2 . " (" . $qm->faction . ") on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
+                $games[$tierName] = $player1 . " (" . $player1_side . ") vs " . $player2 . " (" . $qm->faction . ") on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
             }
         }
 

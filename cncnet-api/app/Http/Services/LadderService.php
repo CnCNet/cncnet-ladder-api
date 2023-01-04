@@ -485,10 +485,15 @@ class LadderService
                 $join->on('sides.ladder_id', '=', 'qmp.ladder_id');
                 $join->on('sides.local_id', '=', 'qmp.actual_side');
             })
+            ->where(function ($where)
+            {
+                $where->where('qms.state_type_id', 5);
+
+            })
             ->where('qm_matches.ladder_id', $ladder_id)
             ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($createdAfter))
             ->groupBy('qmp.id')
-            ->select("qm_matches.id", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.username as player", "qm_maps.description as map")
+            ->select("qm_matches.id", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.id as player_id", "qm_maps.description as map")
             ->get();
     }
 
