@@ -903,12 +903,18 @@ class AdminController extends Controller
 
         $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
 
-        $byPlayer = Player::where("username", "like", "%" . $request->search . "%")
-            ->where("ladder_id", $ladder->id)
-            ->first();
-
-        if ($byPlayer && $request->search)
+        if ($request->search)
         {
+            $byPlayer = Player::where("username", "like", "%" . $request->search . "%")
+                ->where("ladder_id", $ladder->id)
+                ->first();
+
+            if ($byPlayer == null)
+            {
+                $request->session()->flash('error', "Player " . $request->search . " not found");
+                return redirect()->back();
+            }
+
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
                 ->where("users.id", "=", $byPlayer->user_id)
@@ -948,6 +954,7 @@ class AdminController extends Controller
         $userRatingService = new UserRatingService();
         $userRatingService->calculateUserTiers($history);
 
+        $request->session()->flash('success', "User ratings have been updated");
         return redirect()->back();
     }
 

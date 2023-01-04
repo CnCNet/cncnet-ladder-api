@@ -90,6 +90,8 @@
                         <?php endif; ?>
                     </p>
 
+                    @include('components.form-messages')
+
                     <div class="search mb-2 mt-2">
                         <form action="/admin/players/ratings/{{ $abbreviation }}">
                             <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}"
