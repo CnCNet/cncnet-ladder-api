@@ -111,7 +111,7 @@
                             <thead>
                                 <tr>
                                     <th>Player</th>
-                                    <th>Current Tier</th>
+                                    <th>Live Tier</th>
                                     <th>Current Rating</th>
                                     <th>Change Elo
                                     </th>
@@ -134,6 +134,9 @@
                                                         <a
                                                             href="{{ \App\URLHelper::getPlayerProfileUrl($player->ladder->currentHistory(), $player->username) }}">
                                                             {{ $player->username }}
+                                                            --
+                                                            Cached Tier: {{ $user->getCachedUserTierByLadderHistoryAndPlayer($history, $player) }}
+
                                                         </a>
                                                     </span>
                                                 </span>
