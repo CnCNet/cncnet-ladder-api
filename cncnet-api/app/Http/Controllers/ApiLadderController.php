@@ -8,6 +8,7 @@ use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
+use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
 use Log;
 use Illuminate\Support\Facades\Cache;
@@ -18,6 +19,7 @@ class ApiLadderController extends Controller
     private $ladderService;
     private $gameService;
     private $playerService;
+    private $adminService;
 
     public function __construct()
     {
@@ -25,6 +27,7 @@ class ApiLadderController extends Controller
         $this->gameService = new GameService();
         $this->playerService = new PlayerService();
         $this->authService = new AuthService();
+        $this->adminService = new AdminService();
     }
 
     public function pingLadder(Request $request)
@@ -101,6 +104,9 @@ class ApiLadderController extends Controller
 
         if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
             $this->updateAchievements($playerId, $history->ladder, $stats);
+        
+        if ($gameReport->best_report == true && $gameReport->duration == 3)
+            $this->adminService->doWashGame($gameReport->game_id, "ladder-auto-wash");
 
         return response()->json(['success' => $status], 200);
     }

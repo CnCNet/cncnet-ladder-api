@@ -339,38 +339,7 @@ class AdminController extends Controller
 
     public function washGame(Request $request)
     {
-        $game = \App\Game::find($request->game_id);
-        if ($game === null) return "Game not found";
-
-        $gameReport = $game->report()->first();
-        if ($gameReport === null) return "Game Report not found";
-
-        $gameReport->best_report = false;
-
-        $wash = new \App\GameReport();
-        $wash->game_id = $gameReport->game_id;
-        $wash->player_id = $gameReport->player_id;
-        $wash->best_report = true;
-        $wash->manual_report = true;
-        $wash->duration = $gameReport->duration;
-        $wash->valid = true;
-        $wash->finished = false;
-        $wash->fps = $gameReport->fps;
-        $wash->oos = false;
-        $wash->save();
-
-        $game->game_report_id = $wash->id;
-        $game->save();
-        $gameReport->save();
-        $this->ladderService->undoPlayerCache($gameReport);
-
-        //log the user who washed the game
-        $gameAudit = new \App\GameAudit;
-        $gameAudit->game_id = $game->id;
-        $gameAudit->user_id = $request->user()->id;
-        $gameAudit->ladder_history_id = $game->ladderHistory->id;
-        $gameAudit->save();
-
+        $this->adminService->doWashGame($request->game_id, $request->user()->name);
         return redirect()->back();
     }
 
