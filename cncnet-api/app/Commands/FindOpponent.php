@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use App\Commands\Command;
 use App\Http\Services\UserRatingService;
+use App\LeaguePlayer;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\QmQueueEntry;
@@ -132,12 +133,35 @@ class FindOpponent extends Command implements ShouldQueue
             $oppPlayer = $opponentEntry->qmPlayer->player;
             $oppUserPlayerTier = $oppPlayer->getCachedPlayerTierByLadderHistory($history);
             $oppUserSettings = $oppPlayer->user->userSettings;
+            $oppUser = $opponentEntry->user;
 
             # Checks players are in same league tier otherwise skip
             if ($oppUserPlayerTier !== $userPlayerTier)
             {
-                Log::info("FindOpponent ** Players in different tiers for ladder " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $player->username . " (Tier: " . $userPlayerTier . ")");
-                continue;
+                # At this point we've now deemed they can't match based on current tiers/elo
+                # But now check if players we've specifically chosen in the admin panel can still match in this tier
+                $canMatch = false;
+
+                # Check both as either player could be tier 1
+                if ($oppUserPlayerTier == 1)
+                {
+                    $canMatch = $this->checkPlayerCanPlayBothTiers($oppUser, $ladder);
+                }
+
+                if ($canMatch == false && $userPlayerTier == 1)
+                {
+                    $canMatch = $this->checkPlayerCanPlayBothTiers($user, $ladder);
+                }
+
+                if ($canMatch == false)
+                {
+                    Log::info("FindOpponent ** Players in different tiers for ladder " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $player->username . " (Tier: " . $userPlayerTier . ")");
+                    continue;
+                }
+                else
+                {
+                    Log::info("FindOpponent ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $player->username . " (Tier: " . $userPlayerTier . ")");
+                }
             }
 
             $ptFilterOff = false;
@@ -393,6 +417,19 @@ class FindOpponent extends Command implements ShouldQueue
             }
             $qmPlayer->save();
         }
+    }
+
+    private function checkPlayerCanPlayBothTiers($user, $ladder)
+    {
+        $canPlayBoth = false;
+
+        $leaguePlayer = LeaguePlayer::where("user_id", $user->id)->where("ladder_id", $ladder->id)->first();
+        if ($leaguePlayer && $leaguePlayer->getCanPlayBothTiers() === true)
+        {
+            $canPlayBoth = true;
+        }
+
+        return $canPlayBoth;
     }
 }
 
