@@ -589,7 +589,7 @@ class ApiLadderController extends Controller
             $lockedAchievement = $lockedAchievements->filter(function ($value) use (&$objectName, &$heapName)
             {
                 return $value->object_name === $objectName && $value->heap_name === $heapName;
-            })->sortBy('unlock_count')->first();
+            })->sortBy("unlock_count")->first();
 
             //no achievement found, skip over
             if ($lockedAchievement == null || $lockedAchievement->id == null)
@@ -599,13 +599,13 @@ class ApiLadderController extends Controller
 
             $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
                 ->where('user_id', $user->id)
-                ->whereNull('achievement_unlocked_date')
                 ->first();
 
             if ($lockedAchievementProgress == null)
             {
                 $lockedAchievementProgress = new \App\AchievementProgress();
                 $lockedAchievementProgress->achievement_id = $lockedAchievement->id;
+                $lockedAchievementProgress->count = 0;
                 $lockedAchievementProgress->user_id = $user->id;
                 $lockedAchievementProgress->save();
             }
@@ -633,8 +633,8 @@ class ApiLadderController extends Controller
         {
             $lockedAchievement = $lockedAchievements->filter(function ($value) use (&$ladder)
             {
-                return $value->tag === 'Win ' . $ladder->name . ' QM Games';
-            })->sortBy('unlock_count')->first();
+                return $value->tag == "Win " . $ladder->name . " QM Games";
+            })->sortBy("unlock_count")->first();
 
             if ($lockedAchievement !== null)
             {
@@ -712,6 +712,7 @@ class ApiLadderController extends Controller
             $lockedAchievementProgress = new \App\AchievementProgress();
             $lockedAchievementProgress->achievement_id = $lockedAchievement->id;
             $lockedAchievementProgress->user_id = $user->id;
+            $lockedAchievementProgress->count = 0;
             $lockedAchievementProgress->save();
         }
 
