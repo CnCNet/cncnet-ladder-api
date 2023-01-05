@@ -113,6 +113,7 @@
                             <thead>
                                 <tr>
                                     <th>Player</th>
+                                    <th>Match Making Pref</th>
                                     <th>Live Tier</th>
                                     <th>Current Rating</th>
                                     <th>Change Elo
@@ -122,7 +123,7 @@
                             <tbody>
                                 @foreach ($users as $user)
                                     <tr>
-                                        <td width="50%">
+                                        <td width="30%">
                                             @php
                                                 $usernames = $user
                                                     ->usernames()
@@ -147,6 +148,30 @@
                                             @if (count($usernames) == 0)
                                                 No {{ $history->ladder->name }} usernames for this user
                                             @endif
+                                        </td>
+                                        <td>
+                                            <form method="POST" action="/admin/players/ratings/{{ $abbreviation }}/update-user-league">
+                                                {{ csrf_field() }}
+                                                <input type="hidden" name="user_id" value="{{ $user->id }}" />
+
+                                                <?php
+                                                $leaguePlayer = \App\LeaguePlayer::where('user_id', $user->id)
+                                                    ->where('ladder_id', $history->ladder->id)
+                                                    ->first();
+                                                
+                                                $tier2 = $leaguePlayer && $leaguePlayer->getCanPlayBothTiers() == true ? 'checked' : '';
+                                                ?>
+
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="canPlayBothTiers"
+                                                        id="canPlayBothTiers_{{ $user->id }}" {!! $tier2 !!}>
+                                                    <label class="form-check-label" for="canPlayBothTiers_{{ $user->id }}">
+                                                        Can play both Tiers
+                                                    </label>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-outline btn-size-md">Save</button>
+                                            </form>
                                         </td>
                                         <td>
                                             {{ \App\Http\Services\UserRatingService::getTierByLadderRules($user->rating, $history) }}

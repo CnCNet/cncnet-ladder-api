@@ -46,6 +46,7 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => 
     Route::get('players/ratings/{ladderAbbreviation}', 'AdminController@getPlayerRatings');
     Route::get('players/ratings/{ladderAbbreviation}/update', 'AdminController@updatePlayerRatings');
     Route::post('players/ratings/{ladderAbbreviation}/update-user-rating', 'AdminController@changeUserRating');
+    Route::post('players/ratings/{ladderAbbreviation}/update-user-league', 'AdminController@changeLeaguePlayerStatus');
 });
 
 Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
