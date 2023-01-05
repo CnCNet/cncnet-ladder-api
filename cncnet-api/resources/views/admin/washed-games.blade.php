@@ -92,7 +92,7 @@
                     <td><a href="{{ $p1Url }}">{{ $p1 }}</a></td>
                     <td><a href="{{ $p2Url }}">{{ $p2 }}</a></td>
                     <td>{{ $washed_game->created_at->format('F j, Y, g:i a T') }}</td>
-                    <td>{{ $washed_game->user->name }}</td>
+                    <td>{{ $washed_game->username }}</td>
                 </tr>
                 @endforeach
             </tbody>
