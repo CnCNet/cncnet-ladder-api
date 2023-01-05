@@ -566,8 +566,10 @@ class ApiLadderController extends Controller
         $lockedAchievements = \App\Achievement::leftJoin('achievements_progress as ap', 'ap.achievement_id', '=', 'achievements.id')
             ->where('ladder_id', $ladder->id)
             ->whereNull('achievement_unlocked_date')
-            ->select("achievements.*")
-            ->get();
+            ->get()
+            ->filter(function($f) use(&$user) {
+                return $f['user_id'] == $user->id || $f['user_id'] == null;
+            });
 
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
@@ -581,7 +583,7 @@ class ApiLadderController extends Controller
             $lockedAchievement = $lockedAchievements->filter(function ($value) use (&$objectName, &$heapName)
             {
                 return $value->object_name === $objectName && $value->heap_name === $heapName;
-            })->first();
+            })->sortBy('unlock_count')->first();
 
             //no achievement found, skip over
             if ($lockedAchievement == null || $lockedAchievement->id == null)
@@ -591,6 +593,7 @@ class ApiLadderController extends Controller
 
             $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
                 ->where('user_id', $user->id)
+                ->whereNull('achievement_unlocked_date')
                 ->first();
 
             if ($lockedAchievementProgress == null)
@@ -624,7 +627,7 @@ class ApiLadderController extends Controller
         {
             $lockedAchievement = $lockedAchievements->filter(function ($value) use (&$ladder)
             {
-                return $value->tag === 'Win ' . $ladder->abbreviation . ' QM Games';
+                return $value->tag === 'Win ' . $ladder->name . ' QM Games';
             })->sortBy('unlock_count')->first();
 
             if ($lockedAchievement !== null)
