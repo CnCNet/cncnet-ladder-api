@@ -703,6 +703,25 @@ class ApiQuickMatchController extends Controller
 
         return $data;
     }
+
+    public function getRecentLadderWashedGamesCount($ladderAbbrev, $hours)
+    {
+        $ladder = \App\Ladder::where("abbreviation", $ladderAbbrev)->first();
+
+        if ($ladder == null)
+            return "Bad ladder abbreviation " . $ladderAbbrev;
+
+        $ladderHistory = $ladder->currentHistory();
+
+        $start = Carbon::now()->subHour($hours);
+
+        $gameAuditsCount = \App\GameAudit::where("created_at", ">=", $start)
+            ->where("ladder_history_id", $ladderHistory->id)
+            ->where("username", "ladder-auto-wash")
+            ->count();
+
+        return $gameAuditsCount;
+    }
 }
 
 function b_to_ini($bool)
