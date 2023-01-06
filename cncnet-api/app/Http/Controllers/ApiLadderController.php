@@ -10,9 +10,9 @@ use \App\Http\Services\PointService;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
-use Log;
 use Illuminate\Support\Facades\Cache;
 use \App;
+use Illuminate\Support\Facades\Log;
 
 class ApiLadderController extends Controller
 {
@@ -105,7 +105,7 @@ class ApiLadderController extends Controller
         if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
             $this->updateAchievements($playerId, $history->ladder, $stats);
         
-        if ($gameReport->best_report == true && $gameReport->duration == 3)
+        if ($gameReport->best_report == true && $gameReport->duration == 3 && $gameReport->fps == 33)
             $this->adminService->doWashGame($gameReport->game_id, "ladder-auto-wash");
 
         return response()->json(['success' => $status], 200);
@@ -579,6 +579,10 @@ class ApiLadderController extends Controller
 
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
+
+        if ($user->name == "dontRushMe") {
+            Log::info(json_encode($gocs)); // TODO delete
+        }
 
         foreach ($gocs as $goc)
         {
