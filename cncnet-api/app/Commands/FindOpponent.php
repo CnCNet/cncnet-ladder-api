@@ -133,7 +133,7 @@ class FindOpponent extends Command implements ShouldQueue
             $oppPlayer = $opponentEntry->qmPlayer->player;
             $oppUserPlayerTier = $oppPlayer->getCachedPlayerTierByLadderHistory($history);
             $oppUserSettings = $oppPlayer->user->userSettings;
-            $oppUser = $opponentEntry->user;
+            $oppUser = $oppPlayer->user;
 
             # Checks players are in same league tier otherwise skip
             if ($oppUserPlayerTier !== $userPlayerTier)
