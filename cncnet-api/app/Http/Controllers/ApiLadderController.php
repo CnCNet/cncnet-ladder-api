@@ -704,7 +704,7 @@ class ApiLadderController extends Controller
 
     private function monthlyAchievement($user, $lockedAchievement, $count)
     {
-        if ($lockedAchievement == null)
+        if ($lockedAchievement == null || $lockedAchievement->id == null)
             return;
 
         $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
