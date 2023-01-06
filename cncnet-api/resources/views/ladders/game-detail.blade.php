@@ -71,6 +71,7 @@
                             @endif
                         @endforeach
                     </p>
+
                     <p class="text-uppercase">
                         {{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong>
                     </p>
@@ -144,6 +145,13 @@
 
                                 <h5 class="rank pb-1">
                                     Rank #{{ $rank }}
+                                    <br />
+
+                                    <div style="font-size: 0.8rem" class="mt-2 mb-2">
+                                        <?php $tier = $player->getCachedPlayerTierByLadderHistory($history); ?>
+                                        {!! \App\Helpers\LeagueHelper::getLeagueIconByTier($tier) !!}
+                                        - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($tier) }}
+                                    </div>
                                 </h5>
 
                                 <div class="d-flex">
