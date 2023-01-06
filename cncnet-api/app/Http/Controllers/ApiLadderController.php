@@ -640,7 +640,7 @@ class ApiLadderController extends Controller
                 return $value->tag == "Win " . $ladder->name . " QM Games";
             })->sortBy("unlock_count")->first();
 
-            if ($lockedAchievement !== null)
+            if ($lockedAchievement !== null  && $lockedAchievement->id != null)
             {
                 $this->achievementCheck($user, $lockedAchievement, 1);
             }
@@ -654,7 +654,7 @@ class ApiLadderController extends Controller
                     return $value->tag === 'Allied: Win QM Games';
                 })->sortBy('unlock_count')->first();
 
-                if ($lockedAchievement !== null)
+                if ($lockedAchievement !== null  && $lockedAchievement->id != null)
                 {
                     $this->achievementCheck($user, $lockedAchievement, 1);
                 }
@@ -666,7 +666,7 @@ class ApiLadderController extends Controller
                     return $value->tag === 'Soviet: Win QM Games';
                 })->sortBy('unlock_count')->first();
 
-                if ($lockedAchievement !== null)
+                if ($lockedAchievement !== null  && $lockedAchievement->id != null)
                 {
                     $this->achievementCheck($user, $lockedAchievement, 1);
                 }
@@ -744,7 +744,7 @@ class ApiLadderController extends Controller
      */
     private function achievementCheck($user, $lockedAchievement, $count)
     {
-        if ($lockedAchievement == null || $lockedAchievement->id)
+        if ($lockedAchievement == null || $lockedAchievement->id == null)
             return;
 
         $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
