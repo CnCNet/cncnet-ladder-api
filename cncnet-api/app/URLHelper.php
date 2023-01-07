@@ -45,6 +45,16 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/games/" . $gameId;
     }
 
+    /**
+     * Get ladder game url
+     * @param mixed $history 
+     * @param mixed $gameId 
+     * @return string 
+     */
+    public static function getWashGamesUrl($ladderAbbrev)
+    {
+        return "/admin/washedGames/" . $ladderAbbrev;
+    }
 
     /**
      * Return ladder url 

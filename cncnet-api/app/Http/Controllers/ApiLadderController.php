@@ -596,19 +596,19 @@ class ApiLadderController extends Controller
             })->sortBy("unlock_count")->first();
 
             //no achievement found, skip over
-            if ($lockedAchievement == null || $lockedAchievement->id == null)
+            if ($lockedAchievement == null || $lockedAchievement->achievement_id == null)
                 continue;
 
             $count = $goc->count;
 
-            $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
+            $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->achievement_id)
                 ->where('user_id', $user->id)
                 ->first();
 
             if ($lockedAchievementProgress == null)
             {
                 $lockedAchievementProgress = new \App\AchievementProgress();
-                $lockedAchievementProgress->achievement_id = $lockedAchievement->id;
+                $lockedAchievementProgress->achievement_id = $lockedAchievement->achievement_id;
                 $lockedAchievementProgress->count = 0;
                 $lockedAchievementProgress->user_id = $user->id;
                 $lockedAchievementProgress->save();
@@ -640,7 +640,7 @@ class ApiLadderController extends Controller
                 return $value->tag == "Win " . $ladder->name . " QM Games";
             })->sortBy("unlock_count")->first();
 
-            if ($lockedAchievement !== null  && $lockedAchievement->id != null)
+            if ($lockedAchievement !== null  && $lockedAchievement->achievement_id != null)
             {
                 $this->achievementCheck($user, $lockedAchievement, 1);
             }
@@ -654,7 +654,7 @@ class ApiLadderController extends Controller
                     return $value->tag === 'Allied: Win QM Games';
                 })->sortBy('unlock_count')->first();
 
-                if ($lockedAchievement !== null  && $lockedAchievement->id != null)
+                if ($lockedAchievement !== null  && $lockedAchievement->achievement_id != null)
                 {
                     $this->achievementCheck($user, $lockedAchievement, 1);
                 }
@@ -666,7 +666,7 @@ class ApiLadderController extends Controller
                     return $value->tag === 'Soviet: Win QM Games';
                 })->sortBy('unlock_count')->first();
 
-                if ($lockedAchievement !== null  && $lockedAchievement->id != null)
+                if ($lockedAchievement !== null  && $lockedAchievement->achievement_id != null)
                 {
                     $this->achievementCheck($user, $lockedAchievement, 1);
                 }
@@ -704,17 +704,17 @@ class ApiLadderController extends Controller
 
     private function monthlyAchievement($user, $lockedAchievement, $count)
     {
-        if ($lockedAchievement == null || $lockedAchievement->id == null)
+        if ($lockedAchievement == null || $lockedAchievement->achievement_id == null)
             return;
 
-        $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
+        $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->achievement_id)
             ->where('user_id', $user->id)
             ->first();
 
         if ($lockedAchievementProgress == null)
         {
             $lockedAchievementProgress = new \App\AchievementProgress();
-            $lockedAchievementProgress->achievement_id = $lockedAchievement->id;
+            $lockedAchievementProgress->achievement_id = $lockedAchievement->achievement_id;
             $lockedAchievementProgress->user_id = $user->id;
             $lockedAchievementProgress->count = 0;
             $lockedAchievementProgress->save();
@@ -744,10 +744,10 @@ class ApiLadderController extends Controller
      */
     private function achievementCheck($user, $lockedAchievement, $count)
     {
-        if ($lockedAchievement == null || $lockedAchievement->id == null)
+        if ($lockedAchievement == null || $lockedAchievement->achievement_id == null)
             return;
 
-        $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->id)
+        $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->achievement_id)
             ->where('user_id', $user->id)
             ->first();
 
@@ -755,7 +755,7 @@ class ApiLadderController extends Controller
         if ($lockedAchievementProgress == null)
         {
             $lockedAchievementProgress = new \App\AchievementProgress();
-            $lockedAchievementProgress->achievement_id = $lockedAchievement->id;
+            $lockedAchievementProgress->achievement_id = $lockedAchievement->achievement_id;
             $lockedAchievementProgress->user_id = $user->id;
             $lockedAchievementProgress->save();
         }
