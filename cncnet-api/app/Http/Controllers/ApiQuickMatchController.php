@@ -724,7 +724,7 @@ class ApiQuickMatchController extends Controller
 
         $data = [];
         $data["count"] = $gameAuditsCount;
-        $data["url"] = $url;
+        $data["url"] = "https://ladder.cncnet.org" . $url;
 
         return $data;
     }
