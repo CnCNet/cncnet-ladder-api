@@ -5,6 +5,7 @@ use Illuminate\Database\Migrations\Migration;
 
 class UpdateGameAudit extends Migration
 {
+
     /**
      * Run the migrations.
      *
@@ -12,21 +13,20 @@ class UpdateGameAudit extends Migration
      */
     public function up()
     {
-        $records = \App\GameAudit::all();
-
         Schema::table('game_audit', function (Blueprint $table)
-		{
-            $table->dropForeign('user_id');
-            $table->dropColumn('user_id');
-            $table->string('username')->nullable(false);
-        });
-
-        foreach ($records as $record)
         {
-            $record->username = $record->user->name;
-            $record->save();
-        }
+            $table->dropForeign(['user_id']);
 
+            if (Schema::hasColumn('game_audit', 'user_id'))
+            {
+                $table->dropColumn('user_id');
+            }
+
+            if (!Schema::hasColumn('game_audit', 'username'))
+            {
+                $table->string('username')->nullable(false);
+            }
+        });
     }
 
     /**
