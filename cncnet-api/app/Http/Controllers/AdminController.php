@@ -12,6 +12,7 @@ use \App\Ladder;
 use \App\SpawnOptionString;
 use App\GameObjectSchema;
 use App\Helpers\GameHelper;
+use App\Http\Services\LeaguePlayerService;
 use App\Http\Services\UserRatingService;
 use App\Player;
 use App\PlayerRating;
@@ -943,6 +944,33 @@ class AdminController extends Controller
         $userRatingService->changeUserRating($user, $request->new_rating, $history);
 
         $request->session()->flash('success', "User rating updated");
+        return redirect()->back();
+    }
+
+    public function changeLeaguePlayerStatus(Request $request, $abbreviation)
+    {
+        $ladder = Ladder::where("abbreviation", $abbreviation)->first();
+
+        $user = User::find($request->user_id);
+        if ($user == null)
+        {
+            $request->session()->flash('error', "User not found");
+            return redirect()->back();
+        }
+
+        $leaguePlayerService = new LeaguePlayerService();
+        $userCanPlayBothTiers = $request->canPlayBothTiers;
+
+        if ($userCanPlayBothTiers == "on")
+        {
+            $leaguePlayerService->updateLeaguePlayer($ladder->id, $user->id, true);
+        }
+        else
+        {
+            $leaguePlayerService->deleteLeaguePlayer($ladder->id, $user->id);
+        }
+
+        $request->session()->flash('success', "Match making preference updated");
         return redirect()->back();
     }
 
