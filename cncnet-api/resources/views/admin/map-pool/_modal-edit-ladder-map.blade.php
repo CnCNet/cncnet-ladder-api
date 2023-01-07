@@ -37,7 +37,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="ladderMapFile"> Upload Map File (.map) </label>
+                        <label for="ladderMapFile"> Upload Map File (.map / .mpr) </label>
                         <input type="file" name="mapFile" id="ladderMapFile" />
                     </div>
 
