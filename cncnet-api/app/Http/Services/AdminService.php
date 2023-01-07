@@ -7,10 +7,11 @@ use App\QmLadderRules;
 class AdminService
 {
     // Name doesn't seem quite right, but for now 'twill do
+    private $ladderService;
 
     public function __construct()
     {
-
+        $this->ladderService = new LadderService();
     }
 
     public function saveQMLadderRulesRequest($request, $ladderId)
