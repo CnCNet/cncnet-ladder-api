@@ -720,7 +720,13 @@ class ApiQuickMatchController extends Controller
             ->where("username", "ladder-auto-wash")
             ->count();
 
-        return $gameAuditsCount;
+        $url = \App\URLHelper::getWashGamesUrl($ladderAbbrev);
+
+        $data = [];
+        $data["count"] = $gameAuditsCount;
+        $data["url"] = $url;
+
+        return $data;
     }
 }
 
