@@ -108,11 +108,12 @@
                         </div>
                     </div>
 
-                    @if($userIsMod)
-                    <div>
-                        @include('ladders._modal-edit-player-name')
-                        <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName" data-bs-toggle="modal" data-bs-target="#editPlayerName"> Edit Player Name </button>
-                    </div>
+                    @if ($userIsMod)
+                        <div>
+                            @include('ladders._modal-edit-player-name')
+                            <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName" data-bs-toggle="modal"
+                                data-bs-target="#editPlayerName"> Edit Player Name </button>
+                        </div>
                     @endif
 
                     <div class="player-social pt-4 me-5">

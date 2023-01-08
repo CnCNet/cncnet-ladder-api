@@ -14,6 +14,7 @@ Route::get('/donate', 'SiteController@getDonate');
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
     Route::get('/', 'LadderController@getLadders');
+    Route::get('/play', 'LadderController@getPopularTimes');
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
     Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\CountableObjectHeap;
+use App\Game;
+use App\Helpers\GameHelper;
 use App\Http\Services\AchievementService;
 use App\Http\Services\ChartService;
 use \Carbon\Carbon;
@@ -11,6 +13,7 @@ use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use App\Http\Services\UserRatingService;
 use \App\Http\Services\StatsService;
+use App\Ladder;
 use App\Player;
 use App\PlayerHistory;
 use App\QmCanceledMatch;
@@ -39,6 +42,45 @@ class LadderController extends Controller
             [
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders()
+            ]
+        );
+    }
+
+    public function getPopularTimes(Request $request)
+    {
+        $now = Carbon::now();
+        $start = $now->copy()->subMonth(1)->startOfMonth();
+        $end = $now->copy()->endOfMonth();
+
+        $ladders = Ladder::whereIn(
+            "abbreviation",
+            [
+                GameHelper::$GAME_BLITZ,
+                GameHelper::$GAME_RA,
+                GameHelper::$GAME_RA2,
+                GameHelper::$GAME_YR,
+                GameHelper::$GAME_TS
+            ]
+        )->get();
+
+        foreach ($ladders as $ladder)
+        {
+            $histories = LadderHistory::where("starts", ">=", $start)
+                ->where("ends", "<=", $end)
+                ->where("ladder_id", $ladder->id)
+                ->get();
+
+            $data = $this->chartService->getHistoriesGamesPlayedByMonth($histories, $ladder->id);
+            $labels = $data["labels"];
+            $graphGamesPlayedByMonth[$ladder->abbreviation][] = $data["games"];
+        }
+
+        return view(
+            "ladders.play",
+            [
+                "ladder" => $ladder,
+                "labels" => $labels,
+                "games" => $graphGamesPlayedByMonth,
             ]
         );
     }
