@@ -71,7 +71,7 @@
             @endif
             <section class="mt-4 ladder-info">
                 <div>
-                    <a href="/ladder/play?filteredGame={{ $history->ladder->abbreviation }}" class="btn btn-secondary d-flex"">
+                    <a href="/ladder/play" class="btn btn-secondary d-flex"">
                         <span class="material-symbols-outlined pe-3">
                             schedule
                         </span> Popular Times

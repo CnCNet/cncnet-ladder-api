@@ -63,8 +63,6 @@ class LadderController extends Controller
             ]
         )->get();
 
-        $filteredGame = Ladder::where("abbreviation", $request->filteredGame)->first();
-
         foreach ($ladders as $ladder)
         {
             $histories = LadderHistory::where("starts", ">=", $start)
@@ -72,7 +70,7 @@ class LadderController extends Controller
                 ->where("ladder_id", $ladder->id)
                 ->get();
 
-            $data = $this->chartService->getHistoriesGamesPlayedByMonth($histories);
+            $data = $this->chartService->getHistoriesGamesPlayedByMonth($histories, $ladder->id);
             $labels = $data["labels"];
             $graphGamesPlayedByMonth[$ladder->abbreviation][] = $data["games"];
         }
@@ -83,7 +81,6 @@ class LadderController extends Controller
                 "ladder" => $ladder,
                 "labels" => $labels,
                 "games" => $graphGamesPlayedByMonth,
-                "filteredGame" => $filteredGame->abbreviation ?? null
             ]
         );
     }

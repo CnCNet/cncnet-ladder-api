@@ -12,33 +12,36 @@ use Illuminate\Support\Facades\DB;
 
 class ChartService
 {
-    public function getHistoriesGamesPlayedByMonth($histories)
+    public function getHistoriesGamesPlayedByMonth($histories, $ladderId)
     {
-        $games = DB::table('games')
-            ->whereIn("ladder_history_id", $histories->pluck("id")->toArray())
-            ->select([
-                DB::raw('count(*) as count, HOUR(created_at) as hour'),
-                'ladder_history_id'
-            ])
-            ->groupBy('hour')
-            ->get();
-
-        $labels = [];
-        foreach ($games as $hour => $game)
+        # 1 day
+        return Cache::remember("getHistoriesGamesPlayedByMonth/$ladderId", 1440, function () use ($histories)
         {
-            $hourFormatted = Carbon::create(null, null, null, $hour);
-            $hour = $hourFormatted->format('g:i A');
+            $games = DB::table('games')
+                ->whereIn("ladder_history_id", $histories->pluck("id")->toArray())
+                ->select([
+                    DB::raw('count(*) as count, HOUR(created_at) as hour'),
+                    'ladder_history_id'
+                ])
+                ->groupBy('hour')
+                ->get();
 
-            $labels[] = $hour;
-            $results[] = $game->count;
-        }
+            $labels = [];
+            foreach ($games as $hour => $game)
+            {
+                $hourFormatted = Carbon::create(null, null, null, $hour);
+                $hour = $hourFormatted->format('g:i A');
 
-        return [
-            "labels" => $labels,
-            "games" => $results,
-        ];
+                $labels[] = $hour;
+                $results[] = $game->count;
+            }
+
+            return [
+                "labels" => $labels,
+                "games" => $results,
+            ];
+        });
     }
-
 
     public function getGamesPlayedByMonth($player, $history)
     {
