@@ -713,11 +713,11 @@ class ApiLadderController extends Controller
 
             if ($achievementProgress == null)  //first time user is making progress towards this achievement
             {
-                $lockedAchievementProgress = new \App\AchievementProgress();
-                $lockedAchievementProgress->achievement_id = $achievement->id;
-                $lockedAchievementProgress->count = 0;
-                $lockedAchievementProgress->user_id = $user->id;
-                $lockedAchievementProgress->save();
+                $achievementProgress = new \App\AchievementProgress();
+                $achievementProgress->achievement_id = $achievement->id;
+                $achievementProgress->count = 0;
+                $achievementProgress->user_id = $user->id;
+                $achievementProgress->save();
             }
             else if ($achievementProgress->achievement_unlocked_date == null) //achievement already unlocked
             {
