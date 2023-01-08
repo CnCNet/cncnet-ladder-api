@@ -569,7 +569,7 @@ class ApiLadderController extends Controller
         $user = \App\Player::where('id', $playerId)->first()->user;
 
         //fetch achievements that have not been unlocked for this ladder
-        $achievements = \App\Achievement::where('a.ladder_id', $ladder->id)->get();
+        $achievements = \App\Achievement::where('ladder_id', $ladder->id)->get();
 
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
@@ -577,7 +577,7 @@ class ApiLadderController extends Controller
         if ($user->name == "dontRushMe") // TODO delete
         {
             $gocs2 = \App\GameObjectCounts::where('stats_id', $stats->id)
-                ->join('countable_game_objects', 'game_object_counts.countable_game_objects_id', 'id', 'countable_game_objects.id')
+                ->join('countable_game_objects', 'game_object_counts.countable_game_objects_id', '=', 'countable_game_objects.id')
                 ->get();
             Log::info(json_encode($gocs2));
         }
@@ -592,14 +592,14 @@ class ApiLadderController extends Controller
             $unitCareerAchievements = $achievements->filter(function ($value) use (&$objectName, &$heapName)
             {
                 return $value->object_name === $objectName && $value->heap_name === $heapName && $value->achievement_type === "CAREER";
-            })->sortBy("unlock_count")->collect();
+            })->sortBy("unlock_count");
 
             $this->achievementCheck($user, $unitCareerAchievements, $count, "CAREER");
 
             $unitImmediateAchievements = $achievements->filter(function ($value) use (&$objectName, &$heapName)
             {
                 return $value->object_name === $objectName && $value->heap_name === $heapName && $value->achievement_type === "IMMEDIATE";
-            })->sortBy("unlock_count")->collect();
+            })->sortBy("unlock_count");
             $this->achievementCheck($user, $unitImmediateAchievements, $count, "IMMEDIATE");
         }
 
@@ -612,7 +612,7 @@ class ApiLadderController extends Controller
             $winAchievements = $achievements->filter(function ($value) use (&$ladder)
             {
                 return $value->tag == "Win " . $ladder->name . " QM Games";
-            })->sortBy("unlock_count")->collect();
+            })->sortBy("unlock_count");
 
             $this->achievementCheck($user, $winAchievements, 1);
 
@@ -623,7 +623,7 @@ class ApiLadderController extends Controller
                 $winAllied = $achievements->filter(function ($value)
                 {
                     return $value->tag === 'Allied: Win QM Games';
-                })->sortBy('unlock_count')->collect();
+                })->sortBy('unlock_count');
 
                 $this->achievementCheck($user, $winAllied, 1);
             }
@@ -632,7 +632,7 @@ class ApiLadderController extends Controller
                 $winSoviet = $achievements->filter(function ($value)
                 {
                     return $value->tag === 'Soviet: Win QM Games';
-                })->sortBy('unlock_count')->collect();
+                })->sortBy('unlock_count');
 
                 $this->achievementCheck($user, $winSoviet, 1);
             }
@@ -641,7 +641,7 @@ class ApiLadderController extends Controller
                 $winYuri = $achievements->filter(function ($value)
                 {
                     return $value->tag === 'Yuri: Win QM Games';
-                })->sortBy('unlock_count')->collect();
+                })->sortBy('unlock_count');
 
                 $this->achievementCheck($user, $winYuri, 1);
             }
@@ -650,7 +650,7 @@ class ApiLadderController extends Controller
             $winGames = $achievements->filter(function ($value)
             {
                 return $value->tag === 'Win QM Games in One Month';
-            })->sortBy('unlock_count')->collect();
+            })->sortBy('unlock_count');
 
             // $this->monthlyAchievement($user, $lockedAchievement, 1);
         }
@@ -659,7 +659,7 @@ class ApiLadderController extends Controller
         $lockedAchievement = $achievements->filter(function ($value)
         {
             return $value->tag === 'Play Games in one Month';
-        })->sortBy('unlock_count')->collect();
+        })->sortBy('unlock_count');
 
         //$this->monthlyAchievement($user, $lockedAchievement, 1);
     }
