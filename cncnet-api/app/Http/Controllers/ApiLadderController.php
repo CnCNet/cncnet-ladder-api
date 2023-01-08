@@ -13,6 +13,7 @@ use \Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use \App;
 use Illuminate\Support\Facades\Log;
+use DB;
 
 class ApiLadderController extends Controller
 {
