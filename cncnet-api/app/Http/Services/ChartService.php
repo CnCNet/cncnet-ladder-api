@@ -2,6 +2,9 @@
 
 namespace App\Http\Services;
 
+use App\Game;
+use App\Ladder;
+use App\LadderHistory;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Cache;
@@ -9,6 +12,34 @@ use Illuminate\Support\Facades\DB;
 
 class ChartService
 {
+    public function getHistoriesGamesPlayedByMonth($histories)
+    {
+        $games = DB::table('games')
+            ->whereIn("ladder_history_id", $histories->pluck("id")->toArray())
+            ->select([
+                DB::raw('count(*) as count, HOUR(created_at) as hour'),
+                'ladder_history_id'
+            ])
+            ->groupBy('hour')
+            ->get();
+
+        $labels = [];
+        foreach ($games as $hour => $game)
+        {
+            $hourFormatted = Carbon::create(null, null, null, $hour);
+            $hour = $hourFormatted->format('g:i A');
+
+            $labels[] = $hour;
+            $results[] = $game->count;
+        }
+
+        return [
+            "labels" => $labels,
+            "games" => $results,
+        ];
+    }
+
+
     public function getGamesPlayedByMonth($player, $history)
     {
         return Cache::remember("getGamesPlayedByMonth/$history->short/$player->id", 5, function () use ($player, $history)
