@@ -1,11 +1,12 @@
 @extends('layouts.app')
 @section('head')
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/chart.min.js"></script>
+    <script src="/js/chartjs-adapter-date-fns.bundle.min.js"></script>
 @endsection
 
 @section('title', 'Ladder')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($ladder->abbreviation))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($ladder->abbreviation))
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -85,13 +86,23 @@
             labels: {!! json_encode($labels) !!},
             datasets: [
                 <?php foreach($games as $game => $data): ?>
+                <?php
+                $showGame = false;
+                if ($filteredGame == $game) {
+                    $showGame = true;
+                }
+                if ($filteredGame == null) {
+                    $showGame = true;
+                }
+                ?>
                 <?php $l = \App\Ladder::where('abbreviation', $game)->first(); ?> {
                     label: "{!! $l->name !!}",
                     data: {!! json_encode($data[0]) !!},
                     fill: true,
                     backgroundColor: "{!! \App\Helpers\ChartHelper::getChartColourByGameAbbreviation($game, 0.1) !!}",
                     borderColor: "{!! \App\Helpers\ChartHelper::getChartColourByGameAbbreviation($game) !!}",
-                    tension: 0.1
+                    tension: 0.1,
+                    hidden: {{ $showGame ? 'false' : 'true' }}
                 },
                 <?php endforeach; ?>
             ]

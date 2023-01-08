@@ -63,6 +63,8 @@ class LadderController extends Controller
             ]
         )->get();
 
+        $filteredGame = Ladder::where("abbreviation", $request->filteredGame)->first();
+
         foreach ($ladders as $ladder)
         {
             $histories = LadderHistory::where("starts", ">=", $start)
@@ -81,6 +83,7 @@ class LadderController extends Controller
                 "ladder" => $ladder,
                 "labels" => $labels,
                 "games" => $graphGamesPlayedByMonth,
+                "filteredGame" => $filteredGame->abbreviation ?? null
             ]
         );
     }
