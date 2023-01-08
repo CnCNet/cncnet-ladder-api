@@ -390,8 +390,7 @@ class ApiLadderController extends Controller
     {
         $rawGame = \App\GameRaw::where("game_id", "=", $gameId)->get();
 
-        return response($rawGame, 200)
-            ->header('Content-Type', 'application/json');
+        return response($rawGame, 200)->header('Content-Type', 'application/json');
     }
 
     public function getLadderTopList(Request $request, $cncnetGame = null, $count = 10)
@@ -570,30 +569,7 @@ class ApiLadderController extends Controller
         $user = \App\Player::where('id', $playerId)->first()->user;
 
         //fetch achievements that have not been unlocked for this ladder
-        $lockedAchievements = DB::table('achievements as a')->leftJoin('achievements_progress as ap', 'ap.achievement_id', '=', 'a.id')
-            ->where('a.ladder_id', $ladder->id)
-            ->where('ap.user_id', $user->id)
-            ->whereNull('achievement_unlocked_date')
-            ->select(
-                'a.id as achievement_id',
-                'a.achievement_type',
-                'a.order',
-                'a.tag',
-                'a.ladder_id',
-                'a.achievement_name',
-                'a.achievement_description',
-                'a.heap_name',
-                'a.object_name',
-                'a.cameo',
-                'a.unlock_count',
-                'ap.id as ap_id ',
-                'ap.user_id',
-                'ap.count',
-                'ap.achievement_unlocked_date',
-                'ap.created_at',
-                'ap.updated_at'
-            )
-            ->get();
+        $achievements = \App\Achievement::where('a.ladder_id', $ladder->id)->get();
 
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
@@ -608,47 +584,23 @@ class ApiLadderController extends Controller
 
         foreach ($gocs as $goc)
         {
+            $count = $goc->count;
             $objectName = $goc->countableGameObject->name;
             $heapName = $goc->countableGameObject->heap_name;
 
             //fetch the achievement that uses this heap_name and object_name
-            $lockedAchievement = $lockedAchievements->filter(function ($value) use (&$objectName, &$heapName)
+            $unitCareerAchievements = $achievements->filter(function ($value) use (&$objectName, &$heapName)
             {
-                return $value->object_name === $objectName && $value->heap_name === $heapName;
-            })->sortBy("unlock_count")->first();
+                return $value->object_name === $objectName && $value->heap_name === $heapName && $value->achievement_type === "CAREER";
+            })->sortBy("unlock_count")->collect();
 
-            //no achievement found, skip over
-            if ($lockedAchievement == null || $lockedAchievement->achievement_id == null)
-                continue;
+            $this->achievementCheck($user, $unitCareerAchievements, $count, "CAREER");
 
-            $count = $goc->count;
-
-            $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->achievement_id)
-                ->where('user_id', $user->id)
-                ->first();
-
-            if ($lockedAchievementProgress == null)
+            $unitImmediateAchievements = $achievements->filter(function ($value) use (&$objectName, &$heapName)
             {
-                $lockedAchievementProgress = new \App\AchievementProgress();
-                $lockedAchievementProgress->achievement_id = $lockedAchievement->achievement_id;
-                $lockedAchievementProgress->count = 0;
-                $lockedAchievementProgress->user_id = $user->id;
-                $lockedAchievementProgress->save();
-            }
-
-            //update achievement progress
-            if ($lockedAchievement->achievement_type === 'CAREER')
-            {
-                $this->achievementCheck($user, $lockedAchievement, $count);
-            }
-            else if ($lockedAchievement->achievement_type === 'IMMEDIATE')
-            {
-                if ($count >= $lockedAchievement->unlock_count)
-                {
-                    $lockedAchievementProgress->achievement_unlocked_date = Carbon::now();
-                    $lockedAchievementProgress->save();
-                }
-            }
+                return $value->object_name === $objectName && $value->heap_name === $heapName && $value->achievement_type === "IMMEDIATE";
+            })->sortBy("unlock_count")->collect();
+            $this->achievementCheck($user, $unitImmediateAchievements, $count, "IMMEDIATE");
         }
 
         $pgr = $stats->playerGameReport;
@@ -657,71 +609,59 @@ class ApiLadderController extends Controller
         //update player won achievement
         if ($won)
         {
-            $lockedAchievement = $lockedAchievements->filter(function ($value) use (&$ladder)
+            $winAchievements = $achievements->filter(function ($value) use (&$ladder)
             {
                 return $value->tag == "Win " . $ladder->name . " QM Games";
-            })->sortBy("unlock_count")->first();
+            })->sortBy("unlock_count")->collect();
 
-            if ($lockedAchievement !== null  && $lockedAchievement->achievement_id != null)
-            {
-                $this->achievementCheck($user, $lockedAchievement, 1);
-            }
+            $this->achievementCheck($user, $winAchievements, 1);
 
             $country = $stats->cty;
 
             if ($country < 5) //allied
             {
-                $lockedAchievement = $lockedAchievements->filter(function ($value)
+                $winAllied = $achievements->filter(function ($value)
                 {
                     return $value->tag === 'Allied: Win QM Games';
-                })->sortBy('unlock_count')->first();
+                })->sortBy('unlock_count')->collect();
 
-                if ($lockedAchievement !== null  && $lockedAchievement->achievement_id != null)
-                {
-                    $this->achievementCheck($user, $lockedAchievement, 1);
-                }
+                $this->achievementCheck($user, $winAllied, 1);
             }
             else if ($country > 4 && $country < 9) //soviet
             {
-                $lockedAchievement = $lockedAchievements->filter(function ($value)
+                $winSoviet = $achievements->filter(function ($value)
                 {
                     return $value->tag === 'Soviet: Win QM Games';
-                })->sortBy('unlock_count')->first();
+                })->sortBy('unlock_count')->collect();
 
-                if ($lockedAchievement !== null  && $lockedAchievement->achievement_id != null)
-                {
-                    $this->achievementCheck($user, $lockedAchievement, 1);
-                }
+                $this->achievementCheck($user, $winSoviet, 1);
             }
             else if ($country == 9) //yuri
             {
-                $lockedAchievement = $lockedAchievements->filter(function ($value)
+                $winYuri = $achievements->filter(function ($value)
                 {
                     return $value->tag === 'Yuri: Win QM Games';
-                })->sortBy('unlock_count')->first();
+                })->sortBy('unlock_count')->collect();
 
-                if ($lockedAchievement !== null)
-                {
-                    $this->achievementCheck($user, $lockedAchievement, 1);
-                }
+                $this->achievementCheck($user, $winYuri, 1);
             }
 
             //win 'x' amount of QMs in one month
-            $lockedAchievement = $lockedAchievements->filter(function ($value)
+            $winGames = $achievements->filter(function ($value)
             {
                 return $value->tag === 'Win QM Games in One Month';
-            })->sortBy('unlock_count')->first();
+            })->sortBy('unlock_count')->collect();
 
-            $this->monthlyAchievement($user, $lockedAchievement, 1);
+            // $this->monthlyAchievement($user, $lockedAchievement, 1);
         }
 
         //play 'x' amount of QMs in one month
-        $lockedAchievement = $lockedAchievements->filter(function ($value)
+        $lockedAchievement = $achievements->filter(function ($value)
         {
             return $value->tag === 'Play Games in one Month';
-        })->sortBy('unlock_count')->first();
+        })->sortBy('unlock_count')->collect();
 
-        $this->monthlyAchievement($user, $lockedAchievement, 1);
+        //$this->monthlyAchievement($user, $lockedAchievement, 1);
     }
 
     private function monthlyAchievement($user, $lockedAchievement, $count)
@@ -762,33 +702,49 @@ class ApiLadderController extends Controller
 
     /**
      * Tick achievement tracker then check if achievement is unlocked.
-     * For career achievements.
      */
-    private function achievementCheck($user, $lockedAchievement, $count)
+    private function achievementCheck($user, $achievements, $count, $type = "CAREER")
     {
-        if ($lockedAchievement == null || $lockedAchievement->achievement_id == null)
-            return;
-
-        $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->achievement_id)
-            ->where('user_id', $user->id)
-            ->first();
-
-        //first time user is making progress towards this achievement
-        if ($lockedAchievementProgress == null)
+        foreach ($achievements as $achievement)
         {
-            $lockedAchievementProgress = new \App\AchievementProgress();
-            $lockedAchievementProgress->achievement_id = $lockedAchievement->achievement_id;
-            $lockedAchievementProgress->user_id = $user->id;
-            $lockedAchievementProgress->save();
-        }
+            $achievementProgress = \App\AchievementProgress::where('achievement_id', $achievement->id)
+                ->where('user_id', $user->id)
+                ->first();
 
-        $lockedAchievementProgress->count += $count;
+            if ($achievementProgress == null)  //first time user is making progress towards this achievement
+            {
+                $lockedAchievementProgress = new \App\AchievementProgress();
+                $lockedAchievementProgress->achievement_id = $achievement->id;
+                $lockedAchievementProgress->count = 0;
+                $lockedAchievementProgress->user_id = $user->id;
+                $lockedAchievementProgress->save();
+            }
+            else if ($achievementProgress->achievement_unlocked_date == null) //achievement already unlocked
+            {
+                continue; //go to next achievement
+            }
 
-        if ($lockedAchievementProgress->count >= $lockedAchievement->unlock_count)
-        {
-            $lockedAchievementProgress->count = $lockedAchievement->unlock_count; //since user has hit or exceeded the required unlock count, set their count to the unlock count
-            $lockedAchievementProgress->achievement_unlocked_date = Carbon::now();
+            if ($type == "CAREER") //career achievement logic
+            {
+                $achievementProgress->count += $count;
+
+                if ($achievementProgress->count >= $achievement->unlock_count)
+                {
+                    $achievementProgress->count = $achievement->unlock_count; //since user has hit or exceeded the required unlock count, set their count to the unlock count
+                    $achievementProgress->achievement_unlocked_date = Carbon::now();
+                }
+                $achievementProgress->save();
+            }
+            else if ($type == "IMMEDIATE") //immediate achievement logic
+            {
+                if ($count >= $achievement->unlock_count)
+                {
+                    $achievementProgress->achievement_unlocked_date = Carbon::now();
+                    $achievementProgress->save();
+                }
+            }
+
+            break; //only increment one achievement at a time until it's unlocked
         }
-        $lockedAchievementProgress->save();
     }
 }
