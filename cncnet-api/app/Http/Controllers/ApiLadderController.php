@@ -104,7 +104,7 @@ class ApiLadderController extends Controller
 
         if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
             $this->updateAchievements($playerId, $history->ladder, $stats);
-        
+
         if ($gameReport->best_report == true && $gameReport->duration == 3 && $gameReport->fps == 33)
             $this->adminService->doWashGame($gameReport->game_id, "ladder-auto-wash");
 
@@ -569,19 +569,40 @@ class ApiLadderController extends Controller
         $user = \App\Player::where('id', $playerId)->first()->user;
 
         //fetch achievements that have not been unlocked for this ladder
-        $lockedAchievements = \App\Achievement::leftJoin('achievements_progress as ap', 'ap.achievement_id', '=', 'achievements.id')
-            ->where('ladder_id', $ladder->id)
+        $lockedAchievements = DB::table('achievements as a')->leftJoin('achievements_progress as ap', 'ap.achievement_id', '=', 'a.id')
+            ->where('a.ladder_id', $ladder->id)
+            ->where('ap.user_id', $user->id)
             ->whereNull('achievement_unlocked_date')
-            ->get()
-            ->filter(function($f) use(&$user) {
-                return $f['user_id'] == $user->id || $f['user_id'] == null;
-            });
+            ->select(
+                'a.id as achievement_id',
+                'a.achievement_type',
+                'a.order',
+                'a.tag',
+                'a.ladder_id',
+                'a.achievement_name',
+                'a.achievement_description',
+                'a.heap_name',
+                'a.object_name',
+                'a.cameo',
+                'a.unlock_count',
+                'ap.id as ap_id ',
+                'ap.user_id',
+                'ap.count',
+                'ap.achievement_unlocked_date',
+                'ap.created_at',
+                'ap.updated_at'
+            )
+            ->get();
 
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
 
-        if ($user->name == "dontRushMe") {
-            Log::info(json_encode($gocs)); // TODO delete
+        if ($user->name == "dontRushMe") // TODO delete
+        {
+            $gocs2 = \App\GameObjectCounts::where('stats_id', $stats->id)
+                ->join('countable_game_objects', 'game_object_counts.countable_game_objects_id', 'id', 'countable_game_objects.id')
+                ->get();
+            Log::info(json_encode($gocs2));
         }
 
         foreach ($gocs as $goc)
