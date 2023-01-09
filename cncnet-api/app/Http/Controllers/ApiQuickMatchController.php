@@ -652,7 +652,7 @@ class ApiQuickMatchController extends Controller
     public function getPlayerRankings($count = 50)
     {
 
-        $month = Carbon::now()->format('m');
+        $month = Carbon::now()->month;
         $year = Carbon::now()->format('Y');
 
         $rankings = [];
@@ -672,6 +672,7 @@ class ApiQuickMatchController extends Controller
                 ->orderBy('player_caches.points', 'DESC')
                 ->select('u.discord_profile as discord_name', 'player_caches.*')
                 ->limit($count)
+                ->orderBy('points', 'DESC')
                 ->get();
 
             $rankings[strtoupper($ladder->abbreviation)] = $pc;
