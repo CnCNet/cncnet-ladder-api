@@ -719,7 +719,7 @@ class ApiLadderController extends Controller
                 $achievementProgress->user_id = $user->id;
                 $achievementProgress->save();
             }
-            else if ($achievementProgress->achievement_unlocked_date == null) //achievement already unlocked
+            else if ($achievementProgress->achievement_unlocked_date != null) //achievement already unlocked
             {
                 continue; //go to next achievement
             }
