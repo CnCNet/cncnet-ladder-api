@@ -76,3 +76,15 @@
     width: 25px;
     height: 25px;
 }
+
+.icon-blitz:before
+{
+    content: "";
+    display: inline-block;
+    background-image: url(../images/games/blitz/blitz-icon.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 25px;
+    height: 25px;
+}
