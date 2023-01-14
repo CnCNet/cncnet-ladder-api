@@ -307,6 +307,13 @@ class ApiQuickMatchController extends Controller
                 if ($qmPlayer == null)
                 {
                     $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $history, $ladder, $ladderRules);
+
+                    $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladderRules);
+                    if (!$validSides)
+                    {
+                        $error = "Side ({$request->side}) is not allowed";
+                        return $this->onMatchError($error);
+                    }
                 }
 
                 # Important check, sent from qm client
@@ -321,6 +328,8 @@ class ApiQuickMatchController extends Controller
                 $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
 
                 # Create request to matchup
+                Log::info("Before creating request");
+
                 if ($qmPlayer->qm_match_id === null)
                 {
                     $qEntry = $this->quickMatchService->createMatchupRequest($player, $qmPlayer, $history);
@@ -328,9 +337,13 @@ class ApiQuickMatchController extends Controller
                     # Push a job to find an opponent
                     $this->dispatch(new FindOpponent($qEntry->id));
 
+                    Log::info("Dispatched Find opponent $qEntry");
+
                     $qmPlayer->touch();
                     return $this->onCheckback($alert);
                 }
+
+                Log::info("Ready to spawn players");
 
                 $qmPlayer->waiting = false;
                 $qmMatch = QmMatch::find($qmPlayer->qm_match_id);
@@ -339,8 +352,8 @@ class ApiQuickMatchController extends Controller
                 $spawnStruct = $this->quickMatchSpawnService->createInitialSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
 
                 # Check we have all players before writing them to spawn.ini
-                $allPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
-                if (count($allPlayers) == 0)
+                $playersReady = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
+                if (count($playersReady) == 0)
                 {
                     $qmPlayer->waiting = false;
                     $qmPlayer->save();
@@ -349,7 +362,7 @@ class ApiQuickMatchController extends Controller
                 }
 
                 # Write the spawn.ini "Others" sections
-                $spawnStruct = $this->quickMatchSpawnService->createOthersSpawnSection($spawnStruct, $qmMatch, $allPlayers);
+                $spawnStruct = $this->quickMatchSpawnService->createOthersSpawnSection($spawnStruct, $qmPlayer, $playersReady);
 
                 # Return final spawn.ini to client
                 return $spawnStruct;
@@ -363,6 +376,14 @@ class ApiQuickMatchController extends Controller
     {
         return [
             "type" => "fail",
+            "description" => $error
+        ];
+    }
+
+    private function onMatchError($error)
+    {
+        return [
+            "type" => "error",
             "description" => $error
         ];
     }

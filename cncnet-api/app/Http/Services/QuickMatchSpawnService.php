@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class QuickMatchSpawnService
 {
-
     public function createInitialSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules)
     {
         $qmMap = $qmMatch->map;
@@ -96,6 +95,8 @@ class QuickMatchSpawnService
                     break;
             }
         }
+
+        return $spawnStruct;
     }
 
     public function createOthersSpawnSection($spawnStruct, $qmPlayer, $allPlayers)

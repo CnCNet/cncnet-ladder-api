@@ -6,6 +6,7 @@ use App\Commands\FindOpponent;
 use App\Game;
 use App\Ladder;
 use App\LadderHistory;
+use App\QmMatchPlayer;
 use App\QmQueueEntry;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
@@ -95,10 +96,10 @@ class QuickMatchService
 
     public function createQMPlayer($request, $player, $history, $ladder, $ladderRules)
     {
-        $qmPlayer = new \App\QmMatchPlayer();
+        $qmPlayer = new QmMatchPlayer();
         $qmPlayer->player_id = $player->id;
         $qmPlayer->ladder_id = $player->ladder_id;
-        $qmPlayer->map_bitfield = 0xffffffff; # map_bitfield is an old and unused bit of code
+        $qmPlayer->map_bitfield = $request->map_bitfield;
         $qmPlayer->tier = $player->playerHistory($history)->tier;
         $qmPlayer->waiting = true;
 
@@ -119,22 +120,6 @@ class QuickMatchService
         $qmPlayer->ipv6_port = $request->ipv6_port;
 
         $qmPlayer->chosen_side = $request->side;
-
-        $all_sides = $ladderRules->all_sides();
-        $sides = $ladderRules->allowed_sides();
-
-        if ($request->side == -1)
-        {
-            $qmPlayer->actual_side = $all_sides[rand(0, count($all_sides) - 1)];
-        }
-        else if (in_array($request->side, $sides))
-        {
-            $qmPlayer->actual_side = $request->side;
-        }
-        else
-        {
-            return array("type" => "error", "description" => "Side ({$request->side}) is not allowed");
-        }
 
         if ($request->map_sides)
         {
@@ -167,6 +152,27 @@ class QuickMatchService
 
         $qmPlayer->save();
         return $qmPlayer;
+    }
+
+    public function checkPlayerSidesAreValid($qmPlayer, $side, $ladderRules)
+    {
+        $allSides = $ladderRules->all_sides();
+        $sides = $ladderRules->allowed_sides();
+
+        if ($side == -1)
+        {
+            $qmPlayer->actual_side = $allSides[rand(0, count($allSides) - 1)];
+
+            return true;
+        }
+        else if (in_array($side, $sides))
+        {
+            $qmPlayer->actual_side = $side;
+
+            return true;
+        }
+
+        return false;
     }
 
     public function checkForAlerts($ladder, $player)
