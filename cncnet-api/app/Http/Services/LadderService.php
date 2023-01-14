@@ -408,8 +408,7 @@ class LadderService
         return $query->get();
     }
 
-    // TODO - should be middleware
-    public function checkPlayer($request, $username, $ladder)
+    public function checkPlayer($request)
     {
         $authUser = $this->authService->getUser($request);
 
@@ -488,7 +487,6 @@ class LadderService
             ->where(function ($where)
             {
                 $where->where('qms.state_type_id', 5);
-
             })
             ->where('qm_matches.ladder_id', $ladder_id)
             ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($createdAfter))
