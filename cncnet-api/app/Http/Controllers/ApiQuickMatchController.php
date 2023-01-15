@@ -12,6 +12,7 @@ use \App\PlayerActiveHandle;
 use \Carbon\Carbon;
 use DB;
 use \App\Commands\FindOpponent;
+use App\Game;
 use App\PlayerRating;
 use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
@@ -20,6 +21,7 @@ use DateTime;
 use \App\Helpers\LeagueHelper;
 use App\Http\Services\QuickMatchService;
 use App\Http\Services\QuickMatchSpawnService;
+use App\LeaguePlayer;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use BadMethodCallException;
@@ -345,17 +347,42 @@ class ApiQuickMatchController extends Controller
         $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
 
         # Match type
-        $type = QmMatch::$TYPE_QM_1vs1_AI;
+        $gameType = Game::$GAME_TYPE_1VS1;
+        $user = $player->user;
+        $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
+        $qmQueueEntry = $this->quickMatchService->createQueueEntry($player, $qmPlayer, $history);
+
+        if ($userPlayerTier == LeagueHelper::$CONTENDERS_LEAGUE || LeaguePlayer::playerCanPlayBothTiers($user, $ladder))
+        {
+            # We're in the queue for normal 1vs1 matchups
+            # However if we reach a certain amount of time, switch to AI matchup
+
+            $now = Carbon::now();
+            $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
+            Log::info("Time Since Queued $timeSinceQueuedSeconds");
+
+            if ($timeSinceQueuedSeconds > 10)
+            {
+                $qmQueueEntry->delete();
+                $qmQueueEntry = $this->quickMatchService->createQueueEntry($player, $qmPlayer, $history);
+                $gameType = Game::$GAME_TYPE_1VS1_AI;
+            }
+        }
 
         # Match against AI only
-        if ($type == QmMatch::$TYPE_QM_1vs1_AI)
+        if ($gameType == Game::$GAME_TYPE_1VS1_AI)
         {
             Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1 AI");
 
-            $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
             $maps = $history->ladder->mapPool->maps;
-            $qEntry = $this->quickMatchService->createQueueEntry($player, $qmPlayer, $history);
-            $qmMatch = $this->quickMatchService->createQmMatch($qmPlayer, $userPlayerTier, $maps, $qmOpponents = [], $qEntry);
+            $qmMatch = $this->quickMatchService->createQmMatch(
+                $qmPlayer,
+                $userPlayerTier,
+                $maps,
+                $qmOpponents = [],
+                $qmQueueEntry,
+                $gameType
+            );
 
             $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
             $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct);
@@ -365,10 +392,8 @@ class ApiQuickMatchController extends Controller
             if ($qmPlayer->qm_match_id === null)
             {
                 # No match found yet
-                $qEntry = $this->quickMatchService->createQueueEntry($player, $qmPlayer, $history);
-
                 # Push a job to find an opponent
-                $this->dispatch(new FindOpponent($qEntry->id));
+                $this->dispatch(new FindOpponent($qmQueueEntry->id, $gameType));
 
                 $qmPlayer->touch();
 
@@ -396,7 +421,7 @@ class ApiQuickMatchController extends Controller
                 return $this->onCheckback($alert);
             }
 
-            if ($type == QmMatch::$TYPE_QM_Coop_AI)
+            if ($gameType == Game::$GAME_TYPE_2VS2_AI)
             {
                 Log::info("ApiQuickMatchController ** onMatchMeUp - 2vs2 AI Coop");
 

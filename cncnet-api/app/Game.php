@@ -23,7 +23,8 @@ class Game extends Model
         'unit',
         'plrs',
         'scen',
-        'hash'
+        'hash',
+        'game_type'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -40,6 +41,10 @@ class Game extends Model
         'scen',
         'hash'
     ];
+
+    public static $GAME_TYPE_1VS1 = 0;
+    public static $GAME_TYPE_1VS1_AI = 1;
+    public static $GAME_TYPE_2VS2_AI = 2;
 
     public function map()
     {
@@ -66,7 +71,7 @@ class Game extends Model
         return $this->belongsTo('App\LadderHistory');
     }
 
-    public static function genQmEntry(QmMatch $qmMatch)
+    public static function genQmEntry(QmMatch $qmMatch, $gameType)
     {
         $game = new Game;
         $game->ladder_history_id = $qmMatch->ladder->currentHistory()->id;
@@ -76,6 +81,7 @@ class Game extends Model
         }
         $game->hash = $qmMatch->map->hash;
         $game->game_report_id = null;
+        $game->game_type = $gameType;
         $game->save();
         return $game;
     }

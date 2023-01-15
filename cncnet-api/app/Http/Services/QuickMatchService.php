@@ -2,18 +2,11 @@
 
 namespace App\Http\Services;
 
-use App\Commands\FindOpponent;
 use App\Game;
-use App\Ladder;
-use App\LadderHistory;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+
 
 class QuickMatchService
 {
@@ -169,7 +162,7 @@ class QuickMatchService
         return $qEntry;
     }
 
-    public function createQmMatch($qmPlayer, $userPlayerTier, $commonQMMaps, $qmOpns, $qEntry)
+    public function createQmMatch($qmPlayer, $userPlayerTier, $commonQMMaps, $qmOpns, $qEntry, $gameType)
     {
         $randomMapIndex = mt_rand(0, count($commonQMMaps) - 1);
 
@@ -181,7 +174,7 @@ class QuickMatchService
         $qmMatch->tier = $userPlayerTier;
 
         # Create the Game
-        $game = Game::genQmEntry($qmMatch);
+        $game = Game::genQmEntry($qmMatch, $gameType);
         $qmMatch->game_id = $game->id;
         $qmMatch->save();
 

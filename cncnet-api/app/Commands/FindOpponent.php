@@ -4,12 +4,10 @@ namespace App\Commands;
 
 use App\Commands\Command;
 use App\Http\Services\QuickMatchService;
-use App\Http\Services\UserRatingService;
 use App\LeaguePlayer;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use App\QmQueueEntry;
-use App\UserRating;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 
@@ -18,6 +16,7 @@ class FindOpponent extends Command implements ShouldQueue
     use InteractsWithQueue, SerializesModels;
 
     public $qEntryId = null;
+    public $gameType = null;
     private $quickMatchService;
 
     /**
@@ -25,9 +24,10 @@ class FindOpponent extends Command implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($id)
+    public function __construct($id, $gameType)
     {
         $this->qEntryId = $id;
+        $this->gameType = $gameType;
         $this->quickMatchService = new QuickMatchService();
     }
 
@@ -148,12 +148,12 @@ class FindOpponent extends Command implements ShouldQueue
                 # Check both as either player could be tier 1
                 if ($oppUserPlayerTier == 1)
                 {
-                    $canMatch = $this->checkPlayerCanPlayBothTiers($oppUser, $ladder);
+                    $canMatch = LeaguePlayer::playerCanPlayBothTiers($oppUser, $ladder);
                 }
 
                 if ($canMatch == false && $userPlayerTier == 1)
                 {
-                    $canMatch = $this->checkPlayerCanPlayBothTiers($user, $ladder);
+                    $canMatch = LeaguePlayer::playerCanPlayBothTiers($user, $ladder);
                 }
 
                 if ($canMatch == false)
@@ -297,7 +297,7 @@ class FindOpponent extends Command implements ShouldQueue
 
                 foreach ($recentMaps as $recentMap)
                 {
-                    $commonQMMaps = removeMap($recentMap, $commonQMMaps);
+                    $commonQMMaps = $this->removeMap($recentMap, $commonQMMaps);
                 }
 
                 foreach ($qmOpns as $qOpn)
@@ -324,7 +324,7 @@ class FindOpponent extends Command implements ShouldQueue
 
                     foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
                     {
-                        $commonQMMaps = removeMap($recentMap, $commonQMMaps);
+                        $commonQMMaps = $this->removeMap($recentMap, $commonQMMaps);
                     }
                 }
             }
@@ -342,40 +342,28 @@ class FindOpponent extends Command implements ShouldQueue
                 $userPlayerTier,
                 $commonQMMaps,
                 $qmOpns,
-                $qEntry
+                $qEntry,
+                $this->gameType
             );
         }
     }
 
-    private function checkPlayerCanPlayBothTiers($user, $ladder)
+    /**
+     * Remove this 'Map' from this array of 'QmMaps'.
+     * The function will loop through the array of common_qm_maps and check if equal to the $recentmMap
+     */
+    private function removeMap($recentMap, $common_qm_maps)
     {
-        $canPlayBoth = false;
+        $new_common_qm_maps = [];
 
-        $leaguePlayer = LeaguePlayer::where("user_id", $user->id)->where("ladder_id", $ladder->id)->first();
-        if ($leaguePlayer && $leaguePlayer->getCanPlayBothTiers() === true)
+        foreach ($common_qm_maps as $common_qm_map)
         {
-            $canPlayBoth = true;
+            if ($common_qm_map->map->id != $recentMap->id)
+            {
+                $new_common_qm_maps[] = $common_qm_map;
+            }
         }
 
-        return $canPlayBoth;
+        return $new_common_qm_maps;
     }
-}
-
-/**
- * Remove this 'Map' from this array of 'QmMaps'.
- * The function will loop through the array of common_qm_maps and check if equal to the $recentmMap
- */
-function removeMap($recentMap, $common_qm_maps)
-{
-    $new_common_qm_maps = [];
-
-    foreach ($common_qm_maps as $common_qm_map)
-    {
-        if ($common_qm_map->map->id != $recentMap->id)
-        {
-            $new_common_qm_maps[] = $common_qm_map;
-        }
-    }
-
-    return $new_common_qm_maps;
 }

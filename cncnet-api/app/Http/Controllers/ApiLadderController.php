@@ -7,7 +7,6 @@ use \App\Http\Services\LadderService;
 use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
-use \App\Http\Services\AuthService;
 use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -27,7 +26,6 @@ class ApiLadderController extends Controller
         $this->ladderService = new LadderService();
         $this->gameService = new GameService();
         $this->playerService = new PlayerService();
-        $this->authService = new AuthService();
         $this->adminService = new AdminService();
     }
 
@@ -41,17 +39,23 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
+    # http://staging-ladder.cncnet.org/api/v1/result/ladder/5/game/646147/player/165961/pings/40/40
+    public function testPostLadder(Request $request)
+    {
+        return $this->newPostLadder($request, $ladderId = 5, $gameId = 646147, $playerId = 165961, $ping = 40, $pingR = 40);
+    }
+
     public function newPostLadder(Request $request, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
     {
         $ladder = App\Ladder::find($ladderId);
         $player = App\Player::find($playerId);
 
         // Player checks
-        $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
-        if ($check !== null)
-        {
-            return $check;
-        }
+        // $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
+        // if ($check !== null)
+        // {
+        //     return $check;
+        // }
 
         $filePath = config('filesystems')['dmp'];
         $fileName = $gameId . '.' . $ladderId . '.' . $playerId . '.dmp';
@@ -68,7 +72,7 @@ class ApiLadderController extends Controller
         $player = App\Player::find($playerId);
         $game = App\Game::find($gameId);
 
-        // Game stats result
+        # Game stats result
         $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder);
 
         if (count($result) == 0 || $result == null)
@@ -78,29 +82,29 @@ class ApiLadderController extends Controller
 
         $history = $game->ladderHistory;
 
-        // Keep a record of the raw stats sent in
+        # Keep a record of the raw stats sent in
         $this->gameService->saveRawStats($result, $game->id, $history->id);
-
         $this->gameService->fillGameCols($game, $result);
 
-        // Now save the processed stats
+        # Now save the processed stats
         $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
         $gameReport = $result['gameReport'];
         if ($gameReport === null)
         {
             return response()->json(['Error' => $result['error']], 400);
         }
+
         $gameReport->pings_sent = $pingSent;
         $gameReport->pings_received = $pingReceived;
         $gameReport->save();
 
-        // Award points
+        # Award points
         $status = $this->awardPoints($gameReport, $history);
 
-        // Dispute handling
+        # Dispute handling
         $this->handleGameDispute($gameReport);
 
-        // Achievements
+        # Achievements
         $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
 
         if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
