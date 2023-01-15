@@ -125,7 +125,7 @@ class QuickMatchService
         return $alert;
     }
 
-    public function createQueueEntry($player, $qmPlayer, $history)
+    public function createOrUpdateQueueEntry($player, $qmPlayer, $history, $gameType)
     {
         $pc = $player->playerCache($history->id);
         $points = 0;
@@ -142,6 +142,7 @@ class QuickMatchService
             $qEntry->ladder_history_id = $history->id;
             $qEntry->rating = $player->rating->rating;
             $qEntry->points = $points;
+            $qEntry->game_type = $gameType;
             $qEntry->save();
         }
         else
@@ -155,6 +156,7 @@ class QuickMatchService
                 $qEntry->ladder_history_id = $history->id;
                 $qEntry->rating = $player->rating->rating;
                 $qEntry->points = $points;
+                $qEntry->game_type = $gameType;
                 $qEntry->save();
             }
         }

@@ -1,10 +1,13 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QmQueueEntry extends Model {
+class QmQueueEntry extends Model
+{
 
-	//
+    //
 
     public function qmPlayer()
     {

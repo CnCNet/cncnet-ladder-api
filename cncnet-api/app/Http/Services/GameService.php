@@ -2,6 +2,10 @@
 
 namespace App\Http\Services;
 
+use App\Game;
+use App\GameReport;
+use App\Player;
+use App\PlayerGameReport;
 use Illuminate\Support\Facades\Log;
 
 class GameService
@@ -17,9 +21,9 @@ class GameService
 
     public function saveGameStats($result, $gameId, $playerId, $ladder, $cncnetGame)
     {
-        $game = \App\Game::where("id", "=", $gameId)->first();
-
-        $player = \App\Player::where("id", "=", $playerId)->first();
+        $game = Game::where("id", "=", $gameId)->first();
+        $player = Player::where("id", "=", $playerId)->first();
+        $gameType = $game->gameType();
 
         if ($player == null)
         {
@@ -28,7 +32,7 @@ class GameService
 
         $reporter = null;
 
-        $gameReport = new \App\GameReport;
+        $gameReport = new GameReport;
         $gameReport->game_id = $game->id;
         $gameReport->player_id = $playerId;
         $gameReport->best_report = false;
@@ -61,15 +65,27 @@ class GameService
                 $playerGameReports[$id]->game_id = $game->id;
                 $playerGameReports[$id]->game_report_id = $gameReport->id;
 
-                $playerHere = \App\Player::where('ladder_id', $ladder->id)->where('username', $value["value"])->first();
+                if ($gameType === Game::GAME_TYPE_1VS1_AI)
+                {
+                    # Stats won't write player names with just playing against AI
+                    $playerHere = $player;
+                }
+                else
+                {
+                    $playerHere = \App\Player::where('ladder_id', $ladder->id)->where('username', $value["value"])->first();
+                }
 
                 if ($playerHere === null)
+                {
                     return [
                         'error' => 'playerHere is null for username ' . json_decode($value["value"]), 'gameReport' => null
                     ];
+                }
 
                 if ($playerHere->id == $playerId)
+                {
                     $reporter = $playerGameReports[$id];
+                }
 
                 $playerGameReports[$id]->player_id = $playerHere->id;
                 $playerGameReports[$id]->save();
@@ -79,6 +95,19 @@ class GameService
                 $playerStats[$id]->save();
                 $playerGameReports[$id]->stats_id = $playerStats[$id]->id;
             }
+        }
+
+        # Create fake AI profile game report
+        # TODO: Use Player Bot accounts
+        if ($gameType == Game::GAME_TYPE_1VS1_AI)
+        {
+            $aiPlayer = Player::find(73);
+
+            $aiPlayerReport = new PlayerGameReport();
+            $aiPlayerReport->game_id = $game->id;
+            $aiPlayerReport->game_report_id = $gameReport->id;
+            $aiPlayerReport->player_id = $aiPlayer->id;
+            $aiPlayerReport->save();
         }
 
         // Save Game Specific Stats like buildings bought, destroyed etc

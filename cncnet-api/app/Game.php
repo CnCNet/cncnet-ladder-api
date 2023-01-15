@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Game extends Model
 {
+    const GAME_TYPE_1VS1 = 0;
+    const GAME_TYPE_1VS1_AI = 1;
+    const GAME_TYPE_2VS2_AI = 2;
+
     protected $table = 'games';
 
     protected $fillable =
@@ -41,10 +45,6 @@ class Game extends Model
         'scen',
         'hash'
     ];
-
-    public static $GAME_TYPE_1VS1 = 0;
-    public static $GAME_TYPE_1VS1_AI = 1;
-    public static $GAME_TYPE_2VS2_AI = 2;
 
     public function map()
     {
@@ -84,6 +84,11 @@ class Game extends Model
         $game->game_type = $gameType;
         $game->save();
         return $game;
+    }
+
+    public function gameType()
+    {
+        return $this->game_type;
     }
 
     public function qmMatch()

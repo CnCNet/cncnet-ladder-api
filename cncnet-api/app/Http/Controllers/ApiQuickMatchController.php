@@ -13,6 +13,7 @@ use \Carbon\Carbon;
 use DB;
 use \App\Commands\FindOpponent;
 use App\Game;
+use App\Helpers\AIHelper;
 use App\PlayerRating;
 use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
@@ -347,34 +348,42 @@ class ApiQuickMatchController extends Controller
         $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
 
         # Match type
-        $gameType = Game::$GAME_TYPE_1VS1;
         $user = $player->user;
         $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
-        $qmQueueEntry = $this->quickMatchService->createQueueEntry($player, $qmPlayer, $history);
+        $gameType = Game::GAME_TYPE_1VS1;
 
-        if ($userPlayerTier == LeagueHelper::$CONTENDERS_LEAGUE || LeaguePlayer::playerCanPlayBothTiers($user, $ladder))
+        if ($qmPlayer->qEntry !== null)
         {
-            # We're in the queue for normal 1vs1 matchups
+            $gameType = $qmPlayer->qEntry->game_type;
+        }
+
+        $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $history, $gameType);
+
+        if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE || LeaguePlayer::playerCanPlayBothTiers($user, $ladder))
+        {
+            # We're in the queue for normal player matchups
             # However if we reach a certain amount of time, switch to AI matchup
 
             $now = Carbon::now();
             $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
-            Log::info("Time Since Queued $timeSinceQueuedSeconds");
 
-            if ($timeSinceQueuedSeconds > 10)
+            Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds");
+
+            if ($timeSinceQueuedSeconds > 5)
             {
+                # Stop other player matchup queue
                 $qmQueueEntry->delete();
-                $qmQueueEntry = $this->quickMatchService->createQueueEntry($player, $qmPlayer, $history);
-                $gameType = Game::$GAME_TYPE_1VS1_AI;
+                $gameType = Game::GAME_TYPE_1VS1_AI;
             }
         }
 
         # Match against AI only
-        if ($gameType == Game::$GAME_TYPE_1VS1_AI)
+        if ($gameType == Game::GAME_TYPE_1VS1_AI)
         {
             Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1 AI");
 
             $maps = $history->ladder->mapPool->maps;
+            $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $history, $gameType);
             $qmMatch = $this->quickMatchService->createQmMatch(
                 $qmPlayer,
                 $userPlayerTier,
@@ -385,7 +394,7 @@ class ApiQuickMatchController extends Controller
             );
 
             $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
-            $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct);
+            $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
         }
         else
         {
@@ -421,12 +430,12 @@ class ApiQuickMatchController extends Controller
                 return $this->onCheckback($alert);
             }
 
-            if ($gameType == Game::$GAME_TYPE_2VS2_AI)
+            if ($gameType == Game::GAME_TYPE_2VS2_AI)
             {
                 Log::info("ApiQuickMatchController ** onMatchMeUp - 2vs2 AI Coop");
 
                 # Prepend quick-coop AI ini file
-                $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct);
+                $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
             }
             else
             {
@@ -447,7 +456,7 @@ class ApiQuickMatchController extends Controller
         return $spawnStruct;
     }
 
-    public function onQuit($qmPlayer)
+    private function onQuit($qmPlayer)
     {
         if ($qmPlayer != null)
         {
@@ -467,7 +476,7 @@ class ApiQuickMatchController extends Controller
         ];
     }
 
-    public function onUpdate($status, $player, $seed, $peers)
+    private function onUpdate($status, $player, $seed, $peers)
     {
         if ($seed)
         {

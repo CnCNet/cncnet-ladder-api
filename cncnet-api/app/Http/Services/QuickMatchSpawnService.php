@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Helpers\AIHelper;
 use App\SpawnOptionType;
 use Illuminate\Support\Facades\Log;
 
@@ -151,12 +152,22 @@ class QuickMatchSpawnService
      * @param mixed $spawnStruct 
      * @return mixed 
      */
-    public static function addQuickMatchCoopAISpawnIni($spawnStruct)
+    public static function addQuickMatchCoopAISpawnIni($spawnStruct, $difficulty)
     {
         Log::info("QuickMatchSpawnService ** addQuickMatchCoopAISpawnIni");
 
         $spawnStruct["spawn"]["Settings"]["AIPlayers"] = 2;
         $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Game Options/QuickMatchCoopAI.ini"];
+
+        # TODO: SpawnMap modificiations for different difficulty AI
+        switch ($difficulty)
+        {
+            case AIHelper::BRUTAL_AI:
+                break;
+
+            default:
+        }
+
         return $spawnStruct;
     }
 
@@ -165,12 +176,22 @@ class QuickMatchSpawnService
      * @param mixed $spawnStruct 
      * @return void 
      */
-    public static function addQuickMatchAISpawnIni($spawnStruct)
+    public static function addQuickMatchAISpawnIni($spawnStruct, $difficulty)
     {
         Log::info("QuickMatchSpawnService ** addQuickMatchAISpawnIni");
 
         $spawnStruct["spawn"]["Settings"]["AIPlayers"] = 1;
         $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Game Options/QuickMatchAI.ini"];
+
+        # TODO: SpawnMap modificiations for different difficulty AI
+        switch ($difficulty)
+        {
+            case AIHelper::BRUTAL_AI:
+                break;
+
+            default:
+        }
+
         return $spawnStruct;
     }
 }
