@@ -22,7 +22,10 @@ use App\Http\Services\QuickMatchService;
 use App\Http\Services\QuickMatchSpawnService;
 use App\QmMatch;
 use App\QmMatchPlayer;
+use BadMethodCallException;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
+use MaxMind\Db\Reader\InvalidDatabaseException;
 
 class ApiQuickMatchController extends Controller
 {
@@ -283,10 +286,10 @@ class ApiQuickMatchController extends Controller
         switch ($request->type)
         {
             case "quit":
-                return $this->quickMatchService->onQuit($qmPlayer);
+                return $this->onQuit($qmPlayer);
 
             case "update":
-                return $this->quickMatchService->onUpdate(
+                return $this->onUpdate(
                     $request->status,
                     $player,
                     $request->seed,
@@ -294,82 +297,208 @@ class ApiQuickMatchController extends Controller
                 );
 
             case "match me up":
-                $ladderRules = $ladder->qmLadderRules()->first();
-                $history = $ladder->currentHistory();
-                $alert = "";
-
-                /**
-                 * This matchup system is restful, a player will have to check in to see if there is a matchup waitin.
-                 * If there is already a matchup then all these top level ifs will fall through and the game info will be sent.
-                 * Else we'll try to set up a match.
-                 */
-
-                if ($qmPlayer == null)
-                {
-                    $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $history, $ladder, $ladderRules);
-
-                    $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladderRules);
-                    if (!$validSides)
-                    {
-                        $error = "Side ({$request->side}) is not allowed";
-                        return $this->onMatchError($error);
-                    }
-                }
-
-                # Important check, sent from qm client
-                if ($request->ai_dat)
-                {
-                    $qmPlayer->ai_dat = $request->ai_dat;
-                }
-
-                $qmPlayer->save();
-
-                # Check for qm alerts 
-                $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
-
-                # Create request to matchup
-                Log::info("Before creating request");
-
-                if ($qmPlayer->qm_match_id === null)
-                {
-                    $qEntry = $this->quickMatchService->createMatchupRequest($player, $qmPlayer, $history);
-
-                    # Push a job to find an opponent
-                    $this->dispatch(new FindOpponent($qEntry->id));
-
-                    Log::info("Dispatched Find opponent $qEntry");
-
-                    $qmPlayer->touch();
-                    return $this->onCheckback($alert);
-                }
-
-                Log::info("Ready to spawn players");
-
-                $qmPlayer->waiting = false;
-                $qmMatch = QmMatch::find($qmPlayer->qm_match_id);
-
-                # Creates the initial spawn.ini to send to client
-                $spawnStruct = $this->quickMatchSpawnService->createInitialSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
-
-                # Check we have all players before writing them to spawn.ini
-                $playersReady = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
-                if (count($playersReady) == 0)
-                {
-                    $qmPlayer->waiting = false;
-                    $qmPlayer->save();
-
-                    return $this->onCheckback($alert);
-                }
-
-                # Write the spawn.ini "Others" sections
-                $spawnStruct = $this->quickMatchSpawnService->createOthersSpawnSection($spawnStruct, $qmPlayer, $playersReady);
-
-                # Return final spawn.ini to client
-                return $spawnStruct;
+                return $this->onMatchMeUp($request, $ladder, $player, $qmPlayer);
             default:
                 return array("type" => "error", "description" => "unknown type: {$request->type}");
                 break;
         }
+    }
+
+
+    /**
+     * This matchup system is restful, a player will have to check in to see if there is a matchup waitin.
+     * If there is already a matchup then all these top level ifs will fall through and the game info will be sent.
+     * Else we'll try to set up a match.
+     * 
+     * @param mixed $request 
+     * @param mixed $ladder 
+     * @param mixed $player 
+     * @param mixed $qmPlayer 
+     * @return mixed $spawnstruct (spawn.ini info for client)
+     */
+    private function onMatchMeUp($request, $ladder, $player, $qmPlayer)
+    {
+        $ladderRules = $ladder->qmLadderRules()->first();
+        $history = $ladder->currentHistory();
+
+        if ($qmPlayer == null)
+        {
+            $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $history, $ladder, $ladderRules);
+            $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladderRules);
+
+            if (!$validSides)
+            {
+                $error = "Side ({$request->side}) is not allowed";
+                return $this->onMatchError($error);
+            }
+        }
+
+        # Important check, sent from qm client
+        if ($request->ai_dat)
+        {
+            $qmPlayer->ai_dat = $request->ai_dat;
+        }
+
+        $qmPlayer->save();
+
+        # Check for qm alerts 
+        $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
+
+        # Match type
+        $type = QmMatch::$TYPE_QM_1vs1_AI;
+
+        # Match against AI only
+        if ($type == QmMatch::$TYPE_QM_1vs1_AI)
+        {
+            Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1 AI");
+
+            $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
+            $maps = $history->ladder->mapPool->maps;
+            $qEntry = $this->quickMatchService->createQueueEntry($player, $qmPlayer, $history);
+            $qmMatch = $this->quickMatchService->createQmMatch($qmPlayer, $userPlayerTier, $maps, $qmOpponents = [], $qEntry);
+
+            $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
+            $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct);
+        }
+        else
+        {
+            if ($qmPlayer->qm_match_id === null)
+            {
+                # No match found yet
+                $qEntry = $this->quickMatchService->createQueueEntry($player, $qmPlayer, $history);
+
+                # Push a job to find an opponent
+                $this->dispatch(new FindOpponent($qEntry->id));
+
+                $qmPlayer->touch();
+
+                return $this->onCheckback($alert);
+            }
+
+            # If we're at this point, a match has been found
+            $qmMatch = QmMatch::find($qmPlayer->qm_match_id);
+
+            # Creates the initial spawn.ini to send to client
+            $spawnStruct = QuickMatchSpawnService::createSpawnStruct(
+                $qmMatch,
+                $qmPlayer,
+                $ladder,
+                $ladderRules
+            );
+
+            # Check we have all players ready before writing them to spawn.ini
+            $playersReady = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
+            if (count($playersReady) == 0)
+            {
+                $qmPlayer->waiting = false;
+                $qmPlayer->save();
+
+                return $this->onCheckback($alert);
+            }
+
+            if ($type == QmMatch::$TYPE_QM_Coop_AI)
+            {
+                Log::info("ApiQuickMatchController ** onMatchMeUp - 2vs2 AI Coop");
+
+                # Prepend quick-coop AI ini file
+                $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct);
+            }
+            else
+            {
+                Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1");
+            }
+
+            # Write the spawn.ini "Others" sections
+            $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni(
+                $spawnStruct,
+                $qmPlayer,
+                $playersReady
+            );
+
+            $qmPlayer->waiting = false;
+            $qmPlayer->save();
+        }
+
+        return $spawnStruct;
+    }
+
+    public function onQuit($qmPlayer)
+    {
+        if ($qmPlayer != null)
+        {
+            if ($qmPlayer->qm_match_id !== null)
+            {
+                $qmPlayer->qmMatch->save();
+            }
+            if ($qmPlayer->qEntry !== null)
+            {
+                $qmPlayer->qEntry->delete();
+            }
+
+            $qmPlayer->delete();
+        }
+        return [
+            "type" => "quit"
+        ];
+    }
+
+    public function onUpdate($status, $player, $seed, $peers)
+    {
+        if ($seed)
+        {
+            $qmMatch = \App\QmMatch::where('seed', '=', $seed)
+                ->join('qm_match_players', 'qm_match_id', '=', 'qm_matches.id')
+                ->where('qm_match_players.player_id', '=', $player->id)
+                ->select('qm_matches.*')
+                ->first();
+
+            if ($qmMatch !== null)
+            {
+                switch ($status)
+                {
+                    case 'touch':
+                        $qmMatch->touch();
+                        break;
+
+                    default:
+                        $qmState = new \App\QmMatchState;
+                        $qmState->player_id = $player->id;
+                        $qmState->qm_match_id = $qmMatch->id;
+                        $qmState->state_type_id = \App\StateType::findByName($status)->id;
+                        $qmState->save();
+
+                        if ($qmState->state_type_id === 7) //match not ready
+                        {
+                            $canceledMatch = new \App\QmCanceledMatch;
+                            $canceledMatch->qm_match_id = $qmMatch->id;
+                            $canceledMatch->player_id = $player->id;
+                            $canceledMatch->ladder_id = $qmMatch->ladder_id;
+                            $canceledMatch->save();
+                        }
+
+                        if ($peers !== null)
+                        {
+                            foreach ($peers as $peer)
+                            {
+                                $con = new \App\QmConnectionStats;
+                                $con->qm_match_id = $qmMatch->id;
+                                $con->player_id = $player->id;
+                                $con->peer_id = $peer['id'];
+                                $con->ip_address_id = \App\IpAddress::getID($peer['address']);
+                                $con->port = $peer['port'];
+                                $con->rtt = $peer['rtt'];
+                                $con->save();
+                            }
+                        }
+                        break;
+                }
+
+                $qmMatch->save();
+
+                return ["message"  => "update qm match: " . $status];
+            }
+        }
+        return ["type" => "update"];
     }
 
     private function onMatchFailError($error)
@@ -494,12 +623,4 @@ function b_to_ini($bool)
     if ($bool === null) return $bool;
     if ($bool == -1) return rand(0, 1) ? "Yes" : "No"; // Pray the seed was set earlier or this will cause recons
     return $bool ? "Yes" : "No";
-}
-
-function checkback($alert)
-{
-    if ($alert)
-        return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5, 'warning' => $alert);
-    else
-        return array("type" => "please wait", "checkback" => 10, "no_sooner_than" => 5);
 }

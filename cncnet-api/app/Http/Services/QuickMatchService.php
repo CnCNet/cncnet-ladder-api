@@ -6,94 +6,17 @@ use App\Commands\FindOpponent;
 use App\Game;
 use App\Ladder;
 use App\LadderHistory;
+use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class QuickMatchService
 {
-    public function onQuit($qmPlayer)
-    {
-        if ($qmPlayer != null)
-        {
-            if ($qmPlayer->qm_match_id !== null)
-            {
-                $qmPlayer->qmMatch->save();
-            }
-            if ($qmPlayer->qEntry !== null)
-            {
-                $qmPlayer->qEntry->delete();
-            }
-
-            $qmPlayer->delete();
-        }
-        return [
-            "type" => "quit"
-        ];
-    }
-
-    public function onUpdate($status, $player, $seed, $peers)
-    {
-        if ($seed)
-        {
-            $qmMatch = \App\QmMatch::where('seed', '=', $seed)
-                ->join('qm_match_players', 'qm_match_id', '=', 'qm_matches.id')
-                ->where('qm_match_players.player_id', '=', $player->id)
-                ->select('qm_matches.*')
-                ->first();
-
-            if ($qmMatch !== null)
-            {
-                switch ($status)
-                {
-                    case 'touch':
-                        $qmMatch->touch();
-                        break;
-
-                    default:
-                        $qmState = new \App\QmMatchState;
-                        $qmState->player_id = $player->id;
-                        $qmState->qm_match_id = $qmMatch->id;
-                        $qmState->state_type_id = \App\StateType::findByName($status)->id;
-                        $qmState->save();
-
-                        if ($qmState->state_type_id === 7) //match not ready
-                        {
-                            $canceledMatch = new \App\QmCanceledMatch;
-                            $canceledMatch->qm_match_id = $qmMatch->id;
-                            $canceledMatch->player_id = $player->id;
-                            $canceledMatch->ladder_id = $qmMatch->ladder_id;
-                            $canceledMatch->save();
-                        }
-
-                        if ($peers !== null)
-                        {
-                            foreach ($peers as $peer)
-                            {
-                                $con = new \App\QmConnectionStats;
-                                $con->qm_match_id = $qmMatch->id;
-                                $con->player_id = $player->id;
-                                $con->peer_id = $peer['id'];
-                                $con->ip_address_id = \App\IpAddress::getID($peer['address']);
-                                $con->port = $peer['port'];
-                                $con->rtt = $peer['rtt'];
-                                $con->save();
-                            }
-                        }
-                        break;
-                }
-
-                $qmMatch->save();
-
-                return ["message"  => "update qm match: " . $status];
-            }
-        }
-        return ["type" => "update"];
-    }
-
     public function createQMPlayer($request, $player, $history, $ladder, $ladderRules)
     {
         $qmPlayer = new QmMatchPlayer();
@@ -209,15 +132,26 @@ class QuickMatchService
         return $alert;
     }
 
-    public function createMatchupRequest($player, $qmPlayer, $history)
+    public function createQueueEntry($player, $qmPlayer, $history)
     {
         $pc = $player->playerCache($history->id);
         $points = 0;
 
         if ($pc !== null)
+        {
             $points = $pc->points;
+        }
 
-        if ($qmPlayer->qEntry !== null)
+        if ($qmPlayer->qEntry == null)
+        {
+            $qEntry = new QmQueueEntry;
+            $qEntry->qm_match_player_id = $qmPlayer->id;
+            $qEntry->ladder_history_id = $history->id;
+            $qEntry->rating = $player->rating->rating;
+            $qEntry->points = $points;
+            $qEntry->save();
+        }
+        else
         {
             $qEntry = $qmPlayer->qEntry;
             $qEntry->touch();
@@ -231,16 +165,97 @@ class QuickMatchService
                 $qEntry->save();
             }
         }
-        else
-        {
-            $qEntry = new QmQueueEntry;
-            $qEntry->qm_match_player_id = $qmPlayer->id;
-            $qEntry->ladder_history_id = $history->id;
-            $qEntry->rating = $player->rating->rating;
-            $qEntry->points = $points;
-            $qEntry->save();
-        }
 
         return $qEntry;
+    }
+
+    public function createQmMatch($qmPlayer, $userPlayerTier, $commonQMMaps, $qmOpns, $qEntry)
+    {
+        $randomMapIndex = mt_rand(0, count($commonQMMaps) - 1);
+
+        # Create the qm_matches db entry
+        $qmMatch = new QmMatch();
+        $qmMatch->ladder_id = $qmPlayer->ladder_id;
+        $qmMatch->qm_map_id = $commonQMMaps[$randomMapIndex]->id;
+        $qmMatch->seed = mt_rand(-2147483647, 2147483647);
+        $qmMatch->tier = $userPlayerTier;
+
+        # Create the Game
+        $game = Game::genQmEntry($qmMatch);
+        $qmMatch->game_id = $game->id;
+        $qmMatch->save();
+
+        $game->qm_match_id = $qmMatch->id;
+        $game->save();
+
+        $qmMap = $qmMatch->map;
+        $spawn_order = explode(',', $qmMap->spawn_order);
+
+        # Set up player specific information
+        # Color will be used for spawn location
+        $qmPlayer->color = 0;
+        $qmPlayer->location = $spawn_order[$qmPlayer->color] - 1;
+        $qmPlayer->qm_match_id = $qmMatch->id;
+        $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
+
+        $psides = explode(',', $qmPlayer->mapSides->value);
+
+        if (count($psides) > $qmMap->bit_idx)
+        {
+            $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
+        }
+
+        if ($qmPlayer->actual_side < -1)
+        {
+            $qmPlayer->actual_side = $qmPlayer->chosen_side;
+        }
+
+        $qmPlayer->save();
+
+        $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+        {
+            return $s >= 0;
+        }));
+
+        $color = 1;
+        foreach ($qmOpns as $qOpn)
+        {
+            $opn = $qOpn->qmPlayer;
+            $qOpn->delete();
+
+            if ($opn === null)
+            {
+                $qEntry->delete();
+                return;
+            }
+
+            $osides = explode(',', $opn->mapSides->value);
+
+            if (count($osides) > $qmMap->bit_idx)
+                $opn->actual_side = $osides[$qmMap->bit_idx];
+
+            if ($opn->actual_side  < -1)
+            {
+                $opn->actual_side = $opn->chosen_side;
+            }
+
+            if ($opn->actual_side == -1)
+            {
+                $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+            }
+            $opn->color = $color++;
+            $opn->location = $spawn_order[$opn->color] - 1;
+            $opn->qm_match_id = $qmMatch->id;
+            $opn->tunnel_id = $qmMatch->seed + $opn->color;
+            $opn->save();
+        }
+
+        if ($qmPlayer->actual_side == -1)
+        {
+            $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+        }
+        $qmPlayer->save();
+
+        return $qmMatch;
     }
 }

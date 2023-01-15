@@ -1,10 +1,17 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QmMatch extends Model {
+class QmMatch extends Model
+{
 
-	//
+    public static $TYPE_QM_1VS1 = "QuickMatch1vs1";
+    public static $TYPE_QM_1vs1_AI = "QuickMatch1vs1AI";
+    public static $TYPE_QM_Coop_AI = "QuickMatchCoop";
+
+    //
     public function players()
     {
         return $this->hasMany('App\QmMatchPlayer');

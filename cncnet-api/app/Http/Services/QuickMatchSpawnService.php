@@ -2,21 +2,23 @@
 
 namespace App\Http\Services;
 
-use App\Commands\FindOpponent;
-use App\Game;
-use App\Ladder;
-use App\LadderHistory;
-use App\QmQueueEntry;
 use App\SpawnOptionType;
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class QuickMatchSpawnService
 {
-    public function createInitialSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules)
+    /**
+     * Creates base spawn.ini for matchups
+     * @param mixed $qmMatch 
+     * @param mixed $qmPlayer 
+     * @param mixed $ladder 
+     * @param mixed $ladderRules 
+     * @return array 
+     */
+    public static function createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules)
     {
+        Log::info("QuickMatchSpawnService ** createSpawnStruct");
+
         $qmMap = $qmMatch->map;
         $map = $qmMap->map;
 
@@ -99,8 +101,17 @@ class QuickMatchSpawnService
         return $spawnStruct;
     }
 
-    public function createOthersSpawnSection($spawnStruct, $qmPlayer, $allPlayers)
+    /**
+     * Appends the "other" section of all players to the spawn.ini 
+     * @param mixed $spawnStruct 
+     * @param mixed $qmPlayer 
+     * @param mixed $allPlayers 
+     * @return mixed 
+     */
+    public static function appendOthersToSpawnIni($spawnStruct, $qmPlayer, $allPlayers)
     {
+        Log::info("QuickMatchSpawnService ** appendOthers");
+
         $other_idx = 1;
         $multi_idx = $qmPlayer->color + 1;
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
@@ -132,9 +143,34 @@ class QuickMatchSpawnService
             }
         }
 
-        $qmPlayer->waiting = false;
-        $qmPlayer->save();
+        return $spawnStruct;
+    }
 
+    /**
+     * Prepend quick-coop ini file to allow 2 real players vs 2 ai
+     * @param mixed $spawnStruct 
+     * @return mixed 
+     */
+    public static function addQuickMatchCoopAISpawnIni($spawnStruct)
+    {
+        Log::info("QuickMatchSpawnService ** addQuickMatchCoopAISpawnIni");
+
+        $spawnStruct["spawn"]["Settings"]["AIPlayers"] = 2;
+        $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Game Options/QuickMatchCoopAI.ini"];
+        return $spawnStruct;
+    }
+
+    /**
+     * Matchup against AI only, prepends AI house data
+     * @param mixed $spawnStruct 
+     * @return void 
+     */
+    public static function addQuickMatchAISpawnIni($spawnStruct)
+    {
+        Log::info("QuickMatchSpawnService ** addQuickMatchAISpawnIni");
+
+        $spawnStruct["spawn"]["Settings"]["AIPlayers"] = 1;
+        $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Game Options/QuickMatchAI.ini"];
         return $spawnStruct;
     }
 }

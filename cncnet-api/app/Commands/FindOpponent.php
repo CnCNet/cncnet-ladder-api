@@ -3,6 +3,7 @@
 namespace App\Commands;
 
 use App\Commands\Command;
+use App\Http\Services\QuickMatchService;
 use App\Http\Services\UserRatingService;
 use App\LeaguePlayer;
 use Illuminate\Queue\SerializesModels;
@@ -17,6 +18,7 @@ class FindOpponent extends Command implements ShouldQueue
     use InteractsWithQueue, SerializesModels;
 
     public $qEntryId = null;
+    private $quickMatchService;
 
     /**
      * Create a new command instance.
@@ -26,6 +28,7 @@ class FindOpponent extends Command implements ShouldQueue
     public function __construct($id)
     {
         $this->qEntryId = $id;
+        $this->quickMatchService = new QuickMatchService();
     }
 
     public function queue($queue, $arguments)
@@ -213,7 +216,7 @@ class FindOpponent extends Command implements ShouldQueue
             $qmOpns = $qmOpns->shuffle()->take($ladder_rules->player_count - 1);
 
             // Randomly select a map
-            $common_qm_maps = array();
+            $commonQMMaps = array();
             $qmMaps = $ladder->mapPool->maps;
 
             foreach ($qmMaps as $qmMap)
@@ -263,7 +266,7 @@ class FindOpponent extends Command implements ShouldQueue
 
                 if ($match)
                 {
-                    $common_qm_maps[] = $qmMap;
+                    $commonQMMaps[] = $qmMap;
                 }
             }
 
@@ -294,7 +297,7 @@ class FindOpponent extends Command implements ShouldQueue
 
                 foreach ($recentMaps as $recentMap)
                 {
-                    $common_qm_maps = removeMap($recentMap, $common_qm_maps);
+                    $commonQMMaps = removeMap($recentMap, $commonQMMaps);
                 }
 
                 foreach ($qmOpns as $qOpn)
@@ -321,12 +324,12 @@ class FindOpponent extends Command implements ShouldQueue
 
                     foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
                     {
-                        $common_qm_maps = removeMap($recentMap, $common_qm_maps);
+                        $commonQMMaps = removeMap($recentMap, $commonQMMaps);
                     }
                 }
             }
 
-            if (count($common_qm_maps) < 1)
+            if (count($commonQMMaps) < 1)
             {
                 Log::info("FindOpponent ** No common maps available");
 
@@ -334,88 +337,13 @@ class FindOpponent extends Command implements ShouldQueue
                 return;
             }
 
-            $randomMapIndex = mt_rand(0, count($common_qm_maps) - 1);
-
-            # Create the qm_matches db entry
-            $qmMatch = new \App\QmMatch();
-            $qmMatch->ladder_id = $qmPlayer->ladder_id;
-            $qmMatch->qm_map_id = $common_qm_maps[$randomMapIndex]->id;
-            $qmMatch->seed = mt_rand(-2147483647, 2147483647);
-            $qmMatch->tier = $userPlayerTier;
-
-            # Create the Game
-            $game = \App\Game::genQmEntry($qmMatch);
-            $qmMatch->game_id = $game->id;
-            $qmMatch->save();
-
-            $game->qm_match_id = $qmMatch->id;
-            $game->save();
-
-            $qmMap = $qmMatch->map;
-            $spawn_order = explode(',', $qmMap->spawn_order);
-
-            # Set up player specific information
-            # Color will be used for spawn location
-            $qmPlayer->color = 0;
-            $qmPlayer->location = $spawn_order[$qmPlayer->color] - 1;
-            $qmPlayer->qm_match_id = $qmMatch->id;
-            $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
-
-            $psides = explode(',', $qmPlayer->mapSides->value);
-
-            if (count($psides) > $qmMap->bit_idx)
-                $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
-
-            if ($qmPlayer->actual_side < -1)
-            {
-                $qmPlayer->actual_side = $qmPlayer->chosen_side;
-            }
-
-            $qmPlayer->save();
-
-            $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
-            {
-                return $s >= 0;
-            }));
-
-            $color = 1;
-            foreach ($qmOpns as $qOpn)
-            {
-                $opn = $qOpn->qmPlayer;
-                $qOpn->delete();
-
-                if ($opn === null)
-                {
-                    $qEntry->delete();
-                    return;
-                }
-
-                $osides = explode(',', $opn->mapSides->value);
-
-                if (count($osides) > $qmMap->bit_idx)
-                    $opn->actual_side = $osides[$qmMap->bit_idx];
-
-                if ($opn->actual_side  < -1)
-                {
-                    $opn->actual_side = $opn->chosen_side;
-                }
-
-                if ($opn->actual_side == -1)
-                {
-                    $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
-                }
-                $opn->color = $color++;
-                $opn->location = $spawn_order[$opn->color] - 1;
-                $opn->qm_match_id = $qmMatch->id;
-                $opn->tunnel_id = $qmMatch->seed + $opn->color;
-                $opn->save();
-            }
-
-            if ($qmPlayer->actual_side == -1)
-            {
-                $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
-            }
-            $qmPlayer->save();
+            $this->quickMatchService->createQmMatch(
+                $qmPlayer,
+                $userPlayerTier,
+                $commonQMMaps,
+                $qmOpns,
+                $qEntry
+            );
         }
     }
 
