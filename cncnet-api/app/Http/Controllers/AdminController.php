@@ -72,7 +72,7 @@ class AdminController extends Controller
 
         $washedGames = \App\GameAudit::where('game_audit.ladder_history_id', $ladderHistory->id)
             ->orderBy('game_audit.created_at', 'DESC')
-            ->paginate(50);
+            ->paginate(10);
 
         return view("admin.washed-games", [
             "washed_games" => $washedGames,
