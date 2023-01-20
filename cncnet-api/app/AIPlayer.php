@@ -44,6 +44,7 @@ class AIPlayer
             $player->username = $username;
             $player->user_id = $user->id;
             $player->ladder_id = $ladder->id;
+            $player->is_bot = true;
             $player->save();
 
             PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $user->id);
