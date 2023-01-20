@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\AIPlayer;
 use App\Game;
 use App\GameReport;
 use App\Player;
@@ -101,13 +102,17 @@ class GameService
         # TODO: Use Player Bot accounts
         if ($gameType == Game::GAME_TYPE_1VS1_AI)
         {
-            $aiPlayer = Player::find(73);
+            $aiPlayer = AIPlayer::getAIPlayer($ladder->currentHistory());
+            $humanPlayer =  $playerGameReports[0];
+            // Rely on what the human player says
 
             $aiPlayerReport = new PlayerGameReport();
             $aiPlayerReport->game_id = $game->id;
             $aiPlayerReport->game_report_id = $gameReport->id;
             $aiPlayerReport->player_id = $aiPlayer->id;
+            $aiPlayerReport->local_team_id = -1;
             $aiPlayerReport->save();
+            $playerGameReports[] = $aiPlayerReport;
         }
 
         // Save Game Specific Stats like buildings bought, destroyed etc
@@ -290,14 +295,36 @@ class GameService
             }
         }
 
+        $humanPlayers = [];
         foreach ($playerGameReports as $playerGR)
         {
+            if ($playerGR->player->is_bot == false)
+            {
+                $humanPlayers[] = $playerGR;
+            }
             $playerGR->save();
         }
 
         foreach ($playerStats as $pStats)
         {
             $pStats->save();
+        }
+
+        # After all stats done, if we have an AI, manually fill them.
+        foreach ($playerGameReports as $pgr)
+        {
+            if ($pgr->player->is_bot == true)
+            {
+                $humanPlayer = $humanPlayers[0];
+                $humanWon = $humanPlayer->won;
+
+                $pgr->won = $humanWon ? false : true;
+                $pgr->defeated = $humanWon ? true : false;
+                $pgr->draw = 0;
+                $pgr->disconnected = 0;
+                $pgr->quit = 0;
+                $pgr->save();
+            }
         }
 
         $reporter->save();

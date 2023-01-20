@@ -359,23 +359,23 @@ class ApiQuickMatchController extends Controller
 
         $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $history, $gameType);
 
-        if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE || LeaguePlayer::playerCanPlayBothTiers($user, $ladder))
+        // if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE || LeaguePlayer::playerCanPlayBothTiers($user, $ladder))
+        // {
+        # We're in the queue for normal player matchups
+        # However if we reach a certain amount of time, switch to AI matchup
+
+        $now = Carbon::now();
+        $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
+
+        Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds");
+
+        if ($timeSinceQueuedSeconds > 5)
         {
-            # We're in the queue for normal player matchups
-            # However if we reach a certain amount of time, switch to AI matchup
-
-            $now = Carbon::now();
-            $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
-
-            Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds");
-
-            if ($timeSinceQueuedSeconds > 5)
-            {
-                # Stop other player matchup queue
-                $qmQueueEntry->delete();
-                $gameType = Game::GAME_TYPE_1VS1_AI;
-            }
+            # Stop other player matchup queue
+            $qmQueueEntry->delete();
+            $gameType = Game::GAME_TYPE_1VS1_AI;
         }
+        // }
 
         # Match against AI only
         if ($gameType == Game::GAME_TYPE_1VS1_AI)

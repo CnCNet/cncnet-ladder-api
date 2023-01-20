@@ -42,7 +42,14 @@ class ApiLadderController extends Controller
     # http://staging-ladder.cncnet.org/api/v1/result/ladder/5/game/646147/player/165961/pings/40/40
     public function testPostLadder(Request $request)
     {
-        return $this->saveLadderResult($request->file, $ladderId = 5, $gameId = 646151, $playerId = 165964, $ping = 40, $pingR = 40);
+        return $this->saveLadderResult(
+            $request->file,
+            $ladderId = 5,
+            $gameId = 646151,
+            $playerId = 165964,
+            $ping = 40,
+            $pingR = 40
+        );
     }
 
     public function newPostLadder(Request $request, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
