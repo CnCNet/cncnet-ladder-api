@@ -157,12 +157,15 @@ class QuickMatchSpawnService
         Log::info("QuickMatchSpawnService ** addQuickMatchCoopAISpawnIni");
 
         $spawnStruct["spawn"]["Settings"]["AIPlayers"] = 2;
-        $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Game Options/QuickMatchCoopAI.ini"];
+        $spawnStruct["spawn"]["Settings"]["GameSpeed"] = 1;
+        $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Quick Match/QuickMatchAI.ini"];
+
 
         # TODO: SpawnMap modificiations for different difficulty AI
         switch ($difficulty)
         {
             case AIHelper::BRUTAL_AI:
+                $spawnStruct["prepends"][] = ["to" => "spawnmap.ini", "from" => "INI/Game Options/Brutal AI.ini"];
                 break;
 
             default:
@@ -181,12 +184,14 @@ class QuickMatchSpawnService
         Log::info("QuickMatchSpawnService ** addQuickMatchAISpawnIni");
 
         $spawnStruct["spawn"]["Settings"]["AIPlayers"] = 1;
-        $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Game Options/QuickMatchAI.ini"];
+        $spawnStruct["spawn"]["Settings"]["GameSpeed"] = 1;
+        $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Quick Match/QuickMatchAI.ini"];
 
         # TODO: SpawnMap modificiations for different difficulty AI
         switch ($difficulty)
         {
             case AIHelper::BRUTAL_AI:
+                $spawnStruct["prepends"][] = ["to" => "spawnmap.ini", "from" => "INI/Game Options/Brutal AI.ini"];
                 break;
 
             default:
