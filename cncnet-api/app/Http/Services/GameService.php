@@ -7,24 +7,46 @@ use App\Game;
 use App\GameReport;
 use App\Player;
 use App\PlayerGameReport;
+use Exception;
 use Illuminate\Support\Facades\Log;
 
 class GameService
 {
     private $maxPlayers;
     private $playerService;
+    private $idsToSkip;
 
     public function __construct()
     {
         $this->maxPlayers = 8;
+        $this->idsToSkip = [];
         $this->playerService = new PlayerService();
     }
 
+    /**
+     * Some stat indexes for houses we should skip
+     * @param mixed $id 
+     * @return bool 
+     */
+    private function shouldSkipStatsIndex($id)
+    {
+        return in_array($id, $this->idsToSkip);
+    }
+
+    /**
+     * 
+     * @param mixed $result 
+     * @param mixed $gameId 
+     * @param mixed $playerId 
+     * @param mixed $ladder 
+     * @param mixed $cncnetGame 
+     * @return (string|null)[]|GameReport[] 
+     * @throws Exception 
+     */
     public function saveGameStats($result, $gameId, $playerId, $ladder, $cncnetGame)
     {
         $game = Game::where("id", "=", $gameId)->first();
         $player = Player::where("id", "=", $playerId)->first();
-        $gameType = $game->gameType();
 
         if ($player == null)
         {
@@ -52,8 +74,8 @@ class GameService
         $gameReport->save();
         $game->save();
 
-        $playerGameReports = array();
-        $playerStats = array();
+        $playerGameReports = [];
+        $playerStats = [];
 
         foreach ($result as $key => $value)
         {
@@ -62,18 +84,28 @@ class GameService
             if ($property == "NAM")
             {
                 $id = substr($key, -1);
-                $playerGameReports[$id] = new \App\PlayerGameReport();
+
+                if ($value["value"] == "Special" || $value["value"] == "Neutral")
+                {
+                    $this->idsToSkip[] = $id;
+                    continue;
+                }
+
+                $playerGameReports[$id] = new PlayerGameReport();
                 $playerGameReports[$id]->game_id = $game->id;
                 $playerGameReports[$id]->game_report_id = $gameReport->id;
 
-                if ($gameType === Game::GAME_TYPE_1VS1_AI)
+                if ($value["value"] == "Computer")
                 {
-                    # Stats won't write player names with just playing against AI
+                    $playerHere = AIPlayer::getAIPlayer($ladder->currentHistory());
+                }
+                else if ($value["value"] == "<human player>")
+                {
                     $playerHere = $player;
                 }
-                else
+                else if ($value["value"] !== "Special" || $value["value"] !== "Neutral")
                 {
-                    $playerHere = \App\Player::where('ladder_id', $ladder->id)->where('username', $value["value"])->first();
+                    $playerHere = Player::where('ladder_id', $ladder->id)->where('username', $value["value"])->first();
                 }
 
                 if ($playerHere === null)
@@ -94,35 +126,19 @@ class GameService
                 $playerStats[$id] = new \App\Stats2;
                 $playerStats[$id]->player_game_report_id = $playerGameReports[$id]->id;
                 $playerStats[$id]->save();
+
                 $playerGameReports[$id]->stats_id = $playerStats[$id]->id;
+                $playerGameReports[$id]->save();
             }
         }
 
-        # Create fake AI profile game report
-        # TODO: Use Player Bot accounts
-        if ($gameType == Game::GAME_TYPE_1VS1_AI)
-        {
-            $aiPlayer = AIPlayer::getAIPlayer($ladder->currentHistory());
-            $humanPlayer =  $playerGameReports[0];
-            // Rely on what the human player says
-
-            $aiPlayerReport = new PlayerGameReport();
-            $aiPlayerReport->game_id = $game->id;
-            $aiPlayerReport->game_report_id = $gameReport->id;
-            $aiPlayerReport->player_id = $aiPlayer->id;
-            $aiPlayerReport->local_team_id = -1;
-            $aiPlayerReport->save();
-            $playerGameReports[] = $aiPlayerReport;
-        }
-
-        // Save Game Specific Stats like buildings bought, destroyed etc
+        # Save Game Specific Stats like buildings bought, destroyed etc
         foreach ($ladder->countableGameObjects as $countable)
         {
             foreach ($playerStats as $k => $value)
             {
                 if (
-                    array_key_exists($countable->heap_name . "$k", $result)
-                    &&
+                    array_key_exists($countable->heap_name . "$k", $result) &&
                     array_key_exists("counts", $result[$countable->heap_name . "$k"])
                 )
                 {
@@ -145,6 +161,11 @@ class GameService
             $cid = substr($key, -1); // Current Index
             $property = substr($key, 0, -1); // Property without index
 
+            if ($this->shouldSkipStatsIndex($cid))
+            {
+                continue;
+            }
+
             if (is_numeric($cid) && $cid >= 0 && $cid < 8)
             {
                 if (in_array(strtolower($property),  $playerStats[$cid]->gameStatsColumns))
@@ -158,38 +179,41 @@ class GameService
                 {
                     case "CMP":
                         $gameResult = $value["value"];
-                        $playerGameReports[$cid]->disconnected =
-                            ($gameResult & GameResult::COMPLETION_DISCONNECTED)  ? true : false;
-                        $playerGameReports[$cid]->no_completion =
-                            ($gameResult & GameResult::COMPLETION_NO_COMPLETION) ? true : false;
+                        $playerGameReports[$cid]->disconnected = ($gameResult & GameResult::COMPLETION_DISCONNECTED) ? true : false;
+                        $playerGameReports[$cid]->no_completion = ($gameResult & GameResult::COMPLETION_NO_COMPLETION) ? true : false;
                         $playerGameReports[$cid]->quit = ($gameResult & GameResult::COMPLETION_QUIT) ? true : false;
                         $playerGameReports[$cid]->won =  ($gameResult & GameResult::COMPLETION_WON)  ? true : false;
                         $playerGameReports[$cid]->draw = ($gameResult & GameResult::COMPLETION_DRAW) ? true : false;
-                        $playerGameReports[$cid]->defeated =
-                            ($gameResult & GameResult::COMPLETION_DEFEATED) ? true : false;
+                        $playerGameReports[$cid]->defeated = ($gameResult & GameResult::COMPLETION_DEFEATED) ? true : false;
                         break;
+
                     case "RSG":
                         $playerGameReports[$cid]->quit = $value["value"];
                         break;
+
                     case "DED":
                         $playerGameReports[$cid]->defeated = $value["value"];
                         break;
+
                     case "ALY":
                         // Unsupported ATM. My idea is that local_team_id should be the ID of the lowest ALLY -or-yourself
                         // For now everyone is on his own team
                         $playerGameReports[$cid]->local_team_id = $cid;
                         break;
+
                     case "SPC":
                         $playerGameReports[$cid]->spectator = $value["value"];
                         break;
 
-                    case "LCN": //TS lost connection
+                    case "LCN": // TS lost connection
                     case "CON":
                         $playerGameReports[$cid]->disconnected = $value["value"];
                         break;
-                    case "BSP": //starting spawn
+
+                    case "BSP": // starting spawn
                         $playerGameReports[$cid]->spawn = $value["value"];
                         break;
+
                     case "SID": // hack for Red Alert
                         if (!is_numeric($value["value"]))
                         {
@@ -225,6 +249,8 @@ class GameService
                         }
                     default:
                 }
+
+                $playerGameReports[$cid]->save();
             }
 
             switch ($key)
@@ -257,6 +283,7 @@ class GameService
                         $reporter->defeated = !$reporter->won;
                     }
                     break;
+
                 case "OOSY":
                     $gameReport->oos = $value["value"];
                     if ($gameReport->oos)
@@ -269,18 +296,22 @@ class GameService
                         $reporter->won = true;
                     }
                     break;
+
                 case "SDFX":
                     foreach ($playerGameReports as $playerGR)
                     {
                         $playerGR->disconnected = $value["value"];
                     }
                     break;
+
                 case "DURA":
                     $gameReport->duration = $value["value"];
                     break;
+
                 case "AFPS":
                     $gameReport->fps = $value["value"];
                     break;
+
                 case "QUIT":
                     if ($reporter !== null && $cncnetGame != "ra")
                     {
@@ -288,21 +319,15 @@ class GameService
                     }
                     $gameReport->finished = !$value["value"];
                     break;
+
                 case "FINI":
                     $gameReport->finished = $value["value"];
                     break;
+
                 default:
             }
-        }
 
-        $humanPlayers = [];
-        foreach ($playerGameReports as $playerGR)
-        {
-            if ($playerGR->player->is_bot == false)
-            {
-                $humanPlayers[] = $playerGR;
-            }
-            $playerGR->save();
+            $gameReport->save();
         }
 
         foreach ($playerStats as $pStats)
@@ -310,21 +335,9 @@ class GameService
             $pStats->save();
         }
 
-        # After all stats done, if we have an AI, manually fill them.
-        foreach ($playerGameReports as $pgr)
+        foreach ($playerGameReports as $p)
         {
-            if ($pgr->player->is_bot == true)
-            {
-                $humanPlayer = $humanPlayers[0];
-                $humanWon = $humanPlayer->won;
-
-                $pgr->won = $humanWon ? false : true;
-                $pgr->defeated = $humanWon ? true : false;
-                $pgr->draw = 0;
-                $pgr->disconnected = 0;
-                $pgr->quit = 0;
-                $pgr->save();
-            }
+            $p->save();
         }
 
         $reporter->save();

@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use \App;
 use Illuminate\Support\Facades\Log;
 use DB;
+use Exception;
 
 class ApiLadderController extends Controller
 {
@@ -44,9 +45,9 @@ class ApiLadderController extends Controller
     {
         return $this->saveLadderResult(
             $request->file,
-            $ladderId = 5,
-            $gameId = 646151,
-            $playerId = 165964,
+            $ladderId = 1,
+            $gameId = 651744,
+            $playerId = 88,
             $ping = 40,
             $pingR = 40
         );
@@ -271,6 +272,7 @@ class ApiLadderController extends Controller
             $enemy_count = 0;
             $enemy_games = 0;
 
+            // dd($playerGameReports);
             foreach ($playerGameReports as $pgr)
             {
                 $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
