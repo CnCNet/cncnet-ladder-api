@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Helpers\AIHelper;
+use App\Helpers\GameHelper;
 use App\SpawnOptionType;
 use Illuminate\Support\Facades\Log;
 
@@ -179,7 +180,7 @@ class QuickMatchSpawnService
      * @param mixed $spawnStruct 
      * @return void 
      */
-    public static function addQuickMatchAISpawnIni($spawnStruct, $difficulty)
+    public static function addQuickMatchAISpawnIni($spawnStruct, $ladder, $difficulty)
     {
         Log::info("QuickMatchSpawnService ** addQuickMatchAISpawnIni");
 
@@ -187,7 +188,12 @@ class QuickMatchSpawnService
         $spawnStruct["spawn"]["Settings"]["GameSpeed"] = 1;
         $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Quick Match/QuickMatchAI.ini"];
 
-        # TODO: SpawnMap modificiations for different difficulty AI
+        if ($ladder->abbreviation == GameHelper::$GAME_BLITZ)
+        {
+            $spawnStruct["prepends"][] = ["to" => "spawnmap.ini", "from" => "INI/Quick Match/AIBlitz.ini"];
+        }
+
+        # SpawnMap modificiations for different difficulty AI
         switch ($difficulty)
         {
             case AIHelper::BRUTAL_AI:

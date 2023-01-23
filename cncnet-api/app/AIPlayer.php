@@ -57,7 +57,7 @@ class AIPlayer
     public static function getAIPlayer($history)
     {
         $ladder = $history->ladder;
-        $player = AIPlayer::createOrGetAIBot("BurgBot", $ladder->id);
+        $player = AIPlayer::createOrGetAIBot("BrutalBot", $ladder->id);
 
         return $player;
     }

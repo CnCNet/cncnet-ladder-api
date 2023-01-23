@@ -359,23 +359,23 @@ class ApiQuickMatchController extends Controller
 
         $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $history, $gameType);
 
-        // if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE || LeaguePlayer::playerCanPlayBothTiers($user, $ladder))
-        // {
-        # We're in the queue for normal player matchups
-        # However if we reach a certain amount of time, switch to AI matchup
-
-        $now = Carbon::now();
-        $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
-
-        Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds");
-
-        if ($timeSinceQueuedSeconds > 5)
+        if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE)
         {
-            # Stop other player matchup queue
-            $qmQueueEntry->delete();
-            $gameType = Game::GAME_TYPE_1VS1_AI;
+            # We're in the queue for normal player matchups
+            # However if we reach a certain amount of time, switch to AI matchup
+
+            $now = Carbon::now();
+            $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
+
+            Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds");
+
+            if ($timeSinceQueuedSeconds > 60)
+            {
+                # Stop other player matchup queue
+                $qmQueueEntry->delete();
+                $gameType = Game::GAME_TYPE_1VS1_AI;
+            }
         }
-        // }
 
         # Match against AI only
         if ($gameType == Game::GAME_TYPE_1VS1_AI)
@@ -394,7 +394,7 @@ class ApiQuickMatchController extends Controller
             );
 
             $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
-            $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
+            $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, $ladder, AIHelper::BRUTAL_AI);
         }
         else
         {
