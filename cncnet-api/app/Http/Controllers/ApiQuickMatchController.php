@@ -371,6 +371,8 @@ class ApiQuickMatchController extends Controller
 
             if ($timeSinceQueuedSeconds > 60)
             {
+                # Stop other player matchup queue
+                $qmQueueEntry->delete();
                 $gameType = Game::GAME_TYPE_1VS1_AI;
             }
         }
@@ -393,6 +395,8 @@ class ApiQuickMatchController extends Controller
 
             $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
             $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, $ladder, AIHelper::BRUTAL_AI);
+
+            return $spawnStruct;
         }
         else
         {
@@ -449,9 +453,9 @@ class ApiQuickMatchController extends Controller
 
             $qmPlayer->waiting = false;
             $qmPlayer->save();
-        }
 
-        return $spawnStruct;
+            return $spawnStruct;
+        }
     }
 
     private function onQuit($qmPlayer)
