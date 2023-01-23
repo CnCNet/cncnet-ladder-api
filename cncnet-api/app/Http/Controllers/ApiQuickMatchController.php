@@ -371,8 +371,6 @@ class ApiQuickMatchController extends Controller
 
             if ($timeSinceQueuedSeconds > 60)
             {
-                # Stop other player matchup queue
-                $qmQueueEntry->delete();
                 $gameType = Game::GAME_TYPE_1VS1_AI;
             }
         }
