@@ -282,8 +282,8 @@ class ApiQuickMatchController extends Controller
 
         $this->playerService->createPlayerRatingIfNull($player);
 
-        $qmPlayer = QmMatchPlayer::where('player_id', $player->id)
-            ->where('waiting', true)
+        $qmPlayer = QmMatchPlayer::where("player_id", $player->id)
+            ->where("waiting", true)
             ->first();
 
         switch ($request->type)
@@ -300,10 +300,15 @@ class ApiQuickMatchController extends Controller
                 );
 
             case "match me up":
-                return $this->onMatchMeUp($request, $ladder, $player, $qmPlayer);
+                return $this->onMatchMeUp(
+                    $request,
+                    $ladder,
+                    $player,
+                    $qmPlayer
+                );
+
             default:
-                return array("type" => "error", "description" => "unknown type: {$request->type}");
-                break;
+                return ["type" => "error", "description" => "unknown type: {$request->type}"];
         }
     }
 
@@ -312,12 +317,10 @@ class ApiQuickMatchController extends Controller
      * This matchup system is restful, a player will have to check in to see if there is a matchup waitin.
      * If there is already a matchup then all these top level ifs will fall through and the game info will be sent.
      * Else we'll try to set up a match.
-     * 
      * @param mixed $request 
      * @param mixed $ladder 
      * @param mixed $player 
      * @param mixed $qmPlayer 
-     * @return mixed $spawnstruct (spawn.ini info for client)
      */
     private function onMatchMeUp($request, $ladder, $player, $qmPlayer)
     {
@@ -344,12 +347,30 @@ class ApiQuickMatchController extends Controller
 
         $qmPlayer->save();
 
-        # Check for qm alerts 
         $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
-
-        # Match type
-        $user = $player->user;
         $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
+        $playerWillMatchAI = $this->checkPlayerShouldMatchAIAfterTimeInQueue($userPlayerTier, $qmPlayer);
+
+        if ($playerWillMatchAI == true)
+        {
+            # Delete player from queue if they were in one.
+            if ($qmPlayer->qEntry != null)
+            {
+                $qmPlayer->qEntry->delete();
+            }
+
+            # Match against AI 
+            return $this->onHandle1vs1AIMatchupRequest(
+                $qmPlayer,
+                $userPlayerTier,
+                $history,
+                Game::GAME_TYPE_1VS1_AI,
+                $ladder,
+                $ladderRules
+            );
+        }
+
+        # Ladder settings can later dictate this.
         $gameType = Game::GAME_TYPE_1VS1;
 
         if ($qmPlayer->qEntry !== null)
@@ -357,9 +378,21 @@ class ApiQuickMatchController extends Controller
             $gameType = $qmPlayer->qEntry->game_type;
         }
 
-        $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $history, $gameType);
+        return $this->onHandlePlayersMatchupRequest(
+            $qmPlayer,
+            $player,
+            $history,
+            $gameType,
+            $alert,
+            $ladder,
+            $ladderRules
+        );
+    }
 
-        if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE)
+    private function checkPlayerShouldMatchAIAfterTimeInQueue($userPlayerTier, $qmPlayer)
+    {
+        $qmQueueEntry = $qmPlayer->qEntry;
+        if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE && $qmQueueEntry !== null)
         {
             # We're in the queue for normal player matchups
             # However if we reach a certain amount of time, switch to AI matchup
@@ -371,89 +404,90 @@ class ApiQuickMatchController extends Controller
 
             if ($timeSinceQueuedSeconds > 60)
             {
-                # Stop other player matchup queue
-                $qmQueueEntry->delete();
-                $gameType = Game::GAME_TYPE_1VS1_AI;
+                return true;
             }
         }
 
-        # Match against AI only
-        if ($gameType == Game::GAME_TYPE_1VS1_AI)
+        return false;
+    }
+
+    private function onHandle1vs1AIMatchupRequest($qmPlayer, $userPlayerTier, $history, $gameType, $ladder, $ladderRules)
+    {
+        Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1 AI");
+
+        $maps = $history->ladder->mapPool->maps;
+        $qmMatch = $this->quickMatchService->createQmAIMatch(
+            $qmPlayer,
+            $userPlayerTier,
+            $maps,
+            $gameType
+        );
+
+        $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
+        $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, $ladder, AIHelper::BRUTAL_AI);
+
+        return $spawnStruct;
+    }
+
+    private function onHandlePlayersMatchupRequest($qmPlayer, $player, $history, $gameType, $alert, $ladder, $ladderRules)
+    {
+        # Queue up to match an opponent 
+        if ($qmPlayer->qm_match_id === null)
         {
-            Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1 AI");
-
-            $maps = $history->ladder->mapPool->maps;
             $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $history, $gameType);
-            $qmMatch = $this->quickMatchService->createQmMatch(
-                $qmPlayer,
-                $userPlayerTier,
-                $maps,
-                $qmOpponents = [],
-                $qmQueueEntry,
-                $gameType
-            );
 
-            $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules);
-            $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, $ladder, AIHelper::BRUTAL_AI);
+            # No match found yet
+            # Push a job to find an opponent
+            $this->dispatch(new FindOpponent($qmQueueEntry->id, $gameType));
 
-            return $spawnStruct;
+            $qmPlayer->touch();
+
+            return $this->onCheckback($alert);
+        }
+
+        # If we're past this point, a match has been found
+        $qmMatch = QmMatch::find($qmPlayer->qm_match_id);
+
+        # Creates the initial spawn.ini to send to client
+        $spawnStruct = QuickMatchSpawnService::createSpawnStruct(
+            $qmMatch,
+            $qmPlayer,
+            $ladder,
+            $ladderRules
+        );
+
+        # Check we have all players ready before writing them to spawn.ini
+        $playersReady = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
+        if (count($playersReady) == 0)
+        {
+            $qmPlayer->waiting = false;
+            $qmPlayer->save();
+
+            return $this->onCheckback($alert);
+        }
+
+        if ($gameType == Game::GAME_TYPE_2VS2_AI)
+        {
+            Log::info("ApiQuickMatchController ** onMatchMeUp - 2vs2 AI Coop");
+
+            # Prepend quick-coop AI ini file
+            $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
         }
         else
         {
-            if ($qmPlayer->qm_match_id === null)
-            {
-                # No match found yet
-                # Push a job to find an opponent
-                $this->dispatch(new FindOpponent($qmQueueEntry->id, $gameType));
-
-                $qmPlayer->touch();
-
-                return $this->onCheckback($alert);
-            }
-
-            # If we're at this point, a match has been found
-            $qmMatch = QmMatch::find($qmPlayer->qm_match_id);
-
-            # Creates the initial spawn.ini to send to client
-            $spawnStruct = QuickMatchSpawnService::createSpawnStruct(
-                $qmMatch,
-                $qmPlayer,
-                $ladder,
-                $ladderRules
-            );
-
-            # Check we have all players ready before writing them to spawn.ini
-            $playersReady = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
-            if (count($playersReady) == 0)
-            {
-                $qmPlayer->waiting = false;
-                $qmPlayer->save();
-
-                return $this->onCheckback($alert);
-            }
-
-            if ($gameType == Game::GAME_TYPE_2VS2_AI)
-            {
-                Log::info("ApiQuickMatchController ** onMatchMeUp - 2vs2 AI Coop");
-
-                # Prepend quick-coop AI ini file
-                $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
-            }
-            else
-            {
-                Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1");
-            }
-
-            # Write the spawn.ini "Others" sections
-            $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni(
-                $spawnStruct,
-                $qmPlayer,
-                $playersReady
-            );
-
-            $qmPlayer->waiting = false;
-            $qmPlayer->save();
+            Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1");
         }
+
+        # Write the spawn.ini "Others" sections
+        $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni(
+            $spawnStruct,
+            $qmPlayer,
+            $playersReady
+        );
+
+        $qmPlayer->waiting = false;
+        $qmPlayer->save();
+
         return $spawnStruct;
     }
 
@@ -481,7 +515,7 @@ class ApiQuickMatchController extends Controller
     {
         if ($seed)
         {
-            $qmMatch = \App\QmMatch::where('seed', '=', $seed)
+            $qmMatch = QmMatch::where('seed', '=', $seed)
                 ->join('qm_match_players', 'qm_match_id', '=', 'qm_matches.id')
                 ->where('qm_match_players.player_id', '=', $player->id)
                 ->select('qm_matches.*')

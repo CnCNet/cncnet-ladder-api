@@ -164,14 +164,71 @@ class QuickMatchService
         return $qEntry;
     }
 
-    public function createQmMatch($qmPlayer, $userPlayerTier, $commonQMMaps, $qmOpns, $qEntry, $gameType)
+    public function createQmAIMatch($qmPlayer, $userPlayerTier, $maps, $gameType)
     {
-        $randomMapIndex = mt_rand(0, count($commonQMMaps) - 1);
+        $randomMapIndex = mt_rand(0, count($maps) - 1);
 
         # Create the qm_matches db entry
         $qmMatch = new QmMatch();
         $qmMatch->ladder_id = $qmPlayer->ladder_id;
-        $qmMatch->qm_map_id = $commonQMMaps[$randomMapIndex]->id;
+        $qmMatch->qm_map_id = $maps[$randomMapIndex]->id;
+        $qmMatch->seed = mt_rand(-2147483647, 2147483647);
+        $qmMatch->tier = $userPlayerTier;
+
+        # Create the Game
+        $game = Game::genQmEntry($qmMatch, $gameType);
+        $qmMatch->game_id = $game->id;
+        $qmMatch->save();
+
+        $game->qm_match_id = $qmMatch->id;
+        $game->save();
+
+        $qmMap = $qmMatch->map;
+        $spawn_order = explode(',', $qmMap->spawn_order);
+
+        # Set up player specific information
+        # Color will be used for spawn location
+        $qmPlayer->color = 0;
+        $qmPlayer->location = $spawn_order[$qmPlayer->color] - 1;
+        $qmPlayer->qm_match_id = $qmMatch->id;
+        $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
+
+        $psides = explode(',', $qmPlayer->mapSides->value);
+
+        if (count($psides) > $qmMap->bit_idx)
+        {
+            $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
+        }
+
+        if ($qmPlayer->actual_side < -1)
+        {
+            $qmPlayer->actual_side = $qmPlayer->chosen_side;
+        }
+
+        $qmPlayer->save();
+
+        $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+        {
+            return $s >= 0;
+        }));
+
+        if ($qmPlayer->actual_side == -1)
+        {
+            $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+        }
+        $qmPlayer->save();
+
+        return $qmMatch;
+    }
+
+    public function createQmMatch($qmPlayer, $userPlayerTier, $maps, $qmOpns, $qEntry, $gameType)
+    {
+        $randomMapIndex = mt_rand(0, count($maps) - 1);
+
+        # Create the qm_matches db entry
+        $qmMatch = new QmMatch();
+        $qmMatch->ladder_id = $qmPlayer->ladder_id;
+        $qmMatch->qm_map_id = $maps[$randomMapIndex]->id;
         $qmMatch->seed = mt_rand(-2147483647, 2147483647);
         $qmMatch->tier = $userPlayerTier;
 
