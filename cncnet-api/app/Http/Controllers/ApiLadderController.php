@@ -40,19 +40,6 @@ class ApiLadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    # http://staging-ladder.cncnet.org/api/v1/result/ladder/5/game/646147/player/165961/pings/40/40
-    public function testPostLadder(Request $request)
-    {
-        return $this->saveLadderResult(
-            $request->file,
-            $ladderId = 1,
-            $gameId = 651744,
-            $playerId = 88,
-            $ping = 40,
-            $pingR = 40
-        );
-    }
-
     public function newPostLadder(Request $request, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
     {
         $ladder = App\Ladder::find($ladderId);

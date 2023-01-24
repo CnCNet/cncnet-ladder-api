@@ -140,7 +140,6 @@ Route::group(['prefix' => 'api/v1/auth/'], function ()
     Route::post('/login', 'ApiAuthController@login');
 });
 
-Route::post("api/v1/game-result", 'ApiLadderController@testPostLadder');
 
 Route::group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function ()
 {
