@@ -7,13 +7,13 @@ use \App\Http\Services\LadderService;
 use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
-use \App\Http\Services\AuthService;
 use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use \App;
 use Illuminate\Support\Facades\Log;
 use DB;
+use Exception;
 
 class ApiLadderController extends Controller
 {
@@ -27,7 +27,6 @@ class ApiLadderController extends Controller
         $this->ladderService = new LadderService();
         $this->gameService = new GameService();
         $this->playerService = new PlayerService();
-        $this->authService = new AuthService();
         $this->adminService = new AdminService();
     }
 
@@ -68,7 +67,7 @@ class ApiLadderController extends Controller
         $player = App\Player::find($playerId);
         $game = App\Game::find($gameId);
 
-        // Game stats result
+        # Game stats result
         $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder);
 
         if (count($result) == 0 || $result == null)
@@ -78,29 +77,30 @@ class ApiLadderController extends Controller
 
         $history = $game->ladderHistory;
 
-        // Keep a record of the raw stats sent in
+        # Keep a record of the raw stats sent in
         $this->gameService->saveRawStats($result, $game->id, $history->id);
-
         $this->gameService->fillGameCols($game, $result);
 
-        // Now save the processed stats
+        # Now save the processed stats
         $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
         $gameReport = $result['gameReport'];
+
         if ($gameReport === null)
         {
             return response()->json(['Error' => $result['error']], 400);
         }
+
         $gameReport->pings_sent = $pingSent;
         $gameReport->pings_received = $pingReceived;
         $gameReport->save();
 
-        // Award points
+        # Award points
         $status = $this->awardPoints($gameReport, $history);
 
-        // Dispute handling
+        # Dispute handling
         $this->handleGameDispute($gameReport);
 
-        // Achievements
+        # Achievements
         $stats = $gameReport->playerGameReports()->where('player_id', $playerId)->first()->stats;
 
         if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
@@ -259,6 +259,7 @@ class ApiLadderController extends Controller
             $enemy_count = 0;
             $enemy_games = 0;
 
+            // dd($playerGameReports);
             foreach ($playerGameReports as $pgr)
             {
                 $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);

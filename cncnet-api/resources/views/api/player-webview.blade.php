@@ -39,12 +39,6 @@
             overflow: hidden;
         }
 
-        .player-card .player-badge img {
-            max-width: 100%;
-            height: 75px;
-            margin-top: 1rem;
-        }
-
         .player-card .player-profile {
             display: flex;
             flex-direction: column;
@@ -72,16 +66,11 @@
             right: 2%;
             font-size: 5rem;
         }
-
     </style>
 </head>
 
 <body>
     <div class="player-card">
-        <div class="player-badge">
-            <img src="/images/badges/{{ $player->badge->badge }}.png" alt="Player badge" />
-        </div>
-
         <div class="player-profile">
             <div class="player-name">
                 <h1>{{ $player->username }}</h1>

@@ -4,7 +4,10 @@ namespace App\Http\Services;
 
 use App\Ladder;
 use App\Player;
+use App\PlayerActiveHandle;
+use App\PlayerRating;
 use App\UserRating;
+use Carbon\Carbon;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -136,5 +139,63 @@ class PlayerService
         $userRating->rating = $newRating;
         $userRating->rated_games = $userRating->rated_games + 1;
         $userRating->save();
+    }
+
+    public function setActiveUsername($player, $ladder)
+    {
+        $date = Carbon::now();
+        $startOfMonth = $date->startOfMonth()->toDateTimeString();
+        $endOfMonth = $date->endOfMonth()->toDateTimeString();
+
+        // Player checks - ensure nick is registered as an active handle
+        $hasActiveHandle = PlayerActiveHandle::getPlayerActiveHandle($player->id, $ladder->id, $startOfMonth, $endOfMonth);
+        if ($hasActiveHandle == null)
+        {
+            PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $player->user->id);
+        }
+    }
+
+    public function checkPlayerForBans($player, $ip)
+    {
+        $ban = $player->user->getBan(true);
+        if ($ban !== null)
+        {
+            return $ban;
+        }
+
+        $ban = \App\IpAddress::findByIP($ip)->getBan(true);
+        if ($ban !== null)
+        {
+            return $ban;
+        }
+
+        return null;
+    }
+
+    public function checkPlayerHasVerifiedEmail($player)
+    {
+        if (!$player->user->email_verified)
+        {
+            if (!$player->user->verificationSent())
+            {
+                $player->user->sendNewVerification();
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function createPlayerRatingIfNull($player)
+    {
+        $rating = $player->rating()->first();
+        if ($rating == null)
+        {
+            $playerRating = new PlayerRating();
+            $playerRating->player_id = $player->id;
+            $playerRating->save();
+        }
+        return $rating;
     }
 }

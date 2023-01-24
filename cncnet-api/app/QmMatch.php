@@ -1,10 +1,12 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QmMatch extends Model {
-
-	//
+class QmMatch extends Model
+{
+    //
     public function players()
     {
         return $this->hasMany('App\QmMatchPlayer');

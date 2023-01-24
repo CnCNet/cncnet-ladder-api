@@ -130,37 +130,6 @@ class Player extends Model
         return $this->hasOne("App\PlayerRating");
     }
 
-    public function percentile()
-    {
-        if ($this->rating->rated_games < 10)
-            return 0;
-
-        $playerRatings = \App\PlayerRating::join('players as p', 'p.id', '=', 'player_id')
-            ->where("ladder_id", "=", $this->ladder_id)
-            ->where('rated_games', '>', 10)
-            ->where('player_ratings.updated_at', '>', Carbon::now()->subMonths(2))
-            ->orderBy('rating', 'ASC')
-            ->get();
-
-        $ratingsCount = $playerRatings->count();
-        $count = 0;
-        foreach ($playerRatings as $playerRating)
-        {
-            $count++;
-            if ($playerRating->player_id == $this->id)
-            {
-                $count--;
-                break;
-            }
-        }
-        if ($ratingsCount != 0 && $count < $ratingsCount && $count > 0)
-            $ptile = (($count / $ratingsCount) * 100) - 1;
-        else
-            $ptile = 0;
-
-        return $ptile >= 0 ? $ptile : 0;
-    }
-
     public function averageFPS($history)
     {
         $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
@@ -242,59 +211,6 @@ class Player extends Model
             ->where('g.id', '<', $game_id)
             ->sum('player_game_reports.points');
         return $points !== null ? $points : 0;
-    }
-
-    public function badge($percentile = null)
-    {
-        if ($percentile == null)
-        {
-            $percentile = $this->percentile();
-        }
-        return static::getBadge($percentile);
-    }
-
-    public static function getBadge($percentile)
-    {
-        if ($percentile > 0 && $percentile <= 15)
-        {
-            return ["badge" => "badge-t1", "type" => "Officer Cadet"];
-        }
-        else if ($percentile > 15 && $percentile <= 25)
-        {
-            return ["badge" => "badge-t2", "type" => "Second Lieutenant"];
-        }
-        else if ($percentile > 25 && $percentile <= 45)
-        {
-            return ["badge" => "badge-t3", "type" => "Lieutenant"];
-        }
-        else if ($percentile > 45 && $percentile <= 55)
-        {
-            return ["badge" => "badge-t4", "type" => "Captain"];
-        }
-        else if ($percentile > 55 && $percentile <= 65)
-        {
-            return ["badge" => "badge-t5", "type" => "Major"];
-        }
-        else if ($percentile > 65 && $percentile <= 75)
-        {
-            return ["badge" => "badge-t6", "type" => "Lieutenant Colonel"];
-        }
-        else if ($percentile > 75 && $percentile <= 85)
-        {
-            return ["badge" => "badge-t7", "type" => "Colonel"];
-        }
-        else if ($percentile > 85 && $percentile <= 90)
-        {
-            return ["badge" => "badge-t8", "type" => "Brigadier"];
-        }
-        else if ($percentile > 90 && $percentile <= 100)
-        {
-            return ["badge" => "badge-t9", "type" => "Major General"];
-        }
-        else
-        {
-            return ["badge" => "badge-default", "type" => "Recruit"];
-        }
     }
 
     public function playerRating()
