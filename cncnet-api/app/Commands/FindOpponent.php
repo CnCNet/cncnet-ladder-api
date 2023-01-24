@@ -352,18 +352,18 @@ class FindOpponent extends Command implements ShouldQueue
      * Remove this 'Map' from this array of 'QmMaps'.
      * The function will loop through the array of common_qm_maps and check if equal to the $recentmMap
      */
-    private function removeMap($recentMap, $common_qm_maps)
+    private function removeMap($recentMap, $commonQmMaps)
     {
-        $new_common_qm_maps = [];
+        $newCommonQmMaps = [];
 
-        foreach ($common_qm_maps as $common_qm_map)
+        foreach ($commonQmMaps as $common_qm_map)
         {
             if ($common_qm_map->map->id != $recentMap->id)
             {
-                $new_common_qm_maps[] = $common_qm_map;
+                $newCommonQmMaps[] = $common_qm_map;
             }
         }
 
-        return $new_common_qm_maps;
+        return $newCommonQmMaps;
     }
 }
