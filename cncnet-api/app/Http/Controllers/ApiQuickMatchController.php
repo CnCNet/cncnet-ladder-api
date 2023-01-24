@@ -391,6 +391,8 @@ class ApiQuickMatchController extends Controller
 
     private function checkPlayerShouldMatchAIAfterTimeInQueue($userPlayerTier, $qmPlayer)
     {
+        return false; // Until we've released the updated QM client
+
         $qmQueueEntry = $qmPlayer->qEntry;
         if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE && $qmQueueEntry !== null)
         {
