@@ -46,11 +46,11 @@ class ApiLadderController extends Controller
         $player = App\Player::find($playerId);
 
         // Player checks
-        // $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
-        // if ($check !== null)
-        // {
-        //     return $check;
-        // }
+        $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
+        if ($check !== null)
+        {
+            return $check;
+        }
 
         $filePath = config('filesystems')['dmp'];
         $fileName = $gameId . '.' . $ladderId . '.' . $playerId . '.dmp';
