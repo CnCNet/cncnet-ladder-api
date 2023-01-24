@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Ladder;
+use App\PlayerRating;
 use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
 use \Illuminate\Pagination\LengthAwarePaginator;
@@ -343,9 +344,7 @@ class LadderService
                 "games_won" => 0,
                 "games_lost" => 0,
                 "average_fps" => 0,
-                "badge" => \App\Player::getBadge(0),
-                "rating" => 1200,
-                "percentile" => 0
+                "rating" => PlayerRating::$DEFAULT_RATING,
             ];
         }
 
@@ -359,9 +358,7 @@ class LadderService
             "game_count" => $playerCache->games,
             "games_lost" => $playerCache->games - $playerCache->wins,
             "average_fps" => $playerCache->fps,
-            "badge" => \App\Player::getBadge($playerCache->percentile),
             "rating" => $playerCache->rating,
-            "percentile" => $playerCache->percentile,
         ];
     }
 

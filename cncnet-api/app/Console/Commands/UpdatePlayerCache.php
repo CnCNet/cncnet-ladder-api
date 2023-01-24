@@ -62,7 +62,6 @@ class UpdatePlayerCache extends Command
             $pc->points = $player->points($history);
             $pc->wins = $player->wins($history);
             $pc->games = $player->totalGames($history);
-            $pc->percentile = $player->percentile();
 
             $v = $player->sideUsage($history)->first();
             $pc->side = $v !== null ? $v->sid : null;
