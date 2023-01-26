@@ -17,8 +17,9 @@
                         ->where('player_id', '!=', $player->id)
                         ->first();
                     
-                    $opponentPlayerUrl = \App\URLHelper::getPlayerProfileUrl($history, $opponentPlayerReport->player->username);
-                    
+                    if ($opponentPlayerReport) {
+                        $opponentPlayerUrl = \App\URLHelper::getPlayerProfileUrl($history, $opponentPlayerReport->player->username);
+                    }
                 @endphp
 
                 <tr class="align-middle" data-timestamp="{{ $timestamp }}">
@@ -38,12 +39,14 @@
                     </td>
 
                     <td class="td-player td-player-opponent">
-                        @include('ladders.components._games-player-row', [
-                            'profileUrl' => $opponentPlayerUrl,
-                            'username' => $opponentPlayerReport->player->username,
-                            'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
-                            'playerGameReport' => $opponentPlayerReport,
-                        ])
+                        @if ($opponentPlayerReport)
+                            @include('ladders.components._games-player-row', [
+                                'profileUrl' => $opponentPlayerUrl,
+                                'username' => $opponentPlayerReport->player->username,
+                                'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
+                                'playerGameReport' => $opponentPlayerReport,
+                            ])
+                        @endif
                     </td>
 
                     <td class="td-game-details">
