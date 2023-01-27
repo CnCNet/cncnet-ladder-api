@@ -400,7 +400,7 @@ class ApiQuickMatchController extends Controller
             $now = Carbon::now();
             $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
 
-            Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds");
+            Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds QM Player: $qmPlayer , QM Client Version: $version");
 
             if ($timeSinceQueuedSeconds > 60)
             {
