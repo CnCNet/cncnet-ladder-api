@@ -349,7 +349,7 @@ class ApiQuickMatchController extends Controller
 
         $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
         $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
-        $playerWillMatchAI = $this->checkPlayerShouldMatchAIAfterTimeInQueue($userPlayerTier, $qmPlayer);
+        $playerWillMatchAI = $this->checkPlayerShouldMatchAIAfterTimeInQueue($request->version, $userPlayerTier, $qmPlayer);
 
         if ($playerWillMatchAI == true)
         {
@@ -389,12 +389,10 @@ class ApiQuickMatchController extends Controller
         );
     }
 
-    private function checkPlayerShouldMatchAIAfterTimeInQueue($userPlayerTier, $qmPlayer)
+    private function checkPlayerShouldMatchAIAfterTimeInQueue($version, $userPlayerTier, $qmPlayer)
     {
-        return false; // Until we've released the updated QM client
-
         $qmQueueEntry = $qmPlayer->qEntry;
-        if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE && $qmQueueEntry !== null)
+        if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE && $qmQueueEntry !== null && $version >= 1.75)
         {
             # We're in the queue for normal player matchups
             # However if we reach a certain amount of time, switch to AI matchup
