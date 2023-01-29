@@ -193,16 +193,6 @@ class QuickMatchSpawnService
             $spawnStruct["prepends"][] = ["to" => "spawnmap.ini", "from" => "INI/Quick Match/AIBlitz.ini"];
         }
 
-        # SpawnMap modificiations for different difficulty AI
-        switch ($difficulty)
-        {
-            case AIHelper::BRUTAL_AI:
-                $spawnStruct["prepends"][] = ["to" => "spawnmap.ini", "from" => "INI/Game Options/Brutal AI.ini"];
-                break;
-
-            default:
-        }
-
         return $spawnStruct;
     }
 }
