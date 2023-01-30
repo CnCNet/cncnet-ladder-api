@@ -14,6 +14,7 @@ use DB;
 use \App\Commands\FindOpponent;
 use App\Game;
 use App\Helpers\AIHelper;
+use App\Helpers\GameHelper;
 use App\PlayerRating;
 use \App\QmQueueEntry;
 use Illuminate\Support\Facades\Cache;
@@ -23,6 +24,7 @@ use \App\Helpers\LeagueHelper;
 use App\Http\Services\QuickMatchService;
 use App\Http\Services\QuickMatchSpawnService;
 use App\LeaguePlayer;
+use App\MapPool;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use BadMethodCallException;
@@ -391,6 +393,12 @@ class ApiQuickMatchController extends Controller
 
     private function checkPlayerShouldMatchAIAfterTimeInQueue($version, $userPlayerTier, $qmPlayer)
     {
+        if ($qmPlayer->player_id == 176024)
+        {
+            // neogrant4 testing
+            return true;
+        }
+
         $qmQueueEntry = $qmPlayer->qEntry;
         if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE && $qmQueueEntry !== null && $version >= 1.75)
         {
@@ -415,7 +423,16 @@ class ApiQuickMatchController extends Controller
     {
         Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1 AI");
 
-        $maps = $history->ladder->mapPool->maps;
+        if ($ladder->abbreviation === GameHelper::$GAME_BLITZ)
+        {
+            # Exclude certain maps that do not work with AI well
+            $maps = MapPool::where("id", 63)->first()->maps;
+        }
+        else
+        {
+            $maps = $history->ladder->mapPool->maps;
+        }
+
         $qmMatch = $this->quickMatchService->createQmAIMatch(
             $qmPlayer,
             $userPlayerTier,
