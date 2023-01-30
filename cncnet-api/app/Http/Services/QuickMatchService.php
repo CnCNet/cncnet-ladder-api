@@ -6,6 +6,7 @@ use App\Game;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
+use Log;
 
 
 class QuickMatchService
@@ -242,6 +243,24 @@ class QuickMatchService
 
         $qmMap = $qmMatch->map;
         $spawn_order = explode(',', $qmMap->spawn_order);
+
+        if ($qmMap->random_spawns && $qmMap->map->num_spawns > 2) //this map uses random spawns
+        {
+            $spawn_order = [];
+            $numSpawns = $qmMap->map->num_spawns;
+            $spawn_arr = [];
+
+            for ($i = 1; $i <= $numSpawns; $i++)
+            {
+                $spawn_arr[] = $i;
+            }
+
+            shuffle($spawn_arr); //shuffle the spawns, select 2
+            $spawn_order[0] = $spawn_arr[0];
+            $spawn_order[1] = $spawn_arr[1];
+
+            Log::info("Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawn_order[0] . "," . $spawn_order[1]);
+        }
 
         # Set up player specific information
         # Color will be used for spawn location

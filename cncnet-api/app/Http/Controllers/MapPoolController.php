@@ -11,6 +11,7 @@ use \App\MapPool;
 use \App\Ladder;
 use \App\SpawnOptionString;
 use Illuminate\Http\Request;
+use Log;
 
 class MapPoolController extends Controller
 {
@@ -45,6 +46,7 @@ class MapPoolController extends Controller
         $qmMap->spawn_order = $request->spawn_order;
         $qmMap->team1_spawn_order = $request->team1_spawn_order;
         $qmMap->team2_spawn_order = $request->team2_spawn_order;
+        $qmMap->random_spawns = $request->random_spawns == "on" ? true : false;
 
         if (empty($qmMap->description) || empty($qmMap->admin_description))
         {
@@ -269,6 +271,7 @@ class MapPoolController extends Controller
         $mapHeader->numStartingPoints = intval($header["NumberStartingPoints"]);
         $mapHeader->save();
 
+        $spawnCount = 0;
         //create the map waypoints
         for ($i = 1; $i <= 8; $i++)
         {
@@ -282,7 +285,16 @@ class MapPoolController extends Controller
             $mapWaypoint->bit_idx = $i;
             $mapWaypoint->map_header_id = $mapHeader->id;
             $mapWaypoint->save();
+
+            if ($x > 0 && $y > 0)
+            {
+                $spawnCount++;
+            }
         }
+
+        $map = \App\Map::where('id', $mapId)->first();
+        $map->spawn_count = $spawnCount;
+        $map->save();
     }
 
     private function str_ends_with(string $string, string $substring): bool
@@ -318,12 +330,12 @@ class MapPoolController extends Controller
                 'ladderUrl' => "/admin/setup/{$ladder->id}/edit",
                 'mapPool' => $mapPool,
                 'ladderAbbrev' => $ladder->abbreviation,
-                'maps' => $mapPool->maps()->orderBy('bit_idx')->get(),
+                'qmMaps' => $mapPool->maps()->orderBy('bit_idx')->get(),
                 'ladder' => $ladder,
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
                 'spawnOptions' =>  \App\SpawnOption::all(),
-                'allLadders' => \App\Ladder::all(),
+                'allLadders' => \App\Ladder::all()
             ]
         );
     }

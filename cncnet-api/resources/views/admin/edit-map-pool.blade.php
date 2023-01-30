@@ -34,11 +34,11 @@
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                             <select id="mapPoolSelector" name="map_id" size="18" class="form-control mt-2 mb-2">
                                 <?php $lastmap = null; ?>
-                                @foreach ($maps as $map)
-                                    <option value="{{ $map->id }}" {{ old('map_selected') == $map->id ? 'selected' : '' }}>
-                                        {{ $map->admin_description }}
+                                @foreach ($qmMaps as $qmMap)
+                                    <option value="{{ $qmMap->id }}" {{ old('map_selected') == $qmMap->id ? 'selected' : '' }}>
+                                        {{ $qmMap->admin_description }}
                                     </option>
-                                    <?php $lastmap = $map; ?>
+                                    <?php $lastmap = $qmMap; ?>
                                 @endforeach
                                 @if ($lastmap !== null)
                                     <?php $new_map = $lastmap->replicate();
@@ -54,7 +54,7 @@
                                     $new_map->valid = 1;
                                     ?>
                                 @endif
-                                <?php $maps->push($new_map); ?>
+                                <?php $qmMaps->push($new_map); ?>
                                 <option value="new">&lt;New Map></option>
                             </select>
                             <button type="submit" class="btn btn-danger">Remove Map</button>
@@ -67,52 +67,58 @@
                         </div>
                     </div>
                 </div>
-                @foreach ($maps as $map)
-                    <div class="row map hidden" id="map_{{ $map->id == 0 ? 'new' : $map->id }}">
-                        <form method="POST" action="edit" class="map" id="qmap_{{ $map->map_pool_id }}_{{ $map->id }}">
+                @foreach ($qmMaps as $qmMap)
+                    <div class="row map hidden" id="map_{{ $qmMap->id == 0 ? 'new' : $qmMap->id }}">
+                        <form method="POST" action="edit" class="map" id="qmap_{{ $qmMap->map_pool_id }}_{{ $qmMap->id }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                            <input type="hidden" name="id" value="{{ $map->id }}" />
-                            <input type="hidden" name="map_pool_id" value="{{ $map->map_pool_id }}" />
-                            <input type="hidden" name="bit_idx" value="{{ $map->bit_idx }}" />
-                            <input type="hidden" name="valid" value="{{ $map->valid }}" />
+                            <input type="hidden" name="id" value="{{ $qmMap->id }}" />
+                            <input type="hidden" name="map_pool_id" value="{{ $qmMap->map_pool_id }}" />
+                            <input type="hidden" name="bit_idx" value="{{ $qmMap->bit_idx }}" />
+                            <input type="hidden" name="valid" value="{{ $qmMap->valid }}" />
 
                             <div class="container mt-5">
                                 <div class="row">
                                     <h4>Map configuration</h4>
                                     <div class="form-group col-4">
                                         <div class="form-group col-md-12">
-                                            <label for="{{ $map->id }}_description"> Description </label>
-                                            <input type="text" id="{{ $map->id }}_description" name="description"
-                                                value="{{ $map->description }}" class="form-control" />
+                                            <label for="{{ $qmMap->id }}_description"> Description </label>
+                                            <input type="text" id="{{ $qmMap->id }}_description" name="description"
+                                                value="{{ $qmMap->description }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="{{ $map->id }}_admin_description"> Admin Description </label>
-                                            <input type="text" id="{{ $map->id }}_admin_description" name="admin_description"
-                                                value="{{ $map->admin_description }}" class="form-control" />
+                                            <label for="{{ $qmMap->id }}_admin_description"> Admin Description </label>
+                                            <input type="text" id="{{ $qmMap->id }}_admin_description" name="admin_description"
+                                                value="{{ $qmMap->admin_description }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="{{ $map->id }}_spawn_order">spawn_order</label>
-                                            <input type="text" id="{{ $map->id }}_spawn_order" name="spawn_order"
-                                                value="{{ $map->spawn_order }}" class="form-control" />
+                                            <label for="{{ $qmMap->id }}_spawn_order">spawn_order</label>
+                                            <input type="text" id="{{ $qmMap->id }}_spawn_order" name="spawn_order"
+                                                value="{{ $qmMap->spawn_order }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="{{ $map->id }}_team1_spawn_order">team1</label>
-                                            <input type="text" id="{{ $map->id }}_team1_spawn_order" name="team1_spawn_order"
-                                                value="{{ $map->team1_spawn_order }} " class="form-control" />
+                                            <label for="{{ $qmMap->id }}_team1_spawn_order">team1</label>
+                                            <input type="text" id="{{ $qmMap->id }}_team1_spawn_order" name="team1_spawn_order"
+                                                value="{{ $qmMap->team1_spawn_order }} " class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <label for="{{ $map->id }}_team2_spawn_order">team2</label>
-                                            <input type="text" id="{{ $map->id }}_team2_spawn_order" name="team2_spawn_order"
-                                                value="{{ $map->team2_spawn_order }}" class="form-control" />
+                                            <label for="{{ $qmMap->id }}_team2_spawn_order">team2</label>
+                                            <input type="text" id="{{ $qmMap->id }}_team2_spawn_order" name="team2_spawn_order"
+                                                value="{{ $qmMap->team2_spawn_order }}" class="form-control" />
+                                        </div>
+
+                                        <div class="form-group col-md-4">
+                                            <input type="checkbox" id="{{ $qmMap->id }}_random_spawns" name="random_spawns"
+                                                @if ($qmMap->random_spawns) checked @endif />
+                                                <label for="{{ $qmMap->id }}_random_spawns">Random Spawns (any spots)</label>
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="{{ $map->id }}_map"> map </label>
-                                            <select id="{{ $map->id }}_map" name="map_id" class="form-control map-selector"></select>
+                                            <label for="{{ $qmMap->id }}_map"> map </label>
+                                            <select id="{{ $qmMap->id }}_map" name="map_id" class="form-control map-selector"></select>
                                             <button type="button" class="btn btn-primary btn-md" id="editMaps" data-bs-toggle="modal"
                                                 data-bs-target="#editLadderMap">
                                                 Edit/New
@@ -125,8 +131,16 @@
                                     </div>
 
                                     <div class="col-4">
+                                        <div class="form-group">
+                                            <label> 
+                                                    <small for="spawnCount"> Spawn Count: {{ $qmMap->map->spawn_count}} </small>
+                                                </label>
+                                                <label>
+                                                    <small for="hash"> Map Hash: {{ $qmMap->map->hash}} </small>
+                                                </label>
+                                        </div>
                                         <div class="col-md-12">
-                                            <?php $sideIdsAllowed = array_map('intval', explode(',', $map->allowed_sides)); ?>
+                                            <?php $sideIdsAllowed = array_map('intval', explode(',', $qmMap->allowed_sides)); ?>
                                             <label>Allowed Sides</label>
 
                                             <div class="overflow-auto"
@@ -142,15 +156,15 @@
                                         </div>
 
                                         <div class="col-md-6">
-                                            <input id="{{ $map->id }}_rejectable" type="checkbox" name="rejectable"
-                                                @if ($map->rejectable) checked @endif />
-                                            <label for="{{ $map->id }}_rejectable"> Rejectable</label>
+                                            <input id="{{ $qmMap->id }}_rejectable" type="checkbox" name="rejectable"
+                                                @if ($qmMap->rejectable) checked @endif />
+                                            <label for="{{ $qmMap->id }}_rejectable"> Rejectable</label>
                                         </div>
 
                                         <div class="col-md-6">
-                                            <input id="default_reject_{{ $map->id }}" type="checkbox" name="default_reject"
-                                                @if ($map->default_reject) checked @endif />
-                                            <label for="default_reject_{{ $map->id }}"> Rejected By Default</label>
+                                            <input id="default_reject_{{ $qmMap->id }}" type="checkbox" name="default_reject"
+                                                @if ($qmMap->default_reject) checked @endif />
+                                            <label for="default_reject_{{ $qmMap->id }}"> Rejected By Default</label>
                                         </div>
 
                                         <div class="col-md-12">
@@ -162,20 +176,20 @@
                         </form>
 
                         <div class="form-group col-md-4">
-                            <label for="optionList_{{ $map->id }}"> Extra Options </label>
-                            <select id="optionList_{{ $map->id }}" size="12" class="form-control optionList" style="margin-bottom: 8px">
-                                @if ($map->id != 'new')
-                                    @foreach ($map->spawnOptionValues as $sov)
+                            <label for="optionList_{{ $qmMap->id }}"> Extra Options </label>
+                            <select id="optionList_{{ $qmMap->id }}" size="12" class="form-control optionList" style="margin-bottom: 8px">
+                                @if ($qmMap->id != 'new')
+                                    @foreach ($qmMap->spawnOptionValues as $sov)
                                         <option value="{{ $sov->id }}">{{ $sov->spawnOption->name->string }} : {{ $sov->value->string }}</option>
                                     @endforeach
                                 @endif
                             </select>
                             <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal"
-                                data-bs-target="#editOptions_{{ $map->id }}">
+                                data-bs-target="#editOptions_{{ $qmMap->id }}">
                                 Edit
                             </button>
                             <button type="button" class="btn btn-primary btn-md" data-bs-toggle="modal"
-                                data-bs-target="#newOptions_{{ $map->id }}">
+                                data-bs-target="#newOptions_{{ $qmMap->id }}">
                                 New
                             </button>
                         </div>
@@ -188,8 +202,8 @@
     @include('admin.map-pool._modal-edit-map-pool')
     @include('admin.map-pool._modal-edit-ladder-map')
 
-    @foreach ($maps as $map)
-        <div class="modal fade" id="newOptions_{{ $map->id }}" tabIndex="-1" role="dialog">
+    @foreach ($qmMaps as $qmMap)
+        <div class="modal fade" id="newOptions_{{ $qmMap->id }}" tabIndex="-1" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -204,7 +218,7 @@
                             @include('admin._spawn-option', [
                                 'sov' => $new_sov,
                                 'ladderId' => '',
-                                'qmMapId' => $map->id,
+                                'qmMapId' => $qmMap->id,
                                 'spawnOptions' => $spawnOptions,
                                 'button' => 'Add',
                                 'hidden' => false,
@@ -215,7 +229,7 @@
             </div>
         </div>
 
-        <div class="modal fade" id="editOptions_{{ $map->id }}" tabIndex="-1" role="dialog">
+        <div class="modal fade" id="editOptions_{{ $qmMap->id }}" tabIndex="-1" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -230,16 +244,16 @@
                             @include('admin._spawn-option', [
                                 'sov' => $new_sov,
                                 'ladderId' => '',
-                                'qmMapId' => $map->id,
+                                'qmMapId' => $qmMap->id,
                                 'spawnOptions' => $spawnOptions,
                                 'button' => 'Add',
                                 'hidden' => true,
                             ])
-                            @foreach ($map->spawnOptionValues as $sov)
+                            @foreach ($qmMap->spawnOptionValues as $sov)
                                 @include('admin._spawn-option', [
                                     'sov' => $sov,
                                     'ladderId' => '',
-                                    'qmMapId' => $map->id,
+                                    'qmMapId' => $qmMap->id,
                                     'spawnOptions' => $spawnOptions,
                                     'button' => 'Update',
                                     'hidden' => true,
@@ -263,10 +277,10 @@
             "new": {
                 "map_id": "new"
             },
-            @foreach ($maps as $map)
-                @if ($map->id != 'new')
-                    "{{ $map->id }}": {
-                        "map_id": "{{ $map->map_id }}"
+            @foreach ($qmMaps as $qmMap)
+                @if ($qmMap->id != 'new')
+                    "{{ $qmMap->id }}": {
+                        "map_id": "{{ $qmMap->map_id }}"
                     },
                 @endif
             @endforeach
