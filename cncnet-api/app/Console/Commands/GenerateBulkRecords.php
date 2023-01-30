@@ -31,21 +31,21 @@ class GenerateBulkRecords extends Command
      */
     public function handle()
     {
-        
-        $month = Carbon::now()->subMonth(1)->format('m') + 0;
-        // $month = Carbon::now()->format('m') + 0;
-        $year = Carbon::now()->subMonth(1)->format('Y');
-        // $year = Carbon::now()->format('Y');
+        ini_set('memory_limit', '40960M');
+        $month = Carbon::now()->subMonth(0)->format('m') + 0;
+        $year = Carbon::now()->subMonth(0)->format('Y');
 
         echo "Querying for data from ".$month."-".$year;
 
-        $histories = \App\LadderHistory::where('short', '=', $month . "-" . $year)->get();
+        $histories = \App\LadderHistory::where('short', '=', $month . "-" . $year)
+        ->where('ladder_id', 5)
+        ->get();
 
         $ladders = [];
 
         foreach ($histories as $history) {
 
-            \App\Game::where('ladder_history_id', '=', $history->id)->whereNotNull('game_report_id')->chunk(2000, function ($games) use (&$history, &$ladders) {
+            \App\Game::where('ladder_history_id', '=', $history->id)->whereNotNull('game_report_id')->chunk(500, function ($games) use (&$history, &$ladders) {
 
                 foreach ($games as $game) {
  
