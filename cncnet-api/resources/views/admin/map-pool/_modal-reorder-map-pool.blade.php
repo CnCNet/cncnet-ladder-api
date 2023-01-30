@@ -13,13 +13,13 @@
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                                 <input type="hidden" id="mapPoolId" name="id" value="{{ $mapPool->id }}" />
                                 <ul id="mapList" style="overflow: auto;max-height: calc(100vh - 300px); list-style: none; margin: 0; padding: 0;">
-                                    @foreach ($maps as $map)
-                                        @if ($map->id != 'new')
-                                            <li class="map-in-list" value="{{ $map->bit_idx }}">
-                                                <input type="radio" id="rinput_idx_{{ $map->bit_idx }}" name="maphandle" value="{{ $map->id }},{{ $map->bit_idx }}" class="maphandle">
+                                    @foreach ($qmMaps as $qmMap)
+                                        @if ($qmMap->id != 'new')
+                                            <li class="map-in-list" value="{{ $qmMap->bit_idx }}">
+                                                <input type="radio" id="rinput_idx_{{ $qmMap->bit_idx }}" name="maphandle" value="{{ $qmMap->id }},{{ $qmMap->bit_idx }}" class="maphandle">
                                                 </radio>
-                                                <label id="linput_idx_{{ $map->bit_idx }}" for="rinput_idx_{{ $map->bit_idx }}" style="margin-bottom: 0;">{{ $map->admin_description }}</label>
-                                                <input type="hidden" id="input_idx_{{ $map->bit_idx }}" name="bit_idx_{{ $map->bit_idx }}" value="{{ $map->id }}" />
+                                                <label id="linput_idx_{{ $qmMap->bit_idx }}" for="rinput_idx_{{ $qmMap->bit_idx }}" style="margin-bottom: 0;">{{ $qmMap->admin_description }}</label>
+                                                <input type="hidden" id="input_idx_{{ $qmMap->bit_idx }}" name="bit_idx_{{ $qmMap->bit_idx }}" value="{{ $qmMap->id }}" />
                                             </li>
                                         @endif
                                     @endforeach

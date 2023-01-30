@@ -37,9 +37,7 @@ class GenerateBulkRecords extends Command
 
         echo "Querying for data from ".$month."-".$year;
 
-        $histories = \App\LadderHistory::where('short', '=', $month . "-" . $year)
-        ->where('ladder_id', 5)
-        ->get();
+        $histories = \App\LadderHistory::where('short', '=', $month . "-" . $year)->get();
 
         $ladders = [];
 
