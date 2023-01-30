@@ -242,30 +242,30 @@ class QuickMatchService
         $game->save();
 
         $qmMap = $qmMatch->map;
-        $spawn_order = explode(',', $qmMap->spawn_order);
+        $spawnOrder = explode(',', $qmMap->spawn_order);
 
         if ($qmMap->random_spawns && $qmMap->map->num_spawns > 2) //this map uses random spawns
         {
-            $spawn_order = [];
+            $spawnOrder = [];
             $numSpawns = $qmMap->map->num_spawns;
-            $spawn_arr = [];
+            $spawnArr = [];
 
             for ($i = 1; $i <= $numSpawns; $i++)
             {
-                $spawn_arr[] = $i;
+                $spawnArr[] = $i;
             }
 
-            shuffle($spawn_arr); //shuffle the spawns, select 2
-            $spawn_order[0] = $spawn_arr[0];
-            $spawn_order[1] = $spawn_arr[1];
+            shuffle($spawnArr); //shuffle the spawns, select 2
+            $spawnOrder[0] = $spawnArr[0];
+            $spawnOrder[1] = $spawnArr[1];
 
-            Log::info("Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawn_order[0] . "," . $spawn_order[1]);
+            Log::info("Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawnOrder[0] . "," . $spawnOrder[1]);
         }
 
         # Set up player specific information
         # Color will be used for spawn location
         $qmPlayer->color = 0;
-        $qmPlayer->location = $spawn_order[$qmPlayer->color] - 1;
+        $qmPlayer->location = $spawnOrder[$qmPlayer->color] - 1;
         $qmPlayer->qm_match_id = $qmMatch->id;
         $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
 
@@ -315,7 +315,7 @@ class QuickMatchService
                 $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
             }
             $opn->color = $color++;
-            $opn->location = $spawn_order[$opn->color] - 1;
+            $opn->location = $spawnOrder[$opn->color] - 1;
             $opn->qm_match_id = $qmMatch->id;
             $opn->tunnel_id = $qmMatch->seed + $opn->color;
             $opn->save();
