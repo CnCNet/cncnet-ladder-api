@@ -244,10 +244,10 @@ class QuickMatchService
         $qmMap = $qmMatch->map;
         $spawnOrder = explode(',', $qmMap->spawn_order);
 
-        if ($qmMap->random_spawns && $qmMap->map->num_spawns > 2) //this map uses random spawns
+        if ($qmMap->random_spawns && $qmMap->map->spawn_count > 2) //this map uses random spawns
         {
             $spawnOrder = [];
-            $numSpawns = $qmMap->map->num_spawns;
+            $numSpawns = $qmMap->map->spawn_count;
             $spawnArr = [];
 
             for ($i = 1; $i <= $numSpawns; $i++)
