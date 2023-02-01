@@ -212,6 +212,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $this->save();
     }
 
+    public function updateAlias($alias)
+    {
+        $this->alias = $alias;
+        $this->save();
+    }
+
     public function getIsAllowedToUploadAvatar()
     {
         return $this->avatar_upload_allowed;

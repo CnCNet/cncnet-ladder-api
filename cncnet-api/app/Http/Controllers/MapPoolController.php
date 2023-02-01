@@ -271,7 +271,6 @@ class MapPoolController extends Controller
         $mapHeader->numStartingPoints = intval($header["NumberStartingPoints"]);
         $mapHeader->save();
 
-        $spawnCount = 0;
         //create the map waypoints
         for ($i = 1; $i <= 8; $i++)
         {
@@ -285,15 +284,10 @@ class MapPoolController extends Controller
             $mapWaypoint->bit_idx = $i;
             $mapWaypoint->map_header_id = $mapHeader->id;
             $mapWaypoint->save();
-
-            if ($x > 0 && $y > 0)
-            {
-                $spawnCount++;
-            }
         }
 
         $map = \App\Map::where('id', $mapId)->first();
-        $map->spawn_count = $spawnCount;
+        $map->spawn_count = $mapHeader->numStartingPoints;
         $map->save();
     }
 

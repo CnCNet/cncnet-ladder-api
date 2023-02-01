@@ -274,6 +274,8 @@ class AdminController extends Controller
             $user->restrictAvatarUpload(false);
         }
 
+        $user->updateAlias($request->alias);
+
         return view("admin.edit-user", [
             "user" => $user
         ]);
