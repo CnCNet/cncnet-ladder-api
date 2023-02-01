@@ -410,7 +410,8 @@ class ApiQuickMatchController extends Controller
 
             Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds QM Player: $qmPlayer , QM Client Version: $version");
 
-            if ($timeSinceQueuedSeconds > 60)
+            # 3 minute queue time
+            if ($timeSinceQueuedSeconds > 180)
             {
                 return true;
             }
