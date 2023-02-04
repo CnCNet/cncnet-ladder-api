@@ -1,55 +1,58 @@
-<?php namespace App\Http\Middleware;
+<?php
+
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
 
-class Authenticate {
+class Authenticate
+{
 
-	/**
-	 * The Guard implementation.
-	 *
-	 * @var Guard
-	 */
-	protected $auth;
+    /**
+     * The Guard implementation.
+     *
+     * @var Guard
+     */
+    protected $auth;
 
-	/**
-	 * Create a new filter instance.
-	 *
-	 * @param  Guard  $auth
-	 * @return void
-	 */
-	public function __construct(Guard $auth)
-	{
-		$this->auth = $auth;
-	}
+    /**
+     * Create a new filter instance.
+     *
+     * @param  Guard  $auth
+     * @return void
+     */
+    public function __construct(Guard $auth)
+    {
+        $this->auth = $auth;
+    }
 
-	/**
-	 * Handle an incoming request.
-	 *
-	 * @param  \Illuminate\Http\Request  $request
-	 * @param  \Closure  $next
-	 * @return mixed
-	 */
-	public function handle($request, Closure $next)
-	{
+    /**
+     * Handle an incoming request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
+     * @return mixed
+     */
+    public function handle($request, Closure $next)
+    {
         $route = $request->route();
         $actions = $route->getAction();
 
-		if ($this->auth->guest())
-		{
-			if ($request->ajax() || $request->wantsJson())
-			{
-				return response('Unauthorized.', 401);
-			}
+        if ($this->auth->guest())
+        {
+            if ($request->ajax() || $request->wantsJson())
+            {
+                return response('Unauthorized.', 401);
+            }
             else if (isset($actions["guestsAllowed"]))
             {
                 return $next($request);
             }
-			else
-			{
-				return redirect()->guest('auth/login');
-			}
-		}
+            else
+            {
+                return redirect()->guest('auth/login');
+            }
+        }
 
         if (!$this->auth->user()->isGod())
         {
@@ -57,6 +60,15 @@ class Authenticate {
             if (isset($actions["canEditAnyLadders"]))
             {
                 if ($this->auth->user()->canEditAnyLadders() != $actions["canEditAnyLadders"])
+                {
+                    $response = response('Unauthorized.', 401);
+                }
+            }
+
+            # Check any admin route that doesn't contain a ladder
+            if (isset($actions["canAdminLadder"]))
+            {
+                if ($actions["canAdminLadder"] != $this->auth->user()->isAdmin())
                 {
                     $response = response('Unauthorized.', 401);
                 }
@@ -73,6 +85,7 @@ class Authenticate {
                         $response = response('Unauthorized.', 401);
                     }
                 }
+
 
                 if (isset($actions["canModLadder"]))
                 {
@@ -107,7 +120,6 @@ class Authenticate {
             }
         }
 
-		return $next($request);
-	}
-
+        return $next($request);
+    }
 }
