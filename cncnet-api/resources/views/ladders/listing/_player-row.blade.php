@@ -7,7 +7,20 @@
             @include('components.avatar', ['avatar' => $avatar, 'size' => 50])
         </a>
         <a class="player-username player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
-            {{ $username or '' }}
+            
+                <?php 
+                    $playername = $username or '';
+                    $heart = '';
+                    if ($abbreviation == 'ra2' && str_contains(strtolower($playername), 'love'))
+                        $heart = '❤';
+                ?>
+
+                @if ($rank == 1)
+                    {{ $playername }} <p style="color:gold">  {{ $heart }}</p>
+                @else
+                    {{ $playername }} <p style="color:red"> {{ $heart }}</p>
+                @endif
+            </a>
         </a>
     </div>
 
@@ -26,8 +39,19 @@
             @endif
         </a>
         <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
-            {{ $username or '' }}
-        </a>
+            <?php 
+                    $playername = $username or '';
+                    $heart = '';
+                    if ($abbreviation == 'ra2' && str_contains(strtolower($playername), 'love'))
+                        $heart = '❤';
+                ?>
+
+                @if ($rank == 1)
+                    {{ $playername }} <p style="color:gold"> {{ $heart }}</p>
+                @else
+                    {{ $playername }} <p style="color:red"> {{ $heart }}</p>
+                @endif
+            </a>
     </div>
 
     <div class="player-profile-info">
