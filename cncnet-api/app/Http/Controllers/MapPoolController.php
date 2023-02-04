@@ -69,12 +69,13 @@ class MapPoolController extends Controller
         ]);
 
         $mapFile = $request->file('mapFile');
+        $mapFileName = strtolower($mapFile->getClientOriginalName());
         $hash = null;
         if ($mapFile != null)
         {
-            if (!($this->str_ends_with($mapFile->getClientOriginalName(), ".map") || $this->str_ends_with($mapFile->getClientOriginalName(), ".mpr")))
+            if (!($this->str_ends_with($mapFileName, ".map") || $this->str_ends_with($mapFileName, ".mpr")))
             {
-                $request->session()->flash('error', "Map file does not end in .map");
+                $request->session()->flash('error', "Map file does not end in .map or .mpr, for mapfile: " . $mapFileName);
                 return redirect()->back();
             }
 
