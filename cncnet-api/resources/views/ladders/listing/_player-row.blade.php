@@ -16,11 +16,10 @@
                 ?>
 
                 @if ($rank == 1)
-                    {{ $playername }} <p style="color:gold">  {{ $heart }}</p>
+                    {{ $playername }} <span style="color:gold;padding-left:0.5rem;">  {{ $heart }}</span>
                 @else
-                    {{ $playername }} <p style="color:red"> {{ $heart }}</p>
+                    {{ $playername }} <span style="color:red;padding-left:0.5rem;"> {{ $heart }}</span>
                 @endif
-            </a>
         </a>
     </div>
 
@@ -40,18 +39,18 @@
         </a>
         <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             <?php 
-                    $playername = $username or '';
-                    $heart = '';
-                    if ($abbreviation == 'ra2' && str_contains(strtolower($playername), 'love'))
-                        $heart = '❤';
-                ?>
+                $playername = $username or '';
+                $heart = '';
+                if ($abbreviation == 'ra2' && str_contains(strtolower($playername), 'love'))
+                    $heart = '❤';
+            ?>
 
-                @if ($rank == 1)
-                    {{ $playername }} <p style="color:gold"> {{ $heart }}</p>
-                @else
-                    {{ $playername }} <p style="color:red"> {{ $heart }}</p>
-                @endif
-            </a>
+            @if ($rank == 1)
+                {{ $playername }} <span style="color:gold;padding-left:0.5rem;">  {{ $heart }}</span>
+            @else
+                {{ $playername }} <span style="color:red;padding-left:0.5rem;"> {{ $heart }}</span>
+            @endif
+        </a>
     </div>
 
     <div class="player-profile-info">
