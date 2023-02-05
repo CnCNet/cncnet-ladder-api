@@ -40,7 +40,7 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canEditAnyLadders' 
     Route::get('players/ratings/{ladderAbbreviation}/update', 'AdminController@updatePlayerRatings');
 });
 
-Route::group(['prefix' => 'admin/', 'middleware' => 'auth'], function ()
+Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => true], function ()
 {
     Route::get('users/', 'AdminController@getManageUsersIndex');
     Route::get('users/edit/{userId}', 'AdminController@getEditUser');

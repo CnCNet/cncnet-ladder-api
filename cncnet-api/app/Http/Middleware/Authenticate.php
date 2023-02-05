@@ -57,72 +57,65 @@ class Authenticate
         if (!$this->auth->user()->isGod())
         {
             $response = null;
-            if (isset($actions["canEditAnyLadders"]))
+            if (isset($actions["canEditAnyLadders"])) # page can be viewed by any ladder mod/admin
             {
                 if ($this->auth->user()->canEditAnyLadders() != $actions["canEditAnyLadders"])
                 {
                     $response = response('Unauthorized.', 401);
                 }
             }
-            else
+            else if (isset($actions["adminRequired"]))  # non-ladder specific page, user must be an admin
             {
-
+                if (!$this->auth->user()->isAdmin())
+                {
+                    $response = response('Unauthorized.', 401);
+                }
+            }
+            else # ladder-specific mod/admin privilege 
+            {
                 $ladder = \App\Ladder::find($request->ladderId);
 
                 if ($ladder == null)
                     $ladder = \App\Ladder::where('abbreviation', $request->ladderAbbreviation)->first();
 
-                # non-ladder specific page
-                if (!isset($actions["canAdminLadder"]) && !isset($actions["canModLadder"]))
+                if (isset($actions["canAdminLadder"]))
                 {
-                    if (!$this->auth->user()->isAdmin())
+                    if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
                     {
                         $response = response('Unauthorized.', 401);
                     }
                 }
 
-                if ($request->ladderId !== null)
+                if (isset($actions["canModLadder"]))
                 {
-
-                    if (isset($actions["canAdminLadder"]))
+                    if ($actions["canModLadder"] != $this->auth->user()->isLadderMod($ladder))
                     {
-                        if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
-                        {
-                            $response = response('Unauthorized.', 401);
-                        }
-                    }
-
-                    if (isset($actions["canModLadder"]))
-                    {
-                        if ($actions["canModLadder"] != $this->auth->user()->isLadderMod($ladder))
-                        {
-                            $response = response('Unauthorized.', 401);
-                        }
-                    }
-
-                    if (isset($actions["canTestLadder"]))
-                    {
-                        if ($actions["canTestLadder"] != $this->auth->user()->isLadderTester($ladder))
-                        {
-                            $response = response('Unauthorized.', 401);
-                        }
+                        $response = response('Unauthorized.', 401);
                     }
                 }
 
-                if ($request->gameSchemaId !== null)
+                if (isset($actions["canTestLadder"]))
                 {
-                    $gameSchema = \App\GameObjectSchema::find($request->gameSchemaId);
-
-                    if (isset($actions['objectSchemaManager']))
+                    if ($actions["canTestLadder"] != $this->auth->user()->isLadderTester($ladder))
                     {
-                        $gameSchema->managers()->where('user_id', '=', $this->auth->user()->id);
+                        $response = response('Unauthorized.', 401);
                     }
                 }
+            }
 
-                if ($response !== null)
+            if ($request->gameSchemaId !== null)
+            {
+                $gameSchema = \App\GameObjectSchema::find($request->gameSchemaId);
+
+                if (isset($actions['objectSchemaManager']))
                 {
-                    return $response;
+                    $gameSchema->managers()->where('user_id', '=', $this->auth->user()->id);
                 }
+            }
+
+            if ($response !== null)
+            {
+                return $response;
             }
         }
 
