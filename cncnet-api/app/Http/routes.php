@@ -10,6 +10,7 @@ Route::get('/', function ()
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
 Route::get('/help/obs', 'SiteController@getOBSHelp');
 Route::get('/donate', 'SiteController@getDonate');
+Route::get('/ranking', 'RankingController@getIndex');
 
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
@@ -45,7 +46,6 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => t
     Route::get('users/', 'AdminController@getManageUsersIndex');
     Route::get('users/edit/{userId}', 'AdminController@getEditUser');
     Route::post('users/edit/{userId}', 'AdminController@updateUser');
-
 });
 
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
