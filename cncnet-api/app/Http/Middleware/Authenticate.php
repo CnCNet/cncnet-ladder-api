@@ -65,6 +65,8 @@ class Authenticate
                 }
             }
 
+            $ladder = \App\Ladder::find($request->ladderId);
+
             # Check any admin route that doesn't contain a ladder
             if (isset($actions["canAdminLadder"]))
             {
@@ -76,8 +78,7 @@ class Authenticate
 
             if ($request->ladderId !== null)
             {
-                $ladder = \App\Ladder::find($request->ladderId);
-
+        
                 if (isset($actions["canAdminLadder"]))
                 {
                     if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
