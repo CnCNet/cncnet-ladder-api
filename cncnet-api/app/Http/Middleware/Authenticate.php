@@ -68,7 +68,7 @@ class Authenticate
             # Check any admin route that doesn't contain a ladder
             if (isset($actions["canAdminLadder"]))
             {
-                if ($actions["canAdminLadder"] != $this->auth->user()->isAdmin())
+                if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
                 {
                     $response = response('Unauthorized.', 401);
                 }
