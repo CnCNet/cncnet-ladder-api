@@ -33,19 +33,26 @@ Route::controllers([
 
 Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
 
+Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canEditAnyLadders' => true], function ()
+{
+    Route::get('players/ratings', 'AdminController@getPlayerRatings');
+    Route::get('players/ratings/{ladderAbbreviation}', 'AdminController@getPlayerRatings');
+    Route::get('players/ratings/{ladderAbbreviation}/update', 'AdminController@updatePlayerRatings');
+});
 
-Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
+Route::group(['prefix' => 'admin/', 'middleware' => 'auth'], function ()
 {
     Route::get('users/', 'AdminController@getManageUsersIndex');
     Route::get('users/edit/{userId}', 'AdminController@getEditUser');
     Route::post('users/edit/{userId}', 'AdminController@updateUser');
+
+});
+
+Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
+{
     Route::post('ladder/new', ['middleware' => 'auth', 'isGod' => true, 'uses' => 'LadderController@saveLadder']);
     Route::get('canceledMatches/{ladderAbbreviation}', 'AdminController@getCanceledMatches');
     Route::get('washedGames/{ladderAbbreviation}', 'AdminController@getWashedGames');
-
-    Route::get('players/ratings', 'AdminController@getPlayerRatings');
-    Route::get('players/ratings/{ladderAbbreviation}', 'AdminController@getPlayerRatings');
-    Route::get('players/ratings/{ladderAbbreviation}/update', 'AdminController@updatePlayerRatings');
     Route::post('players/ratings/{ladderAbbreviation}/update-user-rating', 'AdminController@changeUserRating');
     Route::post('players/ratings/{ladderAbbreviation}/update-user-league', 'AdminController@changeLeaguePlayerStatus');
 });

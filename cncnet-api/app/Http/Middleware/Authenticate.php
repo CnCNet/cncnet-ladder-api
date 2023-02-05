@@ -64,60 +64,65 @@ class Authenticate
                     $response = response('Unauthorized.', 401);
                 }
             }
-
-            $ladder = \App\Ladder::find($request->ladderId);
-
-            # Check any admin route that doesn't contain a ladder
-            if (isset($actions["canAdminLadder"]))
+            else
             {
-                if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
-                {
-                    $response = response('Unauthorized.', 401);
-                }
-            }
 
-            if ($request->ladderId !== null)
-            {
-        
-                if (isset($actions["canAdminLadder"]))
+                $ladder = \App\Ladder::find($request->ladderId);
+
+                if ($ladder == null)
+                    $ladder = \App\Ladder::where('abbreviation', $request->ladderAbbreviation)->first();
+
+                # non-ladder specific page
+                if (!isset($actions["canAdminLadder"]) && !isset($actions["canModLadder"]))
                 {
-                    if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
+                    if (!$this->auth->user()->isAdmin())
                     {
                         $response = response('Unauthorized.', 401);
                     }
                 }
 
-
-                if (isset($actions["canModLadder"]))
+                if ($request->ladderId !== null)
                 {
-                    if ($actions["canModLadder"] != $this->auth->user()->isLadderMod($ladder))
+
+                    if (isset($actions["canAdminLadder"]))
                     {
-                        $response = response('Unauthorized.', 401);
+                        if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
+                        {
+                            $response = response('Unauthorized.', 401);
+                        }
+                    }
+
+                    if (isset($actions["canModLadder"]))
+                    {
+                        if ($actions["canModLadder"] != $this->auth->user()->isLadderMod($ladder))
+                        {
+                            $response = response('Unauthorized.', 401);
+                        }
+                    }
+
+                    if (isset($actions["canTestLadder"]))
+                    {
+                        if ($actions["canTestLadder"] != $this->auth->user()->isLadderTester($ladder))
+                        {
+                            $response = response('Unauthorized.', 401);
+                        }
                     }
                 }
 
-                if (isset($actions["canTestLadder"]))
+                if ($request->gameSchemaId !== null)
                 {
-                    if ($actions["canTestLadder"] != $this->auth->user()->isLadderTester($ladder))
+                    $gameSchema = \App\GameObjectSchema::find($request->gameSchemaId);
+
+                    if (isset($actions['objectSchemaManager']))
                     {
-                        $response = response('Unauthorized.', 401);
+                        $gameSchema->managers()->where('user_id', '=', $this->auth->user()->id);
                     }
                 }
-            }
 
-            if ($request->gameSchemaId !== null)
-            {
-                $gameSchema = \App\GameObjectSchema::find($request->gameSchemaId);
-
-                if (isset($actions['objectSchemaManager']))
+                if ($response !== null)
                 {
-                    $gameSchema->managers()->where('user_id', '=', $this->auth->user()->id);
+                    return $response;
                 }
-            }
-
-            if ($response !== null)
-            {
-                return $response;
             }
         }
 
