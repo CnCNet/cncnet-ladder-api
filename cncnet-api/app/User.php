@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Mail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Support\Facades\Log;
+use DB;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, JWTSubject
 {
@@ -322,5 +323,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getCachedUserTierByLadderHistoryAndPlayer($history, $player)
     {
         return $player->getCachedPlayerTierByLadderHistory($history);
+    }
+
+    public static function getPossibleEnumValues($name){
+        $instance = new static; // create an instance of the model to be able to get the table name
+        $type = DB::select( DB::raw('SHOW COLUMNS FROM ' . $instance->getTable() . ' WHERE Field = "' . $name . '"') )[0]->Type;
+        preg_match('/^enum\((.*)\)$/', $type, $matches);
+        $enum = array();
+        foreach(explode(',', $matches[1]) as $value){
+            $v = trim( $value, "'" );
+            $enum[] = $v;
+        }
+        return $enum;
     }
 }
