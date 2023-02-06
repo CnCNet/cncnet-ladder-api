@@ -223,6 +223,9 @@ class AdminController extends Controller
         $players = null;
         $users = null;
 
+        if ($request->user() == null || !$request->user()->isAdmin())
+            return response('Unauthorized.', 401);
+
         if ($search)
         {
             $players = Cache::remember("admin/users/{$search}", 20, function () use ($search)
