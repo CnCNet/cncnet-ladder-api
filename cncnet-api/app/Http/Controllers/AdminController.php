@@ -1014,14 +1014,17 @@ class AdminController extends Controller
     }
 
     /**
-     * God view only. Returns users who are in group 'Moderator' or 'Admin'
+     * God view only. Returns users who are in group 'Moderator' or 'Admin' or 'God'
      */
     public function getSuperAdmin(Request $request)
     {
         if ($request->user() == null || !$request->user()->isGod())
             return response('Unauthorized.', 401);
 
-        $users = \App\User::where('group', 'Moderator')->orWhere('group', 'Admin')->get();
+        $users = \App\User::where('group', 'Moderator')
+            ->orWhere('group', 'Admin')
+            ->orWhere('group', 'God')
+            ->get();
         $groups = User::getPossibleEnumValues('group');
         
         return view(
