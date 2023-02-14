@@ -17,7 +17,7 @@
                     </h1>
 
                     <p class="lead text-uppercase">
-                        <small>Last updated - <strong>(2023-02-05 12:00 AM GMT)</strong></small>
+                        <small>Last updated - <strong>{{ $dateLastUpdated }} GMT</strong></small>
                     </p>
                 </div>
             </div>

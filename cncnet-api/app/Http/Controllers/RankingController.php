@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\GameHelper;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class RankingController extends Controller
 {
@@ -23,22 +25,26 @@ class RankingController extends Controller
 
         if (!in_array($gameMode, $gameModesShort))
         {
-            $gameMode = "blitz";
+            $gameMode = GameHelper::$GAME_BLITZ;
         }
 
         $jsonFiles = ["players_active.json", "players_inactive.json", "players_new.json", "players_all.json"];
-        $jsonData = file_get_contents(resource_path("data/" . $gameMode . "_" . $jsonFiles[$index]));
-        $data = json_decode($jsonData, true);
+        $jsonPath = $gameMode . "_" . $jsonFiles[$index];
+        $jsonFile = Storage::disk('rating')->get($jsonPath);
+        $jsonData = json_decode($jsonFile, true);
+
+        $dateLastUpdated = Carbon::createFromTimestamp(Storage::disk("rating")->lastModified($jsonPath));
 
         return view(
             "ranking.index",
             [
-                "data" => $data,
+                "data" => $jsonData,
                 "gameMode" => $gameMode,
                 "gameModes" => $gameModes,
                 "gameModesShort" => $gameModesShort,
                 "links" => $links,
-                "index" => $index
+                "index" => $index,
+                "dateLastUpdated" => $dateLastUpdated
             ]
         );
     }
