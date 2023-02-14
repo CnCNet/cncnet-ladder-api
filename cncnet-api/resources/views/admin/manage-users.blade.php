@@ -129,6 +129,9 @@
                                 <div class="user-info">
                                     <h4><a href="?userId={{ $user->id }}">{{ $user->name }}</a></h4>
                                     <h5>User id: <strong>{{ $user->id }}</strong></h5>
+                                    @if($user->alias != null)
+                                            <h5>Alias: <strong>{{ $user->alias }}</strong></h5>
+                                    @endif
                                     <h5>Email: <strong>{{ $user->email }}</strong></h5>
 
                                     <div class="base-info">
