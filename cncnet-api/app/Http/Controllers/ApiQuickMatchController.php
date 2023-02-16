@@ -233,11 +233,9 @@ class ApiQuickMatchController extends Controller
         });
     }
 
+
     /**
      * Called by cron service only
-     * @return void 
-     * @throws InvalidArgumentException 
-     * @throws Exception 
      */
     public function prunePlayersInQueue()
     {
