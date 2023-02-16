@@ -28,6 +28,7 @@ use App\MapPool;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use BadMethodCallException;
+use Exception;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use MaxMind\Db\Reader\InvalidDatabaseException;
@@ -230,6 +231,37 @@ class ApiQuickMatchController extends Controller
         {
             return in_array($side->local_id, $allowed_sides);
         });
+    }
+
+
+    /**
+     * Called by cron service only
+     */
+    public function prunePlayersInQueue()
+    {
+        $queuedPlayers = QmQueueEntry::all();
+        $now = Carbon::now();
+
+        foreach ($queuedPlayers as $queuedPlayer)
+        {
+            $secondsSinceQMClientTouch = $now->copy()->diffInSeconds($queuedPlayer->updated_at);
+
+            # QM client calls API calls every 10-15 seconds when in queue, cron called every minute
+            if ($secondsSinceQMClientTouch > 20)
+            {
+                try
+                {
+                    $player = $queuedPlayer->qmPlayer->player;
+                    Log::info("Removing player from queue due to inactivity: $player");
+                }
+                catch (Exception $ex)
+                {
+                    Log::info("Removing player from queue due to inactivity: $queuedPlayer");
+                }
+
+                $queuedPlayer->delete();
+            }
+        }
     }
 
     public function matchRequest(Request $request, $ladderAbbrev = null, $playerName = null)
