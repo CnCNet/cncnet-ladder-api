@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\UpdateStatsCache',
         'App\Console\Commands\CleanupQmCanceledMatches',
         'App\Console\Commands\UpdatePlayerRatings',
+        'App\Console\Commands\ClearInactiveQueueEntries'
     ];
 
     /**
@@ -54,5 +55,7 @@ class Kernel extends ConsoleKernel
             ->monthly();
         $schedule->command('update_player_ratings')
             ->monthly();
+
+        $schedule->command('clear_inactive_queue_entries')->everyMinute();
     }
 }
