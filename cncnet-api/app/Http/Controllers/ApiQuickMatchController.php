@@ -251,11 +251,10 @@ class ApiQuickMatchController extends Controller
             # QM client calls API calls every 10-15 seconds when in queue, cron called every minute
             if ($secondsSinceQMClientTouch > 20)
             {
-                $queuedPlayer->delete();
-
                 $player = $queuedPlayer->qmPlayer->player;
-
                 Log::info("Removing player from queue due to inactivity: $player");
+
+                $queuedPlayer->delete();
             }
         }
     }
