@@ -67,8 +67,8 @@ class ApiQuickMatchController extends Controller
                 ->where('qm_match_players.tier', '=', $tierId)
                 ->count();
 
-            $queuedPlayers = \App\QmMatchPlayer::where('qm_match_players.ladder_id', '=', $ladder_id)
-                ->where('qm_match_players.tier', '=', $tierId)
+            $queuedPlayers = \App\QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+                ->where('ladder_history_id', $history->id)
                 ->whereNull('qm_match_id')
                 ->count();
 
