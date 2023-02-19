@@ -28,7 +28,7 @@ class StatsService
         {
             $timediff = Carbon::now()->subHour()->toDateTimeString();
             $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
-            $ladderId = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
+            $ladderId = $ladder->id;
             $history = $ladder->currentHistory();
             $startOfMonth = Carbon::now()->startOfMonth();
             $endOfMonth = Carbon::now()->endOfMonth();
