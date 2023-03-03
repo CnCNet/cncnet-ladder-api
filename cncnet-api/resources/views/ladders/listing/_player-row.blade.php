@@ -11,8 +11,8 @@
                 <?php 
                     $playername = $username or '';
                     $heart = '';
-                    if ($abbreviation == 'ra2' && str_contains(strtolower($playername), 'love'))
-                        $heart = '❤';
+                    if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'irish'))
+                        $heart = '🍀';
                 ?>
 
                 @if ($rank == 1)
@@ -41,8 +41,8 @@
             <?php 
                 $playername = $username or '';
                 $heart = '';
-                if ($abbreviation == 'ra2' && str_contains(strtolower($playername), 'love'))
-                    $heart = '❤';
+                if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'irish'))
+                    $heart = '🍀';
             ?>
 
             @if ($rank == 1)
