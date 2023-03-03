@@ -1009,10 +1009,10 @@ class AdminController extends Controller
         $newName = trim($newName);
 
         //check if this name already belongs to another player in this ladder
-        $existing_players = \App\Player::where('username', $newName)
+        $existing_players_count = \App\Player::where('username', $newName)
             ->where('ladder_id', $history->ladder->id)
-            ->get();
-        if ($existing_players->count() > 0)
+            ->count();
+        if ($existing_players_count > 0)
         {
             $request->session()->flash('error', "This username is already taken for this ladder.");
             return redirect()->back();
