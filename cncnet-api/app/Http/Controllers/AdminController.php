@@ -985,29 +985,50 @@ class AdminController extends Controller
             'player_name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
         ]);
 
-        $player = \App\Player::where('id', $request->player_id)->first();
+        $history = \App\LadderHistory::where('id', $request->history_id)->first();
 
-        if ($player == null)
-            abort(400, "No player found with this player id");
+        $player = \App\Player::where('id', $request->player_id)
+            ->where('ladder_id', $history->ladder->id)
+            ->first();
+
+        if ($player == null) 
+        {
+            $request->session()->flash('error', "No existing player found with this player id");
+            return redirect()->back();
+        }
 
         $playerCaches = \App\PlayerCache::where('player_id', $player->id)->get();
 
         if ($playerCaches == null || $playerCaches->count() == 0)
-            abort(400, "Error getting player data.");
+        {
+            $request->session()->flash('error', "No player caches found with this player id");
+            return redirect()->back();
+        }
 
         $newName = $request->player_name;
-
         $newName = trim($newName);
+
+        //check if this name already belongs to another player in this ladder
+        $existing_players = \App\Player::where('username', $newName)
+            ->where('ladder_id', $history->ladder->id)
+            ->get();
+        if ($existing_players->count() > 0)
+        {
+            $request->session()->flash('error', "This username is already taken for this ladder.");
+            return redirect()->back();
+        }
+
+        //update player name to the new name
         $player->username = $newName;
         $player->save();
 
+        //update player name in player caches
         foreach ($playerCaches as $playerCache)
         {
             $playerCache->player_name = $player->username;
             $playerCache->save();
         }
 
-        $history = \App\LadderHistory::where('id', $request->history_id)->first();
         $url = \App\URLHelper::getPlayerProfileUrl($history, $player->username);
         $request->session()->flash('success', "Player name has been updated to " . $player->username);
         return redirect()->to($url);
