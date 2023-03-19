@@ -16,10 +16,4 @@ class Achievement extends Model
         return $this->belongsTo('App\Ladder');
     }
 
-    public static function getFactionTypeFromTag($tag)
-    {
-        switch ($tag)
-        {
-        }
-    }
 }

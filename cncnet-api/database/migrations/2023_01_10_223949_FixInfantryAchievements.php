@@ -32,7 +32,6 @@ class FixInfantryAchievements extends Migration
             ->orWhere('object_name', 'GGI')
             ->orWhere('object_name', 'TERROR')
             ->orWhere('object_name', 'CLEG')
-            ->orWhere('object_name', 'CLEG')
             ->get();
 
         foreach ($infantryAchievements as $infantryAchievement)
