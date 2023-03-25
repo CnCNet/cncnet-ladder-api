@@ -8,6 +8,7 @@ use App\Player;
 use App\PlayerGameReport;
 use \App\QmMatchPlayer;
 use \App\QmMatch;
+use App\QmQueueEntry;
 use App\StatsCache;
 use \Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -21,46 +22,57 @@ class StatsService
         $this->ladderService = new LadderService();
     }
 
-    public function getQmStats($ladderAbbrev)
+    public function getQmStats($ladderAbbrev, $tierId = 1)
     {
-        return Cache::remember("getQmStats/$ladderAbbrev", 5, function () use ($ladderAbbrev)
+        return Cache::remember("getQmStats/$ladderAbbrev", 1, function () use ($ladderAbbrev, $tierId)
         {
+            $timediff = Carbon::now()->subHour()->toDateTimeString();
+            $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
+            $ladderId = $ladder->id;
+            $history = $ladder->currentHistory();
             $startOfMonth = Carbon::now()->startOfMonth();
             $endOfMonth = Carbon::now()->endOfMonth();
 
-            $timediff = Carbon::now()->subHour()->toDateTimeString();
-            $ladder_id = $this->ladderService->getLadderByGame($ladderAbbrev)->id;
-
-            $recentMatchedPlayers = QmMatchPlayer::where("created_at", ">", $timediff)
-                ->where("ladder_id", "=", $ladder_id)
+            $recentMatchedPlayers = QmMatchPlayer::where('qm_match_players.created_at', '>', $timediff)
+                ->where('ladder_id', '=', $ladderId)
+                ->where('qm_match_players.tier', '=', $tierId)
                 ->count();
 
-            $queuedPlayers = QmMatchPlayer::where("ladder_id", "=", $ladder_id)->whereNull("qm_match_id")->count();
-
-            $recentMatches = QmMatch::where("created_at", ">", $timediff)
-                ->where("ladder_id", "=", $ladder_id)
+            $queuedPlayers = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+                ->where('ladder_history_id', $history->id)
+                ->whereNull('qm_match_id')
                 ->count();
 
-            $activeGames = QmMatch::where("updated_at", ">", Carbon::now()->subMinute(2))
-                ->where("ladder_id", "=", $ladder_id)
+            $recentMatches = QmMatch::where('qm_matches.tier', '=', $tierId)
+                ->where('qm_matches.created_at', '>', $timediff)
+                ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->count();
 
-            $past24hMatches = QmMatch::where("updated_at", ">", Carbon::now()->subDay(1))
-                ->where("ladder_id", "=", $ladder_id)
+            $activeMatches = QmMatch::where('qm_matches.created_at', '>', $timediff)
+                ->where('qm_matches.ladder_id', '=', $ladderId)
+                ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
+                ->where('qm_matches.tier', '=', $tierId)
+                ->count();
+
+            $past24hMatches = \App\QmMatch::where('qm_matches.created_at', '>', $timediff)
+                ->where('qm_matches.ladder_id', '=', $ladderId)
+                ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
+                ->where('qm_matches.updated_at', '>', Carbon::now()->subDay(1))
+                ->where('qm_matches.tier', '=', $tierId)
                 ->count();
 
             $matchesByMonth = QmMatch::where("updated_at", ">", $startOfMonth)
                 ->where("updated_at", "<", $endOfMonth)
-                ->where("ladder_id", "=", $ladder_id)
+                ->where("ladder_id", "=", $ladderId)
                 ->count();
 
             return [
                 "recentMatchedPlayers" => $recentMatchedPlayers,
                 "queuedPlayers" => $queuedPlayers,
-                "matchesByMonth" => $matchesByMonth,
                 "past24hMatches" => $past24hMatches,
                 "recentMatches" => $recentMatches,
-                "activeMatches"   => $activeGames,
+                "matchesByMonth" => $matchesByMonth,
+                "activeMatches"   => $activeMatches,
                 "time"          => Carbon::now()
             ];
         });

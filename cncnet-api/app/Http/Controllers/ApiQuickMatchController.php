@@ -23,6 +23,7 @@ use DateTime;
 use \App\Helpers\LeagueHelper;
 use App\Http\Services\QuickMatchService;
 use App\Http\Services\QuickMatchSpawnService;
+use App\Http\Services\StatsService;
 use App\LeaguePlayer;
 use App\MapPool;
 use App\QmMatch;
@@ -39,6 +40,7 @@ class ApiQuickMatchController extends Controller
     private $playerService;
     private $quickMatchService;
     private $quickMatchSpawnService;
+    private $statsService;
 
     public function __construct()
     {
@@ -46,6 +48,7 @@ class ApiQuickMatchController extends Controller
         $this->playerService = new PlayerService();
         $this->quickMatchService = new QuickMatchService();
         $this->quickMatchSpawnService = new QuickMatchSpawnService();
+        $this->statsService = new StatsService();
     }
 
     public function clientVersion(Request $request, $platform = null)
@@ -55,50 +58,16 @@ class ApiQuickMatchController extends Controller
 
     public function statsRequest(Request $request, $ladderAbbrev = null, $tierId = 1)
     {
-        return Cache::remember("statsRequest/$ladderAbbrev/$tierId", 1, function () use (&$ladderAbbrev, &$tierId)
-        {
-            $timediff = Carbon::now()->subHour()->toDateTimeString();
-            $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
-            $ladder_id = $ladder->id;
-            $history = $ladder->currentHistory();
+        $qmStats = $this->statsService->getQmStats($ladderAbbrev, $tierId);
 
-            $recentMatchedPlayers = \App\QmMatchPlayer::where('qm_match_players.created_at', '>', $timediff)
-                ->where('ladder_id', '=', $ladder_id)
-                ->where('qm_match_players.tier', '=', $tierId)
-                ->count();
-
-            $queuedPlayers = \App\QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
-                ->where('ladder_history_id', $history->id)
-                ->whereNull('qm_match_id')
-                ->count();
-
-            $recentMatches = \App\QmMatch::where('qm_matches.tier', '=', $tierId)
-                ->where('qm_matches.created_at', '>', $timediff)
-                ->where('qm_matches.ladder_id', '=', $ladder_id)
-                ->count();
-
-            $activeGames = \App\QmMatch::where('qm_matches.created_at', '>', $timediff)
-                ->where('qm_matches.ladder_id', '=', $ladder_id)
-                ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
-                ->where('qm_matches.tier', '=', $tierId)
-                ->count();
-
-            $past24hMatches = \App\QmMatch::where('qm_matches.created_at', '>', $timediff)
-                ->where('qm_matches.ladder_id', '=', $ladder_id)
-                ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
-                ->where('qm_matches.updated_at', '>', Carbon::now()->subDay(1))
-                ->where('qm_matches.tier', '=', $tierId)
-                ->count();
-
-            return [
-                'recentMatchedPlayers' => $recentMatchedPlayers,
-                'queuedPlayers' => $queuedPlayers,
-                'past24hMatches' => $past24hMatches,
-                'recentMatches' => $recentMatches,
-                'activeMatches'   => $activeGames,
-                'time'          => Carbon::now()
-            ];
-        });
+        return [
+            'recentMatchedPlayers' => $qmStats['recentMatchedPlayers'],
+            'queuedPlayers' => $qmStats['queuedPlayers'],
+            'past24hMatches' => $qmStats['past24hMatches'],
+            'recentMatches' => $qmStats['recentMatches'],
+            'activeMatches'   => $qmStats['activeMatches'],
+            'time' => $qmStats['time']
+        ];
     }
 
     /**
@@ -513,6 +482,8 @@ class ApiQuickMatchController extends Controller
             $qmPlayer->waiting = false;
             $qmPlayer->save();
 
+            Log::info("ApiQuickMatchController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
+
             return $this->onCheckback($alert);
         }
 
@@ -735,11 +706,4 @@ class ApiQuickMatchController extends Controller
 
         return $data;
     }
-}
-
-function b_to_ini($bool)
-{
-    if ($bool === null) return $bool;
-    if ($bool == -1) return rand(0, 1) ? "Yes" : "No"; // Pray the seed was set earlier or this will cause recons
-    return $bool ? "Yes" : "No";
 }
