@@ -285,6 +285,8 @@ class FindOpponent extends Command implements ShouldQueue
                     ->limit($reduceMapRepeats)
                     ->get();
 
+                Log::info("Recent played map results from player 1 (" + $player->username + ") recent games " + json_encode($playerGameReports));
+
                 $recentMaps = $playerGameReports->map(function ($item)
                 {
                     return $item->game->map;
@@ -311,6 +313,8 @@ class FindOpponent extends Command implements ShouldQueue
                         ->orderBy('created_at', 'DESC')
                         ->limit($reduceMapRepeats)
                         ->get();
+
+                    Log::info("Recent played map results from player 2 (" + $oppPlayer->username + ") recent games " + json_encode($oppPlayerGames));
 
                     $recentMaps = $oppPlayerGames->map(function ($item)
                     {
