@@ -575,14 +575,6 @@ class ApiLadderController extends Controller
         //fetch the game object counts from the game stats for this game
         $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
 
-        if ($user->name == "dontRushMe") // TODO delete
-        {
-            $gocs2 = \App\GameObjectCounts::where('stats_id', $stats->id)
-                ->join('countable_game_objects', 'game_object_counts.countable_game_objects_id', '=', 'countable_game_objects.id')
-                ->get();
-            Log::info(json_encode($gocs2));
-        }
-
         foreach ($gocs as $goc)
         {
             $count = $goc->count;

@@ -423,8 +423,6 @@ class ApiQuickMatchController extends Controller
 
     private function onHandle1vs1AIMatchupRequest($qmPlayer, $userPlayerTier, $history, $gameType, $ladder, $ladderRules)
     {
-        Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1 AI");
-
         if ($ladder->abbreviation === GameHelper::$GAME_BLITZ)
         {
             # Exclude certain maps that do not work with AI well
@@ -489,14 +487,8 @@ class ApiQuickMatchController extends Controller
 
         if ($gameType == Game::GAME_TYPE_2VS2_AI)
         {
-            Log::info("ApiQuickMatchController ** onMatchMeUp - 2vs2 AI Coop");
-
             # Prepend quick-coop AI ini file
             $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
-        }
-        else
-        {
-            Log::info("ApiQuickMatchController ** onMatchMeUp - 1vs1");
         }
 
         # Write the spawn.ini "Others" sections

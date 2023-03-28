@@ -19,8 +19,6 @@ class QuickMatchSpawnService
      */
     public static function createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules)
     {
-        Log::info("QuickMatchSpawnService ** createSpawnStruct");
-
         $qmMap = $qmMatch->map;
         $map = $qmMap->map;
 
@@ -112,8 +110,6 @@ class QuickMatchSpawnService
      */
     public static function appendOthersToSpawnIni($spawnStruct, $qmPlayer, $allPlayers)
     {
-        Log::info("QuickMatchSpawnService ** appendOthers");
-
         $other_idx = 1;
         $multi_idx = $qmPlayer->color + 1;
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
@@ -155,8 +151,6 @@ class QuickMatchSpawnService
      */
     public static function addQuickMatchCoopAISpawnIni($spawnStruct, $difficulty)
     {
-        Log::info("QuickMatchSpawnService ** addQuickMatchCoopAISpawnIni");
-
         $spawnStruct["spawn"]["Settings"]["AIPlayers"] = 2;
         $spawnStruct["spawn"]["Settings"]["GameSpeed"] = 1;
         $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Quick Match/QuickMatchAI.ini"];
@@ -182,8 +176,6 @@ class QuickMatchSpawnService
      */
     public static function addQuickMatchAISpawnIni($spawnStruct, $ladder, $difficulty)
     {
-        Log::info("QuickMatchSpawnService ** addQuickMatchAISpawnIni");
-
         $spawnStruct["spawn"]["Settings"]["AIPlayers"] = 1;
         $spawnStruct["spawn"]["Settings"]["GameSpeed"] = 1;
         $spawnStruct["prepends"][] = ["to" => "spawn.ini", "from" => "INI/Quick Match/QuickMatchAI.ini"];
