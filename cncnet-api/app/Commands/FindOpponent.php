@@ -48,7 +48,6 @@ class FindOpponent extends Command implements ShouldQueue
 
         if ($qEntry === null)
         {
-            Log::info("FindOpponent ** qEntry is null.");
             return;
         }
 
@@ -59,7 +58,6 @@ class FindOpponent extends Command implements ShouldQueue
         # A player could cancel out of queue before this function runs
         if ($qmPlayer === null)
         {
-            Log::info("FindOpponent ** qmPlayer is null.");
             $qEntry->delete();
             return;
         }
@@ -285,8 +283,6 @@ class FindOpponent extends Command implements ShouldQueue
                     ->limit($reduceMapRepeats)
                     ->get();
 
-                Log::info("FindOpponent ** Recent played map results from player 1 ($player->username) recent games: $playerGameReports");
-
                 $recentMaps = $playerGameReports->map(function ($item)
                 {
                     return $item->game->map;
@@ -296,6 +292,8 @@ class FindOpponent extends Command implements ShouldQueue
                 {
                     return !is_null($value);
                 });
+
+                Log::info("FindOpponent ** Recent played maps from player1 ($player->username): $recentMaps");
 
                 foreach ($recentMaps as $recentMap)
                 {
@@ -314,8 +312,6 @@ class FindOpponent extends Command implements ShouldQueue
                         ->limit($reduceMapRepeats)
                         ->get();
 
-                    Log::info("FindOpponent ** Recent played map results from player 2 ($oppPlayer->username) recent games: $oppPlayerGames");
-
                     $recentMaps = $oppPlayerGames->map(function ($item)
                     {
                         return $item->game->map;
@@ -325,6 +321,8 @@ class FindOpponent extends Command implements ShouldQueue
                     {
                         return !is_null($value);
                     });
+
+                    Log::info("FindOpponent ** Recent played maps from player2 ($oppPlayer->username): $recentMaps");
 
                     foreach ($recentMaps as $recentMap) //remove the recent maps from common_qm_maps
                     {
@@ -362,10 +360,19 @@ class FindOpponent extends Command implements ShouldQueue
 
         foreach ($commonQmMaps as $common_qm_map)
         {
-            if ($common_qm_map->map->id != $recentMap->id)
+            if ($common_qm_map->map->hash != $recentMap->hash) //only include maps whose map id is not a recent map id
             {
                 $newCommonQmMaps[] = $common_qm_map;
             }
+            else
+            {
+                Log::info("Skipping map from being selected: $recentMap");
+            }
+        }
+
+        if ($commonQmMaps == $newCommonQmMaps)
+        {
+            Log::info("$recentMap was not found in commonQmMaps");
         }
 
         return $newCommonQmMaps;
