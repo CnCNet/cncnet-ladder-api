@@ -63,16 +63,16 @@ class ClanLadderController  extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
 
-        $clan = Clan::where("ladder_id", "=", $history->ladder->id)
-            ->where("short", "=", $clanName)
-            ->first();
+        $clanCache = ClanCache::where("clan_name", $clanName)->first();
 
-        if ($clanName == null)
+        if ($clanCache == null)
         {
-            abort(404, "No player found");
+            abort(404, "No clan found");
         }
 
-        $user = $request->user();
+        $clan = Clan::where("ladder_id", "=", $history->ladder->id)
+            ->where("id", "=", $clanCache->clan_id)
+            ->first();
 
         $games = $clan->clanGames()
             ->where("ladder_history_id", "=", $history->id)
@@ -92,8 +92,6 @@ class ClanLadderController  extends Controller
         // $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
         // $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $userPlayer, 3);
         // $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $userPlayer);
-
-        $clanCache = ClanCache::where("clan_id", $clan->id)->first();
 
         return view(
             "clans.clan-detail",

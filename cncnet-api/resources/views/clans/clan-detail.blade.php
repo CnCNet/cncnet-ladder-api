@@ -25,7 +25,7 @@
                     </h1>
 
                     <p class="lead text-uppercase">
-                        <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
+                        <small>{{ $history->starts->format('F Y') }} - <strong>Clan Ranked Match</strong></small>
                     </p>
 
                     <div class="mini-breadcrumb d-none d-lg-flex">
@@ -144,12 +144,13 @@
                                 <div class="stat-item">
                                     <span class="name">Losses:</span> {{ $clan->games_lost }}
                                 </div>
-                                {{-- <div class="stat-item">
+                                <div class="stat-item">
                                     <span class="name">Average FPS:</span> {{ $clan->fps }}
-                                </div> --}}
-                                {{-- <div class="stat-item">
-                                    <span class="name">Played today:</span> {{ $playerGamesLast24Hours }}
-                                </div> --}}
+                                </div>
+                                <div class="stat-item">
+                                    <span class="name">Played today:</span>
+                                    {{-- {{ $playerGamesLast24Hours }} --}}
+                                </div>
                             </div>
                         </div>
 
