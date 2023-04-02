@@ -263,7 +263,3 @@
     </div>
 
 @endsection
-
-@if ($history->ends > Carbon\Carbon::now())
-    @include('components.countdown', ['target' => $history->ends->toISO8601String()])
-@endif
