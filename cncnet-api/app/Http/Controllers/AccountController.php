@@ -314,6 +314,17 @@ class AccountController extends Controller
             "twitch_profile" => "string"
         ]);
 
+        # Check if urls
+        if (
+            filter_var($request->youtube_profile, FILTER_VALIDATE_URL) ||
+            filter_var($request->twitch_profile, FILTER_VALIDATE_URL) ||
+            filter_var($request->discord_profile, FILTER_VALIDATE_URL)
+        )
+        {
+            $request->session()->flash('error', "URL's are not allowed, enter usernames only");
+            return redirect()->back();
+        }
+
         $user = Auth::user();
 
         # User Settings
@@ -348,11 +359,11 @@ class AccountController extends Controller
             }
         }
 
-
         # Social profiles
         $user->discord_profile = $newDiscordProfile;
         $user->youtube_profile = $request->youtube_profile;
         $user->twitch_profile = $request->twitch_profile;
+
 
         # User Avatar
         if ($request->hasFile("avatar"))
