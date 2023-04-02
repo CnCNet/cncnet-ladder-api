@@ -37,6 +37,7 @@ Route::group(['prefix' => 'clans/', 'middleware' => ['auth', 'cache.public'], 'g
     Route::get('/', 'ClanLadderController@getIndex');
     Route::get('{date}/{game}', 'ClanLadderController@getListing');
     Route::get('{date}/{game}/{clanName}', 'ClanLadderController@getLadderClan');
+    Route::get('{date}/{game}/{clanName}/games/{gameId}', 'ClanLadderController@getClanLadderGame');
 });
 
 Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()

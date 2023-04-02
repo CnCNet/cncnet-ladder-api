@@ -1,41 +1,38 @@
 <div class="table-responsive">
     <table class="games-table table align-middle mb-0">
         <tbody>
-            @foreach ($games as $gameReport)
-                <?php
-                
-                $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->id);
-                $playerGameReports = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)->get();
-                //$timestamp = $gameReport->updated_at->timestamp;
-                
-                $teamAReport = null;
-                $teamBReport = null;
-                
-                foreach ($playerGameReports as $k => $pgr) {
-                    if ($k == 0) {
-                        $teamAReport = $pgr;
-                    } else {
-                        $teamBReport = $pgr;
-                    }
-                }
-                
-                try {
-                    $playerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $teamAReport->player->username);
-                    $opponentPlayerUrl = \App\URLHelper::getPlayerProfileUrl($history, $teamBReport->player->username);
-                } catch (Exception $ex) {
-                    # Stats most likely washed, skip
-                    continue;
-                }
-                ?>
 
-                <tr class="align-middle">
+            @foreach ($games as $gameReport)
+                @php
+                    $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id);
+                    $timestamp = $gameReport->gameReport->updated_at->timestamp;
+                    
+                    $playerGameReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
+                        ->where('clan_id', '=', $gameReport->clan->id)
+                        ->first();
+                    
+                    $clanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $playerGameReport->clan->name);
+                    $playerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $playerGameReport->player->username);
+                    
+                    $opponentPlayerReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
+                        ->where('clan_id', '!=', $clan->id)
+                        ->first();
+                    
+                    if ($opponentPlayerReport) {
+                        $opponentClanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $opponentPlayerReport->clan->name);
+                        $opponentPlayerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $opponentPlayerReport->player->username);
+                    }
+                @endphp
+
+                <tr class="align-middle" data-timestamp="{{ $timestamp }}">
                     <td class="td-player">
                         @include('clans.components._games-player-clan-row', [
+                            'clanName' => $playerGameReport->clan->name,
+                            'clanProfileUrl' => $clanProfileUrl,
                             'profileUrl' => $playerProfileUrl,
-                            'clanName' => $teamAReport->player->clanPlayer->clan->short,
-                            'username' => $teamAReport->player->username,
-                            'avatar' => $teamAReport->player->user->getUserAvatar(),
-                            'playerGameReport' => $teamAReport,
+                            'username' => $playerGameReport->clan->name,
+                            'avatar' => $playerGameReport->player->user->getUserAvatar(),
+                            'playerGameReport' => $playerGameReport,
                         ])
                     </td>
 
@@ -46,25 +43,28 @@
                     </td>
 
                     <td class="td-player td-player-opponent">
-                        @include('clans.components._games-player-clan-row', [
-                            'profileUrl' => $opponentPlayerUrl,
-                            'clanName' => $teamBReport->player->clanPlayer->clan->short,
-                            'username' => $teamBReport->player->username,
-                            'avatar' => $teamBReport->player->user->getUserAvatar(),
-                            'playerGameReport' => $teamBReport,
-                        ])
+                        @if ($opponentPlayerReport)
+                            @include('clans.components._games-player-clan-row', [
+                                'clanName' => $opponentPlayerReport->clan->name,
+                                'clanProfileUrl' => $clanProfileUrl,
+                                'profileUrl' => $playerProfileUrl,
+                                'username' => $opponentPlayerReport->player->username,
+                                'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
+                                'playerGameReport' => $opponentPlayerReport,
+                            ])
+                        @endif
                     </td>
 
                     <td class="td-game-details">
                         <div class="d-flex align-items-center game-details">
                             <div>
                                 <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
-                                {{-- <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->report->duration) }}</p> --}}
+                                <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->duration) }}</p>
                                 <p class="text-muted mb-0">
-                                    {{-- Played: {{ $gameReport->updated_at->diffForHumans() }} --}}
+                                    Played: {{ $gameReport->gameReport->updated_at->diffForHumans() }}
                                 </p>
                                 <p class="text-muted mb-0">
-                                    FPS: {{ $teamAReport->gameReport->fps }}
+                                    FPS: {{ $gameReport->fps }}
                                 </p>
                             </div>
                         </div>

@@ -260,9 +260,18 @@ class Player extends Model
         return $this->playerHistory($history)->tier;
     }
 
-    public function playerCache($history_id)
+    public function playerCache($historyId)
     {
-        return \App\PlayerCache::where('player_id', '=', $this->id)->where("ladder_history_id", '=', $history_id)->first();
+        return \App\PlayerCache::where('player_id', '=', $this->id)
+            ->where("ladder_history_id", '=', $historyId)
+            ->first();
+    }
+
+    public function clanCache($historyId)
+    {
+        return ClanCache::where('player_id', '=', $this->id)
+            ->where("ladder_history_id", '=', $historyId)
+            ->first();
     }
 
     public function unSeenAlerts()

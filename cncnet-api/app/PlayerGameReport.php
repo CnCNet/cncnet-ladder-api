@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class PlayerGameReport extends Model
 {
-
     // This is a report of disputable information about a game. Undisputed information is stored in the games table
     protected $fillable = [
         'game_id',
         'game_report_id',
         'player_id',
+        'clan_id',
         'points',
         'stats_id',
         'local_id',
@@ -23,7 +23,8 @@ class PlayerGameReport extends Model
         'draw',
         'defeated',
         'spectator',
-        'created_at'
+        'created_at',
+        'updated_at'
     ];
 
     public function player()

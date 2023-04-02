@@ -1,4 +1,5 @@
  <div class="player-container">
+
      <div class="player-row">
          <div class="ms-3 me-3">
              <a href="{{ $profileUrl }}" title="View {{ $playerGameReport->player->username }}'s profile">
@@ -6,13 +7,18 @@
              </a>
          </div>
          <div class="player-username">
-             Clan: {{ $clanName }}
-
-             <a href="{{ $profileUrl or '' }}" title="View {{ $playerGameReport->player->username }}'s profile">
-                 <p class="fw-bold mb-1">{{ $playerGameReport->player->username }}</p>
-             </a>
+             <p class="fw-bold mb-1">
+                 Clan: <a href="{{ $clanProfileUrl }}" title="View clan {{ $clanName }}'s profile">{{ $clanName }}</a>
+             </p>
+             <p class="mb-1">
+                 Player:
+                 <a href="{{ $profileUrl or '' }}" title="View {{ $playerGameReport->player->username }}'s profile">
+                     {{ $playerGameReport->player->username }}
+                 </a>
+             </p>
          </div>
      </div>
+
      @if ($playerGameReport->stats)
          <div class="player-points d-flex">
              @php $playerStats2 = \App\Stats2::where("id", $playerGameReport->stats->id)->first(); @endphp

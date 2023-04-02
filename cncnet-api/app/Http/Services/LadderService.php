@@ -321,18 +321,14 @@ class LadderService
         return \App\Game::where("id", "=", $gameId)->where('ladder_history_id', $history->id)->first();
     }
 
-    public function getLadderClan($history, $clanName)
-    {
-        dd("Here");
-    }
-
     public function getLadderPlayer($history, $username)
     {
         if ($history === null)
             return ["error" => "Incorrect Ladder"];
 
         $player = \App\Player::where("ladder_id", "=", $history->ladder->id)
-            ->where("username", "=", $username)->first();
+            ->where("username", "=", $username)
+            ->first();
 
         if ($player === null)
             return ["error" => "No such player"];

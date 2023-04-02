@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Ladder')
+@section('title', '500')
 @section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
 @section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
@@ -9,8 +9,8 @@
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">404</strong>
-                        <span>Kane Not Found</span>
+                        <strong class="fw-bold">500</strong>
+                        <span>Error. Probably mind control.</span>
                     </h1>
 
                     <ul class="list-inline">

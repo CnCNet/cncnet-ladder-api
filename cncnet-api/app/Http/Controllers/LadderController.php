@@ -197,7 +197,6 @@ class LadderController extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
-
         $user = $request->user();
 
         if ($game == null)

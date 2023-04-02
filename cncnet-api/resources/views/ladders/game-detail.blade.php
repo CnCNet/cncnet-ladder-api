@@ -51,7 +51,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"
+                    <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
                         class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
@@ -65,7 +65,11 @@
                             <?php $gameStats = $pgr->stats; ?>
                             <?php $player = $pgr->player()->first(); ?>
 
-                            <span>{{ $player->username }}</span>
+                            @if ($history->ladder->clans_allowed)
+                                Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
+                            @else
+                                <span>{{ $player->username }}</span>
+                            @endif
                             @if ($k == 0)
                                 <span><strong>VS</strong></span>
                             @endif
@@ -73,7 +77,11 @@
                     </p>
 
                     <p class="text-uppercase">
-                        {{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong>
+                        @if ($history->ladder->clans_allowed)
+                            {{ $history->starts->format('F Y') }} - <strong>Clan Ranked Match</strong>
+                        @else
+                            {{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong>
+                        @endif
                     </p>
 
                     <div class="mini-breadcrumb d-none d-lg-flex">
@@ -137,10 +145,20 @@
 
                             <div class="player-details">
                                 <h2 class="username">
-                                    <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
-                                        title="View {{ $player->username }}'s profile">
-                                        {{ $player->username }}
-                                    </a>
+                                    @if ($history->ladder->clans_allowed)
+                                        <a href="{{ \App\URLHelper::getClanProfileLadderUrl($history, $player->clanPlayer->clan->name) }}"
+                                            title="View {{ $player->clanPlayer->clan->short }}'s clan profile">
+                                            {{ $player->clanPlayer->clan->short }}
+
+                                            <br />
+                                            <span style="font-size: 1rem">Played by: {{ $player->username }}</span>
+                                        </a>
+                                    @else
+                                        <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                            title="View {{ $player->username }}'s profile">
+                                            {{ $player->username }}
+                                        </a>
+                                    @endif
                                 </h2>
 
                                 <h5 class="rank pb-1">

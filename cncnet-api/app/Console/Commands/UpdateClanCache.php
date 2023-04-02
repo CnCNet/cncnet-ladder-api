@@ -63,7 +63,7 @@ class UpdateClanCache extends Command
             $clanCache->side = $v !== null ? $v->sid : null;
 
             $v = $clan->countryUsage($history)->first();
-            // $clanCache->country = $v !== null ? $v->cty : null;
+            $clanCache->country = $v !== null ? $v->cty : null;
             $clanCache->fps = $clan->averageFPS($history);
             $clanCache->save();
         }

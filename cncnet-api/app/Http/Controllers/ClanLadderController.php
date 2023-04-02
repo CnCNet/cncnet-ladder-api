@@ -11,6 +11,7 @@ use App\ClanCache;
 use App\ClanPlayer;
 use App\ClanRole;
 use App\ClanInvitation;
+use App\CountableObjectHeap;
 use App\Player;
 use App\User;
 
@@ -58,23 +59,18 @@ class ClanLadderController  extends Controller
         ]);
     }
 
-
     public function getLadderClan(Request $request, $date = null, $cncnetGame = null, $clanName = null)
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
 
-        $clanCache = ClanCache::where("clan_name", $clanName)->first();
-
-        if ($clanCache == null)
+        if ($history == null)
         {
             abort(404, "No clan found");
         }
 
-        $clan = Clan::where("ladder_id", "=", $history->ladder->id)
-            ->where("id", "=", $clanCache->clan_id)
-            ->first();
+        $clanCache = ClanCache::where("ladder_history_id", $history->id)->first();
 
-        $games = $clan->clanGames()
+        $games = $clanCache->clan->clanGames()
             ->where("ladder_history_id", "=", $history->id)
             ->orderBy('created_at', 'DESC')
             ->paginate(24);

@@ -72,7 +72,6 @@ class Clan extends Model
             ->where('game_reports.best_report', true)
             ->select(
                 'player_game_reports.id as id',
-                'player_game_reports.player_id as player_id',
                 'player_game_reports.clan_id as clan_id',
                 'game_reports.id as game_report_id',
                 'games.ladder_history_id as ladder_history_id',

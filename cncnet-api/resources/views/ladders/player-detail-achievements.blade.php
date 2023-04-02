@@ -25,7 +25,13 @@
                     </h1>
 
                     <p class="lead text-uppercase">
-                        <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
+                        <small>{{ $history->starts->format('F Y') }} -
+                            @if ($history->ladder->clans_allowed)
+                                <strong>Clan Ranked Match</strong>
+                            @else
+                                <strong>1 vs 1 Ranked Match</strong>
+                            @endif
+                        </small>
                     </p>
 
                     <div class="mini-breadcrumb d-none d-lg-flex">
