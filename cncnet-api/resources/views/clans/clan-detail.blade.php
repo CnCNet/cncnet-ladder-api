@@ -128,31 +128,31 @@
                 </div>
 
                 <div class="player-stats">
-                    <div class="player-overall-stats grid">
-                        <div class="column">
-                            <h5 class="stat-title">Clan stats</h5>
-                            <div class="player-stats-drilldown stats-wrap">
-                                <div class="stat-item">
-                                    <span class="name">Points:</span> {{ $clan->points }}
-                                </div>
-                                <div class="stat-item">
-                                    <span class="name">Games:</span>{{ $clan->games }}
-                                </div>
-                                <div class="stat-item">
-                                    <span class="name">Wins:</span> {{ $clan->wins }}
-                                </div>
-                                <div class="stat-item">
-                                    <span class="name">Losses:</span> {{ $clan->games_lost }}
-                                </div>
-                                <div class="stat-item">
-                                    <span class="name">Average FPS:</span> {{ $clan->fps }}
-                                </div>
-                                <div class="stat-item">
-                                    <span class="name">Played today:</span>
-                                    {{-- {{ $playerGamesLast24Hours }} --}}
-                                </div>
+                    {{-- <div class="player-overall-stats grid"> --}}
+                    <div class="column">
+                        <h5 class="stat-title">Clan stats</h5>
+                        <div class="player-stats-drilldown stats-wrap">
+                            <div class="stat-item">
+                                <span class="name">Points:</span> {{ $clan->points }}
+                            </div>
+                            <div class="stat-item">
+                                <span class="name">Games:</span>{{ $clan->games }}
+                            </div>
+                            <div class="stat-item">
+                                <span class="name">Wins:</span> {{ $clan->wins }}
+                            </div>
+                            <div class="stat-item">
+                                <span class="name">Losses:</span> {{ $clan->games - $clan->wins }}
+                            </div>
+                            <div class="stat-item">
+                                <span class="name">Average FPS:</span> {{ $clan->fps }}
+                            </div>
+                            <div class="stat-item">
+                                {{-- <span class="name">Played today:</span> --}}
+                                {{-- {{ $playerGamesLast24Hours }} --}}
                             </div>
                         </div>
+                        {{-- </div> --}}
 
                         {{-- <div class="column">
                             <h5 class="stat-title">Top factions played</h5>
