@@ -1,5 +1,7 @@
 <?php
 
+use App\GameReport;
+use App\Http\Services\LadderService;
 use \App\User;
 
 Route::get('/', function ()
@@ -13,7 +15,7 @@ Route::get('/donate', 'SiteController@getDonate');
 Route::get('/ranking', 'RankingController@getIndex');
 
 
-# Player Ladders
+# 1vs1 Player Ladders
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
     Route::get('/', 'LadderController@getLadders');
@@ -32,8 +34,9 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
 # Clan Ladders
 Route::group(['prefix' => 'clans/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
-    Route::get('/', 'ClanController@getIndex');
-    Route::get('{date}/{game}', 'ClanController@getListing');
+    Route::get('/', 'ClanLadderController@getIndex');
+    Route::get('{date}/{game}', 'ClanLadderController@getListing');
+    Route::get('{date}/{game}/{clanName}', 'ClanLadderController@getLadderClan');
 });
 
 Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
@@ -173,8 +176,14 @@ Route::group(['prefix' => 'api/v1/auth/'], function ()
 });
 
 
-Route::group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function ()
+Route::get('/clan/debug', 'TestController@test');
+
+Route::group([
+    'prefix' => 'api/v1/',
+    'middleware' => 'jwt.auth'
+], function ()
 {
+    Route::get('/user/test', 'ApiUserController@getAccountDebug');
     Route::get('/user/account', 'ApiUserController@getAccount');
     Route::get('/user/ladders', 'ApiUserController@getPrivateLadders');
     Route::post('/user/create', 'ApiUserController@createUser');

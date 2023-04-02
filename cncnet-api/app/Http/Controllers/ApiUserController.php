@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ClanPlayer;
 use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
@@ -37,6 +38,14 @@ class ApiUserController extends Controller
         return $this->getActivePlayersByUser($user);
     }
 
+    public function getAccountDebug(Request $request)
+    {
+        $user = \App\User::find(1);
+        $this->createPlayerForLaddersIfNoneExist($user);
+
+        return $this->getActivePlayersByUser($user);
+    }
+
     /**
      * Return user's active players
      * @param User $user
@@ -58,7 +67,24 @@ class ApiUserController extends Controller
             // No idea why.
             if ($activeHandle->player->ladder)
             {
-                $playerList[] = $activeHandle->player;
+                if ($activeHandle->player->ladder->clans_allowed)
+                {
+                    $ladder = $activeHandle->player->ladder;
+                    $player = $activeHandle->player;
+
+                    // Append clan name if one exists
+                    // Maybe we need to overwrite, unsure yet
+                    // $clanByPlayer = ClanPlayer::where("player_id", $player->id)
+                    //     ->first();
+
+                    // $activeHandle->player->username = $clanByPlayer->clan->name;
+
+                    $playerList[] = $activeHandle->player;
+                }
+                else
+                {
+                    $playerList[] = $activeHandle->player;
+                }
             }
         }
 

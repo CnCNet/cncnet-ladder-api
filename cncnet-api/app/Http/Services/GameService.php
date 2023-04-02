@@ -53,11 +53,20 @@ class GameService
             return ['error' => 'player not found', 'gameReport' => null];
         }
 
+        $isClanLadderGame = $ladder->clans_allowed;
+        $clan = $player->clanPlayer->clan;
+
         $reporter = null;
 
         $gameReport = new GameReport;
         $gameReport->game_id = $game->id;
         $gameReport->player_id = $playerId;
+
+        if ($isClanLadderGame && $clan)
+        {
+            $gameReport->clan_id = $clan->id;
+        }
+
         $gameReport->best_report = false;
         $gameReport->manual_report = false;
         $gameReport->duration = 0;
@@ -121,6 +130,13 @@ class GameService
                 }
 
                 $playerGameReports[$id]->player_id = $playerHere->id;
+
+                if ($isClanLadderGame)
+                {
+                    $clan = $playerHere->clanPlayer->clan;
+                    $playerGameReports[$id]->clan_id = $clan->id;
+                }
+
                 $playerGameReports[$id]->save();
 
                 $playerStats[$id] = new \App\Stats2;

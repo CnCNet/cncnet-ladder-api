@@ -28,7 +28,6 @@ class Clan extends Model
         return $this->clanPlayers()->where('clan_role_id', '=', $memberId)->orderBy('updated_at', 'ASC');
     }
 
-
     public function nextOwner($current = null)
     {
         if ($current !== null)
@@ -53,11 +52,11 @@ class Clan extends Model
 
         if ($history == null)
         {
-            $result = $this->playerGames()->where('won', true)->count();
+            $result = $this->clanGames()->where('won', true)->count();
         }
         else
         {
-            $result = $this->playerGames()->where('won', true)->where('ladder_history_id', $history->id)->count();
+            $result = $this->clanGames()->where('won', true)->where('ladder_history_id', $history->id)->count();
         }
         return $result;
     }
@@ -68,12 +67,13 @@ class Clan extends Model
             ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
             ->join('games', 'games.id', '=', 'game_reports.game_id')
             ->join('stats2', 'player_game_reports.stats_id', '=', 'stats2.id')
-            ->where('player_game_reports.player_id', $this->id)
+            ->where('player_game_reports.clan_id', $this->id)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
             ->select(
                 'player_game_reports.id as id',
                 'player_game_reports.player_id as player_id',
+                'player_game_reports.clan_id as clan_id',
                 'game_reports.id as game_report_id',
                 'games.ladder_history_id as ladder_history_id',
                 'game_reports.game_id as game_id',
@@ -114,36 +114,45 @@ class Clan extends Model
 
         if ($history == null)
         {
-            $result = $this->playerGames()->count();
+            $result = $this->clanGames()->count();
         }
         else
         {
-            $result = $this->playerGames()->where('ladder_history_id', $history->id)->count();
+            $result = $this->clanGames()->where('ladder_history_id', $history->id)->count();
         }
         return $result;
     }
 
     public function sideUsage($history)
     {
-        $pq = $this->playerGames()->where('ladder_history_id', '=', $history->id);
+        $pq = $this->clanGames()->where('ladder_history_id', '=', $history->id);
         $total = $pq->count();
         return $pq->select('sid', DB::raw('count(*) / ' . $total . ' * 100 as count'))->groupBy('sid')->orderBy('count', 'desc')->get();
     }
 
     public function countryUsage($history)
     {
-        $pq = $this->playerGames()->where('ladder_history_id', '=', $history->id);
+        $pq = $this->clanGames()->where('ladder_history_id', '=', $history->id);
         $total = $pq->count();
         return $pq->select('cty', DB::raw('count(*) / ' . $total . ' * 100 as count'))->groupBy('cty')->orderBy('count', 'desc')->get();
     }
 
     public function averageFPS($history)
     {
-        $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
-        $total = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->sum('fps');
+        $count = $this->clanGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
+        $total = $this->clanGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->sum('fps');
         if ($count != 0)
             return $total / $count;
         return 0;
+    }
+
+    public function points($history)
+    {
+        $points = \App\PlayerGameReport::where('player_game_reports.clan_id', $this->id)
+            ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
+            ->where("g.ladder_history_id", "=", $history->id)
+            ->sum('player_game_reports.points');
+        return $points !== null ? $points : 0;
     }
 
 

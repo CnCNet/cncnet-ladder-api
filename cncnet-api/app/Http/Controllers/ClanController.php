@@ -23,43 +23,6 @@ class ClanController extends Controller
         $this->ladderService = new \App\Http\Services\LadderService;
     }
 
-    public function getIndex(Request $request)
-    {
-        $clanLadders = $this->ladderService->getLatestClanLadders();
-        $ladders = $this->ladderService->getLatestLadders();
-
-        return view('clans.index', ['ladders' => $ladders, 'clanLadders' => $clanLadders,]);
-    }
-
-    public function getListing(Request $request, $ladderAbbrev, $date)
-    {
-        $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
-
-        if ($history === null)
-        {
-            abort(404);
-        }
-
-
-        $clanLadders = $this->ladderService->getLatestClanLadders();
-        $ladders = $this->ladderService->getLatestLadders();
-        $laddersPrevious = $this->ladderService->getPreviousLaddersByGame($date, $ladderAbbrev);
-        $search = $request->search;
-
-        # Default
-        $clans = ClanCache::where("ladder_history_id", "=", $history->id)
-            ->where("clan_name", "like", "%" . $request->search . "%")
-            ->orderBy("points", "desc")
-            ->paginate(45);
-
-        return view('clans.listing', [
-            'clanLadders' => $clanLadders,
-            'clans' => $clans,
-            'ladders' => $ladders,
-            'history' => $history
-        ]);
-    }
-
     public function editLadderClan(Request $request, $ladderAbbrev, $clanId)
     {
         $clan_ladders = $this->ladderService->getLatestClanLadders();

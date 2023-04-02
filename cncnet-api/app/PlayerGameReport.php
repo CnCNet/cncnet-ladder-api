@@ -41,6 +41,11 @@ class PlayerGameReport extends Model
         return $this->belongsTo("App\GameReport");
     }
 
+    public function clan()
+    {
+        return $this->belongsTo("App\Clan");
+    }
+
     public function stats()
     {
         return $this->hasOne("App\Stats2");

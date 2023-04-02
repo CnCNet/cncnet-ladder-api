@@ -49,7 +49,7 @@ class UpdateClanCache extends Command
             $clanCache = ClanCache::find($update->clan_cache_id);
             $update->delete();
 
-            $clan = $clanCache->player;
+            $clan = $clanCache->clan;
             $history = $clanCache->history;
 
             $clanCache->ladder_history_id = $history->id;
@@ -63,7 +63,7 @@ class UpdateClanCache extends Command
             $clanCache->side = $v !== null ? $v->sid : null;
 
             $v = $clan->countryUsage($history)->first();
-            $clanCache->country = $v !== null ? $v->cty : null;
+            // $clanCache->country = $v !== null ? $v->cty : null;
             $clanCache->fps = $clan->averageFPS($history);
             $clanCache->save();
         }

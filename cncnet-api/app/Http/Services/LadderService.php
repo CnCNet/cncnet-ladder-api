@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 
+use App\ClanCache;
+use App\ClanPlayer;
 use App\Ladder;
 use App\PlayerRating;
 use \Illuminate\Database\Eloquent\Collection;
@@ -319,6 +321,11 @@ class LadderService
         return \App\Game::where("id", "=", $gameId)->where('ladder_history_id', $history->id)->first();
     }
 
+    public function getLadderClan($history, $clanName)
+    {
+        dd("Here");
+    }
+
     public function getLadderPlayer($history, $username)
     {
         if ($history === null)
@@ -423,7 +430,8 @@ class LadderService
         {
             $player = $playerGR->player;
             $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
-                ->where('player_id', '=', $player->id)->first();
+                ->where('player_id', '=', $player->id)
+                ->first();
             $pc->mark();
             $pc->points -= $playerGR->points;
             $pc->games--;
@@ -437,32 +445,74 @@ class LadderService
     public function updatePlayerCache($gameReport)
     {
         $history = $gameReport->game->ladderHistory;
+        $ladder = $history->ladder;
 
-        foreach ($gameReport->playerGameReports as $playerGR)
+        foreach ($gameReport->playerGameReports as $playerGameReport)
         {
-            $player = $playerGR->player;
-            $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
-                ->where('player_id', '=', $player->id)
-                ->first();
-
-            if ($pc === null)
+            if ($ladder->clans_allowed)
             {
-                $pc = new \App\PlayerCache;
-                $pc->ladder_history_id = $history->id;
-                $pc->player_id = $player->id;
-                $pc->player_name = $player->username;
-                $pc->save();
+                $this->saveClanCache($playerGameReport, $history);
             }
+            else
+            {
+                $this->savePlayerCache($playerGameReport, $history);
+            }
+        }
+    }
 
-            $pc->mark();
+    private function saveClanCache($playerGameReport, $history)
+    {
+        $player = $playerGameReport->player;
+        $clan = $player->clanPlayer->clan;
 
-            $pc->points += $playerGR->points;
-            $pc->games++;
-            if ($playerGR->won)
-                $pc->wins++;
+        $clanCache = ClanCache::where("ladder_history_id", '=', $history->id)
+            ->where('clan_id', '=', $clan->id)
+            ->first();
 
+        if ($clanCache === null)
+        {
+            $clanCache = new ClanCache();
+            $clanCache->ladder_history_id = $history->id;
+            $clanCache->clan_id = $clan->id;
+            $clanCache->clan_name = $clan->name;
+            $clanCache->save();
+        }
+
+        $clanCache->mark();
+
+        $clanCache->points += $playerGameReport->points;
+        $clanCache->games++;
+        if ($playerGameReport->won)
+            $clanCache->wins++;
+
+        $clanCache->save();
+    }
+
+    private function savePlayerCache($playerGameReport, $history)
+    {
+        $player = $playerGameReport->player;
+
+        $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
+            ->where('player_id', '=', $player->id)
+            ->first();
+
+        if ($pc === null)
+        {
+            $pc = new \App\PlayerCache;
+            $pc->ladder_history_id = $history->id;
+            $pc->player_id = $player->id;
+            $pc->player_name = $player->username;
             $pc->save();
         }
+
+        $pc->mark();
+
+        $pc->points += $playerGameReport->points;
+        $pc->games++;
+        if ($playerGameReport->won)
+            $pc->wins++;
+
+        $pc->save();
     }
 
 

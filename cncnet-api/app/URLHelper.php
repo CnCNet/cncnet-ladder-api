@@ -107,6 +107,7 @@ class URLHelper
         {
             case "yr":
             case "ra2":
+            case "ra2-cl":
             case "blitz":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4";
                 break;
@@ -130,6 +131,7 @@ class URLHelper
         {
             case "yr":
             case "ra2":
+            case "ra2-cl":
             case "blitz":
                 return "/images/posters/red-alert-2.jpg";
                 break;
@@ -149,6 +151,14 @@ class URLHelper
      */
     public static function getLadderLogoByAbbrev($abbrev)
     {
-        return "/images/games/{$abbrev}/logo.png";
+        switch ($abbrev)
+        {
+            case "ra2":
+            case "ra2-cl":
+                return "/images/games/ra2/logo.png";
+
+            default:
+                return "/images/games/{$abbrev}/logo.png";
+        }
     }
 }

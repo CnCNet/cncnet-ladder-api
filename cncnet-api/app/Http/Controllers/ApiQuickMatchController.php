@@ -352,7 +352,10 @@ class ApiQuickMatchController extends Controller
 
         $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
         $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
-        $playerWillMatchAI = $this->checkPlayerShouldMatchAIAfterTimeInQueue($request->version, $userPlayerTier, $qmPlayer);
+
+        // Debug
+        // $playerWillMatchAI = $this->checkPlayerShouldMatchAIAfterTimeInQueue($request->version, $userPlayerTier, $qmPlayer);
+        $playerWillMatchAI = true;
 
         if ($playerWillMatchAI == true)
         {
