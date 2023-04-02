@@ -143,32 +143,53 @@
                                         Create a new Clan owned by {{ $primaryPlayer->username }}
                                     </a>
                                 @endif
+                            </div>
+                            <div>
 
-                                @foreach ($clanPlayers as $clanPlayer)
-                                    <div class="clan-listing active">
-                                        <div class="clan-name clan-name-short">
-                                            <a href="/clans/{{ $ladder->abbreviation }}/edit/{{ $clanPlayer->clan_id }}/main">
-                                                <h2>{{ $clanPlayer->clan->short }}</h2>
-                                            </a>
-                                        </div>
-                                        <div class="clan-name clan-name-long">
-                                            <a href="/clans/{{ $ladder->abbreviation }}/edit/{{ $clanPlayer->clan_id }}/main">
-                                                <h2>{{ $clanPlayer->clan->name }}</h2>
-                                            </a>
-                                        </div>
-                                        <div class="text-center">
-                                            <p>{{ $clanPlayer->role }}<strong class="username">{{ $clanPlayer->player->username }}</strong>
-                                            </p>
-                                        </div>
-                                        <div class="clan-username">
-                                            <form method="POST" action="/clans/{{ $ladder->abbreviation }}/leave/{{ $clanPlayer->clan->id }}/">
-                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="hidden" name="id" value="{{ $clanPlayer->id }}">
-                                                <button type="submit" name="submit" value="leave" class="btn btn-primary reject">Leave</button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                @endforeach
+                                <br />
+
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Clan</th>
+                                                <th scope="col">Edit</th>
+                                                <th scope="col">Role</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($clanPlayers as $clanPlayer)
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex">
+                                                            <p>
+                                                                {{ $clanPlayer->clan->short }}
+                                                            </p>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <a href="/clans/{{ $ladder->abbreviation }}/edit/{{ $clanPlayer->clan_id }}/main">
+                                                            {{ $clanPlayer->clan->short }}
+                                                        </a>
+                                                    </td>
+                                                    <td>
+                                                        <strong>Role: {{ $clanPlayer->role }}</strong>
+                                                        <strong class="username">{{ $clanPlayer->player->username }}</strong>
+                                                    </td>
+                                                    <td>
+                                                        <form method="POST"
+                                                            action="/clans/{{ $ladder->abbreviation }}/leave/{{ $clanPlayer->clan->id }}/">
+                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                            <input type="hidden" name="id" value="{{ $clanPlayer->id }}">
+                                                            <button type="submit" name="submit" value="leave" class="btn btn-danger">Leave
+                                                                Clan</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
 
                                 @foreach ($invitations as $invite)
                                     <div class="clan-listing">
