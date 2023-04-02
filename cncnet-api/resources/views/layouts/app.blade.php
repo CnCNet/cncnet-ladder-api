@@ -42,7 +42,9 @@
 
 <body class="@yield('body-class'){{ $bodyClass }}">
 
-    @include('components.countdown', ['target' => $history->ends->toISO8601String()])
+    @if(isset($history))
+        @include('components.countdown', ['target' => $history->ends->toISO8601String()])
+    @endif
 
     <div class="page-feature">
         @include('components.navigation.navbar')
