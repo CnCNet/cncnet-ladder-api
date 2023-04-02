@@ -67,6 +67,16 @@ class URLHelper
     }
 
     /**
+     * Return clan ladder url 
+     * @param mixed $history 
+     * @return string 
+     */
+    public static function getClanLadderUrl($history)
+    {
+        return "/clans/" . $history->short . "/" . $history->ladder->abbreviation;
+    }
+
+    /**
      * 
      * @param mixed $history 
      * @return string 

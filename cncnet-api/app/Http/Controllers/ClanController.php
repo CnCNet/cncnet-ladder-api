@@ -1,4 +1,6 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -6,13 +8,14 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Ladder;
 use App\Clan;
+use App\ClanCache;
 use App\ClanPlayer;
 use App\ClanRole;
 use App\ClanInvitation;
 use App\Player;
 
-class ClanController extends Controller {
-
+class ClanController extends Controller
+{
     protected $ladderService = null;
 
     public function __construct()
@@ -22,24 +25,39 @@ class ClanController extends Controller {
 
     public function getIndex(Request $request)
     {
-
-        $clan_ladders = $this->ladderService->getLatestClanLadders();
+        $clanLadders = $this->ladderService->getLatestClanLadders();
         $ladders = $this->ladderService->getLatestLadders();
 
-        return view('clans.index', [ 'ladders' => $ladders, 'clan_ladders' => $clan_ladders, ]);
+        return view('clans.index', ['ladders' => $ladders, 'clanLadders' => $clanLadders,]);
     }
 
     public function getListing(Request $request, $ladderAbbrev, $date)
     {
-        $clan_ladders = $this->ladderService->getLatestClanLadders();
+        $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
+
+        if ($history === null)
+        {
+            abort(404);
+        }
+
+
+        $clanLadders = $this->ladderService->getLatestClanLadders();
         $ladders = $this->ladderService->getLatestLadders();
-
-        $history = $this->ladderService->getActiveLadderByDate($date, $ladderAbbrev);
-        $ladders_previous = $this->ladderService->getPreviousLaddersByGame($date, $ladderAbbrev);
-
+        $laddersPrevious = $this->ladderService->getPreviousLaddersByGame($date, $ladderAbbrev);
         $search = $request->search;
 
-        return view('clans.listing', compact('clan_ladders', 'ladders', 'history', 'ladders_previous', 'search'));
+        # Default
+        $clans = ClanCache::where("ladder_history_id", "=", $history->id)
+            ->where("clan_name", "like", "%" . $request->search . "%")
+            ->orderBy("points", "desc")
+            ->paginate(45);
+
+        return view('clans.listing', [
+            'clanLadders' => $clanLadders,
+            'clans' => $clans,
+            'ladders' => $ladders,
+            'history' => $history
+        ]);
     }
 
     public function editLadderClan(Request $request, $ladderAbbrev, $clanId)
@@ -75,8 +93,9 @@ class ClanController extends Controller {
         $ladders = $this->ladderService->getLatestLadders();
         $ladder = Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
 
-        $this->validate($request, [ 'short' => 'required|string|max:6|unique:clans,short,'.$clanId,
-                                    'name'  => 'required|string|max:255|unique:clans,name,'.$clanId,
+        $this->validate($request, [
+            'short' => 'required|string|max:6|unique:clans,short,' . $clanId,
+            'name'  => 'required|string|max:255|unique:clans,name,' . $clanId,
         ]);
 
         $player = Player::find($request->player_id);
@@ -101,12 +120,12 @@ class ClanController extends Controller {
             $clan->save();
 
             $clanPlayer = new ClanPlayer;
-            $clanPlayer->fill([ 'clan_id' => $clan->id, 'player_id' => $player->id ]);
+            $clanPlayer->fill(['clan_id' => $clan->id, 'player_id' => $player->id]);
             $clanPlayer->role = "Owner";
             $clanPlayer->save();
 
             $clanInvite = new ClanInvitation;
-            $clanInvite->fill([ 'clan_id' => $clan->id, 'author_id' => $player->id, 'player_id' => $player->id, 'type' => 'invited' ]);
+            $clanInvite->fill(['clan_id' => $clan->id, 'author_id' => $player->id, 'player_id' => $player->id, 'type' => 'invited']);
             $clanInvite->save();
             $clanInvite->delete();
 
@@ -137,7 +156,7 @@ class ClanController extends Controller {
             $request->session()->flash('success', "Successfully updated clan.");
         }
 
-        return redirect()->action('ClanController@editLadderClan', ['ladderAbbrev' => $ladderAbbrev, 'clanId' => $clan->id ]);
+        return redirect()->action('ClanController@editLadderClan', ['ladderAbbrev' => $ladderAbbrev, 'clanId' => $clan->id]);
     }
 
     public function saveInvitation(Request $request, $ladderAbbrev, $clanId)
@@ -174,13 +193,13 @@ class ClanController extends Controller {
             return redirect()->back();
         }
 
-        if (! ($requester->clanPlayer->isOwner() || $requester->clanPlayer->isManager()))
+        if (!($requester->clanPlayer->isOwner() || $requester->clanPlayer->isManager()))
         {
             $request->session()->flash('error', "You don't have permission to invite players. You have to be an Owner or Manager");
             return redirect()->back();
         }
 
-        $invitation = ClanInvitation::firstOrNew( [ 'clan_id' => $clan->id, 'player_id' => $player->id, 'type' => 'invited' ]);
+        $invitation = ClanInvitation::firstOrNew(['clan_id' => $clan->id, 'player_id' => $player->id, 'type' => 'invited']);
         if ($invitation->id !== null)
         {
             $request->session()->flash('error', "This player has already been invited.");
@@ -222,7 +241,7 @@ class ClanController extends Controller {
 
 
         $log = new ClanInvitation;
-        $log->fill([ 'clan_id' => $invite->clan_id, 'author_id' => $player->id, 'player_id' => $invite->player_id, 'type' => 'cancelled' ]);
+        $log->fill(['clan_id' => $invite->clan_id, 'author_id' => $player->id, 'player_id' => $invite->player_id, 'type' => 'cancelled']);
         $log->save();
         $log->delete();
 
@@ -278,13 +297,13 @@ class ClanController extends Controller {
 
         if ($request->submit == 'accept')
         {
-            $clanPlayer = ClanPlayer::firstOrNew([ 'clan_id' => $clan->id, 'player_id' => $player->id ]);
+            $clanPlayer = ClanPlayer::firstOrNew(['clan_id' => $clan->id, 'player_id' => $player->id]);
             $clanPlayer->role = 'Member';
             $clanPlayer->save();
             $invite->delete();
 
             $invite = new ClanInvitation;
-            $invite->fill([ 'clan_id' => $clan->id, 'author_id' => $player->id, 'player_id' => $player->id, 'type' => 'joined' ]);
+            $invite->fill(['clan_id' => $clan->id, 'author_id' => $player->id, 'player_id' => $player->id, 'type' => 'joined']);
             $invite->save();
             $invite->delete();
             $request->session()->flash('success', "You are now a member of {$clan->short}.");
@@ -311,7 +330,6 @@ class ClanController extends Controller {
             $request->session()->flash('error', "Unable to locate the clan.");
             return redirect()->back();
         }
-
     }
 
     public function kick(Request $request, $ladderAbbrev, $clanId)
@@ -327,7 +345,6 @@ class ClanController extends Controller {
             $request->session()->flash('error', "Unable to locate the clan.");
             return redirect()->back();
         }
-
     }
 
     public function leave(Request $request, $ladderAbbrev, $clanId)
@@ -365,7 +382,7 @@ class ClanController extends Controller {
         }
 
         $invite = new ClanInvitation;
-        $invite->fill([ 'clan_id' => $clan->id, 'author_id' => $clanPlayer->player->id, 'player_id' => $clanPlayer->player->id, 'type' => 'left' ]);
+        $invite->fill(['clan_id' => $clan->id, 'author_id' => $clanPlayer->player->id, 'player_id' => $clanPlayer->player->id, 'type' => 'left']);
         $invite->save();
         $invite->delete();
 

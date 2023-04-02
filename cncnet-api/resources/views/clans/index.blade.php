@@ -1,60 +1,70 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-
-@section('cover')
-    /images/feature/feature-index.jpg
-@endsection
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-    <div class="feature-background sub-feature-background">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-8 col-md-offset-2">
-                    <h1>
-                        CnCNet <strong>Clan Ladders</strong>
+    <div class="feature pt-5 pb-5">
+        <div class="container px-4 py-5 text-light">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-12">
+                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                        <strong class="fw-bold">CnCNet</strong>
+                        <span>Ladder Clan Rankings</span>
                     </h1>
-                    <p>
-                        Play, Compete, <strong>Conquer!</strong>
+
+                    <p class="lead">
+                        Compete in <strong>clan</strong> ranked matches with players all over the world.
                     </p>
+
+                    @if (!\Auth::user())
+                        <div class="mt-4">
+                            <a class="btn btn--outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
+                            <a class="btn btn--outline-secondary btn-size-lg" href="/auth/login">Login</a>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 @endsection
 
-@section('content')
-    <section class="light-texture game-detail supported-games">
+@section('breadcrumb')
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <h3>CnCNet <strong>Clan Competition</strong> </h3>
-                </div>
-            </div>
-            <div class="feature">
-                <div class="row">
-                    @foreach ($clan_ladders as $history)
-                        <div class="col-xs-12 col-sm-6 col-md-4" style="margin-bottom:20px">
-                            <a href="/clans/{{ $history->ladder->abbreviation . '/leaderboards/' . $history->short }}/" title="{{ $history->ladder->name }}" class="ladder-link">
-                                <div class="ladder-cover cover-{{ $history->ladder->abbreviation }}" style="background-image: url('/images/ladder/{{ $history->ladder->abbreviation . '-cover.png' }}')">
-                                    <div class="details">
-                                        <div class="type">
-                                            <h1>{{ $history->ladder->name }}</h1>
-                                            <p class="lead"><strong>Clan</strong></p>
-                                        </div>
-                                    </div>
-                                    <div class="badge-cover">
-                                        <ul class="list-inline">
-                                            <li>
-                                                <p>{{ Carbon\Carbon::parse($history->starts)->format('F Y') }} Competition</p>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </a>
-                        </div>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item active">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </li>
+            </ol>
+        </div>
+    </nav>
+@endsection
+
+@section('content')
+    <div class="ladder-index">
+        <section class="pt-5 pb-5">
+            <div class="container">
+                <h3>
+                    <span class="material-symbols-outlined icon">
+                        military_tech
+                    </span>
+                    <strong>Clan</strong> Ladders
+                </h3>
+
+                <div class="d-flex flex-wrap mt-4">
+                    @foreach ($ladders as $history)
+                        @include('components.ladder-box', [
+                            'history' => $history,
+                            'url' => \App\URLHelper::getClanLadderUrl($history),
+                        ])
                     @endforeach
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </div>
 @endsection

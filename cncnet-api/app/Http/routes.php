@@ -12,6 +12,8 @@ Route::get('/help/obs', 'SiteController@getOBSHelp');
 Route::get('/donate', 'SiteController@getDonate');
 Route::get('/ranking', 'RankingController@getIndex');
 
+
+# Player Ladders
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
     Route::get('/', 'LadderController@getLadders');
@@ -26,6 +28,29 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
     Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
     Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
 });
+
+# Clan Ladders
+Route::group(['prefix' => 'clans/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
+{
+    Route::get('/', 'ClanController@getIndex');
+    Route::get('{date}/{game}', 'ClanController@getListing');
+});
+
+Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
+{
+    Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
+    Route::post('/edit/{clanId}', 'ClanController@saveLadderClan');
+    Route::post('/edit/{clanId}/members', 'ClanController@saveMembers');
+    //Route::post('/edit/new', 'ClanController@saveLadderClan');
+
+    Route::post('/invite/{clanId}', 'ClanController@saveInvitation');
+    Route::post('/invite/{clanId}/process', 'ClanController@processInvitation');
+    Route::post('/invite/{clanId}/cancel', 'ClanController@cancelInvitation');
+    Route::post('/role/{clanId}', 'ClanController@role');
+    Route::post('/kick/{clanId}', 'ClanController@kick');
+    Route::post('/leave/{clanId}', 'ClanController@leave');
+});
+
 
 Route::controllers([
     'auth' => 'Auth\AuthController',
@@ -219,25 +244,4 @@ Route::group(['prefix' => 'api/v1/irc', 'middleware' => 'cache.ultra.public'], f
     Route::get('/{abbreviation}/players', 'ApiIrcController@getPlayerNames');
     Route::get('/{abbreviation}/clans', ['middleware' => 'cache.public', 'uses' => 'ApiIrcController@getClans']);
     Route::get('/hostmasks', 'ApiIrcController@getHostmasks');
-});
-
-Route::group(['prefix' => 'clans', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
-{
-    Route::get('/', 'ClanController@getIndex');
-    Route::get('/{ladderAbbrev}/leaderboards/{date}', 'ClanController@getListing');
-});
-
-Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
-{
-    Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
-    Route::post('/edit/{clanId}', 'ClanController@saveLadderClan');
-    Route::post('/edit/{clanId}/members', 'ClanController@saveMembers');
-    //Route::post('/edit/new', 'ClanController@saveLadderClan');
-
-    Route::post('/invite/{clanId}', 'ClanController@saveInvitation');
-    Route::post('/invite/{clanId}/process', 'ClanController@processInvitation');
-    Route::post('/invite/{clanId}/cancel', 'ClanController@cancelInvitation');
-    Route::post('/role/{clanId}', 'ClanController@role');
-    Route::post('/kick/{clanId}', 'ClanController@kick');
-    Route::post('/leave/{clanId}', 'ClanController@leave');
 });

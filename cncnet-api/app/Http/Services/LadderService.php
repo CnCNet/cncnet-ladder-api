@@ -117,7 +117,7 @@ class LadderService
 
     public function getLatestClanLadders()
     {
-        return Cache::remember("ladderService::getLatestClanLadders", 1, function ()
+        return Cache::remember("ladderService::getLatestClanLadders", -1, function ()
         {
             $date = Carbon::now();
 
@@ -129,7 +129,6 @@ class LadderService
                 ->where("ladder_history.ends", "=", $end)
                 ->whereNotNull("ladder.id")
                 ->where('ladder.clans_allowed', '=', true)
-                ->where('ladder.private', '=', false)
                 ->get();
         });
     }
@@ -185,7 +184,8 @@ class LadderService
         if ($cncnetGame == null)
         {
             return \App\LadderHistory::where("starts", "=", $start)
-                ->where("ends", "=", $end)->first();
+                ->where("ends", "=", $end)
+                ->first();
         }
         else
         {
