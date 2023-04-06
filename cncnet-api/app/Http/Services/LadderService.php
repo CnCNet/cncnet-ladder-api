@@ -483,10 +483,10 @@ class LadderService
             })
             ->where(function ($where)
             {
-                $where->where('qms.state_type_id', 5);
+                $where->where('qms.state_type_id', 5); #Game Spawned
             })
             ->where('qm_matches.ladder_id', $ladder_id)
-            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($createdAfter))
+            ->where('qm_matches.created_at', '>', Carbon::now()->subMinute($createdAfter))
             ->groupBy('qmp.id')
             ->select("qm_matches.id", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.id as player_id", "qm_maps.description as map")
             ->get();
@@ -501,10 +501,10 @@ class LadderService
             ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
             ->where(function ($where)
             {
-                $where->where('qms.state_type_id', 1);
-                $where->orWhere('qms.state_type_id', 3);
-                $where->orWhere('qms.state_type_id', 6);
-                $where->orWhere('qms.state_type_id', 7);
+                $where->where('qms.state_type_id', 1); # Finished 
+                $where->orWhere('qms.state_type_id', 3); # NotReached
+                $where->orWhere('qms.state_type_id', 6); # GameCrashed
+                $where->orWhere('qms.state_type_id', 7); # NotReady
             })
             ->where('qm_matches.ladder_id', $ladder_id)
             ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($minutes))

@@ -10,15 +10,15 @@
             
                 <?php 
                     $playername = $username or '';
-                    $heart = '';
-                    if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'irish'))
-                        $heart = '🍀';
+                    $emoji = '';
+                    if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'baguette')) #for zedd
+                        $emoji = '🥖';
                 ?>
 
                 @if ($rank == 1)
-                    {{ $playername }} <span style="color:gold;padding-left:0.5rem;">  {{ $heart }}</span>
+                    {{ $playername }} <span style="color:gold;padding-left:0.5rem;">  {{ $emoji }}</span>
                 @else
-                    {{ $playername }} <span style="color:red;padding-left:0.5rem;"> {{ $heart }}</span>
+                    {{ $playername }} <span style="color:red;padding-left:0.5rem;"> {{ $emoji }}</span>
                 @endif
         </a>
     </div>
@@ -40,15 +40,15 @@
         <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             <?php 
                 $playername = $username or '';
-                $heart = '';
-                if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'irish'))
-                    $heart = '🍀';
+                $emoji = '';
+                if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'baguette')) # for zedd
+                    $emoji = '🥖';
             ?>
 
             @if ($rank == 1)
-                {{ $playername }} <span style="color:gold;padding-left:0.5rem;">  {{ $heart }}</span>
+                {{ $playername }} <span style="color:gold;padding-left:0.5rem;">  {{ $emoji }}</span>
             @else
-                {{ $playername }} <span style="color:red;padding-left:0.5rem;"> {{ $heart }}</span>
+                {{ $playername }} <span style="color:red;padding-left:0.5rem;"> {{ $emoji }}</span>
             @endif
         </a>
     </div>
