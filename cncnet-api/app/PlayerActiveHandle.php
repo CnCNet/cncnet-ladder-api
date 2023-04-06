@@ -111,9 +111,11 @@ class PlayerActiveHandle extends Model
         $count = 0;
         foreach ($activeHandles as $activeHandle)
         {
-            $count += $activeHandle->player->hasMany('App\GameReport')
-                ->where('created_at', '<=', $dateEnd)
-                ->where('created_at', '>', $dateStart)
+            $count += $activeHandle->player->playerGameReports()
+                ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+                ->join('games', 'games.id', '=', 'game_reports.game_id')
+                ->where('games.created_at', '<=', $dateEnd)
+                ->where('games.created_at', '>', $dateStart) # ensure player has not played any games this month
                 ->count();
         }
 
