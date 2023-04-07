@@ -66,20 +66,10 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation;
     }
 
-    /**
-     * Return clan ladder url 
-     * @param mixed $history 
-     * @return string 
-     */
-    public static function getClanLadderUrl($history)
+    public static function getClanProfileLadderUrl($history, $clanId)
     {
-        return "/clans/" . $history->short . "/" . $history->ladder->abbreviation;
-    }
-
-
-    public static function getClanProfileLadderUrl($history, $clanName)
-    {
-        return "/clans/" . $history->short . "/" . $history->ladder->abbreviation . "/" . $clanName;
+        $clan = Clan::find($clanId);
+        return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/clan/" . $clan->short;
     }
 
     /**

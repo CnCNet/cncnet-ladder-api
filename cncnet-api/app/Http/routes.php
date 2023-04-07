@@ -23,12 +23,17 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
     Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');
+
     Route::get('{date}/{game}/player/', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/player/{player}', 'LadderController@getLadderPlayer');
     Route::get('{date}/{game}/player/{player}/achievements', 'LadderController@getPlayerAchievementsPage');
+
+    Route::get('{date}/{game}/clan/', 'LadderController@getLadderIndex');
+    Route::get('{date}/{game}/clan/{clan}', 'LadderController@getLadderClan');
+    Route::get('{date}/{game}/clan/{clan}/achievements', 'LadderController@getPlayerAchievementsPage');
+
     Route::get('{date}/{game}/games/{gameId}', 'LadderController@getLadderGame');
     Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
-    Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
 });
 
 # Clan Ladders

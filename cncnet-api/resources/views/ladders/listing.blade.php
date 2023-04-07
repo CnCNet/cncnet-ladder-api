@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"
+                    <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
                         class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
@@ -130,7 +130,11 @@
                         <div class="header">
                             <div class="col-md-12">
                                 <h4>
-                                    <strong>1vs1</strong>
+                                    @if ($history->ladder->clans_allowed)
+                                        <strong>Clan</strong>
+                                    @else
+                                        <strong>1vs1</strong>
+                                    @endif
                                     Recent Games
                                     <small>
                                         <a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games' }}">View All Games</a>
@@ -164,7 +168,12 @@
                 @endif
 
                 <div class="d-flex flex-column d-sm-flex flex-sm-row">
-                    @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                    @if ($players)
+                        @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                    @endif
+                    @if ($clans)
+                        @include('components.pagination.paginate', ['paginator' => $clans->appends(request()->query())])
+                    @endif
                     <div class="ms-auto">
                         <form>
                             <div class="form-group" method="GET">
@@ -184,20 +193,38 @@
 
                 @if ($tier == null || $tier == 1)
                     <h3 class="mt-2 mb-4">
-                        <i class="bi bi-trophy pe-3"></i> 1vs1 - Champions Players League
+                        <i class="bi bi-trophy pe-3"></i>
+                        @if ($isClanLadder)
+                            Champions Clan League
+                        @else
+                            1vs1 - Champions Players League
+                        @endif
                     </h3>
                 @else
                     <h3 class="mt-2 mb-4">
                         <i class="bi bi-shield-slash-fill pe-3"></i>
-                        1vs1 - Contenders Players League
+                        @if ($isClanLadder)
+                            Contenders Clan League
+                        @else
+                            1vs1 - Contenders Players League
+                        @endif
                     </h3>
                 @endif
 
-                @include('ladders.listing._ladder-table', ['players' => $players])
+                @if ($players)
+                    @include('ladders.listing._ladder-table', ['players' => $players])
+                    <div class="mt-5">
+                        @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                    </div>
+                @endif
 
-                <div class="mt-5">
-                    @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
-                </div>
+                @if ($clans)
+                    @include('ladders.listing.clan._ladder-table', ['clans' => $clans])
+
+                    <div class="mt-5">
+                        @include('components.pagination.paginate', ['paginator' => $clans->appends(request()->query())])
+                    </div>
+                @endif
             </section>
         </div>
     </section>

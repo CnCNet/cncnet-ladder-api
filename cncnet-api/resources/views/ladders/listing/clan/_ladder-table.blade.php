@@ -4,10 +4,9 @@
             Rank
         </div>
         <div class="player-avatar">
-            Name
+            Clan Name
         </div>
         <div class="player-social">
-            Social
         </div>
         <div class="player-points">Points</div>
         <div class="player-wins">Won</div>
@@ -31,7 +30,7 @@
     </div>
 
     @foreach ($clans as $k => $clanCache)
-        @include('clans.listing._table-row', [
+        @include('ladders.listing.clan._table-row', [
             'username' => $clanCache->clan_name,
             'points' => $clanCache->points,
             'rank' => $clanCache->rank(),
@@ -41,7 +40,7 @@
             'game' => $history->ladder->game,
             'abbreviation' => $history->ladder->abbreviation,
             'mostPlayedFaction' => $clanCache->mostPlayedFactionNameByLadderHistory($history),
-            'url' => \App\URLHelper::getClanProfileLadderUrl($history, $clanCache->clan_name),
+            'url' => \App\URLHelper::getClanProfileLadderUrl($history, $clanCache->clan_id),
             'avatar' => null,
             'twitch' => null,
             'youtube' => null,

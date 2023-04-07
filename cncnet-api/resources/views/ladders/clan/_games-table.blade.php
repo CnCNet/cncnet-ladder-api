@@ -11,22 +11,22 @@
                         ->where('clan_id', '=', $gameReport->clan->id)
                         ->first();
                     
-                    $clanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $playerGameReport->clan->name);
+                    $clanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $playerGameReport->clan_id);
                     $playerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $playerGameReport->player->username);
                     
                     $opponentPlayerReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
-                        ->where('clan_id', '!=', $clan->id)
+                        ->where('clan_id', '!=', $playerGameReport->clan_id)
                         ->first();
                     
                     if ($opponentPlayerReport) {
-                        $opponentClanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $opponentPlayerReport->clan->name);
+                        $opponentClanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $opponentPlayerReport->clan_id);
                         $opponentPlayerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $opponentPlayerReport->player->username);
                     }
                 @endphp
 
                 <tr class="align-middle" data-timestamp="{{ $timestamp }}">
                     <td class="td-player">
-                        @include('clans.components._games-player-clan-row', [
+                        @include('ladders.components._games-player-clan-row', [
                             'clanName' => $playerGameReport->clan->name,
                             'clanProfileUrl' => $clanProfileUrl,
                             'profileUrl' => $playerProfileUrl,
@@ -44,10 +44,10 @@
 
                     <td class="td-player td-player-opponent">
                         @if ($opponentPlayerReport)
-                            @include('clans.components._games-player-clan-row', [
+                            @include('ladders.components._games-player-clan-row', [
                                 'clanName' => $opponentPlayerReport->clan->name,
-                                'clanProfileUrl' => $clanProfileUrl,
-                                'profileUrl' => $playerProfileUrl,
+                                'clanProfileUrl' => $opponentClanProfileUrl,
+                                'profileUrl' => $opponentPlayerProfileUrl,
                                 'username' => $opponentPlayerReport->player->username,
                                 'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
                                 'playerGameReport' => $opponentPlayerReport,

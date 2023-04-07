@@ -7,7 +7,6 @@
             @include('components.avatar', ['avatar' => $avatar, 'size' => 50])
         </a>
         <a class="player-username player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
-
             <?php
             ($playername = $username) or '';
             $heart = '';

@@ -1,13 +1,16 @@
 @extends('layouts.app')
 @php $pageTitle = "Viewing Game - ";@endphp
+@section('title', $pageTitle)
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 @foreach ($playerGameReports as $k => $pgr)
-    @php $player = $pgr->player()->first(); @endphp
+    @php $clan = $pgr->clan()->first(); @endphp
     @php
         if ($k == 1) {
             $pageTitle .= ' vs ';
         }
     @endphp
-    @php $pageTitle .= "$player->username"; @endphp
+    @php $pageTitle .= "$clan->short"; @endphp
 @endforeach
 
 @section('breadcrumb')
@@ -41,10 +44,6 @@
         </div>
     </nav>
 @endsection
-
-@section('title', $pageTitle)
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
 @section('feature')
     <div class="feature">
@@ -146,7 +145,7 @@
                             <div class="player-details">
                                 <h2 class="username">
                                     @if ($history->ladder->clans_allowed)
-                                        <a href="{{ \App\URLHelper::getClanProfileLadderUrl($history, $player->clanPlayer->clan->name) }}"
+                                        <a href="{{ \App\URLHelper::getClanProfileLadderUrl($history, $player->clanPlayer->clan->id) }}"
                                             title="View {{ $player->clanPlayer->clan->short }}'s clan profile">
                                             {{ $player->clanPlayer->clan->short }}
 

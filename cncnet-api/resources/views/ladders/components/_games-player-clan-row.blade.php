@@ -8,10 +8,9 @@
          </div>
          <div class="player-username">
              <p class="fw-bold mb-1">
-                 Clan: <a href="{{ $clanProfileUrl }}" title="View clan {{ $clanName }}'s profile">{{ $clanName }}</a>
+                 <a href="{{ $clanProfileUrl }}" title="View clan {{ $clanName }}'s profile">{{ $clanName }}</a>
              </p>
              <p class="mb-1">
-                 Player:
                  <a href="{{ $profileUrl or '' }}" title="View {{ $playerGameReport->player->username }}'s profile">
                      {{ $playerGameReport->player->username }}
                  </a>

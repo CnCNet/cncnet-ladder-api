@@ -33,7 +33,7 @@
 
             @foreach ($clan_ladders as $history)
                 <li>
-                    <a href="{{ \App\URLHelper::getClanLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
+                    <a href="{{ \App\URLHelper::getLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
                         <span class="d-flex align-items-center">
                             <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
                             {{ $history->ladder->name }}

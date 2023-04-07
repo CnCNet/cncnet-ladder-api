@@ -4,7 +4,7 @@
     <script src="/js/chartjs-adapter-date-fns.bundle.min.js"></script>
 @endsection
 
-@section('title', 'Viewing - ' . $clan->clan_name)
+@section('title', 'Viewing - ' . $clanCache->clan_name)
 @section('body-class', 'body-player-detail')
 @section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
@@ -20,12 +20,14 @@
 
                 <div class="col-12 col-lg-6">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold"> {{ $clan->clan_name }}</strong> <br />
+                        <strong class="fw-bold"> {{ $clanCache->clan_name }}</strong> <br />
                         <span>{{ $history->ladder->name }}</span>
                     </h1>
 
                     <p class="lead text-uppercase">
-                        <small>{{ $history->starts->format('F Y') }} - <strong>Clan Ranked Match</strong></small>
+                        <small>{{ $history->starts->format('F Y') }} -
+                            <strong>Clan Ranked Match</strong>
+                        </small>
                     </p>
 
                     <div class="mini-breadcrumb d-none d-lg-flex">
@@ -83,7 +85,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        Viewing {{ $clan->short }}
+                        Viewing {{ $clanCache->clan_name }}
                     </a>
                 </li>
             </ol>
@@ -92,31 +94,38 @@
 @endsection
 
 @section('content')
-
     <div class="player-detail">
         <div class="container">
             <section class="player-header">
                 <div class="player-profile">
-                    {{-- <div class="player-avatar me-5">
-                        @include('components.avatar', ['avatar' => $userPlayer->getUserAvatar(), 'size' => 150])
-                    </div> --}}
+                    <div class="player-avatar me-5">
+                        @include('components.avatar', ['avatar' => null, 'size' => 150])
+                    </div>
                     <div class="player-rank pt-3 me-5">
-                        <h1 class="username">{{ $clan->clan_name }}</h1>
-                        <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $clan->rank() }}</h3>
-                        {{-- <div>
-                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier($userTier) !!}
-                            - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($userTier) }}
-                        </div> --}}
+                        <h1 class="username">{{ $clanCache->clan_name }}</h1>
+                        <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $clanCache->rank() }}</h3>
                     </div>
 
-                    {{-- @if ($userIsMod)
-                        <div>
+                    @if ($userIsMod)
+                        {{-- <div>
                             @include('ladders._modal-edit-player-name')
                             <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName" data-bs-toggle="modal"
                                 data-bs-target="#editPlayerName"> Edit Player Name </button>
-                        </div>
-                    @endif --}}
+                        </div> --}}
+                    @endif
 
+                    <div class="player-social pt-4 me-5">
+                        {{-- @if ($userPlayer->getTwitchProfile())
+                            <a href="{{ $userPlayer->getTwitchProfile() }}">
+                                <i class="bi bi-twitch"></i>
+                            </a>
+                        @endif
+                        @if ($userPlayer->getYouTubeProfile())
+                            <a href="{{ $userPlayer->getYouTubeProfile() }}">
+                                <i class="bi bi-youtube"></i>
+                            </a>
+                        @endif --}}
+                    </div>
                     {{-- @if ($playerOfTheDayAward)
                         <div class="pt-4 ms-auto ml-auto">
                             @include('ladders.player._award-player-of-the-day', [
@@ -128,45 +137,44 @@
                 </div>
 
                 <div class="player-stats">
-                    {{-- <div class="player-overall-stats grid"> --}}
-                    <div class="column">
-                        <h5 class="stat-title">Clan stats</h5>
-                        <div class="player-stats-drilldown stats-wrap">
-                            <div class="stat-item">
-                                <span class="name">Points:</span> {{ $clan->points }}
-                            </div>
-                            <div class="stat-item">
-                                <span class="name">Games:</span>{{ $clan->games }}
-                            </div>
-                            <div class="stat-item">
-                                <span class="name">Wins:</span> {{ $clan->wins }}
-                            </div>
-                            <div class="stat-item">
-                                <span class="name">Losses:</span> {{ $clan->games - $clan->wins }}
-                            </div>
-                            <div class="stat-item">
-                                <span class="name">Average FPS:</span> {{ $clan->fps }}
-                            </div>
-                            <div class="stat-item">
-                                {{-- <span class="name">Played today:</span> --}}
-                                {{-- {{ $playerGamesLast24Hours }} --}}
+                    <div class="player-overall-stats grid">
+                        <div class="column">
+                            <h5 class="stat-title">Clan stats</h5>
+                            <div class="player-stats-drilldown stats-wrap">
+                                <div class="stat-item">
+                                    <span class="name">Points:</span> {{ $clanCache->points }}
+                                </div>
+                                <div class="stat-item">
+                                    <span class="name">Games:</span>{{ $clanCache->games }}
+                                </div>
+                                <div class="stat-item">
+                                    <span class="name">Wins:</span> {{ $clanCache->wins }}
+                                </div>
+                                <div class="stat-item">
+                                    <span class="name">Losses:</span> {{ $clanCache->games - $clanCache->wins }}
+                                </div>
+                                <div class="stat-item">
+                                    <span class="name">Average FPS:</span> {{ $clanCache->fps }}
+                                </div>
+                                <div class="stat-item">
+                                    {{-- <span class="name">Played today:</span> {{ $playerGamesLast24Hours }} --}}
+                                </div>
                             </div>
                         </div>
-                        {{-- </div> --}}
 
-                        {{-- <div class="column">
+                        <div class="column">
                             <h5 class="stat-title">Top factions played</h5>
                             <div>
-                                @include('ladders.player._player-factions')
+                                {{-- @include('ladders.player._player-factions') --}}
                             </div>
                         </div>
 
                         <div class="column">
                             <h5 class="stat-title">Played this month</h5>
                             <div>
-                                @include('ladders.player._player-chart')
+                                {{-- @include('ladders.player._player-chart') --}}
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
                 </div>
 
@@ -226,7 +234,9 @@
                             <div class="mb-2">
                                 @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
                             </div>
-                            @include('clans.clan._games-table', ['clan' => $clan, 'games' => $games])
+
+                            @include('ladders.clan._games-table', ['clan' => $clanCache, 'games' => $games])
+
                             <div class="mt-2">
                                 @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
                             </div>
@@ -241,8 +251,9 @@
                         @include('ladders.player._player-vs-player-matchups')
                     </div>
                 </div>
-            </section>
-            <section class="player-maps pt-5 pb-5">
+            </section> --}}
+
+            {{-- <section class="player-maps pt-5 pb-5">
                 <div class="container">
                     <div class="row">
                         @include('ladders.player._player-map-stats')

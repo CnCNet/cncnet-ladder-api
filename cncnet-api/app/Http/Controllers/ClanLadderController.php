@@ -2,20 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Clan;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Ladder;
-use App\Clan;
 use App\ClanCache;
-use App\ClanPlayer;
-use App\ClanRole;
-use App\ClanInvitation;
-use App\CountableObjectHeap;
-use App\Player;
-use App\User;
 
-class ClanLadderController  extends Controller
+
+class ClanLadderController extends Controller
 {
     protected $ladderService = null;
 
@@ -29,10 +23,10 @@ class ClanLadderController  extends Controller
         $clanLadders = $this->ladderService->getLatestClanLadders();
         $ladders = $this->ladderService->getLatestLadders();
 
-        return view('clans.index', ['ladders' => $ladders, 'clanLadders' => $clanLadders,]);
+        return view('clans.index', ['ladders' => $ladders, 'clanLadders' => $clanLadders]);
     }
 
-    public function getListing(Request $request, $ladderAbbrev, $date)
+    public function getListing(Request $request)
     {
         $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
         if ($history === null)
@@ -42,7 +36,7 @@ class ClanLadderController  extends Controller
 
         $clanLadders = $this->ladderService->getLatestClanLadders();
         $ladders = $this->ladderService->getLatestLadders();
-        $laddersPrevious = $this->ladderService->getPreviousLaddersByGame($date, $ladderAbbrev);
+        $laddersPrevious = $this->ladderService->getPreviousLaddersByGame($request->date, $request->game);
         $search = $request->search;
 
         # Default
@@ -55,7 +49,7 @@ class ClanLadderController  extends Controller
             'clanLadders' => $clanLadders,
             'clans' => $clans,
             'ladders' => $ladders,
-            'history' => $history
+            'history' => $history,
         ]);
     }
 
@@ -65,10 +59,21 @@ class ClanLadderController  extends Controller
 
         if ($history == null)
         {
+            abort(404, "No clan ladder found");
+        }
+
+        $clan = Clan::where("short", $clanName)
+            ->where("ladder_id", $history->ladder->id)
+            ->first();
+
+        if ($clan == null)
+        {
             abort(404, "No clan found");
         }
 
-        $clanCache = ClanCache::where("ladder_history_id", $history->id)->first();
+        $clanCache = ClanCache::where("ladder_history_id", $history->id)
+            ->where("clan_id", $clan->id)
+            ->first();
 
         $games = $clanCache->clan->clanGames()
             ->where("ladder_history_id", "=", $history->id)
