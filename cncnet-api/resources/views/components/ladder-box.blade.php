@@ -6,7 +6,12 @@
             <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($abbrev ?? $history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}" />
         </div>
         <div class="text-center mt-2">
-            <h5>{{ $history->ladder->name }} 1vs1 Ladder</h5>
+            <h5>
+                {{ $history->ladder->name }}
+                @if (!$history->ladder->clans_allowed)
+                    1vs1 Ladder
+                @endif
+            </h5>
             <p>
                 {{ Carbon\Carbon::parse($history->starts)->format('F Y') }}
             </p>

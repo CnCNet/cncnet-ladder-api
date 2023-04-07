@@ -66,5 +66,25 @@
                 </div>
             </div>
         </section>
+
+        <section class="pt-5 pb-5">
+            <div class="container">
+                <h3>
+                    <span class="material-symbols-outlined icon">
+                        military_tech
+                    </span>
+                    <strong>Clan</strong> Ladders
+                </h3>
+
+                <div class="d-flex flex-wrap mt-4">
+                    @foreach ($clan_ladders as $history)
+                        @include('components.ladder-box', [
+                            'history' => $history,
+                            'url' => \App\URLHelper::getLadderUrl($history),
+                        ])
+                    @endforeach
+                </div>
+            </div>
+        </section>
     </div>
 @endsection
