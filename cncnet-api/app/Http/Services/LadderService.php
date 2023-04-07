@@ -424,10 +424,21 @@ class LadderService
 
         foreach ($gameReport->playerGameReports as $playerGR)
         {
-            $player = $playerGR->player;
-            $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
-                ->where('player_id', '=', $player->id)
-                ->first();
+            if ($history->ladder->clans_allowed)
+            {
+                $clan = $playerGR->clan;
+                $pc = \App\ClanCache::where("ladder_history_id", '=', $history->id)
+                    ->where('clan_id', '=', $clan->id)
+                    ->first();
+            }
+            else
+            {
+                $player = $playerGR->player;
+                $pc = \App\PlayerCache::where("ladder_history_id", '=', $history->id)
+                    ->where('player_id', '=', $player->id)
+                    ->first();
+            }
+
             $pc->mark();
             $pc->points -= $playerGR->points;
             $pc->games--;
