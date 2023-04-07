@@ -352,8 +352,6 @@ class ApiQuickMatchController extends Controller
 
         $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
         $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
-
-        // Debug
         $playerWillMatchAI = $this->checkPlayerShouldMatchAIAfterTimeInQueue($request->version, $userPlayerTier, $qmPlayer);
 
         if ($playerWillMatchAI == true)
@@ -396,12 +394,6 @@ class ApiQuickMatchController extends Controller
 
     private function checkPlayerShouldMatchAIAfterTimeInQueue($version, $userPlayerTier, $qmPlayer)
     {
-        if ($qmPlayer->player_id == 176024)
-        {
-            // neogrant4 testing
-            return true;
-        }
-
         $qmQueueEntry = $qmPlayer->qEntry;
         if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE && $qmQueueEntry !== null && $version >= 1.75)
         {

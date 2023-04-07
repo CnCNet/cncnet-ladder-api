@@ -36,15 +36,6 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
     Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
 });
 
-# Clan Ladders
-Route::group(['prefix' => 'clans/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
-{
-    Route::get('/', 'ClanLadderController@getIndex');
-    Route::get('{date}/{game}', 'ClanLadderController@getListing');
-    Route::get('{date}/{game}/{clanName}', 'ClanLadderController@getLadderClan');
-    Route::get('{date}/{game}/{clanName}/games/{gameId}', 'ClanLadderController@getClanLadderGame');
-});
-
 Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
 {
     Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
@@ -189,7 +180,6 @@ Route::group([
     'middleware' => 'jwt.auth'
 ], function ()
 {
-    Route::get('/user/test', 'ApiUserController@getAccountDebug');
     Route::get('/user/account', 'ApiUserController@getAccount');
     Route::get('/user/ladders', 'ApiUserController@getPrivateLadders');
     Route::post('/user/create', 'ApiUserController@createUser');

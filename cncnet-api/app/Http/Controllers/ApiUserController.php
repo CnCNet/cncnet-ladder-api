@@ -38,13 +38,6 @@ class ApiUserController extends Controller
         return $this->getActivePlayersByUser($user);
     }
 
-    public function getAccountDebug(Request $request)
-    {
-        $user = \App\User::find(1);
-        $this->createPlayerForLaddersIfNoneExist($user);
-
-        return $this->getActivePlayersByUser($user);
-    }
 
     /**
      * Return user's active players
@@ -67,24 +60,7 @@ class ApiUserController extends Controller
             // No idea why.
             if ($activeHandle->player->ladder)
             {
-                if ($activeHandle->player->ladder->clans_allowed)
-                {
-                    $ladder = $activeHandle->player->ladder;
-                    $player = $activeHandle->player;
-
-                    // Append clan name if one exists
-                    // Maybe we need to overwrite, unsure yet
-                    // $clanByPlayer = ClanPlayer::where("player_id", $player->id)
-                    //     ->first();
-
-                    // $activeHandle->player->username = $clanByPlayer->clan->name;
-
-                    $playerList[] = $activeHandle->player;
-                }
-                else
-                {
-                    $playerList[] = $activeHandle->player;
-                }
+                $playerList[] = $activeHandle->player;
             }
         }
 

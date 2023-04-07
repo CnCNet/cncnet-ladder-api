@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Manage Clan')
-
-@section('feature-image', '/images/feature/feature-index.jpg')
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -9,12 +9,35 @@
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $clan->ladder->name }} - {{ $clan->short }}</strong>
+                        <strong class="fw-bold">Clan Manager</strong>
+                        <span> {{ $clan->name }}</span>
                     </h1>
+                </div>
+            </div>
 
-                    <p class="lead">
-                        {{ $clan->name }}
-                    </p>
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="/account">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        {{ $clan->name }} Clan
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="#">
+                        <span class="material-symbols-outlined icon pe-3">
+                            settings
+                        </span>
+                        Manage Clan
+                    </a>
                 </div>
             </div>
         </div>
@@ -33,17 +56,19 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="">
+                    <a href="/account">
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        {{ $user->name }}
+                        {{ $user->name }}'s Account
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="">
-                        <i class="bi bi-flag-fill pe-2"></i>
-                        Editing Clan - {{ $clan->name }}
+                    <a href="#">
+                        <span class="material-symbols-outlined icon pe-3">
+                            settings
+                        </span>
+                        Manage Clan
                     </a>
                 </li>
             </ol>
@@ -54,17 +79,8 @@
 @section('content')
     <section>
         <div class="container">
-            <div class="row mb-2">
-                <div class="col-md-12">
-                    @if ($player->clanPlayer->isOwner())
-                        <button class="btn btn-secondary btn-md inline-after-edit" data-bs-toggle="modal" data-bs-target="#renameClan">
-                            Edit clan name <i class="fa fa-edit"></i>
-                        </button>
-                    @endif
-                </div>
-            </div>
 
-            <div class="row">
+            <div class="row mt-5">
                 <div class="col-md-12">
                     @include('components.form-messages')
                 </div>
@@ -98,7 +114,8 @@
                                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                         <input type="hidden" name="id" value="{{ $invite->id }}">
                                                         <input type="hidden" name="player_id" value="{{ $player->id }}">
-                                                        <button class="btn btn-secondary btn-sm" type="submit" name="submit" data-toggle="tooltip" data-placement="top" title="Cancel Invitation">
+                                                        <button class="btn btn-secondary btn-sm" type="submit" name="submit" data-toggle="tooltip"
+                                                            data-placement="top" title="Cancel Invitation">
                                                             <span class="fa fa-times fa-lg clan-danger"></span> Cancel invite
                                                         </button>
                                                     </form>
@@ -127,7 +144,8 @@
                             <div class="clan-members-header">
                                 <h3>Members</h3>
                                 @if ($player->clanPlayer->isOwner())
-                                    <div class="text-center"><button class="btn btn-primary" type="submit" name="submit" value="apply">Apply</button></div>
+                                    <div class="text-center"><button class="btn btn-primary" type="submit" name="submit" value="apply">Apply</button>
+                                    </div>
                                 @endif
                             </div>
                             <div class="clan-members-body">
@@ -146,7 +164,8 @@
                                                     @if ($player->clanPlayer->isOwner())
                                                         <select class="form-control" name="role[{{ $cp->id }}]">
                                                             @foreach ($roles as $role)
-                                                                <option value="{{ $role->id }}" @if ($cp->clan_role_id == $role->id) selected @endif>{{ $role->value }}</option>
+                                                                <option value="{{ $role->id }}" @if ($cp->clan_role_id == $role->id) selected @endif>
+                                                                    {{ $role->value }}</option>
                                                             @endforeach
                                                             <option value="kick">Kick</option>
                                                         </select>
@@ -162,12 +181,25 @@
                             <div class="clan-members-footer">
                                 @if ($player->clanPlayer->isOwner())
                                     @if ($clan->clanPlayers->count() > 10)
-                                        <div class="text-center"> <button class="btn btn-primary" type="submit" name="submit" value="apply">Apply</button></div>
+                                        <div class="text-center"> <button class="btn btn-primary" type="submit" name="submit"
+                                                value="apply">Apply</button></div>
                                     @endif
                                 @endif
                             </div>
                         </form>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row mt-2">
+                <div class="col-md-12">
+                    @if ($player->clanPlayer->isOwner())
+                        <button class="btn btn-primary btn-md inline-after-edit" data-bs-toggle="modal" data-bs-target="#renameClan">
+                            Edit clan name <i class="fa fa-edit"></i>
+                        </button>
+                    @endif
                 </div>
             </div>
         </div>
@@ -196,7 +228,8 @@
 
                         <div class="form-group mb-2">
                             <label for="name">Full Clan Name</label>
-                            <input type="text" name="name" class="form-control border" id="name" placeholder="New Clan Name" value="{{ $clan->name }}">
+                            <input type="text" name="name" class="form-control border" id="name" placeholder="New Clan Name"
+                                value="{{ $clan->name }}">
                         </div>
 
                         <button type="submit" class="btn btn-primary mt-2">Update Clan</button>
@@ -234,7 +267,8 @@
 
                                         <div class="form-group">
                                             <label for="name">Full Clan Name</label>
-                                            <input type="text" name="name" class="form-control" id="name" placeholder="New Clan Name" value="{{ $clan->name }}">
+                                            <input type="text" name="name" class="form-control" id="name" placeholder="New Clan Name"
+                                                value="{{ $clan->name }}">
                                         </div>
 
                                         <button type="submit" class="btn btn-primary">Update Clan</button>
