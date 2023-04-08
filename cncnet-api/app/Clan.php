@@ -154,6 +154,19 @@ class Clan extends Model
         return $points !== null ? $points : 0;
     }
 
+    public function getClanAvatar()
+    {
+        if ($this->avatar_path)
+        {
+            if (config("app.env") !== "production")
+            {
+                return "https://ladder.cncnet.org/" . $this->avatar_path;
+            }
+            return asset($this->avatar_path, true);
+        }
+        return null;
+    }
+
 
     # Relationships
     public function playerGameReports()

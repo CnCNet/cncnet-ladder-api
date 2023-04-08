@@ -39,8 +39,10 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
 Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
 {
     Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
+
     Route::post('/edit/{clanId}', 'ClanController@saveLadderClan');
     Route::post('/edit/{clanId}/members', 'ClanController@saveMembers');
+    Route::post('/edit/{clanId}/avatar', 'ClanController@saveLadderAvatar');
     //Route::post('/edit/new', 'ClanController@saveLadderClan');
 
     Route::post('/invite/{clanId}', 'ClanController@saveInvitation');

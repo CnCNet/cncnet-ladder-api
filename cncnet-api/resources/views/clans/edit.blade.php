@@ -86,6 +86,52 @@
                 </div>
             </div>
 
+            <div class="row mb-5">
+                <div class="col-md-12">
+                    <div class="form-group mb-5">
+
+                        @if ($player->clanPlayer->isOwner() || $player->clanPlayer->isManager())
+                            <form action="/clans/{{ $ladder->abbreviation }}/edit/{{ $clan->id }}/avatar" method="POST"
+                                enctype="multipart/form-data">
+
+                                {{ csrf_field() }}
+
+                                <input type="hidden" name="id" value="{{ $clan->id }}">
+
+                                <h3>Ladder Avatar</h3>
+                                <p>
+                                    <strong>Recommended dimensions are 300x300. Max file size: 1mb.<br /> File types allowed: jpg, png, gif </strong>
+                                </p>
+                                <p>
+                                    Avatars that are not deemed suitable by CnCNet will be removed without warning. <br />
+                                    Inappropriate images and advertising is not allowed.
+                                </p>
+
+                                <div>
+                                    @include('components.avatar', ['avatar' => $clan->getClanAvatar()])
+                                </div>
+
+                                <label for="avatar">Upload an avatar</label>
+                                <input type="file" id="avatar" name="avatar">
+
+                                @if ($clan->getClanAvatar())
+                                    <br />
+                                    <label>
+                                        <input id="removeAvatar" type="checkbox" name="removeAvatar" />
+                                        Remove avatar?
+                                    </label>
+                                @endif
+
+                                <div>
+                                    <button class="btn btn-primary">Save avatar</button>
+                                </div>
+                            </form>
+                        @endif
+
+                    </div>
+                </div>
+            </div>
+
             <div class="feature">
                 <div class="row">
                     <div class="col-md-6 clan-members-box">

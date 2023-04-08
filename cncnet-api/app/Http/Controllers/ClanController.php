@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use App\Ladder;
 use App\Clan;
@@ -13,6 +12,8 @@ use App\ClanPlayer;
 use App\ClanRole;
 use App\ClanInvitation;
 use App\Player;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class ClanController extends Controller
 {
@@ -21,6 +22,45 @@ class ClanController extends Controller
     public function __construct()
     {
         $this->ladderService = new \App\Http\Services\LadderService;
+    }
+
+    public function saveLadderAvatar(Request $request)
+    {
+        $this->validate($request, [
+            "avatar" => "image|mimes:jpg,jpeg,png,gif|max:2000",
+        ]);
+
+
+        $clan = Clan::find($request->id);
+        if ($clan == null)
+        {
+            $request->session()->flash('success', "Clan not found");
+            return redirect()->back();
+        }
+
+        # Clan Avatar
+        if ($request->hasFile("avatar"))
+        {
+            $file = $request->file("avatar");
+            if ($file->getClientOriginalExtension() == "gif")
+            {
+                $hash = md5($file->__toString());
+                $path = "avatars/clans/{$clan->id}/{$hash}.gif";
+                copy($file->getRealPath(), $path);
+            }
+            else
+            {
+                $avatar = Image::make($request->file('avatar')->getRealPath())->resize(300, 300)->encode("png");
+                $hash = md5($avatar->__toString());
+                $path = "avatars/clans/{$clan->id}/{$hash}.png";
+                Storage::put($path, $avatar);
+            }
+
+            $clan->avatar_path = $path;
+        }
+
+        $request->session()->flash('success', "Successfully updated Clan Avatar.");
+        return redirect()->back();
     }
 
     public function editLadderClan(Request $request, $ladderAbbrev, $clanId)
@@ -47,7 +87,20 @@ class ClanController extends Controller
         $invitations = $clan->invitations;
 
         $roles = ClanRole::all();
-        return view('clans.edit', compact('clan_ladders', 'ladders', 'user', 'ladder', 'clan', 'player', 'invitations', 'roles'));
+
+        return view(
+            'clans.edit',
+            compact(
+                'clan_ladders',
+                'ladders',
+                'user',
+                'ladder',
+                'clan',
+                'player',
+                'invitations',
+                'roles'
+            )
+        );
     }
 
     public function saveLadderClan(Request $request, $ladderAbbrev, $clanId = 'new')

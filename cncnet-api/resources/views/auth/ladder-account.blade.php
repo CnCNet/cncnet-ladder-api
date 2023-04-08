@@ -139,7 +139,7 @@
 
                             <div class="clan-listings mb-5">
                                 @if ($primaryPlayer !== null)
-                                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newClan">
+                                    <a href="#" class="btn btn-primary btn-size-md" data-bs-toggle="modal" data-bs-target="#newClan">
                                         Create a new Clan owned by {{ $primaryPlayer->username }}?
                                     </a>
                                 @endif
@@ -166,8 +166,9 @@
                                                         </div>
                                                     </td>
                                                     <td>
-                                                        <a href="/clans/{{ $ladder->abbreviation }}/edit/{{ $clanPlayer->clan_id }}/main">
-                                                            {{ $clanPlayer->clan->short }}
+                                                        <a href="/clans/{{ $ladder->abbreviation }}/edit/{{ $clanPlayer->clan_id }}/main"
+                                                            class="btn btn-primary btn-size-md">
+                                                            Manage Clan - {{ $clanPlayer->clan->short }}
                                                         </a>
                                                     </td>
                                                     <td>
