@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class QmQueueEntry extends Model
 {
 
-    //
-
     public function qmPlayer()
     {
         return $this->belongsTo('App\QmMatchPlayer', 'qm_match_player_id');

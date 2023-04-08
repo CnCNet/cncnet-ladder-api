@@ -172,15 +172,13 @@ Route::group(['prefix' => 'api/v1/auth/'], function ()
     Route::post('/login', 'ApiAuthController@login');
 });
 
-
-Route::get('/clan/debug', 'TestController@test');
-
 Route::group([
     'prefix' => 'api/v1/',
     'middleware' => 'jwt.auth'
 ], function ()
 {
     Route::get('/user/account', 'ApiUserController@getAccount');
+
     Route::get('/user/ladders', 'ApiUserController@getPrivateLadders');
     Route::post('/user/create', 'ApiUserController@createUser');
 

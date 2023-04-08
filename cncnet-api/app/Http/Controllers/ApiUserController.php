@@ -58,8 +58,19 @@ class ApiUserController extends Controller
         {
             // IMPORTANT: Include this $player->ladder in this check to trigger it in the response
             // No idea why.
+            $ladder = $activeHandle->player->ladder;
+            $player = $activeHandle->player;
+
             if ($activeHandle->player->ladder)
             {
+                if ($ladder->clans_allowed)
+                {
+                    // Check player has clan
+                    if ($player && $player->clanPlayer == null)
+                    {
+                        continue;
+                    }
+                }
                 $playerList[] = $activeHandle->player;
             }
         }

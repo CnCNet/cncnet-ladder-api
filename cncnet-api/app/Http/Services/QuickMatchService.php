@@ -20,6 +20,11 @@ class QuickMatchService
         $qmPlayer->tier = $player->playerHistory($history)->tier;
         $qmPlayer->waiting = true;
 
+        if ($history->ladder->clans_allowed && $player->clan)
+        {
+            $qmPlayer->clan_id = $player->clan->id;
+        }
+
         # color, chosen_side, actual_side and saving is done in the next if-statement
         $qmPlayer->qm_match_id = null;
         $qmPlayer->tunnel_id = null;

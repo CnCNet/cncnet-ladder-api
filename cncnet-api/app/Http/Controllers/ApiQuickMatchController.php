@@ -107,7 +107,7 @@ class ApiQuickMatchController extends Controller
 
         if ($ladder == null)
             abort(400, "Invalid ladder provided");
-            
+
         $history = $ladder->currentHistory();
 
         $ladder_id = $ladder->id;

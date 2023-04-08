@@ -130,6 +130,7 @@ class Ladder extends Model
                     continue;
                 }
             }
+
             $userAllowedLadders[] = $ladder;
         }
 
