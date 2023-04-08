@@ -89,12 +89,13 @@
             <div class="feature">
                 <div class="row">
                     <div class="col-md-6 clan-members-box">
-                        <div class="clan-members-header">
-                            <h3>Invitations</h3>
-                            @if ($player->clanPlayer->isOwner() || $player->clanPlayer->isManager())
-                                <button class="btn btn-md btn-primary" data-bs-toggle="modal" data-bs-target="#sendInvitation">New Invite</button>
-                            @endif
+                        <div class="clan-members-header mb-5">
+                            <h4>Invitations</h4>
+                            <p>
+                                Invite players to your clan. They must have a nickname registered for this ladder for you to invite them.
+                            </p>
                         </div>
+
                         <div class="clan-members-body">
                             <table class="table clan-members-table">
                                 <thead>
@@ -129,25 +130,24 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div class="clan-members-footer">
-                            @if ($invitations->count() > 10)
-                                @if ($player->clanPlayer->isOwner() || $player->clanPlayer->isManager())
-                                    <button class="btn btn-md btn-primary" data-toggle="modal" data-target="#sendInvitation">New Invite</button>
-                                @endif
-                            @endif
-                        </div>
+
+                        @if ($player->clanPlayer->isOwner() || $player->clanPlayer->isManager())
+                            <button class="btn btn-md btn-primary" data-bs-toggle="modal" data-bs-target="#sendInvitation">New Invite</button>
+                        @endif
                     </div>
+
                     <div class="col-md-6 clan-members-box">
                         <form method="POST" action="members">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <input type="hidden" name="player_id" value="{{ $player->id }}">
+
                             <div class="clan-members-header">
-                                <h3>Members</h3>
-                                @if ($player->clanPlayer->isOwner())
-                                    <div class="text-center"><button class="btn btn-primary" type="submit" name="submit" value="apply">Apply</button>
-                                    </div>
-                                @endif
+                                <h4>Members</h4>
+                                <p>
+                                    Your clan players in your clan are listed below.
+                                </p>
                             </div>
+
                             <div class="clan-members-body">
                                 <table class="table clan-members-table">
                                     <thead>
@@ -177,7 +177,18 @@
                                         @endforeach
                                     </tbody>
                                 </table>
+
+                                @if ($player->clanPlayer->isOwner())
+                                    <button class="btn btn-primary" type="submit" name="submit" value="apply">Save</button>
+                                @endif
+
+                                @if ($player->clanPlayer->isOwner())
+                                    <button class="btn btn-outline ms-2" data-bs-toggle="modal" data-bs-target="#renameClan" type="button">
+                                        Edit clan name <i class="fa fa-edit"></i>
+                                    </button>
+                                @endif
                             </div>
+
                             <div class="clan-members-footer">
                                 @if ($player->clanPlayer->isOwner())
                                     @if ($clan->clanPlayers->count() > 10)
@@ -188,18 +199,6 @@
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row mt-2">
-                <div class="col-md-12">
-                    @if ($player->clanPlayer->isOwner())
-                        <button class="btn btn-primary btn-md inline-after-edit" data-bs-toggle="modal" data-bs-target="#renameClan">
-                            Edit clan name <i class="fa fa-edit"></i>
-                        </button>
-                    @endif
                 </div>
             </div>
         </div>
@@ -219,7 +218,7 @@
                         <input type="hidden" name="ladder_id" value="{{ $ladder->id }}">
                         <input type="hidden" name="player_id" value="{{ $player->id }}">
 
-                        <p>Usernames will be the name shown when you login to CnCNet clients and play games.</p>
+                        <p>Clan short name will be the name shown in lobbies and on the website.</p>
 
                         <div class="form-group mb-2">
                             <label for="short">Short Name</label>
@@ -232,7 +231,7 @@
                                 value="{{ $clan->name }}">
                         </div>
 
-                        <button type="submit" class="btn btn-primary mt-2">Update Clan</button>
+                        <button type="submit" class="btn btn-primary mt-2">Save</button>
                     </form>
                 </div>
             </div>

@@ -102,7 +102,7 @@ class FindOpponent extends Command implements ShouldQueue
         $qmPlayer->save();
 
         $ladder = $qmPlayer->ladder;
-        $ladder_rules = $ladder->qmLadderRules;
+        $ladderRules = $ladder->qmLadderRules;
 
         /* 
         Try to find a matchup
@@ -120,6 +120,7 @@ class FindOpponent extends Command implements ShouldQueue
         $user = $qmPlayer->player->user;
         $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
         $userSettings = $user->userSettings;
+        $userPlayerClan = $player->clanPlayer;
 
         # Fetch all opponents who are currently in queue for this ladder
         $opponentEntries = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
@@ -133,8 +134,25 @@ class FindOpponent extends Command implements ShouldQueue
         {
             $oppPlayer = $opponentEntry->qmPlayer->player;
             $oppUserPlayerTier = $oppPlayer->getCachedPlayerTierByLadderHistory($history);
+            $oppPlayerClan = $oppPlayer->clanPlayer;
             $oppUserSettings = $oppPlayer->user->userSettings;
             $oppUser = $oppPlayer->user;
+
+            # Checks players aren't matching against players in their own clans
+            # When we support more players, we can check the configured ladder player count
+            if ($ladder->clans_allowed)
+            {
+                Log::info("FindOpponent ** Clan Ladder Matchup");
+
+                if ($oppPlayerClan && $userPlayerClan)
+                {
+                    if ($oppPlayerClan->clan_id == $userPlayerClan->clan_id)
+                    {
+                        Log::info("FindOpponent ** Players are in same clans " . $oppPlayerClan->clan_id . " Vs " . $userPlayerClan->clan_id);
+                        continue;
+                    }
+                }
+            }
 
             # Checks players are in same league tier otherwise skip
             if ($oppUserPlayerTier !== $userPlayerTier)
@@ -176,7 +194,7 @@ class FindOpponent extends Command implements ShouldQueue
 
                 # Do both players' rank meet the minimum rank required for no pt filter to apply
                 $rankDiff = abs($playerRank - $oppPlayerRank);
-                if ($rankDiff <= $ladder_rules->point_filter_rank_threshold)
+                if ($rankDiff <= $ladderRules->point_filter_rank_threshold)
                 {
                     Log::info("FindOpponent ** Players meet the min pt filter rank p1: " . $playerRank . ", p2: " . $oppPlayerRank);
                     $ptFilterOff = true;
@@ -195,10 +213,10 @@ class FindOpponent extends Command implements ShouldQueue
             else
             {
                 # (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
-                $points_time = ((strtotime($qEntry->updated_at) - strtotime($qEntry->created_at))) * $ladder_rules->points_per_second;
+                $points_time = ((strtotime($qEntry->updated_at) - strtotime($qEntry->created_at))) * $ladderRules->points_per_second;
 
                 # is the opponent within the point filter
-                if ($points_time + $ladder_rules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
+                if ($points_time + $ladderRules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
                 {
                     $opponentEntriesFiltered->add($opponentEntry);
                 }
@@ -207,11 +225,11 @@ class FindOpponent extends Command implements ShouldQueue
 
         $qmOpns = $opponentEntriesFiltered->shuffle();
 
-        if ($qmOpns->count() >= $ladder_rules->player_count - 1)
+        if ($qmOpns->count() >= $ladderRules->player_count - 1)
         {
             // Randomly choose the opponents from the best matches. To prevent
             // long runs of identical matchups.
-            $qmOpns = $qmOpns->shuffle()->take($ladder_rules->player_count - 1);
+            $qmOpns = $qmOpns->shuffle()->take($ladderRules->player_count - 1);
 
             // Randomly select a map
             $commonQMMaps = array();

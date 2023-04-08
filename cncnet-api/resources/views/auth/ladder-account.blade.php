@@ -134,20 +134,18 @@
 
                         @if ($activeHandles->count() > 0)
                             <p>
-                                You have to leave your clan before you can create a new one.<br />
+                                Please note: You have to leave your clan before you can create a new one.<br />
                             </p>
 
-                            <div class="clan-listings">
+                            <div class="clan-listings mb-5">
                                 @if ($primaryPlayer !== null)
                                     <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newClan">
-                                        Create a new Clan owned by {{ $primaryPlayer->username }}
+                                        Create a new Clan owned by {{ $primaryPlayer->username }}?
                                     </a>
                                 @endif
                             </div>
+
                             <div>
-
-                                <br />
-
                                 <div class="table-responsive">
                                     <table class="table">
                                         <thead>
@@ -380,7 +378,7 @@
                             </p>
 
                             <div class="form-group mb-2">
-                                <label for="short">Short Name</label>
+                                <label for="short">Short Name (6 Characters long)</label>
                                 <input type="text" name="short" class="form-control border" id="short" placeholder="">
                             </div>
 

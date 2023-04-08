@@ -115,14 +115,14 @@
                             <span class="material-symbols-outlined icon">
                                 military_tech
                             </span>
-                            <strong>Private</strong> Ladders
+                            <strong>Clan</strong> Ladders
                         </h2>
                         <div class="d-flex flex-wrap">
-                            @foreach ($private_ladders as $history)
+                            @foreach ($clan_ladders as $history)
                                 @include('components.ladder-box', [
                                     'history' => $history,
                                     'url' => \App\URLHelper::getAccountLadderUrl($history),
-                                    'abbrev' => $history->ladder->game,
+                                    'abbrev' => $history->ladder->abbrev,
                                 ])
                             @endforeach
                         </div>
@@ -133,10 +133,10 @@
                             <span class="material-symbols-outlined icon">
                                 military_tech
                             </span>
-                            <strong>Clan</strong> Ladders
+                            <strong>Private</strong> Ladders
                         </h2>
                         <div class="d-flex flex-wrap">
-                            @foreach ($clan_ladders as $history)
+                            @foreach ($private_ladders as $history)
                                 @include('components.ladder-box', [
                                     'history' => $history,
                                     'url' => \App\URLHelper::getAccountLadderUrl($history),
