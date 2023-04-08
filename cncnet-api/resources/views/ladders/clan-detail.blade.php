@@ -99,7 +99,7 @@
             <section class="player-header">
                 <div class="player-profile">
                     <div class="player-avatar me-5">
-                        @include('components.avatar', ['avatar' => null, 'size' => 150])
+                        @include('components.avatar', ['avatar' => $clanCache->getClanAvatar(), 'size' => 150])
                     </div>
                     <div class="player-rank pt-3 me-5">
                         <h1 class="username">{{ $clanCache->clan_name }}</h1>

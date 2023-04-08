@@ -31,7 +31,7 @@
                             'clanProfileUrl' => $clanProfileUrl,
                             'profileUrl' => $playerProfileUrl,
                             'username' => $playerGameReport->player->username,
-                            'avatar' => $playerGameReport->player->user->getUserAvatar(),
+                            'avatar' => $playerGameReport->clan->getClanAvatar(),
                             'playerGameReport' => $playerGameReport,
                         ])
                     </td>
@@ -49,7 +49,7 @@
                                 'clanProfileUrl' => $opponentClanProfileUrl,
                                 'profileUrl' => $opponentPlayerProfileUrl,
                                 'username' => $opponentPlayerReport->player->username,
-                                'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
+                                'avatar' => $opponentPlayerReport->clan->getClanAvatar(),
                                 'playerGameReport' => $opponentPlayerReport,
                             ])
                         @endif

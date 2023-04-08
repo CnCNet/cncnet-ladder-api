@@ -158,7 +158,8 @@ class Clan extends Model
     {
         if ($this->avatar_path)
         {
-            if (config("app.env") !== "production")
+            $env = config("app.env");
+            if ($env !== "production" && $env !== "staging")
             {
                 return "https://ladder.cncnet.org/" . $this->avatar_path;
             }

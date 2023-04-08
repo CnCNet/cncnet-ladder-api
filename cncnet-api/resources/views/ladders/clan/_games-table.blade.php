@@ -28,10 +28,10 @@
                     <td class="td-player">
                         @include('ladders.components._games-player-clan-row', [
                             'clanName' => $playerGameReport->clan->name,
+                            'avatar' => $playerGameReport->clan->getClanAvatar(),
                             'clanProfileUrl' => $clanProfileUrl,
                             'profileUrl' => $playerProfileUrl,
                             'username' => $playerGameReport->clan->name,
-                            'avatar' => $playerGameReport->player->user->getUserAvatar(),
                             'playerGameReport' => $playerGameReport,
                         ])
                     </td>
@@ -46,10 +46,10 @@
                         @if ($opponentPlayerReport)
                             @include('ladders.components._games-player-clan-row', [
                                 'clanName' => $opponentPlayerReport->clan->name,
+                                'avatar' => $opponentPlayerReport->clan->getClanAvatar(),
                                 'clanProfileUrl' => $opponentClanProfileUrl,
                                 'profileUrl' => $opponentPlayerProfileUrl,
                                 'username' => $opponentPlayerReport->player->username,
-                                'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
                                 'playerGameReport' => $opponentPlayerReport,
                             ])
                         @endif
