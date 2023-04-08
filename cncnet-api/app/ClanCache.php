@@ -9,14 +9,9 @@ class ClanCache extends Model
 {
     public $timestamps = false;
 
-    public function history()
+    public function getClanAvatar()
     {
-        return $this->belongsTo('App\LadderHistory', 'ladder_history_id');
-    }
-
-    public function clan()
-    {
-        return $this->belongsTo('App\Clan');
+        return $this->clan->getClanAvatar();
     }
 
     public function rank()
@@ -51,5 +46,17 @@ class ClanCache extends Model
     public function mostPlayedFactionNameByLadderHistory($history)
     {
         return FactionHelper::getPlayersCommonlyPlayedFactionByHistory($history, $this);
+    }
+
+
+    # Relationships
+    public function history()
+    {
+        return $this->belongsTo('App\LadderHistory', 'ladder_history_id');
+    }
+
+    public function clan()
+    {
+        return $this->belongsTo('App\Clan');
     }
 }
