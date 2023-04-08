@@ -104,10 +104,11 @@ class ApiQuickMatchController extends Controller
     private function getActiveMatchesByLadder($ladderAbbrev)
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
-        $history = $ladder->currentHistory();
 
         if ($ladder == null)
             abort(400, "Invalid ladder provided");
+            
+        $history = $ladder->currentHistory();
 
         $ladder_id = $ladder->id;
 
