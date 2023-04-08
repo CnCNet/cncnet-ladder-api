@@ -51,16 +51,25 @@ class ApiAuthController extends Controller
 
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $email = $request->email;
+        if (str_contains($email, " "))
+        {
+            // Assume qm client has stripped + from email request
+            $email = str_replace(" ", "+", $email);
+        }
+
+        $validator = Validator::make(["email" => $email, "password" => $request->password], [
             'email' => 'required|string|email|max:255',
             'password' => 'required'
         ]);
+
         if ($validator->fails())
         {
             return response()->json($validator->errors(), 400);
         }
 
-        $credentials = $request->only('email', 'password');
+        $credentials = ["email" => $email, "password" => $request->password];
+
         try
         {
             if (!$token = JWTAuth::attempt($credentials))
