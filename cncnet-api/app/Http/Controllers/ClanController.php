@@ -39,7 +39,7 @@ class ClanController extends Controller
         }
 
         # Clan Avatar
-        if ($request->hasFile("avatar"))
+        if ($request->file("avatar"))
         {
             $file = $request->file("avatar");
             if ($file->getClientOriginalExtension() == "gif")
@@ -57,6 +57,7 @@ class ClanController extends Controller
             }
 
             $clan->avatar_path = $path;
+            $clan->save();
         }
 
         $request->session()->flash('success', "Successfully updated Clan Avatar.");

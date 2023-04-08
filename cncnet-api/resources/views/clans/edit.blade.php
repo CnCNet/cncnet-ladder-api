@@ -91,7 +91,8 @@
                     <div class="form-group mb-5">
 
                         @if ($player->clanPlayer->isOwner() || $player->clanPlayer->isManager())
-                            <form action="/clans/{{ $ladder->abbreviation }}/edit/{{ $clan->id }}/avatar" method="POST"
+
+                            <form method="POST" action="/clans/{{ $ladder->abbreviation }}/edit/{{ $clan->id }}/avatar"
                                 enctype="multipart/form-data">
 
                                 {{ csrf_field() }}
