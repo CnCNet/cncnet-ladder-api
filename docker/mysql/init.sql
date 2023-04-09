@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql
--- Generation Time: Aug 29, 2022 at 12:31 PM
--- Server version: 10.8.3-MariaDB-1:10.8.3+maria~jammy-log
--- PHP Version: 8.0.20
+-- Generation Time: Apr 02, 2023 at 10:14 AM
+-- Server version: 10.10.2-MariaDB-1:10.10.2+maria~ubu2204
+-- PHP Version: 8.0.27
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,6 +24,42 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `achievements`
+--
+
+CREATE TABLE `achievements` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `achievement_type` enum('IMMEDIATE','CAREER','MULTI') NOT NULL,
+  `order` int(11) NOT NULL DEFAULT 999,
+  `tag` text DEFAULT NULL,
+  `ladder_id` int(10) UNSIGNED NOT NULL,
+  `achievement_name` text NOT NULL,
+  `achievement_description` text NOT NULL,
+  `heap_name` text DEFAULT NULL,
+  `object_name` text DEFAULT NULL,
+  `cameo` text DEFAULT NULL,
+  `unlock_count` int(11) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `achievements_progress`
+--
+
+CREATE TABLE `achievements_progress` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `achievement_id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `achievement_unlocked_date` timestamp NULL DEFAULT NULL,
+  `count` int(11) NOT NULL DEFAULT 0,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `bans`
 --
 
@@ -32,8 +68,8 @@ CREATE TABLE `bans` (
   `admin_id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `ban_type` int(10) UNSIGNED NOT NULL,
-  `internal_note` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `plubic_reason` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `internal_note` text NOT NULL,
+  `plubic_reason` text NOT NULL,
   `expires` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -48,8 +84,8 @@ CREATE TABLE `bans` (
 
 CREATE TABLE `cards` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `short` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL
+  `name` varchar(255) NOT NULL,
+  `short` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -61,8 +97,8 @@ CREATE TABLE `cards` (
 CREATE TABLE `clans` (
   `id` int(10) UNSIGNED NOT NULL,
   `ladder_id` int(11) NOT NULL,
-  `short` text COLLATE utf8mb3_unicode_ci NOT NULL,
-  `name` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `short` text NOT NULL,
+  `name` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -78,7 +114,7 @@ CREATE TABLE `clan_invitations` (
   `clan_id` int(11) NOT NULL,
   `author_id` int(11) NOT NULL,
   `player_id` int(11) NOT NULL,
-  `type` enum('invited','cancelled','joined','kicked','left','promoted','demoted') COLLATE utf8mb3_unicode_ci NOT NULL,
+  `type` enum('invited','cancelled','joined','kicked','left','promoted','demoted') NOT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
@@ -107,7 +143,7 @@ CREATE TABLE `clan_players` (
 
 CREATE TABLE `clan_roles` (
   `id` int(10) UNSIGNED NOT NULL,
-  `value` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `value` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -119,11 +155,11 @@ CREATE TABLE `clan_roles` (
 --
 
 CREATE TABLE `client_version` (
-  `version` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `link` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `format` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `platform` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL
+  `version` varchar(255) NOT NULL,
+  `link` varchar(255) NOT NULL,
+  `format` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `platform` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -134,13 +170,13 @@ CREATE TABLE `client_version` (
 
 CREATE TABLE `countable_game_objects` (
   `id` int(10) UNSIGNED NOT NULL,
-  `heap_name` char(3) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `heap_name` char(3) NOT NULL,
   `heap_id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `cameo` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `cameo` varchar(255) NOT NULL,
   `cost` int(11) NOT NULL,
   `value` int(11) NOT NULL,
-  `ui_name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `ui_name` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `game_object_schema_id` int(11) NOT NULL
@@ -154,8 +190,8 @@ CREATE TABLE `countable_game_objects` (
 
 CREATE TABLE `countable_object_heaps` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `description` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -169,7 +205,7 @@ CREATE TABLE `countable_object_heaps` (
 CREATE TABLE `email_verifications` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `token` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `token` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -188,15 +224,16 @@ CREATE TABLE `games` (
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `crat` int(11) NOT NULL,
-  `cred` longtext COLLATE utf8mb3_unicode_ci NOT NULL,
+  `cred` longtext NOT NULL,
   `shrt` int(11) NOT NULL,
   `supr` int(11) NOT NULL,
   `unit` int(11) NOT NULL,
   `plrs` int(11) NOT NULL,
-  `scen` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `hash` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `scen` varchar(255) DEFAULT NULL,
+  `hash` varchar(255) DEFAULT NULL,
   `game_report_id` int(10) UNSIGNED DEFAULT NULL,
-  `qm_match_id` int(10) UNSIGNED DEFAULT NULL
+  `qm_match_id` int(10) UNSIGNED DEFAULT NULL,
+  `game_type` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
@@ -215,14 +252,14 @@ CREATE TABLE `games_backup` (
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `crat` int(11) NOT NULL,
-  `dura` longtext COLLATE utf8mb3_unicode_ci NOT NULL,
-  `cred` longtext COLLATE utf8mb3_unicode_ci NOT NULL,
+  `dura` longtext NOT NULL,
+  `cred` longtext NOT NULL,
   `shrt` int(11) NOT NULL,
   `supr` int(11) NOT NULL,
   `unit` int(11) NOT NULL,
   `plrs` int(11) NOT NULL,
-  `scen` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `hash` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `scen` varchar(255) NOT NULL,
+  `hash` varchar(255) NOT NULL,
   `sdfx` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
@@ -234,11 +271,26 @@ CREATE TABLE `games_backup` (
 
 CREATE TABLE `games_raw` (
   `id` int(10) UNSIGNED NOT NULL,
-  `hash` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `packet` longtext COLLATE utf8mb3_unicode_ci NOT NULL,
+  `hash` varchar(255) NOT NULL,
+  `packet` longtext NOT NULL,
   `game_id` int(10) UNSIGNED NOT NULL,
   `ladder_id` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `game_audit`
+--
+
+CREATE TABLE `game_audit` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `game_id` int(10) UNSIGNED NOT NULL,
+  `ladder_history_id` int(10) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `username` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -260,7 +312,7 @@ CREATE TABLE `game_object_counts` (
 
 CREATE TABLE `game_object_schemas` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -299,7 +351,7 @@ CREATE TABLE `game_stats` (
   `game_id` int(10) UNSIGNED NOT NULL COMMENT 'Game Id',
   `player_id` int(11) UNSIGNED NOT NULL,
   `stats_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=COMPACT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
 
@@ -309,11 +361,11 @@ CREATE TABLE `game_stats` (
 
 CREATE TABLE `ip_addresses` (
   `id` int(10) UNSIGNED NOT NULL,
-  `address` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `address` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `city` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `country` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL
+  `city` varchar(255) NOT NULL,
+  `country` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -356,7 +408,7 @@ CREATE TABLE `irc_associations` (
 
 CREATE TABLE `irc_hostmasks` (
   `id` int(10) UNSIGNED NOT NULL,
-  `value` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `value` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -371,7 +423,7 @@ CREATE TABLE `irc_players` (
   `id` int(10) UNSIGNED NOT NULL,
   `player_id` int(11) NOT NULL,
   `ladder_id` int(11) NOT NULL,
-  `username` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `username` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -384,13 +436,14 @@ CREATE TABLE `irc_players` (
 
 CREATE TABLE `jobs` (
   `id` bigint(20) UNSIGNED NOT NULL,
-  `queue` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` varchar(255) NOT NULL,
+  `payload` text NOT NULL,
   `attempts` tinyint(3) UNSIGNED NOT NULL,
+  `reserved` tinyint(3) UNSIGNED NOT NULL,
   `reserved_at` int(10) UNSIGNED DEFAULT NULL,
   `available_at` int(10) UNSIGNED NOT NULL,
   `created_at` int(10) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -400,15 +453,16 @@ CREATE TABLE `jobs` (
 
 CREATE TABLE `ladders` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `abbreviation` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `game` enum('ra','ts','yr') COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `name` varchar(255) NOT NULL,
+  `abbreviation` varchar(255) NOT NULL,
+  `game` enum('ra','ts','yr') DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `clans_allowed` tinyint(1) NOT NULL DEFAULT 0,
   `game_object_schema_id` int(11) NOT NULL,
   `map_pool_id` int(11) DEFAULT NULL,
-  `private` tinyint(1) NOT NULL DEFAULT 0
+  `private` tinyint(1) NOT NULL DEFAULT 0,
+  `order` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
@@ -437,7 +491,7 @@ CREATE TABLE `ladder_admins` (
 CREATE TABLE `ladder_alerts` (
   `id` int(10) UNSIGNED NOT NULL,
   `ladder_id` int(11) NOT NULL,
-  `message` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `message` text NOT NULL,
   `expires_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
@@ -484,7 +538,7 @@ CREATE TABLE `ladder_history` (
   `ladder_id` int(11) NOT NULL,
   `starts` datetime NOT NULL,
   `ends` datetime NOT NULL,
-  `short` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `short` varchar(255) NOT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
@@ -496,11 +550,26 @@ CREATE TABLE `ladder_history` (
 
 CREATE TABLE `ladder_types` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `type` enum('player','clan') COLLATE utf8mb3_unicode_ci NOT NULL,
-  `match` enum('1vs1','2vs2','3vs3','4vs4') COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `type` enum('player','clan') NOT NULL,
+  `match` enum('1vs1','2vs2','3vs3','4vs4') NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `league_players`
+--
+
+CREATE TABLE `league_players` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `ladder_id` int(10) UNSIGNED NOT NULL,
+  `can_play_both_tiers` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -513,8 +582,9 @@ CREATE TABLE `maps` (
   `id` int(11) NOT NULL,
   `hash` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `ladder_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
+  `ladder_id` int(11) DEFAULT NULL,
+  `spawn_count` int(11) NOT NULL DEFAULT 2
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
 
@@ -524,8 +594,24 @@ CREATE TABLE `maps` (
 
 CREATE TABLE `maps_backup` (
   `id` int(11) NOT NULL,
-  `hash` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL
+  `hash` varchar(255) DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `map_headers`
+--
+
+CREATE TABLE `map_headers` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `width` int(11) NOT NULL,
+  `height` int(11) NOT NULL,
+  `startX` int(11) NOT NULL,
+  `startY` int(11) NOT NULL,
+  `numStartingPoints` int(11) NOT NULL,
+  `map_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -536,7 +622,7 @@ CREATE TABLE `maps_backup` (
 
 CREATE TABLE `map_pools` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `ladder_id` int(11) NOT NULL
@@ -556,11 +642,25 @@ CREATE TABLE `map_side_strings` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `map_waypoints`
+--
+
+CREATE TABLE `map_waypoints` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `bit_idx` int(10) UNSIGNED NOT NULL,
+  `x` int(10) UNSIGNED NOT NULL,
+  `y` int(10) UNSIGNED NOT NULL,
+  `map_header_id` int(10) UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `migrations`
 --
 
 CREATE TABLE `migrations` (
-  `migration` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
 
@@ -585,28 +685,10 @@ CREATE TABLE `object_schema_managers` (
 --
 
 CREATE TABLE `password_resets` (
-  `email` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `token` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `token` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `personal_access_tokens`
---
-
-CREATE TABLE `personal_access_tokens` (
-  `id` bigint(20) UNSIGNED NOT NULL,
-  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `abilities` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `last_used_at` timestamp NULL DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -617,11 +699,12 @@ CREATE TABLE `personal_access_tokens` (
 CREATE TABLE `players` (
   `id` int(10) UNSIGNED NOT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
-  `username` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `username` varchar(255) NOT NULL,
   `ladder_id` int(10) UNSIGNED NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `card_id` int(10) UNSIGNED NOT NULL
+  `card_id` int(10) UNSIGNED NOT NULL,
+  `is_bot` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
 
 -- --------------------------------------------------------
@@ -648,7 +731,7 @@ CREATE TABLE `player_active_handles` (
 CREATE TABLE `player_alerts` (
   `id` int(10) UNSIGNED NOT NULL,
   `player_id` int(11) NOT NULL,
-  `message` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `message` text NOT NULL,
   `expires_at` timestamp NULL DEFAULT NULL,
   `seen_at` timestamp NULL DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL,
@@ -666,7 +749,7 @@ CREATE TABLE `player_caches` (
   `id` int(10) UNSIGNED NOT NULL,
   `ladder_history_id` int(10) UNSIGNED NOT NULL,
   `player_id` int(10) UNSIGNED NOT NULL,
-  `player_name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `player_name` varchar(255) NOT NULL,
   `card` int(11) DEFAULT NULL,
   `points` int(11) NOT NULL,
   `wins` int(11) NOT NULL,
@@ -699,7 +782,7 @@ CREATE TABLE `player_cache_updates` (
 
 CREATE TABLE `player_data_strings` (
   `id` int(10) UNSIGNED NOT NULL,
-  `value` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL
+  `value` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -742,7 +825,8 @@ CREATE TABLE `player_game_reports` (
   `spectator` tinyint(1) NOT NULL DEFAULT 0,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `backupPts` int(11) NOT NULL DEFAULT 0
+  `backupPts` int(11) NOT NULL DEFAULT 0,
+  `spawn` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -795,6 +879,21 @@ CREATE TABLE `player_ratings` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `qm_canceled_matches`
+--
+
+CREATE TABLE `qm_canceled_matches` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `qm_match_id` bigint(20) UNSIGNED NOT NULL,
+  `player_id` int(10) UNSIGNED NOT NULL,
+  `ladder_id` int(10) UNSIGNED NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `qm_connection_stats`
 --
 
@@ -822,8 +921,8 @@ CREATE TABLE `qm_ladder_rules` (
   `player_count` int(11) NOT NULL,
   `map_vetoes` int(11) NOT NULL,
   `max_difference` int(11) NOT NULL,
-  `all_sides` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `allowed_sides` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `all_sides` varchar(255) NOT NULL,
+  `allowed_sides` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `bail_time` int(11) NOT NULL DEFAULT 60,
@@ -835,7 +934,10 @@ CREATE TABLE `qm_ladder_rules` (
   `use_elo_points` tinyint(1) NOT NULL DEFAULT 1,
   `wol_k` int(11) NOT NULL DEFAULT 64,
   `show_map_preview` tinyint(1) NOT NULL DEFAULT 1,
-  `reduce_map_repeats` int(11) NOT NULL DEFAULT 0
+  `reduce_map_repeats` int(11) NOT NULL DEFAULT 0,
+  `ladder_rules_message` text NOT NULL,
+  `ladder_discord` varchar(255) NOT NULL,
+  `point_filter_rank_threshold` int(11) NOT NULL DEFAULT 50
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -848,19 +950,20 @@ CREATE TABLE `qm_maps` (
   `id` int(10) UNSIGNED NOT NULL,
   `ladder_id` int(11) NOT NULL,
   `map_id` int(11) NOT NULL,
-  `description` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `description` varchar(255) NOT NULL,
   `bit_idx` int(11) NOT NULL,
   `valid` tinyint(1) NOT NULL,
-  `spawn_order` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `spawn_order` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `team1_spawn_order` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `team2_spawn_order` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `allowed_sides` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `admin_description` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `team1_spawn_order` varchar(255) NOT NULL,
+  `team2_spawn_order` varchar(255) NOT NULL,
+  `allowed_sides` varchar(255) NOT NULL,
+  `admin_description` varchar(255) NOT NULL,
   `map_pool_id` int(11) NOT NULL,
   `rejectable` tinyint(1) NOT NULL DEFAULT 1,
-  `default_reject` tinyint(1) NOT NULL DEFAULT 0
+  `default_reject` tinyint(1) NOT NULL DEFAULT 0,
+  `random_spawns` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -873,10 +976,10 @@ CREATE TABLE `qm_maps_backup` (
   `id` int(10) UNSIGNED NOT NULL,
   `ladder_id` int(11) NOT NULL,
   `map_id` int(11) NOT NULL,
-  `description` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `description` varchar(255) NOT NULL,
   `bit_idx` int(11) NOT NULL,
   `valid` tinyint(1) NOT NULL,
-  `spawn_order` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `spawn_order` varchar(255) NOT NULL,
   `speed` int(11) NOT NULL,
   `credits` int(11) NOT NULL,
   `bases` tinyint(1) NOT NULL,
@@ -895,7 +998,7 @@ CREATE TABLE `qm_maps_backup` (
   `spawn_preview` tinyint(1) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `game_mode` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `game_mode` varchar(255) DEFAULT NULL,
   `multi_factory` tinyint(1) DEFAULT NULL,
   `firestorm` tinyint(1) DEFAULT NULL,
   `ra2_mode` tinyint(1) DEFAULT NULL,
@@ -919,12 +1022,12 @@ CREATE TABLE `qm_maps_backup` (
   `slow_unit_build` tinyint(1) DEFAULT NULL,
   `shroud_regrows` tinyint(1) DEFAULT NULL,
   `ai_player_count` tinyint(1) NOT NULL DEFAULT 0,
-  `team1_spawn_order` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `team2_spawn_order` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `team1_spawn_order` varchar(255) NOT NULL,
+  `team2_spawn_order` varchar(255) NOT NULL,
   `aftermath` tinyint(1) DEFAULT NULL,
   `ore_regenerates` tinyint(1) DEFAULT NULL,
-  `allowed_sides` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `admin_description` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `allowed_sides` varchar(255) NOT NULL,
+  `admin_description` varchar(255) NOT NULL,
   `map_pool_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
@@ -938,10 +1041,10 @@ CREATE TABLE `qm_maps_old` (
   `id` int(10) UNSIGNED NOT NULL,
   `ladder_id` int(11) NOT NULL,
   `map_id` int(11) NOT NULL,
-  `description` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `description` varchar(255) NOT NULL,
   `bit_idx` int(11) NOT NULL,
   `valid` tinyint(1) NOT NULL,
-  `spawn_affinity` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `spawn_affinity` varchar(255) NOT NULL,
   `speed` int(11) NOT NULL,
   `credits` int(11) NOT NULL,
   `bases` tinyint(1) NOT NULL,
@@ -975,7 +1078,8 @@ CREATE TABLE `qm_matches` (
   `seed` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `game_id` int(10) UNSIGNED DEFAULT NULL
+  `game_id` int(10) UNSIGNED DEFAULT NULL,
+  `tier` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -1008,7 +1112,8 @@ CREATE TABLE `qm_match_players` (
   `version_id` int(10) UNSIGNED DEFAULT NULL,
   `platform_id` int(10) UNSIGNED DEFAULT NULL,
   `map_sides_id` int(10) UNSIGNED DEFAULT NULL,
-  `ddraw_id` int(10) UNSIGNED DEFAULT NULL
+  `ddraw_id` int(10) UNSIGNED DEFAULT NULL,
+  `tier` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -1039,7 +1144,8 @@ CREATE TABLE `qm_queue_entries` (
   `rating` int(11) NOT NULL,
   `points` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `game_type` int(10) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -1052,7 +1158,7 @@ CREATE TABLE `sides` (
   `id` int(10) UNSIGNED NOT NULL,
   `ladder_id` int(11) NOT NULL,
   `local_id` int(11) NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -1081,7 +1187,7 @@ CREATE TABLE `spawn_options` (
 
 CREATE TABLE `spawn_option_strings` (
   `id` int(10) UNSIGNED NOT NULL,
-  `string` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `string` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -1094,7 +1200,7 @@ CREATE TABLE `spawn_option_strings` (
 
 CREATE TABLE `spawn_option_types` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` text COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -1123,7 +1229,7 @@ CREATE TABLE `spawn_option_values` (
 
 CREATE TABLE `state_types` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL
+  `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 -- --------------------------------------------------------
@@ -1150,10 +1256,10 @@ CREATE TABLE `stats2` (
 
 CREATE TABLE `tunnels` (
   `id` int(10) UNSIGNED NOT NULL,
-  `address` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `country` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `countrycode` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `country` varchar(255) NOT NULL,
+  `countrycode` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `password` int(11) NOT NULL,
   `clients` int(11) NOT NULL,
   `maxclients` int(11) NOT NULL,
@@ -1174,21 +1280,70 @@ CREATE TABLE `tunnels` (
 
 CREATE TABLE `users` (
   `id` int(10) UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `email` varchar(255) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `password` varchar(60) COLLATE utf8mb3_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `group` enum('User','Moderator','Admin','God') COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'User',
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(60) NOT NULL,
+  `remember_token` varchar(100) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `group` enum('User','Moderator','Admin','God') NOT NULL DEFAULT 'User',
   `ip_address_id` int(11) DEFAULT NULL,
   `email_verified` tinyint(1) NOT NULL DEFAULT 0,
-  `email_verified_at` timestamp NULL DEFAULT NULL
+  `avatar_path` varchar(255) DEFAULT NULL,
+  `avatar_upload_allowed` tinyint(1) NOT NULL DEFAULT 1,
+  `discord_profile` varchar(255) DEFAULT NULL,
+  `youtube_profile` varchar(255) DEFAULT NULL,
+  `twitch_profile` varchar(255) DEFAULT NULL,
+  `alias` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci ROW_FORMAT=COMPACT;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_ratings`
+--
+
+CREATE TABLE `user_ratings` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `rating` int(11) NOT NULL,
+  `peak_rating` int(11) NOT NULL,
+  `rated_games` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_settings`
+--
+
+CREATE TABLE `user_settings` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `enableAnonymous` tinyint(1) NOT NULL DEFAULT 0,
+  `disabledPointFilter` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `achievements`
+--
+ALTER TABLE `achievements`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `achievements_ladder_id_foreign` (`ladder_id`);
+
+--
+-- Indexes for table `achievements_progress`
+--
+ALTER TABLE `achievements_progress`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `achievements_progress_achievement_id_foreign` (`achievement_id`),
+  ADD KEY `achievements_progress_user_id_foreign` (`user_id`);
 
 --
 -- Indexes for table `bans`
@@ -1266,6 +1421,14 @@ ALTER TABLE `games_raw`
   ADD PRIMARY KEY (`id`) USING BTREE;
 
 --
+-- Indexes for table `game_audit`
+--
+ALTER TABLE `game_audit`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `game_audit_game_id_foreign` (`game_id`),
+  ADD KEY `game_audit_ladder_history_id_foreign` (`ladder_history_id`);
+
+--
 -- Indexes for table `game_object_counts`
 --
 ALTER TABLE `game_object_counts`
@@ -1326,8 +1489,7 @@ ALTER TABLE `irc_players`
 -- Indexes for table `jobs`
 --
 ALTER TABLE `jobs`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `jobs_queue_index` (`queue`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `ladders`
@@ -1372,10 +1534,25 @@ ALTER TABLE `ladder_types`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `league_players`
+--
+ALTER TABLE `league_players`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `league_players_user_id_foreign` (`user_id`),
+  ADD KEY `league_players_ladder_id_foreign` (`ladder_id`);
+
+--
 -- Indexes for table `maps`
 --
 ALTER TABLE `maps`
   ADD PRIMARY KEY (`id`) USING BTREE;
+
+--
+-- Indexes for table `map_headers`
+--
+ALTER TABLE `map_headers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `map_headers_map_id_foreign` (`map_id`);
 
 --
 -- Indexes for table `map_pools`
@@ -1390,6 +1567,13 @@ ALTER TABLE `map_side_strings`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `map_waypoints`
+--
+ALTER TABLE `map_waypoints`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `map_waypoints_map_header_id_foreign` (`map_header_id`);
+
+--
 -- Indexes for table `object_schema_managers`
 --
 ALTER TABLE `object_schema_managers`
@@ -1401,14 +1585,6 @@ ALTER TABLE `object_schema_managers`
 ALTER TABLE `password_resets`
   ADD KEY `password_resets_email_index` (`email`) USING BTREE,
   ADD KEY `password_resets_token_index` (`token`) USING BTREE;
-
---
--- Indexes for table `personal_access_tokens`
---
-ALTER TABLE `personal_access_tokens`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
-  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
 -- Indexes for table `players`
@@ -1482,6 +1658,15 @@ ALTER TABLE `player_ratings`
   ADD PRIMARY KEY (`id`),
   ADD KEY `player_ratings_player_id_index` (`player_id`),
   ADD KEY `player_ratings_rating_index` (`rating`);
+
+--
+-- Indexes for table `qm_canceled_matches`
+--
+ALTER TABLE `qm_canceled_matches`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `qm_canceled_matches_qm_match_id_foreign` (`qm_match_id`),
+  ADD KEY `qm_canceled_matches_player_id_foreign` (`player_id`),
+  ADD KEY `qm_canceled_matches_ladder_id_foreign` (`ladder_id`);
 
 --
 -- Indexes for table `qm_connection_stats`
@@ -1598,8 +1783,35 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `users_email_unique` (`email`) USING BTREE;
 
 --
+-- Indexes for table `user_ratings`
+--
+ALTER TABLE `user_ratings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_ratings_user_id_index` (`user_id`),
+  ADD KEY `user_ratings_rating_index` (`rating`);
+
+--
+-- Indexes for table `user_settings`
+--
+ALTER TABLE `user_settings`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_settings_user_id_foreign` (`user_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `achievements`
+--
+ALTER TABLE `achievements`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `achievements_progress`
+--
+ALTER TABLE `achievements_progress`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `bans`
@@ -1671,6 +1883,12 @@ ALTER TABLE `games_backup`
 -- AUTO_INCREMENT for table `games_raw`
 --
 ALTER TABLE `games_raw`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `game_audit`
+--
+ALTER TABLE `game_audit`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -1770,10 +1988,22 @@ ALTER TABLE `ladder_types`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `league_players`
+--
+ALTER TABLE `league_players`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `maps`
 --
 ALTER TABLE `maps`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `map_headers`
+--
+ALTER TABLE `map_headers`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `map_pools`
@@ -1788,16 +2018,16 @@ ALTER TABLE `map_side_strings`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `map_waypoints`
+--
+ALTER TABLE `map_waypoints`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `object_schema_managers`
 --
 ALTER TABLE `object_schema_managers`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `personal_access_tokens`
---
-ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `players`
@@ -1863,6 +2093,12 @@ ALTER TABLE `player_points`
 -- AUTO_INCREMENT for table `player_ratings`
 --
 ALTER TABLE `player_ratings`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `qm_canceled_matches`
+--
+ALTER TABLE `qm_canceled_matches`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
@@ -1972,6 +2208,75 @@ ALTER TABLE `tunnels`
 --
 ALTER TABLE `users`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `user_ratings`
+--
+ALTER TABLE `user_ratings`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `user_settings`
+--
+ALTER TABLE `user_settings`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `achievements`
+--
+ALTER TABLE `achievements`
+  ADD CONSTRAINT `achievements_ladder_id_foreign` FOREIGN KEY (`ladder_id`) REFERENCES `ladders` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `achievements_progress`
+--
+ALTER TABLE `achievements_progress`
+  ADD CONSTRAINT `achievements_progress_achievement_id_foreign` FOREIGN KEY (`achievement_id`) REFERENCES `achievements` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `achievements_progress_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `game_audit`
+--
+ALTER TABLE `game_audit`
+  ADD CONSTRAINT `game_audit_game_id_foreign` FOREIGN KEY (`game_id`) REFERENCES `games` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `game_audit_ladder_history_id_foreign` FOREIGN KEY (`ladder_history_id`) REFERENCES `ladder_history` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `league_players`
+--
+ALTER TABLE `league_players`
+  ADD CONSTRAINT `league_players_ladder_id_foreign` FOREIGN KEY (`ladder_id`) REFERENCES `ladders` (`id`),
+  ADD CONSTRAINT `league_players_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+
+--
+-- Constraints for table `map_headers`
+--
+ALTER TABLE `map_headers`
+  ADD CONSTRAINT `map_headers_map_id_foreign` FOREIGN KEY (`map_id`) REFERENCES `maps` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `map_waypoints`
+--
+ALTER TABLE `map_waypoints`
+  ADD CONSTRAINT `map_waypoints_map_header_id_foreign` FOREIGN KEY (`map_header_id`) REFERENCES `map_headers` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `qm_canceled_matches`
+--
+ALTER TABLE `qm_canceled_matches`
+  ADD CONSTRAINT `qm_canceled_matches_ladder_id_foreign` FOREIGN KEY (`ladder_id`) REFERENCES `ladders` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `qm_canceled_matches_player_id_foreign` FOREIGN KEY (`player_id`) REFERENCES `players` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `qm_canceled_matches_qm_match_id_foreign` FOREIGN KEY (`qm_match_id`) REFERENCES `qm_matches` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `user_settings`
+--
+ALTER TABLE `user_settings`
+  ADD CONSTRAINT `user_settings_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

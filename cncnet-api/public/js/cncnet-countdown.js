@@ -1,32 +1,18 @@
 (function ()
 {
-
-    let countDown = document.querySelector(".countdown");
-    let closeCountDownBtn = document.querySelector(".close-countdown");
-    closeCountDownBtn.addEventListener("click", function () { hideCountDown(); }, false);
-
-    function hideCountDown()
-    {
-        countDown.classList.add("countdown-hidden")
-        window.localStorage.setItem("hideCountDown", true);
-    }
-
-    function shouldShowCountDown()
-    {
-        let key = window.localStorage.getItem("hideCountDown");
-        if (key == null)
-        {
-            return true;
-        }
-        return key == "false";
-    }
+    let countDown = document.querySelector(".js-countdown");
 
     function showCountDown()
     {
-        countDown.classList.remove("countdown-hidden");
+        countDown.classList.remove("hidden");
     }
 
-    let countDownFill = document.querySelectorAll(".countdown-fill");
+    function ladderOver()
+    {
+        countDown.innerHTML = "Viewing previous ladder";
+    }
+
+    let countDownFill = document.querySelectorAll(".js-countdown-fill");
     for (let i = 0; i < countDownFill.length; i++)
     {
         let elem = countDownFill[i];
@@ -38,12 +24,6 @@
             {
                 let currentDate = new Date().getTime();
                 let timeLeft = endDate - currentDate;
-
-                if (shouldShowCountDown() == false)
-                {
-                    clearInterval(timing);
-                    return;
-                }
 
                 if (timeLeft < 86400 * 2 * 1000)
                 {
@@ -66,9 +46,9 @@
                 if (timeLeft <= 0)
                 {
                     clearInterval(timing);
-                    elem.innerHTML = "It's over";
+                    elem.innerHTML = "";
+                    ladderOver();
                 }
             }, 1000);
     }
-
 })();

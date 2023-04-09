@@ -115,6 +115,8 @@
                             </div>
                         </section>
                     @elseif ($ladder->game == 'yr')
+                        <h2 class="mt-4">New player?</h2>
+                        <p>Join the Discord community for tips on how to play!</p>
                         <div class="me-3">
                             <a href="{{ $ladder->qmLadderRules->ladder_discord }}" class="btn btn-primary btn-size-md">
                                 <i class="bi bi-discord pe-2"></i> {{ $ladder->name }} Discord
@@ -200,7 +202,7 @@
 
                 <div class="col-md-12">
                     <div class="account-box">
-                        <h2>Registered Accounts</h2>
+                        <h3>Registered Accounts</h3>
                         <ul class="mt-4">
                             <li>Tiberian Sun players are now allowed up to 3 nicknames per month.</li>
                             <li>Red Alert &amp; Yuri's Revenge players are only allowed 1 nickname per month.</li>
@@ -211,53 +213,61 @@
                         </p>
 
                         <p>
-                            <a href="/help/obs" target="_blank"><strong>New!</strong> OBS Stream
-                                Profiles (Instructions)
-                            </a>
-                        </p>
-
-                        <p>
-                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newLadderPlayer">
+                            <a href="#" class="btn btn-primary btn-size-md" data-bs-toggle="modal" data-bs-target="#newLadderPlayer">
                                 <i class="bi bi-person-plus"></i> Add new Username?
                             </a>
                         </p>
 
-                        <div class="account-player-listings grid">
-                            @foreach ($players as $player)
-                                <div class="col-md-6 player-listing {{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'active' : '' }}">
-                                    <div class="username">
-                                        <i class="icon icon-game icon-{{ $player->ladder()->first()->abbreviation }}"></i>
-                                        <h4>
-                                            {{ $player->username }}
-                                        </h4>
-                                    </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Username Active</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($players as $player)
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex">
+                                                    <div class="username me-2">
+                                                        <i class="icon icon-game icon-{{ $player->ladder()->first()->abbreviation }} icon-sm"></i>
+                                                    </div>
+                                                    <p>
+                                                        {{ $player->username }}
+                                                    </p>
+                                                </div>
+                                            </td>
+                                            <td>{{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'Active' : 'Inactive' }}</td>
+                                            <td>
+                                                <form id="username-status" class="form-inline" method="POST" action="username-status">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                    <input type="hidden" name="username" value="{{ $player->username }}" />
 
-                                    <div>
-                                        <p>
-                                            <em>
-                                                {{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'This username will appear in your Quick Match client. ' : 'Click "Play with this username" to add this username to your Quick Match client' }}
-                                            </em>
-                                        </p>
-                                        <form id="username-status" class="form-inline text-center" method="POST" action="username-status">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                            <input type="hidden" name="username" value="{{ $player->username }}" />
+                                                    @php $active = $activeHandles->where('player_id', $player->id)->count() > 0; @endphp
+                                                    <button type="submit" class="btn {{ $active ? 'btn-primary' : 'btn-outline' }} btn-size-md">
+                                                        {{ $active ? 'Deactivate' : 'Activate Username' }}
+                                                    </button>
 
-                                            <div class="d-flex justify-content-center">
-                                                <a href="/api/v1/ladder/{{ $player->ladder()->first()->abbreviation }}/player/{{ $player->username }}/webview"
-                                                    target="_blank" class="btn btn-secondary btn-md me-3 btn-size-md">
-                                                    OBS Stream Profile
-                                                </a>
-
-                                                @php $active = $activeHandles->where('player_id', $player->id)->count() > 0; @endphp
-                                                <button type="submit" class="btn {{ $active ? 'btn-primary' : 'btn-secondary' }} btn-size-md">
-                                                    {{ $active ? 'Deactivate' : 'Play with this username?' }}
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            @endforeach
+                                                    <a href="/api/v1/ladder/{{ $player->ladder()->first()->abbreviation }}/player/{{ $player->username }}/webview"
+                                                        target="_blank" class="btn btn-md me-3 btn-size-md">
+                                                        OBS Stream Profile
+                                                    </a>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
                         </div>
+
+                        <h3>OBS Stream Profiles</h3>
+                        <p>
+                            Overlay a webview of your stats in your stream using OBS.
+                            <a href="/help/obs" target="_blank">Click here for OBS Stream Profiles Instructions</a>
+                        </p>
                     </div>
                 </div>
             </div>
