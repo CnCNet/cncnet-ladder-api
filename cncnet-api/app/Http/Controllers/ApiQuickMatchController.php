@@ -332,6 +332,7 @@ class ApiQuickMatchController extends Controller
         $history = $ladder->currentHistory();
         $user = $player->user;
 
+        # If we're new to the queue, create required QmMatchPlayer model
         if ($qmPlayer == null)
         {
             $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $history, $ladder, $ladderRules);
@@ -348,28 +349,27 @@ class ApiQuickMatchController extends Controller
         if ($request->ai_dat)
         {
             $qmPlayer->ai_dat = $request->ai_dat;
-        }
 
+            $error = "Error, please contact us on the CnCNet Discord";
+            return $this->onMatchError($error);
+        }
         $qmPlayer->save();
 
         $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
         $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
+
+        # Check if player should match AI
         $playerWillMatchAI = $this->checkPlayerWillMatchAI(
             $request->version,
             $user,
+            $ladderRules,
             $userPlayerTier,
             $qmPlayer
         );
 
         if ($playerWillMatchAI == true)
         {
-            # Delete player from queue if they were in one.
-            if ($qmPlayer->qEntry != null)
-            {
-                $qmPlayer->qEntry->delete();
-            }
-
-            # Match against AI 
+            # Send spawn info to play against AI 
             return $this->onHandle1vs1AIMatchupRequest(
                 $qmPlayer,
                 $userPlayerTier,
@@ -402,33 +402,29 @@ class ApiQuickMatchController extends Controller
     private function checkPlayerWillMatchAI(
         $version,
         $user,
+        $ladderRules,
         $userPlayerTier,
         $qmPlayer
     )
     {
-        # Check user preferences on whether they want to match an AI or not
-        if ($user->userSettings->getMatchAI() === false)
-        {
-            return false;
-        }
-
         $qmQueueEntry = $qmPlayer->qEntry;
 
-        if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE && $qmQueueEntry !== null && $version >= 1.75)
+        if (
+            $userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE
+            && $qmQueueEntry !== null
+            && $version >= 1.75
+            && $user->userSettings->getMatchAI() == true
+        )
         {
             # We're in the queue for normal player matchups
-            # However if we reach a certain amount of time, switch to AI matchup
+            # If we reach a certain amount of time, switch to AI matchup
 
             $now = Carbon::now();
             $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
-
             Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds QM Player: $qmPlayer , QM Client Version: $version");
 
-            # 3 minute queue time
-            if ($timeSinceQueuedSeconds > 180)
-            {
-                return true;
-            }
+            # Reached max queue time without match as set by ladder rules
+            return ($timeSinceQueuedSeconds > $ladderRules->getMatchAIAfterSeconds());
         }
 
         return false;
@@ -436,6 +432,12 @@ class ApiQuickMatchController extends Controller
 
     private function onHandle1vs1AIMatchupRequest($qmPlayer, $userPlayerTier, $history, $gameType, $ladder, $ladderRules)
     {
+        # Delete player from queue if they were in one.
+        if ($qmPlayer->qEntry != null)
+        {
+            $qmPlayer->qEntry->delete();
+        }
+
         if ($ladder->abbreviation === GameHelper::$GAME_BLITZ)
         {
             # Exclude certain maps that do not work with AI well
