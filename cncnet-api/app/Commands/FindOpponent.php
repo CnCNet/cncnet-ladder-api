@@ -140,7 +140,7 @@ class FindOpponent extends Command implements ShouldQueue
 
             # Checks players aren't matching against players in their own clans
             # When we support more players, we can check the configured ladder player count
-            if ($ladder->clans_allowed)
+            if ($ladder->clans_allowed && $ladderRules->player_count == 2)
             {
                 Log::info("FindOpponent ** Clan Ladder Matchup");
 
