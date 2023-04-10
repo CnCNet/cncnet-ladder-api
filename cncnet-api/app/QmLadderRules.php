@@ -1,14 +1,18 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QmLadderRules extends Model {
+class QmLadderRules extends Model
+{
 
-	//
-    protected $fillable = [ 'ladder_id', 'player_count', 'map_vetoes', 'max_difference', 'all_sides',
-                            'allowed_sides', 'bail_time', 'bail_fps', 'tier2_rating', 'rating_per_second',
-                            'max_points_difference', 'points_per_second', 'use_elo_points', 'wol_k',
-                            'show_map_preview', 'reduce_map_repeats' ];
+    protected $fillable = [
+        'ladder_id', 'player_count', 'map_vetoes', 'max_difference', 'all_sides',
+        'allowed_sides', 'bail_time', 'bail_fps', 'tier2_rating', 'rating_per_second',
+        'max_points_difference', 'points_per_second', 'use_elo_points', 'wol_k',
+        'show_map_preview', 'reduce_map_repeats'
+    ];
 
     public static function newDefault($ladderId)
     {
@@ -32,6 +36,11 @@ class QmLadderRules extends Model {
         $rules->reduce_map_repeats = 0; //number of recent maps to exclude from next played game
 
         return $rules;
+    }
+
+    public function getMatchAIAfterSeconds()
+    {
+        return $this->match_ai_after_seconds;
     }
 
     public function ladder()

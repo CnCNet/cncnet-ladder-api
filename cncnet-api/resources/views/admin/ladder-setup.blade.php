@@ -353,6 +353,12 @@
                                                 </div>
 
                                                 <div class="form-group">
+                                                    <label for="{{ $rule->match_ai_after_seconds }}">Match AI after X (Seconds)</label>
+                                                    <input id="{{ $rule->match_ai_after_seconds }}" type="number" name="match_ai_after_seconds"
+                                                        class="form-control" value="{{ $rule->match_ai_after_seconds }}" />
+                                                </div>
+
+                                                <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_map_vetoes">Map Vetoes</label>
                                                     <input id="{{ $rule->ladder_id }}_map_vetoes" type="number" name="map_vetoes"
                                                         class="form-control" value="{{ $rule->map_vetoes }}" />
@@ -473,8 +479,9 @@
 
                                                 <button type="submit" class="btn btn-primary">Save</button>
                                             </form>
+
                                             <form method="POST" action="rules"
-                                                onsubmit="return confirm('This action will delete the quick match rules permanently.');">
+                                                onsubmit="return confirm('This action will delete the quick match rules permanently.');" class="mt-3">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="hidden" name="id" value="{{ $rule->id }}">
 
@@ -511,13 +518,21 @@
 @section('js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
     <script type="text/javascript">
-@if($user->isGod() || $user->isLadderAdmin($ladder))
-     let ladderAlerts = {
-         @foreach($ladder->alerts as $alert)
-         "{{$alert->id}}": { "id": "{{$alert->id}}", "message": {!! json_encode($alert->message) !!}, "expires_at": "{{$alert->expires_at}}"},
-         @endforeach
-         "new": { "id":"new", "message": "", "expires_at": "{{ \Carbon\Carbon::now()->addMonth(1)->startOfMonth()}}" }
-     };
+        @if ($user->isGod() || $user->isLadderAdmin($ladder))
+            let ladderAlerts = {
+                @foreach ($ladder->alerts as $alert)
+                    "{{ $alert->id }}": {
+                        "id": "{{ $alert->id }}",
+                        "message": {!! json_encode($alert->message) !!},
+                        "expires_at": "{{ $alert->expires_at }}"
+                    },
+                @endforeach
+                "new": {
+                    "id": "new",
+                    "message": "",
+                    "expires_at": "{{ \Carbon\Carbon::now()->addMonth(1)->startOfMonth() }}"
+                }
+            };
         @else
             let ladderAlerts = {};
         @endif

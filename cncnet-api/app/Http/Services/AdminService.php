@@ -57,6 +57,7 @@ class AdminService
         $ladderRule->point_filter_rank_threshold = $request->point_filter_rank_threshold;
         $ladderRule->ladder_rules_message = $request->ladder_rules_message;
         $ladderRule->ladder_discord = $request->ladder_discord;
+        $ladderRule->match_ai_after_seconds = $request->match_ai_after_seconds;
         $ladderRule->save();
 
         $request->session()->flash('success', 'Changes Saved');

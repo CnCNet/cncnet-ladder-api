@@ -336,6 +336,7 @@ class AccountController extends Controller
         }
         $userSettings->disabledPointFilter = $request->disabledPointFilter == "on" ? true : false;
         // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
+        $userSettings->match_ai = $request->matchAI == "on" ? true : false;
         $userSettings->save();
 
         # Remove avatar?

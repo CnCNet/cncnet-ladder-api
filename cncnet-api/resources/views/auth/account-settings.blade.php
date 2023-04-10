@@ -126,6 +126,20 @@
                             </div>
                         @endif
 
+                        <div class="form-group">
+                            <h3>Ladder AI Match making preference</h3>
+                            <p>
+                                This preference is only for the {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(2) }}.
+                                If no matches are found after some time, would you like to match against an AI?
+                            </p>
+                            <p>
+                                <label>
+                                    <input id="matchAI" type="checkbox" name="matchAI" @if ($userSettings->match_ai) checked @endif />
+                                    Enable Matches against AI
+                                </label>
+                            </p>
+                        </div>
+
                         <div class="form-group mt-5 mb-5">
                             <div class="checkbox">
                                 @if (isset($userSettings))
