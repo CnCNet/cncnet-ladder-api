@@ -479,8 +479,9 @@
 
                                                 <button type="submit" class="btn btn-primary">Save</button>
                                             </form>
+
                                             <form method="POST" action="rules"
-                                                onsubmit="return confirm('This action will delete the quick match rules permanently.');">
+                                                onsubmit="return confirm('This action will delete the quick match rules permanently.');" class="mt-3">
                                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                 <input type="hidden" name="id" value="{{ $rule->id }}">
 
