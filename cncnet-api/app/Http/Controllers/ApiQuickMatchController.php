@@ -107,7 +107,7 @@ class ApiQuickMatchController extends Controller
 
         if ($ladder == null)
             abort(400, "Invalid ladder provided");
-            
+
         $history = $ladder->currentHistory();
 
         $ladder_id = $ladder->id;
@@ -330,6 +330,7 @@ class ApiQuickMatchController extends Controller
     {
         $ladderRules = $ladder->qmLadderRules()->first();
         $history = $ladder->currentHistory();
+        $user = $player->user;
 
         if ($qmPlayer == null)
         {
@@ -353,7 +354,12 @@ class ApiQuickMatchController extends Controller
 
         $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
         $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
-        $playerWillMatchAI = $this->checkPlayerShouldMatchAIAfterTimeInQueue($request->version, $userPlayerTier, $qmPlayer);
+        $playerWillMatchAI = $this->checkPlayerWillMatchAI(
+            $request->version,
+            $user,
+            $userPlayerTier,
+            $qmPlayer
+        );
 
         if ($playerWillMatchAI == true)
         {
@@ -393,15 +399,21 @@ class ApiQuickMatchController extends Controller
         );
     }
 
-    private function checkPlayerShouldMatchAIAfterTimeInQueue($version, $userPlayerTier, $qmPlayer)
+    private function checkPlayerWillMatchAI(
+        $version,
+        $user,
+        $userPlayerTier,
+        $qmPlayer
+    )
     {
-        if ($qmPlayer->player_id == 176024)
+        # Check user preferences on whether they want to match an AI or not
+        if ($user->userSettings->getMatchAI() === false)
         {
-            // neogrant4 testing
-            return true;
+            return false;
         }
 
         $qmQueueEntry = $qmPlayer->qEntry;
+
         if ($userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE && $qmQueueEntry !== null && $version >= 1.75)
         {
             # We're in the queue for normal player matchups
