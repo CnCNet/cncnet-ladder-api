@@ -349,9 +349,8 @@ class ApiQuickMatchController extends Controller
         if ($request->ai_dat)
         {
             $qmPlayer->ai_dat = $request->ai_dat;
-
             $error = "Error, please contact us on the CnCNet Discord";
-            return $this->onMatchError($error);
+            return $this->onMatchFatalError($error);
         }
         $qmPlayer->save();
 
