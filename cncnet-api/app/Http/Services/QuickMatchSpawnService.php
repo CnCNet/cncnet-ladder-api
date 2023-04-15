@@ -112,6 +112,7 @@ class QuickMatchSpawnService
     {
         $other_idx = 1;
         $multi_idx = $qmPlayer->color + 1;
+        $myIndex = $multi_idx;
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
 
         $players = [];
@@ -139,9 +140,10 @@ class QuickMatchSpawnService
             {
                 $p1Name = $qmPlayer->player->username;
                 $p2Name = $opn->player->username;
-                
+
                 Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
-                $spawnStruct["spawn"]["Multi{$multi_idx}_Alliances"]["HouseAllyOne"] = $other_idx - 1;
+                $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $other_idx - 1;
+                $spawnStruct["spawn"]["Multi{$other_idx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
             }
 
             $other_idx++;
