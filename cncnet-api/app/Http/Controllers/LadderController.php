@@ -271,6 +271,8 @@ class LadderController extends Controller
                 "gameReport" => $gameReport,
                 "allGameReports" => $allGameReports,
                 "playerGameReports" => $playerGameReports,
+                "isClanGame" => $history->ladder->clans_allowed,
+                "clanGameReports" => $gameReport->playerGameReports()->groupBy("clan_id")->get() ?? [],
                 "history" => $history,
                 "heaps" => $heaps,
                 "user" => $user,
