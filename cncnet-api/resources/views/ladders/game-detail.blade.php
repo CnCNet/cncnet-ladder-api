@@ -148,7 +148,13 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
                         @php $rank = $playerCache ? $playerCache->rank() : 0; @endphp
                         @php $points = $playerCache ? $playerCache->points : 0;@endphp
 
-                        <div class="player-card {{ $k == 1 ? 'player-card-right' : '' }}">
+                        @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
+                            <div class="player-vs d-flex align-items-center">
+                                <h1>Vs</h1>
+                            </div>
+                        @endif
+
+                        <div class="player-card">
                             <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
                                 title="View {{ $player->username }}'s profile">
                                 <div class="player-avatar">
@@ -202,12 +208,6 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
                                 </div>
                             </div>
                         </div>
-
-                        @if ($k == floor($history->ladder->qmLadderRules->player_count / 2))
-                            <div class="player-vs d-flex align-items-center">
-                                <h1>Vs</h1>
-                            </div>
-                        @endif
                     @endforeach
                 </section>
             </div>
