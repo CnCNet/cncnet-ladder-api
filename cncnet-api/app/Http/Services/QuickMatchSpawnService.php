@@ -132,7 +132,7 @@ class QuickMatchSpawnService
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
 
             //check if other player is in my clan, if so add alliance
-            if ($qmPlayer->clan_id != null && $qmPlayer->clan_id == $opn->clan_id)
+            if ($qmPlayer->clan_id != null && $qmPlayer->clan_id != 0 && $qmPlayer->clan_id == $opn->clan_id)
             {
                 $p1Name = $qmPlayer->player->username;
                 $p2Name = $opn->player->username;
