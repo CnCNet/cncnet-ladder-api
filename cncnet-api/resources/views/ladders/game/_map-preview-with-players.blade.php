@@ -138,7 +138,7 @@
             let marker3 = document.querySelector('#marker-2');
             let player3 = document.querySelector('#playerdetails-2');
 
-            Popper.createPopper(marker2, player2, {
+            Popper.createPopper(marker3, player3, {
                 modifiers: [{
                     name: 'offset',
                     options: {
@@ -150,7 +150,7 @@
             let marker4 = document.querySelector('#marker-3');
             let player4 = document.querySelector('#playerdetails-3');
 
-            Popper.createPopper(marker2, player2, {
+            Popper.createPopper(marker4, player4, {
                 modifiers: [{
                     name: 'offset',
                     options: {

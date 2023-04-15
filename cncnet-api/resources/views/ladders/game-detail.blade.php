@@ -203,7 +203,7 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
                             </div>
                         </div>
 
-                        @if ($k == 0)
+                        @if ($k == floor($history->ladder->qmLadderRules->player_count / 2))
                             <div class="player-vs d-flex align-items-center">
                                 <h1>Vs</h1>
                             </div>

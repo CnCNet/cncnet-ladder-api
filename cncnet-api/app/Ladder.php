@@ -11,61 +11,6 @@ class Ladder extends Model
 
     protected $fillable = ['name', 'abbreviation', 'game', 'clans_allowed', 'game_object_schema_id', 'private'];
 
-    public function qmLadderRules()
-    {
-        return $this->hasOne('App\QmLadderRules');
-    }
-
-    public function sides()
-    {
-        return $this->hasMany('App\Side');
-    }
-
-    public function qmMaps()
-    {
-        return $this->hasMany('App\QmMap');
-    }
-
-    public function maps()
-    {
-        return $this->hasMany('App\Map');
-    }
-
-    public function mapPools()
-    {
-        return $this->hasMany('App\MapPool');
-    }
-
-    public function mapPool()
-    {
-        return $this->belongsTo('App\MapPool');
-    }
-
-    public function players()
-    {
-        return $this->hasMany('App\Player');
-    }
-
-    public function allAdmins()
-    {
-        return $this->hasMany('App\LadderAdmin');
-    }
-
-    public function admins()
-    {
-        return $this->allAdmins()->where('admin', '=', true);
-    }
-
-    public function moderators()
-    {
-        return $this->allAdmins()->where('moderator', '=', true);
-    }
-
-    public function testers()
-    {
-        return $this->allAdmins()->where('tester', '=', true);
-    }
-
     public function allowedToView($user)
     {
         if ($this->private == false)
@@ -135,6 +80,63 @@ class Ladder extends Model
         }
 
         return $userAllowedLadders;
+    }
+
+    public function qmLadderRules()
+    {
+        return $this->hasOne('App\QmLadderRules');
+    }
+
+    public function sides()
+    {
+        return $this->hasMany('App\Side');
+    }
+
+    public function qmMaps()
+    {
+        return $this->hasMany('App\QmMap');
+    }
+
+    public function maps()
+    {
+        return $this->hasMany('App\Map');
+    }
+
+    public function mapPools()
+    {
+        return $this->hasMany('App\MapPool');
+    }
+
+    # Relationships
+
+    public function mapPool()
+    {
+        return $this->belongsTo('App\MapPool');
+    }
+
+    public function players()
+    {
+        return $this->hasMany('App\Player');
+    }
+
+    public function allAdmins()
+    {
+        return $this->hasMany('App\LadderAdmin');
+    }
+
+    public function admins()
+    {
+        return $this->allAdmins()->where('admin', '=', true);
+    }
+
+    public function moderators()
+    {
+        return $this->allAdmins()->where('moderator', '=', true);
+    }
+
+    public function testers()
+    {
+        return $this->allAdmins()->where('tester', '=', true);
     }
 
     public function alerts()
