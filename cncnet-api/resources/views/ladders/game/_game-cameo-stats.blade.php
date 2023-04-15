@@ -11,18 +11,20 @@
                       <div class="stats">
                           <div>
                               <div class="player-card text-center justify-content-center mb-2">
-                                  <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
-                                      <div class="player-avatar">
-                                          @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 150])
+                                  <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                      title="View {{ $player->username }}'s profile">
+                                      <div class="player-avatar mb-5">
+                                          @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 50])
                                       </div>
                                   </a>
                               </div>
                               <h2 class="username text-center mt-2 me-2">
-                                  <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
+                                  <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                      title="View {{ $player->username }}'s profile">
                                       {{ $player->username }}
                                   </a>
                               </h2>
-                              <h3 class="text-center status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
+                              <h4 class="text-center status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
                                   @if ($pgr->won)
                                       Won
                                   @elseif($pgr->draw)
@@ -32,9 +34,10 @@
                                   @else
                                       Lost
                                   @endif
-                              </h3>
+                              </h4>
                           </div>
-                          <div class="text-center">
+
+                          <div class="text-center mb-5">
                               <strong>Funds Left: </strong> {{ $gameStats->crd }}
                           </div>
 
@@ -47,7 +50,8 @@
                                       <div class="cameo-body">
                                           @foreach ($gameStats->gameObjectCounts as $goc)
                                               @if ($goc->countableGameObject->heap_name == $heap->name && $goc->countableGameObject->cameo != '')
-                                                  <div class="{{ $gameAbbreviation }}-cameo cameo-tile cameo-{{ $goc->countableGameObject->cameo }}"><span class="number">{{ $goc->count }}</span>
+                                                  <div class="{{ $gameAbbreviation }}-cameo cameo-tile cameo-{{ $goc->countableGameObject->cameo }}">
+                                                      <span class="number">{{ $goc->count }}</span>
                                                   </div>
                                               @endif
                                           @endforeach
