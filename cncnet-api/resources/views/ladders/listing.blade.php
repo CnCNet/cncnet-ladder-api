@@ -193,10 +193,11 @@
 
                 @if ($tier == null || $tier == 1)
                     <h3 class="mt-2 mb-4">
-                        <i class="bi bi-trophy pe-3"></i>
                         @if ($isClanLadder)
+                            <i class="bi bi-flag-fill icon-clan pe-3"></i>
                             Champions Clan League
                         @else
+                            <i class="bi bi-trophy pe-3"></i>
                             1vs1 - Champions Players League
                         @endif
                     </h3>
