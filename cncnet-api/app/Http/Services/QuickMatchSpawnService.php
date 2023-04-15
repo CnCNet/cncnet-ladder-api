@@ -133,6 +133,17 @@ class QuickMatchSpawnService
             $multi_idx = $opn->color + 1;
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
             $players[$multi_idx] = $opn;
+
+            //check if other player is in my clan, if so add alliance
+            if ($qmPlayer->clan_id == $opn->clan_id)
+            {
+                $p1Name = $qmPlayer->player->username;
+                $p2Name = $opn->player->username;
+                
+                Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
+                $spawnStruct["spawn"]["Multi{$multi_idx}_Alliances"]["HouseAllyOne"] = $other_idx - 1;
+            }
+
             $other_idx++;
 
             if (array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
@@ -145,23 +156,41 @@ class QuickMatchSpawnService
             }
         }
 
-        $clans = [];
-        foreach ($players as $multiIdx => $qmPlayer)
-        {
-            $playerIndex = $multiIdx;
+        // $clans = QuickMatchSpawnService::mapPlayerToClans($allPlayers); //map each player to their clan
 
-            Log::info("PlayerIndex ** $playerIndex");
+        // foreach ($players as $multiIdx => $qmPlayer)
+        // {
+        //     $playerIndex = $multiIdx;
 
-            if (!in_array($qmPlayer->player_id, $clans))
-            {
-                $i = count($clans) + 1;
-                $spawnStruct["spawn"]["Multi{$i}_Alliances"]["HouseAllyOne"] = $playerIndex - 1;
-                $clans[] = $qmPlayer->player_id;
-            }
-        }
+        //     Log::info("PlayerIndex ** $playerIndex");
+
+        //     if (!in_array($qmPlayer->player_id, $clans))
+        //     {
+        //         $i = count($clans) + 1;
+        //         $spawnStruct["spawn"]["Multi{$i}_Alliances"]["HouseAllyOne"] = $playerIndex - 1;
+        //         $clans[] = $qmPlayer->player_id;
+        //     }
+        // }
 
 
         return $spawnStruct;
+    }
+
+    /**
+     * Map each player to their clan.
+     */
+    public static function mapPlayerToClans($players)
+    {
+        $clans = []; //{clanName1 -> [p1, p2, p3..], clanName2 -> [p4, p5, p6..], ..}
+
+        foreach ($players as $player)
+        {
+            $clanName = $player->clanPlayer->clan->name;
+
+            $clans[$clanName][] = $player; // append player to clan obj
+        }
+
+        return $clans;
     }
 
     public static function appendAlliances($spawnStruct, $qmPlayer, $allPlayers)
