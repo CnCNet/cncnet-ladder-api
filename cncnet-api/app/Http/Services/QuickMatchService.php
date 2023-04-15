@@ -138,7 +138,7 @@ class QuickMatchService
 
         if ($history->ladder->clans_allowed) // clan ladder, use clan cache
         {
-            $clanCache = $player->clanCache($history->id);
+            $clanCache = $player->clanPlayer->clanCache($history->id);
 
             if ($clanCache !== null)
             {
