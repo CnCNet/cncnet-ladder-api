@@ -136,9 +136,21 @@ class QuickMatchService
         $pc = $player->playerCache($history->id);
         $points = 0;
 
-        if ($pc !== null)
+        if ($history->ladder->clans_allowed) // clan ladder, use clan cache
         {
-            $points = $pc->points;
+            $clanCache = $player->clanCache($history->id);
+
+            if ($clanCache !== null)
+            {
+                $points = $clanCache->points;
+            }
+        }
+        else
+        {
+            if ($pc !== null)
+            {
+                $points = $pc->points;
+            }
         }
 
         if ($qmPlayer->qEntry == null)
@@ -146,8 +158,18 @@ class QuickMatchService
             $qEntry = new QmQueueEntry;
             $qEntry->qm_match_player_id = $qmPlayer->id;
             $qEntry->ladder_history_id = $history->id;
-            $qEntry->rating = $player->rating->rating;
-            $qEntry->points = $points;
+
+            if ($history->ladder->clans_allowed) // clan ladder
+            {
+                // $qEntry->rating = $clanCache->rating;
+                $qEntry->points = $points;
+            }
+            else
+            {
+                $qEntry->rating = $player->rating->rating;
+                $qEntry->points = $points;
+            }
+
             $qEntry->game_type = $gameType;
             $qEntry->save();
         }
@@ -156,7 +178,7 @@ class QuickMatchService
             $qEntry = $qmPlayer->qEntry;
             $qEntry->touch();
 
-            if ($qEntry->ladder_history_id != $history->id)
+            if ($qEntry->ladder_history_id != $history->id) //what is this conditional for?
             {
                 $qEntry->qm_match_player_id = $qmPlayer->id;
                 $qEntry->ladder_history_id = $history->id;
