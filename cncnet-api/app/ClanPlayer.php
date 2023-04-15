@@ -20,6 +20,13 @@ class ClanPlayer extends Model
         return $this->roleRelation !== null ? $this->roleRelation->value : '';
     }
 
+    public function clanCache($historyId)
+    {
+        return ClanCache::where('clan_id', '=', $this->clan_id)
+            ->where("ladder_history_id", '=', $historyId)
+            ->first();
+    }
+
     public function player()
     {
         return $this->belongsTo('App\Player');

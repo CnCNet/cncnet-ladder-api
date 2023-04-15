@@ -233,13 +233,6 @@ class Player extends Model
             ->first();
     }
 
-    public function clanCache($historyId)
-    {
-        return ClanCache::where('player_id', '=', $this->id)
-            ->where("ladder_history_id", '=', $historyId)
-            ->first();
-    }
-
 
     /**
      * Return true if player has been laundered
