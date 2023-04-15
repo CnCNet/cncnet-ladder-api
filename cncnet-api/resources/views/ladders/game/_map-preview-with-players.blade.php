@@ -135,8 +135,34 @@
                 }, ],
             });
 
+            let marker3 = document.querySelector('#marker-2');
+            let player3 = document.querySelector('#playerdetails-2');
+
+            Popper.createPopper(marker2, player2, {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [5, 5],
+                    },
+                }, ],
+            });
+
+            let marker4 = document.querySelector('#marker-3');
+            let player4 = document.querySelector('#playerdetails-3');
+
+            Popper.createPopper(marker2, player2, {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [5, 5],
+                    },
+                }, ],
+            });
+
             player1.style.display = "";
             player2.style.display = "";
+            player3.style.display = "";
+            player4.style.display = "";
         })());
     </script>
 @endsection
