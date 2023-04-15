@@ -471,7 +471,7 @@
                                                         class="form-control" value="{{ $rule->ladder_discord }}" />
                                                 </div>
 
-                                                @if($ladder->clans_allowed)
+                                                @if($ladder->clans_allowed && $ladder->clanLadderRules)
                                                     <div class="form-group">
                                                         <label for="{{ $rule->ladder_id }}_max_clans_allowed">Max Clans Allowed</label>
                                                         <input id="{{ $rule->ladder_id }}_max_clans_allowed" type="text" name="max_clans_allowed"
