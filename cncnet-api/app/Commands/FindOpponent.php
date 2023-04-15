@@ -209,6 +209,7 @@ class FindOpponent extends Command implements ShouldQueue
             {
                 # Both players have the point filter disabled, we will ignore the point filter
                 $opponentEntriesFiltered->add($opponentEntry);
+                Log::info("FindOpponent ** PointFilter Off");
             }
             else
             {
@@ -224,6 +225,8 @@ class FindOpponent extends Command implements ShouldQueue
         }
 
         $qmOpns = $opponentEntriesFiltered->shuffle();
+        $qmOpnsCount = $qmOpns->count();
+        Log::info("FindOpponent ** Opponent Count: $qmOpnsCount");
 
         if ($qmOpns->count() >= $ladderRules->player_count - 1)
         {

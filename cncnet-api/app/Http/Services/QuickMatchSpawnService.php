@@ -115,9 +115,6 @@ class QuickMatchSpawnService
         $myIndex = $multi_idx;
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
 
-        $players = [];
-        $players[$multi_idx] = $qmPlayer;
-
         foreach ($allPlayers as $opn)
         {
             $spawnStruct["spawn"]["Other{$other_idx}"] = [
@@ -133,7 +130,6 @@ class QuickMatchSpawnService
             ];
             $multi_idx = $opn->color + 1;
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
-            $players[$multi_idx] = $opn;
 
             //check if other player is in my clan, if so add alliance
             if ($qmPlayer->clan_id == $opn->clan_id)
