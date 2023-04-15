@@ -59,6 +59,13 @@ class AdminService
         $ladderRule->ladder_discord = $request->ladder_discord;
         $ladderRule->save();
 
+        if ($request->max_clans_allowed)
+        {
+            $clanLadderRules = $ladderRule->ladder->clanLadderRules;
+            $clanLadderRules->max_clans_allowed = $request->max_clans_allowed;
+            $clanLadderRules->save();
+        }
+
         $request->session()->flash('success', 'Changes Saved');
         return redirect()->back();
     }
