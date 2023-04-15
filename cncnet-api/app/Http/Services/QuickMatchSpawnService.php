@@ -154,23 +154,6 @@ class QuickMatchSpawnService
             }
         }
 
-        // $clans = QuickMatchSpawnService::mapPlayerToClans($allPlayers); //map each player to their clan
-
-        // foreach ($players as $multiIdx => $qmPlayer)
-        // {
-        //     $playerIndex = $multiIdx;
-
-        //     Log::info("PlayerIndex ** $playerIndex");
-
-        //     if (!in_array($qmPlayer->player_id, $clans))
-        //     {
-        //         $i = count($clans) + 1;
-        //         $spawnStruct["spawn"]["Multi{$i}_Alliances"]["HouseAllyOne"] = $playerIndex - 1;
-        //         $clans[] = $qmPlayer->player_id;
-        //     }
-        // }
-
-
         return $spawnStruct;
     }
 
