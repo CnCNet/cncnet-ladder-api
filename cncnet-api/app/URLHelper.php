@@ -105,13 +105,15 @@ class URLHelper
             case "ra2":
             case "ra2-cl":
             case "blitz":
+            case "blitz-cl":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4";
-                break;
 
             case "ts":
+            case "ts-cl":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/tiberian-sun.mp4";
 
             case "ra":
+            case "ra-cl":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-1.mp4";
         }
     }
@@ -129,13 +131,15 @@ class URLHelper
             case "ra2":
             case "ra2-cl":
             case "blitz":
+            case "blitz-cl":
                 return "/images/posters/red-alert-2.jpg";
-                break;
 
             case "ts":
+            case "ts-cl":
                 return "/images/posters/tiberian-sun.jpg";
 
             case "ra":
+            case "ra-cl":
                 return "/images/posters/red-alert-1.jpg";
         }
     }
@@ -152,6 +156,18 @@ class URLHelper
             case "ra2":
             case "ra2-cl":
                 return "/images/games/ra2/logo.png";
+
+            case "blitz":
+            case "blitz-cl":
+                return "/images/games/blitz/logo.png";
+
+            case "ts":
+            case "ts-cl":
+                return "/images/games/ts/logo.png";
+
+            case "ra":
+            case "ra-cl":
+                return "/images/games/ra/logo.png";
 
             default:
                 return "/images/games/{$abbrev}/logo.png";
