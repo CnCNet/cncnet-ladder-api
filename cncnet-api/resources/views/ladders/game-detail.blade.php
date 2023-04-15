@@ -1,17 +1,30 @@
 @extends('layouts.app')
-@php $pageTitle = "Viewing Game - ";@endphp
+
+<?php
+
+$pageTitle = 'Viewing Game - ';
+$reports = $isClanGame ? $clanGameReports : $playerGameReports;
+
+?>
+
+@foreach ($reports as $k => $pgr)
+    <?php
+    $player = $pgr->player()->first();
+    $clan = $pgr->clan()->first();
+    if ($k == 1) {
+        $pageTitle .= ' vs ';
+    }
+    if ($isClanGame) {
+        $pageTitle .= "$clan->short";
+    } else {
+        $pageTitle .= "$player->username";
+    }
+    ?>
+@endforeach
+
 @section('title', $pageTitle)
 @section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
-@foreach ($playerGameReports as $k => $pgr)
-    @php $clan = $pgr->clan()->first(); @endphp
-    @php
-        if ($k == 1) {
-            $pageTitle .= ' vs ';
-        }
-    @endphp
-    @php $pageTitle .= "$clan->short"; @endphp
-@endforeach
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -60,7 +73,8 @@
                     </h1>
 
                     <p class="lead">
-                        @foreach ($playerGameReports as $k => $pgr)
+                        <?php $reports = $isClanGame ? $clanGameReports : $playerGameReports; ?>
+                        @foreach ($reports as $k => $pgr)
                             <?php $gameStats = $pgr->stats; ?>
                             <?php $player = $pgr->player()->first(); ?>
 
@@ -138,13 +152,13 @@
                             <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
                                 title="View {{ $player->username }}'s profile">
                                 <div class="player-avatar">
-                                    @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 150])
+                                    @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 50])
                                 </div>
                             </a>
 
                             <div class="player-details">
                                 <h2 class="username">
-                                    @if ($history->ladder->clans_allowed)
+                                    @if ($isClanGame)
                                         <a href="{{ \App\URLHelper::getClanProfileLadderUrl($history, $player->clanPlayer->clan->id) }}"
                                             title="View {{ $player->clanPlayer->clan->short }}'s clan profile">
                                             {{ $player->clanPlayer->clan->short }}

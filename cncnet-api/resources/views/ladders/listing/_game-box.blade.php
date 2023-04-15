@@ -47,10 +47,14 @@
 
                     <h5>
                         @if ($isClanGame)
-                            {{ $gamePlayer->clan->short }}
+                            <span class="ps-3 pe-1">
+                                <i class="bi bi-flag-fill icon-clan"></i>
+                                {{ $gamePlayer->clan->short }}
+                            </span>
                         @else
                             {{ $gamePlayer->player->username }}
                         @endif
+
                         <span class="points">
                             {{ $gamePlayer->points >= 0 ? "+$gamePlayer->points" : $gamePlayer->points }}
                         </span>
