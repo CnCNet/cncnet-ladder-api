@@ -114,6 +114,9 @@ class QuickMatchSpawnService
         $multi_idx = $qmPlayer->color + 1;
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
 
+        $players = [];
+        $players[$multi_idx] = $qmPlayer;
+
         foreach ($allPlayers as $opn)
         {
             $spawnStruct["spawn"]["Other{$other_idx}"] = [
@@ -129,6 +132,7 @@ class QuickMatchSpawnService
             ];
             $multi_idx = $opn->color + 1;
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
+            $players[$multi_idx] = $opn;
             $other_idx++;
 
             if (array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
@@ -140,6 +144,29 @@ class QuickMatchSpawnService
                 }
             }
         }
+
+        $clans = [];
+        foreach ($players as $multiIdx => $qmPlayer)
+        {
+            $playerIndex = $multiIdx;
+
+            Log::info("PlayerIndex ** $playerIndex");
+
+            if (!in_array($qmPlayer->player_id, $clans))
+            {
+                $i = count($clans) + 1;
+                $spawnStruct["spawn"]["Multi{$i}_Alliances"]["HouseAllyOne"] = $playerIndex - 1;
+                $clans[] = $qmPlayer->player_id;
+            }
+        }
+
+
+        return $spawnStruct;
+    }
+
+    public static function appendAlliances($spawnStruct, $qmPlayer, $allPlayers)
+    {
+
 
         return $spawnStruct;
     }
