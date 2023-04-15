@@ -112,6 +112,7 @@ class QuickMatchSpawnService
     {
         $other_idx = 1;
         $multi_idx = $qmPlayer->color + 1;
+        $myIndex = $multi_idx;
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
 
         foreach ($allPlayers as $opn)
@@ -131,13 +132,14 @@ class QuickMatchSpawnService
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
 
             //check if other player is in my clan, if so add alliance
-            if ($qmPlayer->clan_id == $opn->clan_id)
+            if ($qmPlayer->clan_id != null && $qmPlayer->clan_id != 0 && $qmPlayer->clan_id == $opn->clan_id)
             {
                 $p1Name = $qmPlayer->player->username;
                 $p2Name = $opn->player->username;
 
                 Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
-                $spawnStruct["spawn"]["Multi{$multi_idx}_Alliances"]["HouseAllyOne"] = $other_idx - 1;
+                $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $multi_idx - 1;
+                $spawnStruct["spawn"]["Multi{$multi_idx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
             }
 
             $other_idx++;
@@ -151,23 +153,6 @@ class QuickMatchSpawnService
                 }
             }
         }
-
-        // $clans = QuickMatchSpawnService::mapPlayerToClans($allPlayers); //map each player to their clan
-
-        // foreach ($players as $multiIdx => $qmPlayer)
-        // {
-        //     $playerIndex = $multiIdx;
-
-        //     Log::info("PlayerIndex ** $playerIndex");
-
-        //     if (!in_array($qmPlayer->player_id, $clans))
-        //     {
-        //         $i = count($clans) + 1;
-        //         $spawnStruct["spawn"]["Multi{$i}_Alliances"]["HouseAllyOne"] = $playerIndex - 1;
-        //         $clans[] = $qmPlayer->player_id;
-        //     }
-        // }
-
 
         return $spawnStruct;
     }
