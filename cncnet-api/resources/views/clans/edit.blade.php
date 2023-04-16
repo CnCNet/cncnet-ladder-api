@@ -24,7 +24,7 @@
                     </a>
                 </div>
                 <div class="mini-breadcrumb-item">
-                    <a href="/account">
+                    <a href="/account/{{ $ladder->abbreviation }}/list">
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
