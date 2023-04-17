@@ -169,8 +169,4 @@ class Ladder extends Model
         return $this->hasMany('App\Achievement', 'ladder_id');
     }
 
-    public function clanLadderRules()
-    {
-        return $this->hasOne('App\ClanLadderRules');
-    }
 }

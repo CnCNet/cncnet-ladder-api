@@ -57,14 +57,8 @@ class AdminService
         $ladderRule->point_filter_rank_threshold = $request->point_filter_rank_threshold;
         $ladderRule->ladder_rules_message = $request->ladder_rules_message;
         $ladderRule->ladder_discord = $request->ladder_discord;
+        $ladderRule->max_active_players = $request->max_active_players;
         $ladderRule->save();
-
-        if ($request->max_clans_allowed)
-        {
-            $clanLadderRules = $ladderRule->ladder->clanLadderRules;
-            $clanLadderRules->max_clans_allowed = $request->max_clans_allowed;
-            $clanLadderRules->save();
-        }
 
         $request->session()->flash('success', 'Changes Saved');
         return redirect()->back();

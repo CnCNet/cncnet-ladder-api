@@ -266,6 +266,7 @@
                                 <tr>
                                     <th scope="col">Username</th>
                                     <th scope="col">Username Active</th>
+                                    <th scope="col">Clan</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -283,6 +284,17 @@
                                         </div>
                                     </td>
                                     <td>{{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'Active' : 'Inactive' }}</td>
+                                    <td>
+                                        @if($player->clanPlayer && $player->clanPlayer->clan)
+                                        <strong class="fw-bold">
+                                            {{ $player->clanPlayer->clan->name }}
+                                        </strong>
+                                        @else
+                                        <p>
+                                            None
+                                        </p>
+                                        @endif
+                                    </td>
                                     <td>
                                         <form id="username-status" class="form-inline" method="POST" action="username-status">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />

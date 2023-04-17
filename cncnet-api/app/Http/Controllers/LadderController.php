@@ -527,14 +527,6 @@ class LadderController extends Controller
             $this->addLadder($ladder->id);
         }
 
-        $clanLadderRules = $ladder->clanLadderRules;
-        if ($clanLadderRules == null && $ladder->clans_allowed)
-        {
-            $clanLadderRules = new \App\ClanLadderRules();
-            $clanLadderRules->ladder_id = $ladder->id;
-            $clanLadderRules->save();
-        }
-
         $request->session()->flash('success', 'Ladder information saved.');
 
         return redirect("/admin/setup/{$ladder->id}/edit");

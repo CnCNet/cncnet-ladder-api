@@ -471,13 +471,11 @@
                                                         class="form-control" value="{{ $rule->ladder_discord }}" />
                                                 </div>
 
-                                                @if($ladder->clans_allowed && $ladder->clanLadderRules)
-                                                    <div class="form-group">
-                                                        <label for="{{ $rule->ladder_id }}_max_clans_allowed">Max Clans Allowed per User</label>
-                                                        <input id="{{ $rule->ladder_id }}_max_clans_allowed" type="text" name="max_clans_allowed"
-                                                            class="form-control" value="{{ $ladder->clanLadderRules->max_clans_allowed }}" />
-                                                    </div>
-                                                @endif
+                                                <div class="form-group">
+                                                    <label for="{{ $rule->ladder_id }}_max_active_players">Max Clans Allowed per User</label>
+                                                    <input id="{{ $rule->ladder_id }}_max_active_players" type="text" name="max_active_players"
+                                                        class="form-control" value="{{ $ladder->max_active_players }}" />
+                                                </div>
 
                                                 <button type="submit" class="btn btn-primary">Save</button>
                                             </form>
