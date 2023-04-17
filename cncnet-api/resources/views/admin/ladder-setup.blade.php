@@ -474,7 +474,7 @@
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_max_active_players">Max Active Players Allowed per User</label>
                                                     <input id="{{ $rule->ladder_id }}_max_active_players" type="text" name="max_active_players"
-                                                        class="form-control" value="{{ $ladder->max_active_players }}" />
+                                                        class="form-control" value="{{ $rule->max_active_players }}" />
                                                 </div>
 
                                                 <button type="submit" class="btn btn-primary">Save</button>
