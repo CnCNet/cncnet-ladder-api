@@ -117,7 +117,7 @@ class ClanController extends Controller
 
         $player = Player::find($request->player_id);
 
-        $clan = Clan::find($clanId); //TODO allow multiple clans
+        $clan = Clan::find($clanId);
         if ($clan === null)
         {
             if ($player === null)
