@@ -487,21 +487,11 @@ class ApiQuickMatchController extends Controller
         }
 
         # Write the spawn.ini "Others" sections
-        $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni(
+        $spawnStruct = QuickMatchSpawnService::appendOthersAndTeamAlliancesToSpawnIni(
             $spawnStruct,
             $qmPlayer,
             $playersReady
         );
-
-        # Write the Multi_Alliances if teams 
-        if ($ladder->clans_allowed)
-        {
-            $spawnStruct = QuickMatchSpawnService::appendAlliances(
-                $spawnStruct,
-                $qmPlayer,
-                $playersReady
-            );
-        }
 
         $qmPlayer->waiting = false;
         $qmPlayer->save();
