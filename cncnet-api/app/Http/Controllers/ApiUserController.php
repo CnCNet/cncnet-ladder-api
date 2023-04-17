@@ -70,9 +70,8 @@ class ApiUserController extends Controller
                     {
                         continue;
                     }
-
-                    $playerList[] = $player->clanPlayer;
-                    $playerList[] = $player->clanPlayer->clan;
+                    $clan = $player->clanPlayer->clan;
+                    $player->clanPlayer;
                 }
                 $playerList[] = $activeHandle->player;
             }
