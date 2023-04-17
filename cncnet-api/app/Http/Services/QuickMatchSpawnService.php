@@ -105,19 +105,19 @@ class QuickMatchSpawnService
      * Appends the "other" section of all players to the spawn.ini 
      * @param mixed $spawnStruct 
      * @param mixed $qmPlayer 
-     * @param mixed $allPlayers 
+     * @param mixed $otherQmPlayers 
      * @return mixed 
      */
-    public static function appendOthersToSpawnIni($spawnStruct, $qmPlayer, $allPlayers)
+    public static function appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmPlayers)
     {
-        $other_idx = 1;
-        $multi_idx = $qmPlayer->color + 1;
-        $myIndex = $multi_idx;
-        $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
+        $otherIdx = 1;
+        $multiIdx = $qmPlayer->color + 1;
+        $myIndex = $multiIdx;
+        $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
 
-        foreach ($allPlayers as $opn)
+        foreach ($otherQmPlayers as $opn)
         {
-            $spawnStruct["spawn"]["Other{$other_idx}"] = [
+            $spawnStruct["spawn"]["Other{$otherIdx}"] = [
                 "Name" => $opn->player()->first()->username,
                 "Side" => $opn->actual_side,
                 "Color" => $opn->color,
@@ -128,8 +128,8 @@ class QuickMatchSpawnService
                 "LanIP" => $opn->lan_address ? $opn->lan_address->address : "",
                 "LanPort" => $opn->lan_port
             ];
-            $multi_idx = $opn->color + 1;
-            $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
+            $multiIdx = $opn->color + 1;
+            $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $opn->location;
 
             //check if other player is in my clan, if so add alliance
             if ($qmPlayer->clan_id && $qmPlayer->clan_id == $opn->clan_id)
@@ -138,11 +138,11 @@ class QuickMatchSpawnService
                 $p2Name = $opn->player->username;
 
                 Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
-                $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $multi_idx - 1;
-                $spawnStruct["spawn"]["Multi{$multi_idx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
+                $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
+                $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
             }
 
-            $other_idx++;
+            $otherIdx++;
 
             if (array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
             {
