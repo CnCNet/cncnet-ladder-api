@@ -131,7 +131,7 @@ class QuickMatchSpawnService
             $multiIdx = $opn->color + 1;
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $opn->location;
 
-            //check if other player is in my clan, if so add alliance
+            # Check if other player is in my clan, if so add alliance
             if ($qmPlayer->clan_id && $qmPlayer->clan_id == $opn->clan_id)
             {
                 $p1Name = $qmPlayer->player->username;
@@ -146,7 +146,7 @@ class QuickMatchSpawnService
 
             if (array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
             {
-                //if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
+                # if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
                 if (($qmPlayer->actual_side < 5 && $opn->actual_side == 9) || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9))
                 {
                     $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
@@ -157,29 +157,6 @@ class QuickMatchSpawnService
         return $spawnStruct;
     }
 
-    /**
-     * Map each player to their clan.
-     */
-    public static function mapPlayerToClans($players)
-    {
-        $clans = []; //{clanName1 -> [p1, p2, p3..], clanName2 -> [p4, p5, p6..], ..}
-
-        foreach ($players as $player)
-        {
-            $clanName = $player->clanPlayer->clan->name;
-
-            $clans[$clanName][] = $player; // append player to clan obj
-        }
-
-        return $clans;
-    }
-
-    public static function appendAlliances($spawnStruct, $qmPlayer, $allPlayers)
-    {
-
-
-        return $spawnStruct;
-    }
 
     /**
      * Prepend quick-coop ini file to allow 2 real players vs 2 ai

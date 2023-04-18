@@ -82,6 +82,7 @@ class Ladder extends Model
         return $userAllowedLadders;
     }
 
+    # Relationships
     public function qmLadderRules()
     {
         return $this->hasOne('App\QmLadderRules');
@@ -106,8 +107,6 @@ class Ladder extends Model
     {
         return $this->hasMany('App\MapPool');
     }
-
-    # Relationships
 
     public function mapPool()
     {
@@ -168,5 +167,4 @@ class Ladder extends Model
     {
         return $this->hasMany('App\Achievement', 'ladder_id');
     }
-
 }

@@ -105,57 +105,63 @@ class FindOpponent extends Command implements ShouldQueue
         $ladderRules = $ladder->qmLadderRules;
 
         /* 
-        Try to find a matchup
-         * Matchups are based on the player's rating,
-         * The absolute value of the difference of me and every other player is calculated.
-         * Any players whose difference is greater 100 is thrown out with some exceptions
-         * If a player has been waiting a long time for a matchup he should get some special
-         * treatment.  To allow for this, the player rating difference gets wait time, in
-         * seconds, subtracted from it.
-         * If 2 players rated 1200, and 1400 are the only players a match won't be made
-         * until one player has been waiting for 100 seconds 1400-1200-100seconds = 100
-         * The ratio of seconds is tunable per ladder
-         */
+            Try to find a matchup
+            * Matchups are based on the player's rating,
+            * The absolute value of the difference of me and every other player is calculated.
+            * Any players whose difference is greater 100 is thrown out with some exceptions
+            * If a player has been waiting a long time for a matchup he should get some special
+            * treatment.  To allow for this, the player rating difference gets wait time, in
+            * seconds, subtracted from it.
+            * If 2 players rated 1200, and 1400 are the only players a match won't be made
+            * until one player has been waiting for 100 seconds 1400-1200-100seconds = 100
+            * The ratio of seconds is tunable per ladder
+        */
 
-        $user = $qmPlayer->player->user;
-        $userPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
-        $userSettings = $user->userSettings;
-        $userPlayerClan = $player->clanPlayer;
+        $currentUser = $qmPlayer->player->user;
+        $currentUserPlayerTier = $player->getCachedPlayerTierByLadderHistory($history);
+        $currentUserSettings = $currentUser->userSettings;
+        $currentUserClanPlayer = $player->clanPlayer;
 
         # Fetch all opponents who are currently in queue for this ladder
-        $opponentEntries = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
+        $opponentQmQueueEntries = QmQueueEntry::where('qm_match_player_id', '<>', $qEntry->qmPlayer->id)
             ->where('ladder_history_id', '=', $history->id)
             ->get();
 
-        # Collection of qm opponents who are within point filter but also includes opponents who have mutual point filter disabled
-        $opponentEntriesFiltered = (new QmQueueEntry())->newCollection();
 
-        foreach ($opponentEntries as $opponentEntry)
+        # If clans ladder, check we have enough players in our team before proceeding any further
+        if ($ladder->clans_allowed && $currentUserClanPlayer)
+        {
+            $minRequiredClanPlayerCount = floor($ladder->qmLadderRules->player_count / 2);
+
+            $hasValidClanMatchup = $this->checkForValidClanMatchup(
+                $opponentQmQueueEntries,
+                $currentUserClanPlayer,
+                $minRequiredClanPlayerCount
+            );
+
+            $currentUserClanName = $currentUserClanPlayer->clan->short;
+            if (!$hasValidClanMatchup)
+            {
+                Log::info("FindOpponent ** No valid clan matchup: $currentUserClanName has insufficient players ready.");
+                return;
+            }
+
+            Log::info("FindOpponent ** Clan $currentUserClanName has enough players and is ready for battle.");
+        }
+
+
+        # Collection of qm opponents who are within point filter but also includes opponents who have mutual point filter disabled
+        $opponentQmQueueEntriesFiltered = (new QmQueueEntry())->newCollection();
+
+        foreach ($opponentQmQueueEntries as $opponentEntry)
         {
             $oppPlayer = $opponentEntry->qmPlayer->player;
             $oppUserPlayerTier = $oppPlayer->getCachedPlayerTierByLadderHistory($history);
-            $oppPlayerClan = $oppPlayer->clanPlayer;
             $oppUserSettings = $oppPlayer->user->userSettings;
             $oppUser = $oppPlayer->user;
 
-            # Checks players aren't matching against players in their own clans
-            # When we support more players, we can check the configured ladder player count
-            if ($ladder->clans_allowed && $ladderRules->player_count == 2)
-            {
-                Log::info("FindOpponent ** Clan Ladder Matchup");
-
-                if ($oppPlayerClan && $userPlayerClan)
-                {
-                    if ($oppPlayerClan->clan_id == $userPlayerClan->clan_id)
-                    {
-                        Log::info("FindOpponent ** Players are in same clans " . $oppPlayerClan->clan_id . " Vs " . $userPlayerClan->clan_id);
-                        continue;
-                    }
-                }
-            }
-
             # Checks players are in same league tier otherwise skip
-            if ($oppUserPlayerTier !== $userPlayerTier)
+            if ($oppUserPlayerTier !== $currentUserPlayerTier)
             {
                 # At this point we've now deemed they can't match based on current tiers/elo
                 # But now check if players we've specifically chosen in the admin panel can still match in this tier
@@ -167,26 +173,26 @@ class FindOpponent extends Command implements ShouldQueue
                     $canMatch = LeaguePlayer::playerCanPlayBothTiers($oppUser, $ladder);
                 }
 
-                if ($canMatch == false && $userPlayerTier == 1)
+                if ($canMatch == false && $currentUserPlayerTier == 1)
                 {
-                    $canMatch = LeaguePlayer::playerCanPlayBothTiers($user, $ladder);
+                    $canMatch = LeaguePlayer::playerCanPlayBothTiers($currentUser, $ladder);
                 }
 
                 if ($canMatch == false)
                 {
-                    Log::info("FindOpponent ** Players in different tiers for ladder " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $player->username . " (Tier: " . $userPlayerTier . ")");
+                    Log::info("FindOpponent ** Players in different tiers for ladder " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $player->username . " (Tier: " . $currentUserPlayerTier . ")");
                     continue;
                 }
                 else
                 {
-                    Log::info("FindOpponent ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $player->username . " (Tier: " . $userPlayerTier . ")");
+                    Log::info("FindOpponent ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  " . $history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $player->username . " (Tier: " . $currentUserPlayerTier . ")");
                 }
             }
 
             $ptFilterOff = false;
 
             # Checks players point filter settings
-            if ($userSettings->disabledPointFilter && $oppUserSettings->disabledPointFilter)
+            if ($currentUserSettings->disabledPointFilter && $oppUserSettings->disabledPointFilter)
             {
                 $playerRank = $player->rank($history);
 
@@ -208,7 +214,7 @@ class FindOpponent extends Command implements ShouldQueue
             if ($ptFilterOff)
             {
                 # Both players have the point filter disabled, we will ignore the point filter
-                $opponentEntriesFiltered->add($opponentEntry);
+                $opponentQmQueueEntriesFiltered->add($opponentEntry);
                 Log::info("FindOpponent ** PointFilter Off");
             }
             else
@@ -219,12 +225,12 @@ class FindOpponent extends Command implements ShouldQueue
                 # is the opponent within the point filter
                 if ($points_time + $ladderRules->max_points_difference > ABS($qEntry->points - $opponentEntry->points))
                 {
-                    $opponentEntriesFiltered->add($opponentEntry);
+                    $opponentQmQueueEntriesFiltered->add($opponentEntry);
                 }
             }
         }
 
-        $qmOpns = $opponentEntriesFiltered->shuffle();
+        $qmOpns = $opponentQmQueueEntriesFiltered->shuffle();
         $qmOpnsCount = $qmOpns->count();
         Log::info("FindOpponent ** Opponent Count: $qmOpnsCount");
 
@@ -362,7 +368,7 @@ class FindOpponent extends Command implements ShouldQueue
 
             $this->quickMatchService->createQmMatch(
                 $qmPlayer,
-                $userPlayerTier,
+                $currentUserPlayerTier,
                 $commonQMMaps,
                 $qmOpns,
                 $qEntry,
@@ -397,5 +403,36 @@ class FindOpponent extends Command implements ShouldQueue
         }
 
         return $newCommonQmMaps;
+    }
+
+    /**
+     * 
+     * @param mixed $opponentQmQueueEntries - Everyone else but us in the queue
+     * @param mixed $userClanPlayer - Current user in the queue requesting right now
+     * @param mixed $minRequiredClanPlayerCount - Required number of players for a clan
+     * @return bool 
+     */
+    private function checkForValidClanMatchup($opponentQmQueueEntries, $userClanPlayer, $minRequiredClanPlayerCount)
+    {
+        Log::info("FindOpponent ** checkForValidClanMatchup: Required clan players $minRequiredClanPlayerCount");
+
+        # How many clan players do we have in the queue
+        $clanPlayerCountReady = 1; # Include ourselves
+
+        # Everyone else in the queue thats not us
+        foreach ($opponentQmQueueEntries as $opponentQmQueueEntry)
+        {
+            # Check we're in the same clan and increase our players
+            $opponentQmMatchPlayer = $opponentQmQueueEntry->qmPlayer;
+
+            if ($opponentQmMatchPlayer && $opponentQmMatchPlayer->clan_id == $userClanPlayer->clan_id)
+            {
+                $clanPlayerCountReady++;
+            }
+        }
+
+        Log::info("FindOpponent ** checkForValidClanMatchup: Counted clan players $clanPlayerCountReady");
+
+        return ($clanPlayerCountReady == $minRequiredClanPlayerCount);
     }
 }

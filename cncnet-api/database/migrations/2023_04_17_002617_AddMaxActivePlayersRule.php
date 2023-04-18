@@ -17,14 +17,18 @@ class AddMaxActivePlayersRule extends Migration
             $table->integer('max_active_players')->default(1); //max active players per user per ladder
         });
 
+        // Migration failed on staging
+        /*
         $ladderRules = \App\QmLadderRules::all();
 
         foreach ($ladderRules as $ladderRule)
         {
-            if ($ladderRule->ladder->abbreviation=='ts')
+            if ($ladderRule->ladder->abbreviation == 'ts')
                 $ladderRule->max_active_players = 3;
+
             $ladderRule->max_active_players = 1;
         }
+        */
     }
 
     /**
