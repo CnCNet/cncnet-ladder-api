@@ -66,8 +66,6 @@ class AccountController extends Controller
 
         $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $start, $end)->where('ladder_id', $ladder->id)->get();
 
-        // $primaryPlayer = $activeHandles->count() > 0 ? $activeHandles->first()->player : null;
-
         //grab active players who are not in a clan
         $activePlayersNotInAClan = [];
         foreach ($activeHandles as $activeHandle)
