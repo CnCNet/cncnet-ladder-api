@@ -89,6 +89,6 @@ class ClanMatchupHandler extends MatchupInterface
 
         Log::info("ClanMatchupHandler ** checkForValidClanMatchup: Clan players ready ($clanPlayerCountReady / $minRequiredClanPlayerCount)");
 
-        return ($clanPlayerCountReady == $minRequiredClanPlayerCount);
+        return ($clanPlayerCountReady >= $minRequiredClanPlayerCount);
     }
 }
