@@ -6,8 +6,7 @@ use App\Game;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
-use Log;
-
+use Illuminate\Support\Facades\Log;
 
 class QuickMatchService
 {
