@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 use Mail;
+use Log;
 
 class AccountController extends Controller
 {
@@ -65,8 +66,19 @@ class AccountController extends Controller
 
         $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $start, $end)->where('ladder_id', $ladder->id)->get();
 
-        $primaryPlayer = $activeHandles->count() > 0 ? $activeHandles->first()->player : null;
+        // $primaryPlayer = $activeHandles->count() > 0 ? $activeHandles->first()->player : null;
 
+        //grab active players who are not in a clan
+        $activePlayersNotInAClan = [];
+        foreach ($activeHandles as $activeHandle)
+        {
+            if ($activeHandle->player->clanPlayer == null)
+            {
+                $activePlayersNotInAClan[] = $activeHandle;
+            }
+        }
+
+        //grab clan players
         $clanPlayers = $players->filter(function ($player)
         {
             return $player->clanPlayer !== null;
@@ -76,6 +88,7 @@ class AccountController extends Controller
                 return $player->clanPlayer;
             });
 
+        //grab any clan invitations
         $invitations = $players->filter(function ($player)
         {
             return $player->clanInvitations->count() > 0;
@@ -86,6 +99,20 @@ class AccountController extends Controller
             })
             ->collapse();
 
+        $myOldClans = [];
+
+        foreach ($players as $player)
+        {
+            $results = \App\Clan::where('ex_player_id', $player->id)->get();
+
+             foreach($results as $result)
+             {
+                $myOldClans[] = $result;
+             }
+        }
+
+        Log::info($myOldClans);
+
         return view("auth.ladder-account", compact(
             'ladders',
             'clan_ladders',
@@ -93,9 +120,10 @@ class AccountController extends Controller
             'user',
             'players',
             'activeHandles',
+            'activePlayersNotInAClan',
             'clan',
+            'myOldClans',
             'clanPlayers',
-            'primaryPlayer',
             'invitations'
         ));
     }
@@ -171,6 +199,7 @@ class AccountController extends Controller
 
         $user = \Auth::user();
         $ladder = \App\Ladder::where("abbreviation", $ladderAbbrev)->first();
+        $maxActivePlayersAllowed = $ladder->qmLadderRules->max_active_players;
 
         if ($user == null || $ladder == null)
         {
@@ -195,37 +224,11 @@ class AccountController extends Controller
         $startOfMonth = $date->startOfMonth()->toDateTimeString();
         $endOfMonth = $date->endOfMonth()->toDateTimeString();
 
-        // Check if there are active handles within this month
-        $hasActiveHandles = PlayerActiveHandle::getUserActiveHandleCount($user->id, $ladder->id, $startOfMonth, $endOfMonth);
-
-        // Allow TS players to have 3 nicks as opposed to just 1
-        // Other games are still restricted to 1
-        if ($ladder->game == "ts" && $hasActiveHandles == 3)
-        {
-            $request->session()->flash('error', 'You have ' . $hasActiveHandles . ' active nicks for this
-            month and ladder already. If you are trying to make a username inactive, the month we are in
-            has to complete first.');
-
-            return redirect()->back();
-        }
-        else if ($ladder->game != "ts" && $hasActiveHandles >= 1)
-        {
-            // Check if there are games played on the user's active handle this month
-            $hasActiveHandlesGamesPlayed = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($user->id, $ladder->id, $startOfMonth, $endOfMonth);
-
-            if ($hasActiveHandlesGamesPlayed >= 1)
-            {
-                $request->session()->flash('error', 'Your active user has already played ' . $hasActiveHandlesGamesPlayed . ' games this month.
-                If you are trying to make a username inactive, the month we are in has to complete first.');
-
-                return redirect()->back();
-            }
-        }
-
         // Get the player thats being requested to change
         $activeHandle = PlayerActiveHandle::getPlayerActiveHandle($player->id, $ladder->id, $startOfMonth, $endOfMonth);
 
-        $hasActiveHandlesGamesPlayed = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($user->id, $ladder->id, $startOfMonth, $endOfMonth);
+        //get count of how many games this user has played
+        $hasActiveHandlesGamesPlayed = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($activeHandle, $startOfMonth, $endOfMonth);
 
         //allowed to remove the active handle if no games have been played yet
         if ($activeHandle != null && $hasActiveHandlesGamesPlayed < 1)
@@ -236,17 +239,38 @@ class AccountController extends Controller
             return redirect()->back();
         }
 
+        // Check if there are active handles within this month
+        $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->where('ladder_id', $ladder->id)->get();
+
+        if ($activeHandles->count() >= $maxActivePlayersAllowed)
+        {
+            // Check if there are games played on the user's active handle this month
+            $usersWithPlayedGamesCount = 0;
+            $counts = [];
+            foreach ($activeHandles as $activeHandle)
+            {
+                $playedGamesCount = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($activeHandle, $startOfMonth, $endOfMonth);
+
+                if ($playedGamesCount >= 1)
+                {
+                    $usersWithPlayedGamesCount++;
+                    $counts[] = $playedGamesCount;
+                }
+            }
+
+            if ($usersWithPlayedGamesCount >= $maxActivePlayersAllowed)
+            {
+                $str = implode(", ", $counts);
+                $request->session()->flash('error', "Your active user(s) has already played ($str) games this month.
+                If you are trying to make a username inactive, the month we are in has to complete first. The maximum amount of active players is $maxActivePlayersAllowed");
+
+                return redirect()->back();
+            }
+        }
+
         // If it's not an active handle make it one
         if ($activeHandle == null)
         {
-            if ($ladder->game != "ts")
-            {
-                //delete the player's other active handles
-                PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)
-                    ->where('ladder_id', $ladder->id)
-                    ->delete();
-            }
-
             $activeHandle = PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $user->id);
 
             $request->session()->flash('success', $player->username . ' is now active on the ladder.');

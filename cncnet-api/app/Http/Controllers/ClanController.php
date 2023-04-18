@@ -379,6 +379,7 @@ class ClanController extends Controller
         }
 
         $clanPlayer = ClanPlayer::find($request->id);
+        $player = $clanPlayer->player;
         if ($clanPlayer === null)
         {
             $request->session()->flash('error', "That player is not a member of the clan.");
@@ -412,6 +413,11 @@ class ClanController extends Controller
             {
                 $owner->role = 'Owner';
                 $owner->save();
+            }
+            else //there are no other members
+            {
+                $clan->ex_player_id = $player->id;
+                $clan->save();
             }
         }
 

@@ -130,17 +130,17 @@
         <div class="row">
             <div class="col-md-12 mb-5 mt-5">
                 @if ($ladder->clans_allowed)
-                <h2>Your Clan</h2>
+                <h2>My Active Clans</h2>
 
                 @if ($activeHandles->count() > 0)
                 <p>
-                    Please note: You have to leave your clan before you can create a new one.<br />
+                    Please note: You are allowed to be in {{ $ladder->qmLadderRules->max_active_players }} clans at a time. If you have played in any games in a clan this month, you may not leave that clan until next month.<br />
                 </p>
 
                 <div class="clan-listings mb-5">
-                    @if ($primaryPlayer !== null)
+                    @if ($activePlayersNotInAClan !== null && count($activePlayersNotInAClan) > 0)
                     <a href="#" class="btn btn-primary btn-size-md" data-bs-toggle="modal" data-bs-target="#newClan">
-                        Create a new Clan owned by {{ $primaryPlayer->username }}?
+                        Create a new Clan?
                     </a>
                     @endif
                 </div>
@@ -152,7 +152,8 @@
                                 <tr>
                                     <th scope="col">Clan</th>
                                     <th scope="col">Edit</th>
-                                    <th scope="col">Role</th>
+                                    <th scope="col">My Role</th>
+                                    <th scope="col">All Members</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -172,7 +173,14 @@
                                     </td>
                                     <td>
                                         <strong>Role: {{ $clanPlayer->role }}</strong>
-                                        <strong class="username">{{ $clanPlayer->player->username }}</strong>
+                                        </br>
+                                        <strong class="username">Nick: {{ $clanPlayer->player->username }}</strong>
+                                    </td>
+                                    <td>
+                                        @foreach($clanPlayer->clan->clanPlayers()->get() as $clanMember)
+                                        <strong class="username">{{ $clanMember->player->username }}</strong>
+                                        </br>
+                                        @endforeach
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-danger btn-md" data-bs-toggle="modal" data-bs-target="#submitLeaveClan">Leave Clan</button>
@@ -210,128 +218,175 @@
                         </table>
                     </div>
 
+                    <div class="row">
+                        <div class="col-md-12 mb-5 mt-5">
+                            @if ($ladder->clans_allowed)
+                            <h2>My Inactive Clans</h2>
 
-
-                    @foreach ($invitations as $invite)
-                    <div class="clan-listing">
-                        <div class="clan-name short">
-                            <h2>{{ $invite->clan->short }}</h2>
-                        </div>
-                        <div class="clan-name long">
-                            <h2>{{ $invite->clan->name }}</h2>
-                        </div>
-                        <div>
-                            <p>
-                                Has invited <strong class="username">{{ $invite->player->username }}</strong>
-                            </p>
-                        </div>
-                        <div class="clan-username">
-                            <form method="POST" action="/clans/{{ $ladder->abbreviation }}/invite/{{ $invite->clan_id }}/process">
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <input type="hidden" name="id" value="{{ $invite->id }}">
-                                <button type="submit" name="submit" value="accept" class="btn btn-primary accept">Accept</button>
-                                <button type="submit" name="submit" value="reject" class="btn btn-primary reject">Reject</button>
-                            </form>
+                            <div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Clan</th>
+                                                <th scope="col">Full Name</th>
+                                                <th scope="col">Activate</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($myOldClans as $myOldClan)
+                                            <tr>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <p>
+                                                            {{ $myOldClan->short }}
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <p>
+                                                            {{ $myOldClan->name }}
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <form method="POST" action="/clans/{{ $ladder->abbreviation }}/activate/{{ $myOldClan->clan_id }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                        <input type="hidden" name="id" value="{{ $myOldClan->id }}">
+                                                        <button type="submit" name="submit" value="activate" class="btn btn-primary activate">Activate Clan</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            @endif
                         </div>
                     </div>
-                    @endforeach
+                    <div>
+                        @foreach ($invitations as $invite)
+                        <div class="clan-listing">
+                            <div class="clan-name short">
+                                <h2>{{ $invite->clan->short }}</h2>
+                            </div>
+                            <div class="clan-name long">
+                                <h2>{{ $invite->clan->name }}</h2>
+                            </div>
+                            <div>
+                                <p>
+                                    Has invited <strong class="username">{{ $invite->player->username }}</strong>
+                                </p>
+                            </div>
+                            <div class="clan-username">
+                                <form method="POST" action="/clans/{{ $ladder->abbreviation }}/invite/{{ $invite->clan_id }}/process">
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    <input type="hidden" name="id" value="{{ $invite->id }}">
+                                    <button type="submit" name="submit" value="accept" class="btn btn-primary accept">Accept</button>
+                                    <button type="submit" name="submit" value="reject" class="btn btn-primary reject">Reject</button>
+                                </form>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                    @else
+                    <p> You have to register an account for this ladder before you can join a clan</p>
+                    @endif
+                    @endif
                 </div>
-                @else
-                <p> You have to register an account for this ladder before you can join a clan</p>
-                @endif
-                @endif
-            </div>
 
-            <div class="col-md-12">
-                <div class="account-box">
-                    <h3>Registered Accounts</h3>
-                    <ul class="mt-4">
-                        <li>Tiberian Sun players are now allowed up to 3 nicknames per month.</li>
-                        <li>Red Alert &amp; Yuri's Revenge players are only allowed 1 nickname per month.</li>
-                        <li>One user account, having multiple accounts are not allowed. </li>
-                    </ul>
-                    <p>
-                        To use your nickname, activate it and it will appear in your Quick Match client.
-                    </p>
+                <div class="col-md-12">
+                    <div class="account-box">
+                        <h3>Registered Accounts</h3>
+                        <ul class="mt-4">
+                            <li>Tiberian Sun and Clan Ladder players are now allowed up to 3 Active Players per month.</li>
+                            <li>Red Alert &amp; Yuri's Revenge players are only allowed 1 nickname per month.</li>
+                            <li>Users may not play on more than one email in a month per ladder.</li>
+                        </ul>
+                        <p>
+                            To use your nickname, activate it and it will appear in your Quick Match client.
+                        </p>
 
-                    <p>
-                        <a href="#" class="btn btn-primary btn-size-md" data-bs-toggle="modal" data-bs-target="#newLadderPlayer">
-                            <i class="bi bi-person-plus"></i> Add new Username?
-                        </a>
-                    </p>
+                        <p>
+                            <a href="#" class="btn btn-primary btn-size-md" data-bs-toggle="modal" data-bs-target="#newLadderPlayer">
+                                <i class="bi bi-person-plus"></i> Add new Username?
+                            </a>
+                        </p>
 
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">Username</th>
-                                    <th scope="col">Username Active</th>
-                                    <th scope="col">Clan</th>
-                                    <th scope="col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($players as $player)
-                                <tr>
-                                    <td>
-                                        <div class="d-flex">
-                                            <div class="username me-2">
-                                                <i class="icon icon-game icon-{{ $player->ladder()->first()->abbreviation }} icon-sm"></i>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Username Active</th>
+                                        <th scope="col">Clan</th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($players as $player)
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex">
+                                                <div class="username me-2">
+                                                    <i class="icon icon-game icon-{{ $player->ladder()->first()->abbreviation }} icon-sm"></i>
+                                                </div>
+                                                <p>
+                                                    {{ $player->username }}
+                                                </p>
                                             </div>
+                                        </td>
+                                        <td>{{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'Active' : 'Inactive' }}</td>
+                                        <td>
+                                            @if($player->clanPlayer && $player->clanPlayer->clan)
+                                            <strong class="fw-bold">
+                                                {{ $player->clanPlayer->clan->name }}
+                                            </strong>
+                                            @else
                                             <p>
-                                                {{ $player->username }}
+                                                None
                                             </p>
-                                        </div>
-                                    </td>
-                                    <td>{{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'Active' : 'Inactive' }}</td>
-                                    <td>
-                                        @if($player->clanPlayer && $player->clanPlayer->clan)
-                                        <strong class="fw-bold">
-                                            {{ $player->clanPlayer->clan->name }}
-                                        </strong>
-                                        @else
-                                        <p>
-                                            None
-                                        </p>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <form id="username-status" class="form-inline" method="POST" action="username-status">
-                                            <input type="hidden" name="_token" value="{{ csrf_token() }}" />
-                                            <input type="hidden" name="username" value="{{ $player->username }}" />
+                                            @endif
+                                        </td>
+                                        <td>
+                                            <form id="username-status" class="form-inline" method="POST" action="username-status">
+                                                <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                                <input type="hidden" name="username" value="{{ $player->username }}" />
 
-                                            @php $active = $activeHandles->where('player_id', $player->id)->count() > 0; @endphp
-                                            <button type="submit" class="btn {{ $active ? 'btn-primary' : 'btn-outline' }} btn-size-md">
-                                                {{ $active ? 'Deactivate' : 'Activate Username' }}
-                                            </button>
+                                                @php $active = $activeHandles->where('player_id', $player->id)->count() > 0; @endphp
+                                                <button type="submit" class="btn {{ $active ? 'btn-primary' : 'btn-outline' }} btn-size-md">
+                                                    {{ $active ? 'Deactivate' : 'Activate Username' }}
+                                                </button>
 
-                                            <a href="/api/v1/ladder/{{ $player->ladder()->first()->abbreviation }}/player/{{ $player->username }}/webview" target="_blank" class="btn btn-md me-3 btn-size-md">
-                                                OBS Stream Profile
-                                            </a>
-                                        </form>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                                <a href="/api/v1/ladder/{{ $player->ladder()->first()->abbreviation }}/player/{{ $player->username }}/webview" target="_blank" class="btn btn-md me-3 btn-size-md">
+                                                    OBS Stream Profile
+                                                </a>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h3>OBS Stream Profiles</h3>
+                        <p>
+                            Overlay a webview of your stats in your stream using OBS.
+                            <a href="/help/obs" target="_blank">Click here for OBS Stream Profiles Instructions</a>
+                        </p>
                     </div>
-
-                    <h3>OBS Stream Profiles</h3>
-                    <p>
-                        Overlay a webview of your stats in your stream using OBS.
-                        <a href="/help/obs" target="_blank">Click here for OBS Stream Profiles Instructions</a>
-                    </p>
                 </div>
             </div>
         </div>
-    </div>
 </section>
 
 <div class="modal fade" id="newLadderPlayer" tabIndex="-1" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add a new username</h5>
+                <h5 class="modal-title">Add a new ladder player username</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -348,7 +403,7 @@
                         <input type="username" name="username" class="form-control border" id="username" placeholder="username">
                     </div>
 
-                    <button type="submit" class="btn btn-primary">Create username</button>
+                    <button type="submit" class="btn btn-primary">Create ladder player username</button>
                 </form>
             </div>
         </div>
@@ -371,7 +426,7 @@
                                 <form method="POST" action="username">
                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                     <input type="hidden" name="ladder" value="{{ $ladder->id }}">
-                                    <p>Usernames will be the name shown when you login to CnCNet clients and play games.
+                                    <p>Player usernames will be the name shown when you login to CnCNet clients and play games.
                                     </p>
 
                                     <div class="form-group">
@@ -381,7 +436,6 @@
                                     <button type="submit" class="btn btn-primary">Create username</button>
                                 </form>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -390,7 +444,6 @@
     </div>
 </div>
 
-@if ($primaryPlayer != null)
 <div class="modal fade" tabindex="-1" id="newClan">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -398,11 +451,19 @@
                 <h5 class="modal-title">Create a new Clan</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
+
                 <form method="POST" action="/clans/{{ $ladder->abbreviation }}/edit/new">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="ladder_id" value="{{ $ladder->id }}">
-                    <input type="hidden" name="player_id" value="{{ $primaryPlayer->id }}">
+
+                    <label>Select the player:</label>
+                    @foreach ($activePlayersNotInAClan as $activePlayerNotInAClan)
+                    <div>
+                        <input type="radio" id="player_id_{{ $activePlayerNotInAClan->player->id }}" name="player_id" value="{{ $activePlayerNotInAClan->player->id }}">{{ $activePlayerNotInAClan->player->username }}</radio>
+                    </div>
+                    @endforeach
 
                     <p>
                         Short name will be the name appearing in the clients.
@@ -450,6 +511,5 @@
         </div>
     </div>
 </div>
-@endif
 
 @endsection
