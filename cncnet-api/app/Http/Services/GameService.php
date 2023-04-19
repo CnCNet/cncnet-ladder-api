@@ -54,7 +54,6 @@ class GameService
         }
 
         $isClanLadderGame = $ladder->clans_allowed;
-        $clan = $player->clanPlayer->clan;
 
         $reporter = null;
 
@@ -62,9 +61,14 @@ class GameService
         $gameReport->game_id = $game->id;
         $gameReport->player_id = $playerId;
 
-        if ($isClanLadderGame && $clan)
+        if ($isClanLadderGame)
         {
-            $gameReport->clan_id = $clan->id;
+            $clanPlayer = $player->clanPlayer;
+            if ($clanPlayer)
+            {
+                $clan = $clanPlayer->clan;
+                $gameReport->clan_id = $clan->id;
+            }
         }
 
         $gameReport->best_report = false;
