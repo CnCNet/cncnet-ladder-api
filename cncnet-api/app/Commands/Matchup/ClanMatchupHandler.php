@@ -138,7 +138,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
             }
         }
 
-        Log::info("ClanMatchupHandler ** checkForValidClanMatchup: Clan players ready ($clanPlayerCountReady / $minCountRequired)");
+        Log::info("ClanMatchupHandler ** checkForValidClanMatchup ($minCountRequired players needed): Clan players ready $clanPlayerCountReady");
 
         return ($clanPlayerCountReady >= $minCountRequired);
     }

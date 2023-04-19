@@ -26,6 +26,8 @@ class BaseMatchupHandler
 
     public function createMatch($maps, $opponents)
     {
+        $this->removeQueueEntry();
+
         return $this->quickMatchService->createQmMatch(
             $this->qmPlayer,
             $this->currentUserPlayerTier,
@@ -38,6 +40,7 @@ class BaseMatchupHandler
 
     public function removeQueueEntry()
     {
+        Log::info("Removing queue entry for " . $this->qmPlayer);
         $this->qmQueueEntry->delete();
     }
 

@@ -182,7 +182,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
             }
 
             # TODO: This is questionable being here, should it not be right at the end?
-            $this->removeQueueEntry();
+            // $this->removeQueueEntry();
 
             $reduceMapRepeats = $ladder->qmLadderRules->reduce_map_repeats;
 
