@@ -6,24 +6,22 @@ use App\LeaguePlayer;
 use App\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
 
-
-/**
- * Try to find a matchup
- * Matchups are based on the player's rating,
- * The absolute value of the difference of me and every other player is calculated.
- * Any players whose difference is greater 100 is thrown out with some exceptions
- * 
- * If a player has been waiting a long time for a matchup he should get some special
- * treatment.  To allow for this, the player rating difference gets wait time, in
- * seconds, subtracted from it.
- * 
- * If 2 players rated 1200, and 1400 are the only players a match won't be made
- * until one player has been waiting for 100 seconds 1400-1200-100seconds = 100
- * The ratio of seconds is tunable per ladder
- */
-
-class PlayerMatchupHandler extends MatchupInterface
+class PlayerMatchupHandler extends BaseMatchupHandler
 {
+    /**
+     * Try to find a matchup
+     * Matchups are based on the player's rating,
+     * The absolute value of the difference of me and every other player is calculated.
+     * Any players whose difference is greater 100 is thrown out with some exceptions
+     * 
+     * If a player has been waiting a long time for a matchup he should get some special
+     * treatment.  To allow for this, the player rating difference gets wait time, in
+     * seconds, subtracted from it.
+     * 
+     * If 2 players rated 1200, and 1400 are the only players a match won't be made
+     * until one player has been waiting for 100 seconds 1400-1200-100seconds = 100
+     * The ratio of seconds is tunable per ladder
+     */
     public function matchup()
     {
         $ladder = $this->history->ladder;
@@ -33,7 +31,6 @@ class PlayerMatchupHandler extends MatchupInterface
         $currentUserSettings = $currentUser->userSettings;
         $currentPlayer = $this->qmPlayer->player;
         $currentPlayerRank = $currentPlayer->rank($this->history);
-        $currentUserPlayerTier = $currentPlayer->getCachedPlayerTierByLadderHistory($this->history);
 
         # Fetch all opponents who are currently in queue for this ladder
         $opponentQmQueueEntries = QmQueueEntry::where('qm_match_player_id', '<>', $this->qmQueueEntry->qmPlayer->id)
@@ -53,7 +50,7 @@ class PlayerMatchupHandler extends MatchupInterface
             $oppUserPlayerTier = $oppPlayer->getCachedPlayerTierByLadderHistory($this->history);
 
             # Checks players are in same league tier otherwise skip
-            if ($oppUserPlayerTier !== $currentUserPlayerTier)
+            if ($oppUserPlayerTier !== $this->currentUserPlayerTier)
             {
                 # At this point we've now deemed they can't match based on current tiers/elo
                 # But now check if players we've specifically chosen in the admin panel can still match in this tier
@@ -65,19 +62,19 @@ class PlayerMatchupHandler extends MatchupInterface
                     $canMatch = LeaguePlayer::playerCanPlayBothTiers($oppUser, $ladder);
                 }
 
-                if ($canMatch == false && $currentUserPlayerTier == 1)
+                if ($canMatch == false && $this->currentUserPlayerTier == 1)
                 {
                     $canMatch = LeaguePlayer::playerCanPlayBothTiers($currentUser, $ladder);
                 }
 
                 if ($canMatch == false)
                 {
-                    Log::info("FindOpponent ** Players in different tiers for ladder " . $this->history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $currentPlayer->username . " (Tier: " . $currentUserPlayerTier . ")");
+                    Log::info("FindOpponent ** Players in different tiers for ladder " . $this->history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $currentPlayer->username . " (Tier: " . $this->currentUserPlayerTier . ")");
                     continue;
                 }
                 else
                 {
-                    Log::info("FindOpponent ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  " . $this->history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $currentPlayer->username . " (Tier: " . $currentUserPlayerTier . ")");
+                    Log::info("FindOpponent ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  " . $this->history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $currentPlayer->username . " (Tier: " . $this->currentUserPlayerTier . ")");
                 }
             }
 
@@ -256,7 +253,10 @@ class PlayerMatchupHandler extends MatchupInterface
                 return;
             }
 
-            return $this->createMatch($currentUserPlayerTier, $commonQMMaps, $qmOpns);
+            return $this->createMatch(
+                $commonQMMaps,
+                $qmOpns
+            );
         }
     }
 

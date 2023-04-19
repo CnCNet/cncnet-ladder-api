@@ -5,13 +5,14 @@ namespace App\Commands\Matchup;
 use App\Http\Services\QuickMatchService;
 use Illuminate\Support\Facades\Log;
 
-class MatchupInterface
+class BaseMatchupHandler
 {
     public $quickMatchService;
     public $history;
     public $qmQueueEntry;
     public $qmPlayer;
     public $gameType;
+    public $currentUserPlayerTier;
 
     public function __construct($history, $qEntry, $qmPlayer, $gameType)
     {
@@ -20,18 +21,14 @@ class MatchupInterface
         $this->qmQueueEntry = $qEntry;
         $this->qmPlayer = $qmPlayer;
         $this->gameType = $gameType;
+        $this->currentUserPlayerTier = $this->qmPlayer->player->getCachedPlayerTierByLadderHistory($this->history);
     }
 
-    public function matchup()
-    {
-        Log::info("Matchup ** " . $this->qmQueueEntry);
-    }
-
-    public function createMatch($currentUserPlayerTier, $maps, $opponents)
+    public function createMatch($maps, $opponents)
     {
         return $this->quickMatchService->createQmMatch(
             $this->qmPlayer,
-            $currentUserPlayerTier,
+            $this->currentUserPlayerTier,
             $maps,
             $opponents,
             $this->qmQueueEntry,
@@ -42,5 +39,9 @@ class MatchupInterface
     public function removeQueueEntry()
     {
         $this->qmQueueEntry->delete();
+    }
+
+    public function matchup()
+    {
     }
 }
