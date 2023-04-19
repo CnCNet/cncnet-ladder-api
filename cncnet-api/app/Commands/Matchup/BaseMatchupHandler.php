@@ -26,8 +26,6 @@ class BaseMatchupHandler
 
     public function createMatch($maps, $opponents)
     {
-        $this->removeQueueEntry();
-
         return $this->quickMatchService->createQmMatch(
             $this->qmPlayer,
             $this->currentUserPlayerTier,

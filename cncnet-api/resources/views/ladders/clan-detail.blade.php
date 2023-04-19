@@ -139,7 +139,7 @@
                 <div class="player-stats">
                     <div class="player-overall-stats grid">
                         <div class="column">
-                            <h5 class="stat-title">Clan stats</h5>
+                            <h5 class="stat-title"><i class="bi bi-flag-fill icon-clan pe-3"></i> Clan stats</h5>
                             <div class="player-stats-drilldown stats-wrap">
                                 <div class="stat-item">
                                     <span class="name">Points:</span> {{ $clanCache->points }}
