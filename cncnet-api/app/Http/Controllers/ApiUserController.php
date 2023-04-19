@@ -60,7 +60,8 @@ class ApiUserController extends Controller
             // No idea why.
             $ladder = $activeHandle->player->ladder;
             $player = $activeHandle->player;
-
+            $player['user_avatar_path'] = $player->user->avatar_path;
+            
             if ($activeHandle->player->ladder)
             {
                 if ($ladder->clans_allowed)
@@ -72,12 +73,13 @@ class ApiUserController extends Controller
                     }
                     $clan = $player->clanPlayer->clan;
                     $player->clanPlayer;
+                    
                 }
                 $playerList[] = $activeHandle->player;
             }
         }
 
-        return $playerList;
+        return $playerList; 
     }
 
     private function createPlayerForLaddersIfNoneExist(User $user)
