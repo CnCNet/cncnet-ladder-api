@@ -72,12 +72,13 @@ class ApiUserController extends Controller
                     }
                     $clan = $player->clanPlayer->clan;
                     $player->clanPlayer;
+                    $player['user_avatar_path'] = $player->user->avatar_path;
                 }
                 $playerList[] = $activeHandle->player;
             }
         }
 
-        return $playerList;
+        return $playerList; 
     }
 
     private function createPlayerForLaddersIfNoneExist(User $user)
