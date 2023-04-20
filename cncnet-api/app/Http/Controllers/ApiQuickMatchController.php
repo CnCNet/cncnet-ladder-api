@@ -177,7 +177,7 @@ class ApiQuickMatchController extends Controller
 
                 $duration = Carbon::now()->diff($dt);
                 $duration_formatted = $duration->format('%i mins %s sec');
-                $games[$tierName] = $player1 . " (" . $player1_side . ") vs " . $player2 . " (" . $qm->faction . ") on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
+                $games[$tierName][] = $player1 . " (" . $player1_side . ") vs " . $player2 . " (" . $qm->faction . ") on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
             }
         }
 
