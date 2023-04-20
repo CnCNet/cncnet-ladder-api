@@ -147,7 +147,6 @@ class ApiQuickMatchController extends Controller
             $user = $player->user;
             $tier = $player->playerHistory($history)->tier;
 
-
             $tierName = LeagueHelper::getLeagueNameByTier($tier);
 
             //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
@@ -177,7 +176,7 @@ class ApiQuickMatchController extends Controller
 
                 $duration = Carbon::now()->diff($dt);
                 $duration_formatted = $duration->format('%i mins %s sec');
-                $games[$tierName] = $player1 . " (" . $player1_side . ") vs " . $player2 . " (" . $qm->faction . ") on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
+                $games[$tierName][] = $player1 . " (" . $player1_side . ") vs " . $player2 . " (" . $qm->faction . ") on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
             }
         }
 
