@@ -495,6 +495,9 @@ class ClanController extends Controller
         return redirect()->back();
     }
 
+    /*
+     * Active an inactive clan. The owner will be assigned to the clan's previous owner, if that owner is not currently in a clan.
+     */
     public function activateClan(Request $request, $ladderAbbrev, $clanId)
     {
 
