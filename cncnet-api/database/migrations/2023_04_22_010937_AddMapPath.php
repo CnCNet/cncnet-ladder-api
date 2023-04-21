@@ -14,6 +14,11 @@ class AddMapPath extends Migration
     {
         Schema::table('maps', function (Blueprint $table)
         {
+            $table->dropColumn('image_path'); # path to image, `/maps/{$game}/{$filename}`
+        });
+
+        Schema::table('maps', function (Blueprint $table)
+        {
             $table->string('image_path'); # path to image, `/maps/{$game}/{$filename}`
         });
 
@@ -26,7 +31,7 @@ class AddMapPath extends Migration
                     continue;
                 $game = $map->ladder->game;
                 $hash = $map->hash;
-                $map->image_path = "/maps/$game/$hash.png";
+                $map->image_path = "/images/maps/$game/$hash.png";
                 $map->save();
             }
         });
