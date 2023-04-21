@@ -329,6 +329,7 @@ class ApiQuickMatchController extends Controller
     {
         $ladderRules = $ladder->qmLadderRules()->first();
         $history = $ladder->currentHistory();
+        $user = $player->user;
 
         # If we're new to the queue, create required QmMatchPlayer model
         if ($qmPlayer == null)

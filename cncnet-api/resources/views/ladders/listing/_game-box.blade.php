@@ -49,7 +49,9 @@
                         @if ($isClanGame)
                             <span class="ps-3 pe-1">
                                 <i class="bi bi-flag-fill icon-clan"></i>
-                                {{ $gamePlayer->clan->short }}
+                                @if ($gamePlayer->clan)
+                                    {{ $gamePlayer->clan->short }}
+                                @endif
                             </span>
                         @else
                             {{ $gamePlayer->player->username }}
