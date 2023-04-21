@@ -494,4 +494,52 @@ class ClanController extends Controller
         $request->session()->flash('success', "Sucessfully updated.");
         return redirect()->back();
     }
+
+    public function activateClan(Request $request, $ladderAbbrev, $clanId)
+    {
+
+        $ladder = Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
+
+        if ($ladder === null)
+            abort(404);
+
+        $clan = \App\Clan::where('id', $clanId)->first();
+
+        // clan not found
+        if ($clan == null)
+        {
+            $request->session()->flash('error', "Unable to locate the clan.");
+            return redirect()->back();
+        }
+
+        $playerId = $clan->ex_player_id;
+        $player = \App\Player::where('id', $playerId)->first();
+
+        if ($player == null)
+        {
+            $request->session()->flash('error', "Unable to locate the previous owner of this clan.");
+            return redirect()->back();
+        }
+
+        //is ex-owner of this clan already in a clan
+        if ($player->clanPlayer != null)
+        {
+            $playerName = $player->username;
+            $clanName = $player->clanPlayer->clan->short;
+            $request->session()->flash('error', "Player $playerName is already in clan $clanName");
+            return redirect()->back();
+        }
+
+        $clanPlayer = new ClanPlayer;
+        $clanPlayer->fill(['clan_id' => $clan->id, 'player_id' => $player->id]);
+        $clanPlayer->role = "Owner";
+        $clanPlayer->save();
+
+        $clan->ex_player_id = null;
+        $clan->save();
+
+        $clanName = $clan->short;
+        $request->session()->flash('success', "Sucessfully activated clan $clanName.");
+        return redirect()->back();
+    }
 }

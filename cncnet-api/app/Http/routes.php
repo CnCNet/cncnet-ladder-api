@@ -48,6 +48,7 @@ Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], funct
     Route::post('/invite/{clanId}', 'ClanController@saveInvitation');
     Route::post('/invite/{clanId}/process', 'ClanController@processInvitation');
     Route::post('/invite/{clanId}/cancel', 'ClanController@cancelInvitation');
+    Route::post('/activate/{id}', 'ClanController@activateClan');
     Route::post('/role/{clanId}', 'ClanController@role');
     Route::post('/kick/{clanId}', 'ClanController@kick');
     Route::post('/leave/{clanId}', 'ClanController@leave');

@@ -228,8 +228,9 @@
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Clan</th>
-                                                <th scope="col">Full Name</th>
+                                                <th scope="col">Clan Short</th>
+                                                <th scope="col">Full Clan Name</th>
+                                                <th scope="col">Ex-Owner Name</th>
                                                 <th scope="col">Activate</th>
                                             </tr>
                                         </thead>
@@ -251,7 +252,14 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <form method="POST" action="/clans/{{ $ladder->abbreviation }}/activate/{{ $myOldClan->clan_id }}">
+                                                    <div class="d-flex">
+                                                        <p>
+                                                            {{ $myOldClan->playerName }}
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <form method="POST" action="/clans/{{ $ladder->abbreviation }}/activate/{{ $myOldClan->id }}">
                                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                         <input type="hidden" name="id" value="{{ $myOldClan->id }}">
                                                         <button type="submit" name="submit" value="activate" class="btn btn-primary activate">Activate Clan</button>

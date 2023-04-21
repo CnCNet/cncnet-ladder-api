@@ -105,6 +105,7 @@ class AccountController extends Controller
 
              foreach($results as $result)
              {
+                $result['playerName'] = \App\Player::where('id', $result->ex_player_id)->first()->username;
                 $myOldClans[] = $result;
              }
         }
