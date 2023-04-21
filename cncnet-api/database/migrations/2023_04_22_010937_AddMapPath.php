@@ -14,11 +14,6 @@ class AddMapPath extends Migration
     {
         Schema::table('maps', function (Blueprint $table)
         {
-            $table->dropColumn('image_path'); # path to image, `/maps/{$game}/{$filename}`
-        });
-
-        Schema::table('maps', function (Blueprint $table)
-        {
             $table->string('image_path'); # path to image, `/maps/{$game}/{$filename}`
         });
 
