@@ -26,7 +26,7 @@ class AddMapPath extends Migration
                     continue;
                 $game = $map->ladder->game;
                 $hash = $map->hash;
-                $map->image_path = "/images/$game/$hash.png";
+                $map->image_path = "/maps/$game/$hash.png";
                 $map->save();
             }
         });
