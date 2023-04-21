@@ -143,6 +143,8 @@ class MapPoolController extends Controller
         {
             $filename = $map->hash . ".png";
             $filepath = config('filesystems')['map_images'] . "/" . $map->ladder->game; //store map images in game directory
+            $map->image_path = $filepath;
+            $map->save();
 
             $request->file('mapImage')->move($filepath, $filename);
         }

@@ -2,7 +2,6 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 class AddMapPath extends Migration
 {
@@ -15,27 +14,24 @@ class AddMapPath extends Migration
     {
         Schema::table('maps', function (Blueprint $table)
         {
+            $table->dropColumn('image_path');
+        });
+
+        Schema::table('maps', function (Blueprint $table)
+        {
             $table->string('image_path'); # path to image, `/maps/{$game}/{$filename}`
         });
 
-        # Cache all ladder_ids and game attribute
-        $hashmap[] = [];
-        \App\Ladder::all()->map(function ($ladder) use (&$hashmap)
-        {
-            $hashmap[$ladder->id] = $ladder->game;
-            return $hashmap;
-        });
-
         # add image path to all map objects
-        \App\Map::chunk(500, function ($maps) use (&$hashmap, &$output)
+        \App\Map::chunk(500, function ($maps)
         {
             foreach ($maps as $map)
             {
                 if ($map->ladder_id == 0)
                     continue;
-                $game = $hashmap[$map->ladder_id];
+                $game = $map->ladder->game;
                 $hash = $map->hash;
-                $map->image_path = "/maps/$game/$hash.png";
+                $map->image_path = config('filesystems')['map_images'] . "/$game/$hash.png";
                 $map->save();
             }
         });
