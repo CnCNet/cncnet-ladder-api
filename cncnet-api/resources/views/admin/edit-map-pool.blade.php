@@ -304,7 +304,7 @@
             let mapSels = document.querySelectorAll(".map-selector")
             for (let i = 0; i < mapSels.length; i++) {
                 mapSels[i].onchange = function() {
-                    document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" + ladderMaps[this.value].hash + ".png";
+                    document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + ladderMaps[this.value].hash + ".png";
                 }
             }
         })();
@@ -315,14 +315,14 @@
 
                 document.getElementById("ladderMapId").value = this.value;
                 document.getElementById("ladderMapName").value = ladderMap.name;
-                document.getElementById("ladderMapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" + ladderMap.hash + ".png"
+                document.getElementById("ladderMapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + ladderMap.hash + ".png"
             };
         })();
 
         (function() {
             let mps = document.getElementById("mapPoolSelector");
             mps.onchange = function() {
-                document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladderAbbrev }}/" + ladderMaps[maps[this.value].map_id].hash +
+                document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + ladderMaps[maps[this.value].map_id].hash +
                     ".png";
                 let hideList = document.querySelectorAll("div.map");
                 for (let i = 0; i < hideList.length; i++) {
