@@ -558,8 +558,7 @@ class LadderService
             ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
             ->where(function ($where)
             {
-                $where->where('qms.state_type_id', 1); # Finished 
-                $where->orWhere('qms.state_type_id', 3); # NotReached
+                $where->where('qms.state_type_id', 1); # Finished
                 $where->orWhere('qms.state_type_id', 6); # GameCrashed
                 $where->orWhere('qms.state_type_id', 7); # NotReady
             })

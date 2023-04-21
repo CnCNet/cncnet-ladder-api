@@ -60,7 +60,7 @@
                     <span class="material-symbols-outlined icon">
                         military_tech
                     </span>
-                    <strong>1vs1</strong> Ranked Matches - Popular hours to play
+                    Ranked Matches - Popular hours to play
                 </h3>
 
                 <p class="lead">
@@ -73,8 +73,8 @@
                     <strong>Times are based in UTC.</strong>
                 </p>
 
-                <div class="col-10 mt-5 m-auto">
-                    <canvas id="gamesPlayed" width="450" height="340" style="margin-top: 15px;"></canvas>
+                <div class="col-10 mt-5">
+                    <canvas id="gamesPlayed" width="500" height="250" style="margin-top: 15px;"></canvas>
                 </div>
             </div>
         </section>
@@ -82,8 +82,9 @@
 
     <script>
         const ctx = document.getElementById("gamesPlayed");
+        const labels = {!! json_encode($labels) !!};
         const data = {
-            labels: {!! json_encode($labels) !!},
+            labels: labels,
             datasets: [
                 <?php foreach($games as $game => $data): ?>
                 <?php $l = \App\Ladder::where('abbreviation', $game)->first(); ?> {
@@ -93,16 +94,47 @@
                     backgroundColor: "{!! \App\Helpers\ChartHelper::getChartColourByGameAbbreviation($game, 0.1) !!}",
                     borderColor: "{!! \App\Helpers\ChartHelper::getChartColourByGameAbbreviation($game) !!}",
                     tension: 0.1,
+                    pointRadius: 6,
+                    type: "line"
                 },
                 <?php endforeach; ?>
             ]
         };
+
+        var tests = labels;
+        var timezoneDataset = [];
+        for (let dateHour in labels) {
+            console.log(dateHour);
+            let currentHour = new Date().getHours();
+            if (currentHour == dateHour) {
+                timezoneDataset.push(1000);
+            } else {
+                timezoneDataset.push(0);
+            }
+        }
+
+        console.log(timezoneDataset);
+
+        data.datasets.push({
+            label: "Your timezone",
+            data: timezoneDataset,
+            backgroundColor: "rgb(113 255 127 / 100%)",
+            borderSkipped: false,
+            type: "bar",
+        });
 
         const config = {
             type: 'line',
             data: data,
             options: {
                 responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: () => "",
+                        }
+                    }
+                }
             }
         };
 
