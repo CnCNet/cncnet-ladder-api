@@ -326,7 +326,7 @@ class QuickMatchService
                 {
 
                     $qmPlayer = $team2[$i];
-                    $qmPlayer->color = $i + trim($team2SpawnOrder[$i]) - 1;
+                    $qmPlayer->color = trim($team2SpawnOrder[$i]) - 1;
                     $qmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
                 }
 
