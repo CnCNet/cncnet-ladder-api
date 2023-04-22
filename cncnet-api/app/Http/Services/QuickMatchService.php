@@ -314,10 +314,11 @@ class QuickMatchService
                 }
 
                 //assign team 1 spots
+                $color = 0;
                 for ($i = 0; $i < count($team1SpawnOrder); $i++)
                 {
                     $qmPlayer = $team1[$i];
-                    $qmPlayer->color = trim($team1SpawnOrder[$i]) - 1;
+                    $qmPlayer->color = $color++;
                     $qmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
                 }
 
@@ -326,7 +327,7 @@ class QuickMatchService
                 {
 
                     $qmPlayer = $team2[$i];
-                    $qmPlayer->color = trim($team2SpawnOrder[$i]) - 1;
+                    $qmPlayer->color = $color++;
                     $qmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
                 }
 
