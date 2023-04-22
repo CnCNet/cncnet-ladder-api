@@ -76,7 +76,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
         Log::info("ClanMatchupHandler ** Clan: " . $currentUserClan->short . " has: $playerCount opponents available.");
         Log::info("ClanMatchupHandler ** Opponent Count: $playerCount // MinPlayerCountRequired: $minPlayerCountForLadder");
 
-        if ($playerCount == 4)
+        if ($playerCount == $ladderRules->player_count)
         {
             return $this->createMatch(
                 $ladderMaps,
