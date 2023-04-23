@@ -1,10 +1,28 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class QmMatchPlayer extends Model {
+class QmMatchPlayer extends Model
+{
+    protected $_map_side_array = null;
 
-	//
+    public function map_side_array()
+    {
+        if ($this->_map_side_array === null)
+        {
+            $this->_map_side_array = explode(',', $this->mapSides->value);
+        }
+        return $this->_map_side_array;
+    }
+
+    # Relationships
+    public function clan()
+    {
+        return $this->belongsTo('App\Clan');
+    }
+
     public function qmMatch()
     {
         return $this->belongsTo('App\QmMatch');
@@ -18,16 +36,6 @@ class QmMatchPlayer extends Model {
     public function ladder()
     {
         return $this->belongsTo('App\Ladder');
-    }
-
-    protected $_map_side_array = null;
-    public function map_side_array()
-    {
-        if ($this->_map_side_array === null)
-        {
-            $this->_map_side_array = explode(',', $this->mapSides->value);
-        }
-        return $this->_map_side_array;
     }
 
     public function qEntry()
