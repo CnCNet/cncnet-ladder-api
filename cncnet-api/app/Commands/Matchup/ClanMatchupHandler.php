@@ -60,10 +60,15 @@ class ClanMatchupHandler extends BaseMatchupHandler
         {
             $commonQmMaps = $this->removeRejectedMaps($ladderMaps, $this->qmPlayer, $readyQMQueueEntries);
 
+            if (count($commonQMMaps) <= 0)
+                Log::info("0 commonQmMaps found, exiting...")
+            else
+            {
             return $this->createMatch(
-                $ladderMaps,
+                $commonQmMaps,
                 $readyQMQueueEntries
-            );
+            )
+        }
         }
     }
 
