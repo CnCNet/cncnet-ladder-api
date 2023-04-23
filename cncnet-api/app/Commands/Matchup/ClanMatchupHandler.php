@@ -58,19 +58,25 @@ class ClanMatchupHandler extends BaseMatchupHandler
 
         if ($playersReadyCount === $playerCountForMatchup)
         {
-            // $commonQmMaps = $this->removeRejectedMaps($ladderMaps, $this->qmPlayer, $readyQMQueueEntries);
+            $commonQmMaps = $this->removeRejectedMaps($ladderMaps, $this->qmPlayer, $readyQMQueueEntries);
 
+            if (count($commonQmMaps) <= 0)
+                Log::info("0 commonQmMaps found, exiting...");
+            else
+            {
             return $this->createMatch(
-                $ladderMaps,
+                $commonQmMaps,
                 $readyQMQueueEntries
             );
+            }
         }
     }
 
     private function removeRejectedMaps($qmMaps, $currentQmPlayer, $qmEntries)
     {
+        $team1 = [];
         $team1[] = $currentQmPlayer;
-        $team2[] = [];
+        $team2 = [];
 
         //assign other players to correct clan (assumes there are 2 clans)
         foreach ($qmEntries as $qmEntry)
