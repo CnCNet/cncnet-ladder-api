@@ -24,13 +24,13 @@ class BaseMatchupHandler
         $this->currentUserPlayerTier = $this->qmPlayer->player->getCachedPlayerTierByLadderHistory($this->history);
     }
 
-    public function createMatch($maps, $opponents)
+    public function createMatch($maps, $otherPlayers)
     {
         return $this->quickMatchService->createQmMatch(
             $this->qmPlayer,
             $this->currentUserPlayerTier,
             $maps,
-            $opponents,
+            $otherPlayers,
             $this->qmQueueEntry,
             $this->gameType
         );

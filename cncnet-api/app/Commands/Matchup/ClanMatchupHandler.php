@@ -16,8 +16,8 @@ class ClanMatchupHandler extends BaseMatchupHandler
 
         $currentPlayer = $this->qmPlayer->player;
         $currentUserClanPlayer = $currentPlayer->clanPlayer;
-        $minClanPlayersRequiredToMatch = floor($ladder->qmLadderRules->player_count / 2);
-        $minPlayerCountForLadder = $ladderRules->player_count;
+        $playerCountPerClanRequired = floor($ladderRules->player_count / 2); # (2) for a 2v2
+        $playerCountForMatchup = $ladderRules->player_count; # (4) for a 2v2
 
         if ($currentUserClanPlayer == null)
         {
@@ -25,94 +25,72 @@ class ClanMatchupHandler extends BaseMatchupHandler
             return $this->removeQueueEntry();
         }
 
-        $currentUserClan = $currentUserClanPlayer->clan;
+        # Fetch all entries who are currently in queue for this ladder
+        $qmQueueEntries = QmQueueEntry::where('ladder_history_id', '=', $this->history->id)->get();
 
-        # Fetch all opponents who are currently in queue for this ladder
-        $opponentQmQueueEntries = QmQueueEntry::where('qm_match_player_id', '<>', $this->qmQueueEntry->qmPlayer->id)
-            ->where('ladder_history_id', '=', $this->history->id)
-            ->get();
+        # Group queue entries by clan and make sure we only have the exact number of players in each
+        $groupedQmQueueEntries = $this->groupAndLimitClanPlayers($qmQueueEntries, $playerCountPerClanRequired);
 
-        # Check we have enough players in our clan before we go any further
-        $currentClanHasRequiredPlayers = $this->checkCurrentClanHasRequiredPlayers(
-            $opponentQmQueueEntries,
-            $currentUserClanPlayer,
-            $minClanPlayersRequiredToMatch
-        );
+        # Collection of QM Queued Players ready 
+        $qmQueueEntriesReady = (new QmQueueEntry())->newCollection();
 
-        if (!$currentClanHasRequiredPlayers)
+        foreach ($groupedQmQueueEntries as $clanId => $qmQueueEntries)
         {
-            Log::info("ClanMatchupHandler ** Clan: " . $currentUserClan->short . " has insufficient players");
-            return;
-        }
-
-        $clans = [];
-        foreach ($opponentQmQueueEntries as $opponentQmQueueEntry)
-        {
-            $clans[$opponentQmQueueEntry->qmPlayer->clan_id][] = $opponentQmQueueEntry;
-        }
-
-        $players = (new QmQueueEntry())->newCollection();
-        foreach ($clans as $clanId => $clanQueueEntries)
-        {
-            if (
-                $currentUserClan->id === $clanId
-                || count($clanQueueEntries) >= $minClanPlayersRequiredToMatch
-            )
+            # Check this clan has enough players to play
+            # Add them to players ready if so
+            if (count($qmQueueEntries) == $playerCountPerClanRequired)
             {
-                foreach ($clanQueueEntries as $clanQueueEntry)
+                foreach ($qmQueueEntries as $qmQueueEntry)
                 {
-                    $players->add($clanQueueEntry);
+                    # Exclude ourselves from this 
+                    if ($qmQueueEntry->id === $this->qmQueueEntry->id)
+                    {
+                        continue;
+                    }
+
+                    Log::info("ClanMatchupHandler ** " . $qmQueueEntry->qmPlayer->player->username . " added");
+                    $qmQueueEntriesReady->add($qmQueueEntry);
                 }
             }
         }
 
-        $playerCount = $players->count() + 1; // Plus ourselves
-
-        foreach ($players as $player)
-        {
-            Log::info("-- ClanMatchupHandler ** Player: " . $player->qmPlayer->player->username . " waiting");
-        }
-
-        Log::info("ClanMatchupHandler ** Clan: " . $currentUserClan->short . " has: $playerCount opponents available.");
-        Log::info("ClanMatchupHandler ** Opponent Count: $playerCount // MinPlayerCountRequired: $minPlayerCountForLadder");
-
-        if ($playerCount == $minPlayerCountForLadder)
+        $playersReadyCount = $qmQueueEntriesReady->count() + 1; // Plus ourselves
+        if ($playersReadyCount === $playerCountForMatchup)
         {
             return $this->createMatch(
                 $ladderMaps,
-                $players
+                $qmQueueEntriesReady
             );
         }
     }
 
 
     /**
-     * 
-     * @param mixed $opponentQmQueueEntries - Everyone else but us in the queue
-     * @param mixed $userClanPlayer - Current user in the queue requesting right now
-     * @param mixed $minCountRequired - Required number of players for a clan
-     * @return bool 
+     * Return QM Queue Entries grouped by clan
+     * @param mixed $allQMQueueEntries - All queue entries
+     * @param mixed $limit - Number of entries per clan
+     * @return array 
      */
-    private function checkCurrentClanHasRequiredPlayers($opponentQmQueueEntries, $userClanPlayer, $minCountRequired)
+    private function groupAndLimitClanPlayers($allQMQueueEntries, $limit)
     {
-        # How many clan players do we have in the queue
-        # Include ourselves = 1
-        $clanPlayerCountReady = 1;
+        $result = [];
 
-        # Everyone else in the queue thats not us
-        foreach ($opponentQmQueueEntries as $opponentQmQueueEntry)
+        # Loop over all QM Queue Entries and group them by clan
+        foreach ($allQMQueueEntries as $qmQueueEntry)
         {
-            # Check we're in the same clan and increase our players in the clan
-            $opponentQmMatchPlayer = $opponentQmQueueEntry->qmPlayer;
-
-            if ($opponentQmMatchPlayer && $opponentQmMatchPlayer->clan_id == $userClanPlayer->clan_id)
+            if (isset($result[$qmQueueEntry->qmPlayer->clan_id]))
             {
-                $clanPlayerCountReady++;
+                $count = count($result[$qmQueueEntry->qmPlayer->clan_id]);
+
+                # We've reached enough players in this clan for a match
+                if ($count == $limit)
+                {
+                    continue;
+                }
             }
+            $result[$qmQueueEntry->qmPlayer->clan_id][] = $qmQueueEntry;
         }
 
-        Log::info("ClanMatchupHandler ** " . $userClanPlayer->clan->short . " has $clanPlayerCountReady players ready");
-
-        return ($clanPlayerCountReady >= $minCountRequired);
+        return $result;
     }
 }
