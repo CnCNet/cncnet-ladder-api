@@ -113,9 +113,12 @@ class ClanMatchupHandler extends BaseMatchupHandler
 
         foreach ($qmMaps as $qmMap) # Loop through every qm map in this map pool
         {
+            $match = true;
             foreach ($allTeams as $team) # Loop through each team, if every member in team has rejected the map then exclude it
             {
-                $match = true;
+                if (!$match) # map was rejected by a clan
+                    break;
+
                 foreach ($team as $qmPlayer) # Loop through each member in the team
                 {
                     # If map index exists in qmPlayer side array,
@@ -136,15 +139,15 @@ class ClanMatchupHandler extends BaseMatchupHandler
                         $match = false; //map must be rejected by all members of team to be rejected
                     }
                 }
+            }
 
-                if ($match)
-                {
-                    $commonQMMaps[] = $qmMap;
-                }
-                else
-                {
-                    Log::info("ClanMatchupHandler.removeRejectedMaps() ** Rejecting QmMap: " . $qmMap->map->name);
-                }
+            if ($match) # map was not rejected by either clan
+            {
+                $commonQMMaps[] = $qmMap;
+            }
+            else
+            {
+                Log::info("ClanMatchupHandler.removeRejectedMaps() ** Rejecting QmMap: " . $qmMap->map->name);
             }
         }
 
