@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\ClanRole;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class Clan extends Model
@@ -105,6 +106,18 @@ class Clan extends Model
                 'scen',
                 'hash'
             );
+    }
+
+    public function totalGames24Hours($history)
+    {
+        $now = Carbon::now();
+        $start = $now->copy()->startOfDay();
+        $end = $now->copy()->endOfDay();
+
+        return $this->clanGames()
+            ->where("ladder_history_id", $history->id)
+            ->whereBetween("game_reports.created_at", [$start, $end])
+            ->count();
     }
 
     public function totalGames($history = null)

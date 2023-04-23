@@ -337,7 +337,7 @@ class LadderController extends Controller
         $userTier = $player->getCachedPlayerTierByLadderHistory($history);
 
         # Stats
-        $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
+        $graphGamesPlayedByMonth = $this->chartService->getPlayerGamesPlayedByMonth($player, $history);
         $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
         $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
@@ -416,13 +416,15 @@ class LadderController extends Controller
         {
             $userIsMod = true;
         }
+
+        $clanPlayers = $clan->clanPlayers;
+
         // $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
 
         # Stats
-        // $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
-        // $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
+        $graphGamesPlayedByMonth = $this->chartService->getClanGamesPlayedByMonth($clan, $history);
         // $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
-        // $playerGamesLast24Hours = $player->totalGames24Hours($history);
+        $clanGamesLast24Hours = $clan->totalGames24Hours($history);
         // $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
         // $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
         // $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $userPlayer, 3);
@@ -434,8 +436,11 @@ class LadderController extends Controller
                 "ladderPlayer" => null,
                 "history" => $history,
                 "clanCache" => $clanCache,
+                "clanPlayers" => $clanPlayers,
                 "games" => $games,
-                "userIsMod" => $userIsMod
+                "userIsMod" => $userIsMod,
+                "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
+                "clanGamesLast24Hours" => $clanGamesLast24Hours
             ]
         );
     }

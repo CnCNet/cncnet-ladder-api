@@ -157,22 +157,29 @@
                                     <span class="name">Average FPS:</span> {{ $clanCache->fps }}
                                 </div>
                                 <div class="stat-item">
-                                    {{-- <span class="name">Played today:</span> {{ $playerGamesLast24Hours }} --}}
+                                    <span class="name">Played today:</span> {{ $clanGamesLast24Hours }}
                                 </div>
                             </div>
                         </div>
 
                         <div class="column">
-                            <h5 class="stat-title">Top factions played</h5>
+                            <h5 class="stat-title">Clan players</h5>
                             <div>
-                                {{-- @include('ladders.player._player-factions') --}}
+                                @foreach ($clanPlayers as $clanPlayer)
+                                    @php $player = $clanPlayer->player; @endphp
+
+                                    <a class="" href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                        title="Go to {{ $player->username }}'s profile">
+                                        {{ $player->username }}
+                                    </a>
+                                @endforeach
                             </div>
                         </div>
 
                         <div class="column">
                             <h5 class="stat-title">Played this month</h5>
                             <div>
-                                {{-- @include('ladders.player._player-chart') --}}
+                                @include('ladders.player._player-chart')
                             </div>
                         </div>
                     </div>
