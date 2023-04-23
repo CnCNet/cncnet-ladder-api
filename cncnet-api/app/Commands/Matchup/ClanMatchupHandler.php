@@ -26,40 +26,41 @@ class ClanMatchupHandler extends BaseMatchupHandler
         }
 
         # Fetch all entries who are currently in queue for this ladder
-        $qmQueueEntries = QmQueueEntry::where('ladder_history_id', '=', $this->history->id)->get();
+        $allQMQueueEntries = QmQueueEntry::where('ladder_history_id', '=', $this->history->id)->get();
 
         # Group queue entries by clan and make sure we only have the exact number of players in each
-        $groupedQmQueueEntries = $this->groupAndLimitClanPlayers($qmQueueEntries, $playerCountPerClanRequired);
+        $groupedQmQueueEntriesByClan = $this->groupAndLimitClanPlayers($allQMQueueEntries, $playerCountPerClanRequired);
 
         # Collection of QM Queued Players ready 
-        $qmQueueEntriesReady = (new QmQueueEntry())->newCollection();
+        $readyQMQueueEntries = (new QmQueueEntry())->newCollection();
 
-        foreach ($groupedQmQueueEntries as $clanId => $qmQueueEntries)
+        foreach ($groupedQmQueueEntriesByClan as $clanId => $allQMQueueEntries)
         {
             # Check this clan has enough players to play
             # Add them to players ready if so
-            if (count($qmQueueEntries) == $playerCountPerClanRequired)
+            if (count($allQMQueueEntries) == $playerCountPerClanRequired)
             {
-                foreach ($qmQueueEntries as $qmQueueEntry)
+                foreach ($allQMQueueEntries as $qmQueueEntry)
                 {
-                    # Exclude ourselves from this 
-                    if ($qmQueueEntry->id === $this->qmQueueEntry->id)
+                    Log::info("ClanMatchupHandler ** Player " . $qmQueueEntry->qmPlayer->player->username . " ready from Clan:" . $qmQueueEntry->qmPlayer->clan->short);
+
+                    if ($qmQueueEntry->id == $this->qmQueueEntry->id)
                     {
+                        # Don't add ourselves
                         continue;
                     }
-
-                    Log::info("ClanMatchupHandler ** " . $qmQueueEntry->qmPlayer->player->username . " added");
-                    $qmQueueEntriesReady->add($qmQueueEntry);
+                    $readyQMQueueEntries->add($qmQueueEntry);
                 }
             }
         }
 
-        $playersReadyCount = $qmQueueEntriesReady->count() + 1; // Plus ourselves
+        $playersReadyCount = $readyQMQueueEntries->count() + 1; # Add ourselves to this count
+
         if ($playersReadyCount === $playerCountForMatchup)
         {
             return $this->createMatch(
                 $ladderMaps,
-                $qmQueueEntriesReady
+                $readyQMQueueEntries
             );
         }
     }
