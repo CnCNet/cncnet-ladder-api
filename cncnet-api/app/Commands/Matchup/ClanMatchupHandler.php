@@ -58,13 +58,80 @@ class ClanMatchupHandler extends BaseMatchupHandler
 
         if ($playersReadyCount === $playerCountForMatchup)
         {
+            $commonQmMaps = $this->removeRejectedMaps($ladderMaps, $this->qmPlayer, $readyQMQueueEntries);
+
             return $this->createMatch(
-                $ladderMaps,
+                $commonQmMaps,
                 $readyQMQueueEntries
             );
         }
     }
 
+    private function removeRejectedMaps($qmMaps, $currentQmPlayer, $qmEntries)
+    {
+        $team1[] = $currentQmPlayer;
+        $team2[] = [];
+
+        //assign other players to correct clan (assumes there are 2 clans)
+        foreach ($qmEntries as $qmEntry)
+        {
+            if ($qmEntry->qmPlayer->id == $currentQmPlayer->id)
+                continue;
+
+            if ($qmEntry->qmPlayer->clan_id == $currentQmPlayer->clan_id)
+                $team1[] = $qmEntry->qmPlayer;
+            else
+                $team2[] = $qmEntry->qmPlayer;
+        }
+
+        $commonQMMaps = [];
+
+        $allTeams = [];
+        $allTeams[] = $team1;
+        $allTeams[] = $team2;
+
+        foreach ($qmMaps as $qmMap) # Loop through every qm map in this map pool
+        {
+            $match = true;
+            foreach ($allTeams as $team) # Loop through each team, if every member in team has rejected the map then exclude it
+            {
+                if (!$match) # map was rejected by a clan
+                    break;
+
+                foreach ($team as $qmPlayer) # Loop through each member in the team
+                {
+                    # If map index exists in qmPlayer side array,
+                    # and qmPlayer's side is greater than -2 (-2 = rejected),
+                    # and qmPlayer's side is in QmMap sides,
+                    # Then add map to commonMaps
+                    if (
+                        array_key_exists($qmMap->bit_idx, $qmPlayer->map_side_array())
+                        && $qmPlayer->map_side_array()[$qmMap->bit_idx] > -2
+                        && in_array($qmPlayer->map_side_array()[$qmMap->bit_idx], $qmMap->sides_array())
+                    )
+                    {
+                        $match = true;
+                        break; //this map is valid for at least one member of this team, so this map will be added
+                    }
+                    else
+                    {
+                        $match = false; //map must be rejected by all members of team to be rejected
+                    }
+                }
+            }
+
+            if ($match) # map was not rejected by either clan
+            {
+                $commonQMMaps[] = $qmMap;
+            }
+            else
+            {
+                Log::info("ClanMatchupHandler.removeRejectedMaps() ** Rejecting QmMap: " . $qmMap->map->name);
+            }
+        }
+
+        return $commonQMMaps;
+    }
 
     /**
      * Return QM Queue Entries grouped by clan
