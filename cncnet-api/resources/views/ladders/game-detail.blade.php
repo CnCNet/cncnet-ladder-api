@@ -141,28 +141,56 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
         <div class="game-players-container">
             <div class="container">
                 <section class="game-players">
-                    @foreach ($playerGameReports as $k => $pgr)
-                        @php $gameStats = $pgr->stats; @endphp
-                        @php $player = $pgr->player()->first(); @endphp
-                        @php $playerCache = $player->playerCache($history->id);@endphp
-                        @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
-                        @php $points = $playerCache ? $playerCache->points : 0;@endphp
-                        @php $clanCache = $player->clanPlayer->clanCache($history->id);@endphp
 
-                        @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
-                            <div class="player-vs d-flex align-items-center">
-                                <h1>Vs</h1>
-                            </div>
-                        @endif
+                    @if ($isClanGame)
+                        @php $clans = []; @endphp
+                        @foreach ($playerGameReports as $k => $pgr)
+                            @php
+                                $clans[$pgr->clan_id][] = $pgr;
+                            @endphp
+                        @endforeach
 
-                        @if ($isClanGame && $clanCache)
-                            @include('ladders.game._clan-card')
-                        @endif
+                        @php $i = 0; @endphp
+                        @foreach ($clans as $clanId => $pgrArr)
+                            @foreach ($pgrArr as $k => $pgr)
+                                @php $gameStats = $pgr->stats; @endphp
+                                @php $player = $pgr->player()->first(); @endphp
+                                @php $playerCache = $player->playerCache($history->id);@endphp
+                                @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
+                                @php $points = $playerCache ? $playerCache->points : 0;@endphp
+                                @php $clanCache = $player->clanPlayer->clanCache($history->id);@endphp
 
-                        @if (!$isClanGame)
+                                @if ($clanCache)
+                                    @include('ladders.game._clan-card')
+                                @endif
+                            @endforeach
+
+                            @if ($i == 0)
+                                <div class="player-vs d-flex align-items-center">
+                                    <h1>Vs</h1>
+                                </div>
+                            @endif
+
+                            @php $i++; @endphp
+                        @endforeach
+                    @else
+                        @foreach ($playerGameReports as $k => $pgr)
+                            @php $gameStats = $pgr->stats; @endphp
+                            @php $player = $pgr->player()->first(); @endphp
+                            @php $playerCache = $player->playerCache($history->id);@endphp
+                            @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
+                            @php $points = $playerCache ? $playerCache->points : 0;@endphp
+                            @php $clanCache = $player->clanPlayer->clanCache($history->id);@endphp
+
+                            @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
+                                <div class="player-vs d-flex align-items-center">
+                                    <h1>Vs</h1>
+                                </div>
+                            @endif
+
                             @include('ladders.game._player-card')
-                        @endif
-                    @endforeach
+                        @endforeach
+                    @endif
                 </section>
             </div>
         </div>
