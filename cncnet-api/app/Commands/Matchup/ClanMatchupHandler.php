@@ -42,7 +42,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
             {
                 foreach ($allQMQueueEntries as $qmQueueEntry)
                 {
-                    Log::info("ClanMatchupHandler ** Player " . $qmQueueEntry->qmPlayer->player->username . " ready from Clan:" . $qmQueueEntry->qmPlayer->clan->short);
+                    Log::info("ClanMatchupHandler ** Player Ready: " . $qmQueueEntry->qmPlayer->player->username . " [" . $qmQueueEntry->qmPlayer->clan->short . "]");
 
                     if ($qmQueueEntry->id == $this->qmQueueEntry->id)
                     {
