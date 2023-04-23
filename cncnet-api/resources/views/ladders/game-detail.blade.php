@@ -180,7 +180,6 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
                             @php $playerCache = $player->playerCache($history->id);@endphp
                             @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
                             @php $points = $playerCache ? $playerCache->points : 0;@endphp
-                            @php $clanCache = $player->clanPlayer->clanCache($history->id);@endphp
 
                             @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
                                 <div class="player-vs d-flex align-items-center">

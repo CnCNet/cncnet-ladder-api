@@ -35,6 +35,11 @@
                         $gameStats = $pgr->stats;
                         $player = $pgr->player()->first();
                         
+                        try {
+                            $clan = $pgr->clan;
+                        } catch (Exception $ex) {
+                        }
+                        
                         # Player positions plotted onto map preview
                         $playerX = 0;
                         $playerY = 0;
@@ -72,6 +77,10 @@
                             <div class="player-details">
                                 <div class="username">
                                     {{ $player->username }}
+
+                                    @if ($clan)
+                                        [{{ $clan->short }}]
+                                    @endif
                                 </div>
 
                                 <div class="status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
