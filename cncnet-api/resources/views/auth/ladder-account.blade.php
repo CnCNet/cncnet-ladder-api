@@ -10,9 +10,11 @@
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">CnCNet</strong>
-                        <span>Ladder Account</span>
+                        <strong class="fw-bold">{{ $ladder->name }}</strong>
                     </h1>
+                    <p class="lead">
+                        Manage everything to do with Ranked Matches on {{ $ladder->name }}
+                    </p>
                 </div>
             </div>
             <div class="mini-breadcrumb d-none d-lg-flex">
@@ -21,7 +23,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        {{ $user->name }}'s Account
+                        All Ladder Accounts
                     </a>
                 </div>
                 <div class="mini-breadcrumb-item">
@@ -95,25 +97,25 @@
                     @if ($ladder->abbreviation == 'blitz')
                         <h2 class="mt-4">New player to play Blitz?</h2>
                         <p>Join the Discord and watch the videos below to get started!</p>
-                        <section class="useful-links d-md-flex mt-4">
+                        <div class="useful-links d-md-flex mt-2">
                             <div class="me-3">
-                                <a href="{{ $ladder->qmLadderRules->ladder_discord }}" class="btn btn-primary btn-size-md">
+                                <a href="{{ $ladder->qmLadderRules->ladder_discord }}" class="btn btn-secondary btn-size-md">
                                     <i class="bi bi-discord pe-2"></i> {{ $ladder->name }} Discord
                                 </a>
                             </div>
 
                             <div class="me-3">
-                                <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-primary btn-size-md" target="_blank">
+                                <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-secondary btn-size-md" target="_blank">
                                     <i class="bi bi-youtube pe-2"></i> How-To Play Blitz Online
                                 </a>
                             </div>
 
                             <div>
-                                <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-primary btn-size-md" target="_blank">
+                                <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-secondary btn-size-md" target="_blank">
                                     <i class="bi bi-youtube pe-2"></i> Tips & Tricks - New Blitz Players
                                 </a>
                             </div>
-                        </section>
+                        </div>
                     @elseif ($ladder->game == 'yr')
                         <h3 class="mt-4">New player?</h3>
                         <p>Join the Discord community for tips on how to play!</p>
@@ -130,11 +132,12 @@
             <div class="row">
                 <div class="col-md-12 mb-5 mt-5">
                     @if ($ladder->clans_allowed)
-                        <h4>My Active Clans</h4>
+                        <h4><i class="bi bi-flag-fill icon-clan pe-3"></i> My Active Clans</h4>
 
                         @if ($activeHandles->count() > 0)
                             <p>
-                                Please note: You are allowed to be in {{ $ladder->qmLadderRules->max_active_players }} clans at a time. If you have played
+                                Please note: You are allowed to be in {{ $ladder->qmLadderRules->max_active_players }} clans at a time. If you have
+                                played
                                 in any games in a clan this month, you may not leave that clan until next month.<br />
                             </p>
 
@@ -223,7 +226,7 @@
                                 <div class="row">
                                     <div class="col-md-12 mb-5 mt-5">
                                         @if ($ladder->clans_allowed)
-                                            <h4>My Inactive Clans</h4>
+                                            <h4><i class="bi bi-flag-fill icon-clan pe-3"></i> My Inactive Clans</h4>
 
                                             <div>
                                                 <div class="table-responsive">
@@ -266,7 +269,7 @@
                                                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                                                             <input type="hidden" name="id" value="{{ $myOldClan->id }}">
                                                                             <button type="submit" name="submit" value="activate"
-                                                                                class="btn btn-primary activate">Activate Clan</button>
+                                                                                class="btn btn-primary btn-size-md activate">Activate Clan</button>
                                                                         </form>
                                                                     </td>
                                                                 </tr>
@@ -281,7 +284,7 @@
 
                                 <div class="row mb-5">
                                     <div class="table-responsive">
-                                        <h4>Your clan invites</h4>
+                                        <h4><i class="bi bi-flag-fill icon-clan pe-3"></i> Your clan invites</h4>
                                         <p>If someone has invited you to a clan, they will appear here. </p>
 
                                         <table class="table">

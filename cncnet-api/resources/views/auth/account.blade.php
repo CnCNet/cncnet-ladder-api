@@ -14,6 +14,20 @@
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Account</span>
                     </h1>
+                    <p class="lead">
+                        Below are the Ranked Ladders aavailable to play on. Click into a game to manage your ladder account, <br />
+                        including creating usernames and managing clans.
+                    </p>
+                </div>
+            </div>
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/account">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                        All Ladder Accounts
+                    </a>
                 </div>
             </div>
         </div>
@@ -63,18 +77,18 @@
             </div>
 
             <div class="mt-4 mb-4 pt-4">
-                <h2>
+                <h3>
                     <span class="material-symbols-outlined icon pe-2">
                         settings
                     </span>
                     <strong>Account</strong> Settings
-                </h2>
+                </h3>
             </div>
 
-            <p class="lead">Manage all of your ladder account settings, including Ladder Avatar, Social links and Points filter.</p>
+            <p class="lead">Manage all ladder account settings, including Ladder Avatar, Social links and Points filter.</p>
 
             @if (isset($userSettings))
-                <a href="account/settings" class="btn btn-outline btn-size-md">Ladder Account Settings</a>
+                <a href="account/settings" class="btn btn-outline btn-size-md">All Ladder Account Settings</a>
             @endif
         </div>
 
@@ -92,7 +106,7 @@
                             <span class="material-symbols-outlined icon">
                                 military_tech
                             </span>
-                            <strong>1vs1</strong> Ladders
+                            <strong>1vs1</strong> Player Ladders
                         </h2>
 
                         <p class="lead col-md-8 mb-4">
@@ -115,7 +129,7 @@
                             <span class="material-symbols-outlined icon">
                                 military_tech
                             </span>
-                            <strong>Clan</strong> Ladders
+                            <strong>2vs2 Clan</strong> Ladders
                         </h2>
                         <div class="d-flex flex-wrap">
                             @foreach ($clan_ladders as $history)
