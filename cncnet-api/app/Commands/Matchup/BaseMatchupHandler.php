@@ -24,7 +24,7 @@ class BaseMatchupHandler
         $this->currentUserPlayerTier = $this->qmPlayer->player->getCachedPlayerTierByLadderHistory($this->history);
     }
 
-    public function createMatch($maps, $otherPlayers)
+    public function createMatch($maps, $otherQMQueueEntries)
     {
         $this->removeQueueEntry();
 
@@ -32,7 +32,7 @@ class BaseMatchupHandler
             $this->qmPlayer,
             $this->currentUserPlayerTier,
             $maps,
-            $otherPlayers,
+            $otherQMQueueEntries,
             $this->qmQueueEntry,
             $this->gameType
         );
