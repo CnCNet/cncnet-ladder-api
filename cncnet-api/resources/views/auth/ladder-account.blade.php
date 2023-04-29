@@ -188,38 +188,31 @@
                                                         <button type="button" class="btn btn-danger btn-md" data-bs-toggle="modal"
                                                             data-bs-target="#submitLeaveClan">Leave Clan</button>
 
-                                                        <div class="modal fade" id="submitLeaveClan" tabIndex="-1" role="dialog">
-                                                            <div class="modal-dialog modal-md" role="document">
+                                                        <div class="modal fade" tabindex="-1" id="submitLeaveClan" tabIndex="-1" role="dialog">
+                                                            <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
-                                                                        <button type="button" class="close" data-bs-dismiss="modal"
-                                                                            aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                                        <h5 class="modal-title">Leave the clan?</h5>
+                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                            aria-label="Close"></button>
                                                                     </div>
-                                                                    <div class="modal-body clearfix">
-                                                                        <div class="container-fluid">
-                                                                            <div class="row content">
-                                                                                <div class="col-md-12 player-box player-card list-inline">
 
-                                                                                    <div style="display: inline-block">
-                                                                                        <form method="POST"
-                                                                                            action="/clans/{{ $ladder->abbreviation }}/leave/{{ $clanPlayer->clan->id }}/">
-                                                                                            <input type="hidden" name="_token"
-                                                                                                value="{{ csrf_token() }}">
-                                                                                            <input type="hidden" name="id"
-                                                                                                value="{{ $clanPlayer->id }}">
-                                                                                            <h3 class="modal-title">Are you sure you want to leave clan
-                                                                                                {{ $clanPlayer->clan->name }}?</h3>
-                                                                                            <button type="submit" name="submit" value="leave"
-                                                                                                class="btn btn-danger">Leave Clan</button>
-                                                                                        </form>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
+                                                                    <div class="modal-body">
+                                                                        <form method="POST"
+                                                                            action="/clans/{{ $ladder->abbreviation }}/leave/{{ $clanPlayer->clan->id }}/">
+                                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                                            <input type="hidden" name="id" value="{{ $clanPlayer->id }}">
+
+                                                                            <p>Are you sure you want to leave the clan:
+                                                                                <strong>{{ $clanPlayer->clan->name }}</strong>?
+                                                                            </p>
+
+                                                                            <button type="submit" name="submit" value="leave"
+                                                                                class="btn btn-danger">I want to leave</button>
+                                                                        </form>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
                                                     </td>
                                                 </tr>
                                             @endforeach
@@ -444,7 +437,7 @@
                             <input type="username" name="username" class="form-control border" id="username" placeholder="username">
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Create ladder player username</button>
+                        <button type="submit" class="btn btn-primary btn-size-md">Create ladder player username</button>
                     </form>
                 </div>
             </div>
@@ -543,9 +536,7 @@
                         <div class="row">
                             <div class="col-md-12 player-box player-card" style="padding:8px;margin:8px;">
                                 <div class="account-box">
-
                                 </div>
-
                             </div>
                         </div>
                     </div>
