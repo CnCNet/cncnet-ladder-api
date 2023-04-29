@@ -309,21 +309,21 @@ class QuickMatchService
                 $team1[] = $qmPlayer;
 
                 //assign other players to correct clan (assumes there are 2 clans)
-                foreach ($otherPlayers as $qmOpn)
+                foreach ($otherPlayers as $qmOpnEntry)
                 {
-                    if ($qmOpn->clan_id == $qmPlayer->clan_id)
-                        $team1[] = $qmOpn;
+                    if ($qmOpnEntry->qmPlayer->clan_id == $qmPlayer->clan_id && $qmOpnEntry->qmPlayer->id != $qmPlayer->id)
+                        $team1[] = $qmOpnEntry->qmPlayer;
                     else
-                        $team2[] = $qmOpn;
+                        $team2[] = $qmOpnEntry->qmPlayer;
                 }
 
                 if (count($team1) != count($team1SpawnOrder))
                 {
-                    Log::info("Expected " . count($team1SpawnOrder) . " players but found " . count($team1));
+                    Log::info("Team1: Expected " . count($team1SpawnOrder) . " players but found " . count($team1));
                 }
                 else if (count($team2) != count($team2SpawnOrder))
                 {
-                    Log::info("Expected " . count($team2SpawnOrder) . " players but found " . count($team2));
+                    Log::info("Team2: Expected " . count($team2SpawnOrder) . " players but found " . count($team2));
                 }
                 else
                 {
