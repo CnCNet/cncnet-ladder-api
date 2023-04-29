@@ -248,7 +248,14 @@ class QuickMatchService
         return $qmMatch;
     }
 
-    public function createQmMatch($qmPlayer, $userPlayerTier, $maps, $otherPlayers, $qEntry, $gameType)
+    public function createQmMatch(
+        $qmPlayer,
+        $userPlayerTier,
+        $maps,
+        $otherQMQueueEntries,
+        $qEntry,
+        $gameType
+    )
     {
         $randomMapIndex = mt_rand(0, count($maps) - 1);
 
@@ -307,7 +314,7 @@ class QuickMatchService
                 $team1[] = $qmPlayer;
 
                 //assign other players to correct clan (assumes there are 2 clans)
-                foreach ($otherPlayers as $qmOpnEntry)
+                foreach ($otherQMQueueEntries as $qmOpnEntry)
                 {
                     if ($qmOpnEntry->qmPlayer->clan_id == $qmPlayer->clan_id && $qmOpnEntry->qmPlayer->id != $qmPlayer->id)
                         $team1[] = $qmOpnEntry->qmPlayer;
@@ -379,7 +386,7 @@ class QuickMatchService
         }));
 
         $color = 1;
-        foreach ($otherPlayers as $qOpn)
+        foreach ($otherQMQueueEntries as $qOpn)
         {
             $opn = $qOpn->qmPlayer;
             $qOpn->delete();
