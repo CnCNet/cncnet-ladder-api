@@ -128,6 +128,8 @@ class QuickMatchSpawnService
 
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
 
+        $myTeamIndices = [];
+        $myTeamIndices[] = $myIndex;
         foreach ($otherQmPlayers as $opn)
         {
             $spawnStruct["spawn"]["Other{$otherIdx}"] = [
@@ -163,6 +165,7 @@ class QuickMatchSpawnService
                 Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
                 $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
                 $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
+                $myTeamIndices[] = $multiIdx;
             }
 
             $otherIdx++;
@@ -175,6 +178,38 @@ class QuickMatchSpawnService
                     $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
                 }
             }
+        }
+
+        //create multi alliance for opponent's team
+        $completed = false;
+        foreach ($otherQmPlayers as $opn)
+        {
+            $multiIdx = $opn->color + 1;
+
+            if (!in_array($multiIdx, $myTeamIndices)) //this index is opponent's team
+            {
+                foreach ($otherQmPlayers as $opn2) //find teammate(s)
+                {
+                    $otherIdx = $opn2->color + 1;
+
+                    if ($otherIdx == $multiIdx) //self
+                        continue;
+
+                    if (!in_array($otherIdx, $myTeamIndices)) //this index is opponent's teammate
+                    {
+                        $p1Name = $opn->player->username;
+                        $p2Name = $opn2->player->username;
+
+                        Log::info("PlayerIndex ** assigning opponents $p1Name with $p2Name");
+                        $spawnStruct["spawn"]["Multi{$otherIdx}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
+                        $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $otherIdx - 1;
+                        $completed = true;
+                    }
+                }
+            }
+
+            if ($completed)
+                break;
         }
 
         # Set observer index if they exist
