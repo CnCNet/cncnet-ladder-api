@@ -43,11 +43,11 @@ class QuickMatchSpawnService
                 "GameID" =>         $qmMatch->seed,
                 "WOLGameID" =>      $qmMatch->seed,
                 "Host" =>           "No",
-                "IsSpectator" =>    "No",
                 "Name" =>           $qmPlayer->player()->first()->username,
                 "Port" =>           $qmPlayer->port,
                 "Side" =>           $qmPlayer->actual_side,
-                "Color" =>          $qmPlayer->color
+                "Color" =>          $qmPlayer->color,
+                "IsSpectator" =>    "False"
                 // Filter null values
             ],
             function ($var)
@@ -113,6 +113,19 @@ class QuickMatchSpawnService
         $otherIdx = 1;
         $multiIdx = $qmPlayer->color + 1;
         $myIndex = $multiIdx;
+        $observerIndex = -1;
+
+        # Checks if player is observer
+        $observerPlayerName = null; # Set to "neogrant" or "burg" for tests
+        $myPlayerUsername = $qmPlayer->player->username;
+
+        if ($myPlayerUsername == $observerPlayerName)
+        {
+            $observerIndex = $myIndex;
+            $spawnStruct["spawn"]["Settings"]["IsSpectator"] = "True";
+            Log::info("Setting $myPlayerUsername getting set as spectator");
+        }
+
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
 
         foreach ($otherQmPlayers as $opn)
@@ -126,8 +139,18 @@ class QuickMatchSpawnService
                 "IPv6" => $opn->ipv6Address ? $opn->ipv6Address->address : "",
                 "PortV6" => $opn->ipv6_port,
                 "LanIP" => $opn->lan_address ? $opn->lan_address->address : "",
-                "LanPort" => $opn->lan_port
+                "LanPort" => $opn->lan_port,
+                "IsSpectator" => false
             ];
+
+            # Set the observer
+            if ($opn->player->username == $observerPlayerName)
+            {
+                Log::info("$observerPlayerName is set to spec in other players spawn.ini");
+                $spawnStruct["spawn"]["Other{$otherIdx}"]["IsSpectator"] = true;
+                $observerIndex = $otherIdx;
+            }
+
             $multiIdx = $opn->color + 1;
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $opn->location;
 
@@ -151,6 +174,15 @@ class QuickMatchSpawnService
                 {
                     $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
                 }
+            }
+        }
+
+        # Set observer index if they exist
+        if ($observerIndex !== null)
+        {
+            foreach ($otherQmPlayers as $opn)
+            {
+                $spawnStruct["isspectator"]["Multi$observerIndex"] = "True";
             }
         }
 
