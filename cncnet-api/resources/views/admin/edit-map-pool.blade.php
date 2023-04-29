@@ -113,7 +113,7 @@
                                         <div class="form-group col-md-4">
                                             <input type="checkbox" id="{{ $qmMap->id }}_random_spawns" name="random_spawns"
                                                 @if ($qmMap->random_spawns) checked @endif />
-                                                <label for="{{ $qmMap->id }}_random_spawns">Random Spawns (any spots)</label>
+                                            <label for="{{ $qmMap->id }}_random_spawns">Random Spawns (any spots)</label>
                                         </div>
 
                                         <div class="form-group col-md-12">
@@ -131,14 +131,16 @@
                                     </div>
 
                                     <div class="col-4">
-                                        <div class="form-group">
-                                            <label> 
-                                                    <small for="spawnCount"> Spawn Count: {{ $qmMap->map->spawn_count}} </small>
+                                        @if ($qmMap->map)
+                                            <div class="form-group">
+                                                <label>
+                                                    <small for="spawnCount"> Spawn Count: {{ $qmMap->map->spawn_count }} </small>
                                                 </label>
                                                 <label>
-                                                    <small for="hash"> Map Hash: {{ $qmMap->map->hash}} </small>
+                                                    <small for="hash"> Map Hash: {{ $qmMap->map->hash }} </small>
                                                 </label>
-                                        </div>
+                                            </div>
+                                        @endif
                                         <div class="col-md-12">
                                             <?php $sideIdsAllowed = array_map('intval', explode(',', $qmMap->allowed_sides)); ?>
                                             <label>Allowed Sides</label>
