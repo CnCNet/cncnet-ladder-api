@@ -302,6 +302,8 @@ class QuickMatchService
             if ($qmPlayer->clan_id)
             {
                 //map each player to their clan
+                $team1 = [];
+                $team2 = [];
                 $team1[] = $qmPlayer;
 
                 //assign other players to correct clan (assumes there are 2 clans)
@@ -325,7 +327,6 @@ class QuickMatchService
                 //assign team 2 spots
                 for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
                 {
-
                     $qmPlayer = $team2[$i];
                     $qmPlayer->color = $color++;
                     $qmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
