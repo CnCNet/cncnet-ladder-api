@@ -28,14 +28,12 @@
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        Your clans
+                        {{ $user->name }}'s Account
                     </a>
                 </div>
                 <div class="mini-breadcrumb-item">
                     <a href="#">
-                        <span class="material-symbols-outlined icon pe-3">
-                            settings
-                        </span>
+                        <i class="bi bi-flag-fill pe-3"></i>
                         Manage Clan
                     </a>
                 </div>
@@ -65,9 +63,7 @@
                 </li>
                 <li class="breadcrumb-item">
                     <a href="#">
-                        <span class="material-symbols-outlined icon pe-3">
-                            settings
-                        </span>
+                        <i class="bi bi-flag-fill pe-3"></i>
                         Manage Clan
                     </a>
                 </li>
