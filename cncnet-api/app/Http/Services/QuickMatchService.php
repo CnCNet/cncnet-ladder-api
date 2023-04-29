@@ -293,8 +293,6 @@ class QuickMatchService
         //check if team spots are configured, if this is a clan match
         $team1SpawnOrder = explode(',', $qmMap->team1_spawn_order); //e.g. 1,2
         $team2SpawnOrder = explode(',', $qmMap->team2_spawn_order); //e.g. 3,4
-        Log::info($qmMap->team1_spawn_order . " - " . $qmMap->team2_spawn_order);
-        Log::info(count($team1SpawnOrder) . " - " . count($team2SpawnOrder));
         $teamSpotsAssigned = false;
         if (
             $ladder->clans_allowed && count($team1SpawnOrder) == $ladder->qmLadderRules->player_count / 2
@@ -327,24 +325,23 @@ class QuickMatchService
                 }
                 else
                 {
-
                     //assign team 1 spots
                     $color = 0;
                     for ($i = 0; $i < count($team1SpawnOrder); $i++) //red + yellow
                     {
-                        Log::info("i=" . $i . ", team_count=" . count($team1));
                         $qmPlayer = $team1[$i];
                         $qmPlayer->color = $color++;
                         $qmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
+                        $qmPlayer->save();
                     }
 
                     //assign team 2 spots
                     for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
                     {
-                        Log::info("i=" . $i . ", team_count=" . count($team2));
                         $qmPlayer = $team2[$i];
                         $qmPlayer->color = $color++;
                         $qmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
+                        $qmPlayer->save();
                     }
 
                     $teamSpotsAssigned = true;
