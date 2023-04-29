@@ -129,6 +129,7 @@ class QuickMatchSpawnService
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
 
         $myTeamIndices = [];
+        $myTeamIndices[] = $myIndex;
         foreach ($otherQmPlayers as $opn)
         {
             $spawnStruct["spawn"]["Other{$otherIdx}"] = [
@@ -199,7 +200,7 @@ class QuickMatchSpawnService
                         $p1Name = $opn->player->username;
                         $p2Name = $opn2->player->username;
 
-                        Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
+                        Log::info("PlayerIndex ** assigning opponents $p1Name with $p2Name");
                         $spawnStruct["spawn"]["Multi{$otherIdx}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
                         $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $otherIdx - 1;
                         $completed = true;
