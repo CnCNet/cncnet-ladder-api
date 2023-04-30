@@ -360,12 +360,12 @@ class QuickMatchService
 
         # Set up player specific information
         # Color will be used for spawn location
+        $qmPlayer = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
         if (!$teamSpotsAssigned) //spots were team assigned
         {
             $qmPlayer->color = 0;
             $qmPlayer->location = $spawnOrder[$qmPlayer->color] - 1;
         }
-        $qmPlayer = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
         $qmPlayer->qm_match_id = $qmMatch->id;
         $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
 

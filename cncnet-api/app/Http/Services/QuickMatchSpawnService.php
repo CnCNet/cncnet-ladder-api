@@ -128,6 +128,11 @@ class QuickMatchSpawnService
 
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
 
+        if ($qmPlayer->player->user->userSettings->skip_score_screen == 'Yes')
+        {
+            $spawnStruct["spawn"]["Settings"]["SkipScoreScreen"] = "Yes";
+        }
+
         $myTeamIndices = [];
         $myTeamIndices[] = $myIndex;
         foreach ($otherQmPlayers as $opn)
