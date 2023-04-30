@@ -128,7 +128,7 @@ class QuickMatchSpawnService
 
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
 
-        if ($qmPlayer->player->user->userSettings->skip_score_screen == 'Yes')
+        if ($qmPlayer->player->user->userSettings->skip_score_screen)
         {
             $spawnStruct["spawn"]["Settings"]["SkipScoreScreen"] = "Yes";
         }

@@ -358,6 +358,7 @@ class AccountController extends Controller
             $userSettings->user_id = $user->id;
         }
         $userSettings->disabledPointFilter = $request->disabledPointFilter == "on" ? true : false;
+        $userSettings->skip_score_screen = $request->skip_score_screen == "on" ? true : false;
         // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
         $userSettings->match_ai = $request->matchAI == "on" ? true : false;
         $userSettings->save();
@@ -367,6 +368,7 @@ class AccountController extends Controller
         {
             $user->removeAvatar();
         }
+        
 
         $newDiscordProfile = $request->discord_profile;
 
@@ -387,6 +389,7 @@ class AccountController extends Controller
         $user->discord_profile = $newDiscordProfile;
         $user->youtube_profile = $request->youtube_profile;
         $user->twitch_profile = $request->twitch_profile;
+    
 
 
         # User Avatar
