@@ -351,7 +351,8 @@ class QuickMatchService
                         $qmPlayer->save();
                     }
 
-                    Log::info("Team spawns have been assigned per the QmMap team spots");
+                    $mapName = $qmMap->map->name;
+                    Log::info("Team spawns have been assigned per the QmMap team spots for map $mapName");
                     $teamSpotsAssigned = true;
                 }
             }
