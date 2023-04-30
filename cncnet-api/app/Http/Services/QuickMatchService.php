@@ -336,19 +336,19 @@ class QuickMatchService
                     $color = 0;
                     for ($i = 0; $i < count($team1SpawnOrder); $i++) //red + yellow
                     {
-                        $qmPlayer = $team1[$i];
-                        $qmPlayer->color = $color++;
-                        $qmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
-                        $qmPlayer->save();
+                        $currentQmPlayer = $team1[$i];
+                        $currentQmPlayer->color = $color++;
+                        $currentQmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
+                        $currentQmPlayer->save();
                     }
 
                     //assign team 2 spots
                     for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
                     {
-                        $qmPlayer = $team2[$i];
-                        $qmPlayer->color = $color++;
-                        $qmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
-                        $qmPlayer->save();
+                        $currentQmPlayer = $team2[$i];
+                        $currentQmPlayer->color = $color++;
+                        $currentQmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
+                        $currentQmPlayer->save();
                     }
 
                     $mapName = $qmMap->map->name;
@@ -365,6 +365,7 @@ class QuickMatchService
             $qmPlayer->color = 0;
             $qmPlayer->location = $spawnOrder[$qmPlayer->color] - 1;
         }
+        $qmPlayer = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
         $qmPlayer->qm_match_id = $qmMatch->id;
         $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
 
@@ -391,6 +392,7 @@ class QuickMatchService
         foreach ($otherQMQueueEntries as $qOpn)
         {
             $opn = $qOpn->qmPlayer;
+            $opn = \App\QmMatchPlayer::where('id', $opn->id)->first();
             $qOpn->delete();
 
             if ($opn === null)
