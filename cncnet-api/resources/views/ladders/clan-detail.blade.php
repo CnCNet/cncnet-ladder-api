@@ -167,11 +167,12 @@
                             <div>
                                 @foreach ($clanPlayers as $clanPlayer)
                                     @php $player = $clanPlayer->player; @endphp
-
-                                    <a class="" href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
-                                        title="Go to {{ $player->username }}'s profile">
-                                        {{ $player->username }}
-                                    </a>
+                                    <div>
+                                        <a class="" href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                            title="Go to {{ $player->username }}'s profile">
+                                            {{ $player->username }}
+                                        </a>
+                                    </div>
                                 @endforeach
                             </div>
                         </div>

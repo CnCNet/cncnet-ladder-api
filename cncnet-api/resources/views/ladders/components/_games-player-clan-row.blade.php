@@ -2,18 +2,13 @@
 
      <div class="player-row">
          <div class="ms-3 me-3">
-             <a href="{{ $profileUrl }}" title="View {{ $playerGameReport->player->username }}'s profile">
-                 @include('components.avatar', ['avatar' => $playerGameReport->player->user->getUserAvatar(), 'size' => 55])
+             <a href="{{ $profileUrl }}" title="View {{ $clanName }}'s profile">
+                 @include('components.avatar', ['avatar' => $avatar, 'size' => 55])
              </a>
          </div>
          <div class="player-username">
              <p class="fw-bold mb-1">
                  <a href="{{ $clanProfileUrl }}" title="View clan {{ $clanName }}'s profile">{{ $clanName }}</a>
-             </p>
-             <p class="mb-1">
-                 <a href="{{ $profileUrl or '' }}" title="View {{ $playerGameReport->player->username }}'s profile">
-                     {{ $playerGameReport->player->username }}
-                 </a>
              </p>
          </div>
      </div>
