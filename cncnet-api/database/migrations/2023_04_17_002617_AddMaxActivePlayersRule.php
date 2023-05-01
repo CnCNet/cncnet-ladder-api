@@ -18,7 +18,7 @@ class AddMaxActivePlayersRule extends Migration
         });
 
         // Migration failed on staging
-        /*
+
         $ladderRules = \App\QmLadderRules::all();
 
         foreach ($ladderRules as $ladderRule)
@@ -28,7 +28,6 @@ class AddMaxActivePlayersRule extends Migration
 
             $ladderRule->max_active_players = 1;
         }
-        */
     }
 
     /**
