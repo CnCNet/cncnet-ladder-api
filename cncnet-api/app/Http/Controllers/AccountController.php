@@ -103,11 +103,11 @@ class AccountController extends Controller
         {
             $results = \App\Clan::where('ex_player_id', $player->id)->get();
 
-             foreach($results as $result)
-             {
+            foreach ($results as $result)
+            {
                 $result['playerName'] = \App\Player::where('id', $result->ex_player_id)->first()->username;
                 $myOldClans[] = $result;
-             }
+            }
         }
 
         Log::info($myOldClans);
@@ -272,7 +272,7 @@ class AccountController extends Controller
         {
             $activeHandle = PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $user->id);
 
-            $request->session()->flash('success', $player->username . ' is now active on the ladder.');
+            $request->session()->flash('success', $player->username . ' is now active on the ladder. You can now play in Ranked Matches!');
             return redirect()->back();
         }
 
@@ -368,7 +368,7 @@ class AccountController extends Controller
         {
             $user->removeAvatar();
         }
-        
+
 
         $newDiscordProfile = $request->discord_profile;
 
@@ -389,7 +389,7 @@ class AccountController extends Controller
         $user->discord_profile = $newDiscordProfile;
         $user->youtube_profile = $request->youtube_profile;
         $user->twitch_profile = $request->twitch_profile;
-    
+
 
 
         # User Avatar

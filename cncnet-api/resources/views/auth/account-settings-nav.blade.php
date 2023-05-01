@@ -7,7 +7,5 @@
     </h2>
 </div>
 
-@if (isset($userSettings))
-    <a href="/account" class="btn btn-outline {{ request()->is('account') ? 'active' : '' }} me-3" }}>Manage Ladder Account</a>
-    <a href="/account/settings" class="btn btn-outline {{ request()->is('account/settings') ? 'active' : '' }}">Ladder Account Settings</a>
-@endif
+<a href="/account" class="btn btn-outline {{ request()->is('account') ? 'active' : '' }} me-3" }}>Manage Ladder Account</a>
+<a href="/account/settings" class="btn btn-outline {{ request()->is('account/settings') ? 'active' : '' }}">Ladder Account Settings</a>

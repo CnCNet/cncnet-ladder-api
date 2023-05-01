@@ -81,6 +81,10 @@
                 </div>
             </div>
 
+            <div class="mb-5">
+                @include('auth.account-settings-nav')
+            </div>
+
             <div class="row">
                 @if (!$user->email_verified)
                     <div class="mt-4 mb-4">
@@ -337,7 +341,9 @@
                                     </div>
                                 </div>
                             @else
-                                <p> You have to register an account for this ladder before you can join a clan</p>
+                                <p class="lead">
+                                    You have to register and activate a username below for this ladder before you can join a clan
+                                </p>
                         @endif
                     </div>
                 @endif
