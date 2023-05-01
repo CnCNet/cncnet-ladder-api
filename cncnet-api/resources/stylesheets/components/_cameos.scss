@@ -92,6 +92,7 @@
     height: 48px;
 }
 
+
 // RA 
 .ra-cameo.cameo-1tnkicon { background-position: 0 0; } 
 .ra-cameo.cameo-2tnkicon { background-position: -64px 0; } 
@@ -813,3 +814,29 @@
 .blitz-cameo.cameo-falcicon { background-position: -7260px 0; } 
 .blitz-cameo.cameo-spypicon { background-position: -7320px 0; } 
 .blitz-cameo.cameo-psybicon { background-position: -7380px 0; }
+
+
+.ra-cl-cameo 
+{
+    @extend .ra-cameo;
+}
+
+.ts-cl-cameo 
+{
+    @extend .ts-cameo;
+}
+
+.ra2-cl-cameo 
+{
+    @extend .ra2-cameo;
+}
+
+.yr-cl-cameo 
+{
+    @extend .yr-cameo;
+}
+
+.blitz-cl-cameo 
+{
+    @extend .blitz-cameo;
+}

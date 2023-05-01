@@ -7,7 +7,8 @@
         </a>
     </div>
 
-    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" data-timestamp="{{ $date->timestamp }}" title="View game">
+    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" data-timestamp="{{ $date->timestamp }}"
+        title="View game">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
             <small class="status text-capitalize">{{ $status . ' ' . $date->diffForHumans() }}</small>
@@ -26,7 +27,15 @@
         </div>
 
         <div class="footer text-center {{ $history->ladder->abbreviation }}">
-            <?php $gamePlayerResults = $gamePlayers->get(); ?>
+            <?php
+            $gamePlayerResults = $gamePlayers->get();
+            if ($isClanGame) {
+                $gamePlayerResults = $gamePlayers->groupBy('clan_id')->get();
+            } else {
+                $gamePlayerResults = $gamePlayers->get();
+            }
+            ?>
+
             @foreach ($gamePlayerResults as $k => $gamePlayer)
                 <div class="player {{ $gamePlayer->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
 
@@ -37,7 +46,17 @@
                     @endif
 
                     <h5>
-                        {{ $gamePlayer->player->username }}
+                        @if ($isClanGame)
+                            <span class="ps-3 pe-1">
+                                <i class="bi bi-flag-fill icon-clan"></i>
+                                @if ($gamePlayer->clan)
+                                    {{ $gamePlayer->clan->short }}
+                                @endif
+                            </span>
+                        @else
+                            {{ $gamePlayer->player->username }}
+                        @endif
+
                         <span class="points">
                             {{ $gamePlayer->points >= 0 ? "+$gamePlayer->points" : $gamePlayer->points }}
                         </span>

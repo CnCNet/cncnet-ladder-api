@@ -43,9 +43,9 @@ class ChartService
         });
     }
 
-    public function getGamesPlayedByMonth($player, $history)
+    public function getPlayerGamesPlayedByMonth($player, $history)
     {
-        return Cache::remember("getGamesPlayedByMonth/$history->short/$player->id", 5, function () use ($player, $history)
+        return Cache::remember("getPlayerGamesPlayedByMonth/$history->short/$player->id", 5, function () use ($player, $history)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
@@ -70,6 +70,51 @@ class ChartService
                 $results[$dateKey]["won"] = $wins;
 
                 $losses = $player->playerGames()
+                    ->where("ladder_history_id", $history->id)
+                    ->whereBetween("player_game_reports.created_at", [$s, $e])
+                    ->where("won", false)
+                    ->count();
+
+                $results[$dateKey]["lost"] = $losses;
+            }
+
+            $resultCollection = collect($results);
+
+            return [
+                "labels" => array_keys($results),
+                "data_games_won" => $resultCollection->pluck("won"),
+                "data_games_lost" => $resultCollection->pluck("lost"),
+            ];
+        });
+    }
+
+    public function getClanGamesPlayedByMonth($clan, $history)
+    {
+        return Cache::remember("getClanGamesPlayedByMonth/$history->short/$clan->id", 5, function () use ($clan, $history)
+        {
+            $now = $history->starts;
+            $from = $now->copy()->startOfMonth()->toDateTimeString();
+            $to = $now->copy()->endOfMonth()->toDateTimeString();
+
+            $period = CarbonPeriod::create($from, $to);
+
+            $results = [];
+            foreach ($period as $date)
+            {
+                $dateKey = $date->format("Y-m-d");
+
+                $s = $date->copy()->startOfDay();
+                $e = $date->copy()->endOfDay();
+
+                $wins = $clan->clanGames()
+                    ->where("ladder_history_id", $history->id)
+                    ->whereBetween("player_game_reports.created_at", [$s, $e])
+                    ->where("won", true)
+                    ->count();
+
+                $results[$dateKey]["won"] = $wins;
+
+                $losses = $clan->clanGames()
                     ->where("ladder_history_id", $history->id)
                     ->whereBetween("player_game_reports.created_at", [$s, $e])
                     ->where("won", false)

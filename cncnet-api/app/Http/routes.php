@@ -1,5 +1,7 @@
 <?php
 
+use App\GameReport;
+use App\Http\Services\LadderService;
 use \App\User;
 
 Route::get('/', function ()
@@ -12,6 +14,8 @@ Route::get('/help/obs', 'SiteController@getOBSHelp');
 Route::get('/donate', 'SiteController@getDonate');
 Route::get('/ranking', 'RankingController@getIndex');
 
+
+# 1vs1 Player Ladders
 Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
 {
     Route::get('/', 'LadderController@getLadders');
@@ -19,13 +23,37 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
     Route::get('{date}/{game}', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
     Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');
+
     Route::get('{date}/{game}/player/', 'LadderController@getLadderIndex');
     Route::get('{date}/{game}/player/{player}', 'LadderController@getLadderPlayer');
     Route::get('{date}/{game}/player/{player}/achievements', 'LadderController@getPlayerAchievementsPage');
+
+    Route::get('{date}/{game}/clan/', 'LadderController@getLadderIndex');
+    Route::get('{date}/{game}/clan/{clan}', 'LadderController@getLadderClan');
+    Route::get('{date}/{game}/clan/{clan}/achievements', 'LadderController@getPlayerAchievementsPage');
+
     Route::get('{date}/{game}/games/{gameId}', 'LadderController@getLadderGame');
     Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
-    Route::get('{date}/{game}/badges', 'LadderController@getBadgesIndex');
 });
+
+Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
+{
+    Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
+
+    Route::post('/edit/{clanId}', 'ClanController@saveLadderClan');
+    Route::post('/edit/{clanId}/members', 'ClanController@saveMembers');
+    Route::post('/edit/{clanId}/avatar', 'ClanController@saveLadderAvatar');
+    //Route::post('/edit/new', 'ClanController@saveLadderClan');
+
+    Route::post('/invite/{clanId}', 'ClanController@saveInvitation');
+    Route::post('/invite/{clanId}/process', 'ClanController@processInvitation');
+    Route::post('/invite/{clanId}/cancel', 'ClanController@cancelInvitation');
+    Route::post('/activate/{id}', 'ClanController@activateClan');
+    Route::post('/role/{clanId}', 'ClanController@role');
+    Route::post('/kick/{clanId}', 'ClanController@kick');
+    Route::post('/leave/{clanId}', 'ClanController@leave');
+});
+
 
 Route::controllers([
     'auth' => 'Auth\AuthController',
@@ -147,10 +175,13 @@ Route::group(['prefix' => 'api/v1/auth/'], function ()
     Route::post('/login', 'ApiAuthController@login');
 });
 
-
-Route::group(['prefix' => 'api/v1/', 'middleware' => 'jwt.auth'], function ()
+Route::group([
+    'prefix' => 'api/v1/',
+    'middleware' => 'jwt.auth'
+], function ()
 {
     Route::get('/user/account', 'ApiUserController@getAccount');
+
     Route::get('/user/ladders', 'ApiUserController@getPrivateLadders');
     Route::post('/user/create', 'ApiUserController@createUser');
 
@@ -219,25 +250,4 @@ Route::group(['prefix' => 'api/v1/irc', 'middleware' => 'cache.ultra.public'], f
     Route::get('/{abbreviation}/players', 'ApiIrcController@getPlayerNames');
     Route::get('/{abbreviation}/clans', ['middleware' => 'cache.public', 'uses' => 'ApiIrcController@getClans']);
     Route::get('/hostmasks', 'ApiIrcController@getHostmasks');
-});
-
-Route::group(['prefix' => 'clans', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
-{
-    Route::get('/', 'ClanController@getIndex');
-    Route::get('/{ladderAbbrev}/leaderboards/{date}', 'ClanController@getListing');
-});
-
-Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
-{
-    Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
-    Route::post('/edit/{clanId}', 'ClanController@saveLadderClan');
-    Route::post('/edit/{clanId}/members', 'ClanController@saveMembers');
-    //Route::post('/edit/new', 'ClanController@saveLadderClan');
-
-    Route::post('/invite/{clanId}', 'ClanController@saveInvitation');
-    Route::post('/invite/{clanId}/process', 'ClanController@processInvitation');
-    Route::post('/invite/{clanId}/cancel', 'ClanController@cancelInvitation');
-    Route::post('/role/{clanId}', 'ClanController@role');
-    Route::post('/kick/{clanId}', 'ClanController@kick');
-    Route::post('/leave/{clanId}', 'ClanController@leave');
 });

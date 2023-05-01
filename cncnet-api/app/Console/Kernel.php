@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\PruneRawLogs',
         'App\Console\Commands\PruneOldStats',
         'App\Console\Commands\UpdatePlayerCache',
+        'App\Console\Commands\UpdateClanCache',
         'App\Console\Commands\GenerateBulkRecords',
         'App\Console\Commands\UpdateIrc',
         'App\Console\Commands\AprilFoolsPurge',

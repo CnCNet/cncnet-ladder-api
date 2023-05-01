@@ -12,6 +12,9 @@
                         <strong class="fw-bold">Ladder</strong>
                         <span>Account Settings</span>
                     </h1>
+                    <p class="lead">
+                        Global ladder account settings, manage point filters, ladder avatars.
+                    </p>
                 </div>
             </div>
 
@@ -28,7 +31,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        {{ $user->name }}'s account
+                        Manage Ladder Account
                     </a>
                 </div>
                 <div class="mini-breadcrumb-item">
@@ -36,7 +39,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             settings
                         </span>
-                        Account Settings
+                        Ladder Account Settings
                     </a>
                 </div>
             </div>
@@ -60,7 +63,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        {{ $user->name }}'s account
+                        Manage Ladder Account
                     </a>
                 </li>
                 <li class="breadcrumb-item">
@@ -68,7 +71,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             settings
                         </span>
-                        Account Settings
+                        Ladder Account Settings
                     </a>
                 </li>
             </ol>
@@ -77,13 +80,17 @@
 @endsection
 
 @section('content')
-    <section class="mt-4 pt-4">
+    <section class="">
         <div class="container">
 
             <div class="row">
                 <div class="col-md-12">
                     @include('components.form-messages')
                 </div>
+            </div>
+
+            <div class="mb-5">
+                @include('auth.account-settings-nav')
             </div>
 
             <div class="row">
@@ -94,7 +101,7 @@
                         {{-- TODO future functionality will use this value, no need to have users touch this yet
                     <input id="enableAnonymous" type="checkbox" name="enableAnonymous"  value="{{ $userSettings->enableAnonymous }}" @if ($userSettings->enableAnonymous) checked @endif />
                     <label for="enableAnonymous"> Enable Anonymity </label>
-                --}}
+                    --}}
 
                         @if ($user->getIsAllowedToUploadAvatar() == false)
                             <h4>Ladder Avatar Disabled</h4>
@@ -127,10 +134,10 @@
                         @endif
 
                         <div class="form-group">
-                            <h3>Ladder AI Match making preference</h3>
+                            <h3>Match Ladder AI Bot?</h3>
                             <p>
                                 This preference is only for the {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(2) }}.
-                                If no matches are found after some time, would you like to match against an AI?
+                                If no matches are found after some time you are matched against an AI.
                             </p>
                             <p>
                                 <label>
@@ -164,29 +171,39 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group mt-5 mb-5">
+                            <h3>Skip Score Screen</h3>
+                            <label>
+                                <input id="skip_score_screen" type="checkbox" name="skip_score_screen" @if ($userSettings->skip_score_screen) checked @endif />
+                                Skip the score screen after a match ends
+                            </label>
+                        </div>
+
+                        <div class="form-group mt-5">
                             <h3>Social profiles</h3>
                             <p>
-                                These will be shown on all your ladder profiles. Do not enter URLs.
+                                These will be shown on all your ladder profiles. <strong class="highlight">Do not enter URLs to your social
+                                    profiles</strong>.
                             </p>
                         </div>
 
-                        <div class="form-group mt-2">
-                            <label for="twitch">Twitch username, e.g. <strong>myTwitchUsername</strong></label>
+                        <div class="form-group
+                            mt-2">
+                            <label for="twitch">Twitch username <strong>E.g. myTwitchUsername</strong></label>
                             <input id="twitch" type="text" class="form-control" name="twitch_profile" value="{{ $user->twitch_profile }}"
-                                placeholder="Enter your Twitch username only" />
+                                placeholder="Enter your Twitch username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2">
-                            <label for="discord">Discord username, E.g. user#9999</label>
+                            <label for="discord">Discord username, <strong>E.g. user#9999</strong></label>
                             <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}"
-                                placeholder="Enter your Discord username only" />
+                                placeholder="Enter your Discord username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2">
-                            <label for="youtube">YouTube channel name e.g. <strong>myYouTubeChannel</strong></label>
+                            <label for="youtube">YouTube channel name <strong>E.g. myYouTubeChannel</strong></label>
                             <input id="youtube" type="text" class="form-control" name="youtube_profile" value="{{ $user->youtube_profile }}"
-                                placeholder="Enter your YouTube username only" />
+                                placeholder="Enter your YouTube username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2 mb-2">

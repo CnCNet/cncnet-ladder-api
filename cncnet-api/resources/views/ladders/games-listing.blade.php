@@ -8,7 +8,8 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
@@ -17,7 +18,13 @@
                         <span>Ladder Rankings</span>
                     </h1>
                     <p class="lead text-uppercase">
-                        <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
+                        <small>{{ $history->starts->format('F Y') }} -
+                            @if ($history->ladder->clans_allowed)
+                                <strong>Clan Ranked Match</strong>
+                            @else
+                                <strong>1 vs 1 Ranked Match</strong>
+                            @endif
+                        </small>
                     </p>
                 </div>
 

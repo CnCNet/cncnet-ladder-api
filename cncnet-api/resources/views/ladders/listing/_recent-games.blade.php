@@ -11,6 +11,7 @@
                     @include('ladders.listing._game-box', [
                         'url' => '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id,
                         'game' => $history->ladder->abbreviation,
+                        'isClanGame' => $history->ladder->clans_allowed,
                         'gamePlayers' => $game->playerGameReports(),
                         'gameReport' => $game->report()->first(),
                         'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',

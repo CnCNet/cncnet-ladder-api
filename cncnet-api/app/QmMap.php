@@ -34,6 +34,7 @@ class QmMap extends Model {
         return $qmMaps->map( function($qmMap)
         {
             $qmMap["hash"] = $qmMap->map->hash;
+            $qmMap->map['image_url'] = asset($qmMap->map->image_path);
             $qmMap["allowed_sides"] = array_map('intval', explode(',', $qmMap->allowed_sides));
             return $qmMap;
         });

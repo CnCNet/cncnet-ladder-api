@@ -147,7 +147,6 @@ class ApiQuickMatchController extends Controller
             $user = $player->user;
             $tier = $player->playerHistory($history)->tier;
 
-
             $tierName = LeagueHelper::getLeagueNameByTier($tier);
 
             //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
@@ -368,23 +367,37 @@ class ApiQuickMatchController extends Controller
 
         if ($playerWillMatchAI == true)
         {
-            # Send spawn info to play against AI 
+            # Delete player from queue if they were in one.
+            if ($qmPlayer->qEntry != null)
+            {
+                $qmPlayer->qEntry->delete();
+            }
+
+            $gameType = Game::GAME_TYPE_1VS1_AI;
+
+            # Match against AI
             return $this->onHandle1vs1AIMatchupRequest(
                 $qmPlayer,
                 $userPlayerTier,
                 $history,
-                Game::GAME_TYPE_1VS1_AI,
+                $gameType,
                 $ladder,
                 $ladderRules
             );
         }
 
-        # Ladder settings can later dictate this.
-        $gameType = Game::GAME_TYPE_1VS1;
-
         if ($qmPlayer->qEntry !== null)
         {
             $gameType = $qmPlayer->qEntry->game_type;
+        }
+        else
+        {
+            $gameType = Game::GAME_TYPE_1VS1;
+
+            if ($history->ladder->clans_allowed)
+            {
+                $gameType = Game::GAME_TYPE_2VS2;
+            }
         }
 
         return $this->onHandlePlayersMatchupRequest(
@@ -506,7 +519,7 @@ class ApiQuickMatchController extends Controller
         }
 
         # Write the spawn.ini "Others" sections
-        $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni(
+        $spawnStruct = QuickMatchSpawnService::appendOthersAndTeamAlliancesToSpawnIni(
             $spawnStruct,
             $qmPlayer,
             $playersReady

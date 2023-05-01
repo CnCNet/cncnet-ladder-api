@@ -1,18 +1,22 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+namespace App\Http\Controllers;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
 use App\Ladder;
 use App\Clan;
+use App\ClanCache;
 use App\ClanPlayer;
 use App\ClanRole;
 use App\ClanInvitation;
 use App\Player;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
-class ClanController extends Controller {
-
+class ClanController extends Controller
+{
     protected $ladderService = null;
 
     public function __construct()
@@ -20,26 +24,44 @@ class ClanController extends Controller {
         $this->ladderService = new \App\Http\Services\LadderService;
     }
 
-    public function getIndex(Request $request)
+    public function saveLadderAvatar(Request $request)
     {
+        $this->validate($request, [
+            "avatar" => "image|mimes:jpg,jpeg,png,gif|max:2000",
+        ]);
 
-        $clan_ladders = $this->ladderService->getLatestClanLadders();
-        $ladders = $this->ladderService->getLatestLadders();
 
-        return view('clans.index', [ 'ladders' => $ladders, 'clan_ladders' => $clan_ladders, ]);
-    }
+        $clan = Clan::find($request->id);
+        if ($clan == null)
+        {
+            $request->session()->flash('success', "Clan not found");
+            return redirect()->back();
+        }
 
-    public function getListing(Request $request, $ladderAbbrev, $date)
-    {
-        $clan_ladders = $this->ladderService->getLatestClanLadders();
-        $ladders = $this->ladderService->getLatestLadders();
+        # Clan Avatar
+        if ($request->file("avatar"))
+        {
+            $file = $request->file("avatar");
+            if ($file->getClientOriginalExtension() == "gif")
+            {
+                $hash = md5($file->__toString());
+                $path = "avatars/clans/{$clan->id}/{$hash}.gif";
+                copy($file->getRealPath(), $path);
+            }
+            else
+            {
+                $avatar = Image::make($request->file('avatar')->getRealPath())->resize(300, 300)->encode("png");
+                $hash = md5($avatar->__toString());
+                $path = "avatars/clans/{$clan->id}/{$hash}.png";
+                Storage::put($path, $avatar);
+            }
 
-        $history = $this->ladderService->getActiveLadderByDate($date, $ladderAbbrev);
-        $ladders_previous = $this->ladderService->getPreviousLaddersByGame($date, $ladderAbbrev);
+            $clan->avatar_path = $path;
+            $clan->save();
+        }
 
-        $search = $request->search;
-
-        return view('clans.listing', compact('clan_ladders', 'ladders', 'history', 'ladders_previous', 'search'));
+        $request->session()->flash('success', "Successfully updated Clan Avatar.");
+        return redirect()->back();
     }
 
     public function editLadderClan(Request $request, $ladderAbbrev, $clanId)
@@ -66,7 +88,20 @@ class ClanController extends Controller {
         $invitations = $clan->invitations;
 
         $roles = ClanRole::all();
-        return view('clans.edit', compact('clan_ladders', 'ladders', 'user', 'ladder', 'clan', 'player', 'invitations', 'roles'));
+
+        return view(
+            'clans.edit',
+            compact(
+                'clan_ladders',
+                'ladders',
+                'user',
+                'ladder',
+                'clan',
+                'player',
+                'invitations',
+                'roles'
+            )
+        );
     }
 
     public function saveLadderClan(Request $request, $ladderAbbrev, $clanId = 'new')
@@ -75,8 +110,9 @@ class ClanController extends Controller {
         $ladders = $this->ladderService->getLatestLadders();
         $ladder = Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
 
-        $this->validate($request, [ 'short' => 'required|string|max:6|unique:clans,short,'.$clanId,
-                                    'name'  => 'required|string|max:255|unique:clans,name,'.$clanId,
+        $this->validate($request, [
+            'short' => 'required|string|max:6|unique:clans,short,' . $clanId,
+            'name'  => 'required|string|max:255|unique:clans,name,' . $clanId,
         ]);
 
         $player = Player::find($request->player_id);
@@ -101,12 +137,12 @@ class ClanController extends Controller {
             $clan->save();
 
             $clanPlayer = new ClanPlayer;
-            $clanPlayer->fill([ 'clan_id' => $clan->id, 'player_id' => $player->id ]);
+            $clanPlayer->fill(['clan_id' => $clan->id, 'player_id' => $player->id]);
             $clanPlayer->role = "Owner";
             $clanPlayer->save();
 
             $clanInvite = new ClanInvitation;
-            $clanInvite->fill([ 'clan_id' => $clan->id, 'author_id' => $player->id, 'player_id' => $player->id, 'type' => 'invited' ]);
+            $clanInvite->fill(['clan_id' => $clan->id, 'author_id' => $player->id, 'player_id' => $player->id, 'type' => 'invited']);
             $clanInvite->save();
             $clanInvite->delete();
 
@@ -137,7 +173,7 @@ class ClanController extends Controller {
             $request->session()->flash('success', "Successfully updated clan.");
         }
 
-        return redirect()->action('ClanController@editLadderClan', ['ladderAbbrev' => $ladderAbbrev, 'clanId' => $clan->id ]);
+        return redirect()->action('ClanController@editLadderClan', ['ladderAbbrev' => $ladderAbbrev, 'clanId' => $clan->id]);
     }
 
     public function saveInvitation(Request $request, $ladderAbbrev, $clanId)
@@ -174,13 +210,13 @@ class ClanController extends Controller {
             return redirect()->back();
         }
 
-        if (! ($requester->clanPlayer->isOwner() || $requester->clanPlayer->isManager()))
+        if (!($requester->clanPlayer->isOwner() || $requester->clanPlayer->isManager()))
         {
             $request->session()->flash('error', "You don't have permission to invite players. You have to be an Owner or Manager");
             return redirect()->back();
         }
 
-        $invitation = ClanInvitation::firstOrNew( [ 'clan_id' => $clan->id, 'player_id' => $player->id, 'type' => 'invited' ]);
+        $invitation = ClanInvitation::firstOrNew(['clan_id' => $clan->id, 'player_id' => $player->id, 'type' => 'invited']);
         if ($invitation->id !== null)
         {
             $request->session()->flash('error', "This player has already been invited.");
@@ -222,7 +258,7 @@ class ClanController extends Controller {
 
 
         $log = new ClanInvitation;
-        $log->fill([ 'clan_id' => $invite->clan_id, 'author_id' => $player->id, 'player_id' => $invite->player_id, 'type' => 'cancelled' ]);
+        $log->fill(['clan_id' => $invite->clan_id, 'author_id' => $player->id, 'player_id' => $invite->player_id, 'type' => 'cancelled']);
         $log->save();
         $log->delete();
 
@@ -278,13 +314,13 @@ class ClanController extends Controller {
 
         if ($request->submit == 'accept')
         {
-            $clanPlayer = ClanPlayer::firstOrNew([ 'clan_id' => $clan->id, 'player_id' => $player->id ]);
+            $clanPlayer = ClanPlayer::firstOrNew(['clan_id' => $clan->id, 'player_id' => $player->id]);
             $clanPlayer->role = 'Member';
             $clanPlayer->save();
             $invite->delete();
 
             $invite = new ClanInvitation;
-            $invite->fill([ 'clan_id' => $clan->id, 'author_id' => $player->id, 'player_id' => $player->id, 'type' => 'joined' ]);
+            $invite->fill(['clan_id' => $clan->id, 'author_id' => $player->id, 'player_id' => $player->id, 'type' => 'joined']);
             $invite->save();
             $invite->delete();
             $request->session()->flash('success', "You are now a member of {$clan->short}.");
@@ -311,7 +347,6 @@ class ClanController extends Controller {
             $request->session()->flash('error', "Unable to locate the clan.");
             return redirect()->back();
         }
-
     }
 
     public function kick(Request $request, $ladderAbbrev, $clanId)
@@ -327,7 +362,6 @@ class ClanController extends Controller {
             $request->session()->flash('error', "Unable to locate the clan.");
             return redirect()->back();
         }
-
     }
 
     public function leave(Request $request, $ladderAbbrev, $clanId)
@@ -345,6 +379,7 @@ class ClanController extends Controller {
         }
 
         $clanPlayer = ClanPlayer::find($request->id);
+        $player = $clanPlayer->player;
         if ($clanPlayer === null)
         {
             $request->session()->flash('error', "That player is not a member of the clan.");
@@ -365,7 +400,7 @@ class ClanController extends Controller {
         }
 
         $invite = new ClanInvitation;
-        $invite->fill([ 'clan_id' => $clan->id, 'author_id' => $clanPlayer->player->id, 'player_id' => $clanPlayer->player->id, 'type' => 'left' ]);
+        $invite->fill(['clan_id' => $clan->id, 'author_id' => $clanPlayer->player->id, 'player_id' => $clanPlayer->player->id, 'type' => 'left']);
         $invite->save();
         $invite->delete();
 
@@ -378,6 +413,11 @@ class ClanController extends Controller {
             {
                 $owner->role = 'Owner';
                 $owner->save();
+            }
+            else //there are no other members
+            {
+                $clan->ex_player_id = $player->id;
+                $clan->save();
             }
         }
 
@@ -452,6 +492,57 @@ class ClanController extends Controller {
         }
 
         $request->session()->flash('success', "Sucessfully updated.");
+        return redirect()->back();
+    }
+
+    /*
+     * Active an inactive clan. The owner will be assigned to the clan's previous owner, if that owner is not currently in a clan.
+     */
+    public function activateClan(Request $request, $ladderAbbrev, $clanId)
+    {
+
+        $ladder = Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
+
+        if ($ladder === null)
+            abort(404);
+
+        $clan = \App\Clan::where('id', $clanId)->first();
+
+        // clan not found
+        if ($clan == null)
+        {
+            $request->session()->flash('error', "Unable to locate the clan.");
+            return redirect()->back();
+        }
+
+        $playerId = $clan->ex_player_id;
+        $player = \App\Player::where('id', $playerId)->first();
+
+        if ($player == null)
+        {
+            $request->session()->flash('error', "Unable to locate the previous owner of this clan.");
+            return redirect()->back();
+        }
+
+        //is ex-owner of this clan already in a clan
+        if ($player->clanPlayer != null)
+        {
+            $playerName = $player->username;
+            $clanName = $player->clanPlayer->clan->short;
+            $request->session()->flash('error', "Player $playerName is already in clan $clanName");
+            return redirect()->back();
+        }
+
+        $clanPlayer = new ClanPlayer;
+        $clanPlayer->fill(['clan_id' => $clan->id, 'player_id' => $player->id]);
+        $clanPlayer->role = "Owner";
+        $clanPlayer->save();
+
+        $clan->ex_player_id = null;
+        $clan->save();
+
+        $clanName = $clan->short;
+        $request->session()->flash('success', "Sucessfully activated clan $clanName.");
         return redirect()->back();
     }
 }

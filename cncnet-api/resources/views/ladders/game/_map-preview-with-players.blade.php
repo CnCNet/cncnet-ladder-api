@@ -35,6 +35,11 @@
                         $gameStats = $pgr->stats;
                         $player = $pgr->player()->first();
                         
+                        try {
+                            $clan = $pgr->clan;
+                        } catch (Exception $ex) {
+                        }
+                        
                         # Player positions plotted onto map preview
                         $playerX = 0;
                         $playerY = 0;
@@ -72,6 +77,10 @@
                             <div class="player-details">
                                 <div class="username">
                                     {{ $player->username }}
+
+                                    @if ($clan)
+                                        [{{ $clan->short }}]
+                                    @endif
                                 </div>
 
                                 <div class="status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
@@ -135,8 +144,34 @@
                 }, ],
             });
 
+            let marker3 = document.querySelector('#marker-2');
+            let player3 = document.querySelector('#playerdetails-2');
+
+            Popper.createPopper(marker3, player3, {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [5, 5],
+                    },
+                }, ],
+            });
+
+            let marker4 = document.querySelector('#marker-3');
+            let player4 = document.querySelector('#playerdetails-3');
+
+            Popper.createPopper(marker4, player4, {
+                modifiers: [{
+                    name: 'offset',
+                    options: {
+                        offset: [5, 5],
+                    },
+                }, ],
+            });
+
             player1.style.display = "";
             player2.style.display = "";
+            player3.style.display = "";
+            player4.style.display = "";
         })());
     </script>
 @endsection

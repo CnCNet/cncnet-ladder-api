@@ -25,7 +25,13 @@
                     </h1>
 
                     <p class="lead text-uppercase">
-                        <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
+                        <small>{{ $history->starts->format('F Y') }} -
+                            @if ($history->ladder->clans_allowed)
+                                <strong>Clan Ranked Match</strong>
+                            @else
+                                <strong>1 vs 1 Ranked Match</strong>
+                            @endif
+                        </small>
                     </p>
 
                     <div class="mini-breadcrumb d-none d-lg-flex">
@@ -101,6 +107,11 @@
                     </div>
                     <div class="player-rank pt-3 me-5">
                         <h1 class="username">{{ $ladderPlayer->username }}</h1>
+
+                        @if ($history->ladder->clans_allowed)
+                            <h2 class="rank text-uppercase mt-0">Clan {{ $player->clanPlayer->clan->short }}</h2>
+                        @endif
+
                         <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $ladderPlayer->rank }}</h3>
                         <div>
                             {!! \App\Helpers\LeagueHelper::getLeagueIconByTier($userTier) !!}

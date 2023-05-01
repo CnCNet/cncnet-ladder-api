@@ -1,14 +1,30 @@
 @extends('layouts.app')
-@php $pageTitle = "Viewing Game - ";@endphp
-@foreach ($playerGameReports as $k => $pgr)
-    @php $player = $pgr->player()->first(); @endphp
-    @php
-        if ($k == 1) {
-            $pageTitle .= ' vs ';
-        }
-    @endphp
-    @php $pageTitle .= "$player->username"; @endphp
+
+<?php
+
+$pageTitle = 'Viewing Game - ';
+$reports = $isClanGame ? $clanGameReports : $playerGameReports;
+
+?>
+
+@foreach ($reports as $k => $pgr)
+    <?php
+    $player = $pgr->player()->first();
+    $clan = $pgr->clan()->first();
+    if ($k == 1) {
+        $pageTitle .= ' vs ';
+    }
+    if ($isClanGame) {
+        $pageTitle .= "$clan->short";
+    } else {
+        $pageTitle .= "$player->username";
+    }
+    ?>
 @endforeach
+
+@section('title', $pageTitle)
+@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
+@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -42,16 +58,12 @@
     </nav>
 @endsection
 
-@section('title', $pageTitle)
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
-
 @section('feature')
     <div class="feature">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"
+                    <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
                         class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
@@ -61,11 +73,16 @@
                     </h1>
 
                     <p class="lead">
-                        @foreach ($playerGameReports as $k => $pgr)
+                        <?php $reports = $isClanGame ? $clanGameReports : $playerGameReports; ?>
+                        @foreach ($reports as $k => $pgr)
                             <?php $gameStats = $pgr->stats; ?>
                             <?php $player = $pgr->player()->first(); ?>
 
-                            <span>{{ $player->username }}</span>
+                            @if ($history->ladder->clans_allowed)
+                                Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
+                            @else
+                                <span>{{ $player->username }}</span>
+                            @endif
                             @if ($k == 0)
                                 <span><strong>VS</strong></span>
                             @endif
@@ -73,7 +90,11 @@
                     </p>
 
                     <p class="text-uppercase">
-                        {{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong>
+                        @if ($history->ladder->clans_allowed)
+                            {{ $history->starts->format('F Y') }} - <strong>Clan Ranked Match</strong>
+                        @else
+                            {{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong>
+                        @endif
                     </p>
 
                     <div class="mini-breadcrumb d-none d-lg-flex">
@@ -120,64 +141,55 @@
         <div class="game-players-container">
             <div class="container">
                 <section class="game-players">
-                    @foreach ($playerGameReports as $k => $pgr)
-                        @php $gameStats = $pgr->stats; @endphp
-                        @php $player = $pgr->player()->first(); @endphp
-                        @php $playerCache = $player->playerCache($history->id);@endphp
-                        @php $rank = $playerCache ? $playerCache->rank() : 0; @endphp
-                        @php $points = $playerCache ? $playerCache->points : 0;@endphp
 
-                        <div class="player-card {{ $k == 1 ? 'player-card-right' : '' }}">
-                            <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
-                                title="View {{ $player->username }}'s profile">
-                                <div class="player-avatar">
-                                    @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 150])
+                    @if ($isClanGame)
+                        @php $clans = []; @endphp
+                        @foreach ($playerGameReports as $k => $pgr)
+                            @php
+                                $clans[$pgr->clan_id][] = $pgr;
+                            @endphp
+                        @endforeach
+
+                        @php $i = 0; @endphp
+                        @foreach ($clans as $clanId => $pgrArr)
+                            @foreach ($pgrArr as $k => $pgr)
+                                @php $gameStats = $pgr->stats; @endphp
+                                @php $player = $pgr->player()->first(); @endphp
+                                @php $playerCache = $player->playerCache($history->id);@endphp
+                                @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
+                                @php $points = $playerCache ? $playerCache->points : 0;@endphp
+                                @php $clanCache = $player->clanPlayer->clanCache($history->id);@endphp
+
+                                @if ($clanCache)
+                                    @include('ladders.game._clan-card')
+                                @endif
+                            @endforeach
+
+                            @if ($i == 0)
+                                <div class="player-vs d-flex align-items-center">
+                                    <h1>Vs</h1>
                                 </div>
-                            </a>
+                            @endif
 
-                            <div class="player-details">
-                                <h2 class="username">
-                                    <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
-                                        title="View {{ $player->username }}'s profile">
-                                        {{ $player->username }}
-                                    </a>
-                                </h2>
+                            @php $i++; @endphp
+                        @endforeach
+                    @else
+                        @foreach ($playerGameReports as $k => $pgr)
+                            @php $gameStats = $pgr->stats; @endphp
+                            @php $player = $pgr->player()->first(); @endphp
+                            @php $playerCache = $player->playerCache($history->id);@endphp
+                            @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
+                            @php $points = $playerCache ? $playerCache->points : 0;@endphp
 
-                                <h5 class="rank pb-1">
-                                    Rank #{{ $rank }}
-                                    <br />
-
-                                    <div style="font-size: 0.8rem" class="mt-2 mb-2">
-                                        <?php $tier = $player->getCachedPlayerTierByLadderHistory($history); ?>
-                                        {!! \App\Helpers\LeagueHelper::getLeagueIconByTier($tier) !!}
-                                        - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($tier) }}
-                                    </div>
-                                </h5>
-
-                                <div class="d-flex">
-                                    <div class="faction">
-                                        @if ($pgr->stats)
-                                            @php $playerStats2 = \App\Stats2::where("id", $pgr->stats->id)->first(); @endphp
-                                            @php $playerCountry = $playerStats2->faction($history->ladder->game, $pgr->stats->cty); @endphp
-                                            <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
-                                        @endif
-                                    </div>
-                                    <div class="points {{ $pgr->won ? 'won' : 'lost' }}">
-                                        @if ($pgr->points >= 0)
-                                            <span>{{ '+' }}</span>
-                                        @endif
-                                        {{ $pgr->points }}
-                                    </div>
+                            @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
+                                <div class="player-vs d-flex align-items-center">
+                                    <h1>Vs</h1>
                                 </div>
-                            </div>
-                        </div>
+                            @endif
 
-                        @if ($k == 0)
-                            <div class="player-vs d-flex align-items-center">
-                                <h1>Vs</h1>
-                            </div>
-                        @endif
-                    @endforeach
+                            @include('ladders.game._player-card')
+                        @endforeach
+                    @endif
                 </section>
             </div>
         </div>

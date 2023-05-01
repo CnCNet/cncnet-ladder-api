@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ClanPlayer;
 use Illuminate\Http\Request;
 use \App\Http\Services\AuthService;
 use \App\Http\Services\PlayerService;
@@ -37,6 +38,7 @@ class ApiUserController extends Controller
         return $this->getActivePlayersByUser($user);
     }
 
+
     /**
      * Return user's active players
      * @param User $user
@@ -56,13 +58,28 @@ class ApiUserController extends Controller
         {
             // IMPORTANT: Include this $player->ladder in this check to trigger it in the response
             // No idea why.
+            $ladder = $activeHandle->player->ladder;
+            $player = $activeHandle->player;
+            $player['user_avatar_path'] = $player->user->avatar_path;
+            
             if ($activeHandle->player->ladder)
             {
+                if ($ladder->clans_allowed)
+                {
+                    // Check player has clan
+                    if ($player && $player->clanPlayer == null)
+                    {
+                        continue;
+                    }
+                    $clan = $player->clanPlayer->clan;
+                    $player->clanPlayer;
+                    
+                }
                 $playerList[] = $activeHandle->player;
             }
         }
 
-        return $playerList;
+        return $playerList; 
     }
 
     private function createPlayerForLaddersIfNoneExist(User $user)

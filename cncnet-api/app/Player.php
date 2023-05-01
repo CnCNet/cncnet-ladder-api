@@ -20,15 +20,6 @@ class Player extends Model
 
     protected $hidden = ['user_id', 'created_at', 'updated_at'];
 
-    public function user()
-    {
-        return $this->belongsTo("\App\User");
-    }
-
-    public function playerGameReports()
-    {
-        return $this->hasMany('App\PlayerGameReport');
-    }
 
     public function wins($history = null)
     {
@@ -125,11 +116,6 @@ class Player extends Model
             ->count();
     }
 
-    public function rating()
-    {
-        return $this->hasOne("App\PlayerRating");
-    }
-
     public function averageFPS($history)
     {
         $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
@@ -151,16 +137,6 @@ class Player extends Model
         $pq = $this->playerGames()->where('ladder_history_id', '=', $history->id);
         $total = $pq->count();
         return $pq->select('cty', DB::raw('count(*) / ' . $total . ' * 100 as count'))->groupBy('cty')->orderBy('count', 'desc')->get();
-    }
-
-    public function ladder()
-    {
-        return $this->belongsTo("App\Ladder");
-    }
-
-    public function card()
-    {
-        return $this->belongsTo("App\Card");
     }
 
     public function rank($history)
@@ -213,16 +189,6 @@ class Player extends Model
         return $points !== null ? $points : 0;
     }
 
-    public function playerRating()
-    {
-        return $this->hasOne("App\PlayerRating");
-    }
-
-    public function playerHistories()
-    {
-        return $this->hasMany("App\PlayerHistory");
-    }
-
     public function playerHistory($history)
     {
         # Dont' trust these relationships functions
@@ -260,10 +226,28 @@ class Player extends Model
         return $this->playerHistory($history)->tier;
     }
 
-    public function playerCache($history_id)
+    public function playerCache($historyId)
     {
-        return \App\PlayerCache::where('player_id', '=', $this->id)->where("ladder_history_id", '=', $history_id)->first();
+        return \App\PlayerCache::where('player_id', '=', $this->id)
+            ->where("ladder_history_id", '=', $historyId)
+            ->first();
     }
+
+
+    /**
+     * Return true if player has been laundered
+     * A player has been laundered if their player game reports have 'backupPts' which is populated when a launder occurs, and erased when launder is undone.
+     */
+    public function laundered($ladderHistory)
+    {
+        $sum = \App\PlayerGameReport::where('player_id', '=', $this->id)
+            ->where('created_at', '<', $ladderHistory->ends)
+            ->where('created_at', '>', $ladderHistory->starts)
+            ->sum('backupPts');
+
+        return $sum > 0;
+    }
+
 
     public function unSeenAlerts()
     {
@@ -273,6 +257,24 @@ class Player extends Model
     public function alerts()
     {
         return $this->hasMany('\App\PlayerAlert')->where('expires_at', '>', Carbon::now());
+    }
+
+
+    # Relationships
+
+    public function user()
+    {
+        return $this->belongsTo("\App\User");
+    }
+
+    public function playerGameReports()
+    {
+        return $this->hasMany('App\PlayerGameReport');
+    }
+
+    public function qmCanceledMatches()
+    {
+        return $this->hasMany('App\QmCanceledMatch', 'player_id');
     }
 
     public function clanPlayer()
@@ -290,22 +292,28 @@ class Player extends Model
         return $this->hasOne('App\IrcAssociation');
     }
 
-    /**
-     * Return true if player has been laundered
-     * A player has been laundered if their player game reports have 'backupPts' which is populated when a launder occurs, and erased when launder is undone.
-     */
-    public function laundered($ladderHistory)
+    public function playerRating()
     {
-        $sum = \App\PlayerGameReport::where('player_id', '=', $this->id)
-            ->where('created_at', '<', $ladderHistory->ends)
-            ->where('created_at', '>', $ladderHistory->starts)
-            ->sum('backupPts');
-
-        return $sum > 0;
+        return $this->hasOne("App\PlayerRating");
     }
 
-    public function qmCanceledMatches()
+    public function playerHistories()
     {
-        return $this->hasMany('App\QmCanceledMatch', 'player_id');
+        return $this->hasMany("App\PlayerHistory");
+    }
+
+    public function ladder()
+    {
+        return $this->belongsTo("App\Ladder");
+    }
+
+    public function card()
+    {
+        return $this->belongsTo("App\Card");
+    }
+
+    public function rating()
+    {
+        return $this->hasOne("App\PlayerRating");
     }
 }

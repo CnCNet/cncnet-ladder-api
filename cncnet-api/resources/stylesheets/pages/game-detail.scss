@@ -47,14 +47,11 @@
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.8784313725), rgba(4, 4, 4, 0.7019607843));
 }
 
+
+// Game colours
 .game-detail .player-marker .player-start-position.red 
 {
     border: 2px solid #c30000;
-}
-
-.game-detail .player-marker .player-start-position.yellow 
-{
-    border: 2px solid #ffba00;
 }
 
 .game-detail .player-red 
@@ -64,10 +61,87 @@
     border-top: 0;
 }
 
+.game-detail .player-marker .player-start-position.yellow 
+{
+    border: 2px solid #fffb00;
+}
+
 .game-detail .player-yellow 
 {
-    border: 2px solid #ffba00;
-    box-shadow: 0px -2px #ffcc00;
+    border: 2px solid #fffb00;
+    box-shadow: 0px -2px #fffb00;
+    border-top: 0;
+}
+
+.game-detail .player-marker .player-start-position.green 
+{
+    border: 2px solid #2bff00;
+}
+
+.game-detail .player-green 
+{
+    border: 2px solid #2bff00;
+    box-shadow: 0px -2px #2bff00;
+    border-top: 0;
+}
+
+.game-detail .player-marker .player-start-position.blue 
+{
+    border: 2px solid #001aff;
+}
+
+.game-detail .player-blue 
+{
+    border: 2px solid #001aff;
+    box-shadow: 0px -2px #001aff;
+    border-top: 0;
+}
+
+.game-detail .player-marker .player-start-position.orange 
+{
+    border: 2px solid #ffa600;
+}
+
+.game-detail .player-orange 
+{
+    border: 2px solid #ffa600;
+    box-shadow: 0px -2px #ffa600;
+    border-top: 0;
+}
+
+.game-detail .player-marker .player-start-position.teal 
+{
+    border: 2px solid #00f7ff;
+}
+
+.game-detail .player-teal 
+{
+    border: 2px solid #00f7ff;
+    box-shadow: 0px -2px #00f7ff;
+    border-top: 0;
+}
+
+.game-detail .player-marker .player-start-position.purple 
+{
+    border: 2px solid #c300ff;
+}
+
+.game-detail .player-purple 
+{
+    border: 2px solid #c300ff;
+    box-shadow: 0px -2px #c300ff;
+    border-top: 0;
+}
+
+.game-detail .player-marker .player-start-position.pink 
+{
+    border: 2px solid #ff009d;
+}
+
+.game-detail .player-pink 
+{
+    border: 2px solid #ff009d;
+    box-shadow: 0px -2px #ff009d;
     border-top: 0;
 }
 

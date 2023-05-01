@@ -58,6 +58,7 @@ class AdminService
         $ladderRule->ladder_rules_message = $request->ladder_rules_message;
         $ladderRule->ladder_discord = $request->ladder_discord;
         $ladderRule->match_ai_after_seconds = $request->match_ai_after_seconds;
+        $ladderRule->max_active_players = $request->max_active_players;
         $ladderRule->save();
 
         $request->session()->flash('success', 'Changes Saved');

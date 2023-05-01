@@ -74,4 +74,6 @@ class QmLadderRules extends Model
     {
         return $this->hasMany('App\SpawnOptionValue');
     }
+
 }
+

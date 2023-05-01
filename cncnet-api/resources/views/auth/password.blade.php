@@ -10,8 +10,6 @@
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Account</span>
                     </h1>
-
-                    <p class="lead">Manage everything to do with your CnCNet Ladder Account here.</p>
                 </div>
             </div>
         </div>

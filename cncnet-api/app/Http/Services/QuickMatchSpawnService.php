@@ -43,11 +43,11 @@ class QuickMatchSpawnService
                 "GameID" =>         $qmMatch->seed,
                 "WOLGameID" =>      $qmMatch->seed,
                 "Host" =>           "No",
-                "IsSpectator" =>    "No",
                 "Name" =>           $qmPlayer->player()->first()->username,
                 "Port" =>           $qmPlayer->port,
                 "Side" =>           $qmPlayer->actual_side,
-                "Color" =>          $qmPlayer->color
+                "Color" =>          $qmPlayer->color,
+                "IsSpectator" =>    "False"
                 // Filter null values
             ],
             function ($var)
@@ -105,18 +105,39 @@ class QuickMatchSpawnService
      * Appends the "other" section of all players to the spawn.ini 
      * @param mixed $spawnStruct 
      * @param mixed $qmPlayer 
-     * @param mixed $allPlayers 
+     * @param mixed $otherQmPlayers 
      * @return mixed 
      */
-    public static function appendOthersToSpawnIni($spawnStruct, $qmPlayer, $allPlayers)
+    public static function appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmPlayers)
     {
-        $other_idx = 1;
-        $multi_idx = $qmPlayer->color + 1;
-        $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $qmPlayer->location;
+        $otherIdx = 1;
+        $multiIdx = $qmPlayer->color + 1;
+        $myIndex = $multiIdx;
+        $observerIndex = -1;
 
-        foreach ($allPlayers as $opn)
+        # Checks if player is observer
+        $observerPlayerName = null; # Set to "neogrant" or "burg" for tests
+        $myPlayerUsername = $qmPlayer->player->username;
+
+        if ($myPlayerUsername == $observerPlayerName)
         {
-            $spawnStruct["spawn"]["Other{$other_idx}"] = [
+            $observerIndex = $myIndex;
+            $spawnStruct["spawn"]["Settings"]["IsSpectator"] = "True";
+            Log::info("Setting $myPlayerUsername getting set as spectator");
+        }
+
+        $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
+
+        if ($qmPlayer->player->user->userSettings->skip_score_screen)
+        {
+            $spawnStruct["spawn"]["Settings"]["SkipScoreScreen"] = "Yes";
+        }
+
+        $myTeamIndices = [];
+        $myTeamIndices[] = $myIndex;
+        foreach ($otherQmPlayers as $opn)
+        {
+            $spawnStruct["spawn"]["Other{$otherIdx}"] = [
                 "Name" => $opn->player()->first()->username,
                 "Side" => $opn->actual_side,
                 "Color" => $opn->color,
@@ -125,15 +146,38 @@ class QuickMatchSpawnService
                 "IPv6" => $opn->ipv6Address ? $opn->ipv6Address->address : "",
                 "PortV6" => $opn->ipv6_port,
                 "LanIP" => $opn->lan_address ? $opn->lan_address->address : "",
-                "LanPort" => $opn->lan_port
+                "LanPort" => $opn->lan_port,
+                "IsSpectator" => false
             ];
-            $multi_idx = $opn->color + 1;
-            $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multi_idx}"] = $opn->location;
-            $other_idx++;
+
+            # Set the observer
+            if ($opn->player->username == $observerPlayerName)
+            {
+                Log::info("$observerPlayerName is set to spec in other players spawn.ini");
+                $spawnStruct["spawn"]["Other{$otherIdx}"]["IsSpectator"] = true;
+                $observerIndex = $otherIdx;
+            }
+
+            $multiIdx = $opn->color + 1;
+            $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $opn->location;
+
+            # Check if other player is in my clan, if so add alliance
+            if ($qmPlayer->clan_id && $qmPlayer->clan_id == $opn->clan_id)
+            {
+                $p1Name = $qmPlayer->player->username;
+                $p2Name = $opn->player->username;
+
+                Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
+                $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
+                $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
+                $myTeamIndices[] = $multiIdx;
+            }
+
+            $otherIdx++;
 
             if (array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
             {
-                //if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
+                # if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
                 if (($qmPlayer->actual_side < 5 && $opn->actual_side == 9) || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9))
                 {
                     $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
@@ -141,8 +185,50 @@ class QuickMatchSpawnService
             }
         }
 
+        //create multi alliance for opponent's team
+        $completed = false;
+        foreach ($otherQmPlayers as $opn)
+        {
+            $multiIdx = $opn->color + 1;
+
+            if (!in_array($multiIdx, $myTeamIndices)) //this index is opponent's team
+            {
+                foreach ($otherQmPlayers as $opn2) //find teammate(s)
+                {
+                    $otherIdx = $opn2->color + 1;
+
+                    if ($otherIdx == $multiIdx) //self
+                        continue;
+
+                    if (!in_array($otherIdx, $myTeamIndices)) //this index is opponent's teammate
+                    {
+                        $p1Name = $opn->player->username;
+                        $p2Name = $opn2->player->username;
+
+                        Log::info("PlayerIndex ** assigning opponents $p1Name with $p2Name");
+                        $spawnStruct["spawn"]["Multi{$otherIdx}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
+                        $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $otherIdx - 1;
+                        $completed = true;
+                    }
+                }
+            }
+
+            if ($completed)
+                break;
+        }
+
+        # Set observer index if they exist
+        if ($observerIndex !== null)
+        {
+            foreach ($otherQmPlayers as $opn)
+            {
+                $spawnStruct["isspectator"]["Multi$observerIndex"] = "True";
+            }
+        }
+
         return $spawnStruct;
     }
+
 
     /**
      * Prepend quick-coop ini file to allow 2 real players vs 2 ai

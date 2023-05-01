@@ -1,22 +1,30 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Clan;
 use App\ClanRole;
 
-class ClanPlayer extends Model {
-
-    //
-    protected $fillable = [ 'clan_id', 'player_id', 'clan_role_id' ];
+class ClanPlayer extends Model
+{
+    protected $fillable = ['clan_id', 'player_id', 'clan_role_id'];
 
     public function setRoleAttribute($value)
     {
-        $this->attributes['clan_role_id'] = ClanRole::firstOrCreate([ 'value' => $value ])->id;
+        $this->attributes['clan_role_id'] = ClanRole::firstOrCreate(['value' => $value])->id;
     }
 
     public function getRoleAttribute()
     {
         return $this->roleRelation !== null ? $this->roleRelation->value : '';
+    }
+
+    public function clanCache($historyId)
+    {
+        return ClanCache::where('clan_id', '=', $this->clan_id)
+            ->where("ladder_history_id", '=', $historyId)
+            ->first();
     }
 
     public function player()

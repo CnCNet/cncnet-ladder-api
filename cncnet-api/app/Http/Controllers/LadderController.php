@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Clan;
+use App\ClanCache;
 use App\CountableObjectHeap;
 use App\Game;
 use App\Helpers\GameHelper;
@@ -92,6 +94,8 @@ class LadderController extends Controller
         if ($history === null)
             abort(404);
 
+        $players = null;
+        $clans = null;
         $tier = $request->tier ?? 1; // Default to tier 1
 
         # Stats
@@ -102,20 +106,40 @@ class LadderController extends Controller
         {
             $orderBy = $request->orderBy == "desc" ? "desc" : "asc";
 
-            $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
-                ->where("tier", "=", $tier)
-                ->where("player_name", "like", "%" . $request->search . "%")
-                ->orderBy("games", $orderBy)
-                ->paginate(45);
+            if ($history->ladder->clans_allowed)
+            {
+                $clans = ClanCache::where("ladder_history_id", "=", $history->id)
+                    ->where("clan_name", "like", "%" . $request->search . "%")
+                    ->orderBy("points", "desc")
+                    ->orderBy("games", $orderBy)
+                    ->paginate(45);
+            }
+            else
+            {
+                $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
+                    ->where("tier", "=", $tier)
+                    ->where("player_name", "like", "%" . $request->search . "%")
+                    ->orderBy("games", $orderBy)
+                    ->paginate(45);
+            }
         }
         else
         {
-            # Default
-            $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
-                ->where("tier", "=", $tier)
-                ->where("player_name", "like", "%" . $request->search . "%")
-                ->orderBy("points", "desc")
-                ->paginate(45);
+            if ($history->ladder->clans_allowed)
+            {
+                $clans = ClanCache::where("ladder_history_id", "=", $history->id)
+                    ->where("clan_name", "like", "%" . $request->search . "%")
+                    ->orderBy("points", "desc")
+                    ->paginate(45);
+            }
+            else
+            {
+                $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
+                    ->where("tier", "=", $tier)
+                    ->where("player_name", "like", "%" . $request->search . "%")
+                    ->orderBy("points", "desc")
+                    ->paginate(45);
+            }
         }
 
         $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
@@ -124,13 +148,15 @@ class LadderController extends Controller
             ->lists('name');
 
         $data = [
+            "isClanLadder" => $history->ladder->clans_allowed,
+            "players" => $players,
+            "clans" => $clans,
             "history" => $history,
             "tier" => $request->tier,
             "search" => $request->search,
             "sides" => $sides,
             "stats" => $this->statsService->getQmStats($request->game),
             "statsPlayerOfTheDay" => $statsPlayerOfTheDay,
-            "players" => $players,
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),
@@ -197,7 +223,6 @@ class LadderController extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
-
         $user = $request->user();
 
         if ($game == null)
@@ -246,6 +271,8 @@ class LadderController extends Controller
                 "gameReport" => $gameReport,
                 "allGameReports" => $allGameReports,
                 "playerGameReports" => $playerGameReports,
+                "isClanGame" => $history->ladder->clans_allowed,
+                "clanGameReports" => $gameReport->playerGameReports()->groupBy("clan_id")->get() ?? [],
                 "history" => $history,
                 "heaps" => $heaps,
                 "user" => $user,
@@ -262,6 +289,11 @@ class LadderController extends Controller
     public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $username = null)
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+
+        if ($history == null)
+        {
+            abort(404, "Ladder not found");
+        }
 
         $player = Player::where("ladder_id", "=", $history->ladder->id)
             ->where("username", "=", $username)
@@ -305,7 +337,7 @@ class LadderController extends Controller
         $userTier = $player->getCachedPlayerTierByLadderHistory($history);
 
         # Stats
-        $graphGamesPlayedByMonth = $this->chartService->getGamesPlayedByMonth($player, $history);
+        $graphGamesPlayedByMonth = $this->chartService->getPlayerGamesPlayedByMonth($player, $history);
         $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
         $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
@@ -338,6 +370,77 @@ class LadderController extends Controller
                 "playerMatchups" => $playerMatchups,
                 "achievements" => $recentAchievements,
                 "achievementsCount" => $achievementProgressCounts
+            ]
+        );
+    }
+
+    public function getLadderClan(Request $request, $date = null, $cncnetGame = null, $clanNameShort = null)
+    {
+        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+
+        if ($history == null)
+        {
+            abort(404, "Ladder not found");
+        }
+
+        $clan = Clan::where("ladder_id", "=", $history->ladder->id)
+            ->where("short", "=", $clanNameShort)
+            ->first();
+
+        if ($clan == null)
+        {
+            abort(404, "No clan found");
+        }
+
+        $user = $request->user();
+
+        $userIsMod = false;
+        if ($user !== null && $user->isLadderMod($clan->ladder))
+        {
+            $userIsMod = true;
+        }
+
+        $clanCache = ClanCache::where("ladder_history_id", $history->id)
+            ->where("clan_id", $clan->id)
+            ->first();
+
+        $games = $clanCache->clan->clanGames()
+            ->where("ladder_history_id", "=", $history->id)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(24);
+
+        $mod = $request->user();
+        $userIsMod = false;
+
+        if ($user !== null && $user->isLadderMod($history->ladder))
+        {
+            $userIsMod = true;
+        }
+
+        $clanPlayers = $clan->clanPlayers;
+
+        // $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
+
+        # Stats
+        $graphGamesPlayedByMonth = $this->chartService->getClanGamesPlayedByMonth($clan, $history);
+        // $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
+        $clanGamesLast24Hours = $clan->totalGames24Hours($history);
+        // $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
+        // $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
+        // $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $userPlayer, 3);
+        // $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $userPlayer);
+
+        return view(
+            "ladders.clan-detail",
+            [
+                "ladderPlayer" => null,
+                "history" => $history,
+                "clanCache" => $clanCache,
+                "clanPlayers" => $clanPlayers,
+                "games" => $games,
+                "userIsMod" => $userIsMod,
+                "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
+                "clanGamesLast24Hours" => $clanGamesLast24Hours
             ]
         );
     }

@@ -991,7 +991,7 @@ class AdminController extends Controller
             ->where('ladder_id', $history->ladder->id)
             ->first();
 
-        if ($player == null) 
+        if ($player == null)
         {
             $request->session()->flash('error', "No existing player found with this player id");
             return redirect()->back();
