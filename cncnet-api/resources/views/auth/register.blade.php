@@ -70,9 +70,9 @@
 
                 <ol>
                     <li>Create your Ladder Account below.</li>
-                    <li>Once complete, create a Nickname to play online with.</li>
-                    <li>Login to the CnCNet Quick Match client with your Ladder Account.</li>
-                    <li>Click Quick Match and wait to play ladder games!</li>
+                    <li>Once complete, create a Username to play online with.</li>
+                    <li>Login to the CnCNet Ranked Match client with your Ladder Account.</li>
+                    <li>Click "Quick Match" and wait to play ladder games!</li>
                 </ol>
 
                 <p>

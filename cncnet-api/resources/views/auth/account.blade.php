@@ -15,18 +15,24 @@
                         <span>Ladder Account</span>
                     </h1>
                     <p class="lead">
-                        Below are the Ranked Ladders aavailable to play on. Click into a game to manage your ladder account, <br />
-                        including creating usernames and managing clans.
+                        Below are all the Ranked Ladders. Click into a ladder to manage your usernames and clans.
                     </p>
                 </div>
             </div>
             <div class="mini-breadcrumb d-none d-lg-flex">
                 <div class="mini-breadcrumb-item">
+                    <a href="/">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
                     <a href="/account">
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        All Ladder Accounts
+                        Manage Ladder Account
                     </a>
                 </div>
             </div>
@@ -50,7 +56,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        {{ $user->name }}'s account
+                        Manage Ladder Account
                     </a>
                 </li>
             </ol>
@@ -76,20 +82,7 @@
                 @endif
             </div>
 
-            <div class="mt-4 mb-4 pt-4">
-                <h3>
-                    <span class="material-symbols-outlined icon pe-2">
-                        settings
-                    </span>
-                    <strong>Account</strong> Settings
-                </h3>
-            </div>
-
-            <p class="lead">Manage all ladder account settings, including Ladder Avatar, Social links and Points filter.</p>
-
-            @if (isset($userSettings))
-                <a href="account/settings" class="btn btn-outline btn-size-md">All Ladder Account Settings</a>
-            @endif
+            @include('auth.account-settings-nav')
         </div>
 
         <div class="container">
@@ -102,6 +95,18 @@
             <div class="pt-4">
                 <div class="row">
                     <div class="mt-2 mb-2">
+
+                        <h2 class="mb-4 mt-4">
+                            <span class="material-symbols-outlined icon">
+                                military_tech
+                            </span>
+                            <strong>New to Ranked Match?</strong>
+
+                        </h2>
+                        <p class="lead">
+                            Pick the ladder you want to play on below and follow the "how to play" instructions.
+                        </p>
+
                         <h2 class="mb-4 mt-4">
                             <span class="material-symbols-outlined icon">
                                 military_tech
@@ -109,12 +114,7 @@
                             <strong>1vs1</strong> Player Ladders
                         </h2>
 
-                        <p class="lead col-md-8 mb-4">
-                            For new Red Alert 2 or Yuri's Revenge players joining for the first time, consider playing in the "YR Blitz 1vs1 Ladder" to
-                            gain experience before playing Red Alert 2 & Yuri's Revenge Ladder matches.
-                        </p>
-
-                        <div class="d-flex flex-wrap">
+                        <div class="d-flex flex-wrap mini-game-box-ladder-links">
                             @foreach ($ladders as $history)
                                 @include('components.ladder-box', [
                                     'history' => $history,
@@ -131,7 +131,7 @@
                             </span>
                             <strong>2vs2 Clan</strong> Ladders
                         </h2>
-                        <div class="d-flex flex-wrap">
+                        <div class="d-flex flex-wrap mini-game-box-ladder-links">
                             @foreach ($clan_ladders as $history)
                                 @include('components.ladder-box', [
                                     'history' => $history,
@@ -149,7 +149,7 @@
                             </span>
                             <strong>Private</strong> Ladders
                         </h2>
-                        <div class="d-flex flex-wrap">
+                        <div class="d-flex flex-wrap mini-game-box-ladder-links">
                             @foreach ($private_ladders as $history)
                                 @include('components.ladder-box', [
                                     'history' => $history,

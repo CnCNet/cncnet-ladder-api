@@ -13,7 +13,7 @@
                         <strong class="fw-bold">{{ $ladder->name }}</strong>
                     </h1>
                     <p class="lead">
-                        Manage everything to do with Ranked Matches on {{ $ladder->name }}
+                        Manage usernames for {{ $ladder->name }}.
                     </p>
                 </div>
             </div>
@@ -23,7 +23,7 @@
                         <span class="material-symbols-outlined icon pe-3">
                             person
                         </span>
-                        All Ladder Accounts
+                        Manage Ladder Account
                     </a>
                 </div>
                 <div class="mini-breadcrumb-item">
@@ -95,34 +95,43 @@
                     </div>
                 @else
                     @if ($ladder->abbreviation == 'blitz')
-                        <h2 class="mt-4">New player to play Blitz?</h2>
-                        <p>Join the Discord and watch the videos below to get started!</p>
-                        <div class="useful-links d-md-flex mt-2">
+                        <div class="mb-5">
+                            <h2 class="mt-4">New player?</h2>
+                            <p class="lead">
+                                Join the YR Blitz Discord below and watch the videos below to get better!
+                            </p>
+                            <p class="lead">
+                                There is also a training bootcamp hosted weekly, perfect for new or returning players!
+                            </p>
+                            <div class="useful-links d-md-flex mt-2">
+                                <div class="me-3">
+                                    <a href="{{ $ladder->qmLadderRules->ladder_discord }}" class="btn btn-secondary btn-size-md">
+                                        <i class="bi bi-discord pe-2"></i> {{ $ladder->name }} Discord
+                                    </a>
+                                </div>
+
+                                <div class="me-3">
+                                    <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-secondary btn-size-md" target="_blank">
+                                        <i class="bi bi-youtube pe-2"></i> How-To Play Blitz Online
+                                    </a>
+                                </div>
+
+                                <div>
+                                    <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-secondary btn-size-md" target="_blank">
+                                        <i class="bi bi-youtube pe-2"></i> Tips & Tricks - New Blitz Players
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @elseif ($ladder->game == 'yr')
+                        <div class="mb-5">
+                            <h3 class="mt-4">New player?</h3>
+                            <p class="lead">Join the Discord community for tips on how to play!</p>
                             <div class="me-3">
                                 <a href="{{ $ladder->qmLadderRules->ladder_discord }}" class="btn btn-secondary btn-size-md">
                                     <i class="bi bi-discord pe-2"></i> {{ $ladder->name }} Discord
                                 </a>
                             </div>
-
-                            <div class="me-3">
-                                <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-secondary btn-size-md" target="_blank">
-                                    <i class="bi bi-youtube pe-2"></i> How-To Play Blitz Online
-                                </a>
-                            </div>
-
-                            <div>
-                                <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-secondary btn-size-md" target="_blank">
-                                    <i class="bi bi-youtube pe-2"></i> Tips & Tricks - New Blitz Players
-                                </a>
-                            </div>
-                        </div>
-                    @elseif ($ladder->game == 'yr')
-                        <h3 class="mt-4">New player?</h3>
-                        <p>Join the Discord community for tips on how to play!</p>
-                        <div class="me-3">
-                            <a href="{{ $ladder->qmLadderRules->ladder_discord }}" class="btn btn-secondary btn-size-md">
-                                <i class="bi bi-discord pe-2"></i> {{ $ladder->name }} Discord
-                            </a>
                         </div>
                     @endif
 
@@ -130,8 +139,8 @@
             </div>
 
             <div class="row">
-                <div class="col-md-12 mb-5 mt-5">
-                    @if ($ladder->clans_allowed)
+                @if ($ladder->clans_allowed)
+                    <div class="col-md-12 mb-5 mt-5">
                         <h4><i class="bi bi-flag-fill icon-clan pe-3"></i> My Active Clans</h4>
 
                         @if ($activeHandles->count() > 0)
@@ -330,24 +339,23 @@
                             @else
                                 <p> You have to register an account for this ladder before you can join a clan</p>
                         @endif
-                    @endif
-                </div>
+                    </div>
+                @endif
 
                 <div class="col-md-12">
                     <div class="account-box">
-                        <h4>Registered Accounts</h4>
-                        <ul class="mt-4">
-                            <li>Tiberian Sun and Clan Ladder players are now allowed up to 3 Active Players per month.</li>
-                            <li>Red Alert &amp; Yuri's Revenge players are only allowed 1 nickname per month.</li>
-                            <li>Users may not play on more than one email in a month per ladder.</li>
-                        </ul>
-                        <p>
-                            To use your nickname, activate it and it will appear in your Quick Match client.
-                        </p>
 
-                        <p>
-                            <a href="#" class="btn btn-primary btn-size-md" data-bs-toggle="modal" data-bs-target="#newLadderPlayer">
-                                <i class="bi bi-person-plus"></i> Add new Username?
+                        <h3>How to play</h3>
+                        <ol style="font-size: 1.2rem" class="mb-5 mt-3">
+                            <li>Create a username.</li>
+                            <li>Select <strong>"Play with username"</strong> so it will appear in your Ranked Match client.
+                            </li>
+                            <li>Usernames marked active below will be the nicknamme that appears in your Ranked Match client.</li>
+                        </ol>
+
+                        <p class="mb-5">
+                            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newLadderPlayer">
+                                <i class="bi bi-person-plus pe-3"></i> Create new Username?
                             </a>
                         </p>
 
@@ -356,7 +364,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">Username</th>
-                                        <th scope="col">Username Active</th>
+                                        <th scope="col">Username Active on Ladder</th>
                                         <th scope="col">Clan</th>
                                         <th scope="col"></th>
                                     </tr>
@@ -374,7 +382,13 @@
                                                     </p>
                                                 </div>
                                             </td>
-                                            <td>{{ $activeHandles->where('player_id', $player->id)->count() > 0 ? 'Active' : 'Inactive' }}</td>
+                                            <td>
+                                                @if ($activeHandles->where('player_id', $player->id)->count() > 0)
+                                                    <strong class="highlight">Active</strong>
+                                                @else
+                                                    <span>Inactive</span>
+                                                @endif
+                                            </td>
                                             <td>
                                                 @if ($player->clanPlayer && $player->clanPlayer->clan)
                                                     <strong class="fw-bold">
@@ -408,7 +422,14 @@
                             </table>
                         </div>
 
-                        <h3>OBS Stream Profiles</h3>
+                        <h4>About Usernames</h4>
+                        <ul class="mt-4">
+                            <li>Tiberian Sun and Clan Ladder players are now allowed up to 3 Active Players per month.</li>
+                            <li>Red Alert &amp; Yuri's Revenge players are only allowed 1 nickname per month.</li>
+                            <li>Users may not play on more than one account, in a month per ladder.</li>
+                        </ul>
+
+                        <h4 class="mt-4">OBS Stream Profiles</h4>
                         <p>
                             Overlay a webview of your stats in your stream using OBS.
                             <a href="/help/obs" target="_blank">Click here for OBS Stream Profiles Instructions</a>
@@ -423,24 +444,24 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Add a new ladder player username</h5>
+                    <h5 class="modal-title">Create username for {{ $ladder->name }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
 
+                <div class="modal-body">
                     <form method="POST" action="username">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="ladder" value="{{ $ladder->id }}">
                         <p>
-                            Usernames will be the name shown when you login to CnCNet clients and play games.
+                            Usernames will be shown in the Ranked Match client and in-game.
                         </p>
 
-                        <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
+                        <div class="mb-5">
+                            <label for="username" class="form-label"><strong>Username</strong></label>
                             <input type="username" name="username" class="form-control border" id="username" placeholder="username">
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-size-md">Create ladder player username</button>
+                        <button type="submit" class="btn btn-primary">Create</button>
                     </form>
                 </div>
             </div>

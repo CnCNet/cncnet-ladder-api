@@ -23,15 +23,17 @@
             <li>
                 <h4 class=" dropdown-header text-uppercase">Hi {{ $user->name }}</h4>
             </li>
+
+            <li><a href="/account" class="dropdown-item">Your Account</a></li>
+            <li><a href="/account/settings" class="dropdown-item">Account Settings</a></li>
+            <li>
+                <hr class="dropdown-divider">
+            </li>
             @if ($user->canEditAnyLadders())
                 <li>
                     <a href="/admin/" class="dropdown-item">Admin</a>
                 </li>
             @endif
-            <li><a href="/account" class="dropdown-item">Manage account</a></li>
-            <li>
-                <hr class="dropdown-divider">
-            </li>
             <li><a href="/auth/logout" class="dropdown-item">Logout</a></li>
         @else
             <li>
