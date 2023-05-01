@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', $history->ladder->name . ' Ladder')
+@section('title', $history->ladder->name)
 @section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
@@ -19,7 +19,15 @@
                     </h1>
 
                     <p class="lead text-uppercase">
-                        <small>{{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong></small>
+                        <small>{{ $history->starts->format('F Y') }} -
+                            <strong>
+                                @if ($history->ladder->clans_allowed)
+                                    2 vs 2 Ranked Match
+                                @else
+                                    1 vs 1 Ranked Match
+                                @endif
+                            </strong>
+                        </small>
                     </p>
                 </div>
             </div>
