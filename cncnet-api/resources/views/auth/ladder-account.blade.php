@@ -356,7 +356,7 @@
                             <li>Create a username.</li>
                             <li>Select <strong>"Play with username"</strong> so it will appear in your Ranked Match client.
                             </li>
-                            <li>Usernames marked active below will be the nicknamme that appears in your Ranked Match client.</li>
+                            <li>Usernames marked active below will be the nickname that appears in your Ranked Match client.</li>
                         </ol>
 
                         <p class="mb-5">
