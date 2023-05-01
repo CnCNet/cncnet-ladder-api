@@ -133,11 +133,13 @@
                         </h2>
                         <div class="d-flex flex-wrap mini-game-box-ladder-links">
                             @foreach ($clan_ladders as $history)
-                                @include('components.ladder-box', [
-                                    'history' => $history,
-                                    'url' => \App\URLHelper::getAccountLadderUrl($history),
-                                    'abbrev' => $history->ladder->abbrev,
-                                ])
+                                @if (!$history->ladder->private)
+                                    @include('components.ladder-box', [
+                                        'history' => $history,
+                                        'url' => \App\URLHelper::getAccountLadderUrl($history),
+                                        'abbrev' => $history->ladder->abbrev,
+                                    ])
+                                @endif
                             @endforeach
                         </div>
                     </div>
