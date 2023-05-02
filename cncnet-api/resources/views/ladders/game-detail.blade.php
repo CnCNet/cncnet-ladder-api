@@ -220,9 +220,33 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
             'playerGameReports' => $playerGameReports,
         ])
 
-        @include('ladders.game._game-cameo-stats', [
-            'playerGameReports' => $playerGameReports,
-            'abbreviation' => $gameAbbreviation,
-        ])
+        @if ($isClanGame)
+            @php $clans = []; @endphp
+            @foreach ($playerGameReports as $k => $pgr)
+                @php
+                    $clans[$pgr->clan_id][] = $pgr;
+                @endphp
+            @endforeach
+
+            @php
+                $orderedClanReports = [];
+                foreach ($clans as $clanId => $pgrArr) {
+                    foreach ($pgrArr as $pgr) {
+                        $orderedClanReports[] = $pgr;
+                    }
+                }
+            @endphp
+
+            @include('ladders.game._game-cameo-stats', [
+                'playerGameReports' => $orderedClanReports,
+                'abbreviation' => $gameAbbreviation,
+            ])
+        @else
+            @include('ladders.game._game-cameo-stats', [
+                'playerGameReports' => $playerGameReports,
+                'abbreviation' => $gameAbbreviation,
+            ])
+        @endif
+
     </section>
 @endsection
