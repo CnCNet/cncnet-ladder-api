@@ -311,7 +311,7 @@ class StatsService
         $playerOfTheDay = $this->getPlayerOfTheDay($history);
         if ($playerOfTheDay != null)
         {
-            if ($player->username === $playerOfTheDay->username)
+            if ($player->username === $playerOfTheDay->name)
             {
                 return $playerOfTheDay;
             }
