@@ -143,7 +143,7 @@
                         <div class="pt-4 ms-auto ml-auto">
                             @include('ladders.player._award-player-of-the-day', [
                                 'wins' => $playerOfTheDayAward->wins,
-                                'username' => $playerOfTheDayAward->username,
+                                'username' => $playerOfTheDayAward->name,
                             ])
                         </div>
                     @endif
