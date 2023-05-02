@@ -233,16 +233,46 @@ class ApiQuickMatchController extends Controller
         }
     }
 
+    private function checkQMClientRequiresUpdate($ladder, $version)
+    {
+        # YR Games check
+        if ($ladder->game == "yr")
+        {
+            if ($version < 1.79)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        # RA/TS Games check
+        if ($ladder->game == "ra" || $ladder->game == "ts")
+        {
+            if ($version < 1.69)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
     public function matchRequest(Request $request, $ladderAbbrev = null, $playerName = null)
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
 
-        # Deprecate older versions
-        if ($request->version < 1.69)
+        $requiresUpdate = $this->checkQMClientRequiresUpdate($ladder, $request->version);
+
+        if ($requiresUpdate === true)
         {
+            # Deprecate older versions
             $error = "Quick Match Version is no longer supported, please restart the CnCNet client to get the latest updates";
             return $this->onMatchFatalError($error);
         }
+
 
         $playerHasAuth = $this->ladderService->checkPlayer($request);
         if ($playerHasAuth !== null)
