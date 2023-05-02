@@ -47,20 +47,27 @@
                     </div>
                 </div>
 
-                @if ($statsPlayerOfTheDay)
-                    <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsPlayerOfTheDay->username); ?>
-                    <a class="stat gold potd" style="position:relative" href="{{ $url }}" title="{{ $statsPlayerOfTheDay->username }}">
+                @if ($statsXOfTheDay)
+                    <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsXOfTheDay->name); ?>
+                    <a class="stat gold potd" style="position:relative" href="{{ $url }}" title="{{ $statsXOfTheDay->name }}">
                         <div class="text-center">
                             <div class="icon icon-crown pt-4">
                                 @include('icons.crown', [
                                     'colour' => '#ffcd00',
                                 ])
                             </div>
-                            <h4>Player of the day</h4>
+
+                            <h4>
+                                @if ($history->ladder->clans_allowed)
+                                    Clan of the day
+                                @else
+                                    Player of the day
+                                @endif
+                            </h4>
                         </div>
                         <div class="text-center" style="z-index:1;position:relative;">
-                            <div class="value">{{ $statsPlayerOfTheDay->username }}</div>
-                            <div><small>{{ $statsPlayerOfTheDay->wins }} wins <br />(Today)</small></div>
+                            <div class="value">{{ $statsXOfTheDay->name }}</div>
+                            <div><small>{{ $statsXOfTheDay->wins }} wins <br />(Today)</small></div>
                         </div>
                         <div style="position: absolute; top: 0; left: 0;width:100%; z-index: 0;">
                             @include('animations.player', [

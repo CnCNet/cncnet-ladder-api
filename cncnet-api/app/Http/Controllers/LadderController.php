@@ -98,8 +98,6 @@ class LadderController extends Controller
         $clans = null;
         $tier = $request->tier ?? 1; // Default to tier 1
 
-        # Stats
-        $statsPlayerOfTheDay = $this->statsService->getPlayerOfTheDay($history);
 
         # Filter & Ordering
         if ($request->filterBy && $request->orderBy)
@@ -142,6 +140,16 @@ class LadderController extends Controller
             }
         }
 
+        # Stats
+        if ($history->ladder->clans_allowed)
+        {
+            $statsXOfTheDay = $this->statsService->getClanOfTheDay($history);
+        }
+        else
+        {
+            $statsXOfTheDay = $this->statsService->getPlayerOfTheDay($history);
+        }
+
         $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
             ->where('local_id', '>=', 0)
             ->orderBy('local_id', 'asc')
@@ -156,7 +164,7 @@ class LadderController extends Controller
             "search" => $request->search,
             "sides" => $sides,
             "stats" => $this->statsService->getQmStats($request->game),
-            "statsPlayerOfTheDay" => $statsPlayerOfTheDay,
+            "statsXOfTheDay" => $statsXOfTheDay,
             "ladders" => $this->ladderService->getLatestLadders(),
             "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
             "clan_ladders" => $this->ladderService->getLatestClanLadders(),

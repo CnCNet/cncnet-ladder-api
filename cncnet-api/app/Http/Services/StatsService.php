@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Clan;
 use Illuminate\Support\Facades\Cache;
 use \App\Http\Services\LadderService;
 use App\Player;
@@ -254,7 +255,7 @@ class StatsService
                 ->count();
 
             $stats[$k]["id"] = $player->id;
-            $stats[$k]["username"] = $player->username;
+            $stats[$k]["name"] = $player->username;
             $stats[$k]["wins"] = $winCount;
         }
 
@@ -266,6 +267,44 @@ class StatsService
 
         return null;
     }
+
+
+    public function getClanOfTheDay($history)
+    {
+        // Clans won't change too often, cache them for 30 minutes under each ladder
+        $clans = StatsCache::getClansTodayFromCache($history);
+
+        // These stats will update instantly
+        $now = Carbon::now();
+        $from = $now->copy()->startOfDay()->toDateTimeString();
+        $to = $now->copy()->endOfDay()->toDateTimeString();
+        $stats = [];
+
+        foreach ($clans as $k => $clanId)
+        {
+            $clan = Clan::where("id", $clanId)->first();
+            $winCountGames = $clan->clanGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("won", true)
+                ->get();
+
+            $winCount = count($winCountGames);
+
+            $stats[$k]["id"] = $clan->id;
+            $stats[$k]["name"] = $clan->short;
+            $stats[$k]["wins"] = $winCount;
+        }
+
+        if (count($stats) > 0)
+        {
+            $clanOfTheDay = collect($stats)->sortByDesc("wins")->first();
+            return json_decode(json_encode($clanOfTheDay));
+        }
+
+        return null;
+    }
+
 
     public function checkPlayerIsPlayerOfTheDay($history, $player)
     {

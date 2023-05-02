@@ -126,7 +126,7 @@
                 @include('ladders.listing._qm-stats', [
                     'stats' => $stats,
                     'history' => $history,
-                    'statsPlayerOfTheDay' => $statsPlayerOfTheDay,
+                    'statsXOfTheDay' => $statsXOfTheDay,
                 ])
             </section>
 

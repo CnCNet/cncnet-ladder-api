@@ -54,6 +54,12 @@ class UpdateStatsCache extends Command
         {
             echo "\n Setting setPlayersTodayCache for ladder history id: $history->id";
             StatsCache::setPlayersTodayCache($history);
+
+            if ($history->ladder->clans_allowed)
+            {
+                echo "\n Setting setClansTodayCache for ladder history id: $history->id";
+                StatsCache::setClansTodayCache($history);
+            }
         }
     }
 }
