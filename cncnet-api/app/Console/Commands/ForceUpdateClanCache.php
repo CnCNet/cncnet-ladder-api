@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
-class UpdateClanCache extends Command
+class ForceUpdateClanCache extends Command
 {
 
     /**
@@ -16,14 +16,14 @@ class UpdateClanCache extends Command
      *
      * @var string
      */
-    protected $name = 'update_clan_cache';
+    protected $name = 'force_update_clan_cache';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Updates the clan_caches table';
+    protected $description = 'Force updates all the clan_caches table';
 
     /**
      * Create a new command instance.
@@ -42,14 +42,10 @@ class UpdateClanCache extends Command
      */
     public function handle()
     {
-        $updates = ClanCacheUpdate::get();
-
-        foreach ($updates as $update)
+        $forceUpdate = ClanCache::all();
+        foreach ($forceUpdate as $fu)
         {
-            $clanCache = ClanCache::find($update->clan_cache_id);
-            $update->delete();
-
-            $this->update($clanCache);
+            $this->update($fu);
         }
     }
 

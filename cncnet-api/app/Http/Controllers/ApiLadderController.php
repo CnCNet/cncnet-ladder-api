@@ -227,6 +227,7 @@ class ApiLadderController extends Controller
     public function awardPoints($gameReport, $history)
     {
         $players = [];
+
         $playerGameReports = $gameReport->playerGameReports()->get();
 
         // Oops we don't have any players

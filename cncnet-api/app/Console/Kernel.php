@@ -27,7 +27,8 @@ class Kernel extends ConsoleKernel
         'App\Console\Commands\UpdateStatsCache',
         'App\Console\Commands\CleanupQmCanceledMatches',
         'App\Console\Commands\UpdatePlayerRatings',
-        'App\Console\Commands\ClearInactiveQueueEntries'
+        'App\Console\Commands\ClearInactiveQueueEntries',
+        'App\Console\Commands\ForceUpdateClanCache'
     ];
 
     /**
