@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Ladder Setup')
+@section('title', 'Map Pool Setup')
 
 @section('feature-image', '/images/feature/feature-index.jpg')
 @section('feature')
@@ -11,6 +11,16 @@
                         <strong class="fw-bold">CnCNet Admin</strong><br />
                         <span>Map Pool Configuration</span>
                     </h1>
+                </div>
+            </div>
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/admin/setup/{{ $ladder->id }}/edit">
+                        <span class="material-symbols-outlined icon pe-3">
+                            person
+                        </span>
+                       {{ $ladder->name }} Admin Page
+                    </a>
                 </div>
             </div>
         </div>

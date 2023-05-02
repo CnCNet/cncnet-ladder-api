@@ -314,6 +314,13 @@ class ClanController extends Controller
 
         if ($request->submit == 'accept')
         {
+            if ($player->clanPlayer != null)
+            {
+                $short =  $player->clanPlayer->clan->short;
+                $request->session()->flash('error', "$player->username is already in clan $short");
+                return redirect()->back();
+            }
+            
             $clanPlayer = ClanPlayer::firstOrNew(['clan_id' => $clan->id, 'player_id' => $player->id]);
             $clanPlayer->role = 'Member';
             $clanPlayer->save();
