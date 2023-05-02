@@ -110,8 +110,6 @@ class AccountController extends Controller
             }
         }
 
-        Log::info($myOldClans);
-
         return view("auth.ladder-account", compact(
             'ladders',
             'clan_ladders',
@@ -239,32 +237,32 @@ class AccountController extends Controller
         }
 
         // Check if there are active handles within this month
-        $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->where('ladder_id', $ladder->id)->get();
+        $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->where('ladder_id', $ladder->id)->get();
 
         if ($activeHandles->count() >= $maxActivePlayersAllowed)
         {
             // Check if there are games played on the user's active handle this month
-            $usersWithPlayedGamesCount = 0;
-            $counts = [];
-            foreach ($activeHandles as $activeHandle)
-            {
-                $playedGamesCount = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($activeHandle, $startOfMonth, $endOfMonth);
+            // $usersWithPlayedGamesCount = 0;
+            // $counts = [];
+            // foreach ($activeHandles as $tempHandle)
+            // {
+                // $playedGamesCount = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($tempHandle, $startOfMonth, $endOfMonth);
 
-                if ($playedGamesCount >= 1)
-                {
-                    $usersWithPlayedGamesCount++;
-                    $counts[] = $playedGamesCount;
-                }
-            }
+                // if ($playedGamesCount >= 1)
+                // {
+                    // $usersWithPlayedGamesCount++;
+                    // $counts[] = $playedGamesCount;
+                // }
+            // }
 
-            if ($usersWithPlayedGamesCount >= $maxActivePlayersAllowed)
-            {
-                $str = implode(", ", $counts);
-                $request->session()->flash('error', "Your active user(s) has already played ($str) games this month.
-                If you are trying to make a username inactive, the month we are in has to complete first. The maximum amount of active players is $maxActivePlayersAllowed");
+            // if ($usersWithPlayedGamesCount >= $maxActivePlayersAllowed)
+            // {
+                // $str = implode(", ", $counts);
+                // $request->session()->flash('error', "Your active user(s) has already played ($str) games this month.
+                $request->session()->flash('error', "You already have an active user, deactivate that user to activate another. The maximum amount of active players is $maxActivePlayersAllowed");
 
                 return redirect()->back();
-            }
+            // }
         }
 
         // If it's not an active handle make it one
