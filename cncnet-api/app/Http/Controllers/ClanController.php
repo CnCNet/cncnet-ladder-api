@@ -216,6 +216,14 @@ class ClanController extends Controller
             return redirect()->back();
         }
 
+        //check if invited player is already in this clan
+        if ($player->clanPlayer != null && $player->clanPlayer->clan->id == $clan->id)
+        {
+            $playerName = $player->username;
+            $request->session()->flash('error', "$playerName is already in your clan!");
+            return redirect()->back();
+        }
+
         $invitation = ClanInvitation::firstOrNew(['clan_id' => $clan->id, 'player_id' => $player->id, 'type' => 'invited']);
         if ($invitation->id !== null)
         {
@@ -320,7 +328,7 @@ class ClanController extends Controller
                 $request->session()->flash('error', "$player->username is already in clan $short");
                 return redirect()->back();
             }
-            
+
             $clanPlayer = ClanPlayer::firstOrNew(['clan_id' => $clan->id, 'player_id' => $player->id]);
             $clanPlayer->role = 'Member';
             $clanPlayer->save();
