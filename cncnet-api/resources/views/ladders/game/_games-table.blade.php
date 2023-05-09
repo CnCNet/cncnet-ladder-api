@@ -69,7 +69,7 @@
 
                     <td>
                         <div class="d-flex align-items-center">
-                            @php $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->abbreviation . '/' . $gameReport->hash . '.png'; @endphp
+                            @php $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $gameReport->hash . '.png'; @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>
                         </div>

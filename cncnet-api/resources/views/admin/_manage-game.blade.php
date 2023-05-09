@@ -3,7 +3,7 @@
         <?php $map = \App\Map::where('hash', '=', $game->hash)->first(); ?>
         @if ($map != null)
             <div class="feature-map text-center">
-                <img src="/images/maps/{{ $ladder->abbreviation }}/{{ $map->hash . '.png' }}">
+                <img src="/images/maps/{{ $ladder->game }}/{{ $map->hash . '.png' }}">
             </div>
         @endif
         <p class="username text-center" style="margin-bottom:0">1vs1</p>

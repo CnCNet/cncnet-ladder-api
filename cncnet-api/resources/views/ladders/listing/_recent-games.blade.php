@@ -10,7 +10,7 @@
 
                     @include('ladders.listing._game-box', [
                         'url' => '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id,
-                        'game' => $history->ladder->abbreviation,
+                        'game' => $history->ladder->game,
                         'isClanGame' => $history->ladder->clans_allowed,
                         'gamePlayers' => $game->playerGameReports(),
                         'gameReport' => $game->report()->first(),

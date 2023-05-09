@@ -1,7 +1,7 @@
 @php
     $mapPreview = '';
     try {
-        $mapPreview = url('images/maps/' . $history->ladder->abbreviation . '/' . $map->hash . '.png');
+        $mapPreview = url('images/maps/' . $history->ladder->game . '/' . $map->hash . '.png');
         $mapPreviewSize = getimagesize($mapPreview);
     
         $webMapWidth = $mapPreviewSize[0];
