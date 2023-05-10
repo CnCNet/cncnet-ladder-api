@@ -61,7 +61,7 @@ class ApiUserController extends Controller
             $ladder = $activeHandle->player->ladder;
             $player = $activeHandle->player;
             $player['user_avatar_path'] = $player->user->avatar_path;
-            
+
             if ($activeHandle->player->ladder)
             {
                 if ($ladder->clans_allowed)
@@ -73,13 +73,12 @@ class ApiUserController extends Controller
                     }
                     $clan = $player->clanPlayer->clan;
                     $player->clanPlayer;
-                    
                 }
                 $playerList[] = $activeHandle->player;
             }
         }
 
-        return $playerList; 
+        return $playerList;
     }
 
     private function createPlayerForLaddersIfNoneExist(User $user)
@@ -134,21 +133,14 @@ class ApiUserController extends Controller
                     if ($player)
                     {
                         // Check this username is not owned by someone on this ladder
-                        $playerTaken = Player::where("username", $player->username)->where("id", "!=", $player->id)->first();
-                        if ($playerTaken == null)
+                        $playerCount = Player::where("username", $player->username)
+                            ->where("id", "!=", $player->id)
+                            ->where('ladder_id', $ladder->id)
+                            ->count();
+                        if ($playerCount == 0)
                         {
                             // Use as our active handle on this ladder.
                             $this->playerService->addPlayerToUser($player->username, $user, $ladder->id);
-                            continue;
-                        }
-                        else
-                        {
-                            // Use as our active handle on this ladder.
-                            PlayerActiveHandle::setPlayerActiveHandle(
-                                $ladder->id,
-                                $player->id,
-                                $user->id
-                            );
                             continue;
                         }
                     }
@@ -167,7 +159,7 @@ class ApiUserController extends Controller
 
         while ($userCanCreateNick == false)
         {
-            $playerUsername = $this->autoGeneratePlayerUsername($user, $ladder);
+            $playerUsername = $this->autoGeneratePlayerUsername();
             $existsAlready = Player::where("username", $playerUsername)->where("ladder_id", $ladder->id)->first();
 
             if ($existsAlready == null)

@@ -239,30 +239,17 @@ class AccountController extends Controller
         // Check if there are active handles within this month
         $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->where('ladder_id', $ladder->id)->get();
 
+        //filter out any whose ladder_id does not match
+        $activeHandles = $activeHandles->filter(function ($tempHandle) use (&$ladder)
+        {
+            return $tempHandle->ladder_id == $ladder->id && $tempHandle->player->ladder_id == $ladder->id;
+        });
+
         if ($activeHandles->count() >= $maxActivePlayersAllowed)
         {
-            // Check if there are games played on the user's active handle this month
-            // $usersWithPlayedGamesCount = 0;
-            // $counts = [];
-            // foreach ($activeHandles as $tempHandle)
-            // {
-                // $playedGamesCount = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($tempHandle, $startOfMonth, $endOfMonth);
+            $request->session()->flash('error', "You already have an active user, deactivate that user to activate another. The maximum amount of active players is $maxActivePlayersAllowed");
 
-                // if ($playedGamesCount >= 1)
-                // {
-                    // $usersWithPlayedGamesCount++;
-                    // $counts[] = $playedGamesCount;
-                // }
-            // }
-
-            // if ($usersWithPlayedGamesCount >= $maxActivePlayersAllowed)
-            // {
-                // $str = implode(", ", $counts);
-                // $request->session()->flash('error', "Your active user(s) has already played ($str) games this month.
-                $request->session()->flash('error', "You already have an active user, deactivate that user to activate another. The maximum amount of active players is $maxActivePlayersAllowed");
-
-                return redirect()->back();
-            // }
+            return redirect()->back();
         }
 
         // If it's not an active handle make it one
