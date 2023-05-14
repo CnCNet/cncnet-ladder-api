@@ -72,7 +72,7 @@ class Clan extends Model
             ->where('player_game_reports.clan_id', $this->id)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
-            ->groupBy("player_game_reports.clan_id")
+            ->groupBy("game_reports.game_id")
             ->select(
                 'player_game_reports.id as id',
                 'player_game_reports.clan_id as clan_id',

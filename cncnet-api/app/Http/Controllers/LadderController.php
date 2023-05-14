@@ -417,6 +417,7 @@ class LadderController extends Controller
             ->orderBy('created_at', 'DESC')
             ->paginate(24);
 
+
         $mod = $request->user();
         $userIsMod = false;
 
