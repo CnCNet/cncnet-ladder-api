@@ -450,7 +450,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Create username for {{ $ladder->name }}</h5>
+                    <h4 class="modal-title">Create username for {{ $ladder->name }}</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -461,6 +461,11 @@
                         <p>
                             Usernames will be shown in the Ranked Match client and in-game.
                         </p>
+                        @if ($ladder->clans_allowed)
+                            <p>
+                                <strong>Do not include clan names in your usernames. This will happen automatically.</strong>
+                            </p>
+                        @endif
 
                         <div class="mb-5">
                             <label for="username" class="form-label"><strong>Username</strong></label>
@@ -512,7 +517,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Create a new Clan</h5>
+                    <h4 class="modal-title">Create a new Clan</h4>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -522,57 +527,47 @@
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="ladder_id" value="{{ $ladder->id }}">
 
-                        <label>Select the player:</label>
-                        @foreach ($activePlayersNotInAClan as $activePlayerNotInAClan)
-                            <div>
-                                <input type="radio" id="player_id_{{ $activePlayerNotInAClan->player->id }}" name="player_id"
-                                    value="{{ $activePlayerNotInAClan->player->id }}">{{ $activePlayerNotInAClan->player->username }}</radio>
-                            </div>
-                        @endforeach
+                        <div class="mb-2">
+                            <p>
+                                Short name will be the name appearing in the clients. <br />
+                                Full clan names will appear on the ladder.
+                            </p>
+                        </div>
 
-                        <p>
-                            Short name will be the name appearing in the clients.
-                        </p>
-                        <p>
-                            Full clan names will appear on the ladder.
-                        </p>
-
-                        <div class="form-group mb-2">
-                            <label for="short">Short Name (6 Characters long)</label>
+                        <div class="form-group
+                            mb-2">
+                            <label for="short"><strong>Short Name (6 Characters long)*</strong></label>
                             <input type="text" name="short" class="form-control border" id="short" placeholder="">
                         </div>
 
                         <div class="form-group mb-2">
-                            <label for="name">Full Clan Name</label>
+                            <label for="name"><strong>Full Clan Name*</strong></label>
                             <input type="text" name="name" class="form-control border" id="name" placeholder="">
                         </div>
 
-                        <button type="submit" class="btn btn-primary">Create Clan</button>
+                        <div class="form-group mb-4">
+                            <strong class="mb-2">Select a nickname that will own this clan*</strong>
+                            <?php $autoCheckNickname = count($activePlayersNotInAClan) == 1; ?>
+
+                            <div class="mt-2 mb-2">
+                                @foreach ($activePlayersNotInAClan as $activePlayerNotInAClan)
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="player_id"
+                                            id="player_id_{{ $activePlayerNotInAClan->player->id }}" {{ $autoCheckNickname ? 'checked' : '' }}>
+                                        <label class="form-check-label" for="player_id_{{ $activePlayerNotInAClan->player->id }}">
+                                            {{ $activePlayerNotInAClan->player->username }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-2 mb-2">
+                            <button type="submit" class="btn btn-primary">Create Clan</button>
+                        </diV>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="newClan" tabIndex="-1" role="dialog">
-        <div class="modal-dialog modal-md" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h3 class="modal-title">Create A New Clan!</h3>
-                </div>
-                <div class="modal-body clearfix">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-md-12 player-box player-card" style="padding:8px;margin:8px;">
-                                <div class="account-box">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 @endsection
