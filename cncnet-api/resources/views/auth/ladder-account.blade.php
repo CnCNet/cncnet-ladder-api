@@ -553,7 +553,8 @@
                                 @foreach ($activePlayersNotInAClan as $activePlayerNotInAClan)
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="player_id"
-                                            id="player_id_{{ $activePlayerNotInAClan->player->id }}" {{ $autoCheckNickname ? 'checked' : '' }}>
+                                            id="player_id_{{ $activePlayerNotInAClan->player->id }}" {{ $autoCheckNickname ? 'checked' : '' }}
+                                            value="{{ $activePlayerNotInAClan->player->id }}">
                                         <label class="form-check-label" for="player_id_{{ $activePlayerNotInAClan->player->id }}">
                                             {{ $activePlayerNotInAClan->player->username }}
                                         </label>
