@@ -48,7 +48,13 @@
                 </div>
 
                 @if ($statsXOfTheDay)
-                    <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsXOfTheDay->name); ?>
+
+                    @if ($history->ladder->clans_allowed)
+                        <?php $url = \App\URLHelper::getClanProfileUrl($history, $statsXOfTheDay->name); ?>~
+                    @else
+                        <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsXOfTheDay->name); ?>
+                    @endif
+
                     <a class="stat gold potd" style="position:relative" href="{{ $url }}" title="{{ $statsXOfTheDay->name }}">
                         <div class="text-center">
                             <div class="icon icon-crown pt-4">
