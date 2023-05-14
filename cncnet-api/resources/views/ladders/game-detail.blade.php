@@ -161,7 +161,7 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
                                 @php $clanCache = $player->clanPlayer->clanCache($history->id);@endphp
 
                                 @if ($clanCache)
-                                    @include('ladders.game._clan-card')
+                                    @include('ladders.game.clan._clan-card')
                                 @endif
                             @endforeach
 

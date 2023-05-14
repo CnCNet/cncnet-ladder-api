@@ -209,7 +209,10 @@
 {
     margin-top: 2rem;
     margin-bottom: 2rem;
-
+    width: 10%;
+    justify-content: center;
+    max-width: 100%;
+    
     h1 
     {
         color: #ededed;
@@ -238,6 +241,9 @@
 {
     display: flex;
     position: relative;
+    justify-content: center;
+    width: 20%;
+    max-width: 100%;
 }
 
 .game-detail .player-card .player-details

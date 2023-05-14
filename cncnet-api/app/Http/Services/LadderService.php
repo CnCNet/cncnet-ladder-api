@@ -481,7 +481,7 @@ class LadderService
             $clanCache = new ClanCache();
             $clanCache->ladder_history_id = $history->id;
             $clanCache->clan_id = $clan->id;
-            $clanCache->clan_name = $clan->name;
+            $clanCache->clan_name = $clan->short;
             $clanCache->save();
         }
 
