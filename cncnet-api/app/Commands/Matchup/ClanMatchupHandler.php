@@ -200,7 +200,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
             {
                 if ($player->clanPlayer && $player->clanPlayer->clan->id == $clanId)
                 {
-                    $opponentClanName = \App\Clan::where('id', $clanId)->short;
+                    $opponentClanName = \App\Clan::where('id', $clanId)->first()->short;
                     $currentPlayerName = $currentUserClanPlayer->player->username;
                     $playerName = $player->username;
                     Log::info("Current player '$currentPlayerName' has another player '$playerName' who belongs to clan '$opponentClanName'.");
