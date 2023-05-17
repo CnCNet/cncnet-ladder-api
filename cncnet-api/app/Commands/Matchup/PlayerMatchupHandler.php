@@ -118,7 +118,6 @@ class PlayerMatchupHandler extends BaseMatchupHandler
 
         $qmOpns = $opponentQmQueueEntriesFiltered->shuffle();
         $qmOpnsCount = $qmOpns->count();
-        Log::info("FindOpponent ** Opponent Count: $qmOpnsCount");
 
         if ($qmOpns->count() >= $ladderRules->player_count - 1)
         {

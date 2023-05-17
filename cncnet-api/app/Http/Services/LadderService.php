@@ -465,7 +465,7 @@ class LadderService
                     $clanUpdated[] = $playerGameReport->clan->id;
                 }
             }
-            else if ($ladder->clans_allowed)
+            else
             {
                 $this->savePlayerCache($playerGameReport, $history);
             }
