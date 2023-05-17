@@ -9,6 +9,7 @@ use \App\Http\Services\PlayerService;
 use \App\Http\Services\PointService;
 use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
+use \App\PlayerGameReport;
 use Illuminate\Support\Facades\Cache;
 use \App;
 use Illuminate\Support\Facades\Log;
@@ -357,6 +358,50 @@ class ApiLadderController extends Controller
                 $playerGR->points = 0;
                 $playerGR->save();
             }
+        }
+
+        # If clan game, make sure team mates have same points
+        if ($history->ladder->clans_allowed)
+        {
+            # Get best lost report, including best points calc
+            $bestWonReport = PlayerGameReport::where("game_id", $gameReport->game_id)
+                ->where("game_report_id", $gameReport->id)
+                ->where("won", true)
+                ->where("defeated", false)
+                ->where("points", ">=", 0)
+                ->orderBy("points", "DESC")
+                ->groupBy("clan_id")
+                ->first();
+
+            # Get best lost report, including worst points deduction
+            $bestLostReport = PlayerGameReport::where("game_id", $gameReport->game_id)
+                ->where("game_report_id", $gameReport->id)
+                ->where("won", false)
+                ->where("defeated", true)
+                ->where("points", "<=", 0)
+                ->orderBy("points", "ASC")
+                ->groupBy("clan_id")
+                ->first();
+
+            # Update other player reports in these clans
+            $winningClanUpdate = PlayerGameReport::where("game_report_id", $bestWonReport->game_report_id)
+                ->where("game_id", $bestWonReport->game_id)
+                ->where("clan_id", $bestWonReport->clan_id)
+                ->where("points", ">=", 0)
+                ->update([
+                    "won" => $bestWonReport->won,
+                    "defeated" => $bestWonReport->defeated,
+                    "points" => $bestWonReport->points
+                ]);
+
+            $losingClanUpdate = PlayerGameReport::where("game_report_id", $bestLostReport->game_report_id)
+                ->where("game_id", $bestLostReport->game_id)
+                ->where("clan_id", $bestLostReport->clan_id)
+                ->update([
+                    "won" => $bestLostReport->won,
+                    "defeated" => $bestLostReport->defeated,
+                    "points" => $bestLostReport->points
+                ]);
         }
 
         return 200;

@@ -454,13 +454,18 @@ class LadderService
         $history = $gameReport->game->ladderHistory;
         $ladder = $history->ladder;
 
+        $clanUpdated = array();
         foreach ($gameReport->playerGameReports as $playerGameReport)
         {
             if ($ladder->clans_allowed)
             {
-                $this->saveClanCache($playerGameReport, $history);
+                if (!isset($clanUpdated[$playerGameReport->clan->id])) //only update each clan's cache one time after a game ends
+                {
+                    $this->saveClanCache($playerGameReport, $history);
+                    $clanUpdated[] = $playerGameReport->clan->id;
+                }
             }
-            else
+            else if ($ladder->clans_allowed)
             {
                 $this->savePlayerCache($playerGameReport, $history);
             }
