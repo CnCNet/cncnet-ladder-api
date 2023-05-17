@@ -51,11 +51,12 @@
             <div class="container">
                 <div class="countdown announcement m-auto" style="width: 450px; max-width: 100%;">
                     <a href="/news/clan-ladder" title="Clan Ladder Announcement">
-                        Announcement
+                        2vs2 - Clan Ladder Announcement
                     </a>
                 </div>
             </div>
         </section>
+
         <section class="pt-5 pb-5">
             <div class="container">
                 <h3>
