@@ -74,23 +74,23 @@
                         The developers below are responsible for making the clan ladders happen.
                     </p>
 
-                    <ul class="list-styled" style="font-size:19px">
-                        <li>
-                            <a href="https://www.paypal.com/donate?business=97YLXRUPWZAK8" target="_blank">
+                    <div class="d-flex" style="font-size:19px">
+                        <div class="mr-4">
+                            <a href="https://www.paypal.com/donate?business=97YLXRUPWZAK8" target="_blank" class="btn btn-outline">
                                 <i class="fa bi-paypal fa-lg pe-2"></i>Burg
                             </a>
-                        </li>
-                        <li>
-                            <a href="https://www.paypal.com/donate/?business=CWS4JFC2ENMSC" target="_blank">
+                        </div>
+                        <div class="ps-4 mr-4">
+                            <a href="https://www.paypal.com/donate/?business=CWS4JFC2ENMSC" target="_blank" class="btn btn-outline">
                                 <i class="fa bi-paypal fa-lg pe-2"></i>xme
                             </a>
-                        </li>
-                        <li>
-                            <a href="https://www.paypal.com/donate/?hosted_button_id=CAHPHC3X78KWC" target="_blank">
+                        </div>
+                        <div class="ps-4 mr-4">
+                            <a href="https://www.paypal.com/donate/?hosted_button_id=CAHPHC3X78KWC"target="_blank" class="btn btn-outline">
                                 <i class="fa bi-paypal fa-lg pe-2"></i>neogrant
                             </a>
-                        </li>
-                    </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
