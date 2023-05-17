@@ -53,14 +53,14 @@ class Clan extends Model
 
         if ($history == null)
         {
-            $result = $this->clanGames()->where('won', true)->count();
+            $result = $this->clanGames()->where('won', true)->get();
         }
         else
         {
-            $result = $this->clanGames()->where('won', true)->where('ladder_history_id', $history->id)->count();
+            $result = $this->clanGames()->where('won', true)->where('ladder_history_id', $history->id)->get();
         }
 
-        return $result;
+        return count($result);
     }
 
     public function clanGames()
@@ -118,9 +118,9 @@ class Clan extends Model
 
         $totalGames = $this->clanGames()->where("ladder_history_id", $history->id)
             ->whereBetween("game_reports.created_at", [$start, $end])
-            ->count();
+            ->get();
 
-        return $totalGames;
+        return count($totalGames);
     }
 
     public function totalGames($history = null)
@@ -129,14 +129,14 @@ class Clan extends Model
 
         if ($history == null)
         {
-            $result = $this->clanGames->count();
+            $result = $this->clanGames->get();
         }
         else
         {
-            $result = $this->clanGames->where('ladder_history_id', $history->id)->count();
+            $result = $this->clanGames()->where('ladder_history_id', $history->id)->get();
         }
 
-        return $result;
+        return count($result);
     }
 
     public function sideUsage($history)

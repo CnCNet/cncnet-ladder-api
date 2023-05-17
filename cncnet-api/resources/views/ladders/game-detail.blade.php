@@ -79,7 +79,9 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
                             <?php $player = $pgr->player()->first(); ?>
 
                             @if ($history->ladder->clans_allowed)
-                                Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
+                                @if ($player->clanPlayer)
+                                    Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
+                                @endif
                             @else
                                 <span>{{ $player->username }}</span>
                             @endif
@@ -158,10 +160,13 @@ $reports = $isClanGame ? $clanGameReports : $playerGameReports;
                                 @php $playerCache = $player->playerCache($history->id);@endphp
                                 @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
                                 @php $points = $playerCache ? $playerCache->points : 0;@endphp
-                                @php $clanCache = $player->clanPlayer->clanCache($history->id);@endphp
 
-                                @if ($clanCache)
-                                    @include('ladders.game.clan._clan-card')
+                                @if ($player->clanPlayer)
+                                    @php $clanCache = $player->clanPlayer->clanCache($history->id);@endphp
+
+                                    @if ($clanCache)
+                                        @include('ladders.game.clan._clan-card')
+                                    @endif
                                 @endif
                             @endforeach
 

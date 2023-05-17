@@ -60,6 +60,16 @@
 @endsection
 
 @section('content')
+    <section class="pt-3 pb-3">
+        <div class="container">
+            <div class="countdown announcement m-auto" style="width: 450px; max-width: 100%;">
+                <a href="/news/clan-ladder" title="Clan Ladder Announcement">
+                    2vs2 - Clan Ladder Announcement
+                </a>
+            </div>
+        </div>
+    </section>
+
     <section class="ladder-listing game-{{ $history->ladder->abbreviation }}">
         <div class="container">
             @if ($history->ladder->abbreviation == 'blitz')

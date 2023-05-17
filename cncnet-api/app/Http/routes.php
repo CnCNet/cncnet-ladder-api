@@ -13,6 +13,7 @@ Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChamp
 Route::get('/help/obs', 'SiteController@getOBSHelp');
 Route::get('/donate', 'SiteController@getDonate');
 Route::get('/ranking', 'RankingController@getIndex');
+Route::get('/news/clan-ladder', 'SiteController@getClanLadderNews');
 
 
 # 1vs1 Player Ladders

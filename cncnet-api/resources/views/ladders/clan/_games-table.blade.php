@@ -27,11 +27,11 @@
                 <tr class="align-middle" data-timestamp="{{ $timestamp }}">
                     <td class="td-player">
                         @include('ladders.components._games-player-clan-row', [
-                            'clanName' => $playerGameReport->clan->name,
+                            'clanName' => $playerGameReport->clan->short,
                             'avatar' => $playerGameReport->clan->getClanAvatar(),
                             'clanProfileUrl' => $clanProfileUrl,
                             'profileUrl' => $playerProfileUrl,
-                            'username' => $playerGameReport->clan->name,
+                            'username' => $playerGameReport->clan->short,
                             'playerGameReport' => $playerGameReport,
                         ])
                     </td>
@@ -45,7 +45,7 @@
                     <td class="td-player td-player-opponent">
                         @if ($opponentPlayerReport)
                             @include('ladders.components._games-player-clan-row', [
-                                'clanName' => $opponentPlayerReport->clan->name,
+                                'clanName' => $opponentPlayerReport->clan->short,
                                 'avatar' => $opponentPlayerReport->clan->getClanAvatar(),
                                 'clanProfileUrl' => $opponentClanProfileUrl,
                                 'profileUrl' => $opponentPlayerProfileUrl,

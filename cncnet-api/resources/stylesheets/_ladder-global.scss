@@ -64,3 +64,29 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+.announcement 
+{
+    text-transform: uppercase;
+    transition: ease all 250ms;
+    border-radius: 10px;
+    text-align: center;
+
+    font-size: 1.5rem;
+    @media(min-width: $md-width)
+    {
+        font-size: 1.9rem;
+    }
+    
+    a 
+    {
+        font-weight: 600;
+        @extend %font-secondary-bold;
+        color: #2e66ff; 
+        background-image: -webkit-linear-gradient(0deg, #2e66ff 25%, #2ed2ff 86%); 
+        background-clip: text; 
+        -webkit-background-clip: text; 
+        text-fill-color: transparent; 
+        -webkit-text-fill-color: transparent;
+    }
+}
