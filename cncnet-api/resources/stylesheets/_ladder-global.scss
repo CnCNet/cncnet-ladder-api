@@ -70,7 +70,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(45deg, #4107ff, #0bb0ff);
+    background: linear-gradient(174deg, #3F51B5, #0bff8e);
     color: #fff;
     height: 50px;
     font-weight: 500;
@@ -78,4 +78,8 @@
     font-size: 1.2rem;
     transition: ease all 250ms;
     border-radius: 10px;
+    a 
+    {
+        @extend %font-secondary-bold;
+    }
 }
