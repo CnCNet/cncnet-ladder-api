@@ -11,6 +11,11 @@ class SiteController extends Controller
         return view("help.obs");
     }
 
+    public function getClanLadderNews(Request $request)
+    {
+        return view("news.clans-coming-soon");
+    }
+
     public function getDonate(Request $request)
     {
         return view("donate");

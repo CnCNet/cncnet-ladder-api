@@ -49,6 +49,15 @@
     <div class="ladder-index">
         <section class="pt-5 pb-5">
             <div class="container">
+                <div class="countdown announcement">
+                    <a href="/news/clan-ladder" title="Clan Ladder Announcement">
+                        Clan Ladder Announcement
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section class="pt-5 pb-5">
+            <div class="container">
                 <h3>
                     <span class="material-symbols-outlined icon">
                         military_tech
