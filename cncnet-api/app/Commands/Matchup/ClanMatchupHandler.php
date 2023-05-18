@@ -194,10 +194,10 @@ class ClanMatchupHandler extends BaseMatchupHandler
             }
         }
 
-        //loop through opponent clans, check if any of my clan members in queue are in their clan
+        //loop through opponent clans, check if any of my clan members in queue are in their clan also
         foreach ($groupedQmQueueEntriesByClan as $opponentClanId => $opponentQmEntries)
         {
-            if ($currentUserClanPlayer->clan->id == $opponentClanId) //self
+            if ($opponentClanId == $currentUserClanPlayer->clan->id) //self
             {
                 continue;
             }
@@ -220,6 +220,9 @@ class ClanMatchupHandler extends BaseMatchupHandler
                         break;
                     }
                 }
+
+                if (!$canMatch)
+                    break;
             }
             if ($canMatch)
                 $result[$clanId] = $allQMQueueEntries;
