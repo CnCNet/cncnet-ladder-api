@@ -63,6 +63,16 @@ class Clan extends Model
         return count($result);
     }
 
+    public function pointsBefore($history, $gameId, $clanId)
+    {
+        $points = \App\PlayerGameReport::where('player_game_reports.clan_id', $clanId)
+            ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
+            ->where("g.ladder_history_id", "=", $history->id)
+            ->where('g.id', '<', $gameId)
+            ->sum('player_game_reports.points');
+        return $points !== null ? $points : 0;
+    }
+
     public function clanGames()
     {
         return $this->playerGameReports()
