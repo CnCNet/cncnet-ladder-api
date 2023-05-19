@@ -21,6 +21,7 @@ use App\PlayerHistory;
 use App\QmCanceledMatch;
 use App\User;
 use App\UserRating;
+use GuzzleHttp\Subscriber\History;
 
 class LadderController extends Controller
 {
@@ -232,6 +233,17 @@ class LadderController extends Controller
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
         $user = $request->user();
+
+        // Tests
+        if ($request->reunRewardPoints && $history->ladder->clans_allowed)
+        {
+            $api = new ApiLadderController();
+            foreach ($game->playerGameReports as $k => $pgr)
+            {
+                $gameReport = $pgr->gameReport;
+                $result = $api->awardPoints($gameReport, $history);
+            }
+        }
 
         if ($game == null)
         {

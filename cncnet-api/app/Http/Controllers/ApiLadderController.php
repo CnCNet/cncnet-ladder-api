@@ -261,24 +261,43 @@ class ApiLadderController extends Controller
             $enemy_count = 0;
             $enemy_games = 0;
 
-            // dd($playerGameReports);
             foreach ($playerGameReports as $pgr)
             {
                 $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
                 $players[] = $other;
 
-                if ($pgr->local_team_id == $playerGR->local_team_id)
+                # Extra safety, code duplication for now. If Clans...
+                if ($history->ladder->clans_allowed)
                 {
-                    $ally_average += $other->rating;
-                    $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
-                    $ally_count++;
+                    if ($pgr->clan_id == $playerGR->clan_id)
+                    {
+                        $ally_average += $other->rating;
+                        $ally_points += $pgr->clan->pointsBefore($history, $pgr->game_id, $pgr->clan_id);
+                        $ally_count++;
+                    }
+                    else
+                    {
+                        $enemy_average += $other->rating;
+                        $enemy_points += $pgr->clan->pointsBefore($history, $pgr->game_id, $pgr->clan_id);
+                        $enemy_count++;
+                        $enemy_games += $pgr->clan->totalGames($history);
+                    }
                 }
                 else
                 {
-                    $enemy_average += $other->rating;
-                    $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
-                    $enemy_count++;
-                    $enemy_games += $pgr->player->totalGames($history);
+                    if ($pgr->local_team_id == $playerGR->local_team_id)
+                    {
+                        $ally_average += $other->rating;
+                        $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                        $ally_count++;
+                    }
+                    else
+                    {
+                        $enemy_average += $other->rating;
+                        $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                        $enemy_count++;
+                        $enemy_games += $pgr->player->totalGames($history);
+                    }
                 }
             }
 
@@ -349,64 +368,33 @@ class ApiLadderController extends Controller
                 }
             }
 
-            $playerGR->save();
+            // Get correct cache type
+            $cache = null;
+            try
+            {
+                if ($history->ladder->clans_allowed)
+                {
+                    if ($playerGR->player->clanPlayer)
+                    {
+                        $cache = $playerGR->player->clanPlayer->clanCache($history->id);
+                    }
+                }
+                else
+                {
+                    $cache = $playerGR->player->playerCache($history->id);
+                }
+            }
+            catch (Exception $ex)
+            {
+                Log::info("ApiLadderController ERROR: " . $ex->getMessage());
+            }
 
-            $pc = $playerGR->player->playerCache($history->id);
-
-            if ($playerGR->points < 0 && ($pc === null || $pc->points < 0))
+            if ($playerGR->points < 0 && ($cache === null || $cache->points < 0))
             {
                 $playerGR->points = 0;
-                $playerGR->save();
             }
-        }
 
-        # If clan game, make sure team mates have same points
-        if ($history->ladder->clans_allowed)
-        {
-
-
-
-
-
-            # Get best lost report, including best points calc
-            // $bestWonReport = PlayerGameReport::where("game_id", $gameReport->game_id)
-            //     ->where("game_report_id", $gameReport->id)
-            //     ->where("won", true)
-            //     ->where("defeated", false)
-            //     ->where("points", ">=", 0)
-            //     ->orderBy("points", "DESC")
-            //     ->groupBy("clan_id")
-            //     ->first();
-
-            // # Get best lost report, including worst points deduction
-            // $bestLostReport = PlayerGameReport::where("game_id", $gameReport->game_id)
-            //     ->where("game_report_id", $gameReport->id)
-            //     ->where("won", false)
-            //     ->where("defeated", true)
-            //     ->where("points", "<=", 0)
-            //     ->orderBy("points", "ASC")
-            //     ->groupBy("clan_id")
-            //     ->first();
-
-            // # Update other player reports in these clans
-            // $winningClanUpdate = PlayerGameReport::where("game_report_id", $bestWonReport->game_report_id)
-            //     ->where("game_id", $bestWonReport->game_id)
-            //     ->where("clan_id", $bestWonReport->clan_id)
-            //     ->where("points", ">=", 0)
-            //     ->update([
-            //         "won" => $bestWonReport->won,
-            //         "defeated" => $bestWonReport->defeated,
-            //         "points" => $bestWonReport->points
-            //     ]);
-
-            // $losingClanUpdate = PlayerGameReport::where("game_report_id", $bestLostReport->game_report_id)
-            //     ->where("game_id", $bestLostReport->game_id)
-            //     ->where("clan_id", $bestLostReport->clan_id)
-            //     ->update([
-            //         "won" => $bestLostReport->won,
-            //         "defeated" => $bestLostReport->defeated,
-            //         "points" => $bestLostReport->points
-            //     ]);
+            $playerGR->save();
         }
 
         return 200;
