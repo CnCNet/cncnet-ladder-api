@@ -10,6 +10,7 @@ use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
 use \Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class LadderService
 {
@@ -451,6 +452,8 @@ class LadderService
 
     public function updatePlayerCache($gameReport)
     {
+        Log::info("Updating PlayerCache for gameReportId=$gameReport->id");
+
         $history = $gameReport->game->ladderHistory;
         $ladder = $history->ladder;
 
@@ -459,10 +462,11 @@ class LadderService
         {
             if ($ladder->clans_allowed)
             {
-                if (!isset($clanUpdated[$playerGameReport->clan->id])) //only update each clan's cache one time after a game ends
+                if (!isset($clanUpdated[$playerGameReport->clan_id])) //only update each clan's cache one time after a game ends
                 {
+                    Log::info("Updating clanCache for player: " . $playerGameReport->player->username);
                     $this->saveClanCache($playerGameReport, $history);
-                    $clanUpdated[] = $playerGameReport->clan->id;
+                    $clanUpdated[] = $playerGameReport->clan_id;
                 }
             }
             else
