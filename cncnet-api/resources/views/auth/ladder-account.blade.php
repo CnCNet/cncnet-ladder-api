@@ -186,7 +186,12 @@
                                                     <td>
                                                         <a href="/clans/{{ $ladder->abbreviation }}/edit/{{ $clanPlayer->clan_id }}/main"
                                                             class="btn btn-primary btn-size-md">
-                                                            Mange your clan - {{ $clanPlayer->clan->short }}
+
+                                                            @if ($clanPlayer->isMember())
+                                                                View Clan - {{ $clanPlayer->clan->short }}
+                                                            @else
+                                                                Manage Clan - {{ $clanPlayer->clan->short }}
+                                                            @endif
                                                         </a>
                                                     </td>
                                                     <td>
