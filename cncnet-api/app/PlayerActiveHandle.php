@@ -111,6 +111,7 @@ class PlayerActiveHandle extends Model
             ->join('games', 'games.id', '=', 'game_reports.game_id')
             ->where('games.created_at', '<=', $dateEnd)
             ->where('games.created_at', '>', $dateStart) # ensure player has not played any games this month
+            ->groupBy('player_game_reports.id')
             ->count();
 
         return $count;

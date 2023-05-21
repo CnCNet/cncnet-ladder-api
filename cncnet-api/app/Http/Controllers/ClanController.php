@@ -14,6 +14,8 @@ use App\ClanInvitation;
 use App\Player;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
+use Carbon\Carbon;
+use \App\PlayerActiveHandle;
 
 class ClanController extends Controller
 {
@@ -414,6 +416,21 @@ class ClanController extends Controller
             return redirect()->back();
         }
 
+        //check if player has played games for this clan
+        $date = Carbon::now();
+        $startOfMonth = $date->startOfMonth()->toDateTimeString();
+        $endOfMonth = $date->endOfMonth()->toDateTimeString();
+        $activeHandle = PlayerActiveHandle::getPlayerActiveHandle($player->id, $ladder->id, $startOfMonth, $endOfMonth);
+
+        //get count of how many games this user has played
+        $gamesPlayed = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($activeHandle, $startOfMonth, $endOfMonth);
+
+        if ($gamesPlayed > 0)
+        {
+            $request->session()->flash('error', "You cannot leave $clan->short because you have played $gamesPlayed games for this clan this month. Wait until this month is over to leave this clan.");
+            return redirect()->back();
+        }
+
         $invite = new ClanInvitation;
         $invite->fill(['clan_id' => $clan->id, 'author_id' => $clanPlayer->player->id, 'player_id' => $clanPlayer->player->id, 'type' => 'left']);
         $invite->save();
@@ -472,29 +489,29 @@ class ClanController extends Controller
 
         foreach ($request->role as $id => $role_id)
         {
-            $cp = ClanPlayer::find($id);
+            $clanPlayer = ClanPlayer::find($id);
 
-            if ($cp->clan_id == $clan->id)
+            if ($clanPlayer->clan_id == $clan->id)
             {
                 $ci = new ClanInvitation;
                 $ci->clan_id = $clan->id;
                 $ci->author_id = $player->id;
-                $ci->player_id = $cp->player_id;
+                $ci->player_id = $clanPlayer->player_id;
 
                 if ($role_id == 'kick')
                 {
                     $ci->type = 'kicked';
                     $ci->save();
                     $ci->delete();
-                    $cp->delete();
+                    $clanPlayer->delete();
                 }
-                else if ($cp->clan_role_id != $role_id)
+                else if ($clanPlayer->clan_role_id != $role_id)
                 {
-                    $ci->type = $cp->clan_role_id > $role_id ? 'promoted' : 'demoted';
-                    $cp->clan_role_id = $role_id;
+                    $ci->type = $clanPlayer->clan_role_id > $role_id ? 'promoted' : 'demoted';
+                    $clanPlayer->clan_role_id = $role_id;
                     $ci->save();
                     $ci->delete();
-                    $cp->save();
+                    $clanPlayer->save();
                 }
             }
         }
