@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Carbon\Carbon;
 use \App\PlayerActiveHandle;
+use ErrorException;
+use Illuminate\Support\Facades\Log;
 
 class ClanController extends Controller
 {
@@ -55,7 +57,17 @@ class ClanController extends Controller
                 $avatar = Image::make($request->file('avatar')->getRealPath())->resize(300, 300)->encode("png");
                 $hash = md5($avatar->__toString());
                 $path = "avatars/clans/{$clan->id}/{$hash}.png";
-                Storage::put($path, $avatar);
+                try
+                {
+                    Storage::put($path, $avatar);
+                }
+                catch (ErrorException $e)
+                {
+                    Log::info("Failed to move file to $path because: " . $e);
+
+                    $request->session()->flash('error', "Failed to upload the file, please ensure you selected the correct file.");
+                    return redirect()->back();
+                }
             }
 
             $clan->avatar_path = $path;
