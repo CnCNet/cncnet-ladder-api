@@ -427,7 +427,7 @@ class ClanController extends Controller
 
         if ($gamesPlayed > 0)
         {
-            $request->session()->flash('error', "You cannot leave $clan->short because you have played $gamesPlayed games for this clan this month. Wait until this month is over to leave this clan.");
+            $request->session()->flash('error', "$player->username cannot leave $clan->short because you have played $gamesPlayed games for this clan this month. Wait until this month is over to leave this clan.");
             return redirect()->back();
         }
 
