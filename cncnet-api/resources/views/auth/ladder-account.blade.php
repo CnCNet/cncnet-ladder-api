@@ -202,9 +202,10 @@
                                                     </td>
                                                     <td>
                                                         <button type="button" class="btn btn-danger btn-md" data-bs-toggle="modal"
-                                                            data-bs-target="#submitLeaveClan">Leave Clan</button>
+                                                            data-bs-target="#submitLeaveClan_{{ $clanPlayer->clan->id }}">Leave Clan</button>
 
-                                                        <div class="modal fade" tabindex="-1" id="submitLeaveClan" tabIndex="-1" role="dialog">
+                                                        <div class="modal fade" tabindex="-1" id="submitLeaveClan_{{ $clanPlayer->clan->id }}"
+                                                            tabIndex="-1" role="dialog">
                                                             <div class="modal-dialog">
                                                                 <div class="modal-content">
                                                                     <div class="modal-header">
