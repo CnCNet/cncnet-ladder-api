@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', $history->ladder->name . ' Ladder')
+@section('title', $history->ladder->name)
 @section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
