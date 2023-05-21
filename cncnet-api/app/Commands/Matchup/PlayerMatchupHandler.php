@@ -279,7 +279,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
             }
             else
             {
-                Log::info("FindOpponent ** Skipping map from being selected: $recentMap");
+                // Log::info("FindOpponent ** Skipping map from being selected: $recentMap");
             }
         }
 

@@ -235,34 +235,40 @@ class AccountController extends Controller
             $request->session()->flash('success', $player->username . ' is now inactive');
             return redirect()->back();
         }
-
-        // Check if there are active handles within this month
-        $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->where('ladder_id', $ladder->id)->get();
-
-        //filter out any whose ladder_id does not match
-        $activeHandles = $activeHandles->filter(function ($tempHandle) use (&$ladder)
+        else if ($activeHandle != null && $hasActiveHandlesGamesPlayed > 0)
         {
-            return $tempHandle->ladder_id == $ladder->id && $tempHandle->player->ladder_id == $ladder->id;
-        });
-
-        if ($activeHandles->count() >= $maxActivePlayersAllowed)
-        {
-            $request->session()->flash('error', "You already have an active user, deactivate that user to activate another. The maximum amount of active players is $maxActivePlayersAllowed");
+            $request->session()->flash('error', "Unable to deactive player $player->username because $player->username has played games this month already.");
 
             return redirect()->back();
         }
-
-        // If it's not an active handle make it one
-        if ($activeHandle == null)
+        else
         {
+
+            // Check if there are active handles within this month
+            $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->where('ladder_id', $ladder->id)->get();
+
+            //filter out any whose ladder_id does not match
+            $activeHandles = $activeHandles->filter(function ($tempHandle) use (&$ladder)
+            {
+                return $tempHandle->ladder_id == $ladder->id && $tempHandle->player->ladder_id == $ladder->id;
+            });
+
+            if ($activeHandles->count() >= $maxActivePlayersAllowed)
+            {
+                $request->session()->flash('error', "You already have an active user, deactivate that user to activate another. The maximum amount of active players is $maxActivePlayersAllowed");
+
+                return redirect()->back();
+            }
+
             $activeHandle = PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $user->id);
 
             $request->session()->flash('success', $player->username . ' is now active on the ladder. You can now play in Ranked Matches!');
             return redirect()->back();
-        }
 
-        $request->session()->flash('error', $player->username . ' is still active for this month');
-        return redirect()->back();
+
+            $request->session()->flash('error', $player->username . ' is still active for this month');
+            return redirect()->back();
+        }
     }
 
     public function getNewVerification(Request $request)
