@@ -99,8 +99,11 @@
                         @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
                     </div>
 
-                    @include('ladders.game._games-table', ['games' => $games])
-
+                    @if ($history->ladder->clans_allowed)
+                        @include('ladders.listing.clan._games-table', ['games' => $games])
+                    @else
+                        @include('ladders.listing._games-table', ['games' => $games])
+                    @endif
                     <div class="mt-2">
                         @include('components.pagination.paginate', ['paginator' => $games->appends(request()->query())])
                     </div>

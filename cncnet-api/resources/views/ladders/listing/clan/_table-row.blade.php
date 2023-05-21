@@ -71,7 +71,7 @@
         <div class="player-losses player-stat">{{ $losses }} <span>lost</span></div>
         <div class="player-games player-stat">{{ $totalGames }} <span>games</span></div>
     </div>
-    {{-- <a href="{{ $url }}" class="player-link">
+    <a href="{{ $url }}" class="player-link">
         <i class="bi bi-chevron-right"></i>
-    </a> --}}
+    </a>
 </div>
