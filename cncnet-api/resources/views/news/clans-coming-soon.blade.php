@@ -34,7 +34,7 @@
                     </h1>
 
                     <p class="lead">
-                        Attention, commanders! Brace yourselves, for the clan ladders are inbound and arriving soon!
+                        Attention, commanders! Brace yourselves, for the clan ladders are here.
                     </p>
                 </div>
             </div>
@@ -53,8 +53,7 @@
                 <div class="col-md-8 m-auto">
                     <h1 class="mb-4"> 2vs2 Clan Ladder Announcement </h1>
                     <p class="lead">
-                        Commanders. Are you sitting down? Red Alert, Tiberian Sun and Red Alert 2 Clan
-                        Ladders are coming very soon!
+                        Commanders. Are you sitting down? Red Alert 2 Clan Ladders are now in public beta!
                     </p>
 
                     <p class="lead">
@@ -62,10 +61,10 @@
                         formidable clan!
                     </p>
 
-                    <h3 class="mt-5">Public Beta?</h3>
+                    <h3 class="mt-5">Public Beta</h3>
                     <p class="lead">
-                        The public beta for the Clan ladder is almost here. We are currently finalizing the remaining details and aiming to
-                        have it ready very soon.
+                        The public beta for the Clan ladder is now available for Red Alert 2. We will begin a public beta
+                        test for Tiberian Sun and Red Alert available in due time.
                     </p>
 
                     <h3 class="mt-5">Every 🍺 helps!</h3>

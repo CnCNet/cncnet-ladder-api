@@ -64,7 +64,7 @@
         <div class="container">
             <div class="countdown announcement m-auto" style="width: 450px; max-width: 100%;">
                 <a href="/news/clan-ladder" title="Clan Ladder Announcement">
-                    2vs2 - Clan Ladder Announcement
+                    2vs2 - Clan Ladder <br />public beta testing open
                 </a>
             </div>
         </div>
