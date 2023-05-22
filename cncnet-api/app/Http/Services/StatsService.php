@@ -283,6 +283,10 @@ class StatsService
         foreach ($clans as $k => $clanId)
         {
             $clan = Clan::where("id", $clanId)->first();
+
+            if ($clan == null)
+                continue;
+
             $winCountGames = $clan->clanGames()
                 ->where("ladder_history_id", $history->id)
                 ->whereBetween("player_game_reports.created_at", [$from, $to])

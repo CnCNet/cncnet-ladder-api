@@ -193,8 +193,6 @@ class ClanMatchupHandler extends BaseMatchupHandler
      */
     public function removeClansCurrentPlayerIsIn($currentUserClanPlayer, $ladderId, $groupedQmQueueEntriesByClan)
     {
-        Log::info("Start removeClansCurrentPlayerIsIn() numClans: " . count($groupedQmQueueEntriesByClan) . " - " . $currentUserClanPlayer->player->username);
-
         $result = [];
 
         //grab my clan's QM Entries
@@ -242,7 +240,12 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 $result[$clanId] = $allQMQueueEntries;
         }
 
-        Log::info("Exit removeClansCurrentPlayerIsIn() numClans: " . count($result) . $currentUserClanPlayer->player->username);
+        if (count($result) != count($groupedQmQueueEntriesByClan))
+        {
+            Log::info("Start removeClansCurrentPlayerIsIn() numClans: " . count($groupedQmQueueEntriesByClan) . " - " . $currentUserClanPlayer->player->username);
+            Log::info("Exit removeClansCurrentPlayerIsIn() numClans: " . count($result) . $currentUserClanPlayer->player->username);
+        }
+
         return $result;
     }
 }
