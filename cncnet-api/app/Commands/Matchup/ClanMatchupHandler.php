@@ -70,12 +70,26 @@ class ClanMatchupHandler extends BaseMatchupHandler
             }
             else
             {
+                $playerNames = implode(",", $this->getPlayerNamesInQueue($readyQMQueueEntries));
+                Log::info("Launching clan match with players $playerNames");
                 return $this->createMatch(
                     $commonQmMaps,
                     $readyQMQueueEntries
                 );
             }
         }
+    }
+
+    private function getPlayerNamesInQueue($readyQMQueueEntries) 
+    {
+        $playerNames = [];
+
+        foreach ($readyQMQueueEntries as $readyQMQueueEntry)
+        {
+            $playerNames[] = $readyQMQueueEntry->qmPlayer->player->username;
+        }
+
+        return $playerNames;
     }
 
     private function removeRejectedMaps($qmMaps, $currentQmPlayer, $qmEntries)
