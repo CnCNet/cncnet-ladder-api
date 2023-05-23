@@ -7,6 +7,7 @@ use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
+use App\Commands\Matchup\ClanMatchupHandler;
 
 class QuickMatchService
 {
@@ -444,6 +445,9 @@ class QuickMatchService
             $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
         }
         $qmPlayer->save();
+
+        $playerNames = implode(",", ClanMatchupHandler::getPlayerNamesInQueue($otherQMQueueEntries));
+        Log::info("Launching match with players $playerNames, " . $qmPlayer->player->username . " on map: " . $qmMatch->map->name);
 
         return $qmMatch;
     }
