@@ -424,11 +424,23 @@ class LadderController extends Controller
             ->where("clan_id", $clan->id)
             ->first();
 
-        $games = $clanCache->clan->clanGames()
-            ->where("ladder_history_id", "=", $history->id)
-            ->orderBy('created_at', 'DESC')
-            ->paginate(24);
+        $games = 0;
 
+        if ($clanCache != null)
+        {
+            $games = $clanCache->clan->clanGames()
+                ->where("ladder_history_id", "=", $history->id)
+                ->orderBy('created_at', 'DESC')
+                ->paginate(24);
+        }
+        else
+        {
+            $clanCache = new ClanCache();
+            $clanCache->ladder_history_id = $history->id;
+            $clanCache->clan_id = $clan->id;
+            $clanCache->clan_name = $clan->short;
+            $clanCache->save();
+        }
 
         $mod = $request->user();
         $userIsMod = false;

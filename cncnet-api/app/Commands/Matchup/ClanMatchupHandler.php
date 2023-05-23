@@ -70,12 +70,26 @@ class ClanMatchupHandler extends BaseMatchupHandler
             }
             else
             {
+                $playerNames = implode(",", $this->getPlayerNamesInQueue($readyQMQueueEntries));
+                Log::info("Launching clan match with players $playerNames");
                 return $this->createMatch(
                     $commonQmMaps,
                     $readyQMQueueEntries
                 );
             }
         }
+    }
+
+    private function getPlayerNamesInQueue($readyQMQueueEntries) 
+    {
+        $playerNames = [];
+
+        foreach ($readyQMQueueEntries as $readyQMQueueEntry)
+        {
+            $playerNames[] = $readyQMQueueEntry->qmPlayer->player->username;
+        }
+
+        return $playerNames;
     }
 
     private function removeRejectedMaps($qmMaps, $currentQmPlayer, $qmEntries)
@@ -179,8 +193,6 @@ class ClanMatchupHandler extends BaseMatchupHandler
      */
     public function removeClansCurrentPlayerIsIn($currentUserClanPlayer, $ladderId, $groupedQmQueueEntriesByClan)
     {
-        Log::info("Start removeClansCurrentPlayerIsIn() numClans: " . count($groupedQmQueueEntriesByClan) . " - " . $currentUserClanPlayer->player->username);
-
         $result = [];
 
         //grab my clan's QM Entries
@@ -228,7 +240,12 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 $result[$clanId] = $allQMQueueEntries;
         }
 
-        Log::info("Exit removeClansCurrentPlayerIsIn() numClans: " . count($result) . $currentUserClanPlayer->player->username);
+        if (count($result) != count($groupedQmQueueEntriesByClan))
+        {
+            Log::info("Start removeClansCurrentPlayerIsIn() numClans: " . count($groupedQmQueueEntriesByClan) . " - " . $currentUserClanPlayer->player->username);
+            Log::info("Exit removeClansCurrentPlayerIsIn() numClans: " . count($result) . $currentUserClanPlayer->player->username);
+        }
+
         return $result;
     }
 }
