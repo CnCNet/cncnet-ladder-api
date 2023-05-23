@@ -56,7 +56,7 @@
                 @if ($statsXOfTheDay)
 
                     @if ($history->ladder->clans_allowed)
-                        <?php $url = \App\URLHelper::getClanProfileUrl($history, $statsXOfTheDay->name); ?>~
+                        <?php $url = \App\URLHelper::getClanProfileUrl($history, $statsXOfTheDay->name); ?>
                     @else
                         <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsXOfTheDay->name); ?>
                     @endif
