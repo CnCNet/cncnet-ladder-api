@@ -31,9 +31,6 @@
                 </li>
             @endif
 
-            <li>
-                <a href="/news/clan-ladder" class="dropdown-item">Clan Ladder Announcement</a>
-            </li>
             @foreach ($clan_ladders as $history)
                 @if (!$history->ladder->private)
                     <li>
