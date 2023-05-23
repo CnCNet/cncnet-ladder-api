@@ -206,7 +206,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
                     return !is_null($value);
                 });
 
-                Log::info("FindOpponent ** Recent played maps from player1 ($currentPlayer->username): $recentMaps");
+                // Log::info("FindOpponent ** Recent played maps from player1 ($currentPlayer->username): $recentMaps");
 
                 foreach ($recentMaps as $recentMap)
                 {
@@ -235,7 +235,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
                         return !is_null($value);
                     });
 
-                    Log::info("FindOpponent ** Recent played maps from player2 ($oppPlayer->username): $recentMaps");
+                    // Log::info("FindOpponent ** Recent played maps from player2 ($oppPlayer->username): $recentMaps");
 
                     foreach ($recentMaps as $recentMap) //remove the opponent's recent maps from common_qm_maps
                     {
