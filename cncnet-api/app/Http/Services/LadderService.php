@@ -450,26 +450,26 @@ class LadderService
         }
     }
 
-    public function updatePlayerCache($gameReport)
+    public function updateCache($gameReport)
     {
-        Log::info("Updating PlayerCache for gameReportId=$gameReport->id");
-
         $history = $gameReport->game->ladderHistory;
-        $ladder = $history->ladder;
 
-        $clanUpdated = array();
-        foreach ($gameReport->playerGameReports as $playerGameReport)
+        if ($history->ladder->clans_allowed)
         {
-            if ($ladder->clans_allowed)
+            # Group playerGameReports by clan id, so we only update each clan once
+            $clanPlayerGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
+
+            foreach ($clanPlayerGameReports as $playerGameReport)
             {
-                if (!isset($clanUpdated[$playerGameReport->clan_id])) //only update each clan's cache one time after a game ends
-                {
-                    Log::info("Updating clanCache for player: " . $playerGameReport->player->username);
-                    $this->saveClanCache($playerGameReport, $history);
-                    $clanUpdated[] = $playerGameReport->clan_id;
-                }
+                Log::info("Updating clanCache for player: " . $playerGameReport->player->username);
+                $this->saveClanCache($playerGameReport, $history);
             }
-            else
+        }
+        else
+        {
+            Log::info("Updating PlayerCache for gameReportId=$gameReport->id");
+
+            foreach ($gameReport->playerGameReports as $playerGameReport)
             {
                 $this->savePlayerCache($playerGameReport, $history);
             }
