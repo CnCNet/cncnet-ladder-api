@@ -139,7 +139,11 @@ class ApiQuickMatchController extends Controller
         $player2 = "";
         $player1_side = "";
 
-        foreach ($qms2 as $qm)
+        $numPlayers = $ladder->qmLadderRules->player_count;
+
+        $i = 0;
+        $players = [];
+        foreach ($qms2 as $qm) //loop through every qm player
         {
             $dt = new DateTime($qm->qm_match_created_at);
 
@@ -149,35 +153,101 @@ class ApiQuickMatchController extends Controller
 
             $tierName = LeagueHelper::getLeagueNameByTier($tier);
 
-            //i'm bad at sql so here is a janky work around to gather both qm players and map of each qm match
             if ($qm_id != $qm->id)
             {
+                if ($i % $numPlayers == 0)
+                {
+                    $players = []; //reset players array
+                    $qm_id = $qm->id;
+                }
+
                 if (Carbon::now()->diffInSeconds($dt) <= 120)
                 {
-                    $player1 = "Player 1";
+                    $players[$qm->clan_id][] = ["Player " . $i, $qm->faction];
                 }
                 else
                 {
-                    $player1 = $player->username;
+                    $players[$qm->clan_id][] = [$player->username, $qm->faction];
                 }
-                $qm_id = $qm->id;
-                $player1_side = $qm->faction;
             }
             else
             {
                 if (Carbon::now()->diffInSeconds($dt) <= 120)
                 {
-                    $player2 = "Player 2";
+                    $players[$qm->clan_id][] = ["Player " . $i, $qm->faction];
                 }
                 else
                 {
-                    $player2 = $player->username;
+                    $players[$qm->clan_id][] = [$player->username, $qm->faction];
                 }
 
                 $duration = Carbon::now()->diff($dt);
                 $duration_formatted = $duration->format('%i mins %s sec');
-                $games[$tierName][] = $player1 . " (" . $player1_side . ") vs " . $player2 . " (" . $qm->faction . ") on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
+
+                if ($ladder->clans_allowed)
+                {
+
+                    $clan1 = [];
+                    $clan2 = [];
+
+                    Log::info(" players : " . count($players));
+
+                    //put each player data in appropriate clan array
+                    foreach ($players as $clanId => $playerArr)
+                    {
+                        Log::info(count($playerArr) . " - " . $clanId);
+                        if (count($clan1) == 0)
+                        {
+                            $clan1[$clanId][] = [$playerArr[0], $playerArr[1]];
+                            continue;
+                        }
+
+                        if (in_array($clanId, $clan1))
+                        {
+                            $clan1[$clanId][] = [$playerArr[0], $playerArr[1]];
+                            continue;
+                        }
+                        else
+                        {
+                            $clan2[$clanId][] = [$playerArr[0], $playerArr[1]];
+                            continue;
+                        }
+                    }
+
+                    $playersString = "";
+
+                    Log::info(" clan1 : " . count($clan1));
+                    for ($i = 0; $i < count($clan1); $i++)
+                    {
+                        $clan = $clan1[$i];
+                        $playersString += $clan[0] . " (" . $clan[1] . ")";
+
+                        if ($i < count($clan1) - 1)
+                            $playersString += " and ";
+                    }
+
+                    $playersString += " vs ";
+
+                    for ($i = 0; $i < count($clan2); $i++)
+                    {
+                        $clan = $clan2[$i];
+                        $playersString += $clan[0] . " (" . $clan[1] . ")";
+
+                        if ($i < count($clan2) - 1)
+                            $playersString += " and ";
+                    }
+
+                    $games[$tierName][] = $playersString . " on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
+                }
+                else
+                {
+                    $playersString =  $players[0][0] . " (" . $players[0][1] . ") vs " . $players[1][0] . " (" . $players[1][1] . ")";
+
+                    $games[$tierName][] = $playersString . " on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
+                }
             }
+
+            $i++;
         }
 
         return $games;

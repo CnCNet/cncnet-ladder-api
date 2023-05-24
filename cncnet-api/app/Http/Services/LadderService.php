@@ -569,7 +569,7 @@ class LadderService
             ->where('qm_matches.ladder_id', $ladder_id)
             ->where('qm_matches.created_at', '>', Carbon::now()->subMinute($createdAfter))
             ->groupBy('qmp.id')
-            ->select("qm_matches.id", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.id as player_id", "qm_maps.description as map")
+            ->select("qm_matches.id", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.id as player_id", "qm_maps.description as map", "qmp.clan_id as clan_id")
             ->get();
     }
 
