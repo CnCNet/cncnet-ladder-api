@@ -8,6 +8,7 @@ use App\Ladder;
 use App\PlayerRating;
 use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
+use Exception;
 use \Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -456,13 +457,27 @@ class LadderService
 
         if ($history->ladder->clans_allowed)
         {
-            # Group playerGameReports by clan id, so we only update each clan once
-            $clanPlayerGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
-
-            foreach ($clanPlayerGameReports as $playerGameReport)
+            try
             {
-                Log::info("Updating clanCache for player: " . $playerGameReport->player->username);
-                $this->saveClanCache($playerGameReport, $history);
+                # Group playerGameReports by clan id, so we only update each clan once
+                # Grab the winning team, then opposite clan must be loser
+                $winningTeam = $gameReport->playerGameReports()->groupBy("clan_id")
+                    ->where("won", true)
+                    ->first();
+
+                $losingTeam = $gameReport->playerGameReports()->groupBy("clan_id")
+                    ->where("clan_id", "!=", $winningTeam->clan_id)
+                    ->first();
+
+                $this->saveClanCache($winningTeam, $history);
+                Log::info("Updating clanCache for Clan (Winners): " . $winningTeam->clan->short);
+
+                $this->saveClanCache($losingTeam, $history);
+                Log::info("Updating clanCache for Clan (Losers): " . $losingTeam->clan->short);
+            }
+            catch (Exception $ex)
+            {
+                Log::info("ERROR ** Updating clan cache: " . $ex->getMessage());
             }
         }
         else
