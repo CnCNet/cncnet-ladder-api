@@ -136,7 +136,7 @@ class ApiQuickMatchController extends Controller
 
             $duration = Carbon::now()->diff($dt);
             $duration_formatted = $duration->format('%i mins %s sec');
-            $games[] = $playersString . " on " . $map . ". Playtime: " . $duration_formatted . ".";
+            $games[] = $playersString . " on " . $map . ". (" . $duration_formatted . ")";
         }
 
         return $games;
@@ -144,51 +144,48 @@ class ApiQuickMatchController extends Controller
 
     private function getActiveClanMatchesData($players)
     {
-        $clan1 = [];
-        $clan2 = [];
+        $clans = [];
 
         //put each player data in appropriate clan array
         foreach ($players as $player)
         {
-            if (count($clan1) == 0)
+            if (count($clans) == 0)
             {
-                $clan1[] = $player;
+                $clans[$player->clan_id][] = $player;
                 continue;
             }
 
-            if (in_array($player, $clan1))
+            if (in_array($player->clan_id, $clans))
             {
-                $clan1[] = $player;
+                $clans[$player->clan_id][] = $player;
                 continue;
             }
             else
             {
-                $clan2[] = $player;
+                $clans[$player->clan_id][] = $player;
                 continue;
             }
         }
 
         $playersString = "";
-
-        Log::info(" clan1 : " . count($clan1));
-        for ($i = 0; $i < count($clan1); $i++)
+        Log::info("num clans: " . count($clans));
+     
+        foreach ($clans as $clanId => $players)
         {
-            $player = $clan1[$i];
-            $playersString .= $player->name . " (" . $player->faction . ")";
+            Log::info("num players: " . count($players));
+            $i = 0;
+            $clanName = \App\Clan::where('id', $clanId)->first()->short;
+            foreach ($players as $player)
+            {
+                $playersString .= "[$clanName]" . $player->name . " (" . $player->faction . ")";
 
-            if ($i < count($clan1) - 1)
-                $playersString .= " and ";
-        }
+                if ($i < count($players) - 1)
+                    $playersString .= " and ";
+                
+                $i++;
+            }
 
-        $playersString .= " vs ";
-
-        for ($i = 0; $i < count($clan2); $i++)
-        {
-            $player = $clan2[$i];
-            $playersString .= $player->name . " (" . $player->faction . ")";
-
-            if ($i < count($clan2) - 1)
-                $playersString .= " and ";
+            $playersString .= " vs ";
         }
 
         return $playersString;
