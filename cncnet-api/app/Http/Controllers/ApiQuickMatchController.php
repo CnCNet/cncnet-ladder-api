@@ -170,6 +170,7 @@ class ApiQuickMatchController extends Controller
         $playersString = "";
         Log::info("num clans: " . count($clans));
      
+        $j = 0;
         foreach ($clans as $clanId => $players)
         {
             Log::info("num players: " . count($players));
@@ -185,7 +186,10 @@ class ApiQuickMatchController extends Controller
                 $i++;
             }
 
-            $playersString .= " vs ";
+            if ($j < count($clans) - 1)
+                $playersString .= " vs ";
+
+            $j++;
         }
 
         return $playersString;
