@@ -8,6 +8,7 @@ use App\Ladder;
 use App\PlayerRating;
 use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
+use Exception;
 use \Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -456,13 +457,27 @@ class LadderService
 
         if ($history->ladder->clans_allowed)
         {
-            # Group playerGameReports by clan id, so we only update each clan once
-            $clanPlayerGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
-
-            foreach ($clanPlayerGameReports as $playerGameReport)
+            try
             {
-                Log::info("Updating clanCache for player: " . $playerGameReport->player->username);
-                $this->saveClanCache($playerGameReport, $history);
+                # Group playerGameReports by clan id, so we only update each clan once
+                # Grab the winning team, then opposite clan must be loser
+                $winningTeam = $gameReport->playerGameReports()->groupBy("clan_id")
+                    ->where("won", true)
+                    ->first();
+
+                $losingTeam = $gameReport->playerGameReports()->groupBy("clan_id")
+                    ->where("clan_id", "!=", $winningTeam->clan_id)
+                    ->first();
+
+                $this->saveClanCache($winningTeam, $history);
+                Log::info("Updating clanCache for Clan (Winners): " . $winningTeam->clan->short);
+
+                $this->saveClanCache($losingTeam, $history);
+                Log::info("Updating clanCache for Clan (Losers): " . $losingTeam->clan->short);
+            }
+            catch (Exception $ex)
+            {
+                Log::info("ERROR ** Updating clan cache: " . $ex->getMessage());
             }
         }
         else
@@ -533,47 +548,43 @@ class LadderService
 
 
     /**
-     * Return matches which have spawned in last $createdAfter minutes
-     * Note: This could include matches which have finished as well.
+     * Return player and map data pertaining to a quick_match_id
+     */
+    public function getQmMatchPlayersInMatch($qmMatchId)
+    {
+        return \App\QmMatchPlayer::join('qm_matches', 'qm_matches.id', '=', 'qm_match_players.qm_match_id')
+            ->join('players as p', 'qm_match_players.player_id', '=', 'p.id')
+            ->join('sides', function ($join)
+            {
+                $join->on('sides.ladder_id', '=', 'qm_match_players.ladder_id');
+                $join->on('sides.local_id', '=', 'qm_match_players.actual_side');
+            })
+            ->where('qm_matches.id', $qmMatchId)
+            ->groupBy('qm_match_players.id')
+            ->select("qm_matches.id", "p.username as name", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.id as player_id", "qm_match_players.clan_id as clan_id")
+            ->get();
+    }
+
+    /**
+     * Return matches which have spawned in last $createdAfter minutes but have not finished
      */
     public function getRecentSpawnedMatches($ladder_id, $createdAfter)
     {
         return \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
             ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
-            ->join('qm_match_players as qmp', 'qm_matches.id', '=', 'qmp.qm_match_id')
-            ->join('players as p', 'qmp.player_id', '=', 'p.id')->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
-            ->join('sides', function ($join)
-            {
-                $join->on('sides.ladder_id', '=', 'qmp.ladder_id');
-                $join->on('sides.local_id', '=', 'qmp.actual_side');
-            })
-            ->where(function ($where)
-            {
-                $where->where('qms.state_type_id', 5); #Game Spawned
-            })
+            ->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
             ->where('qm_matches.ladder_id', $ladder_id)
             ->where('qm_matches.created_at', '>', Carbon::now()->subMinute($createdAfter))
-            ->groupBy('qmp.id')
-            ->select("qm_matches.id", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.id as player_id", "qm_maps.description as map", "qmp.clan_id as clan_id")
-            ->get();
-    }
-
-    /**
-     * Return matches which have finished in last $minutes minutes. 
-     */
-    public function getRecentFinishedMatches($ladder_id, $minutes)
-    {
-        return \App\QmMatch::join('qm_match_states as qms', 'qm_matches.id', '=', 'qms.qm_match_id')
-            ->join('state_types as st', 'qms.state_type_id', '=', 'st.id')
-            ->where(function ($where)
+            ->whereHas('states', function ($where)
             {
-                $where->where('qms.state_type_id', 1); # Finished
-                $where->orWhere('qms.state_type_id', 6); # GameCrashed
-                $where->orWhere('qms.state_type_id', 7); # NotReady
+                $where->where('qms.state_type_id', 5); # Game Spawned
+
+            })->whereNotIn('qm_matches.id', function ($where)
+            {
+                $where->select('qms.qm_match_id')->from('qm_match_states as qms')->whereIn('qms.state_type_id', [1, 6, 7]);      # Finished, GameCrashed, NotReady
             })
-            ->where('qm_matches.ladder_id', $ladder_id)
-            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute($minutes))
-            ->select("qm_matches.id")
+            ->groupBy('qm_matches.id')
+            ->select("qm_matches.id as id", "qm_matches.created_at as qm_match_created_at", "qm_maps.description as map")
             ->get();
     }
 }

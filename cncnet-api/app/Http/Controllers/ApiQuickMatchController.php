@@ -108,149 +108,105 @@ class ApiQuickMatchController extends Controller
         if ($ladder == null)
             abort(400, "Invalid ladder provided");
 
-        $history = $ladder->currentHistory();
+        //get all recent QMs that whose games have spawned. (state_type_id == 5)
+        $qms = $this->ladderService->getRecentSpawnedMatches($ladder->id, 30);
+        Log::info("Num matches returned : " . count($qms));
 
-        $ladder_id = $ladder->id;
+        $games = [];
 
-        //get all QMs that whose games have spawned. (state_type_id == 5)
-        $qms = $this->ladderService->getRecentSpawnedMatches($ladder_id, 20);
-
-        //get all QMs that have finished recently.  (state_type_id == 1)
-        $finishedQms = $this->ladderService->getRecentFinishedMatches($ladder_id, 20);
-
-        $finishedQmsArr = [];
-        $finishedQms->map(function ($qm) use (&$finishedQmsArr)
+        foreach ($qms as $qm) //iterate over every active quick match
         {
-            $finishedQmsArr[] = $qm->id;
-            return;
-        })->values();
-
-        //remove all QMs that have finished
-        $qms2 = $qms->filter(function ($qm) use (&$finishedQmsArr)
-        {
-            return !in_array($qm->id, $finishedQmsArr);
-        })->values();
-
-        $games["Champions Players League"] = [];
-        $games["Contenders Players League"] = [];
-
-        $qm_id = -1;
-        $player1 = "";
-        $player2 = "";
-        $player1_side = "";
-
-        $numPlayers = $ladder->qmLadderRules->player_count;
-
-        $i = 0;
-        $players = [];
-        foreach ($qms2 as $qm) //loop through every qm player
-        {
+            Log::info($qm);
+            $map = trim($qm->map);
             $dt = new DateTime($qm->qm_match_created_at);
 
-            $player = \App\Player::where('id', $qm->player_id)->first();
-            $user = $player->user;
-            $tier = $player->playerHistory($history)->tier;
+            //get the player data pertaining to this quick match
+            $players = $this->ladderService->getQmMatchPlayersInMatch($qm->id);
+            Log::info(" players : " . count($players) . " - " . $players);
 
-            $tierName = LeagueHelper::getLeagueNameByTier($tier);
-
-            if ($qm_id != $qm->id)
+            $playersString = "";
+            if ($ladder->clans_allowed)
             {
-                if ($i % $numPlayers == 0)
-                {
-                    $players = []; //reset players array
-                    $qm_id = $qm->id;
-                }
-
-                if (Carbon::now()->diffInSeconds($dt) <= 120)
-                {
-                    $players[$qm->clan_id][] = ["Player " . $i, $qm->faction];
-                }
-                else
-                {
-                    $players[$qm->clan_id][] = [$player->username, $qm->faction];
-                }
+                $playersString = $this->getActiveClanMatchesData($players);
             }
             else
             {
-                if (Carbon::now()->diffInSeconds($dt) <= 120)
-                {
-                    $players[$qm->clan_id][] = ["Player " . $i, $qm->faction];
-                }
-                else
-                {
-                    $players[$qm->clan_id][] = [$player->username, $qm->faction];
-                }
-
-                $duration = Carbon::now()->diff($dt);
-                $duration_formatted = $duration->format('%i mins %s sec');
-
-                if ($ladder->clans_allowed)
-                {
-
-                    $clan1 = [];
-                    $clan2 = [];
-
-                    Log::info(" players : " . count($players));
-
-                    //put each player data in appropriate clan array
-                    foreach ($players as $clanId => $playerArr)
-                    {
-                        Log::info(count($playerArr) . " - " . $clanId);
-                        if (count($clan1) == 0)
-                        {
-                            $clan1[$clanId][] = [$playerArr[0], $playerArr[1]];
-                            continue;
-                        }
-
-                        if (in_array($clanId, $clan1))
-                        {
-                            $clan1[$clanId][] = [$playerArr[0], $playerArr[1]];
-                            continue;
-                        }
-                        else
-                        {
-                            $clan2[$clanId][] = [$playerArr[0], $playerArr[1]];
-                            continue;
-                        }
-                    }
-
-                    $playersString = "";
-
-                    Log::info(" clan1 : " . count($clan1));
-                    for ($i = 0; $i < count($clan1); $i++)
-                    {
-                        $clan = $clan1[$i];
-                        $playersString += $clan[0] . " (" . $clan[1] . ")";
-
-                        if ($i < count($clan1) - 1)
-                            $playersString += " and ";
-                    }
-
-                    $playersString += " vs ";
-
-                    for ($i = 0; $i < count($clan2); $i++)
-                    {
-                        $clan = $clan2[$i];
-                        $playersString += $clan[0] . " (" . $clan[1] . ")";
-
-                        if ($i < count($clan2) - 1)
-                            $playersString += " and ";
-                    }
-
-                    $games[$tierName][] = $playersString . " on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
-                }
-                else
-                {
-                    $playersString =  $players[0][0] . " (" . $players[0][1] . ") vs " . $players[1][0] . " (" . $players[1][1] . ")";
-
-                    $games[$tierName][] = $playersString . " on " . trim($qm->map) . ". Playtime: " . $duration_formatted . ".";
-                }
+                $playersString = $this->getActivePlayerMatchesData($players);
             }
 
-            $i++;
+            $duration = Carbon::now()->diff($dt);
+            $duration_formatted = $duration->format('%i mins %s sec');
+            $games[] = $playersString . " on " . $map . ". Playtime: " . $duration_formatted . ".";
         }
 
         return $games;
+    }
+
+    private function getActiveClanMatchesData($players)
+    {
+        $clan1 = [];
+        $clan2 = [];
+
+        //put each player data in appropriate clan array
+        foreach ($players as $player)
+        {
+            if (count($clan1) == 0)
+            {
+                $clan1[] = $player;
+                continue;
+            }
+
+            if (in_array($player, $clan1))
+            {
+                $clan1[] = $player;
+                continue;
+            }
+            else
+            {
+                $clan2[] = $player;
+                continue;
+            }
+        }
+
+        $playersString = "";
+
+        Log::info(" clan1 : " . count($clan1));
+        for ($i = 0; $i < count($clan1); $i++)
+        {
+            $player = $clan1[$i];
+            $playersString .= $player->name . " (" . $player->faction . ")";
+
+            if ($i < count($clan1) - 1)
+                $playersString .= " and ";
+        }
+
+        $playersString .= " vs ";
+
+        for ($i = 0; $i < count($clan2); $i++)
+        {
+            $player = $clan2[$i];
+            $playersString .= $player->name . " (" . $player->faction . ")";
+
+            if ($i < count($clan2) - 1)
+                $playersString .= " and ";
+        }
+
+        return $playersString;
+    }
+
+    private function getActivePlayerMatchesData($players)
+    {
+        $playersString = "";
+        for ($i = 0; $i < count($players); $i++)
+        {
+            $player = $players[$i];
+            Log::info($player);
+            $playersString .= $player->name . " (" . $player->faction . ")";
+
+            if ($i < count($players) - 1)
+                $playersString .= " vs ";
+        }
+        return $playersString;
     }
 
     public function mapListRequest(Request $request, $ladderAbbrev = null)
