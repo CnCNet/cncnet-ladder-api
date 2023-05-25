@@ -131,7 +131,7 @@ class ApiQuickMatchController extends Controller
             }
             else
             {
-                $playersString = $this->getActivePlayerMatchesData($players);
+                $playersString = $this->getActivePlayerMatchesData($players, $qm->qm_match_created_at);
             }
 
             $duration = Carbon::now()->diff($dt);
@@ -169,7 +169,7 @@ class ApiQuickMatchController extends Controller
 
         $playersString = "";
         Log::info("num clans: " . count($clans));
-     
+
         $j = 0;
         foreach ($clans as $clanId => $players)
         {
@@ -182,7 +182,7 @@ class ApiQuickMatchController extends Controller
 
                 if ($i < count($players) - 1)
                     $playersString .= " and ";
-                
+
                 $i++;
             }
 
@@ -195,14 +195,18 @@ class ApiQuickMatchController extends Controller
         return $playersString;
     }
 
-    private function getActivePlayerMatchesData($players)
+    private function getActivePlayerMatchesData($players, $created_at)
     {
         $playersString = "";
+        $dt = new DateTime($created_at);
         for ($i = 0; $i < count($players); $i++)
         {
             $player = $players[$i];
-            Log::info($player);
-            $playersString .= $player->name . " (" . $player->faction . ")";
+            $playerName = "Player" . ($i + 1);
+            if (Carbon::now()->diffInSeconds($dt) > 120) //only show real player name if 2mins has passed
+                $playerName = $player->name;
+
+            $playersString .= $playerName . " (" . $player->faction . ")";
 
             if ($i < count($players) - 1)
                 $playersString .= " vs ";
