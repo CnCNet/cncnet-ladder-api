@@ -157,6 +157,15 @@
                                     <span class="name">Played today:</span> {{ $clanGamesLast24Hours }}
                                 </div>
                             </div>
+
+                            @if ($clanCache->clan->description)
+                                <div class="mt-5">
+                                    <h5 class="stat-title"> Clan Bio</h5>
+                                    <div class="player-stats-drilldown stats-wrap">
+                                        {{ $clanCache->clan->description }}
+                                    </div>
+                                </div>
+                            @endif
                         </div>
 
                         <div class="column">

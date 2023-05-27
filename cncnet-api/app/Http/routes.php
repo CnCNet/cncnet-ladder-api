@@ -75,6 +75,9 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => t
     Route::get('users/', 'AdminController@getManageUsersIndex');
     Route::get('users/edit/{userId}', 'AdminController@getEditUser');
     Route::post('users/edit/{userId}', 'AdminController@updateUser');
+
+    Route::get('clans', 'AdminController@getManageClansIndex');
+    Route::post('clans', 'AdminController@updateClan');
 });
 
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
