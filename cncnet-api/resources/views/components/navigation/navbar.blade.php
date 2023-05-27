@@ -20,7 +20,7 @@
                     <hr class="dropdown-divider">
                 </li>
                 <li><a class="dropdown-item" href="https://cncnet.org/live">Live</a></li>
-                <li><a class="dropdown-item" href="https://cncnet.org/developers">Donate to Developers</a></li>
+                <li><a class="dropdown-item highlight" href="https://ladder.cncnet.org/news/clan-ladder">Clan Ladder Announcement</a></li>
             </ul>
         </div>
 

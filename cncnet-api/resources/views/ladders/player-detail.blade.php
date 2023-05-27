@@ -10,11 +10,12 @@
 @section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
 @section('feature')
+
     <div class="feature">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $history->ladder->abbreviation }}/logo.png" alt="{{ $history->ladder->name }}"
+                    <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
                         class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
@@ -103,7 +104,11 @@
             <section class="player-header">
                 <div class="player-profile">
                     <div class="player-avatar me-5">
-                        @include('components.avatar', ['avatar' => $userPlayer->getUserAvatar(), 'size' => 150])
+                        @include('components.avatar', [
+                            'avatar' => $userPlayer->getUserAvatar(),
+                            'size' => 150,
+                            'type' => $history->ladder->clans_allowed ? 'clan' : 'player',
+                        ])
                     </div>
                     <div class="player-rank pt-3 me-5">
                         <h1 class="username">{{ $ladderPlayer->username }}</h1>

@@ -110,7 +110,9 @@ class ChartService
                     ->where("ladder_history_id", $history->id)
                     ->whereBetween("player_game_reports.created_at", [$s, $e])
                     ->where("won", true)
-                    ->count();
+                    ->get();
+
+                $wins = count($wins);
 
                 $results[$dateKey]["won"] = $wins;
 
@@ -118,7 +120,9 @@ class ChartService
                     ->where("ladder_history_id", $history->id)
                     ->whereBetween("player_game_reports.created_at", [$s, $e])
                     ->where("won", false)
-                    ->count();
+                    ->get();
+
+                $losses = count($losses);
 
                 $results[$dateKey]["lost"] = $losses;
             }

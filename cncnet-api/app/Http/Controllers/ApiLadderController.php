@@ -6,12 +6,15 @@ use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
-use \App\Http\Services\PointService;
+use \App\Http\Services\EloService;
 use \App\Http\Services\AdminService;
 use \Carbon\Carbon;
 use \App\PlayerGameReport;
 use Illuminate\Support\Facades\Cache;
 use \App;
+use App\Clan;
+use App\Http\Services\ClanService;
+use App\Http\Services\PointService;
 use Illuminate\Support\Facades\Log;
 use DB;
 use Exception;
@@ -21,14 +24,18 @@ class ApiLadderController extends Controller
     private $ladderService;
     private $gameService;
     private $playerService;
+    private $clanService;
     private $adminService;
+    private $pointService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
         $this->gameService = new GameService();
         $this->playerService = new PlayerService();
+        $this->clanService = new ClanService();
         $this->adminService = new AdminService();
+        $this->pointService = new PointService();
     }
 
     public function pingLadder(Request $request)
@@ -96,7 +103,14 @@ class ApiLadderController extends Controller
         $gameReport->save();
 
         # Award points
-        $status = $this->awardPoints($gameReport, $history);
+        if ($history->ladder->clans_allowed)
+        {
+            $status = $this->awardClanPoints($gameReport, $history);
+        }
+        else
+        {
+            $status = $this->awardPlayerPoints($gameReport, $history);
+        }
 
         # Dispute handling
         $this->handleGameDispute($gameReport);
@@ -176,7 +190,7 @@ class ApiLadderController extends Controller
                 $game->save();
                 $gameReport->save();
                 $bestReport->save();
-                $this->ladderService->undoPlayerCache($bestReport);
+                $this->ladderService->undoCache($bestReport);
                 $this->ladderService->updateCache($gameReport);
                 return;
             }
@@ -188,7 +202,7 @@ class ApiLadderController extends Controller
                 $game->save();
                 $wash->save();
                 $bestReport->save();
-                $this->ladderService->undoPlayerCache($bestReport);
+                $this->ladderService->undoCache($bestReport);
                 $this->ladderService->updateCache($wash);
                 return;
             }
@@ -205,7 +219,7 @@ class ApiLadderController extends Controller
             $game->save();
             $gameReport->save();
             $bestReport->save();
-            $this->ladderService->undoPlayerCache($bestReport);
+            $this->ladderService->undoCache($bestReport);
             $this->ladderService->updateCache($gameReport);
             return;
         }
@@ -219,13 +233,118 @@ class ApiLadderController extends Controller
             $game->save();
             $gameReport->save();
             $bestReport->save();
-            $this->ladderService->undoPlayerCache($bestReport);
+            $this->ladderService->undoCache($bestReport);
             $this->ladderService->updateCache($gameReport);
             return;
         }
     }
 
-    public function awardPoints($gameReport, $history)
+    public function awardClanPoints($gameReport, $history)
+    {
+        $clanRatings = [];
+
+        // Should limit us to just 2 reports, 1 for each clan
+        $clanGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
+
+        // Oops we don't have any players
+        if ($clanGameReports->count() < 1)
+        {
+            return 604;
+        }
+
+        if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
+        {
+            // FPS too low, no points awarded
+            return 630;
+        }
+
+        if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
+        {
+            // Duration too low, no points awarded
+            return 660;
+        }
+
+        foreach ($clanGameReports as $clanGameReport)
+        {
+            $allyAverage = 0;
+            $allyPoints = 0;
+            $allyCount = 0;
+            $enemyAverage = 0;
+            $enemyPoints = 0;
+            $enemyCount = 0;
+            $enemyGames = 0;
+
+            foreach ($clanGameReports as $cgr)
+            {
+                $otherClanId = $cgr->clan_id;
+                $otherClanRatingModel = $this->clanService->findClanRatingById($otherClanId);
+                $gameId = $cgr->game_id;
+
+                $clanRatings[] = $otherClanRatingModel;
+
+                if ($otherClanId == $clanGameReport->clan_id)
+                {
+                    $allyAverage += $otherClanRatingModel->rating;
+                    $allyPoints += $cgr->clan->pointsBefore(
+                        $history,
+                        $gameId,
+                        $otherClanId
+                    );
+                    $allyCount++;
+                }
+                else
+                {
+                    $enemyAverage += $otherClanRatingModel->rating;
+                    $enemyPoints += $cgr->clan->pointsBefore(
+                        $history,
+                        $gameId,
+                        $otherClanId
+                    );
+                    $enemyCount++;
+                    $enemyGames += $cgr->clan->totalGames($history);
+                }
+            }
+
+            $allyAverage /= $allyCount;
+            $enemyAverage /= $enemyCount;
+
+            $eloK = $this->clanService->getEloKvalue($clanRatings);
+            $wolK = $history->ladder->qmLadderRules->wol_k;
+            $useEloPoints = $history->ladder->qmLadderRules->use_elo_points;
+            $isBestReport = $gameReport->best_report;
+
+            $this->clanService->awardPointsByClanRating(
+                $clanGameReport,
+                $enemyAverage,
+                $enemyPoints,
+                $enemyGames,
+                $allyAverage,
+                $allyPoints,
+                $useEloPoints,
+                $isBestReport,
+                $eloK,
+                $wolK
+            );
+
+            // Get correct cache type
+            $cache = null;
+            if ($clanGameReport->player->clanPlayer)
+            {
+                $cache = $clanGameReport->player->clanPlayer->clanCache($history->id);
+            }
+
+            if ($clanGameReport->points < 0 && ($cache === null || $cache->points < 0))
+            {
+                $clanGameReport->points = 0;
+            }
+
+            $clanGameReport->save();
+        }
+
+        return 200;
+    }
+
+    public function awardPlayerPoints($gameReport, $history)
     {
         $players = [];
 
@@ -266,38 +385,18 @@ class ApiLadderController extends Controller
                 $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
                 $players[] = $other;
 
-                # Extra safety, code duplication for now. If Clans...
-                if ($history->ladder->clans_allowed)
+                if ($pgr->local_team_id == $playerGR->local_team_id)
                 {
-                    if ($pgr->clan_id == $playerGR->clan_id)
-                    {
-                        $ally_average += $other->rating;
-                        $ally_points += $pgr->clan->pointsBefore($history, $pgr->game_id, $pgr->clan_id);
-                        $ally_count++;
-                    }
-                    else
-                    {
-                        $enemy_average += $other->rating;
-                        $enemy_points += $pgr->clan->pointsBefore($history, $pgr->game_id, $pgr->clan_id);
-                        $enemy_count++;
-                        $enemy_games += $pgr->clan->totalGames($history);
-                    }
+                    $ally_average += $other->rating;
+                    $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $ally_count++;
                 }
                 else
                 {
-                    if ($pgr->local_team_id == $playerGR->local_team_id)
-                    {
-                        $ally_average += $other->rating;
-                        $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
-                        $ally_count++;
-                    }
-                    else
-                    {
-                        $enemy_average += $other->rating;
-                        $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
-                        $enemy_count++;
-                        $enemy_games += $pgr->player->totalGames($history);
-                    }
+                    $enemy_average += $other->rating;
+                    $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $enemy_count++;
+                    $enemy_games += $pgr->player->totalGames($history);
                 }
             }
 
@@ -327,7 +426,7 @@ class ApiLadderController extends Controller
             }
             else if ($playerGR->wonOrDisco())
             {
-                $points = (new PointService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
+                $points = (new EloService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
                 $diff = (int)($points - $ally_average);
                 if (!$history->ladder->qmLadderRules->use_elo_points)
                 {
@@ -336,7 +435,7 @@ class ApiLadderController extends Controller
 
                 $playerGR->points = $gvc + $diff + $wol;
 
-                $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 1, 0);
+                $eloAdjust = new EloService($elo_k, $ally_average, $enemy_average, 1, 0);
 
                 if ($gameReport->best_report)
                 {
@@ -358,7 +457,7 @@ class ApiLadderController extends Controller
                     $playerGR->points = -1 * ($wol + $gvc);
                 }
 
-                $eloAdjust = new PointService($elo_k, $ally_average, $enemy_average, 0, 1);
+                $eloAdjust = new EloService($elo_k, $ally_average, $enemy_average, 0, 1);
                 if ($gameReport->best_report)
                 {
                     $this->playerService->updateUserRating(
@@ -369,25 +468,7 @@ class ApiLadderController extends Controller
             }
 
             // Get correct cache type
-            $cache = null;
-            try
-            {
-                if ($history->ladder->clans_allowed)
-                {
-                    if ($playerGR->player->clanPlayer)
-                    {
-                        $cache = $playerGR->player->clanPlayer->clanCache($history->id);
-                    }
-                }
-                else
-                {
-                    $cache = $playerGR->player->playerCache($history->id);
-                }
-            }
-            catch (Exception $ex)
-            {
-                Log::info("ApiLadderController ERROR: " . $ex->getMessage());
-            }
+            $cache = $playerGR->player->playerCache($history->id);
 
             if ($playerGR->points < 0 && ($cache === null || $cache->points < 0))
             {
@@ -521,7 +602,7 @@ class ApiLadderController extends Controller
         foreach ($grs as $gr)
         {
             error_log("{$gr->game_id}, {$gr->player_id}");
-            $this->awardPoints($gr, $gr->game->ladderHistory);
+            $this->awardPlayerPoints($gr, $gr->game->ladderHistory);
         }
     }
 

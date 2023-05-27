@@ -14,7 +14,7 @@
                     </h1>
 
                     <p class="lead">
-                        Compete in <strong>1vs1</strong> ranked matches with players all over the world.
+                        Compete in <strong>1vs1</strong> or <strong>2vs2</strong> ranked matches with players all over the world.
                     </p>
 
                     @if (!\Auth::user())

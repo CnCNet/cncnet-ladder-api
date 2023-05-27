@@ -420,7 +420,7 @@ class LadderService
             return null;
     }
 
-    public function undoPlayerCache($gameReport)
+    public function undoCache($gameReport)
     {
         $history = $gameReport->game->ladderHistory;
 

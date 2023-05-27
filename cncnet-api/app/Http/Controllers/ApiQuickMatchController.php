@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\GameService;
 use \App\Http\Services\PlayerService;
-use \App\Http\Services\PointService;
+use \App\Http\Services\EloService;
 use \App\Http\Services\AuthService;
 use \App\PlayerActiveHandle;
 use \Carbon\Carbon;

@@ -1,7 +1,9 @@
 <html>
 
 <head>
-    <link href='http://fonts.googleapis.com/css?family=Lato:100' rel='stylesheet' type='text/css'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -9,10 +11,11 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            color: #B0BEC5;
+            color: #ffffff;
             display: table;
             font-weight: 100;
-            font-family: 'Lato';
+            font-family: 'Roboto', sans-serif;
+            background: black;
         }
 
         .container {
@@ -36,7 +39,11 @@
 <body>
     <div class="container">
         <div class="content">
-            <div class="title">Be right back.</div>
+
+            <div class="title">Updating</div>
+            <p style="font-size:28px; color:silver;">
+                We're applying some updates, be back shortly.
+            </p>
         </div>
     </div>
 </body>
