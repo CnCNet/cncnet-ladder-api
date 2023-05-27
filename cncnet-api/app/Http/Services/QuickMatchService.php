@@ -371,7 +371,7 @@ class QuickMatchService
         # Set up player specific information
         # Color will be used for spawn location
         $qmPlayer = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
-        $colorsArr = getColorsArr($actualPlayerCount, $ladder->clans_allowed);
+        $colorsArr = getColorsArr($actualPlayerCount, $ladder->clans_allowed && !$teamSpotsAssigned);
         Log::info("Color values created: " . implode(",", $colorsArr));
         $i = 0;
         if (!$teamSpotsAssigned) //spots were not team assigned
