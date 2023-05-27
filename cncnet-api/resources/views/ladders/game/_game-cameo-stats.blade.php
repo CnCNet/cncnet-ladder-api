@@ -4,10 +4,10 @@
               @foreach ($playerGameReports as $k => $pgr)
                   @php $gameStats = $pgr->stats; @endphp
                   @php $player = $pgr->player()->first(); @endphp
-
                   @php
+                      $pointReport = $pgr;
                       if ($history->ladder->clans_allowed) {
-                          $pgr = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
+                          $pointReport = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
                       }
                   @endphp
 
@@ -33,13 +33,12 @@
                                   </a>
                               </h2>
 
-
-                              <h4 class="text-center status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
-                                  @if ($pgr->won)
+                              <h4 class="text-center status text-uppercase status-{{ $pointReport->won ? 'won' : 'lost' }}">
+                                  @if ($pointReport->won)
                                       Won
-                                  @elseif($pgr->draw)
+                                  @elseif($pointReport->draw)
                                       Draw
-                                  @elseif($pgr->disconnected)
+                                  @elseif($pointReport->disconnected)
                                       Disconnected
                                   @else
                                       Lost
