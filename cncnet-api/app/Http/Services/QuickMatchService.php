@@ -371,15 +371,23 @@ class QuickMatchService
         # Set up player specific information
         # Color will be used for spawn location
         $qmPlayer = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
-        $colorsArr = getColorsArr($actualPlayerCount, $ladder->clans_allowed && !$teamSpotsAssigned);
-        Log::info("Color values created: " . implode(",", $colorsArr));
+
+        if (!$teamSpotsAssigned && $ladder->clans_allowed) //randomize the spawns if teams were not manually set and is a clan match
+        {
+            $spawnOrder = getLocationsArr($qmMap->map->spawn_count, true);
+        }
+        $colorsArr = getColorsArr(8, false);
+
+        Log::info("Spawns created: " . implode(",", $spawnOrder));
+        Log::info("Colors created: " . implode(",", $colorsArr));
         $i = 0;
-        if (!$teamSpotsAssigned) //spots were not team assigned
+        if (!$teamSpotsAssigned)
         {
             $qmPlayer->color = $colorsArr[$i];
             $qmPlayer->location = $spawnOrder[$i] - 1;
             $i++;
         }
+
         $qmPlayer->qm_match_id = $qmMatch->id;
         $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
 
@@ -467,4 +475,18 @@ function getColorsArr($numPlayers, $randomize)
         shuffle($possibleColors);
 
     return array_slice($possibleColors, 0, $numPlayers);
+}
+
+function getLocationsArr($numPlayers, $randomize)
+{
+    $locations = [];
+    for ($i = 1; $i < $numPlayers; $i++)
+    {
+        $locations[] = $i;
+    }
+
+    if ($randomize)
+        shuffle($locations);
+
+    return $locations;
 }
