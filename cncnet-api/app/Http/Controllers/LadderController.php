@@ -237,16 +237,16 @@ class LadderController extends Controller
         // Tests
         if ($request->reunRewardPoints && $history->ladder->clans_allowed)
         {
-            $api = new ApiLadderController();
-            $ladderService = new LadderService;
-            $ladderService->updateCache($game->report);
+            // $api = new ApiLadderController();
+            // $ladderService = new LadderService;
+            // $ladderService->updateCache($game->report);
 
-            foreach ($game->playerGameReports as $k => $pgr)
-            {
-                $gameReport = $pgr->gameReport;
-                $result = $api->awardClanPoints($gameReport, $history);
-                break;
-            }
+            // foreach ($game->playerGameReports as $k => $pgr)
+            // {
+            //     $gameReport = $pgr->gameReport;
+            //     $result = $api->awardClanPoints($gameReport, $history);
+            //     break;
+            // }
         }
 
         if ($game == null)
