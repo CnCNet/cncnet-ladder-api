@@ -33,27 +33,29 @@
                     $clanPointReport = $clanReport->gameReport->getPointReportByClan($clanReport->clan_id);
                 @endphp
 
-                <div class="player {{ $clanPointReport->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
+                @if ($clanPointReport)
+                    <div class="player {{ $clanPointReport->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
 
-                    @if ($clanReport->stats)
-                        @php $playerStats2 = \App\Stats2::where("id", $clanReport->stats->id)->first(); @endphp
-                        @php $playerCountry = $playerStats2->faction($history->ladder->game, $clanReport->stats->cty); @endphp
-                        <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
-                    @endif
+                        @if ($clanReport->stats)
+                            @php $playerStats2 = \App\Stats2::where("id", $clanReport->stats->id)->first(); @endphp
+                            @php $playerCountry = $playerStats2->faction($history->ladder->game, $clanReport->stats->cty); @endphp
+                            <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
+                        @endif
 
-                    <h5>
-                        <span class="ps-3 pe-1">
-                            <i class="bi bi-flag-fill icon-clan"></i>
-                            @if ($clanReport->clan)
-                                {{ $clanReport->clan->short }}
-                            @endif
-                        </span>
+                        <h5>
+                            <span class="ps-3 pe-1">
+                                <i class="bi bi-flag-fill icon-clan"></i>
+                                @if ($clanReport->clan)
+                                    {{ $clanReport->clan->short }}
+                                @endif
+                            </span>
 
-                        <span class="points">
-                            {{ $clanPointReport->points >= 0 ? "+$clanPointReport->points" : $clanPointReport->points }}
-                        </span>
-                    </h5>
-                </div>
+                            <span class="points">
+                                {{ $clanPointReport->points >= 0 ? "+$clanPointReport->points" : $clanPointReport->points }}
+                            </span>
+                        </h5>
+                    </div>
+                @endif
 
                 @if ($k == 0)
                     <p class="vs">vs</p>

@@ -21,7 +21,12 @@ class GameReport extends Model
 
     public function checkIsWinningClan($clanId)
     {
-        return $this->getWinningClanReport()->clan_id == $clanId;
+        $winningReport = $this->getWinningClanReport();
+        if ($winningReport)
+        {
+            return $winningReport->clan_id == $clanId;
+        }
+        return false;
     }
 
     public function getWinningClanReport()
@@ -39,11 +44,16 @@ class GameReport extends Model
             ->where("won", true)
             ->first();
 
-        $losingTeam = $this->playerGameReports()->groupBy("clan_id")
-            ->where("clan_id", "!=", $winningTeam->clan_id)
-            ->first();
+        if ($winningTeam)
+        {
+            $losingTeam = $this->playerGameReports()->groupBy("clan_id")
+                ->where("clan_id", "!=", $winningTeam->clan_id)
+                ->first();
 
-        return $losingTeam;
+            return $losingTeam;
+        }
+
+        return null;
     }
 
     //
