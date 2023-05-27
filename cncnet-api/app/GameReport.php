@@ -9,6 +9,43 @@ class GameReport extends Model
     protected $table = 'game_reports';
     protected $fillable = ['game_id', 'player_id', 'best_report', 'manual_report', 'duration', 'valid', 'fps', 'oos', 'created_at'];
 
+    public function getPointReportByClan($clanId)
+    {
+        $clanWon = $this->checkIsWinningClan($clanId);
+        if ($clanWon)
+        {
+            return $this->getWinningClanReport();
+        }
+        return $this->getLosingClanReport();
+    }
+
+    public function checkIsWinningClan($clanId)
+    {
+        return $this->getWinningClanReport()->clan_id == $clanId;
+    }
+
+    public function getWinningClanReport()
+    {
+        $winningTeam = $this->playerGameReports()->groupBy("clan_id")
+            ->where("won", true)
+            ->first();
+
+        return $winningTeam;
+    }
+
+    public function getLosingClanReport()
+    {
+        $winningTeam = $this->playerGameReports()->groupBy("clan_id")
+            ->where("won", true)
+            ->first();
+
+        $losingTeam = $this->playerGameReports()->groupBy("clan_id")
+            ->where("clan_id", "!=", $winningTeam->clan_id)
+            ->first();
+
+        return $losingTeam;
+    }
+
     //
     public function playerGameReports()
     {

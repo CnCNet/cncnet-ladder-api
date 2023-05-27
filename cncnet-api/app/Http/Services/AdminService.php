@@ -90,7 +90,7 @@ class AdminService
         $game->game_report_id = $wash->id;
         $game->save();
         $gameReport->save();
-        $this->ladderService->undoPlayerCache($gameReport);
+        $this->ladderService->undoCache($gameReport);
 
         //log the user who washed the game
         $gameAudit = new \App\GameAudit;

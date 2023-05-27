@@ -31,6 +31,11 @@
                 style="background-image:url('{{ $mapPreview }}'); width: {{ $webMapWidth }}px; height: {{ $webMapHeight }}px">
                 @foreach ($playerGameReports as $k => $pgr)
                     @php
+                        
+                        if ($history->ladder->clans_allowed) {
+                            $pgr = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
+                        }
+                        
                         $hasValidSpawnData = false;
                         $gameStats = $pgr->stats;
                         $player = $pgr->player()->first();

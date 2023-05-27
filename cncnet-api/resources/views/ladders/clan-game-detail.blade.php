@@ -3,18 +3,17 @@
 <?php
 
 $pageTitle = 'Viewing Game - ';
-$reports = $playerGameReports;
 
 ?>
 
-@foreach ($reports as $k => $pgr)
+@foreach ($clanGameReports as $k => $pgr)
     <?php
     $player = $pgr->player()->first();
     $clan = $pgr->clan()->first();
     if ($k == 1) {
         $pageTitle .= ' vs ';
     }
-    $pageTitle .= "$player->username";
+    $pageTitle .= "$clan->short";
     ?>
 @endforeach
 
@@ -35,17 +34,13 @@ $reports = $playerGameReports;
                 </li>
                 <li class="breadcrumb-item">
                     <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
-                        <span class="material-symbols-outlined icon pe-3">
-                            military_tech
-                        </span>
+                        <i class="bi bi-flag-fill pe-3"></i>
                         {{ $history->ladder->name }}
                     </a>
                 </li>
                 <li class="breadcrumb-item active">
                     <a href="">
-                        <span class="material-symbols-outlined pe-3">
-                            swords
-                        </span>
+                        <i class="bi bi-flag-fill pe-3"></i>
                         {{ $pageTitle }}
                     </a>
                 </li>
@@ -69,17 +64,12 @@ $reports = $playerGameReports;
                     </h1>
 
                     <p class="lead">
-                        <?php $reports = $playerGameReports; ?>
-                        @foreach ($reports as $k => $pgr)
+                        @foreach ($clanGameReports as $k => $pgr)
                             <?php $gameStats = $pgr->stats; ?>
                             <?php $player = $pgr->player()->first(); ?>
 
-                            @if ($history->ladder->clans_allowed)
-                                @if ($player->clanPlayer)
-                                    Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
-                                @endif
-                            @else
-                                <span>{{ $player->username }}</span>
+                            @if ($player->clanPlayer)
+                                Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
                             @endif
                             @if ($k == 0)
                                 <span><strong>VS</strong></span>
@@ -116,11 +106,9 @@ $reports = $playerGameReports;
             </div>
         </div>
     </div>
-@endsection
 
-@section('content')
     @if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder))
-        <div class="container mt-5 mb-5">
+        <div class="container mb-5">
             <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
                 Show admin tools
             </a>
@@ -129,32 +117,37 @@ $reports = $playerGameReports;
             </div>
         </div>
     @endif
+@endsection
 
+@section('content')
     <section class="game-detail">
         @php
             $gameAbbreviation = $history->ladder()->first()->abbreviation;
             $map = \App\Map::where('hash', '=', $game->hash)->first();
         @endphp
 
-        <div class="game-players-container">
+        <div class="clan-versus-header">
             <div class="container">
-                <section class="game-players">
-                    @foreach ($playerGameReports as $k => $pgr)
-                        @php $gameStats = $pgr->stats; @endphp
-                        @php $player = $pgr->player()->first(); @endphp
-                        @php $playerCache = $player->playerCache($history->id);@endphp
-                        @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
-                        @php $points = $playerCache ? $playerCache->points : 0;@endphp
+                <div class="clan-versus-header-container">
+                    @foreach ($clanGameReports as $k => $cgr)
+                        @php $clanPointReport = $cgr->gameReport->getPointReportByClan($cgr->clan_id); @endphp
+                        @php $url = \App\URLHelper::getClanProfileUrl($history, $cgr->clan->short); @endphp
 
-                        @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
-                            <div class="player-vs d-flex align-items-center">
-                                <h1>Vs</h1>
+                        @include('ladders.game.clan._clan-versus-header', [
+                            'clanName' => $cgr->clan->short,
+                            'clanProfileUrl' => $url,
+                            'avatar' => $cgr->clan->getClanAvatar(),
+                            'playerGameReport' => $clanPointReport,
+                            'order' => $k,
+                        ])
+
+                        @if ($k == 0)
+                            <div class="clan-vs">
+                                Vs
                             </div>
                         @endif
-
-                        @include('ladders.game._player-card')
                     @endforeach
-                </section>
+                </div>
             </div>
         </div>
 
@@ -181,14 +174,12 @@ $reports = $playerGameReports;
 
         @include('ladders.game._map-preview-with-players', [
             'map' => $map,
-            'playerGameReports' => $playerGameReports,
+            'playerGameReports' => $clanGameReports,
         ])
-
 
         @include('ladders.game._game-cameo-stats', [
-            'playerGameReports' => $playerGameReports,
+            'playerGameReports' => $orderedClanReports,
             'abbreviation' => $gameAbbreviation,
         ])
-
     </section>
 @endsection

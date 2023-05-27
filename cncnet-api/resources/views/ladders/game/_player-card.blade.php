@@ -1,25 +1,15 @@
 <div class="player-card">
     <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
         <div class="player-avatar">
-            @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 50])
+            @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 100])
         </div>
     </a>
 
     <div class="player-details">
         <h2 class="username">
-            @if ($isClanGame)
-                <a href="{{ \App\URLHelper::getClanProfileLadderUrl($history, $player->clanPlayer->clan->id) }}"
-                    title="View {{ $player->clanPlayer->clan->short }}'s clan profile">
-                    {{ $clanCache->clan_name }}
-
-                    <br />
-                    <span style="font-size: 1rem">Played by: {{ $player->username }}</span>
-                </a>
-            @else
-                <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
-                    {{ $player->username }}
-                </a>
-            @endif
+            <a href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
+                {{ $player->username }}
+            </a>
         </h2>
 
         <h5 class="rank pb-1">

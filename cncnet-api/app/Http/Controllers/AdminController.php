@@ -337,7 +337,7 @@ class AdminController extends Controller
         $gameReport->best_report = true;
         $gameReport->save();
 
-        $this->ladderService->undoPlayerCache($currentReport);
+        $this->ladderService->undoCache($currentReport);
         $this->ladderService->updatePlayerCache($gameReport);
         return redirect()->back();
     }

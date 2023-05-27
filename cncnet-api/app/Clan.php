@@ -195,6 +195,20 @@ class Clan extends Model
         return null;
     }
 
+    /**
+     * Returns live user rating or creates a new one if one doesn't exist yet
+     * @return mixed 
+     */
+    public function getOrCreateLiveClanRating()
+    {
+        $clanRating = ClanRating::where("clan_id", "=", $this->id)->first();
+        if ($clanRating == null)
+        {
+            $clanRating = ClanRating::createNew($this, ClanRating::$DEFAULT_RATING);
+        }
+        return $clanRating;
+    }
+
 
     # Relationships
     public function playerGameReports()
@@ -215,5 +229,10 @@ class Clan extends Model
     public function invitations()
     {
         return $this->hasMany('App\ClanInvitation');
+    }
+
+    public function clanRating()
+    {
+        return $this->belongsTo('App\ClanRating');
     }
 }

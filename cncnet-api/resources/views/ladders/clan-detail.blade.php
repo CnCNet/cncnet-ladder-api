@@ -74,17 +74,14 @@
                 </li>
                 <li class="breadcrumb-item">
                     <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
-                        <span class="material-symbols-outlined icon pe-3">
-                            military_tech
-                        </span>
+                        <i class="bi bi-flag-fill pe-3"></i>
                         {{ $history->ladder->name }}
                     </a>
                 </li>
                 <li class="breadcrumb-item active">
                     <a href="">
-                        <span class="material-symbols-outlined icon pe-3">
-                            person
-                        </span>
+                        <i class="bi bi-flag-fill pe-3"></i>
+
                         Viewing {{ $clanCache->clan_name }}
                     </a>
                 </li>
@@ -99,7 +96,7 @@
             <section class="player-header">
                 <div class="player-profile">
                     <div class="player-avatar me-5">
-                        @include('components.avatar', ['avatar' => $clanCache->getClanAvatar(), 'size' => 150])
+                        @include('components.avatar', ['avatar' => $clanCache->getClanAvatar(), 'size' => 150, 'type' => 'clan'])
                     </div>
                     <div class="player-rank pt-3 me-5">
                         <h1 class="username">{{ $clanCache->clan_name }}</h1>
