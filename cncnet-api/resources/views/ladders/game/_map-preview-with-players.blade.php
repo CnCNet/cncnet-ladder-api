@@ -1,7 +1,7 @@
 @php
     $mapPreview = '';
     try {
-        $mapPreview = url('images/maps/' . $history->ladder->game . '/' . $map->hash . '.png');
+        $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $map->hash . '.png';
         $mapPreviewSize = getimagesize($mapPreview);
     
         $webMapWidth = $mapPreviewSize[0];
@@ -32,8 +32,9 @@
                 @foreach ($playerGameReports as $k => $pgr)
                     @php
                         
+                        $pointReport = null;
                         if ($history->ladder->clans_allowed) {
-                            $pgr = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
+                            $pointReport = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
                         }
                         
                         $hasValidSpawnData = false;
@@ -43,6 +44,7 @@
                         try {
                             $clan = $pgr->clan;
                         } catch (Exception $ex) {
+                            dd($ex);
                         }
                         
                         # Player positions plotted onto map preview
@@ -88,12 +90,12 @@
                                     @endif
                                 </div>
 
-                                <div class="status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
-                                    @if ($pgr->won)
+                                <div class="status text-uppercase status-{{ $pointReport->won ? 'won' : 'lost' }}">
+                                    @if ($pointReport->won)
                                         Won
-                                    @elseif($pgr->draw)
+                                    @elseif($pointReport->draw)
                                         Draw
-                                    @elseif($pgr->disconnected)
+                                    @elseif($pointReport->disconnected)
                                         Disconnected
                                     @else
                                         Lost

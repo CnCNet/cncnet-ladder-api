@@ -174,7 +174,7 @@ $pageTitle = 'Viewing Game - ';
 
         @include('ladders.game._map-preview-with-players', [
             'map' => $map,
-            'playerGameReports' => $clanGameReports,
+            'playerGameReports' => $playerGameReports,
         ])
 
         @include('ladders.game._game-cameo-stats', [
