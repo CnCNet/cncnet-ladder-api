@@ -110,7 +110,6 @@ class ApiQuickMatchController extends Controller
 
         //get all recent QMs that whose games have spawned. (state_type_id == 5)
         $qms = $this->ladderService->getRecentSpawnedMatches($ladder->id, 30);
-        Log::info("Num matches returned : " . count($qms));
 
         $games = [];
 
