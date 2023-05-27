@@ -32,7 +32,7 @@
                 @foreach ($playerGameReports as $k => $pgr)
                     @php
                         
-                        $pointReport = null;
+                        $pointReport = $pgr;
                         if ($history->ladder->clans_allowed) {
                             $pointReport = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
                         }
