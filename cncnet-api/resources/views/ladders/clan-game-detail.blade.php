@@ -13,7 +13,9 @@ $pageTitle = 'Viewing Game - ';
     if ($k == 1) {
         $pageTitle .= ' vs ';
     }
-    $pageTitle .= "$clan->short";
+    if ($clan) {
+        $pageTitle .= "$clan->short";
+    }
     ?>
 @endforeach
 
@@ -129,17 +131,22 @@ $pageTitle = 'Viewing Game - ';
         <div class="clan-versus-header">
             <div class="container">
                 <div class="clan-versus-header-container">
-                    @foreach ($clanGameReports as $k => $cgr)
-                        @php $clanPointReport = $cgr->gameReport->getPointReportByClan($cgr->clan_id); @endphp
-                        @php $url = \App\URLHelper::getClanProfileUrl($history, $cgr->clan->short); @endphp
 
-                        @include('ladders.game.clan._clan-versus-header', [
-                            'clanName' => $cgr->clan->short,
-                            'clanProfileUrl' => $url,
-                            'avatar' => $cgr->clan->getClanAvatar(),
-                            'playerGameReport' => $clanPointReport,
-                            'order' => $k,
-                        ])
+                    @foreach ($clanGameReports as $k => $cgr)
+                        @if ($cgr)
+                            @php $clanPointReport = $cgr->gameReport->getPointReportByClan($cgr->clan_id); @endphp
+
+                            @if ($clanPointReport)
+                                @php $url = \App\URLHelper::getClanProfileUrl($history, $cgr->clan->short); @endphp
+                                @include('ladders.game.clan._clan-versus-header', [
+                                    'clanName' => $cgr->clan->short,
+                                    'clanProfileUrl' => $url,
+                                    'avatar' => $cgr->clan->getClanAvatar(),
+                                    'playerGameReport' => $clanPointReport,
+                                    'order' => $k,
+                                ])
+                            @endif
+                        @endif
 
                         @if ($k == 0)
                             <div class="clan-vs">
