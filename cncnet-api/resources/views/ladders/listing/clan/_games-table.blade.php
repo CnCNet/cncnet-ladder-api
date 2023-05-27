@@ -15,6 +15,9 @@
                     $clanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $playerGameReport->clan_id);
                     $playerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $playerGameReport->player->username);
                 
+                    if ($clanProfileUrl == null || $playerProfileUrl == null) {
+                        continue;
+                    }
                     $opponentPlayerReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
                         ->where('clan_id', '!=', $playerGameReport->clan->id)
                         ->first();
