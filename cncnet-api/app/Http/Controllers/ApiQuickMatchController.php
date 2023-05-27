@@ -167,12 +167,10 @@ class ApiQuickMatchController extends Controller
         }
 
         $playersString = "";
-        Log::info("num clans: " . count($clans));
 
         $j = 0;
         foreach ($clans as $clanId => $players)
         {
-            Log::info("num players: " . count($players));
             $i = 0;
             $clanName = \App\Clan::where('id', $clanId)->first()->short;
             foreach ($players as $player)
