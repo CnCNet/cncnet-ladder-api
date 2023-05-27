@@ -17,11 +17,14 @@
          <div class="player-points d-flex">
              @php $playerStats2 = \App\Stats2::where("id", $playerGameReport->stats->id)->first(); @endphp
              @php $playerCountry = $playerStats2->faction($history->ladder->game, $playerGameReport->stats->cty); @endphp
+
              <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
 
-             <div class="game-status status-{{ $playerGameReport->won ? 'won' : 'lost' }}">
+             @php $clanWon = $playerGameReport->gameReport->checkIsWinningClan($playerGameReport->clan_id); @endphp
+
+             <div class="game-status status-{{ $clanWon ? 'won' : 'lost' }}">
                  <span class="status-text">
-                     {{ $playerGameReport->won == true ? 'Won' : 'Lost' }}
+                     {{ $clanWon ? 'Won' : 'Lost' }}
                  </span>
 
                  <span class="points">

@@ -75,6 +75,10 @@ class URLHelper
     public static function getClanProfileLadderUrl($history, $clanId)
     {
         $clan = Clan::find($clanId);
+        if ($clan == null)
+        {
+            return null;
+        }
         return "/ladder/" . $history->short . "/" . $history->ladder->abbreviation . "/clan/" . $clan->short;
     }
 

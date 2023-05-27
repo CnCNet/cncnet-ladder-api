@@ -21,8 +21,9 @@
                 <h3><strong>{{ trans('footer.footer_support') }}</strong></h3>
                 <ul class="list-unstyled">
                     <li><a href="//forums.cncnet.org" title="{{ trans('footer.footer_support') }}">{{ trans('footer.footer_support') }}</a></li>
-                    <li><a href="https://cncnet.org/developers" title="Developers">Developers</a></li>
-                    <li><a href="https://discord.gg/aJRJFe5" title="{{ trans('footer.footer_discord') }}" target="_blank">{{ trans('footer.footer_discord') }}</a></li>
+                    <li><a href="http://ladder.cncnet.org/news/clan-ladder" title="Developers">Clan Ladder Announcement</a></li>
+                    <li><a href="https://discord.gg/aJRJFe5" title="{{ trans('footer.footer_discord') }}"
+                            target="_blank">{{ trans('footer.footer_discord') }}</a></li>
                 </ul>
             </div>
 
@@ -49,7 +50,8 @@
                         </a>
                     </div>
                     <div>
-                        <a href="https://www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" title="Subscribe to CnCNet on YouTube" target="_blank">
+                        <a href="https://www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" title="Subscribe to CnCNet on YouTube"
+                            target="_blank">
                             <i class="bi bi-youtube"></i>
                         </a>
                     </div>

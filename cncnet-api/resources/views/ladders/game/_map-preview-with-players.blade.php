@@ -1,7 +1,7 @@
 @php
     $mapPreview = '';
     try {
-        $mapPreview = url('images/maps/' . $history->ladder->game . '/' . $map->hash . '.png');
+        $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $map->hash . '.png';
         $mapPreviewSize = getimagesize($mapPreview);
     
         $webMapWidth = $mapPreviewSize[0];
@@ -31,6 +31,12 @@
                 style="background-image:url('{{ $mapPreview }}'); width: {{ $webMapWidth }}px; height: {{ $webMapHeight }}px">
                 @foreach ($playerGameReports as $k => $pgr)
                     @php
+                        
+                        $pointReport = $pgr;
+                        if ($history->ladder->clans_allowed) {
+                            $pointReport = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
+                        }
+                        
                         $hasValidSpawnData = false;
                         $gameStats = $pgr->stats;
                         $player = $pgr->player()->first();
@@ -38,6 +44,7 @@
                         try {
                             $clan = $pgr->clan;
                         } catch (Exception $ex) {
+                            dd($ex);
                         }
                         
                         # Player positions plotted onto map preview
@@ -83,12 +90,12 @@
                                     @endif
                                 </div>
 
-                                <div class="status text-uppercase status-{{ $pgr->won ? 'won' : 'lost' }}">
-                                    @if ($pgr->won)
+                                <div class="status text-uppercase status-{{ $pointReport->won ? 'won' : 'lost' }}">
+                                    @if ($pointReport->won)
                                         Won
-                                    @elseif($pgr->draw)
+                                    @elseif($pointReport->draw)
                                         Draw
-                                    @elseif($pgr->disconnected)
+                                    @elseif($pointReport->disconnected)
                                         Disconnected
                                     @else
                                         Lost

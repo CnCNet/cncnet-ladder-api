@@ -69,17 +69,21 @@ class MapPoolController extends Controller
         ]);
 
         $mapFile = $request->file('mapFile');
-        $mapFileName = strtolower($mapFile->getClientOriginalName());
         $hash = null;
-        if ($mapFile != null)
-        {
-            if (!($this->str_ends_with($mapFileName, ".map") || $this->str_ends_with($mapFileName, ".mpr")))
-            {
-                $request->session()->flash('error', "Map file does not end in .map or .mpr, for mapfile: " . $mapFileName);
-                return redirect()->back();
-            }
 
-            $hash = sha1_file($mapFile);
+        if ($mapFile)
+        {
+            $mapFileName = strtolower($mapFile->getClientOriginalName());
+            if ($mapFile != null)
+            {
+                if (!($this->str_ends_with($mapFileName, ".map") || $this->str_ends_with($mapFileName, ".mpr")))
+                {
+                    $request->session()->flash('error', "Map file does not end in .map or .mpr, for mapfile: " . $mapFileName);
+                    return redirect()->back();
+                }
+
+                $hash = sha1_file($mapFile);
+            }
         }
 
         if ($request->map_id == 'new')
@@ -163,10 +167,11 @@ class MapPoolController extends Controller
 
     private function parseMapHeaders($fileName, $mapId, $ladderId)
     {
-        try 
+        try
         {
             $ini = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
-        } catch(ErrorException $e) 
+        }
+        catch (ErrorException $e)
         {
             return "Failed to parse map file, error: " . $e->getMessage();
         }

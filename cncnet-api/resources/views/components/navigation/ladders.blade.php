@@ -28,6 +28,7 @@
             @if (count($clan_ladders) > 0)
                 <li>
                     <h4 class="dropdown-header text-uppercase">Clan Ladders</h4>
+
                 </li>
             @endif
 

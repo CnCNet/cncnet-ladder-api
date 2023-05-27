@@ -34,7 +34,7 @@ class AdminController extends Controller
     public function getAdminIndex(Request $request)
     {
         return view("admin.index", [
-            "ladders" => $this->ladderService->getLatestLadders(),
+            "ladders" => $this->ladderService->getLadders(),
             "clan_ladders" => $this->ladderService->getLatestLadders(),
             "all_ladders" => \App\Ladder::all(),
             "schemas" => \App\GameObjectSchema::managedBy($request->user()),
@@ -337,7 +337,7 @@ class AdminController extends Controller
         $gameReport->best_report = true;
         $gameReport->save();
 
-        $this->ladderService->undoPlayerCache($currentReport);
+        $this->ladderService->undoCache($currentReport);
         $this->ladderService->updatePlayerCache($gameReport);
         return redirect()->back();
     }

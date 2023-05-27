@@ -1,0 +1,79 @@
+.clan-versus-header 
+{
+    background: #181b26;
+}
+
+.clan-versus-header-container 
+{
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+
+    @media(min-width: $lg-width)
+    {
+        flex-direction: row;
+    }
+}
+
+.clan-versus-header .clan-header 
+{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: #fff;
+
+    @media(min-width: $sm-width)
+    {
+        flex-direction: row;
+    }
+}
+
+.clan-versus-header .clan-header .rank.lost 
+{
+    color: $lostColour;
+}
+
+.clan-versus-header .clan-vs 
+{
+    font-family: Impact,Haettenschweiler,"Arial Narrow Bold",sans-serif;
+    color: #fff;
+    font-size: 3rem;
+    text-align: center;
+    padding: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clan-versus-header .clan-avatar 
+{
+    transition: ease 250ms all;
+    padding: 2rem;
+
+    &:hover 
+    {
+        opacity: 0.8;
+    }
+}
+
+.clan-versus-header .clan-avatar .avatar-container
+{
+    background: #08090e;
+}
+
+.clan-versus-header .clan-header.order-1 .clan-avatar 
+{
+    order: 1;
+}
+
+@media(max-width: $md-width)
+{
+    .clan-versus-header .clan-avatar .avatar-container 
+    {
+        width: 80px!important;
+        height: 80px!important;
+    }
+}

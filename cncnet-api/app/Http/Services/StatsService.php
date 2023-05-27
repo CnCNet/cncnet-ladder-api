@@ -41,10 +41,25 @@ class StatsService
                 ->where('qm_match_players.tier', '=', $tierId)
                 ->count();
 
-            $queuedPlayers = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
-                ->where('ladder_history_id', $history->id)
-                ->whereNull('qm_match_id')
-                ->count();
+
+            if ($history->ladder->clans_allowed)
+            {
+                $queuedPlayersOrClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+                    ->where('ladder_history_id', $history->id)
+                    ->whereNull('qm_match_id')
+                    ->groupBy("clan_id")
+                    ->get();
+
+                // Groupby doesn't work with ->count()
+                $queuedPlayersOrClans = count($queuedPlayersOrClans);
+            }
+            else
+            {
+                $queuedPlayersOrClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+                    ->where('ladder_history_id', $history->id)
+                    ->whereNull('qm_match_id')
+                    ->count();
+            }
 
             $recentMatches = QmMatch::where('qm_matches.tier', '=', $tierId)
                 ->where('qm_matches.created_at', '>', $carbonDateSubHour)
@@ -69,7 +84,7 @@ class StatsService
 
             return [
                 "recentMatchedPlayers" => $recentMatchedPlayers,
-                "queuedPlayers" => $queuedPlayers,
+                "queuedPlayers" => $queuedPlayersOrClans,
                 "past24hMatches" => $past24hMatches,
                 "recentMatches" => $recentMatches,
                 "matchesByMonth" => $matchesByMonth,

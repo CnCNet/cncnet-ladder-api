@@ -1,4 +1,5 @@
 <canvas id="gamesPlayed" width="450" height="340" style="margin-top: 15px;"></canvas>
+
 <script>
     const config = {
         type: "bar",

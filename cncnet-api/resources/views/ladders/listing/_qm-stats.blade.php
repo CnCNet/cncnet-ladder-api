@@ -34,12 +34,18 @@
                     </div>
                 </div>
 
-                <div class="stat magenta">
+
+                <div class="stat {{ $history->ladder->clans_allowed ? 'blue' : 'magenta' }}">
                     <div class="text-center">
-                        <span class="material-symbols-outlined">
-                            group
-                        </span>
-                        <h5>Queued Players</h5>
+                        @if ($history->ladder->clans_allowed)
+                            <i class="bi bi-flag-fill icon-clan"></i>
+                            <h5>Queued Clans</h5>
+                        @else
+                            <span class="material-symbols-outlined">
+                                group
+                            </span>
+                            <h5>Queued Players</h5>
+                        @endif
                     </div>
                     <div class="text-center">
                         <div class="value">{{ $stats['queuedPlayers'] }}</div>
@@ -50,7 +56,7 @@
                 @if ($statsXOfTheDay)
 
                     @if ($history->ladder->clans_allowed)
-                        <?php $url = \App\URLHelper::getClanProfileUrl($history, $statsXOfTheDay->name); ?>~
+                        <?php $url = \App\URLHelper::getClanProfileUrl($history, $statsXOfTheDay->name); ?>
                     @else
                         <?php $url = \App\URLHelper::getPlayerProfileUrl($history, $statsXOfTheDay->name); ?>
                     @endif

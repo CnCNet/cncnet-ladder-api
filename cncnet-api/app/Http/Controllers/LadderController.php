@@ -237,12 +237,16 @@ class LadderController extends Controller
         // Tests
         if ($request->reunRewardPoints && $history->ladder->clans_allowed)
         {
-            $api = new ApiLadderController();
-            foreach ($game->playerGameReports as $k => $pgr)
-            {
-                $gameReport = $pgr->gameReport;
-                $result = $api->awardPoints($gameReport, $history);
-            }
+            // $api = new ApiLadderController();
+            // $ladderService = new LadderService;
+            // $ladderService->updateCache($game->report);
+
+            // foreach ($game->playerGameReports as $k => $pgr)
+            // {
+            //     $gameReport = $pgr->gameReport;
+            //     $result = $api->awardClanPoints($gameReport, $history);
+            //     break;
+            // }
         }
 
         if ($game == null)
@@ -282,28 +286,70 @@ class LadderController extends Controller
         }
 
         $playerGameReports = $gameReport->playerGameReports()->get() ?? [];
+
         $heaps = CountableObjectHeap::all();
 
-        return view(
-            'ladders.game-detail',
-            [
-                "game" => $game,
-                "gameReport" => $gameReport,
-                "allGameReports" => $allGameReports,
-                "playerGameReports" => $playerGameReports,
-                "isClanGame" => $history->ladder->clans_allowed,
-                "clanGameReports" => $gameReport->playerGameReports()->groupBy("clan_id")->get() ?? [],
-                "history" => $history,
-                "heaps" => $heaps,
-                "user" => $user,
-                "userIsMod" => $userIsMod,
-                "cncnetGame" => $cncnetGame,
-                "qmMatchStates" => $qmMatchStates,
-                "qmConnectionStats" => $qmConnectionStats,
-                "qmMatchPlayers" => $qmMatchPlayers,
-                "date" => $date,
-            ]
-        );
+        if ($history->ladder->clans_allowed)
+        {
+
+            $clans = [];
+            foreach ($playerGameReports as $pgr)
+            {
+                $clans[$pgr->clan_id][] = $pgr;
+            }
+
+            $orderedClanReports = [];
+            foreach ($clans as $clanId => $pgrArr)
+            {
+                foreach ($pgrArr as $pgr)
+                {
+                    $orderedClanReports[] = $pgr;
+                }
+            }
+
+            $clanGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
+            return view(
+                'ladders.clan-game-detail',
+                [
+                    "game" => $game,
+                    "gameReport" => $gameReport,
+                    "allGameReports" => $allGameReports,
+                    "clanGameReports" => $clanGameReports,
+                    "orderedClanReports" => $orderedClanReports,
+                    "playerGameReports" => $playerGameReports,
+                    "history" => $history,
+                    "heaps" => $heaps,
+                    "user" => $user,
+                    "userIsMod" => $userIsMod,
+                    "cncnetGame" => $cncnetGame,
+                    "qmMatchStates" => $qmMatchStates,
+                    "qmConnectionStats" => $qmConnectionStats,
+                    "qmMatchPlayers" => $qmMatchPlayers,
+                    "date" => $date,
+                ]
+            );
+        }
+        else
+        {
+            return view(
+                'ladders.game-detail',
+                [
+                    "game" => $game,
+                    "gameReport" => $gameReport,
+                    "allGameReports" => $allGameReports,
+                    "playerGameReports" => $playerGameReports,
+                    "history" => $history,
+                    "heaps" => $heaps,
+                    "user" => $user,
+                    "userIsMod" => $userIsMod,
+                    "cncnetGame" => $cncnetGame,
+                    "qmMatchStates" => $qmMatchStates,
+                    "qmConnectionStats" => $qmConnectionStats,
+                    "qmMatchPlayers" => $qmMatchPlayers,
+                    "date" => $date,
+                ]
+            );
+        }
     }
 
     public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $username = null)

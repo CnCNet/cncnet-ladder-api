@@ -8,18 +8,33 @@
                 <div class="swiper-slide" data-swiper-autoplay="8000">
                     <?php $pp = $game->playerGameReports()->first(); ?>
 
-                    @include('ladders.listing._game-box', [
-                        'url' => '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id,
-                        'game' => $history->ladder->game,
-                        'isClanGame' => $history->ladder->clans_allowed,
-                        'gamePlayers' => $game->playerGameReports(),
-                        'gameReport' => $game->report()->first(),
-                        'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
-                        'points' => $pp,
-                        'map' => $game->hash,
-                        'title' => $game->scen,
-                        'date' => $game->updated_at,
-                    ])
+                    @if ($history->ladder->clans_allowed)
+                        @include('ladders.listing.clan._game-box', [
+                            'url' => '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id,
+                            'game' => $history->ladder->game,
+                            'isClanGame' => $history->ladder->clans_allowed,
+                            'gamePlayers' => $game->playerGameReports(),
+                            'gameReport' => $game->report()->first(),
+                            'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
+                            'points' => $pp,
+                            'map' => $game->hash,
+                            'title' => $game->scen,
+                            'date' => $game->updated_at,
+                        ])
+                    @else
+                        @include('ladders.listing._game-box', [
+                            'url' => '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id,
+                            'game' => $history->ladder->game,
+                            'isClanGame' => $history->ladder->clans_allowed,
+                            'gamePlayers' => $game->playerGameReports(),
+                            'gameReport' => $game->report()->first(),
+                            'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
+                            'points' => $pp,
+                            'map' => $game->hash,
+                            'title' => $game->scen,
+                            'date' => $game->updated_at,
+                        ])
+                    @endif
                 </div>
             @endforeach
         </div>

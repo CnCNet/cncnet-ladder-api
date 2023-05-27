@@ -18,12 +18,6 @@
                     <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                 @endif
             </div>
-            <div class="points {{ $pgr->won ? 'won' : 'lost' }}">
-                @if ($pgr->points >= 0)
-                    <span>{{ '+' }}</span>
-                @endif
-                {{ $pgr->points }}
-            </div>
         </div>
     </div>
 </div>

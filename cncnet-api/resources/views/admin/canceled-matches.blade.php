@@ -73,7 +73,15 @@
                     @foreach ($canceled_matches as $canceled_match)
                         <tr>
                             <td>{{ $canceled_match->created_at->format('F j, Y, g:i a T') }}</td>
-                            <td>{{ $canceled_match->username }}</td>
+                            <td>
+                                @if ($canceled_match->player->clanPlayer)
+                                    <i class="bi bi-flag-fill icon-clan ps-1 pe-1"></i>
+                                    <span class="pe-3">
+                                        [{{ $canceled_match->player->clanPlayer->clan->short }}]
+                                    </span>
+                                @endif
+                                {{ $canceled_match->username }}
+                            </td>
                             <td>{{ $canceled_match->qm_match_id }}</td>
                         </tr>
                     @endforeach
