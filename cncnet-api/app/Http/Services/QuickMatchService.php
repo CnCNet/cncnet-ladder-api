@@ -463,27 +463,8 @@ function getColorsArr($numPlayers, $randomize)
 {
     $possibleColors = [0, 1, 2, 3, 4, 5, 6, 7];
 
-    $colors = [];
-    $i = 0;
-    while (count($colors) != $numPlayers)
-    {
-        if ($randomize) //random colors
-        {
-            $randomColorIndex = mt_rand(0, count($possibleColors) - 1);
-            $randomColor = $possibleColors[$randomColorIndex];
+    if ($randomize)
+        shuffle($possibleColors);
 
-            if (!in_array($randomColor, $colors))
-                $colors[] = $randomColor;
-            else
-                continue;
-        }
-        else //not random
-        {
-            $colors[] = $possibleColors[$i];
-        }
-
-        $i++;
-    }
-
-    return $colors;
+    return array_slice($possibleColors, 0, $numPlayers);
 }
