@@ -480,9 +480,9 @@ function getColorsArr($numPlayers, $randomize)
 function getLocationsArr($numPlayers, $randomize)
 {
     $locations = [];
-    for ($i = 1; $i < $numPlayers; $i++)
+    for ($i = 0; $i < $numPlayers; $i++)
     {
-        $locations[] = $i;
+        $locations[] = $i + 1;
     }
 
     if ($randomize)
