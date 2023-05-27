@@ -540,8 +540,7 @@
                             </p>
                         </div>
 
-                        <div class="form-group
-                            mb-2">
+                        <div class="form-group mb-2">
                             <label for="short"><strong>Short Name (6 Characters long)*</strong></label>
                             <input type="text" name="short" class="form-control border" id="short" placeholder="">
                         </div>
