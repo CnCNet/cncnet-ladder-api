@@ -94,9 +94,13 @@ class ClanController extends Controller
             return $p->clanPlayer !== null && $p->clanPlayer->clan_id == $clan->id;
         })->first();
 
-        if ($player === null)
+        if ($player === null && !$user->isGod())
         {
             return response('Not Authorized', 403);
+        }
+        else if ($player === null && $user->isGod())
+        {
+            $player = $clan->clanPlayers[0]->player;
         }
 
         $invitations = $clan->invitations;
@@ -484,16 +488,15 @@ class ClanController extends Controller
         }
 
         $player = \App\Player::find($request->player_id);
+        $user = $request->user();
 
-        if ($player === null || !$player->clanPlayer->isOwner())
+        if (($player === null || !$player->clanPlayer->isOwner()) && !$user->isGod())
         {
             $request->session()->flash('error', "You don't have permission to do that.");
             return redirect()->back();
         }
 
-        $user = $request->user();
-
-        if ($player->user_id != $user->id)
+        if ($player->user_id != $user->id && !$user->isGod())
         {
             $request->session()->flash('error', "You don't have permission to do that.");
             return redirect()->back();

@@ -7,6 +7,7 @@ use App\QmMatch;
 use App\QmMatchPlayer;
 use App\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
+use App\Commands\Matchup\ClanMatchupHandler;
 
 class QuickMatchService
 {
@@ -268,6 +269,15 @@ class QuickMatchService
 
         $ladder = \App\Ladder::where('id', $qmPlayer->ladder_id)->first();
 
+        $actualPlayerCount = count($otherQMQueueEntries) + 1; //total player counts equals myself plus other players to be matched
+        $expectedPlayerCount = $ladder->qmLadderRules->player_count;
+        if ($actualPlayerCount != $expectedPlayerCount)
+        {
+            Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
+            Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
+            // return null
+        }
+
         # Create the Game
         $game = Game::genQmEntry($qmMatch, $gameType);
         $qmMatch->game_id = $game->id;
@@ -279,7 +289,7 @@ class QuickMatchService
         $qmMap = $qmMatch->map;
         $spawnOrder = explode(',', $qmMap->spawn_order);
 
-        if ($qmMap->random_spawns && $qmMap->map->spawn_count > 2) //this map uses random spawns
+        if ($qmMap->random_spawns && $qmMap->map->spawn_count > 2 && $expectedPlayerCount == 2) //this map uses 1v1 random spawns
         {
             $spawnOrder = [];
             $numSpawns = $qmMap->map->spawn_count;
@@ -361,10 +371,14 @@ class QuickMatchService
         # Set up player specific information
         # Color will be used for spawn location
         $qmPlayer = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
-        if (!$teamSpotsAssigned) //spots were team assigned
+        $colorsArr = getColorsArr($actualPlayerCount, $ladder->clans_allowed && !$teamSpotsAssigned);
+        Log::info("Color values created: " . implode(",", $colorsArr));
+        $i = 0;
+        if (!$teamSpotsAssigned) //spots were not team assigned
         {
-            $qmPlayer->color = 0;
-            $qmPlayer->location = $spawnOrder[$qmPlayer->color] - 1;
+            $qmPlayer->color = $colorsArr[$i];
+            $qmPlayer->location = $spawnOrder[$i] - 1;
+            $i++;
         }
         $qmPlayer->qm_match_id = $qmMatch->id;
         $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
@@ -388,7 +402,6 @@ class QuickMatchService
             return $s >= 0;
         }));
 
-        $color = 1;
         foreach ($otherQMQueueEntries as $qOpn)
         {
             $opn = $qOpn->qmPlayer;
@@ -416,10 +429,11 @@ class QuickMatchService
                 $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
             }
 
-            if (!$teamSpotsAssigned) //spots were team assigned
+            if (!$teamSpotsAssigned) //spots were not team assigned
             {
-                $opn->color = $color++;
-                $opn->location = $spawnOrder[$opn->color] - 1;
+                $opn->color = $colorsArr[$i];
+                $opn->location = $spawnOrder[$i] - 1;
+                $i++;
             }
 
             $opn->qm_match_id = $qmMatch->id;
@@ -433,6 +447,24 @@ class QuickMatchService
         }
         $qmPlayer->save();
 
+        $playerNames = implode(",", ClanMatchupHandler::getPlayerNamesInQueue($otherQMQueueEntries));
+        Log::info("Launching match with players $playerNames, " . $qmPlayer->player->username . " on map: " . $qmMatch->map->description);
+
         return $qmMatch;
     }
+}
+
+/**
+ * Given $numPlayers, return an array of numbers, length of array = $numPlayers.
+ * 
+ * Clan ladder matches should randomize the colors. 1v1 should use red vs yellow.
+ */
+function getColorsArr($numPlayers, $randomize)
+{
+    $possibleColors = [0, 1, 2, 3, 4, 5, 6, 7];
+
+    if ($randomize)
+        shuffle($possibleColors);
+
+    return array_slice($possibleColors, 0, $numPlayers);
 }

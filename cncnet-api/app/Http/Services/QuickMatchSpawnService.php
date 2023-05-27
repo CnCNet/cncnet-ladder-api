@@ -110,9 +110,9 @@ class QuickMatchSpawnService
      */
     public static function appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmPlayers)
     {
-        $otherIdx = 1;
-        $multiIdx = $qmPlayer->color + 1;
-        $myIndex = $multiIdx;
+        Log::info("otherQmPlayers: " . count($otherQmPlayers));
+        $myIndex = 1;
+        $multiIdx = 1;
         $observerIndex = -1;
 
         # Checks if player is observer
@@ -134,10 +134,10 @@ class QuickMatchSpawnService
         }
 
         $myTeamIndices = [];
-        $myTeamIndices[] = $myIndex;
+        $myTeamIndices[] = $qmPlayer->color;
         foreach ($otherQmPlayers as $opn)
         {
-            $spawnStruct["spawn"]["Other{$otherIdx}"] = [
+            $spawnStruct["spawn"]["Other{$multiIdx}"] = [
                 "Name" => $opn->player()->first()->username,
                 "Side" => $opn->actual_side,
                 "Color" => $opn->color,
@@ -158,7 +158,7 @@ class QuickMatchSpawnService
                 $observerIndex = $otherIdx;
             }
 
-            $multiIdx = $opn->color + 1;
+            $multiIdx++;
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $opn->location;
 
             # Check if other player is in my clan, if so add alliance
@@ -167,13 +167,11 @@ class QuickMatchSpawnService
                 $p1Name = $qmPlayer->player->username;
                 $p2Name = $opn->player->username;
 
-                Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
+                Log::info("PlayerIndex ** assigning $p1Name with $p2Name, myIndex: $myIndex, multi: $multiIdx");
                 $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
                 $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
-                $myTeamIndices[] = $multiIdx;
+                $myTeamIndices[] = $opn->color;
             }
-
-            $otherIdx++;
 
             if (array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
             {
@@ -186,33 +184,33 @@ class QuickMatchSpawnService
         }
 
         //create multi alliance for opponent's team
+        $multiIdx = $myIndex + 1;
         $completed = false;
         foreach ($otherQmPlayers as $opn)
         {
-            $multiIdx = $opn->color + 1;
-
-            if (!in_array($multiIdx, $myTeamIndices)) //this index is opponent's team
+            if (!in_array($opn->color, $myTeamIndices)) //this index is opponent's team
             {
+                $otherIdx = $multiIdx + 1;
                 foreach ($otherQmPlayers as $opn2) //find teammate(s)
                 {
-                    $otherIdx = $opn2->color + 1;
-
-                    if ($otherIdx == $multiIdx) //self
+                    if ($otherIdx == $multiIdx || !$opn2->clan_id || $opn->color == $opn2->color) //self
                         continue;
 
-                    if (!in_array($otherIdx, $myTeamIndices)) //this index is opponent's teammate
+                    if (!in_array($opn2->color, $myTeamIndices)) //this index is opponent's teammate
                     {
                         $p1Name = $opn->player->username;
                         $p2Name = $opn2->player->username;
 
-                        Log::info("PlayerIndex ** assigning opponents $p1Name with $p2Name");
+                        Log::info("PlayerIndex ** assigning opponents $p1Name with $p2Name, other: $otherIdx, multi: $multiIdx");
                         $spawnStruct["spawn"]["Multi{$otherIdx}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
                         $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $otherIdx - 1;
                         $completed = true;
+                        $multiIdx++;
+                        break;
                     }
                 }
             }
-
+         
             if ($completed)
                 break;
         }
