@@ -540,8 +540,7 @@
                             </p>
                         </div>
 
-                        <div class="form-group
-                            mb-2">
+                        <div class="form-group mb-2">
                             <label for="short"><strong>Short Name (6 Characters long)*</strong></label>
                             <input type="text" name="short" class="form-control border" id="short" placeholder="">
                         </div>
@@ -549,6 +548,11 @@
                         <div class="form-group mb-2">
                             <label for="name"><strong>Full Clan Name*</strong></label>
                             <input type="text" name="name" class="form-control border" id="name" placeholder="">
+                        </div>
+
+                        <div class="form-group mb-2">
+                            <label for="description"><strong>Clan Bio</strong></label>
+                            <textarea type="text" name="description" class="form-control border" id="description" placeholder=""></textarea>
                         </div>
 
                         <div class="form-group mb-4">

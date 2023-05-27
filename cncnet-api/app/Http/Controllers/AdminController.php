@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Clan;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\AdminService;
@@ -248,6 +249,44 @@ class AdminController extends Controller
             "userId" => $userId,
             "hostname" => $hostname
         ]);
+    }
+
+    public function getManageClansIndex(Request $request)
+    {
+        if ($request->user() == null || !$request->user()->isAdmin())
+            return response('Unauthorized.', 401);
+
+        $ladder = Ladder::where("abbreviation", "ra2-cl")->first();
+        $ladderHistory = $ladder->currentHistory();
+
+        if ($request->search)
+        {
+            $clans = Clan::where("short", "like", "%" . $request->search . "%")->paginate(50);
+        }
+        else
+        {
+            $clans = Clan::orderBy("short")->paginate(50);
+        }
+
+        return view("admin.manage-clans", [
+            "clans" => $clans,
+            "ladder" => $ladder,
+            "history" => $ladderHistory,
+            "search" => $request->search
+        ]);
+    }
+
+    public function updateClan(Request $request)
+    {
+        if ($request->user() == null || !$request->user()->isAdmin())
+            return response('Unauthorized.', 401);
+
+        $clan = Clan::find($request->clan_id);
+        $clan->fill($request->all());
+        $clan->save();
+
+        $request->session()->flash("success", 'Clan updated');
+        return redirect()->back();
     }
 
     public function getEditUser(Request $request)
