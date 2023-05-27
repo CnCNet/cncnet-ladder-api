@@ -131,7 +131,7 @@
 
                             @if ($player->clanPlayer->isOwner())
                                 <button class="btn btn-outline ms-2" data-bs-toggle="modal" data-bs-target="#renameClan" type="button">
-                                    Edit clan name <i class="fa fa-edit"></i>
+                                    Edit clan <i class="fa fa-edit"></i>
                                 </button>
                             @endif
                         </div>
@@ -255,7 +255,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Edit Clan name</h5>
+                    <h5 class="modal-title">Edit Clan</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -274,6 +274,11 @@
                             <label for="name">Full Clan Name</label>
                             <input type="text" name="name" class="form-control border" id="name" placeholder="New Clan Name"
                                 value="{{ $clan->name }}">
+                        </div>
+
+                        <div class="form-group mb-2">
+                            <label for="description"><strong>Clan Bio</strong></label>
+                            <textarea type="text" name="description" class="form-control border" id="description" placeholder="">{{ $clan->description }}</textarea>
                         </div>
 
                         <button type="submit" class="btn btn-primary mt-2">Save</button>

@@ -551,6 +551,11 @@
                             <input type="text" name="name" class="form-control border" id="name" placeholder="">
                         </div>
 
+                        <div class="form-group mb-2">
+                            <label for="description"><strong>Clan Bio</strong></label>
+                            <textarea type="text" name="description" class="form-control border" id="description" placeholder=""></textarea>
+                        </div>
+
                         <div class="form-group mb-4">
                             <strong class="mb-2">Select a nickname that will own this clan*</strong>
                             <?php $autoCheckNickname = count($activePlayersNotInAClan) == 1; ?>

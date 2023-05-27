@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class Clan extends Model
 {
-    protected $fillable = ['ladder_id', 'short', 'name', 'avatar_path'];
+    protected $fillable = ['ladder_id', 'short', 'name', 'description', 'avatar_path'];
 
     public function owners()
     {
