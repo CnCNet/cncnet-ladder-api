@@ -121,7 +121,6 @@ class ApiQuickMatchController extends Controller
 
             //get the player data pertaining to this quick match
             $players = $this->ladderService->getQmMatchPlayersInMatch($qm->id);
-            Log::info(" players : " . count($players) . " - " . $players);
 
             $playersString = "";
             if ($ladder->clans_allowed)
