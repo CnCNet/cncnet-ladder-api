@@ -227,7 +227,8 @@ class ClanMatchupHandler extends BaseMatchupHandler
                         $opponentClanName = \App\Clan::where('id', $opponentClanId)->first()->short;
                         $currentPlayerName = $qmEntry->qmPlayer->player->username;
                         $playerName = $player->username;
-                        Log::info("Player being matched: '$currentPlayerName' has another player: '$playerName' who belongs to opponent clan: '$opponentClanName'.");
+                        $currentClanName = $currentUserClanPlayer->clan->short;
+                        Log::info("(CurrentUser=[$currentClanName]" . $currentUserClanPlayer->player->username . ") Player being matched: '$currentPlayerName' has another player: '$playerName' who belongs to opponent clan: '$opponentClanName'.");
                         $canMatch = false;
                         break;
                     }
@@ -237,7 +238,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
                     break;
             }
             if ($canMatch)
-                $result[$clanId] = $allQMQueueEntries;
+                $result[$clanId] = $opponentQmEntries;
         }
 
         if (count($result) != count($groupedQmQueueEntriesByClan))
