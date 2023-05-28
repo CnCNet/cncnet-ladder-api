@@ -18,7 +18,7 @@
                         ->where('clan_id', '!=', $playerGameReport->clan_id)
                         ->first();
                     
-                    if ($opponentPlayerReport) {
+                    if (isset($opponentPlayerReport) && $opponentPlayerReport) {
                         $opponentClanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $opponentPlayerReport->clan_id);
                         $opponentPlayerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $opponentPlayerReport->player->username);
                     }
@@ -43,7 +43,7 @@
                     </td>
 
                     <td class="td-player td-player-opponent">
-                        @if ($opponentPlayerReport)
+                        @if (isset($opponentPlayerReport) && $opponentPlayerReport)
                             @include('ladders.components._games-player-clan-row', [
                                 'clanName' => $opponentPlayerReport->clan->short,
                                 'avatar' => $opponentPlayerReport->clan->getClanAvatar(),

@@ -378,8 +378,6 @@ class QuickMatchService
         }
         $colorsArr = getColorsArr(8, false);
 
-        Log::info("Spawns created: " . implode(",", $spawnOrder));
-        Log::info("Colors created: " . implode(",", $colorsArr));
         $i = 0;
         if (!$teamSpotsAssigned)
         {

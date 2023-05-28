@@ -50,7 +50,7 @@
                     </td>
 
                     <td class="td-player td-player-opponent">
-                        @if ($opponentPlayerReport)
+                        @if (isset($opponentPlayerReport) && $opponentPlayerReport)
                             @include('ladders.components._games-player-clan-row', [
                                 'clanName' => $opponentPlayerReport->clan->short,
                                 'clanProfileUrl' => $opponentClanProfileUrl,

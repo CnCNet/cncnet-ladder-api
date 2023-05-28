@@ -242,8 +242,8 @@ class ClanMatchupHandler extends BaseMatchupHandler
 
         if (count($result) != count($groupedQmQueueEntriesByClan))
         {
-            Log::info("Start removeClansCurrentPlayerIsIn() numClans: " . count($groupedQmQueueEntriesByClan) . " - " . $currentUserClanPlayer->player->username);
-            Log::info("Exit removeClansCurrentPlayerIsIn() numClans: " . count($result) . $currentUserClanPlayer->player->username);
+            // Log::info("Start removeClansCurrentPlayerIsIn() numClans: " . count($groupedQmQueueEntriesByClan) . " - " . $currentUserClanPlayer->player->username);
+            // Log::info("Exit removeClansCurrentPlayerIsIn() numClans: " . count($result) . $currentUserClanPlayer->player->username);
         }
 
         return $result;
