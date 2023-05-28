@@ -12,7 +12,7 @@
                   @endphp
 
 
-                  @if ($gameStats !== null)
+                  @if ($gameStats !== null && $pointReport)
                       @php $last_heap = 'Z'; @endphp
 
                       <div class="stats">

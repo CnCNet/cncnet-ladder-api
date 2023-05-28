@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class GameReport extends Model
 {
@@ -35,6 +36,9 @@ class GameReport extends Model
             ->where("won", true)
             ->first();
 
+        if ($winningTeam)
+            Log::info("No winning clan report found for game_report id " . $this->game_id);
+
         return $winningTeam;
     }
 
@@ -50,10 +54,22 @@ class GameReport extends Model
                 ->where("clan_id", "!=", $winningTeam->clan_id)
                 ->first();
 
+            if ($losingTeam)
+                Log::info("No losing clan report found for game_report id " . $this->game_id);
+
             return $losingTeam;
         }
+        else
+        {
+            $losingTeam = $this->playerGameReports()->groupBy("clan_id")
+                ->where("won", false)
+                ->first();
 
-        return null;
+            if ($losingTeam)
+                Log::info("No losing clan report found for game_report id " . $this->game_id);
+
+            return $losingTeam;
+        }
     }
 
     //
