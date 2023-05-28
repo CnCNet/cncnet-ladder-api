@@ -175,68 +175,70 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($clanPlayers as $clanPlayer)
-                                                <tr>
-                                                    <td>
-                                                        <div class="d-flex">
-                                                            <p>
-                                                                {{ $clanPlayer->clan->short }}
-                                                            </p>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <a href="/clans/{{ $ladder->abbreviation }}/edit/{{ $clanPlayer->clan_id }}/main"
-                                                            class="btn btn-primary btn-size-md">
+                                                @if ($clanPlayer->clan)
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex">
+                                                                <p>
+                                                                    {{ $clanPlayer->clan->short }}
+                                                                </p>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <a href="/clans/{{ $ladder->abbreviation }}/edit/{{ $clanPlayer->clan_id }}/main"
+                                                                class="btn btn-primary btn-size-md">
 
-                                                            @if ($clanPlayer->isMember())
-                                                                View Clan - {{ $clanPlayer->clan->short }}
-                                                            @else
-                                                                Manage Clan - {{ $clanPlayer->clan->short }}
-                                                            @endif
-                                                        </a>
-                                                    </td>
-                                                    <td>
-                                                        <strong>Role: {{ $clanPlayer->role }}</strong>
-                                                        <br />
-                                                        <strong class="username">Nick: {{ $clanPlayer->player->username }}</strong>
-                                                    </td>
-                                                    <td>
-                                                        @foreach ($clanPlayer->clan->clanPlayers()->get() as $clanMember)
-                                                            <strong class="username">{{ $clanMember->player->username }}</strong>
+                                                                @if ($clanPlayer->isMember())
+                                                                    View Clan - {{ $clanPlayer->clan->short }}
+                                                                @else
+                                                                    Manage Clan - {{ $clanPlayer->clan->short }}
+                                                                @endif
+                                                            </a>
+                                                        </td>
+                                                        <td>
+                                                            <strong>Role: {{ $clanPlayer->role }}</strong>
                                                             <br />
-                                                        @endforeach
-                                                    </td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-danger btn-md" data-bs-toggle="modal"
-                                                            data-bs-target="#submitLeaveClan_{{ $clanPlayer->clan->id }}">Leave Clan</button>
+                                                            <strong class="username">Nick: {{ $clanPlayer->player->username }}</strong>
+                                                        </td>
+                                                        <td>
+                                                            @foreach ($clanPlayer->clan->clanPlayers()->get() as $clanMember)
+                                                                <strong class="username">{{ $clanMember->player->username }}</strong>
+                                                                <br />
+                                                            @endforeach
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-danger btn-md" data-bs-toggle="modal"
+                                                                data-bs-target="#submitLeaveClan_{{ $clanPlayer->clan->id }}">Leave Clan</button>
 
-                                                        <div class="modal fade" tabindex="-1" id="submitLeaveClan_{{ $clanPlayer->clan->id }}"
-                                                            tabIndex="-1" role="dialog">
-                                                            <div class="modal-dialog">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title">Leave the clan?</h5>
-                                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                            aria-label="Close"></button>
-                                                                    </div>
+                                                            <div class="modal fade" tabindex="-1" id="submitLeaveClan_{{ $clanPlayer->clan->id }}"
+                                                                tabIndex="-1" role="dialog">
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title">Leave the clan?</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                                aria-label="Close"></button>
+                                                                        </div>
 
-                                                                    <div class="modal-body">
-                                                                        <form method="POST"
-                                                                            action="/clans/{{ $ladder->abbreviation }}/leave/{{ $clanPlayer->clan->id }}/">
-                                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                                            <input type="hidden" name="id" value="{{ $clanPlayer->id }}">
+                                                                        <div class="modal-body">
+                                                                            <form method="POST"
+                                                                                action="/clans/{{ $ladder->abbreviation }}/leave/{{ $clanPlayer->clan->id }}/">
+                                                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                                                <input type="hidden" name="id" value="{{ $clanPlayer->id }}">
 
-                                                                            <p>Are you sure you want to leave the clan:
-                                                                                <strong>{{ $clanPlayer->clan->name }}</strong>?
-                                                                            </p>
+                                                                                <p>Are you sure you want to leave the clan:
+                                                                                    <strong>{{ $clanPlayer->clan->name }}</strong>?
+                                                                                </p>
 
-                                                                            <button type="submit" name="submit" value="leave"
-                                                                                class="btn btn-danger">I want to leave</button>
-                                                                        </form>
+                                                                                <button type="submit" name="submit" value="leave"
+                                                                                    class="btn btn-danger">I want to leave</button>
+                                                                            </form>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                    </td>
-                                                </tr>
+                                                        </td>
+                                                    </tr>
+                                                @endif
                                             @endforeach
                                         </tbody>
                                     </table>
