@@ -115,7 +115,6 @@ class ApiQuickMatchController extends Controller
 
         foreach ($qms as $qm) //iterate over every active quick match
         {
-            Log::info($qm);
             $map = trim($qm->map);
             $dt = new DateTime($qm->qm_match_created_at);
 

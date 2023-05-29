@@ -87,18 +87,18 @@ class PlayerMatchupHandler extends BaseMatchupHandler
                 $rankDiff = abs($currentPlayerRank - $oppPlayerRank);
                 if ($rankDiff <= $ladderRules->point_filter_rank_threshold)
                 {
-                    Log::info("FindOpponent ** Players meet the min pt filter rank p1: " . $currentPlayerRank . ", p2: " . $oppPlayerRank);
+                    // Log::info("FindOpponent ** Players meet the min pt filter rank p1: " . $currentPlayerRank . ", p2: " . $oppPlayerRank);
                     $ptFilterOff = true;
                 }
                 else
                 {
-                    Log::info("FindOpponent ** Players do not meet the min pt filter rank. p1: " . $currentPlayerRank . ", p2: " . $oppPlayerRank);
+                    // Log::info("FindOpponent ** Players do not meet the min pt filter rank. p1: " . $currentPlayerRank . ", p2: " . $oppPlayerRank);
                 }
             }
 
             if ($ptFilterOff)
             {
-                Log::info("FindOpponent ** PointFilter Off");
+                // Log::info("FindOpponent ** PointFilter Off");
 
                 # Both players have the point filter disabled, we will ignore the point filter
                 $opponentQmQueueEntriesFiltered->add($opponentEntry);
