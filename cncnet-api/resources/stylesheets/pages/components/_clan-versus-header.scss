@@ -1,6 +1,6 @@
 .clan-versus-header 
 {
-    background: #181b26;
+    background: #11131a;
 }
 
 .clan-versus-header-container 
@@ -23,7 +23,7 @@
     flex-direction: column;
     color: #fff;
 
-    @media(min-width: $sm-width)
+    @media(min-width: $xs-width)
     {
         flex-direction: row;
     }
