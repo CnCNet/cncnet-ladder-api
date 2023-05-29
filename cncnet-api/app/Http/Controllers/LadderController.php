@@ -508,6 +508,7 @@ class LadderController extends Controller
         // $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
         // $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $userPlayer, 3);
         // $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $userPlayer);
+        $clanPlayerWinLossByMonth = $this->statsService->getClanPlayerWinLosses($clan, $history);
 
         return view(
             "ladders.clan-detail",
@@ -519,7 +520,8 @@ class LadderController extends Controller
                 "games" => $games,
                 "userIsMod" => $userIsMod,
                 "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
-                "clanGamesLast24Hours" => $clanGamesLast24Hours
+                "clanGamesLast24Hours" => $clanGamesLast24Hours,
+                "clanPlayerWinLossByMonth" => $clanPlayerWinLossByMonth
             ]
         );
     }

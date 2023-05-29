@@ -387,4 +387,57 @@ class StatsService
             return $matchupResults;
         });
     }
+
+    public function getClanPlayerWinLosses($clan, $history)
+    {
+        // Get clan games reports
+        // Group by players and get their wins/losses breakdown
+        return Cache::remember("getClanPlayerWinLosses/$history->short/$clan->id", 5, function () use ($clan, $history)
+        {
+            $clanGames = $clan->clanGames()->where('ladder_history_id', $history->id)->get();
+            $results = [];
+            foreach ($clanGames as $cgr)
+            {
+                $report = $cgr->gameReport->getPointReportByClan($cgr->clan_id);
+
+                $playerReports = $cgr->gameReport->playerGameReports->where("clan_id", $cgr->clan_id);
+                foreach ($playerReports as $pr)
+                {
+                    if ($report->won)
+                    {
+                        $results[$pr->player_id]["wins"][] = $report;
+                    }
+                    else
+                    {
+                        $results[$pr->player_id]["losses"][] = $report;
+                    }
+                }
+            }
+
+            $formattedResults = [];
+            foreach ($results as $playerId => $report)
+            {
+                if (isset($report["wins"]))
+                {
+                    $report["wins"] = count($report["wins"]);
+                }
+                else
+                {
+                    $report["wins"] = 0;
+                }
+                if (isset($report["losses"]))
+                {
+                    $report["losses"] = count($report["losses"]);
+                }
+                else
+                {
+                    $report["losses"] = 0;
+                }
+
+                $report["total"] = $report["wins"] + $report["losses"];
+                $formattedResults[$playerId] = $report;
+            }
+            return $formattedResults;
+        });
+    }
 }

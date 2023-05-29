@@ -169,28 +169,67 @@
                         </div>
 
                         <div class="column">
-                            <h5 class="stat-title">Clan players</h5>
-                            <div>
-                                @foreach ($clanPlayers as $clanPlayer)
-                                    @php $player = $clanPlayer->player; @endphp
-                                    <div>
-                                        <a class="" href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
-                                            title="Go to {{ $player->username }}'s profile">
-                                            {{ $player->username }}
-                                        </a>
-                                    </div>
-                                @endforeach
+                            <h5 class="stat-title"><i class="bi bi-graph-up pe-3"></i> Clan players performance</h5>
+
+                            <div class="clan-player-breakdown stats-wrap">
+                                <div class="table-responsive" style="width:100%">
+                                    <table class="table table player-factions-table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Player</th>
+                                                <th scope="col">Wins</th>
+                                                <th scope="col">Lost</th>
+                                                <th scope="col">Played</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($clanPlayerWinLossByMonth as $playerId => $report)
+                                                <tr>
+                                                    <td>
+                                                        @foreach ($clanPlayers as $clanPlayer)
+                                                            @php $player = $clanPlayer->player; @endphp
+
+                                                            @if ($playerId == $player->id)
+                                                                {{ $player->username }}
+                                                            @endif
+                                                        @endforeach
+                                                    </td>
+                                                    <td class="count won">{{ $report['wins'] }}</td>
+                                                    <td class="count lost">{{ $report['losses'] }}</td>
+                                                    <td>{{ $report['total'] }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
 
                         <div class="column">
-                            <h5 class="stat-title">Played this month</h5>
+                            <h5 class="stat-title"><i class="bi bi-calendar-date pe-3"></i> Played this month</h5>
                             <div>
                                 @include('ladders.player._player-chart')
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="column mt-5 mt-lg-0">
+                    <h5 class="stat-title">Clan members</h5>
+                    <div>
+                        @foreach ($clanPlayers as $clanPlayer)
+                            @php $player = $clanPlayer->player; @endphp
+                            <div>
+                                <a class="" href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                    title="Go to {{ $player->username }}'s profile">
+                                    {{ $player->username }}
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+
 
                 <!-- Toggle achievements on for Blitz ladder only, TODO remove -->
                 {{-- @if ($history->ladder->id == 8 || $history->ladder->id == 1)
