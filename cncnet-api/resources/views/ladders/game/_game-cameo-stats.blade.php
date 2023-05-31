@@ -50,6 +50,16 @@
                               <strong>Funds Left: </strong> {{ $gameStats->crd }}
                           </div>
 
+                          <div class="text-center">
+                            @php 
+                                $pings = $pgr->game->qmMatch->qmConnectionStats->where('player_id', $pgr->player_id)->map(function ($connectionStat) {return $connectionStat->rtt;})->all();
+                                $pingString = count($pings) > 0 ? implode(', ', $pings) : '?';
+                            @endphp
+
+                              <strong>Pings: </strong> {{ $pingString}}
+                          </div>
+
+
                           <div class="text-center mb-5">
                               @if ($pgr->stats)
                                   @php $playerStats2 = \App\Stats2::where("id", $pgr->stats->id)->first(); @endphp
