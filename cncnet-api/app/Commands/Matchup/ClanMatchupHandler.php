@@ -215,11 +215,10 @@ class ClanMatchupHandler extends BaseMatchupHandler
             }
 
             $canMatch = true;
-            foreach ($myClansQmEntries as $qmEntry) //loop through the members in my clan in queue
+            foreach ($myClansQmEntries as $qmEntry) //loop through the members in my clan, check if a player in my clan is also in opponent's clan
             {
                 $players = $qmEntry->qmPlayer->player->user->usernames()->where("ladder_id", '=', $ladderId)->get();
 
-                //check if the current user has another player who belongs to the clan being matched against
                 foreach ($players as $player)
                 {
                     if ($player->clanPlayer && $player->clanPlayer->clan->id == $opponentClanId)
@@ -237,14 +236,32 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 if (!$canMatch)
                     break;
             }
+
+            //loop through the members in opponent clan, check if any opponent is also in my clan
+            foreach ($opponentQmEntries as $opponentQmEntry) 
+            {
+                $opponentPlayers = $opponentQmEntry->qmPlayer->player->user->usernames()->where("ladder_id", '=', $ladderId)->get();
+
+                foreach ($opponentPlayers as $opponentPlayer)
+                {
+                    if ($opponentPlayer->clanPlayer && $opponentPlayer->clanPlayer->clan->id == $currentUserClanPlayer->clan->id)
+                    {
+                        $myClanName = \App\Clan::where('id', $currentUserClanPlayer->clan->id)->first()->short;
+                        $oppontnePlayerName = $opponentQmEntry->qmPlayer->player->username;
+                        $playerName = $opponentPlayer->username;
+                        $currentClanName = $currentUserClanPlayer->clan->short;
+                        Log::info("(CurrentUser=[$currentClanName]" . $currentUserClanPlayer->player->username . ") Player being matched: '$oppontnePlayerName' has another player: '$playerName' who belongs to my clan: '$myClanName'.");
+                        $canMatch = false;
+                        break;
+                    }
+                }
+
+                if (!$canMatch)
+                    break;
+            }
+
             if ($canMatch)
                 $result[$clanId] = $opponentQmEntries;
-        }
-
-        if (count($result) != count($groupedQmQueueEntriesByClan))
-        {
-            // Log::info("Start removeClansCurrentPlayerIsIn() numClans: " . count($groupedQmQueueEntriesByClan) . " - " . $currentUserClanPlayer->player->username);
-            // Log::info("Exit removeClansCurrentPlayerIsIn() numClans: " . count($result) . $currentUserClanPlayer->player->username);
         }
 
         return $result;
