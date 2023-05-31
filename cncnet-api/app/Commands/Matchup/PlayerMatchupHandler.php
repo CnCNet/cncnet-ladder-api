@@ -285,7 +285,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
 
         if ($commonQmMaps == $newCommonQmMaps)
         {
-            Log::info("FindOpponent ** $recentMap was not found in commonQmMaps");
+            // Log::info("FindOpponent ** $recentMap was not found in commonQmMaps");
         }
 
         return $newCommonQmMaps;
