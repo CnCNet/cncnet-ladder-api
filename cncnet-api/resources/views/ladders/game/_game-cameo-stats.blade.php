@@ -52,8 +52,13 @@
 
                           <div class="text-center">
                             @php 
-                                $pings = $pgr->game->qmMatch->qmConnectionStats->where('player_id', $pgr->player_id)->map(function ($connectionStat) {return $connectionStat->rtt;})->all();
-                                $pingString = (isset($pings) && $pings != null && count($pings) > 0) ? implode(', ', $pings) : '?';
+                                $pingString = '?';
+                                $connectionStats = $pgr->game->qmMatch->qmConnectionStats->where('player_id', $pgr->player_id);
+                                if ($connectionStats != null && count($connectionStats) > 0)
+                                {
+                                    $pings = $connectionStats->map(function ($connectionStat) {return $connectionStat->rtt;})->all();
+                                    $pingString = (isset($pings) && $pings != null && count($pings) > 0) ? implode(', ', $pings) : '?';
+                                }
                             @endphp
 
                               <strong>Pings: </strong> {{ $pingString}}
