@@ -167,6 +167,11 @@ $pageTitle = 'Viewing Game - ';
                 <br />
                 <strong>FPS:</strong> {{ $gameReport->fps }}
 
+                @foreach ($qmConnectionStats as $qmStat)
+                    <?php $ipHost = $qmStat->ipAddress->address . ':' . $qmStat->port; ?>
+                    {{ \App\Helpers\TunnelHelper::getTunnelNameByIpHost($ipHost) }}
+                @endforeach
+
                 @if ($gameReport !== null)
                     @if ($gameReport->oos)
                         <br />
