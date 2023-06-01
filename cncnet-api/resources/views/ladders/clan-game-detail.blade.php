@@ -166,10 +166,14 @@ $pageTitle = 'Viewing Game - ';
                 <strong>Game duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
                 <br />
                 <strong>FPS:</strong> {{ $gameReport->fps }}
+                <br />
 
-                @foreach ($qmConnectionStats as $qmStat)
-                    <?php $ipHost = $qmStat->ipAddress->address . ':' . $qmStat->port; ?>
-                    {{ \App\Helpers\TunnelHelper::getTunnelNameByIpHost($ipHost) }}
+                <strong>Tunnel(s):</strong>
+                <br />
+                <?php $tunnels = \App\Helpers\TunnelHelper::getTunnelsFromStats($qmConnectionStats) ?>
+                @foreach ($tunnels as $tunnel)
+                    * {{ $tunnel }}
+                    <br />
                 @endforeach
 
                 @if ($gameReport !== null)

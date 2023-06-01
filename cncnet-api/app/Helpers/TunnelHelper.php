@@ -33,4 +33,18 @@ class TunnelHelper
         }
         return null;
     }
+
+    public static function getTunnelsFromStats($connectionStats)
+    {
+        $tunnels = [];
+        foreach ($connectionStats as $connectionStat)
+        {
+            $name = TunnelHelper::getTunnelNameByIpHost($connectionStat->ipAddress->address . ':' . $connectionStat->port);
+
+            if (!in_array($name, $tunnels))
+                $tunnels[] = $name;
+        }
+        
+        return $tunnels;
+    }
 }
