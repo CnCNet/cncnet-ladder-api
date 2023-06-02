@@ -170,7 +170,6 @@ $pageTitle = 'Viewing Game - ';
 
                 <strong>Tunnel(s):</strong>
                 <br />
-                <?php $tunnels = \App\Helpers\TunnelHelper::getTunnelsFromStats($qmConnectionStats) ?>
                 @foreach ($tunnels as $tunnel)
                     * {{ $tunnel }}
                     <br />

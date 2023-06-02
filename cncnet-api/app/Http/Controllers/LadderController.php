@@ -282,8 +282,8 @@ class LadderController extends Controller
         {
             $qmMatchStates = $game->qmMatch ? $game->qmMatch->states : [];
             $qmMatchPlayers = $game->qmMatch ? $game->qmMatch->players : [];
-            $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
         }
+        $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
 
         $playerGameReports = $gameReport->playerGameReports()->get() ?? [];
 
@@ -307,6 +307,11 @@ class LadderController extends Controller
                 }
             }
 
+            $tunnels = \App\Helpers\TunnelHelper::getTunnelsFromStats($qmConnectionStats);
+
+            if (!$userIsMod)
+                $qmConnectionStats = [];
+
             $clanGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
             return view(
                 'ladders.clan-game-detail',
@@ -325,12 +330,17 @@ class LadderController extends Controller
                     "qmMatchStates" => $qmMatchStates,
                     "qmConnectionStats" => $qmConnectionStats,
                     "qmMatchPlayers" => $qmMatchPlayers,
+                    "tunnels" => $tunnels,
                     "date" => $date,
                 ]
             );
         }
         else
         {
+
+            if (!$userIsMod)
+               $qmConnectionStats = [];
+
             return view(
                 'ladders.game-detail',
                 [
