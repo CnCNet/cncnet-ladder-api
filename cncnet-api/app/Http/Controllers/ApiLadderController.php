@@ -243,8 +243,34 @@ class ApiLadderController extends Controller
     {
         $clanRatings = [];
 
-        // Should limit us to just 2 reports, 1 for each clan
-        $clanGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
+        //find the winning clan report
+        $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->groupBy("clan_id")->first();
+
+        if ($winningClanReport == null)
+        {
+            Log::info("No winner found in gameReport.id=$gameReport->id");
+            return 700;
+        }
+
+        //find the losing clan report
+        $losingClanReport = $gameReport->playerGameReports()->where('clan_id', '!=', $winningClanReport->clan_id)
+            ->where(function ($query)
+            {
+                $query->where('won', 0);
+                $query->orWhere('disconnected', 1);
+            })
+            ->groupBy("clan_id")
+            ->first();
+
+        if ($losingClanReport == null)
+        {
+            Log::info("No loser found in gameReport.id=$gameReport->id");
+            return 701;
+        }
+
+        $clanGameReports = collect();
+        $clanGameReports->push($winningClanReport);
+        $clanGameReports->push($losingClanReport);
 
         // Oops we don't have any players
         if ($clanGameReports->count() < 1)
