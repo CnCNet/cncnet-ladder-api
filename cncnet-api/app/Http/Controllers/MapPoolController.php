@@ -210,8 +210,14 @@ class MapPoolController extends Controller
 
         $spawnsArr = [];
         //create the map waypoints
-        for ($i = 0; $i <= 7; $i++)
+        for ($i = 0; $i <= count($waypoints); $i++)
         {
+
+            if (!isset($waypoints[$i]))
+            {
+                break;
+            }
+
             $wayPointValue = $waypoints[$i];
             $x = intval($wayPointValue % 128);
             $y = intval($wayPointValue / 128);
@@ -255,8 +261,13 @@ class MapPoolController extends Controller
 
         $spawnsArr = [];
         //create the map waypoints
-        for ($i = 0; $i <= 7; $i++)
+        for ($i = 0; $i <= count($waypoints); $i++)
         {
+            if (!isset($waypoints[$i]))
+            {
+                break;
+            }
+
             $wayPointValue = $waypoints[$i];
             $x = intval($wayPointValue % 1000);
             $y = intval($wayPointValue / 1000);
