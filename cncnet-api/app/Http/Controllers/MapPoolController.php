@@ -154,7 +154,7 @@ class MapPoolController extends Controller
         }
 
         if ($mapFile != null)
-            $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id, $request->ladder_id);
+            $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id, $map->ladder->game);
 
         if (isset($errMessage) && $errMessage != null && !empty($errMessage))
         {
@@ -165,7 +165,7 @@ class MapPoolController extends Controller
         return redirect()->back()->withInput();
     }
 
-    private function parseMapHeaders($fileName, $mapId, $ladderId)
+    private function parseMapHeaders($fileName, $mapId, $ladderGame)
     {
         try
         {
@@ -178,8 +178,6 @@ class MapPoolController extends Controller
 
         if ($ini == null)
             return "Failure parsing INI from file";
-
-        $ladderGame = \App\Ladder::where('id', $ladderId)->first()->game;
 
         if ($ladderGame == "ra")
             $this->parseRaMapHeaders($ini, $mapId);
@@ -210,6 +208,7 @@ class MapPoolController extends Controller
         if ($waypoints == null)
             return "No 'Waypoints' section found from INI";
 
+        $spawnsArr = [];
         //create the map waypoints
         for ($i = 0; $i <= 7; $i++)
         {
@@ -223,7 +222,14 @@ class MapPoolController extends Controller
             $mapWaypoint->bit_idx = $i;
             $mapWaypoint->map_header_id = $mapHeader->id;
             $mapWaypoint->save();
+
+            if (!in_array($wayPointValue, $spawnsArr) && $wayPointValue != 0)
+                $spawnsArr[] = $wayPointValue;
         }
+
+        $map = \App\Map::where('id', $mapId)->first();
+        $map->spawn_count = count($spawnsArr);
+        $map->save();
     }
 
     private function parseTsMapHeaders($ini, $mapId)
@@ -247,6 +253,7 @@ class MapPoolController extends Controller
         if ($waypoints == null)
             return "No 'Waypoints' section found from INI";
 
+        $spawnsArr = [];
         //create the map waypoints
         for ($i = 0; $i <= 7; $i++)
         {
@@ -260,7 +267,14 @@ class MapPoolController extends Controller
             $mapWaypoint->bit_idx = $i;
             $mapWaypoint->map_header_id = $mapHeader->id;
             $mapWaypoint->save();
+
+            if (!in_array($wayPointValue, $spawnsArr) && $wayPointValue != 0)
+                $spawnsArr[] = $wayPointValue;
         }
+
+        $map = \App\Map::where('id', $mapId)->first();
+        $map->spawn_count = count($spawnsArr);
+        $map->save();
     }
 
     private function parseYrMapHeaders($ini, $mapId)
