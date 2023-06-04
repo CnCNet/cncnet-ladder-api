@@ -242,14 +242,14 @@ class ApiLadderController extends Controller
     public function awardClanPoints($gameReport, $history)
     {
         $clanRatings = [];
+        $clanGameReports = collect();
 
         //find the winning clan report
         $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->groupBy("clan_id")->first();
 
-        if ($winningClanReport == null)
+        if ($winningClanReport != null)
         {
-            Log::info("No winner found in gameReport.id=$gameReport->id");
-            return 700;
+            $clanGameReports->push($winningClanReport);
         }
 
         //find the losing clan report
@@ -262,15 +262,10 @@ class ApiLadderController extends Controller
             ->groupBy("clan_id")
             ->first();
 
-        if ($losingClanReport == null)
+        if ($losingClanReport != null)
         {
-            Log::info("No loser found in gameReport.id=$gameReport->id");
-            return 701;
-        }
-
-        $clanGameReports = collect();
-        $clanGameReports->push($winningClanReport);
-        $clanGameReports->push($losingClanReport);
+            $clanGameReports->push($losingClanReport);
+        }     
 
         // Oops we don't have any players
         if ($clanGameReports->count() < 1)
@@ -292,10 +287,10 @@ class ApiLadderController extends Controller
 
         foreach ($clanGameReports as $clanGameReport)
         {
-            $allyAverage = 0;
+            $allyRatingAverage = 0;
             $allyPoints = 0;
             $allyCount = 0;
-            $enemyAverage = 0;
+            $enemyRatingAverage = 0;
             $enemyPoints = 0;
             $enemyCount = 0;
             $enemyGames = 0;
@@ -310,7 +305,7 @@ class ApiLadderController extends Controller
 
                 if ($otherClanId == $clanGameReport->clan_id)
                 {
-                    $allyAverage += $otherClanRatingModel->rating;
+                    $allyRatingAverage += $otherClanRatingModel->rating;
                     $allyPoints += $cgr->clan->pointsBefore(
                         $history,
                         $gameId,
@@ -320,7 +315,7 @@ class ApiLadderController extends Controller
                 }
                 else
                 {
-                    $enemyAverage += $otherClanRatingModel->rating;
+                    $enemyRatingAverage += $otherClanRatingModel->rating;
                     $enemyPoints += $cgr->clan->pointsBefore(
                         $history,
                         $gameId,
@@ -331,8 +326,8 @@ class ApiLadderController extends Controller
                 }
             }
 
-            $allyAverage /= $allyCount;
-            $enemyAverage /= $enemyCount;
+            $allyRatingAverage /= $allyCount;
+            $enemyRatingAverage /= $enemyCount;
 
             $eloK = $this->clanService->getEloKvalue($clanRatings);
             $wolK = $history->ladder->qmLadderRules->wol_k;
@@ -341,10 +336,10 @@ class ApiLadderController extends Controller
 
             $this->clanService->awardPointsByClanRating(
                 $clanGameReport,
-                $enemyAverage,
+                $enemyRatingAverage,
                 $enemyPoints,
                 $enemyGames,
-                $allyAverage,
+                $allyRatingAverage,
                 $allyPoints,
                 $useEloPoints,
                 $isBestReport,

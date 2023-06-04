@@ -63,6 +63,7 @@ class Clan extends Model
         return count($result);
     }
 
+    // Calculate the clan's total points, up until this game_id
     public function pointsBefore($history, $gameId, $clanId)
     {
         $points = \App\PlayerGameReport::where('player_game_reports.clan_id', $clanId)
