@@ -32,7 +32,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
         $groupedQmQueueEntriesByClan = $this->groupAndLimitClanPlayers($allQMQueueEntries, $playerCountPerClanRequired);
 
         # remove other clans who current user has a player who belongs to it
-        $groupedQmQueueEntriesByClan = $this->removeClansCurrentPlayerIsIn($currentUserClanPlayer, $ladder->id, $groupedQmQueueEntriesByClan);
+        // $groupedQmQueueEntriesByClan = $this->removeClansCurrentPlayerIsIn($currentUserClanPlayer, $ladder->id, $groupedQmQueueEntriesByClan);
 
         # Collection of QM Queued Players ready 
         $readyQMQueueEntries = (new QmQueueEntry())->newCollection();
