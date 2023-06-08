@@ -56,7 +56,14 @@
                                 $connectionStats = $pgr->game->qmMatch->qmConnectionStats->where('player_id', $pgr->player_id);
                                 if ($connectionStats != null && count($connectionStats) > 0)
                                 {
-                                    $pings = $connectionStats->map(function ($connectionStat) {return $connectionStat != null && $connectionStat->rtt;})->all();
+                                    $pings = $connectionStats->map(function ($connectionStat) 
+                                    {
+                                        if ($connectionStat == null)
+                                            return -1;
+                                        else
+                                            return $connectionStat->rtt;
+                                    })
+                                    ->all();
                                     $pingString = (isset($pings) && $pings != null && count($pings) > 0) ? implode(', ', $pings) : '?';
                                 }
                             @endphp
