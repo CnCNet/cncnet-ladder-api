@@ -66,6 +66,7 @@ class ApiQuickMatchController extends Controller
             'past24hMatches' => $qmStats['past24hMatches'],
             'recentMatches' => $qmStats['recentMatches'],
             'activeMatches'   => $qmStats['activeMatches'],
+            'clans' => $qmStats['clans'],
             'time' => $qmStats['time']
         ];
     }

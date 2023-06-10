@@ -41,17 +41,29 @@ class StatsService
                 ->where('qm_match_players.tier', '=', $tierId)
                 ->count();
 
+            $clans = [];
 
             if ($history->ladder->clans_allowed)
             {
-                $queuedPlayersOrClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+                $queuedClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
                     ->where('ladder_history_id', $history->id)
                     ->whereNull('qm_match_id')
                     ->groupBy("clan_id")
                     ->get();
 
+                //count how many players are in queue for each clan
+                foreach ($queuedClans as $queuedClan)
+                {
+                    $count = 1;
+                    if (isset($clans[$queuedClan->clan_id]))
+                    {
+                        $count = $clans[$queuedClan->clan_id] + 1;
+                    }
+                    $clans[$queuedClan->clan_id] = $count;
+                }
+
                 // Groupby doesn't work with ->count()
-                $queuedPlayersOrClans = count($queuedPlayersOrClans);
+                $queuedPlayersOrClans = count($queuedClans);
             }
             else
             {
@@ -89,6 +101,7 @@ class StatsService
                 "recentMatches" => $recentMatches,
                 "matchesByMonth" => $matchesByMonth,
                 "activeMatches" => $activeMatches,
+                "clans" => $clans,
                 "time" => Carbon::now()
             ];
         });
