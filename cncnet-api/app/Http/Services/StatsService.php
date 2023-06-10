@@ -48,7 +48,6 @@ class StatsService
                 $queuedClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
                     ->where('ladder_history_id', $history->id)
                     ->whereNull('qm_match_id')
-                    ->groupBy("clan_id")
                     ->get();
 
                 //count how many players are in queue for each clan
@@ -63,7 +62,7 @@ class StatsService
                 }
 
                 // Groupby doesn't work with ->count()
-                $queuedPlayersOrClans = count($queuedClans);
+                $queuedPlayersOrClans = count($clans);
             }
             else
             {
