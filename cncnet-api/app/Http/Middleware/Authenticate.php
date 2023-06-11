@@ -80,7 +80,10 @@ class Authenticate
 
                 if (isset($actions["canAdminLadder"]))
                 {
-                    if ($actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder))
+                    if (
+                        $actions["canAdminLadder"] != $this->auth->user()->isLadderAdmin($ladder)
+                        && $actions["canAdminLadder"] != $this->auth->user()->isAdmin()
+                    )
                     {
                         $response = response('Unauthorized.', 401);
                     }
