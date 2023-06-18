@@ -58,30 +58,4 @@ class PlayerGameReport extends Model
         return $this->won || ($this->disconnected && $this->player_id == $this->gameReport->player_id);
     }
 
-    public static function getBestPlayerGameReport($gameId, $clanId, $isMyTeam)
-    {
-        $playerGameReports = \App\PlayerGameReport::where('game_id', $gameId);
-
-        if ($isMyTeam)
-            $playerGameReports = $playerGameReports->where('clan_id', '=', $clanId)->get();
-        else
-            $playerGameReports = $playerGameReports->where('clan_id', '!=', $clanId)->get();
-
-        $playerGameReport = null;
-
-        //find a winning game report if there was one. It could be one teammate died and marked as lost, but his teammate won
-        foreach ($playerGameReports as $p)
-        {
-            if ($p->won)
-            {
-                $playerGameReport = $p;
-                break;
-            }
-        }
-
-        if ($playerGameReport == null)
-            $playerGameReport = $playerGameReports->first();
-
-        return $playerGameReport;
-    }
 }
