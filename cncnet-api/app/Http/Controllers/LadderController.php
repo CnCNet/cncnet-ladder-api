@@ -289,6 +289,39 @@ class LadderController extends Controller
 
         $heaps = CountableObjectHeap::all();
 
+        //grab player pings
+        foreach ($playerGameReports as $pgr)
+        {
+            $pings = '?';
+            $game = $pgr->game;
+            $connectionStats = null;
+
+            if ($game != null)
+            {
+                $qmMatch = $game->qmMatch;
+
+                if ($qmMatch != null)
+                {
+                    if ($pgr != null)
+                        $connectionStats = $qmMatch->qmConnectionStats->where('player_id', $pgr->player_id);
+                }
+            }
+            if ($connectionStats != null && count($connectionStats) > 0)
+            {
+                $pingsArr = $connectionStats->map(function ($connectionStat)
+                {
+                    if ($connectionStat == null)
+                        return -1;
+                    else
+                        return $connectionStat->rtt;
+                })
+                    ->all();
+                $pings = (isset($pings) && $pings != null && count($pingsArr) > 0) ? implode(', ', $pingsArr) : '?';
+            }
+
+            $pgr['pings'] = $pings;
+        }
+
         if ($history->ladder->clans_allowed)
         {
 
@@ -339,7 +372,7 @@ class LadderController extends Controller
         {
 
             if (!$userIsMod)
-               $qmConnectionStats = [];
+                $qmConnectionStats = [];
 
             return view(
                 'ladders.game-detail',
