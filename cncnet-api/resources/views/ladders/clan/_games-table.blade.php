@@ -6,17 +6,13 @@
                 @php
                     $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id);
                     $timestamp = $gameReport->gameReport->updated_at->timestamp;
-                    
-                    $playerGameReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
-                        ->where('clan_id', '=', $gameReport->clan->id)
-                        ->first();
+
+                    $playerGameReport = \App\PlayerGameReport::getBestPlayerGameReport($gameReport->game_id, $gameReport->clan_id, true);
                     
                     $clanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $playerGameReport->clan_id);
                     $playerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $playerGameReport->player->username);
                     
-                    $opponentPlayerReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
-                        ->where('clan_id', '!=', $playerGameReport->clan_id)
-                        ->first();
+                    $opponentPlayerReport = \App\PlayerGameReport::getBestPlayerGameReport($gameReport->game_id, $gameReport->clan_id, false);
                     
                     if (isset($opponentPlayerReport) && $opponentPlayerReport) {
                         $opponentClanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $opponentPlayerReport->clan_id);
