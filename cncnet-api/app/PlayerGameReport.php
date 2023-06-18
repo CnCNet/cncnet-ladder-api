@@ -72,9 +72,6 @@ class PlayerGameReport extends Model
         //find a winning game report if there was one. It could be one teammate died and marked as lost, but his teammate won
         foreach ($playerGameReports as $p)
         {
-            if ($gameId == 734729)
-                Log::info($p);
-
             if ($p->won)
             {
                 $playerGameReport = $p;
