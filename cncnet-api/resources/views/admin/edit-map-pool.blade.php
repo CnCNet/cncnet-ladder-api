@@ -105,7 +105,7 @@
                                         @if($use_ranked_map_picker)
                                             <div class="form-group col-md-12">
                                                 <label for="{{ $qmMap->id }}_difficulty"> Difficulty </label>
-                                                <input type="number" id="{{ $qmMap->id }}_difficulty" name="difficulty" min="1" max="5"
+                                                <input type="number" id="{{ $qmMap->id }}_difficulty" name="difficulty" min="0" max="5"
                                                     value="{{ $qmMap->difficulty }}" class="form-control" />
                                             </div>
                                         @endif

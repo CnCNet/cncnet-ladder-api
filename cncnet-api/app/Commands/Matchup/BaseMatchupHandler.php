@@ -26,12 +26,17 @@ class BaseMatchupHandler
 
     public function createMatch($maps, $otherQMQueueEntries)
     {
+        
+        $filteredMaps = array_filter($maps, function($map) {
+            return $map->description !== 'Map Star Definition';
+        });
+
         $this->removeQueueEntry();
 
         return $this->quickMatchService->createQmMatch(
             $this->qmPlayer,
             $this->currentUserPlayerTier,
-            $maps,
+            $filteredMaps,
             $otherQMQueueEntries,
             $this->qmQueueEntry,
             $this->gameType
