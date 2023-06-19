@@ -28,7 +28,7 @@ class BaseMatchupHandler
     {
         
         $filteredMaps = array_filter($maps, function($map) {
-            return $map->description !== 'Map Star Definition';
+            return $map->description !== 'Map Info' && $map->description !== 'Map Guide';
         });
 
         $this->removeQueueEntry();
