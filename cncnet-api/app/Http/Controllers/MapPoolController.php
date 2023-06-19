@@ -50,9 +50,9 @@ class MapPoolController extends Controller
         $qmMap->difficulty = $request->difficulty;
 
         $ladderRules = \App\MapPool::find($request->map_pool_id)->ladder->qmLadderRules;
-        if ($ladderRules->use_ranked_map_picker && ($request->difficulty > 5 || $request->difficulty < 1))
+        if ($ladderRules->use_ranked_map_picker && ($request->difficulty > 5 || $request->difficulty < 0))
         {
-            $request->session()->flash('error', "Map difficulty $request->difficulty cannot be less than 1 or greater than 5");
+            $request->session()->flash('error', "Map difficulty $request->difficulty cannot be less than 0 or greater than 5");
             return redirect()->back();
         }
 
