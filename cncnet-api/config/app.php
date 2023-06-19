@@ -82,7 +82,7 @@ return [
 
 	'env' => env('APP_ENV', 'production'),
 
-	'cipher' => MCRYPT_RIJNDAEL_128,
+	'cipher' => 'AES-256-CBC',
 
 	/*
 	|--------------------------------------------------------------------------
