@@ -212,7 +212,6 @@ class ApiQuickMatchController extends Controller
 
     public function mapListRequest(Request $request, $ladderAbbrev = null)
     {
-        //$qmMaps = \App\QmMap::where('ladder_id', $this->ladderService->getLadderByGame($ladderAbbrev)->id)->get();
         return \App\QmMap::findMapsByLadder($this->ladderService->getLadderByGame($ladderAbbrev)->id);
     }
 
