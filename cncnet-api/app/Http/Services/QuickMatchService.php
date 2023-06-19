@@ -258,16 +258,32 @@ class QuickMatchService
         $gameType
     )
     {
-        $randomMapIndex = mt_rand(0, count($maps) - 1);
+        $ladder = \App\Ladder::where('id', $qmPlayer->ladder_id)->first();
+        $history = $ladder->currentHistory();
 
+        if ($ladder->qmLadderRules->use_ranked_map_picker) //use ranked map selection
+        {
+            $rank = $qmPlayer->player->rank($history);
+            
+            foreach ($otherQMQueueEntries as $otherQMQueueEntry)
+            {
+                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history));
+            }
+
+            $qmMapId = $this->rankedMapPicker($maps, $rank); //choose the person who has the worst rank to base our map pick off of
+        }
+        else
+        {
+            $randomMapIdx = mt_rand(0, count($maps) - 1);
+            $qmMapId = $maps[$randomMapIdx]->id;
+        }
+       
         # Create the qm_matches db entry
         $qmMatch = new QmMatch();
         $qmMatch->ladder_id = $qmPlayer->ladder_id;
-        $qmMatch->qm_map_id = $maps[$randomMapIndex]->id;
+        $qmMatch->qm_map_id = $qmMapId;
         $qmMatch->seed = mt_rand(-2147483647, 2147483647);
         $qmMatch->tier = $userPlayerTier;
-
-        $ladder = \App\Ladder::where('id', $qmPlayer->ladder_id)->first();
 
         $actualPlayerCount = count($otherQMQueueEntries) + 1; //total player counts equals myself plus other players to be matched
         $expectedPlayerCount = $ladder->qmLadderRules->player_count;
@@ -456,6 +472,93 @@ class QuickMatchService
         Log::info("Launching match with players $playerNames, " . $qmPlayer->player->username . " on map: " . $qmMatch->map->description);
 
         return $qmMatch;
+    }
+
+    /**
+     * Given a player's rank, choose a map based on map ranked difficulties
+     */
+    private function rankedMapPicker($mapsArr, $rank)
+    {
+        Log::info("Selecting map for rank $rank");
+
+        $mapsRanked = [];
+        foreach ($mapsArr as $map)
+        {
+            //difficulties: 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
+            $mapsRanked[$map->difficulty][] = $map;
+        }
+
+        $randVal = mt_rand(0, 100); //rand val between 0 and 99
+
+        if ($rank >= 90)
+        {
+            if ($randVal < 60) //beginner map
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[1]));
+                $map = $mapsRanked[1][$randIdx];
+            }
+            else //intermediate map
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[2]));
+                $map = $mapsRanked[2][$randIdx];
+            }
+        }
+        else if ($rank >= 75)
+        {
+            if ($randVal < 80) //beginner/intermediate map
+            {
+                $beginnerAndIntermediate = array_merge($mapsRanked[1], $mapsRanked[2]);
+                $randIdx = mt_rand(0, count($beginnerAndIntermediate));
+                $map = $beginnerAndIntermediate[$randIdx];
+            }
+            else //advanced map
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[3]));
+                $map = $mapsRanked[3][$randIdx];
+            }
+        }
+        else if ($rank >= 50)
+        {
+            if ($randVal < 50) //beginner/intermediate map
+            {
+                $beginnerAndIntermediate = array_merge($mapsRanked[1], $mapsRanked[2]);
+                $randIdx = mt_rand(0, count($beginnerAndIntermediate));
+                $map = $beginnerAndIntermediate[$randIdx];
+            }
+            else if ($randVal < 85) //advanced map
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[3]));
+                $map = $mapsRanked[3][$randIdx];
+            }
+            else //expert map
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[4]));
+                $map = $mapsRanked[4][$randIdx];
+            }
+        }
+        else if ($rank >= 20)
+        {
+            if ($randVal < 70) //beginner/intermediate/advanced map
+            {
+                $beginnerAndIntermediateAndAdvanced = array_merge($mapsRanked[1], $mapsRanked[2], $mapsRanked[3]);
+                $randIdx = mt_rand(0, count($beginnerAndIntermediateAndAdvanced));
+                $map = $beginnerAndIntermediateAndAdvanced[$randIdx];
+            }
+            else //expert map
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[4]));
+                $map = $mapsRanked[4][$randIdx];
+            }
+        }
+        else
+        {
+            $randIdx = mt_rand(0, count($mapsArr)); //any map
+            $map = $mapsArr[$randIdx];
+        }
+        
+        Log::info("Ranked map chosen=$map->description, difficulty=$map->difficulty, from rank=$rank, used randIdx=$randIdx");
+
+        return $map->id;
     }
 }
 

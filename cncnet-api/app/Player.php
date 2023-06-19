@@ -157,7 +157,7 @@ class Player extends Model
             if ($playerPoints[$i]->player_id == $this->id)
                 return $i + 1;
         }
-        return -1;
+        return 9999;
     }
 
     public function playerPoints($history, $username)

@@ -11,7 +11,7 @@ class QmLadderRules extends Model
         'ladder_id', 'player_count', 'map_vetoes', 'max_difference', 'all_sides',
         'allowed_sides', 'bail_time', 'bail_fps', 'tier2_rating', 'rating_per_second',
         'max_points_difference', 'points_per_second', 'use_elo_points', 'wol_k',
-        'show_map_preview', 'reduce_map_repeats'
+        'show_map_preview', 'reduce_map_repeats', 'use_ranked_map_picker'
     ];
 
     public static function newDefault($ladderId)
@@ -33,6 +33,7 @@ class QmLadderRules extends Model
         $rules->use_elo_points    = true;
         $rules->wol_k             = 64;
         $rules->show_map_preview = true;
+        $rules->use_ranked_map_picker = false;
         $rules->reduce_map_repeats = 0; //number of recent maps to exclude from next played game
 
         return $rules;

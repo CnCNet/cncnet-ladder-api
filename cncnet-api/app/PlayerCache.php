@@ -35,7 +35,7 @@ class PlayerCache extends Model
                 return $count;
             $count++;
         }
-        return 0;
+        return 9999;
     }
 
     public function mark()

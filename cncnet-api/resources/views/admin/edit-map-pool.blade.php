@@ -102,6 +102,14 @@
                                                 value="{{ $qmMap->admin_description }}" class="form-control" />
                                         </div>
 
+                                        @if($use_ranked_map_picker)
+                                            <div class="form-group col-md-12">
+                                                <label for="{{ $qmMap->id }}_difficulty"> Difficulty </label>
+                                                <input type="number" id="{{ $qmMap->id }}_difficulty" name="difficulty" min="1" max="5"
+                                                    value="{{ $qmMap->difficulty }}" class="form-control" />
+                                            </div>
+                                        @endif
+
                                         <div class="form-group col-md-4">
                                             <label for="{{ $qmMap->id }}_spawn_order">spawn_order</label>
                                             <input type="text" id="{{ $qmMap->id }}_spawn_order" name="spawn_order"

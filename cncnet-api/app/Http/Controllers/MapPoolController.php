@@ -47,6 +47,14 @@ class MapPoolController extends Controller
         $qmMap->team1_spawn_order = $request->team1_spawn_order;
         $qmMap->team2_spawn_order = $request->team2_spawn_order;
         $qmMap->random_spawns = $request->random_spawns == "on" ? true : false;
+        $qmMap->difficulty = $request->difficulty;
+
+        $ladderRules = \App\MapPool::find($request->map_pool_id)->ladder->qmLadderRules;
+        if ($ladderRules->use_ranked_map_picker && ($request->difficulty > 5 || $request->difficulty < 1))
+        {
+            $request->session()->flash('error', "Map difficulty $request->difficulty cannot be less than 1 or greater than 5");
+            return redirect()->back();
+        }
 
         if (empty($qmMap->description) || empty($qmMap->admin_description))
         {
@@ -350,6 +358,7 @@ class MapPoolController extends Controller
     {
         $ladder = Ladder::find($ladderId);
         $mapPool = MapPool::find($mapPoolId);
+        $ladderRules = $ladder->qmLadderRules;
 
         return view(
             "admin.edit-map-pool",
@@ -362,7 +371,8 @@ class MapPoolController extends Controller
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
                 'spawnOptions' =>  \App\SpawnOption::all(),
-                'allLadders' => \App\Ladder::all()
+                'allLadders' => \App\Ladder::all(),
+                'use_ranked_map_picker' => $ladderRules->use_ranked_map_picker
             ]
         );
     }
