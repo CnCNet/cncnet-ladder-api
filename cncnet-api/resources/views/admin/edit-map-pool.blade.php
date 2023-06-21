@@ -102,13 +102,11 @@
                                                 value="{{ $qmMap->admin_description }}" class="form-control" />
                                         </div>
 
-                                        @if($use_ranked_map_picker)
-                                            <div class="form-group col-md-12">
-                                                <label for="{{ $qmMap->id }}_difficulty"> Difficulty </label>
-                                                <input type="number" id="{{ $qmMap->id }}_difficulty" name="difficulty" min="0" max="5"
-                                                    value="{{ $qmMap->difficulty }}" class="form-control" />
-                                            </div>
-                                        @endif
+                                        <div class="form-group col-md-12">
+                                            <label for="{{ $qmMap->id }}_difficulty"> Difficulty </label>
+                                            <input type="number" id="{{ $qmMap->id }}_difficulty" name="difficulty" min="0" max="5"
+                                                value="{{ $qmMap->difficulty }}" class="form-control" />
+                                        </div>
 
                                         <div class="form-group col-md-4">
                                             <label for="{{ $qmMap->id }}_spawn_order">spawn_order</label>
@@ -490,6 +488,44 @@
                     var i = 0;
                     Array.from(mapList.getElementsByTagName("li"))
                         .sort((a, b) => a.textContent.localeCompare(b.textContent))
+                        .forEach(x => {
+                            let rinput = x.getElementsByTagName("input")[0]; //radio input
+                            let parts = rinput.value.split(",");
+                            rinput.value = parts[i] + "," + i;
+                            rinput.id = "rinput_idx_" + i;
+
+                            let label = x.getElementsByTagName("label")[0]; //label
+                            label.for = "rinput_idx_" + i;
+                            label.id = "linput_idx_" + i;
+
+                            let hinput = x.getElementsByTagName("input")[1]; //hidden input - (stores the sort value)
+                            hinput.value = parts[0];
+                            hinput.id = "input_idx_" + i;
+                            hinput.name = "bit_idx_" + i;
+
+                            x.value = i;
+                            mapList.appendChild(x); //place element at end of list
+                            i++;
+                        });
+                });
+            }
+
+            let difficultySorts = document.querySelectorAll(".difficulty-sort");
+            for (i = 0; i < difficultySorts.length; i++) {
+
+                difficultySorts[i].addEventListener('click', function() {
+
+                    var mapList = document.getElementById("mapList");
+
+                    var i = 0;
+                    Array.from(mapList.getElementsByTagName("li"))
+                        .sort( function(a, b) {
+
+                            var valueA = a.getElementsByTagName("input")[0].value.split(",")[2];
+                            var valueB = b.getElementsByTagName("input")[0].value.split(",")[2];
+                            
+                            return valueA - valueB;
+                        })
                         .forEach(x => {
                             let rinput = x.getElementsByTagName("input")[0]; //radio input
                             let parts = rinput.value.split(",");

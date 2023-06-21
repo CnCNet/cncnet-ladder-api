@@ -490,18 +490,11 @@ class QuickMatchService
 
         $randVal = mt_rand(0, 100); //rand val between 0 and 99
 
-        if ($rank >= 90)
+        if ($rank >= 90) //pick a beginner map
         {
-            if ($randVal < 60) //beginner map
-            {
-                $randIdx = mt_rand(0, count($mapsRanked[1]));
-                $map = $mapsRanked[1][$randIdx];
-            }
-            else //intermediate map
-            {
-                $randIdx = mt_rand(0, count($mapsRanked[2]));
-                $map = $mapsRanked[2][$randIdx];
-            }
+            $randIdx = mt_rand(0, count($mapsRanked[1]));
+            $map = $mapsRanked[1][$randIdx];
+
         }
         else if ($rank >= 75)
         {
