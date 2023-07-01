@@ -521,10 +521,15 @@
                     Array.from(mapList.getElementsByTagName("li"))
                         .sort( function(a, b) {
 
+                            //sort by difficulty, difficulty is the input element's 3rd index in the value attribute
                             var valueA = a.getElementsByTagName("input")[0].value.split(",")[2];
                             var valueB = b.getElementsByTagName("input")[0].value.split(",")[2];
+                            var diff = valueA - valueB;
+
+                            if (diff == 0) //secondary sort, apply alphabetical sort
+                                diff = a.textContent.localeCompare(b.textContent);
                             
-                            return valueA - valueB;
+                            return diff;
                         })
                         .forEach(x => {
                             let rinput = x.getElementsByTagName("input")[0]; //radio input
