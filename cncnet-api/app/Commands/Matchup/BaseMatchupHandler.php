@@ -26,9 +26,14 @@ class BaseMatchupHandler
 
     public function createMatch($maps, $otherQMQueueEntries)
     {
-        
-        $filteredMaps = array_filter($maps, function($map) {
-            return $map->description !== 'Map Info' && $map->description !== 'Map Guide';
+
+        $filteredMaps = array_filter($maps, function ($map)
+        {
+            return
+                !strpos($map->description, 'Map Info')
+                && !strpos($map->description, 'Map Guide')
+                && !strpos($map->description, 'Ladder Guide')
+                && !strpos($map->description, 'Ladder Rules');
         });
 
         $this->removeQueueEntry();
