@@ -167,6 +167,14 @@
                                             Disable Point Filter &amp; Match with anyone
                                         </label>
                                     </p>
+                                    <p>
+                                        <label>
+                                            <input id="match_any_map" type="checkbox" name="match_any_map"
+                                                @if ($userSettings->match_any_map) checked @endif />
+                                            Allow matching on any map regardless of your rank. Is used when both matched players have this option selected.
+                                            (Affects ladders which use map divisions like RA2.)
+                                        </label>
+                                    </p>
                                 @endif
                             </div>
                         </div>
