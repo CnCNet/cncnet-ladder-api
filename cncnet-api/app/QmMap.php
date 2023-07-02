@@ -42,7 +42,10 @@ class QmMap extends Model {
             //add difficulty stars to the map name
             if ($useRankedMapPicker && $qmMap->difficulty)
             {
-                $qmMap["description"] = $qmMap["description"] . str_repeat("🔥", $qmMap->difficulty);
+                // $qmMap["adminDescription"] = $qmMap["adminDescription"] . " " . str_repeat("I", $qmMap->difficulty);
+                // $qmMap["description"] = $qmMap["description"] . " " . strval($qmMap->difficulty);
+                $qmMap["description"] = $qmMap["description"] . " " . str_repeat("I", $qmMap->difficulty);
+                // $qmMap["map"]["name"] = $qmMap["map"]["name"] . " " . str_repeat("I", $qmMap->difficulty);
             }
 
             return $qmMap;
