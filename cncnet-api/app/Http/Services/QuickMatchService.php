@@ -485,7 +485,7 @@ class QuickMatchService
      */
     private function rankedMapPicker($mapsArr, $rank, $matchAnyMap)
     {
-        Log::info("Selecting map for rank $rank, anyMap=$matchAnyMap");
+        Log::info("Selecting map for rank $rank, anyMap=$matchAnyMap, " . strval(count($mapsArr)) . " maps");
 
         $mapsRanked = [];
         foreach ($mapsArr as $map)
@@ -494,22 +494,22 @@ class QuickMatchService
             $mapsRanked[$map->difficulty][] = $map;
         }
 
-        $randVal = mt_rand(0, 100); //rand val between 0 and 99
+        $randVal = mt_rand(0, 99); //rand val between 0 and 99
 
         if ($matchAnyMap)
         {
-            $randIdx = mt_rand(0, count($mapsArr)); //any map
+            $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
             $map = $mapsArr[$randIdx];
         }
         else if ($rank >= 90) //90-999
         {
-            $randIdx = mt_rand(0, count($mapsRanked[1]));  //pick a beginner map
+            $randIdx = mt_rand(0, count($mapsRanked[1]) - 1);  //pick a beginner map
             $map = $mapsRanked[1][$randIdx];
         }
         else if ($rank >= 75) //75 - 89
         {
             $beginnerAndIntermediate = array_merge($mapsRanked[1], $mapsRanked[2]);
-            $randIdx = mt_rand(0, count($beginnerAndIntermediate));
+            $randIdx = mt_rand(0, count($beginnerAndIntermediate) - 1);
             $map = $beginnerAndIntermediate[$randIdx];
         }
         else if ($rank >= 50) //50-74
@@ -517,12 +517,12 @@ class QuickMatchService
             if ($randVal < 60) //beginner/intermediate map
             {
                 $beginnerAndIntermediate = array_merge($mapsRanked[1], $mapsRanked[2]);
-                $randIdx = mt_rand(0, count($beginnerAndIntermediate));
+                $randIdx = mt_rand(0, count($beginnerAndIntermediate) - 1);
                 $map = $beginnerAndIntermediate[$randIdx];
             }
             else //advanced map
             {
-                $randIdx = mt_rand(0, count($mapsRanked[3]));
+                $randIdx = mt_rand(0, count($mapsRanked[3]) - 1);
                 $map = $mapsRanked[3][$randIdx];
             }
         }
@@ -536,13 +536,13 @@ class QuickMatchService
             }
             else //expert map
             {
-                $randIdx = mt_rand(0, count($mapsRanked[4]));
+                $randIdx = mt_rand(0, count($mapsRanked[4]) - 1);
                 $map = $mapsRanked[4][$randIdx];
             }
         }
         else
         {
-            $randIdx = mt_rand(0, count($mapsArr)); //any map
+            $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
             $map = $mapsArr[$randIdx];
         }
 
