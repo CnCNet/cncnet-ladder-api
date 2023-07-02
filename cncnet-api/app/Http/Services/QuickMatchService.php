@@ -485,6 +485,11 @@ class QuickMatchService
      */
     private function rankedMapPicker($mapsArr, $rank, $matchAnyMap)
     {
+        $mapsArr = array_filter($mapsArr, function ($map)
+        {
+            return $map->difficulty && $map->difficulty > 0;
+        });
+
         Log::info("Selecting map for rank $rank, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
 
         $mapsRanked = [];
