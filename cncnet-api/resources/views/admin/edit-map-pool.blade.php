@@ -46,7 +46,7 @@
                                 <?php $lastmap = null; ?>
                                 @foreach ($qmMaps as $qmMap)
                                     <option value="{{ $qmMap->id }}" {{ old('map_selected') == $qmMap->id ? 'selected' : '' }}>
-                                        {{ $qmMap->admin_description }} {{ str_repeat("🔥", $qmMap->difficulty) }}
+                                        {{ $qmMap->admin_description }}
                                     </option>
                                     <?php $lastmap = $qmMap; ?>
                                 @endforeach
