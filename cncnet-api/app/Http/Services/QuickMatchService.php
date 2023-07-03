@@ -271,7 +271,7 @@ class QuickMatchService
             {
                 //choose the person who has the worst rank to base our map pick off of
                 $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history)); 
-                $points = min($rank, $otherQMQueueEntry->qmPlayer->player->points($history)); 
+                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history)); 
 
                 //true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
