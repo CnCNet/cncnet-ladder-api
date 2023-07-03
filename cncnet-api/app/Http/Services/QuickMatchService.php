@@ -264,19 +264,21 @@ class QuickMatchService
         if ($ladder->qmLadderRules->use_ranked_map_picker) //use ranked map selection
         {
             $rank = $qmPlayer->player->rank($history);
+            $points = $qmPlayer->player->points($history);
 
             $matchAnyMap = false;
             foreach ($otherQMQueueEntries as $otherQMQueueEntry)
             {
                 //choose the person who has the worst rank to base our map pick off of
                 $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history)); 
+                $points =  max($rank, $otherQMQueueEntry->qmPlayer->player->points($history)); 
 
                 //true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
                     && $qmPlayer->player->user->userSettings->match_any_map;
             }
 
-            $qmMapId = $this->rankedMapPicker($maps, $rank, $matchAnyMap);  //select a map dependent on player rank and map tiers
+            $qmMapId = $this->rankedMapPicker($maps, $rank, $points, $matchAnyMap);  //select a map dependent on player rank and map tiers
         }
         else
         {
@@ -483,14 +485,14 @@ class QuickMatchService
     /**
      * Given a player's rank, choose a map based on map ranked difficulties
      */
-    private function rankedMapPicker($mapsArr, $rank, $matchAnyMap)
+    private function rankedMapPicker($mapsArr, $rank, $points, $matchAnyMap)
     {
         $mapsArr = array_filter($mapsArr, function ($map)
         {
             return $map->difficulty && $map->difficulty > 0;
         });
 
-        Log::info("Selecting map for rank $rank, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
+        Log::info("Selecting map for rank $rank, points $points, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
 
         $mapsRanked = [];
         foreach ($mapsArr as $map)
@@ -506,7 +508,7 @@ class QuickMatchService
             $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
             $map = $mapsArr[$randIdx];
         }
-        else if ($rank >= 90) //90-999
+        else if ($rank >= 90 || $points < 150) //90-999 or points less than 150 points
         {
             $randIdx = mt_rand(0, count($mapsRanked[1]) - 1);  //pick a beginner map
             $map = $mapsRanked[1][$randIdx];
