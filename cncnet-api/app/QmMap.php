@@ -31,20 +31,13 @@ class QmMap extends Model {
     {
         $ladder = \App\Ladder::find($id);
         $qmMaps = $ladder->mapPool->maps;
-        $useRankedMapPicker= $ladder->qmLadderRules->use_ranked_map_picker;
 
-        return $qmMaps->map( function($qmMap) use (&$useRankedMapPicker)
+        return $qmMaps->map( function($qmMap)
         {
             $qmMap["hash"] = $qmMap->map->hash;
             $qmMap->map['image_url'] = asset($qmMap->map->image_path);
             $qmMap["allowed_sides"] = array_map('intval', explode(',', $qmMap->allowed_sides));
             
-            //add difficulty stars to the map name
-            if ($useRankedMapPicker && $qmMap->difficulty)
-            {
-                $qmMap["description"] = $qmMap["description"] . str_repeat("🔥", $qmMap->difficulty);
-            }
-
             return $qmMap;
         });
     }
