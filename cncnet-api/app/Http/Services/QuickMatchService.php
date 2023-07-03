@@ -269,7 +269,7 @@ class QuickMatchService
             foreach ($otherQMQueueEntries as $otherQMQueueEntry)
             {
                 //choose the person who has the worst rank to base our map pick off of
-                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history));
+                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history)); 
 
                 //true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
@@ -533,11 +533,17 @@ class QuickMatchService
         }
         else if ($rank >= 20) //20 - 49
         {
-            //beginner/intermediate/advanced map
-
-            $beginnerAndIntermediateAndAdvanced = array_merge($mapsRanked[1], $mapsRanked[2], $mapsRanked[3]);
-            $randIdx = mt_rand(0, count($beginnerAndIntermediateAndAdvanced));
-            $map = $beginnerAndIntermediateAndAdvanced[$randIdx];
+            if ($randVal < 70) //beginner/intermediate/advanced map
+            {
+                $beginnerAndIntermediateAndAdvanced = array_merge($mapsRanked[1], $mapsRanked[2], $mapsRanked[3]);
+                $randIdx = mt_rand(0, count($beginnerAndIntermediateAndAdvanced));
+                $map = $beginnerAndIntermediateAndAdvanced[$randIdx];
+            }
+            else //expert map
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[4]) - 1);
+                $map = $mapsRanked[4][$randIdx];
+            }
         }
         else
         {
