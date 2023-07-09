@@ -49,7 +49,7 @@ class BaseMatchupHandler
 
     public function removeQueueEntry()
     {
-        Log::info("Removing queue entry for " . $this->qmPlayer);
+        Log::info("Removing queue entry for " . $this->qmPlayer->player);
         $this->qmQueueEntry->delete();
     }
 

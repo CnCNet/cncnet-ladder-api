@@ -79,7 +79,12 @@ class QuickMatchService
             || $player->username === "Zingo"
         )
         {
+            Log::info("Player ** Is observering Game: " . $player->username);
             $qmPlayer->is_observer = true;
+        }
+        else
+        {
+            Log::info("Player ** Is NOT observering Game: " . $player->username);
         }
 
         $qmPlayer->save();
@@ -307,8 +312,8 @@ class QuickMatchService
         $expectedPlayerCount = $ladder->qmLadderRules->player_count;
         if ($actualPlayerCount != $expectedPlayerCount)
         {
-            Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
-            Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
+            // Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
+            // Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
             // return null
         }
 
@@ -441,6 +446,8 @@ class QuickMatchService
             return $s >= 0;
         }));
 
+        $observers = [];
+        $lastOpn = null;
         foreach ($otherQMQueueEntries as $qOpn)
         {
             $opn = $qOpn->qmPlayer;
@@ -451,6 +458,12 @@ class QuickMatchService
             {
                 $qEntry->delete();
                 return;
+            }
+
+            if ($opn->isObserver())
+            {
+                $observers[] = $opn;
+                continue;
             }
 
             $osides = explode(',', $opn->mapSides->value);
@@ -478,12 +491,28 @@ class QuickMatchService
             $opn->qm_match_id = $qmMatch->id;
             $opn->tunnel_id = $qmMatch->seed + $opn->color;
             $opn->save();
+
+            $lastOpn = $opn;
         }
 
-        if ($qmPlayer->actual_side == -1)
+        if ($qmPlayer->actual_side == -1 && $qmPlayer->isObserver() === false)
         {
             $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
         }
+
+        foreach ($observers as $obs)
+        {
+            $observer = \App\QmMatchPlayer::where('id', $obs->id)->first();
+
+            Log::info("Last Opn Variable: " . $lastOpn);
+
+            $observer->qm_match_id = $qmMatch->id;
+            $observer->color = $lastOpn["color"] + 1;
+            $observer->location = -1;
+            $observer->tunnel_id = $qmMatch->seed + $observer->color;
+            $observer->save();
+        }
+
         $qmPlayer->save();
 
         $playerNames = implode(",", ClanMatchupHandler::getPlayerNamesInQueue($otherQMQueueEntries));

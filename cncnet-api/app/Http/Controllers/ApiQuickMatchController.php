@@ -290,7 +290,7 @@ class ApiQuickMatchController extends Controller
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
 
-        $requiresUpdate = $this->checkQMClientRequiresUpdate($ladder, $request->version);
+        $requiresUpdate = false; //$this->checkQMClientRequiresUpdate($ladder, $request->version);
 
         if ($requiresUpdate === true)
         {

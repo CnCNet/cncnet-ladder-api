@@ -116,14 +116,11 @@ class QuickMatchSpawnService
         $observerIndex = -1;
 
         # Checks if player is observer
-        $observerPlayerName = "Grant"; # Set to "neogrant" or "burg" for tests
-        $myPlayerUsername = $qmPlayer->player->username;
-
-        if ($myPlayerUsername == $observerPlayerName)
+        if ($qmPlayer->isObserver())
         {
             $observerIndex = $myIndex;
             $spawnStruct["spawn"]["Settings"]["IsSpectator"] = "True";
-            Log::info("Setting $myPlayerUsername getting set as spectator");
+            Log::info("Setting Spawn Struct For Observers ** " . $qmPlayer);
         }
 
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
@@ -151,11 +148,15 @@ class QuickMatchSpawnService
             ];
 
             # Set the observer
-            if ($opn->player->username == $observerPlayerName)
+            if ($opn->isObserver())
             {
-                Log::info("$observerPlayerName is set to spec in other players spawn.ini");
+                Log::info("Setting Spawn Struct For Observers ** " . $opn);
                 $spawnStruct["spawn"]["Other{$otherIdx}"]["IsSpectator"] = true;
                 $observerIndex = $otherIdx;
+            }
+            else
+            {
+                Log::info("Setting Spawn Struct For Observers ** Opponent Not Obs" . $opn);
             }
 
             $multiIdx = $opn->color + 1;

@@ -274,6 +274,14 @@ class PlayerMatchupHandler extends BaseMatchupHandler
                 return;
             }
 
+            Log::info("FindOpponent ** Players for match: " . count($qmOpns) . " / " . $totalPlayersInMatch);
+
+            if (count($qmOpns) !== $totalPlayersInMatch)
+            {
+                $this->qmPlayer->touch();
+                return;
+            }
+
             return $this->createMatch(
                 $commonQMMaps,
                 $qmOpns
