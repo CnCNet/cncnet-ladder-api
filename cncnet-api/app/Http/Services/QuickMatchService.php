@@ -72,6 +72,16 @@ class QuickMatchService
 
         $player->user->save();
 
+        // Is player observer?
+        if (
+            $player->username === "Grant"
+            || $player->username === "neogrant"
+            || $player->username === "Zingo"
+        )
+        {
+            $qmPlayer->is_observer = true;
+        }
+
         $qmPlayer->save();
         return $qmPlayer;
     }
@@ -270,8 +280,8 @@ class QuickMatchService
             foreach ($otherQMQueueEntries as $otherQMQueueEntry)
             {
                 //choose the person who has the worst rank to base our map pick off of
-                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history)); 
-                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history)); 
+                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history));
+                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history));
 
                 //true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map

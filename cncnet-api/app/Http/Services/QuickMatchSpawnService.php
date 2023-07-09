@@ -116,7 +116,7 @@ class QuickMatchSpawnService
         $observerIndex = -1;
 
         # Checks if player is observer
-        $observerPlayerName = null; # Set to "neogrant" or "burg" for tests
+        $observerPlayerName = "Grant"; # Set to "neogrant" or "burg" for tests
         $myPlayerUsername = $qmPlayer->player->username;
 
         if ($myPlayerUsername == $observerPlayerName)
@@ -222,7 +222,7 @@ class QuickMatchSpawnService
         {
             foreach ($otherQmPlayers as $opn)
             {
-                $spawnStruct["isspectator"]["Multi$observerIndex"] = "True";
+                $spawnStruct["IsSpectator"]["Multi$observerIndex"] = "True";
             }
         }
 

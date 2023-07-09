@@ -26,11 +26,13 @@ class PlayerMatchupHandler extends BaseMatchupHandler
     {
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
+        $matchHasObservers = false;
 
         $currentUser = $this->qmPlayer->player->user;
         $currentUserSettings = $currentUser->userSettings;
         $currentPlayer = $this->qmPlayer->player;
         $currentPlayerRank = $currentPlayer->rank($this->history);
+        $currentQmPlayer = $this->qmPlayer;
 
         # Fetch all opponents who are currently in queue for this ladder
         $opponentQmQueueEntries = QmQueueEntry::where('qm_match_player_id', '<>', $this->qmQueueEntry->qmPlayer->id)
@@ -39,6 +41,11 @@ class PlayerMatchupHandler extends BaseMatchupHandler
 
         # Collection of qm opponents who are within point filter but also includes opponents who have mutual point filter disabled
         $opponentQmQueueEntriesFiltered = (new QmQueueEntry())->newCollection();
+
+        if ($currentQmPlayer->isObserver())
+        {
+            $matchHasObservers = true;
+        }
 
         foreach ($opponentQmQueueEntries as $opponentEntry)
         {
@@ -96,34 +103,49 @@ class PlayerMatchupHandler extends BaseMatchupHandler
                 }
             }
 
-            if ($ptFilterOff)
+            if ($oppQmPlayer->isObserver())
             {
-                // Log::info("FindOpponent ** PointFilter Off");
-
-                # Both players have the point filter disabled, we will ignore the point filter
                 $opponentQmQueueEntriesFiltered->add($opponentEntry);
+                $matchHasObservers = true;
             }
             else
             {
-                # (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
-                $pointsTime = ((strtotime($this->qmQueueEntry->updated_at) - strtotime($this->qmQueueEntry->created_at))) * $ladderRules->points_per_second;
-
-                # is the opponent within the point filter
-                if ($pointsTime + $ladderRules->max_points_difference > ABS($this->qmQueueEntry->points - $opponentEntry->points))
+                if ($ptFilterOff)
                 {
+                    // Log::info("FindOpponent ** PointFilter Off");
+
+                    # Both players have the point filter disabled, we will ignore the point filter
                     $opponentQmQueueEntriesFiltered->add($opponentEntry);
+                }
+                else
+                {
+                    # (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
+                    $pointsTime = ((strtotime($this->qmQueueEntry->updated_at) - strtotime($this->qmQueueEntry->created_at))) * $ladderRules->points_per_second;
+
+                    # is the opponent within the point filter
+                    if ($pointsTime + $ladderRules->max_points_difference > ABS($this->qmQueueEntry->points - $opponentEntry->points))
+                    {
+                        $opponentQmQueueEntriesFiltered->add($opponentEntry);
+                    }
                 }
             }
         }
 
         $qmOpns = $opponentQmQueueEntriesFiltered->shuffle();
         $qmOpnsCount = $qmOpns->count();
+        $totalPlayersInMatch = $ladderRules->player_count - 1;
 
-        if ($qmOpns->count() >= $ladderRules->player_count - 1)
+        # Check we have observers present
+        if ($matchHasObservers)
+        {
+            $totalPlayersInMatch = $totalPlayersInMatch + 1;
+        }
+
+        if ($qmOpns->count() >= $totalPlayersInMatch)
         {
             // Randomly choose the opponents from the best matches. To prevent
             // long runs of identical matchups.
-            $qmOpns = $qmOpns->shuffle()->take($ladderRules->player_count - 1);
+            $qmOpns = $qmOpns->shuffle()->take($totalPlayersInMatch);
 
             // Randomly select a map
             $commonQMMaps = array();

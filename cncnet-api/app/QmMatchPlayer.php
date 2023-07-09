@@ -17,6 +17,11 @@ class QmMatchPlayer extends Model
         return $this->_map_side_array;
     }
 
+    public function isObserver()
+    {
+        return $this->is_observer;
+    }
+
     # Relationships
     public function clan()
     {

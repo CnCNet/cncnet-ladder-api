@@ -80,7 +80,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
         }
     }
 
-    public static function getPlayerNamesInQueue($readyQMQueueEntries) 
+    public static function getPlayerNamesInQueue($readyQMQueueEntries)
     {
         $playerNames = [];
 
@@ -238,7 +238,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
             }
 
             //loop through the members in opponent clan, check if any opponent is also in my clan
-            foreach ($opponentQmEntries as $opponentQmEntry) 
+            foreach ($opponentQmEntries as $opponentQmEntry)
             {
                 $opponentPlayers = $opponentQmEntry->qmPlayer->player->user->usernames()->where("ladder_id", '=', $ladderId)->get();
 

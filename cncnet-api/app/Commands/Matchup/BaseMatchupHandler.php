@@ -26,7 +26,6 @@ class BaseMatchupHandler
 
     public function createMatch($maps, $otherQMQueueEntries)
     {
-
         $filteredMaps = array_filter($maps, function ($map)
         {
             return
