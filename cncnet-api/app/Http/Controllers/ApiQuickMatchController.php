@@ -548,17 +548,9 @@ class ApiQuickMatchController extends Controller
         # If we're past this point, a match has been found
         $qmMatch = QmMatch::find($qmPlayer->qm_match_id);
 
-        # Creates the initial spawn.ini to send to client
-        $spawnStruct = QuickMatchSpawnService::createSpawnStruct(
-            $qmMatch,
-            $qmPlayer,
-            $ladder,
-            $ladderRules
-        );
-
         # Check we have all players ready before writing them to spawn.ini
-        $playersReady = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
-        if (count($playersReady) == 0)
+        $qmMatchPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
+        if (count($qmMatchPlayers) == 0)
         {
             $qmPlayer->waiting = false;
             $qmPlayer->save();
@@ -568,18 +560,33 @@ class ApiQuickMatchController extends Controller
             return $this->onCheckback($alert);
         }
 
-        if ($gameType == Game::GAME_TYPE_2VS2_AI)
-        {
-            # Prepend quick-coop AI ini file
-            $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
-        }
+        # Creates the initial spawn.ini to send to client
+        $spawnStruct = QuickMatchSpawnService::createSpawnStruct(
+            $qmMatch,
+            $qmPlayer,
+            $ladder,
+            $ladderRules
+        );
 
-        # Write the spawn.ini "Others" sections
-        $spawnStruct = QuickMatchSpawnService::appendOthersAndTeamAlliancesToSpawnIni(
+        # Write the spawn.ini "SpawnLocations" sections
+        $spawnStruct = QuickMatchSpawnService::appendSpawnLocations(
             $spawnStruct,
             $qmPlayer,
-            $playersReady
+            $qmMatchPlayers
         );
+
+        # Write the spawn.ini "TeamAlliances" sections
+        if (false)
+        {
+            $spawnStruct = QuickMatchSpawnService::appendTeamAlliances(
+                $spawnStruct,
+                $qmPlayer,
+                $qmMatchPlayers
+            );
+        }
+
+        # Write the spawn.ini "Observers" sections
+        $spawnStruct = QuickMatchSpawnService::appendObservers($spawnStruct, $qmPlayer, $qmMatchPlayers);
 
         $qmPlayer->waiting = false;
         $qmPlayer->save();

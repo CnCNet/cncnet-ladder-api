@@ -8,6 +8,7 @@ use App\QmMatchPlayer;
 use App\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
 use App\Commands\Matchup\ClanMatchupHandler;
+use App\Ladder;
 
 class QuickMatchService
 {
@@ -264,6 +265,7 @@ class QuickMatchService
         return $qmMatch;
     }
 
+
     public function createQmMatch(
         $qmPlayer,
         $userPlayerTier,
@@ -312,8 +314,8 @@ class QuickMatchService
         $expectedPlayerCount = $ladder->qmLadderRules->player_count;
         if ($actualPlayerCount != $expectedPlayerCount)
         {
-            // Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
-            // Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
+            //Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
+            //Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
             // return null
         }
 
@@ -412,9 +414,9 @@ class QuickMatchService
 
         if (!$teamSpotsAssigned && $ladder->clans_allowed) //randomize the spawns if teams were not manually set and is a clan match
         {
-            $spawnOrder = getLocationsArr($qmMap->map->spawn_count, true);
+            $spawnOrder = $this->getLocationsArr($qmMap->map->spawn_count, true);
         }
-        $colorsArr = getColorsArr(8, false);
+        $colorsArr = $this->getColorsArr(8, false);
 
         $i = 0;
         if (!$teamSpotsAssigned)
@@ -440,6 +442,424 @@ class QuickMatchService
         }
 
         $qmPlayer->save();
+
+        $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+        {
+            return $s >= 0;
+        }));
+
+        foreach ($otherQMQueueEntries as $qOpn)
+        {
+            $opn = $qOpn->qmPlayer;
+            $opn = \App\QmMatchPlayer::where('id', $opn->id)->first();
+            $qOpn->delete();
+
+            if ($opn === null)
+            {
+                $qEntry->delete();
+                return;
+            }
+
+            $osides = explode(',', $opn->mapSides->value);
+
+            if (count($osides) > $qmMap->bit_idx)
+                $opn->actual_side = $osides[$qmMap->bit_idx];
+
+            if ($opn->actual_side  < -1)
+            {
+                $opn->actual_side = $opn->chosen_side;
+            }
+
+            if ($opn->actual_side == -1)
+            {
+                $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+            }
+
+            if (!$teamSpotsAssigned) //spots were not team assigned
+            {
+                $opn->color = $colorsArr[$i];
+                if ($opn->isObserver() === false)
+                {
+                    $opn->location = $spawnOrder[$i] - 1;
+                }
+                else
+                {
+                    $opn->location = -1;
+                }
+                $i++;
+            }
+
+            $opn->qm_match_id = $qmMatch->id;
+            $opn->tunnel_id = $qmMatch->seed + $opn->color;
+            $opn->save();
+        }
+
+        if ($qmPlayer->actual_side == -1)
+        {
+            $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+        }
+        $qmPlayer->save();
+
+        $playerNames = implode(",", ClanMatchupHandler::getPlayerNamesInQueue($otherQMQueueEntries));
+        Log::info("Launching match with players $playerNames, " . $qmPlayer->player->username . " on map: " . $qmMatch->map->description);
+
+        return $qmMatch;
+    }
+
+    public function createNewQMMatch(
+        $qmPlayer,
+        $userPlayerTier,
+        $maps,
+        $otherQMQueueEntries,
+        $currentPlayerQEntry,
+        $gameType
+    )
+    {
+        Log::info("Error");
+        return;
+        # Get QM Map
+        $qmMapId = $this->getQmMap($qmPlayer, $otherQMQueueEntries, $maps);
+        $ladder = Ladder::where('id', $qmPlayer->ladder_id)->first();
+
+        # Create the qm_matches db entry
+        $qmMatch = new QmMatch();
+        $qmMatch->ladder_id = $qmPlayer->ladder_id;
+        $qmMatch->qm_map_id = $qmMapId;
+        $qmMatch->seed = mt_rand(-2147483647, 2147483647);
+        $qmMatch->tier = $userPlayerTier;
+
+        # Create the Game
+        $game = Game::genQmEntry($qmMatch, $gameType);
+        $qmMatch->game_id = $game->id;
+        $qmMatch->save();
+        $game->qm_match_id = $qmMatch->id;
+        $game->save();
+
+        # Map
+        $qmMap = $qmMatch->map;
+        $spawnOrder = explode(',', $qmMap->spawn_order);
+        $colorsArr = $this->getColorsArr(8, false);
+
+        # Set up player specific information
+        # Color will be used for spawn location
+        $qmPlayerModel = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
+
+        $index = 0;
+
+        if ($ladder->clans_allowed)
+        {
+            $teamSpotsAssigned = $this->assignTeamPlayers($qmMap, $qmPlayer, $otherQMQueueEntries, $ladder);
+            $spawnOrder = $this->getLocationsArr($qmMap->map->spawn_count, true);
+        }
+
+        if (!$teamSpotsAssigned)
+        {
+            $qmPlayerModel->color = $colorsArr[$index];
+            $qmPlayerModel->location = $spawnOrder[$index] - 1;
+            $index++;
+        }
+
+        $qmPlayerModel->color = $colorsArr[$index];
+        $qmPlayerModel->location =  $spawnOrder[$qmPlayerModel->color] - 1;
+        $qmPlayerModel->qm_match_id = $qmMatch->id;
+        $qmPlayerModel->tunnel_id = $qmMatch->seed + $qmPlayerModel->color;
+
+        $psides = explode(',', $qmPlayerModel->mapSides->value);
+
+        if (count($psides) > $qmMap->bit_idx)
+        {
+            $qmPlayerModel->actual_side = $psides[$qmMap->bit_idx];
+        }
+
+        if ($qmPlayerModel->actual_side < -1)
+        {
+            $qmPlayerModel->actual_side = $qmPlayerModel->chosen_side;
+        }
+
+        $qmPlayerModel->save();
+
+        $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+        {
+            return $s >= 0;
+        }));
+
+        foreach ($otherQMQueueEntries as $opponentQMQueueEntry)
+        {
+            $opponentQMQueueEntry->delete();
+
+            $opponentQmMatchPlayer = QmMatchPlayer::where('id', $opponentQMQueueEntry->qmPlayer->id)->first();
+
+            $osides = explode(',', $opponentQmMatchPlayer->mapSides->value);
+
+            if (count($osides) > $qmMap->bit_idx)
+            {
+                $opponentQmMatchPlayer->actual_side = $osides[$qmMap->bit_idx];
+            }
+
+            if ($opponentQmMatchPlayer->actual_side == -1)
+            {
+                $opponentQmMatchPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+            }
+
+            //  Don't set observers location
+            if ($opponentQmMatchPlayer->isObserver() === false)
+            {
+                $opponentQmMatchPlayer->location = $spawnOrder[$opponentQmMatchPlayer->color] - 1;
+            }
+
+            $opponentQmMatchPlayer->color = $colorsArr[$index];
+            $opponentQmMatchPlayer->location = $spawnOrder[$index] - 1;
+
+            $opponentQmMatchPlayer->qm_match_id = $qmMatch->id;
+            $opponentQmMatchPlayer->tunnel_id = $qmMatch->seed + $opponentQmMatchPlayer->color;
+            $opponentQmMatchPlayer->save();
+
+            $index++;
+        }
+
+        if ($qmPlayerModel->actual_side == -1)
+        {
+            $qmPlayerModel->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+        }
+
+        $qmPlayerModel->save();
+
+        return $qmMatch;
+    }
+
+    /**
+     * Returns whether teams were assigned or not
+     * @param mixed $qmMap 
+     * @param mixed $qmPlayer 
+     * @param mixed $otherQMQueueEntries 
+     * @param mixed $ladder 
+     * @return bool 
+     */
+    private function assignTeamPlayers($qmMap, $qmPlayer, $otherQMQueueEntries, $ladder): bool
+    {
+        $teamSpotsAssigned = false;
+
+        # Check if team spots are configured, if this is a clan match
+        $team1SpawnOrder = explode(',', $qmMap->team1_spawn_order); //e.g. 1,2
+        $team2SpawnOrder = explode(',', $qmMap->team2_spawn_order); //e.g. 3,4
+
+        if (
+            count($team1SpawnOrder) == $ladder->qmLadderRules->player_count / 2 &&
+            count($team2SpawnOrder) == $ladder->qmLadderRules->player_count / 2
+        )
+        {
+            if ($qmPlayer->clan_id)
+            {
+                //map each player to their clan
+                $team1 = [];
+                $team2 = [];
+                $team1[] = $qmPlayer;
+
+                //assign other players to correct clan (assumes there are 2 clans)
+                foreach ($otherQMQueueEntries as $qmOpnEntry)
+                {
+                    if ($qmOpnEntry->qmPlayer->clan_id == $qmPlayer->clan_id && $qmOpnEntry->qmPlayer->id != $qmPlayer->id)
+                    {
+                        $team1[] = $qmOpnEntry->qmPlayer;
+                    }
+                    else
+                    {
+                        $team2[] = $qmOpnEntry->qmPlayer;
+                    }
+                }
+
+                if (count($team1) != count($team1SpawnOrder))
+                {
+                    Log::info("Team1: Expected " . count($team1SpawnOrder) . " players but found " . count($team1));
+                }
+                else if (count($team2) != count($team2SpawnOrder))
+                {
+                    Log::info("Team2: Expected " . count($team2SpawnOrder) . " players but found " . count($team2));
+                }
+                else
+                {
+                    //assign team 1 spots
+                    $color = 0;
+                    for ($i = 0; $i < count($team1SpawnOrder); $i++) //red + yellow
+                    {
+                        $currentQmPlayer = $team1[$i];
+                        $currentQmPlayer->color = $color++;
+                        $currentQmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
+                        $currentQmPlayer->save();
+                    }
+
+                    //assign team 2 spots
+                    for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
+                    {
+                        $currentQmPlayer = $team2[$i];
+                        $currentQmPlayer->color = $color++;
+                        $currentQmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
+                        $currentQmPlayer->save();
+                    }
+
+                    $teamSpotsAssigned = true;
+                }
+            }
+        }
+
+        return $teamSpotsAssigned;
+    }
+
+    private function getQmMap($qmPlayer, $otherQMQueueEntries, $maps)
+    {
+        $ladder = \App\Ladder::where('id', $qmPlayer->ladder_id)->first();
+        $history = $ladder->currentHistory();
+        $qmMapId = 0;
+
+        if ($ladder->qmLadderRules->use_ranked_map_picker) //use ranked map selection
+        {
+            $rank = $qmPlayer->player->rank($history);
+            $points = $qmPlayer->player->points($history);
+
+            $matchAnyMap = false;
+            foreach ($otherQMQueueEntries as $otherQMQueueEntry)
+            {
+                //choose the person who has the worst rank to base our map pick off of
+                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history));
+                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history));
+
+                //true if both players allow any map
+                $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
+                    && $qmPlayer->player->user->userSettings->match_any_map;
+            }
+
+            $qmMapId = $this->rankedMapPicker($maps, $rank, $points, $matchAnyMap);  //select a map dependent on player rank and map tiers
+        }
+        else
+        {
+            $randomMapIdx = mt_rand(0, count($maps) - 1);
+            $qmMapId = $maps[$randomMapIdx]->id;
+        }
+
+        return $qmMapId;
+    }
+
+
+    /*
+    public function createQmMatch(
+        $qmPlayer,
+        $userPlayerTier,
+        $maps,
+        $otherQMQueueEntries,
+        $qEntry,
+        $gameType
+    )
+    {
+        $ladder = \App\Ladder::where('id', $qmPlayer->ladder_id)->first();
+        $history = $ladder->currentHistory();
+
+        if ($ladder->qmLadderRules->use_ranked_map_picker) //use ranked map selection
+        {
+            $rank = $qmPlayer->player->rank($history);
+            $points = $qmPlayer->player->points($history);
+
+            $matchAnyMap = false;
+            foreach ($otherQMQueueEntries as $otherQMQueueEntry)
+            {
+                //choose the person who has the worst rank to base our map pick off of
+                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history));
+                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history));
+
+                //true if both players allow any map
+                $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
+                    && $qmPlayer->player->user->userSettings->match_any_map;
+            }
+
+            $qmMapId = $this->rankedMapPicker($maps, $rank, $points, $matchAnyMap);  //select a map dependent on player rank and map tiers
+        }
+        else
+        {
+            $randomMapIdx = mt_rand(0, count($maps) - 1);
+            $qmMapId = $maps[$randomMapIdx]->id;
+        }
+
+        # Create the qm_matches db entry
+        $qmMatch = new QmMatch();
+        $qmMatch->ladder_id = $qmPlayer->ladder_id;
+        $qmMatch->qm_map_id = $qmMapId;
+        $qmMatch->seed = mt_rand(-2147483647, 2147483647);
+        $qmMatch->tier = $userPlayerTier;
+
+        $actualPlayerCount = count($otherQMQueueEntries) + 1; //total player counts equals myself plus other players to be matched
+        $expectedPlayerCount = $ladder->qmLadderRules->player_count;
+        if ($actualPlayerCount != $expectedPlayerCount)
+        {
+            // Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
+            // Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
+            // return null
+        }
+
+        # Create the Game
+        $game = Game::genQmEntry($qmMatch, $gameType);
+        $qmMatch->game_id = $game->id;
+        $qmMatch->save();
+
+        $game->qm_match_id = $qmMatch->id;
+        $game->save();
+
+        $qmMap = $qmMatch->map;
+        $spawnOrder = explode(',', $qmMap->spawn_order);
+
+
+        if ($qmMap->random_spawns && $qmMap->map->spawn_count > 2 && $expectedPlayerCount == 2) //this map uses 1v1 random spawns
+        {
+            $spawnOrder = [];
+            $numSpawns = $qmMap->map->spawn_count;
+            $spawnArr = [];
+
+            for ($i = 1; $i <= $numSpawns; $i++)
+            {
+                $spawnArr[] = $i;
+            }
+
+            shuffle($spawnArr); //shuffle the spawns, select 2
+            $spawnOrder[0] = $spawnArr[0];
+            $spawnOrder[1] = $spawnArr[1];
+
+            Log::info("Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawnOrder[0] . "," . $spawnOrder[1]);
+        }
+
+
+
+        # Set up player specific information
+        # Color will be used for spawn location
+        $qmPlayerModel = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
+
+        if (!$teamSpotsAssigned && $ladder->clans_allowed) //randomize the spawns if teams were not manually set and is a clan match
+        {
+            $spawnOrder = getLocationsArr($qmMap->map->spawn_count, true);
+        }
+        $colorsArr = getColorsArr(8, false);
+
+        $i = 0;
+        if (!$teamSpotsAssigned)
+        {
+            $qmPlayerModel->color = $colorsArr[$i];
+            $qmPlayerModel->location = $spawnOrder[$i] - 1;
+            $i++;
+        }
+
+        $qmPlayerModel->qm_match_id = $qmMatch->id;
+        $qmPlayerModel->tunnel_id = $qmMatch->seed + $qmPlayerModel->color;
+
+        $psides = explode(',', $qmPlayerModel->mapSides->value);
+
+        if (count($psides) > $qmMap->bit_idx)
+        {
+            $qmPlayerModel->actual_side = $psides[$qmMap->bit_idx];
+        }
+
+        if ($qmPlayerModel->actual_side < -1)
+        {
+            $qmPlayerModel->actual_side = $qmPlayerModel->chosen_side;
+        }
+
+        $qmPlayerModel->save();
 
         $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
         {
@@ -485,6 +905,7 @@ class QuickMatchService
             {
                 $opn->color = $colorsArr[$i];
                 $opn->location = $spawnOrder[$i] - 1;
+
                 $i++;
             }
 
@@ -520,6 +941,7 @@ class QuickMatchService
 
         return $qmMatch;
     }
+    */
 
     /**
      * Given a player's rank, choose a map based on map ranked difficulties
@@ -602,33 +1024,35 @@ class QuickMatchService
 
         return $map->id;
     }
-}
 
-/**
- * Given $numPlayers, return an array of numbers, length of array = $numPlayers.
- * 
- * Clan ladder matches should randomize the colors. 1v1 should use red vs yellow.
- */
-function getColorsArr($numPlayers, $randomize)
-{
-    $possibleColors = [0, 1, 2, 3, 4, 5, 6, 7];
-
-    if ($randomize)
-        shuffle($possibleColors);
-
-    return array_slice($possibleColors, 0, $numPlayers);
-}
-
-function getLocationsArr($numPlayers, $randomize)
-{
-    $locations = [];
-    for ($i = 0; $i < $numPlayers; $i++)
+    private function getLocationsArr($numPlayers, $randomize)
     {
-        $locations[] = $i + 1;
+        $locations = [];
+        for ($i = 0; $i < $numPlayers; $i++)
+        {
+            $locations[] = $i + 1;
+        }
+
+        if ($randomize)
+            shuffle($locations);
+
+        return $locations;
     }
 
-    if ($randomize)
-        shuffle($locations);
+    /**
+     * Given $numPlayers, return an array of numbers, length of array = $numPlayers.
+     * Clan ladder matches should randomize the colors. 1v1 should use red vs yellow.
+     * @param mixed $numPlayers 
+     * @param mixed $randomize 
+     * @return int[] 
+     */
+    private function getColorsArr($numPlayers, $randomize)
+    {
+        $possibleColors = [0, 1, 2, 3, 4, 5, 6, 7];
 
-    return $locations;
+        if ($randomize)
+            shuffle($possibleColors);
+
+        return array_slice($possibleColors, 0, $numPlayers);
+    }
 }
