@@ -154,7 +154,6 @@ class QuickMatchSpawnService
         return $spawnStruct;
     }
 
-
     public static function appendTeamAlliances($spawnStruct, $qmPlayer, $qmMatchPlayers)
     {
         $multiIndex = $qmPlayer->color + 1;

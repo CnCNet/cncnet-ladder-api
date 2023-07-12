@@ -575,8 +575,8 @@ class ApiQuickMatchController extends Controller
             $qmMatchPlayers
         );
 
-        # Write the spawn.ini "TeamAlliances" sections
-        if (false)
+        # Write the spawn.ini "TeamAlliances" sections for clans only
+        if ($ladder->clans_allowed)
         {
             $spawnStruct = QuickMatchSpawnService::appendTeamAlliances(
                 $spawnStruct,
