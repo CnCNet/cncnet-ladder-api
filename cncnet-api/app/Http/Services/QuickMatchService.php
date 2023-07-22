@@ -314,8 +314,8 @@ class QuickMatchService
         $expectedPlayerCount = $ladder->qmLadderRules->player_count;
         if ($actualPlayerCount != $expectedPlayerCount)
         {
-            Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
-            Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
+            // Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
+            // Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
             // return null
         }
 

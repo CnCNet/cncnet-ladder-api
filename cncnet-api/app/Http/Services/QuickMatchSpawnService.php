@@ -114,7 +114,10 @@ class QuickMatchSpawnService
         $multiIdx = $qmPlayer->color + 1;
         $myIndex = $multiIdx;
 
-        $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
+        if ($qmPlayer->isObserver() === false)
+        {
+            $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
+        }
 
         if ($qmPlayer->player->user->userSettings->skip_score_screen)
         {
@@ -139,29 +142,38 @@ class QuickMatchSpawnService
                 "IsSpectator"   => $opn->isObserver() ? "True" : "False"
             ];
 
-            $multiIdx = $opn->color + 1;
-            $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $opn->location;
-
-            # Check if other player is in my clan, if so add alliance
-            if ($qmPlayer->clan_id && $qmPlayer->clan_id == $opn->clan_id)
+            if ($opn->isObserver() === true)
             {
-                $p1Name = $qmPlayer->player->username;
-                $p2Name = $opn->player->username;
-
-                Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
-                $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
-                $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
-                $myTeamIndices[] = $multiIdx;
+                Log::info("SKipping alliances for observer: " . $opn->player->username);
+                $otherIdx++;
+                continue;
             }
-
-            $otherIdx++;
-
-            if (array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
+            else
             {
-                # if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
-                if (($qmPlayer->actual_side < 5 && $opn->actual_side == 9) || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9))
+                $multiIdx = $opn->color + 1;
+                $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $opn->location;
+
+                # Check if other player is in my clan, if so add alliance
+                if ($qmPlayer->clan_id && $qmPlayer->clan_id == $opn->clan_id)
                 {
-                    $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
+                    $p1Name = $qmPlayer->player->username;
+                    $p2Name = $opn->player->username;
+
+                    Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
+                    $spawnStruct["spawn"]["Multi{$myIndex}_Alliances"]["HouseAllyOne"] = $multiIdx - 1;
+                    $spawnStruct["spawn"]["Multi{$multiIdx}_Alliances"]["HouseAllyOne"] = $myIndex - 1;
+                    $myTeamIndices[] = $multiIdx;
+                }
+
+                $otherIdx++;
+
+                if (array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) && $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes")
+                {
+                    # if p1 is allied and p2 is yuri, or if p1 is yuri and p2 is allied then disable SW for this match
+                    if (($qmPlayer->actual_side < 5 && $opn->actual_side == 9) || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9))
+                    {
+                        $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
+                    }
                 }
             }
         }
@@ -171,6 +183,12 @@ class QuickMatchSpawnService
         foreach ($otherQmMatchPlayers as $opn)
         {
             $multiIdx = $opn->color + 1;
+
+            if ($opn->isObserver() === true)
+            {
+                Log::info("SKipping alliances for observer: " . $opn->player->username);
+                continue;
+            }
 
             if (!in_array($multiIdx, $myTeamIndices)) //this index is opponent's team
             {
