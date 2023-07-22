@@ -557,8 +557,8 @@ class ApiQuickMatchController extends Controller
         );
 
         # Check we have all players ready before writing them to spawn.ini
-        $playersReady = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
-        if (count($playersReady) == 0)
+        $otherQmMatchPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
+        if (count($otherQmMatchPlayers) == 0)
         {
             $qmPlayer->waiting = false;
             $qmPlayer->save();
@@ -578,8 +578,11 @@ class ApiQuickMatchController extends Controller
         $spawnStruct = QuickMatchSpawnService::appendOthersAndTeamAlliancesToSpawnIni(
             $spawnStruct,
             $qmPlayer,
-            $playersReady
+            $otherQmMatchPlayers
         );
+
+        # Write the observers
+        $spawnStruct = QuickMatchSpawnService::appendObservers($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
 
         $qmPlayer->waiting = false;
         $qmPlayer->save();

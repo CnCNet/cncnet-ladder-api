@@ -58,7 +58,23 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 break;
         }
 
+
+        # Add x1 observers if any are in the queue
+        foreach ($allQMQueueEntries as $qmQueueEntry)
+        {
+            if ($qmQueueEntry->qmPlayer->isObserver())
+            {
+                $this->matchHasObservers = true;
+                $readyQMQueueEntries->add($qmQueueEntry);
+            }
+        }
+
         $playersReadyCount = $readyQMQueueEntries->count() + 1; # Add ourselves to this count
+
+        if ($this->matchHasObservers === true)
+        {
+            $playerCountForMatchup = $playerCountForMatchup + 1; # 4 players + 1x observer
+        }
 
         if ($playersReadyCount === $playerCountForMatchup)
         {
@@ -80,7 +96,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
         }
     }
 
-    public static function getPlayerNamesInQueue($readyQMQueueEntries) 
+    public static function getPlayerNamesInQueue($readyQMQueueEntries)
     {
         $playerNames = [];
 
@@ -172,6 +188,12 @@ class ClanMatchupHandler extends BaseMatchupHandler
         # Loop over all QM Queue Entries and group them by clan
         foreach ($allQMQueueEntries as $qmQueueEntry)
         {
+            # Don't add observers to clan counts
+            if ($qmQueueEntry->qmPlayer->isObserver())
+            {
+                continue;
+            }
+
             if (isset($result[$qmQueueEntry->qmPlayer->clan_id]))
             {
                 $count = count($result[$qmQueueEntry->qmPlayer->clan_id]);
@@ -238,7 +260,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
             }
 
             //loop through the members in opponent clan, check if any opponent is also in my clan
-            foreach ($opponentQmEntries as $opponentQmEntry) 
+            foreach ($opponentQmEntries as $opponentQmEntry)
             {
                 $opponentPlayers = $opponentQmEntry->qmPlayer->player->user->usernames()->where("ladder_id", '=', $ladderId)->get();
 

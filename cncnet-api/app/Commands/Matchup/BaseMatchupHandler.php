@@ -13,6 +13,7 @@ class BaseMatchupHandler
     public $qmPlayer;
     public $gameType;
     public $currentUserPlayerTier;
+    public $matchHasObservers;
 
     public function __construct($history, $qEntry, $qmPlayer, $gameType)
     {
@@ -22,11 +23,11 @@ class BaseMatchupHandler
         $this->qmPlayer = $qmPlayer;
         $this->gameType = $gameType;
         $this->currentUserPlayerTier = $this->qmPlayer->player->getCachedPlayerTierByLadderHistory($this->history);
+        $this->matchHasObservers = $qmPlayer->isObserver();
     }
 
     public function createMatch($maps, $otherQMQueueEntries)
     {
-
         $filteredMaps = array_filter($maps, function ($map)
         {
             return
@@ -50,7 +51,7 @@ class BaseMatchupHandler
 
     public function removeQueueEntry()
     {
-        Log::info("Removing queue entry for " . $this->qmPlayer);
+        Log::info("Removing queue entry for " . $this->qmPlayer->player);
         $this->qmQueueEntry->delete();
     }
 

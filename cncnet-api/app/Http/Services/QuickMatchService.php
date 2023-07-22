@@ -72,6 +72,23 @@ class QuickMatchService
 
         $player->user->save();
 
+        // Is player observer?
+        // @TODO: Just for tests until we do this by "Observer" faction
+        if (
+            $player->username === "Grant"
+            || $player->username === "neogrant"
+            || $player->username === "Zingo"
+            || $player->username === "neo"
+        )
+        {
+            Log::info("Player ** Is observering Game: " . $player->username);
+            $qmPlayer->is_observer = true;
+        }
+        else
+        {
+            Log::info("Player ** Is NOT observering Game: " . $player->username);
+        }
+
         $qmPlayer->save();
         return $qmPlayer;
     }
@@ -270,8 +287,8 @@ class QuickMatchService
             foreach ($otherQMQueueEntries as $otherQMQueueEntry)
             {
                 //choose the person who has the worst rank to base our map pick off of
-                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history)); 
-                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history)); 
+                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history));
+                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history));
 
                 //true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
@@ -397,9 +414,9 @@ class QuickMatchService
 
         if (!$teamSpotsAssigned && $ladder->clans_allowed) //randomize the spawns if teams were not manually set and is a clan match
         {
-            $spawnOrder = getLocationsArr($qmMap->map->spawn_count, true);
+            $spawnOrder = $this->getLocationsArr($qmMap->map->spawn_count, true);
         }
-        $colorsArr = getColorsArr(8, false);
+        $colorsArr = $this->getColorsArr(8, false);
 
         $i = 0;
         if (!$teamSpotsAssigned)
@@ -461,7 +478,14 @@ class QuickMatchService
             if (!$teamSpotsAssigned) //spots were not team assigned
             {
                 $opn->color = $colorsArr[$i];
-                $opn->location = $spawnOrder[$i] - 1;
+                if ($opn->isObserver() === false)
+                {
+                    $opn->location = $spawnOrder[$i] - 1;
+                }
+                else
+                {
+                    $opn->location = -1;
+                }
                 $i++;
             }
 
@@ -563,33 +587,33 @@ class QuickMatchService
 
         return $map->id;
     }
-}
 
-/**
- * Given $numPlayers, return an array of numbers, length of array = $numPlayers.
- * 
- * Clan ladder matches should randomize the colors. 1v1 should use red vs yellow.
- */
-function getColorsArr($numPlayers, $randomize)
-{
-    $possibleColors = [0, 1, 2, 3, 4, 5, 6, 7];
-
-    if ($randomize)
-        shuffle($possibleColors);
-
-    return array_slice($possibleColors, 0, $numPlayers);
-}
-
-function getLocationsArr($numPlayers, $randomize)
-{
-    $locations = [];
-    for ($i = 0; $i < $numPlayers; $i++)
+    /**
+     * Given $numPlayers, return an array of numbers, length of array = $numPlayers.
+     * 
+     * Clan ladder matches should randomize the colors. 1v1 should use red vs yellow.
+     */
+    private function getColorsArr($numPlayers, $randomize)
     {
-        $locations[] = $i + 1;
+        $possibleColors = [0, 1, 2, 3, 4, 5, 6, 7];
+
+        if ($randomize)
+            shuffle($possibleColors);
+
+        return array_slice($possibleColors, 0, $numPlayers);
     }
 
-    if ($randomize)
-        shuffle($locations);
+    private function getLocationsArr($numPlayers, $randomize)
+    {
+        $locations = [];
+        for ($i = 0; $i < $numPlayers; $i++)
+        {
+            $locations[] = $i + 1;
+        }
 
-    return $locations;
+        if ($randomize)
+            shuffle($locations);
+
+        return $locations;
+    }
 }

@@ -105,26 +105,14 @@ class QuickMatchSpawnService
      * Appends the "other" section of all players to the spawn.ini 
      * @param mixed $spawnStruct 
      * @param mixed $qmPlayer 
-     * @param mixed $otherQmPlayers 
+     * @param mixed $otherQmMatchPlayers 
      * @return mixed 
      */
-    public static function appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmPlayers)
+    public static function appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers)
     {
         $otherIdx = 1;
         $multiIdx = $qmPlayer->color + 1;
         $myIndex = $multiIdx;
-        $observerIndex = -1;
-
-        # Checks if player is observer
-        $observerPlayerName = null; # Set to "neogrant" or "burg" for tests
-        $myPlayerUsername = $qmPlayer->player->username;
-
-        if ($myPlayerUsername == $observerPlayerName)
-        {
-            $observerIndex = $myIndex;
-            $spawnStruct["spawn"]["Settings"]["IsSpectator"] = "True";
-            Log::info("Setting $myPlayerUsername getting set as spectator");
-        }
 
         $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $qmPlayer->location;
 
@@ -135,28 +123,21 @@ class QuickMatchSpawnService
 
         $myTeamIndices = [];
         $myTeamIndices[] = $myIndex;
-        foreach ($otherQmPlayers as $opn)
+        foreach ($otherQmMatchPlayers as $opn)
         {
+            # Other{1,2,3} etc
             $spawnStruct["spawn"]["Other{$otherIdx}"] = [
-                "Name" => $opn->player()->first()->username,
-                "Side" => $opn->actual_side,
-                "Color" => $opn->color,
-                "Ip" =>   $opn->ipAddress ? $opn->ipAddress->address : "",
-                "Port" => $opn->port,
-                "IPv6" => $opn->ipv6Address ? $opn->ipv6Address->address : "",
-                "PortV6" => $opn->ipv6_port,
-                "LanIP" => $opn->lan_address ? $opn->lan_address->address : "",
-                "LanPort" => $opn->lan_port,
-                "IsSpectator" => false
+                "Name"          => $opn->player()->first()->username,
+                "Side"          => $opn->actual_side,
+                "Color"         => $opn->color,
+                "Ip"            => $opn->ipAddress ? $opn->ipAddress->address : "",
+                "Port"          => $opn->port,
+                "IPv6"          => $opn->ipv6Address ? $opn->ipv6Address->address : "",
+                "PortV6"        => $opn->ipv6_port,
+                "LanIP"         => $opn->lan_address ? $opn->lan_address->address : "",
+                "LanPort"       => $opn->lan_port,
+                "IsSpectator"   => $opn->isObserver() ? "True" : "False"
             ];
-
-            # Set the observer
-            if ($opn->player->username == $observerPlayerName)
-            {
-                Log::info("$observerPlayerName is set to spec in other players spawn.ini");
-                $spawnStruct["spawn"]["Other{$otherIdx}"]["IsSpectator"] = true;
-                $observerIndex = $otherIdx;
-            }
 
             $multiIdx = $opn->color + 1;
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIdx}"] = $opn->location;
@@ -187,13 +168,13 @@ class QuickMatchSpawnService
 
         //create multi alliance for opponent's team
         $completed = false;
-        foreach ($otherQmPlayers as $opn)
+        foreach ($otherQmMatchPlayers as $opn)
         {
             $multiIdx = $opn->color + 1;
 
             if (!in_array($multiIdx, $myTeamIndices)) //this index is opponent's team
             {
-                foreach ($otherQmPlayers as $opn2) //find teammate(s)
+                foreach ($otherQmMatchPlayers as $opn2) //find teammate(s)
                 {
                     $otherIdx = $opn2->color + 1;
 
@@ -217,15 +198,35 @@ class QuickMatchSpawnService
                 break;
         }
 
-        # Set observer index if they exist
-        if ($observerIndex !== null)
+        return $spawnStruct;
+    }
+
+
+    /**
+     * Checks if any players are observers and writes to spawnstruct
+     * @param mixed $spawnStruct 
+     * @param mixed $qmPlayer 
+     * @param mixed $otherQmMatchPlayers 
+     * @return mixed 
+     */
+    public static function appendObservers($spawnStruct, $qmPlayer, $otherQmMatchPlayers)
+    {
+        # Checks if player is observer
+        if ($qmPlayer->isObserver())
         {
-            foreach ($otherQmPlayers as $opn)
-            {
-                $spawnStruct["isspectator"]["Multi$observerIndex"] = "True";
-            }
+            $spawnStruct["spawn"]["Settings"]["IsSpectator"] = "True";
         }
 
+        # Make sure we mark other players too
+        foreach ($otherQmMatchPlayers as $playerIndex => $opn)
+        {
+            if ($opn->isObserver())
+            {
+                # Because it references "Other", which is 1-8
+                $playerIndex = $playerIndex + 1;
+                $spawnStruct["isspectator"]["Multi$playerIndex"] = "True";
+            }
+        }
         return $spawnStruct;
     }
 
