@@ -78,6 +78,7 @@ class QuickMatchService
             $player->username === "Grant"
             || $player->username === "neogrant"
             || $player->username === "Zingo"
+            || $player->username === "neo"
         )
         {
             Log::info("Player ** Is observering Game: " . $player->username);
