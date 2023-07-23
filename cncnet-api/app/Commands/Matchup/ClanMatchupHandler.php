@@ -102,6 +102,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
             {
                 $playerNames = implode(",", $this->getPlayerNamesInQueue($otherQMQueueEntries));
                 Log::info("Launching clan match with players $playerNames, " . $currentPlayer->username);
+
                 return $this->createMatch(
                     $commonQmMaps,
                     $otherQMQueueEntries
