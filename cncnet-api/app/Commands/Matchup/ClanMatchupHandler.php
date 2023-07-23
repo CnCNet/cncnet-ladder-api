@@ -10,6 +10,8 @@ class ClanMatchupHandler extends BaseMatchupHandler
 {
     public function matchup()
     {
+        Log::info("ClanMatchupHandler ** Started");
+
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
         $ladderMaps = $ladder->mapPool->maps;
@@ -19,14 +21,23 @@ class ClanMatchupHandler extends BaseMatchupHandler
         $playerCountPerClanRequired = floor($ladderRules->player_count / 2); # (2) for a 2v2
         $playerCountForMatchup = $ladderRules->player_count; # (4) for a 2v2
 
+        # Fetch all entries who are currently in queue for this ladder
+        $allQMQueueEntries = QmQueueEntry::where('ladder_history_id', '=', $this->history->id)->get();
+
+        $this->matchHasObservers = $this->checkMatchForObserver($allQMQueueEntries);
+
+        Log::info("ClanMatchupHandler ** Players Per Clan Required: " . $playerCountPerClanRequired);
+        Log::info("ClanMatchupHandler ** Players For Matchup Required: " . $playerCountForMatchup);
+        Log::info("ClanMatchupHandler ** Match Has Observer Present: " . $this->matchHasObservers);
+
+
         if ($currentUserClanPlayer == null)
         {
             Log::info("ClanMatchupHandler ** Clan Player Null, removing $currentPlayer from queue");
             return $this->removeQueueEntry();
         }
 
-        # Fetch all entries who are currently in queue for this ladder
-        $allQMQueueEntries = QmQueueEntry::where('ladder_history_id', '=', $this->history->id)->get();
+
 
         # Group queue entries by clan and make sure we only have the exact number of players in each
         $groupedQmQueueEntriesByClan = $this->groupAndLimitClanPlayers($allQMQueueEntries, $playerCountPerClanRequired);
@@ -58,23 +69,15 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 break;
         }
 
-
-        # Add x1 observers if any are in the queue
-        foreach ($allQMQueueEntries as $qmQueueEntry)
-        {
-            if ($qmQueueEntry->qmPlayer->isObserver())
-            {
-                $this->matchHasObservers = true;
-                $readyQMQueueEntries->add($qmQueueEntry);
-            }
-        }
-
         $playersReadyCount = $readyQMQueueEntries->count() + 1; # Add ourselves to this count
 
         if ($this->matchHasObservers === true)
         {
-            $playerCountForMatchup = $playerCountForMatchup + 1; # 4 players + 1x observer
+            $playerCountForMatchup = $playerCountForMatchup + 1; # E.g. 4 players + 1x observer
         }
+
+        Log::info("ClanMatchUpHandler ** Match has observer: " . $this->matchHasObservers);
+        Log::info("ClanMatchUpHandler ** Player count for matchup: Ready: " . $playersReadyCount . "  Required: " . $playerCountForMatchup);
 
         if ($playersReadyCount === $playerCountForMatchup)
         {
@@ -94,6 +97,30 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 );
             }
         }
+    }
+
+    /**
+     * Check match for observer
+     * @param mixed $qmPlayer 
+     * @param mixed $allQMQueueEntries 
+     * @return bool 
+     */
+    private function checkMatchForObserver($allQMQueueEntries)
+    {
+        $hasObserver = false;
+
+        foreach ($allQMQueueEntries as $qmQueueEntry)
+        {
+            Log::info("ClanMatchupHandler ** Checking for observer: " . $qmQueueEntry->qmPlayer->player->username . " : " . $qmQueueEntry->qmPlayer->isObserver());
+
+            if ($qmQueueEntry->qmPlayer->isObserver())
+            {
+                $hasObserver = true;
+                break;
+            }
+        }
+
+        return $hasObserver;
     }
 
     public static function getPlayerNamesInQueue($readyQMQueueEntries)

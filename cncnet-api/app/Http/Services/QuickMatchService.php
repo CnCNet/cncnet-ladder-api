@@ -81,12 +81,12 @@ class QuickMatchService
             || $player->username === "neo"
         )
         {
-            Log::info("Player ** Is observering Game: " . $player->username);
+            Log::info("Player ** Is observing Game: " . $player->username);
             $qmPlayer->is_observer = true;
         }
         else
         {
-            Log::info("Player ** Is NOT observering Game: " . $player->username);
+            Log::info("Player ** Is NOT observing Game: " . $player->username);
         }
 
         $qmPlayer->save();
@@ -266,18 +266,9 @@ class QuickMatchService
         return $qmMatch;
     }
 
-    public function createQmMatch(
-        $qmPlayer,
-        $userPlayerTier,
-        $maps,
-        $otherQMQueueEntries,
-        $qEntry,
-        $gameType
-    )
+    private function pickMap($otherQMQueueEntries, $ladder, $qmPlayer, $history, $maps)
     {
-        $ladder = \App\Ladder::where('id', $qmPlayer->ladder_id)->first();
-        $history = $ladder->currentHistory();
-
+        $qmMapId = -1;
         if ($ladder->qmLadderRules->use_ranked_map_picker) //use ranked map selection
         {
             $rank = $qmPlayer->player->rank($history);
@@ -303,21 +294,59 @@ class QuickMatchService
             $qmMapId = $maps[$randomMapIdx]->id;
         }
 
+        return $qmMapId;
+    }
+
+    private function checkMatchForObserver($qmPlayer, $otherQMQueueEntries)
+    {
+        # Checkourselves
+        $hasObservers = $qmPlayer->isObserver() === true;
+
+        # Check other players
+        foreach ($otherQMQueueEntries as $otherQMQueueEntry)
+        {
+            if ($otherQMQueueEntry->qmPlayer->isObserver() === true)
+            {
+                $hasObservers = true;
+                break;
+            }
+        }
+
+        return $hasObservers;
+    }
+
+    public function createQmMatch(
+        $qmPlayer,
+        $userPlayerTier,
+        $maps,
+        $otherQMQueueEntries,
+        $qEntry,
+        $gameType
+    )
+    {
+        $ladder = \App\Ladder::where('id', $qmPlayer->ladder_id)->first();
+        $history = $ladder->currentHistory();
+
+        $qmMapId = $this->pickMap($otherQMQueueEntries, $ladder, $qmPlayer, $history, $maps);
+        $matchHasObserver = $this->checkMatchForObserver($qmPlayer, $otherQMQueueEntries);
+        $actualPlayerCount = count($otherQMQueueEntries) + 1; // Total player counts equals myself plus other players to be matched
+        $expectedPlayerCount = $ladder->qmLadderRules->player_count;
+
+        if ($matchHasObserver === true)
+        {
+            $expectedPlayerCount = $expectedPlayerCount + 1;
+        }
+
+        Log::info("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver);
+        Log::info("ApiQuickMatchController ** createQmMatch: Player counts " . $actualPlayerCount . "/" . $expectedPlayerCount);
+
+
         # Create the qm_matches db entry
         $qmMatch = new QmMatch();
         $qmMatch->ladder_id = $qmPlayer->ladder_id;
         $qmMatch->qm_map_id = $qmMapId;
         $qmMatch->seed = mt_rand(-2147483647, 2147483647);
         $qmMatch->tier = $userPlayerTier;
-
-        $actualPlayerCount = count($otherQMQueueEntries) + 1; //total player counts equals myself plus other players to be matched
-        $expectedPlayerCount = $ladder->qmLadderRules->player_count;
-        if ($actualPlayerCount != $expectedPlayerCount)
-        {
-            // Log::error("Only found $actualPlayerCount players, expected $expectedPlayerCount.");
-            // Log::error(implode(",", $actualPlayerCount) . ", " . $qmPlayer->player->username);
-            // return null
-        }
 
         # Create the Game
         $game = Game::genQmEntry($qmMatch, $gameType);
@@ -353,11 +382,12 @@ class QuickMatchService
         $team2SpawnOrder = explode(',', $qmMap->team2_spawn_order); //e.g. 3,4
         $teamSpotsAssigned = false;
         if (
-            $ladder->clans_allowed && count($team1SpawnOrder) == $ladder->qmLadderRules->player_count / 2
+            $ladder->clans_allowed
+            && count($team1SpawnOrder) == $ladder->qmLadderRules->player_count / 2
             && count($team2SpawnOrder) == $ladder->qmLadderRules->player_count / 2
         )
         {
-            if ($qmPlayer->clan_id)
+            if ($qmPlayer->clan_id && $qmPlayer->isObserver() === false)
             {
                 //map each player to their clan
                 $team1 = [];
@@ -367,10 +397,17 @@ class QuickMatchService
                 //assign other players to correct clan (assumes there are 2 clans)
                 foreach ($otherQMQueueEntries as $qmOpnEntry)
                 {
-                    if ($qmOpnEntry->qmPlayer->clan_id == $qmPlayer->clan_id && $qmOpnEntry->qmPlayer->id != $qmPlayer->id)
+                    if (
+                        $qmOpnEntry->qmPlayer->clan_id == $qmPlayer->clan_id
+                        && $qmOpnEntry->qmPlayer->id != $qmPlayer->id
+                    )
+                    {
                         $team1[] = $qmOpnEntry->qmPlayer;
+                    }
                     else
+                    {
                         $team2[] = $qmOpnEntry->qmPlayer;
+                    }
                 }
 
                 if (count($team1) != count($team1SpawnOrder))
@@ -383,23 +420,30 @@ class QuickMatchService
                 }
                 else
                 {
+
                     //assign team 1 spots
                     $color = 0;
                     for ($i = 0; $i < count($team1SpawnOrder); $i++) //red + yellow
                     {
                         $currentQmPlayer = $team1[$i];
-                        $currentQmPlayer->color = $color++;
-                        $currentQmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
-                        $currentQmPlayer->save();
+                        if ($currentQmPlayer->isObserver() === false)
+                        {
+                            $currentQmPlayer->color = $color++;
+                            $currentQmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
+                            $currentQmPlayer->save();
+                        }
                     }
 
                     //assign team 2 spots
                     for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
                     {
                         $currentQmPlayer = $team2[$i];
-                        $currentQmPlayer->color = $color++;
-                        $currentQmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
-                        $currentQmPlayer->save();
+                        if ($currentQmPlayer->isObserver() === false)
+                        {
+                            $currentQmPlayer->color = $color++;
+                            $currentQmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
+                            $currentQmPlayer->save();
+                        }
                     }
 
                     $mapName = $qmMap->map->name;
@@ -506,8 +550,14 @@ class QuickMatchService
         return $qmMatch;
     }
 
+
     /**
      * Given a player's rank, choose a map based on map ranked difficulties
+     * @param mixed $mapsArr 
+     * @param mixed $rank 
+     * @param mixed $points 
+     * @param mixed $matchAnyMap 
+     * @return mixed 
      */
     private function rankedMapPicker($mapsArr, $rank, $points, $matchAnyMap)
     {
@@ -588,21 +638,33 @@ class QuickMatchService
         return $map->id;
     }
 
+
     /**
      * Given $numPlayers, return an array of numbers, length of array = $numPlayers.
-     * 
      * Clan ladder matches should randomize the colors. 1v1 should use red vs yellow.
+     * @param mixed $numPlayers 
+     * @param mixed $randomize 
+     * @return int[] 
      */
     private function getColorsArr($numPlayers, $randomize)
     {
         $possibleColors = [0, 1, 2, 3, 4, 5, 6, 7];
 
         if ($randomize)
+        {
             shuffle($possibleColors);
+        }
 
         return array_slice($possibleColors, 0, $numPlayers);
     }
 
+
+    /**
+     * 
+     * @param mixed $numPlayers 
+     * @param mixed $randomize 
+     * @return array 
+     */
     private function getLocationsArr($numPlayers, $randomize)
     {
         $locations = [];
@@ -612,7 +674,9 @@ class QuickMatchService
         }
 
         if ($randomize)
+        {
             shuffle($locations);
+        }
 
         return $locations;
     }
