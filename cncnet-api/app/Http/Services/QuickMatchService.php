@@ -77,7 +77,7 @@ class QuickMatchService
         if (
             $player->username === "Grant"
             || $player->username === "neogrant"
-            || $player->username === "Zingo"
+            // || $player->username === "Zingo"
             || $player->username === "[FC]MJ"
             || $player->username === "callmemj"
         )

@@ -198,48 +198,51 @@ class QuickMatchSpawnService
             $otherIndex++;
         }
 
-        //create multi alliance for opponent's team
-        $completed = false;
-        foreach ($otherQmMatchPlayers as $opn)
+        if ($qmPlayer->clan_id)
         {
-            $multiIndex = $opn->color + 1;
-
-            if ($opn->isObserver() == false)
+            //create multi alliance for opponent's team
+            $completed = false;
+            foreach ($otherQmMatchPlayers as $opn)
             {
-                if (!in_array($multiIndex, $myTeamIndices)) //this index is opponent's team
+                $multiIndex = $opn->color + 1;
+
+                if ($opn->isObserver() == false)
                 {
-                    foreach ($otherQmMatchPlayers as $opn2) //find teammate(s)
+                    if (!in_array($multiIndex, $myTeamIndices)) //this index is opponent's team
                     {
-                        $otherIndex = $opn2->color + 1;
-
-                        if ($otherIndex == $multiIndex) //self
-                            continue;
-
-                        if (!in_array($otherIndex, $myTeamIndices)) //this index is opponent's teammate
+                        foreach ($otherQmMatchPlayers as $opn2) //find teammate(s)
                         {
-                            $p1Name = $opn->player->username;
-                            $p2Name = $opn2->player->username;
+                            $otherIndex = $opn2->color + 1;
 
-                            $p1IsObserver = $opn->isObserver();
-                            $p2IsObserver = $opn2->isObserver();
+                            if ($otherIndex == $multiIndex) //self
+                                continue;
 
-                            if ($p1IsObserver == false && $p2IsObserver == false)
+                            if (!in_array($otherIndex, $myTeamIndices)) //this index is opponent's teammate
                             {
-                                if ($opn->clan_id == $opn2->clan_id)
+                                $p1Name = $opn->player->username;
+                                $p2Name = $opn2->player->username;
+
+                                $p1IsObserver = $opn->isObserver();
+                                $p2IsObserver = $opn2->isObserver();
+
+                                if ($p1IsObserver == false && $p2IsObserver == false)
                                 {
-                                    Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $p2IsObserver)");
-                                    $spawnStruct["spawn"]["Multi{$otherIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
-                                    $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $otherIndex - 1;
-                                    $completed = true;
+                                    if ($opn->clan_id == $opn2->clan_id)
+                                    {
+                                        Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $p2IsObserver)");
+                                        $spawnStruct["spawn"]["Multi{$otherIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
+                                        $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $otherIndex - 1;
+                                        $completed = true;
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            if ($completed)
-                break;
+                if ($completed)
+                    break;
+            }
         }
 
         return $spawnStruct;
