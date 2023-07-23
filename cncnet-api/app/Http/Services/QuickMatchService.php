@@ -11,7 +11,7 @@ use App\Commands\Matchup\ClanMatchupHandler;
 
 class QuickMatchService
 {
-    public function createQMPlayer($request, $player, $history, $ladder, $ladderRules)
+    public function createQMPlayer($request, $player, $history)
     {
         $qmPlayer = new QmMatchPlayer();
         $qmPlayer->player_id = $player->id;
@@ -78,7 +78,8 @@ class QuickMatchService
             $player->username === "Grant"
             || $player->username === "neogrant"
             || $player->username === "Zingo"
-            || $player->username === "neo"
+            || $player->username === "[FC]MJ"
+            || $player->username === "callmemj"
         )
         {
             Log::info("Player ** Is observing Game: " . $player->username);
@@ -300,12 +301,12 @@ class QuickMatchService
     private function checkMatchForObserver($qmPlayer, $otherQMQueueEntries)
     {
         # Checkourselves
-        $hasObservers = $qmPlayer->isObserver() === true;
+        $hasObservers = $qmPlayer->isObserver() == true;
 
         # Check other players
         foreach ($otherQMQueueEntries as $otherQMQueueEntry)
         {
-            if ($otherQMQueueEntry->qmPlayer->isObserver() === true)
+            if ($otherQMQueueEntry->qmPlayer->isObserver() == true)
             {
                 $hasObservers = true;
                 break;
@@ -387,14 +388,14 @@ class QuickMatchService
             && count($team2SpawnOrder) == $ladder->qmLadderRules->player_count / 2
         )
         {
-            if ($qmPlayer->clan_id && $qmPlayer->isObserver() === false)
+            if ($qmPlayer->clan_id && $qmPlayer->isObserver() == false)
             {
                 //map each player to their clan
                 $team1 = [];
                 $team2 = [];
                 $team1[] = $qmPlayer;
 
-                //assign other players to correct clan (assumes there are 2 clans)
+                // Assign other players to correct clan (assumes there are 2 clans)
                 foreach ($otherQMQueueEntries as $qmOpnEntry)
                 {
                     if (
@@ -426,7 +427,7 @@ class QuickMatchService
                     for ($i = 0; $i < count($team1SpawnOrder); $i++) //red + yellow
                     {
                         $currentQmPlayer = $team1[$i];
-                        if ($currentQmPlayer->isObserver() === false)
+                        if ($currentQmPlayer->isObserver() == false)
                         {
                             $currentQmPlayer->color = $color++;
                             $currentQmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
@@ -438,7 +439,7 @@ class QuickMatchService
                     for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
                     {
                         $currentQmPlayer = $team2[$i];
-                        if ($currentQmPlayer->isObserver() === false)
+                        if ($currentQmPlayer->isObserver() == false)
                         {
                             $currentQmPlayer->color = $color++;
                             $currentQmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
@@ -465,9 +466,17 @@ class QuickMatchService
         $i = 0;
         if (!$teamSpotsAssigned)
         {
-            $qmPlayer->color = $colorsArr[$i];
-            $qmPlayer->location = $spawnOrder[$i] - 1;
-            $i++;
+            if ($qmPlayer->isObserver() == true)
+            {
+                $qmPlayer->color = 5;
+                $qmPlayer->location = -1;
+            }
+            else
+            {
+                $qmPlayer->color = $colorsArr[$i];
+                $qmPlayer->location = $spawnOrder[$i] - 1;
+                $i++;
+            }
         }
 
         $qmPlayer->qm_match_id = $qmMatch->id;
@@ -519,18 +528,20 @@ class QuickMatchService
                 $opn->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
             }
 
+
             if (!$teamSpotsAssigned) //spots were not team assigned
             {
-                $opn->color = $colorsArr[$i];
-                if ($opn->isObserver() === false)
+                if ($opn->isObserver() == true)
                 {
-                    $opn->location = $spawnOrder[$i] - 1;
+                    $opn->color = 5;
+                    $opn->location = -1;
                 }
                 else
                 {
-                    $opn->location = -1;
+                    $opn->color = $colorsArr[$i];
+                    $opn->location = $spawnOrder[$i] - 1;
+                    $i++;
                 }
-                $i++;
             }
 
             $opn->qm_match_id = $qmMatch->id;

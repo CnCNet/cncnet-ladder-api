@@ -390,7 +390,7 @@ class ApiQuickMatchController extends Controller
         # If we're new to the queue, create required QmMatchPlayer model
         if ($qmPlayer == null)
         {
-            $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $history, $ladder, $ladderRules);
+            $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $history);
             $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladderRules);
 
             if (!$validSides)
@@ -404,6 +404,8 @@ class ApiQuickMatchController extends Controller
         if ($request->ai_dat)
         {
             $qmPlayer->ai_dat = $request->ai_dat;
+            $qmPlayer->save();
+
             $error = "Error, please contact us on the CnCNet Discord";
             return $this->onMatchFatalError($error);
         }

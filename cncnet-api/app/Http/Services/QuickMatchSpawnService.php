@@ -110,11 +110,13 @@ class QuickMatchSpawnService
      */
     public static function appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers)
     {
+        Log::info("QuickMatchSpawnService ** appendOthersAndTeamAlliancesToSpawnIni: Is Observer: " . $qmPlayer->isObserver());
+
         $otherIndex = 1;
         $multiIndex = $qmPlayer->color + 1;
         $currentQmPlayerIndex = $multiIndex;
 
-        if ($qmPlayer->isObserver() === false)
+        if ($qmPlayer->isObserver() == false)
         {
             $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIndex}"] = $qmPlayer->location;
         }
@@ -146,7 +148,7 @@ class QuickMatchSpawnService
 
             $multiIndex = $opn->color + 1;
 
-            if ($opn->isObserver() === false)
+            if ($opn->isObserver() == false)
             {
                 $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIndex}"] = $opn->location;
             }
@@ -156,17 +158,23 @@ class QuickMatchSpawnService
             if (
                 $qmPlayer->clan_id
                 && $qmPlayer->clan_id == $opn->clan_id
-                && $opn->isObserver() === false
             )
             {
+                $clanName = $qmPlayer->clan->name;
                 $p1Name = $qmPlayer->player->username;
+                $p1IsObserver = $qmPlayer->isObserver();
+
                 $p2Name = $opn->player->username;
+                $p2IsObserver  = $opn->isObserver();
 
-                Log::info("PlayerIndex ** assigning $p1Name with $p2Name");
+                if ($p1IsObserver == false && $p2IsObserver == false)
+                {
+                    Log::info("QuickMatchSpawnService 1 ** Alliances: Teaming for $clanName, Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $$p2IsObserver)");
 
-                $spawnStruct["spawn"]["Multi{$currentQmPlayerIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
-                $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $currentQmPlayerIndex - 1;
-                $myTeamIndices[] = $multiIndex;
+                    $spawnStruct["spawn"]["Multi{$currentQmPlayerIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
+                    $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $currentQmPlayerIndex - 1;
+                    $myTeamIndices[] = $multiIndex;
+                }
             }
 
 
@@ -196,7 +204,7 @@ class QuickMatchSpawnService
         {
             $multiIndex = $opn->color + 1;
 
-            if ($opn->isObserver() === false)
+            if ($opn->isObserver() == false)
             {
                 if (!in_array($multiIndex, $myTeamIndices)) //this index is opponent's team
                 {
@@ -212,10 +220,19 @@ class QuickMatchSpawnService
                             $p1Name = $opn->player->username;
                             $p2Name = $opn2->player->username;
 
-                            Log::info("PlayerIndex ** assigning opponents $p1Name with $p2Name");
-                            $spawnStruct["spawn"]["Multi{$otherIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
-                            $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $otherIndex - 1;
-                            $completed = true;
+                            $p1IsObserver = $opn->isObserver();
+                            $p2IsObserver = $opn2->isObserver();
+
+                            if ($p1IsObserver == false && $p2IsObserver == false)
+                            {
+                                if ($opn->clan_id == $opn2->clan_id)
+                                {
+                                    Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $p2IsObserver)");
+                                    $spawnStruct["spawn"]["Multi{$otherIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
+                                    $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $otherIndex - 1;
+                                    $completed = true;
+                                }
+                            }
                         }
                     }
                 }

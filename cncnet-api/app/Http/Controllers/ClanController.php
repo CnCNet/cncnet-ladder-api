@@ -439,12 +439,15 @@ class ClanController extends Controller
         $activeHandle = PlayerActiveHandle::getPlayerActiveHandle($player->id, $ladder->id, $startOfMonth, $endOfMonth);
 
         //get count of how many games this user has played
-        $gamesPlayed = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($activeHandle, $startOfMonth, $endOfMonth);
-
-        if ($gamesPlayed > 0)
+        if (false)
         {
-            $request->session()->flash('error', "$player->username cannot leave $clan->short because you have played $gamesPlayed games for this clan this month. Wait until this month is over to leave this clan.");
-            return redirect()->back();
+            $gamesPlayed = PlayerActiveHandle::getUserActiveHandleGamesPlayedCount($activeHandle, $startOfMonth, $endOfMonth);
+
+            if ($gamesPlayed > 0)
+            {
+                $request->session()->flash('error', "$player->username cannot leave $clan->short because you have played $gamesPlayed games for this clan this month. Wait until this month is over to leave this clan.");
+                return redirect()->back();
+            }
         }
 
         $invite = new ClanInvitation;

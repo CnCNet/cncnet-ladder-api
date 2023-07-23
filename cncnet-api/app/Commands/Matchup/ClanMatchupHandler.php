@@ -25,6 +25,10 @@ class ClanMatchupHandler extends BaseMatchupHandler
         $allQMQueueEntries = QmQueueEntry::where('ladder_history_id', '=', $this->history->id)->get();
 
         $this->matchHasObservers = $this->checkMatchForObserver($allQMQueueEntries);
+        if ($this->matchHasObservers === true)
+        {
+            $playerCountForMatchup = $playerCountForMatchup + 1; # E.g. 4 players + 1x observer
+        }
 
         Log::info("ClanMatchupHandler ** Players Per Clan Required: " . $playerCountPerClanRequired);
         Log::info("ClanMatchupHandler ** Players For Matchup Required: " . $playerCountForMatchup);
@@ -37,16 +41,14 @@ class ClanMatchupHandler extends BaseMatchupHandler
             return $this->removeQueueEntry();
         }
 
-
-
         # Group queue entries by clan and make sure we only have the exact number of players in each
         $groupedQmQueueEntriesByClan = $this->groupAndLimitClanPlayers($allQMQueueEntries, $playerCountPerClanRequired);
 
         # remove other clans who current user has a player who belongs to it
         // $groupedQmQueueEntriesByClan = $this->removeClansCurrentPlayerIsIn($currentUserClanPlayer, $ladder->id, $groupedQmQueueEntriesByClan);
 
-        # Collection of QM Queued Players ready 
-        $readyQMQueueEntries = (new QmQueueEntry())->newCollection();
+        # Collection of other QM Queued Players ready 
+        $otherQMQueueEntries = (new QmQueueEntry())->newCollection();
 
         foreach ($groupedQmQueueEntriesByClan as $clanId => $allQMQueueEntries)
         {
@@ -61,27 +63,36 @@ class ClanMatchupHandler extends BaseMatchupHandler
                         # Don't add ourselves
                         continue;
                     }
-                    $readyQMQueueEntries->add($qmQueueEntry);
+                    $otherQMQueueEntries->add($qmQueueEntry);
                 }
             }
 
-            if ($readyQMQueueEntries->count() == $playerCountForMatchup) //required number of players found
+            if ($otherQMQueueEntries->count() == $playerCountForMatchup) //required number of players found
                 break;
         }
 
-        $playersReadyCount = $readyQMQueueEntries->count() + 1; # Add ourselves to this count
 
-        if ($this->matchHasObservers === true)
+        # Check for observers and add to our ready qm entries
+        foreach ($allQMQueueEntries as $qmQueueEntry)
         {
-            $playerCountForMatchup = $playerCountForMatchup + 1; # E.g. 4 players + 1x observer
+            if (
+                $qmQueueEntry->qmPlayer->isObserver() === true
+                && $this->qmPlayer->id !== $qmQueueEntry->qmPlayer->id
+            )
+            {
+                Log::info("ClanMatchUpHandler ** Adding observer to our ready entries: " . $qmQueueEntry->qmPlayer->player->username);
+                $otherQMQueueEntries->add($qmQueueEntry);
+                break; //1x only
+            }
         }
 
+        $playersReadyCount = $otherQMQueueEntries->count() + 1; # Add ourselves to this count
         Log::info("ClanMatchUpHandler ** Match has observer: " . $this->matchHasObservers);
         Log::info("ClanMatchUpHandler ** Player count for matchup: Ready: " . $playersReadyCount . "  Required: " . $playerCountForMatchup);
 
         if ($playersReadyCount === $playerCountForMatchup)
         {
-            $commonQmMaps = $this->removeRejectedMaps($ladderMaps, $this->qmPlayer, $readyQMQueueEntries);
+            $commonQmMaps = $this->removeRejectedMaps($ladderMaps, $this->qmPlayer, $otherQMQueueEntries);
 
             if (count($commonQmMaps) <= 0)
             {
@@ -89,11 +100,11 @@ class ClanMatchupHandler extends BaseMatchupHandler
             }
             else
             {
-                $playerNames = implode(",", $this->getPlayerNamesInQueue($readyQMQueueEntries));
+                $playerNames = implode(",", $this->getPlayerNamesInQueue($otherQMQueueEntries));
                 Log::info("Launching clan match with players $playerNames, " . $currentPlayer->username);
                 return $this->createMatch(
                     $commonQmMaps,
-                    $readyQMQueueEntries
+                    $otherQMQueueEntries
                 );
             }
         }
