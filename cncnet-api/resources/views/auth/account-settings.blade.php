@@ -133,6 +133,21 @@
                             </div>
                         @endif
 
+                        @if ($user->name == 9466 || $user->id == 30045 || $user->id == 1)
+                            <div class="form-group mt-5 mb-5">
+                                <h3>Observer Mode (Invite only)</h3>
+                                <p>
+                                    Watch any match on any ladder. Enabling this will take any username you have in the ladder and make you an observer.
+                                </p>
+                                <p>
+                                    <label>
+                                        <input id="isObserver" type="checkbox" name="isObserver" @if ($userSettings->is_observer) checked @endif />
+                                        Enable Observer Mode
+                                    </label>
+                                </p>
+                            </div>
+                        @endif
+
                         <div class="form-group">
                             <h3>Match Ladder AI Bot?</h3>
                             <p>
@@ -171,7 +186,8 @@
                                         <label>
                                             <input id="match_any_map" type="checkbox" name="match_any_map"
                                                 @if ($userSettings->match_any_map) checked @endif />
-                                            Allow matching on any map regardless of your rank. Is used when both matched players have this option selected.
+                                            Allow matching on any map regardless of your rank. Is used when both matched players have this option
+                                            selected.
                                             (Affects ladders which use map divisions like RA2.)
                                         </label>
                                     </p>
@@ -179,11 +195,20 @@
                             </div>
                         </div>
 
+
                         <div class="form-group mt-5 mb-5">
                             <h3>Skip Score Screen</h3>
                             <label>
                                 <input id="skip_score_screen" type="checkbox" name="skip_score_screen" @if ($userSettings->skip_score_screen) checked @endif />
                                 Skip the score screen after a match ends
+                            </label>
+                        </div>
+
+                        <div class="form-group mt-5 mb-5">
+                            <h3>Observers</h3>
+                            <label>
+                                <input id="allow_observers" type="checkbox" name="allow_observers" @if ($userSettings->allow_observers) checked @endif />
+                                Allow CnCNet vetted streamers to stream your matches?
                             </label>
                         </div>
 

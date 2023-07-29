@@ -72,11 +72,8 @@ class QuickMatchService
 
         $player->user->save();
 
-        // Is player observer?
-        // @TODO: Just for tests until we do this by "Observer" faction
-        if (
-            $player->username === "Thomas338"
-        )
+        // Is player an observer?
+        if ($player->user->is_observer)
         {
             Log::info("Player ** Is observing Game: " . $player->username);
             $qmPlayer->is_observer = true;
