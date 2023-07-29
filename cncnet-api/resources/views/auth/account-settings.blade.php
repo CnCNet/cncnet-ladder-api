@@ -133,7 +133,8 @@
                             </div>
                         @endif
 
-                        @if ($user->name == 9466 || $user->id == 30045 || $user->id == 1)
+                        {{-- MJ, Matt, Iver, Grant --}}
+                        @if ($user->name == 9466 || $user->id == 30045 || $user->id == 53431 || $user->id == 1)
                             <div class="form-group mt-5 mb-5">
                                 <h3>Observer Mode (Invite only)</h3>
                                 <p>
