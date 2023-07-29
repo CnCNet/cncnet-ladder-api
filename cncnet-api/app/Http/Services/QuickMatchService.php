@@ -320,7 +320,6 @@ class QuickMatchService
     {
         Log::info("QuickMatchService ** setClanSpawns: " . $qmPlayer->player->username);
 
-
         // Check if team spots are configured, if this is a clan match
         $team1SpawnOrder = explode(',', $qmMap->team1_spawn_order); // e.g. 1,2
         $team2SpawnOrder = explode(',', $qmMap->team2_spawn_order); // e.g. 3,4
@@ -496,17 +495,21 @@ class QuickMatchService
 
     private function set1v1QmSpawns($otherQmQueueEntries, $qmMatch, $qmPlayer, $expectedPlayerQueueCount, $matchHasObserver, $qmMap, $perMS, $qEntry)
     {
-        Log::info("QuickMatchService ** set1v1QmSpawns: " . $qmPlayer->player->username);
-
         $spawnOrder = explode(',', $qmMap->spawn_order);
 
+        Log::info("QuickMatchService ** set1v1QmSpawns: " . $qmPlayer->player->username . " Playing " . $qmMap->map->name);
+        Log::info("QuickMatchService ** set1v1QmSpawns: Qm Map" . $qmMap->description);
+
         if (
-            $qmMap->random_spawns
+            $qmMap->random_spawns == true
             && $qmMap->map->spawn_count > 2
-            && $expectedPlayerQueueCount == $matchHasObserver ? 3 : 2
+            && ($expectedPlayerQueueCount == ($matchHasObserver ? 3 : 2))
         )
         {
+            Log::info("QuickMatchService ** set1v1QmSpawns: Random Spawns for " . $qmMap->description);
+
             # This map uses 1v1 random spawns
+            $spawnOrder = [];
             $numSpawns = $qmMap->map->spawn_count;
             $spawnArr = [];
 
@@ -581,6 +584,12 @@ class QuickMatchService
             $otherQmPlayer->tunnel_id = $qmMatch->seed + $otherQmPlayer->color;
             $otherQmPlayer->save();
         }
+
+        if ($qmPlayer->actual_side == -1)
+        {
+            $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+        }
+        $qmPlayer->save();
     }
 
     public function createQmMatch(
