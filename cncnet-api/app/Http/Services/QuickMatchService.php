@@ -373,7 +373,7 @@ class QuickMatchService
                     continue;
                 }
 
-                $teams[$otherQmQueueEntry->qmPlayer->clan_id][] = $otherQmQueueEntry;
+                $teams[$otherQmQueueEntry->qmPlayer->clan_id][] = $otherQmQueueEntry->qmPlayer;
             }
 
             // Get the values (sub-arrays) from the $teams array
