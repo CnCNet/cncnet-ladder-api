@@ -73,7 +73,7 @@ class QuickMatchService
         $player->user->save();
 
         // Is player an observer?
-        if ($player->user->is_observer)
+        if ($player->user->userSettings->is_observer)
         {
             Log::info("Player ** Is observing Game: " . $player->username);
             $qmPlayer->is_observer = true;
