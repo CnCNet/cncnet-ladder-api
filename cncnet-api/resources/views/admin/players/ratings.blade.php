@@ -148,7 +148,7 @@
                                             <form method="POST" action="/admin/users/tier/update">
                                                 {{ csrf_field() }}
                                                 <input type="hidden" name="user_id" value="{{ $user->id }}" />
-                                                <input type="hidden" name="ladder_id" value="{{ $user->id }}" />
+                                                <input type="hidden" name="ladder_id" value="{{ $history->ladder->id }}" />
 
                                                 @php
                                                     $userTier = $user->getUserLadderTier($history->ladder);
