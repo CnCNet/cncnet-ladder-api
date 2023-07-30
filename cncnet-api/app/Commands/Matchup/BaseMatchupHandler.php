@@ -22,7 +22,7 @@ class BaseMatchupHandler
         $this->qmQueueEntry = $qEntry;
         $this->qmPlayer = $qmPlayer;
         $this->gameType = $gameType;
-        $this->currentUserTier = $this->qmPlayer->player->user->getUserLadderTier($history->ladder);
+        $this->currentUserTier = $this->qmPlayer->player->user->getUserLadderTier($history->ladder)->tier;
         $this->matchHasObservers = $qmPlayer->isObserver();
     }
 
