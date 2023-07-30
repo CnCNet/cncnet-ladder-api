@@ -8,6 +8,7 @@ use App\QmMatchPlayer;
 use App\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
 use App\Commands\Matchup\ClanMatchupHandler;
+use Exception;
 
 class QuickMatchService
 {
@@ -732,52 +733,63 @@ class QuickMatchService
 
         $randVal = mt_rand(0, 99); //rand val between 0 and 99
 
-        if ($matchAnyMap)
+        try
         {
-            $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
-            $map = $mapsArr[$randIdx];
-        }
-        else if ($rank >= 90 || $points < 150) //90-999 or points less than 150 points
-        {
-            $randIdx = mt_rand(0, count($mapsRanked[1]) - 1);  //pick a beginner map
-            $map = $mapsRanked[1][$randIdx];
-        }
-        else if ($rank >= 75 || $points < 300) //75 - 89
-        {
-            $beginnerAndIntermediate = array_merge($mapsRanked[1], $mapsRanked[2]);
-            $randIdx = mt_rand(0, count($beginnerAndIntermediate) - 1);
-            $map = $beginnerAndIntermediate[$randIdx];
-        }
-        else if ($rank >= 50 || $points < 400) //50-74
-        {
-            if ($randVal < 60) //beginner/intermediate map
+            if ($matchAnyMap)
+            {
+                $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
+                $map = $mapsArr[$randIdx];
+            }
+            else if ($rank >= 90 || $points < 150) //90-999 or points less than 150 points
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[1]) - 1);  //pick a beginner map
+                $map = $mapsRanked[1][$randIdx];
+            }
+            else if ($rank >= 75 || $points < 300) //75 - 89
             {
                 $beginnerAndIntermediate = array_merge($mapsRanked[1], $mapsRanked[2]);
                 $randIdx = mt_rand(0, count($beginnerAndIntermediate) - 1);
                 $map = $beginnerAndIntermediate[$randIdx];
             }
-            else //advanced map
+            else if ($rank >= 50 || $points < 400) //50-74
             {
-                $randIdx = mt_rand(0, count($mapsRanked[3]) - 1);
-                $map = $mapsRanked[3][$randIdx];
+                if ($randVal < 60) //beginner/intermediate map
+                {
+                    $beginnerAndIntermediate = array_merge($mapsRanked[1], $mapsRanked[2]);
+                    $randIdx = mt_rand(0, count($beginnerAndIntermediate) - 1);
+                    $map = $beginnerAndIntermediate[$randIdx];
+                }
+                else //advanced map
+                {
+                    $randIdx = mt_rand(0, count($mapsRanked[3]) - 1);
+                    $map = $mapsRanked[3][$randIdx];
+                }
+            }
+            else if ($rank >= 20) //20 - 49
+            {
+                if ($randVal < 70) //beginner/intermediate/advanced map
+                {
+                    $beginnerAndIntermediateAndAdvanced = array_merge($mapsRanked[1], $mapsRanked[2], $mapsRanked[3]);
+                    $randIdx = mt_rand(0, count($beginnerAndIntermediateAndAdvanced));
+                    $map = $beginnerAndIntermediateAndAdvanced[$randIdx];
+                }
+                else //expert map
+                {
+                    $randIdx = mt_rand(0, count($mapsRanked[4]) - 1);
+                    $map = $mapsRanked[4][$randIdx];
+                }
+            }
+            else
+            {
+                $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
+                $map = $mapsArr[$randIdx];
             }
         }
-        else if ($rank >= 20) //20 - 49
+        catch (Exception $ex)
         {
-            if ($randVal < 70) //beginner/intermediate/advanced map
-            {
-                $beginnerAndIntermediateAndAdvanced = array_merge($mapsRanked[1], $mapsRanked[2], $mapsRanked[3]);
-                $randIdx = mt_rand(0, count($beginnerAndIntermediateAndAdvanced));
-                $map = $beginnerAndIntermediateAndAdvanced[$randIdx];
-            }
-            else //expert map
-            {
-                $randIdx = mt_rand(0, count($mapsRanked[4]) - 1);
-                $map = $mapsRanked[4][$randIdx];
-            }
-        }
-        else
-        {
+            // Safety until its fixed
+
+            Log::info("Error in rankedMapPicker: " . $ex->getMessage());
             $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
             $map = $mapsArr[$randIdx];
         }
