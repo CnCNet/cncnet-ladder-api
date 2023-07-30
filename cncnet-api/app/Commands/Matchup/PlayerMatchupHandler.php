@@ -53,34 +53,34 @@ class PlayerMatchupHandler extends BaseMatchupHandler
             $oppUserSettings = $oppUser->userSettings;
             $oppPlayer = $oppQmPlayer->player;
             $oppPlayerRank = $oppPlayer->rank($this->history);
-            $oppUserPlayerTier = $oppPlayer->getCachedPlayerTierByLadderHistory($this->history);
+            $oppUserTier = $oppUser->getUserLadderTier($this->history->ladder);
 
             # Checks players are in same league tier otherwise skip
-            if ($oppUserPlayerTier !== $this->currentUserPlayerTier)
+            if ($oppUserTier !== $this->currentUserTier)
             {
                 # At this point we've now deemed they can't match based on current tiers/elo
                 # But now check if players we've specifically chosen in the admin panel can still match in this tier
                 $canMatch = false;
 
                 # Check both as either player could be tier 1
-                if ($oppUserPlayerTier == 1)
+                if ($oppUserTier == 1)
                 {
-                    $canMatch = LeaguePlayer::playerCanPlayBothTiers($oppUser, $ladder);
+                    $canMatch = $oppUser->canUserPlayBothTiers($ladder);
                 }
 
-                if ($canMatch == false && $this->currentUserPlayerTier == 1)
+                if ($canMatch == false && $this->currentUserTier == 1)
                 {
-                    $canMatch = LeaguePlayer::playerCanPlayBothTiers($currentUser, $ladder);
+                    $canMatch = $currentUser->canUserPlayBothTiers($ladder);
                 }
 
                 if ($canMatch == false)
                 {
-                    Log::info("FindOpponent ** Players in different tiers for ladder " . $this->history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $currentPlayer->username . " (Tier: " . $this->currentUserPlayerTier . ")");
+                    Log::info("FindOpponent ** Players in different tiers for ladder " . $this->history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $currentPlayer->username . " (Tier: " . $this->currentUserTier . ")");
                     continue;
                 }
                 else
                 {
-                    Log::info("FindOpponent ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  " . $this->history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $currentPlayer->username . " (Tier: " . $this->currentUserPlayerTier . ")");
+                    Log::info("FindOpponent ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  " . $this->history->ladder->abbreviation . "- P1:" . $oppPlayer->username . " (Tier: " . $oppUserPlayerTier . ") VS  P2:" . $currentPlayer->username . " (Tier: " . $this->currentUserTier . ")");
                 }
             }
 

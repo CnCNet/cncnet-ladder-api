@@ -956,26 +956,14 @@ class AdminController extends Controller
         ]);
     }
 
-    public function updatePlayerRatings(Request $request, $ladderAbbreviation)
+    public function updateUserLadderTier(Request $request)
     {
-        $ladder = Ladder::where("abbreviation", $ladderAbbreviation)->first();
+        $ladder = Ladder::where("id", $request->ladder_id)->first();
         if ($ladder == null)
         {
-            abort(404, "Ladder not found");
+            $request->session()->flash('error', "Ladder not found");
+            return redirect()->back();
         }
-
-        $history = $ladder->currentHistory();
-        $userRatingService = new UserRatingService();
-        $userRatingService->calculateUserTiers($history);
-
-        $request->session()->flash('success', "User ratings have been updated");
-        return redirect()->back();
-    }
-
-    public function changeUserRating(Request $request, $abbreviation)
-    {
-        $ladder = Ladder::where("abbreviation", $abbreviation)->first();
-        $history = $ladder->currentHistory();
 
         $user = User::find($request->user_id);
         if ($user == null)
@@ -984,37 +972,24 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
-        $userRatingService = new UserRatingService();
-        $userRatingService->changeUserRating($user, $request->new_rating, $history);
-
-        $request->session()->flash('success', "User rating updated");
-        return redirect()->back();
-    }
-
-    public function changeLeaguePlayerStatus(Request $request, $abbreviation)
-    {
-        $ladder = Ladder::where("abbreviation", $abbreviation)->first();
-
-        $user = User::find($request->user_id);
-        if ($user == null)
+        $userTier = $user->userTier;
+        if ($request->tier == 1 || $request->tier == 2)
         {
-            $request->session()->flash('error', "User not found");
-            return redirect()->back();
+            $userTier->tier = $request->tier;
         }
 
-        $leaguePlayerService = new LeaguePlayerService();
         $userCanPlayBothTiers = $request->canPlayBothTiers;
-
         if ($userCanPlayBothTiers == "on")
         {
-            $leaguePlayerService->updateLeaguePlayer($ladder->id, $user->id, true);
+            $userTier->both_tiers = true;
         }
         else
         {
-            $leaguePlayerService->deleteLeaguePlayer($ladder->id, $user->id);
+            $userTier->both_tiers = false;
         }
+        $userTier->save();
 
-        $request->session()->flash('success', "Match making preference updated");
+        $request->session()->flash('success', "User Tier updated");
         return redirect()->back();
     }
 

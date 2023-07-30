@@ -594,7 +594,7 @@ class QuickMatchService
 
     public function createQmMatch(
         $qmPlayer,
-        $userPlayerTier,
+        $currentUserTier,
         $maps,
         $otherQmQueueEntries,
         $qEntry,
@@ -629,7 +629,7 @@ class QuickMatchService
         $qmMatch->ladder_id = $qmPlayer->ladder_id;
         $qmMatch->qm_map_id = $qmMapId;
         $qmMatch->seed = mt_rand(-2147483647, 2147483647);
-        $qmMatch->tier = $userPlayerTier;
+        $qmMatch->tier = $currentUserTier;
 
 
         # Create the Game
