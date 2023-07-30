@@ -261,22 +261,51 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function getLiveUserTier($history)
     {
         $userRating = $this->getOrCreateLiveUserRating();
-        return UserRatingService::getTierByLadderRules($userRating->rating, $history);
+        return UserRatingService::getTierByLadderRules($userRating->rating, $history->ladder);
     }
+
 
     /**
-     * This will give you the users "cached" tier rating for the supplied ladder history
-     * @param mixed $history 
-     * @param mixed $player 
+     * 
+     * @param mixed $ladder 
      * @return mixed 
      */
-    public function getCachedUserTierByLadderHistoryAndPlayer($history, $player)
+    public function getUserLadderTier($ladder)
     {
-        return $player->getCachedPlayerTierByLadderHistory($history);
+        $userTier = $this->userTier()->where("ladder_id", $ladder->id)->first();
+
+        if ($userTier == null)
+        {
+            $tier = null;
+            $userRating = $this->userRating;
+
+            if ($userRating)
+            {
+                $tier = UserRatingService::getTierByLadderRules($userRating->rating, $ladder);
+            }
+            else
+            {
+                $tier = UserRatingService::getTierByLadderRules(UserRating::$DEFAULT_RATING, $ladder);
+            }
+
+            $userTier = UserTier::createNew($this->id, $ladder->id, $tier);
+        }
+
+        return $userTier;
     }
 
+    public function canUserPlayBothTiers($ladder)
+    {
+        $userTier = $this->getUserLadderTier($ladder);
+        return $userTier->both_tiers;
+    }
 
     # Relationships
+    public function userTier()
+    {
+        return $this->hasOne('App\UserTier', 'user_id');
+    }
+
     public function userSettings()
     {
         return $this->hasOne('App\UserSettings', 'user_id');

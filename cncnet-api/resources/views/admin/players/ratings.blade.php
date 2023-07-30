@@ -78,10 +78,6 @@
                         @endforeach
                     </div>
 
-                    <a href="/admin/players/ratings/{{ $abbreviation }}/update" class="btn mt-3 mb-3 btn-size-md btn-primary">
-                        Update {{ $abbreviation }} User Ratings
-                    </a>
-
                     @include('components.pagination.paginate', ['paginator' => $users->appends(request()->query())])
 
                     <p class="lead">
@@ -102,27 +98,28 @@
                         </form>
                     </div>
 
-                    <p>
-                        Warning: Changing a users elo rating will also move them into the appropriate tier for this month.
-                    </p>
-
-                    <h3>Ratings for: {{ $history->starts->format('d M Y') }}</h3>
-
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Player</th>
-                                    <th>Match Making Pref</th>
-                                    <th>Live Tier</th>
-                                    <th>Current Rating</th>
-                                    <th>Change Elo
+                                    <th>Name</th>
+                                    <th>Usernames</th>
+                                    <th>
+                                        User Tier
                                     </th>
+                                    <th>Current Elo Ratings</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($users as $user)
                                     <tr>
+                                        <td>
+                                            {{ $user->name }}
+                                            @if ($user->alias)
+                                                <br />
+                                                Alias: {{ $user->alias }}
+                                            @endif
+                                        </td>
                                         <td width="30%">
                                             @php
                                                 $usernames = $user
@@ -137,11 +134,9 @@
                                                         <a
                                                             href="{{ \App\URLHelper::getPlayerProfileUrl($player->ladder->currentHistory(), $player->username) }}">
                                                             {{ $player->username }}
-                                                            --
-                                                            Cached Tier: {{ $user->getCachedUserTierByLadderHistoryAndPlayer($history, $player) }}
-
                                                         </a>
                                                     </span>
+                                                    <br />
                                                 </span>
                                             @endforeach
 
@@ -150,21 +145,19 @@
                                             @endif
                                         </td>
                                         <td>
-                                            <form method="POST" action="/admin/players/ratings/{{ $abbreviation }}/update-user-league">
+                                            <form method="POST" action="/admin/users/tier/update">
                                                 {{ csrf_field() }}
                                                 <input type="hidden" name="user_id" value="{{ $user->id }}" />
+                                                <input type="hidden" name="ladder_id" value="{{ $history->ladder->id }}" />
 
-                                                <?php
-                                                $leaguePlayer = \App\LeaguePlayer::where('user_id', $user->id)
-                                                    ->where('ladder_id', $history->ladder->id)
-                                                    ->first();
-                                                
-                                                $tier2 = $leaguePlayer && $leaguePlayer->getCanPlayBothTiers() == true ? 'checked' : '';
-                                                ?>
+                                                @php
+                                                    $userTier = $user->getUserLadderTier($history->ladder);
+                                                @endphp
+                                                <input type="text" name="tier" class="form-control" value="{{ $userTier->tier }}" />
 
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="canPlayBothTiers"
-                                                        id="canPlayBothTiers_{{ $user->id }}" {!! $tier2 !!}>
+                                                        id="canPlayBothTiers_{{ $user->id }}" {{ $userTier->both_tiers ? 'checked' : '' }} />
                                                     <label class="form-check-label" for="canPlayBothTiers_{{ $user->id }}">
                                                         Can play both Tiers
                                                     </label>
@@ -173,21 +166,11 @@
                                                 <button type="submit" class="btn btn-outline btn-size-md">Save</button>
                                             </form>
                                         </td>
-                                        <td>
-                                            {{ \App\Http\Services\UserRatingService::getTierByLadderRules($user->rating, $history) }}
-                                        </td>
+
                                         <td>
                                             Rating: {{ $user->rating }} <br />
                                             Rated games:{{ $user->rated_games }}<br />
                                             Peek rating: {{ $user->peak_rating }} <br />
-                                        </td>
-                                        <td>
-                                            <form method="POST" action="/admin/players/ratings/{{ $abbreviation }}/update-user-rating">
-                                                {{ csrf_field() }}
-                                                <input type="hidden" name="user_id" value="{{ $user->id }}" />
-                                                <input type="number" name="new_rating" value="{{ $user->rating }}" class="form-control" />
-                                                <button type="submit" class="btn btn-outline btn-size-md">Save User Rating</button>
-                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach

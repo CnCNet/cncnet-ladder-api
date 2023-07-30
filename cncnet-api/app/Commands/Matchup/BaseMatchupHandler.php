@@ -12,7 +12,7 @@ class BaseMatchupHandler
     public $qmQueueEntry;
     public $qmPlayer;
     public $gameType;
-    public $currentUserPlayerTier;
+    public $currentUserTier;
     public $matchHasObservers;
 
     public function __construct($history, $qEntry, $qmPlayer, $gameType)
@@ -22,7 +22,7 @@ class BaseMatchupHandler
         $this->qmQueueEntry = $qEntry;
         $this->qmPlayer = $qmPlayer;
         $this->gameType = $gameType;
-        $this->currentUserPlayerTier = $this->qmPlayer->player->getCachedPlayerTierByLadderHistory($this->history);
+        $this->currentUserTier = $this->qmPlayer->player->user->getUserLadderTier($history->ladder)->tier;
         $this->matchHasObservers = $qmPlayer->isObserver();
     }
 
@@ -41,7 +41,7 @@ class BaseMatchupHandler
 
         return $this->quickMatchService->createQmMatch(
             $this->qmPlayer,
-            $this->currentUserPlayerTier,
+            $this->currentUserTier,
             $filteredMaps,
             $otherQMQueueEntries,
             $this->qmQueueEntry,
