@@ -244,7 +244,7 @@ class ApiLadderController extends Controller
         $clanRatings = [];
         $clanGameReports = collect();
 
-        //find the winning clan report
+        // Find the winning clan report
         $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->groupBy("clan_id")->first();
 
         if ($winningClanReport != null)
@@ -252,20 +252,23 @@ class ApiLadderController extends Controller
             $clanGameReports->push($winningClanReport);
         }
 
-        //find the losing clan report
-        $losingClanReport = $gameReport->playerGameReports()->where('clan_id', '!=', $winningClanReport->clan_id)
-            ->where(function ($query)
-            {
-                $query->where('won', 0);
-                $query->orWhere('disconnected', 1);
-            })
-            ->groupBy("clan_id")
-            ->first();
-
-        if ($losingClanReport != null)
+        // Find the losing clan report
+        if ($winningClanReport)
         {
-            $clanGameReports->push($losingClanReport);
-        }     
+            $losingClanReport = $gameReport->playerGameReports()->where('clan_id', '!=', $winningClanReport->clan_id)
+                ->where(function ($query)
+                {
+                    $query->where('won', 0);
+                    $query->orWhere('disconnected', 1);
+                })
+                ->groupBy("clan_id")
+                ->first();
+
+            if ($losingClanReport != null)
+            {
+                $clanGameReports->push($losingClanReport);
+            }
+        }
 
         // Oops we don't have any players
         if ($clanGameReports->count() < 1)

@@ -290,7 +290,7 @@ class ApiQuickMatchController extends Controller
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
 
-        $requiresUpdate = $this->checkQMClientRequiresUpdate($ladder, $request->version);
+        $requiresUpdate = false; //$this->checkQMClientRequiresUpdate($ladder, $request->version);
 
         if ($requiresUpdate === true)
         {
@@ -390,7 +390,7 @@ class ApiQuickMatchController extends Controller
         # If we're new to the queue, create required QmMatchPlayer model
         if ($qmPlayer == null)
         {
-            $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $history, $ladder, $ladderRules);
+            $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $history);
             $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladderRules);
 
             if (!$validSides)
@@ -404,6 +404,8 @@ class ApiQuickMatchController extends Controller
         if ($request->ai_dat)
         {
             $qmPlayer->ai_dat = $request->ai_dat;
+            $qmPlayer->save();
+
             $error = "Error, please contact us on the CnCNet Discord";
             return $this->onMatchFatalError($error);
         }
@@ -557,8 +559,8 @@ class ApiQuickMatchController extends Controller
         );
 
         # Check we have all players ready before writing them to spawn.ini
-        $playersReady = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
-        if (count($playersReady) == 0)
+        $otherQmMatchPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
+        if (count($otherQmMatchPlayers) == 0)
         {
             $qmPlayer->waiting = false;
             $qmPlayer->save();
@@ -578,8 +580,11 @@ class ApiQuickMatchController extends Controller
         $spawnStruct = QuickMatchSpawnService::appendOthersAndTeamAlliancesToSpawnIni(
             $spawnStruct,
             $qmPlayer,
-            $playersReady
+            $otherQmMatchPlayers
         );
+
+        # Write the observers
+        $spawnStruct = QuickMatchSpawnService::appendObservers($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
 
         $qmPlayer->waiting = false;
         $qmPlayer->save();

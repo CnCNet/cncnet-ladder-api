@@ -353,6 +353,8 @@ class AccountController extends Controller
         $userSettings->match_any_map = $request->match_any_map == "on" ? true : false;
         // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
         $userSettings->match_ai = $request->matchAI == "on" ? true : false;
+        $userSettings->is_observer = $request->isObserver == "on" ? true : false;
+        $userSettings->allow_observers = $request->allowObservers == "on" ? true : false;
         $userSettings->save();
 
         # Remove avatar?
@@ -360,7 +362,6 @@ class AccountController extends Controller
         {
             $user->removeAvatar();
         }
-
 
         $newDiscordProfile = $request->discord_profile;
 
