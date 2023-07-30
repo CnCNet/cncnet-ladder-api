@@ -157,8 +157,7 @@
 
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="canPlayBothTiers"
-                                                        id="canPlayBothTiers_{{ $user->id }}"
-                                                        {{ $userTier->both_tiers == true ? 'checked' : '' }} />
+                                                        id="canPlayBothTiers_{{ $user->id }}" {{ $userTier->both_tiers ? 'checked' : '' }} />
                                                     <label class="form-check-label" for="canPlayBothTiers_{{ $user->id }}">
                                                         Can play both Tiers
                                                     </label>

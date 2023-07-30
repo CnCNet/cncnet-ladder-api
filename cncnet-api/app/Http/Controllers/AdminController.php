@@ -972,7 +972,7 @@ class AdminController extends Controller
             return redirect()->back();
         }
 
-        $userTier = $user->userTier;
+        $userTier = $user->getUserLadderTier($ladder);
         if ($request->tier == 1 || $request->tier == 2)
         {
             $userTier->tier = $request->tier;
