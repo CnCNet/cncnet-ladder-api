@@ -57,7 +57,7 @@
             </div>
         </section>
 
-        <section class="pt-5 pb-5">
+        <section class="pt-3 pb-3">
             <div class="container">
                 <h3>
                     <span class="material-symbols-outlined icon">
@@ -77,16 +77,16 @@
             </div>
         </section>
 
-        <section class="pt-5 pb-5">
+        <section class="pt-3 pb-3">
             <div class="container">
                 <h3>
                     <span class="material-symbols-outlined icon">
                         military_tech
                     </span>
-                    <strong>Clan</strong> Ladders
+                    <strong>2vs2 Clan</strong> Ladders
                 </h3>
 
-                <div class="d-flex flex-wrap mt-4">
+                <div class="d-flex flex-wrap mt-4 clan-ladders">
                     @foreach ($clan_ladders as $history)
                         @if (!$history->ladder->private)
                             @include('components.ladder-box', [
