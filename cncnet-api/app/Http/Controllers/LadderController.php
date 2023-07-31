@@ -228,26 +228,24 @@ class LadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
+    private function debugStart()
+    {
+        return microtime(true);
+    }
+
+    private function debugEnd($start)
+    {
+        //dividing with 60 will give the execution time in minutes otherwise seconds
+        dd((microtime(true) - $start));
+    }
+
     public function getLadderGame(Request $request, $date = null, $cncnetGame = null, $gameId = null, $reportId = null)
     {
+        $start = $this->debugStart();
+
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
         $user = $request->user();
-
-        // Tests
-        if ($request->reunRewardPoints && $history->ladder->clans_allowed)
-        {
-            // $api = new ApiLadderController();
-            // $ladderService = new LadderService;
-            // $ladderService->updateCache($game->report);
-
-            // foreach ($game->playerGameReports as $k => $pgr)
-            // {
-            //     $gameReport = $pgr->gameReport;
-            //     $result = $api->awardClanPoints($gameReport, $history);
-            //     break;
-            // }
-        }
 
         if ($game == null)
         {
@@ -299,7 +297,6 @@ class LadderController extends Controller
             if ($game != null)
             {
                 $qmMatch = $game->qmMatch;
-
                 if ($qmMatch != null)
                 {
                     if ($pgr != null)
@@ -324,7 +321,6 @@ class LadderController extends Controller
 
         if ($history->ladder->clans_allowed)
         {
-
             $clans = [];
             foreach ($playerGameReports as $pgr)
             {
@@ -345,7 +341,9 @@ class LadderController extends Controller
             if (!$userIsMod)
                 $qmConnectionStats = [];
 
+            // $this->debugEnd($start);
             $clanGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
+
             return view(
                 'ladders.clan-game-detail',
                 [
