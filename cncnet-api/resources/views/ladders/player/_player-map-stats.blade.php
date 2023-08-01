@@ -4,10 +4,11 @@
     @foreach ($playerWinLossByMaps as $mapName => $v)
         <div class="map-row-container">
             <div class="map-name">
-                <h5>{{ $mapName }}</h5>
+                <h6>{{ $mapName }}</h6>
             </div>
             <div class="map-row">
-                <div class="map-preview" style="background-image:url(https://ladder.cncnet.org/images/maps/{{ $history->ladder->game }}/{{ $v['preview'] }}.png)"></div>
+                <div class="map-preview"
+                    style="background-image:url(https://ladder.cncnet.org/images/maps/{{ $history->ladder->game }}/{{ $v['preview'] }}.png)"></div>
                 <div class="counts">
                     <div class="count won">
                         x{{ $v['won'] }} wins

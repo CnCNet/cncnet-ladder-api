@@ -32,8 +32,18 @@ $font-oswald: 'Oswald', sans-serif;
     font-weight: 300;
 }
 
+.font-secondary 
+{
+    @extend %font-secondary;
+}
+
 %font-secondary-bold
 {
     font-family: $font-oswald;
     font-weight: 500;
+}
+
+.font-secondary-bold
+{
+    @extend %font-secondary-bold;
 }

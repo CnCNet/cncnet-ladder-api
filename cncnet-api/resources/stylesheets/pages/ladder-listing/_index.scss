@@ -12,6 +12,26 @@
     {
         margin-right: 1rem;
         margin-bottom: 0.5rem;
+        width: 100%;
+
+        @media(min-width: $md-width)
+        {
+            width: auto;
+        }
+    }
+}
+
+.ladder-listing .ladder-info .btn 
+{
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+
+    @media(min-width: $lg-width)
+    {
+        width: auto;
+        justify-content: flex-start;
+        text-align: left;
     }
 }
 

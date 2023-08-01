@@ -122,7 +122,7 @@ $pageTitle = 'Viewing Game - ';
 @endsection
 
 @section('content')
-    <section class="game-detail">
+    <section class="game-detail clan-detail">
         @php
             $gameAbbreviation = $history->ladder()->first()->abbreviation;
             $map = \App\Map::where('hash', '=', $game->hash)->first();
@@ -158,7 +158,7 @@ $pageTitle = 'Viewing Game - ';
             </div>
         </div>
 
-        <div class="match-details text-center mt-5">
+        <div class="match-details text-center mt-2">
             <h4>{{ $game->scen }}</h4>
             <p>
                 <strong>Date played:</strong> {{ $gameReport->created_at->diffForHumans() }} - <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
@@ -167,24 +167,25 @@ $pageTitle = 'Viewing Game - ';
                 <br />
                 <strong>FPS:</strong> {{ $gameReport->fps }}
                 <br />
+            </p>
 
+            <div style="font-size:0.8rem" class="mb-1">
                 <strong>Tunnel(s):</strong>
                 <br />
                 @foreach ($tunnels as $tunnel)
                     * {{ $tunnel }}
                     <br />
                 @endforeach
-
-                @if ($gameReport !== null)
-                    @if ($gameReport->oos)
-                        <br />
-                        <strong>Game ended in reconnection error (OOS)</strong>
-                    @endif
-                    @if ($gameReport->disconnected())
-                        <strong>Game disconnected</strong>
-                    @endif
+            </div>
+            @if ($gameReport !== null)
+                @if ($gameReport->oos)
+                    <br />
+                    <strong>Game ended in reconnection error (OOS)</strong>
                 @endif
-            </p>
+                @if ($gameReport->disconnected())
+                    <strong>Game disconnected</strong>
+                @endif
+            @endif
         </div>
 
         @include('ladders.game._map-preview-with-players', [
@@ -192,9 +193,13 @@ $pageTitle = 'Viewing Game - ';
             'playerGameReports' => $playerGameReports,
         ])
 
-        @include('ladders.game._game-cameo-stats', [
-            'playerGameReports' => $orderedClanReports,
-            'abbreviation' => $gameAbbreviation,
-        ])
+        <section class="game {{ $gameAbbreviation }} mt-2 mb-2">
+            <div class="container max-container">
+                @include('ladders.game._game-cameo-stats', [
+                    'playerGameReports' => $orderedClanReports,
+                    'abbreviation' => $gameAbbreviation,
+                ])
+            </div>
+        </section>
     </section>
 @endsection

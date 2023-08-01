@@ -147,8 +147,31 @@ $reports = $playerGameReports;
                         @php $points = $playerCache ? $playerCache->points : 0;@endphp
 
                         @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
-                            <div class="player-vs d-flex align-items-center">
-                                <h1>Vs</h1>
+                            <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">
+                                <div class="player-vs d-flex align-items-center">
+                                    <h1>Vs</h1>
+                                </div>
+                                <div class="match-details text-center mt-2">
+                                    <h6>{{ $game->scen }}</h4>
+                                        <p>
+                                            {{ $gameReport->created_at->diffForHumans() }} -
+                                            <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
+                                            <br />
+                                            <strong>Duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
+                                            <br />
+                                            <strong>FPS:</strong> {{ $gameReport->fps }}
+
+                                            @if ($gameReport !== null)
+                                                @if ($gameReport->oos)
+                                                    <br />
+                                                    <strong>Game ended in reconnection error (OOS)</strong>
+                                                @endif
+                                                @if ($gameReport->disconnected())
+                                                    <strong>Game disconnected</strong>
+                                                @endif
+                                            @endif
+                                        </p>
+                                </div>
                             </div>
                         @endif
 
@@ -158,37 +181,21 @@ $reports = $playerGameReports;
             </div>
         </div>
 
-        <div class="match-details text-center mt-5">
-            <h4>{{ $game->scen }}</h4>
-            <p>
-                <strong>Date played:</strong> {{ $gameReport->created_at->diffForHumans() }} - <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
-                <br />
-                <strong>Game duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
-                <br />
-                <strong>FPS:</strong> {{ $gameReport->fps }}
-
-                @if ($gameReport !== null)
-                    @if ($gameReport->oos)
-                        <br />
-                        <strong>Game ended in reconnection error (OOS)</strong>
-                    @endif
-                    @if ($gameReport->disconnected())
-                        <strong>Game disconnected</strong>
-                    @endif
-                @endif
-            </p>
+        <div class="mt-2">
+            @include('ladders.game._map-preview-with-players', [
+                'map' => $map,
+                'playerGameReports' => $playerGameReports,
+            ])
         </div>
 
-        @include('ladders.game._map-preview-with-players', [
-            'map' => $map,
-            'playerGameReports' => $playerGameReports,
-        ])
-
-
-        @include('ladders.game._game-cameo-stats', [
-            'playerGameReports' => $playerGameReports,
-            'abbreviation' => $gameAbbreviation,
-        ])
+        <section class="game {{ $gameAbbreviation }} mt-2 mb-2">
+            <div class="container">
+                @include('ladders.game._game-cameo-stats', [
+                    'playerGameReports' => $playerGameReports,
+                    'abbreviation' => $gameAbbreviation,
+                ])
+            </div>
+        </section>
 
     </section>
 @endsection

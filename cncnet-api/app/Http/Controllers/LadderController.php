@@ -241,8 +241,7 @@ class LadderController extends Controller
 
     public function getLadderGame(Request $request, $date = null, $cncnetGame = null, $gameId = null, $reportId = null)
     {
-        $start = $this->debugStart();
-
+        // $start = $this->debugStart();
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
         $user = $request->user();

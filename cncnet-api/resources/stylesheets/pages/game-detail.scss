@@ -7,8 +7,8 @@
 {
     position: relative;
     background-repeat: no-repeat;
-    background-size: 100%;
     overflow: hidden;
+    background-size: 100%;
 }
 
 .game-detail .player 
@@ -20,20 +20,37 @@
     display: flex;
     align-items: center;
     border-top: 0;
-    border-radius: 4px;
-    padding-right: 2rem;
-    min-width: 160px;
-    height: 60px;
+    padding-right: 0.5rem;
+
+    @media(min-width: $md-width)
+    {
+        min-width: 160px;
+        height: 60px;
+        border-radius: 4px;
+        padding-right: 2rem;
+    }
 }
 
 // Player
 .game-detail .player-marker 
 {
     position: absolute;
-    width:30px; 
+    width: 30px; 
     height: 30px; 
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
+}
+
+@media(max-width: $md-width)
+{
+    .game-detail.clan-detail .player-marker 
+    {
+        width: 20px; 
+        height: 20px;
+        
+        .player-start-position
+        {
+            font-size: 0.6rem;
+        }
+    }
 }
 
 .game-detail .player-marker .player-start-position 
@@ -154,12 +171,24 @@
 {
     color: $game-lost;
     font-weight: 500;
+    font-size: 0.8rem;
+    
+    @media(min-width:$md-width)
+    {
+        font-size: 1rem;
+    }
 }
 
 .game-detail .status-won 
 {
     color: $game-won;
     font-weight: 500;
+    font-size: 0.8rem;
+
+    @media(min-width:$md-width)
+    {
+        font-size: 1rem;
+    }
 }
 
 .game-detail .player .username 
@@ -168,10 +197,30 @@
     font-weight: 400;
 }
 
+@media(max-width: $lg-width)
+{
+    .game-detail.clan-detail .status-won,
+    .game-detail.clan-detail .status-lost 
+    {
+        font-size: .6rem;
+    }
+    
+    .game-detail.clan-detail .username 
+    {
+        font-size: .65rem;
+    }
+}
+
+
 .game-detail .player .player-details 
 {
     padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-right: 22px;
+    @media(min-width:$md-width)
+    {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
 }
 
 .game-detail .player .player-details .faction 
@@ -184,8 +233,17 @@
 
     .player-faction 
     {
-        width: 40px;
-        height: 19px;
+        width: 25px;
+        height: 16px;
+    }
+
+    @media(min-width: $md-width)
+    {
+        .player-faction 
+        {
+            width: 40px;
+            height: 19px;
+        }
     }
 }
 
@@ -193,6 +251,11 @@
 {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
+    display: none;
+    @media(min-width: $md-width)
+    {
+        display: flex;
+    }
 }
 
 
@@ -212,9 +275,6 @@
 
 .game-detail .game-players .player-vs 
 {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    width: 10%;
     justify-content: center;
     max-width: 100%;
     
@@ -237,8 +297,8 @@
 .game-detail .game-players-container 
 {
     position: relative;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     background: linear-gradient(118deg, #0e0e0e, transparent);
 }
 
@@ -246,10 +306,9 @@
 {
     display: flex;
     position: relative;
-    justify-content: center;
-    width: 40%;
     max-width: 100%;
     margin: auto;
+    width: 100%;
 }
 
 .game-detail .player-card .player-details
@@ -258,8 +317,8 @@
     flex-direction: column;
     padding-left: 2rem;
     padding-right: 2rem;
-    align-items: flex-start;
     justify-content: center;
+    align-items: center;
 }
 
 .game-detail .player-card .points { font-weight: 500; display: flex; align-items: center; }
@@ -287,13 +346,71 @@
 {
     background: #08090e;
     border-radius: 100%;
+    margin-top: 0;
+    margin-bottom: auto;
 
     .icon 
     {
         color: silver;
         font-size: 2rem;
     }
+
+    @media(min-width:$md-width)
+    {
+        margin-right: 1rem;
+    }
 }
+
+// Top banner in game detail page showing Player vs Player
+.game-detail .game-players-container .player-card
+{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    @media(min-width: $md-width)
+    {
+        width: 38%;
+        justify-content: center;
+        flex-direction: row;
+    }
+}
+
+.game-detail .game-players-container .player-card:nth-child(1)
+{
+    justify-content: flex-start;
+
+    @media(min-width: $xl-width)
+    {
+        justify-content: center;
+    }
+}
+
+.game-detail .game-players-container .player-card:last-child
+{
+    justify-content: flex-end;
+    
+    @media(min-width: $xl-width)
+    {
+        justify-content: center;
+    }
+}
+
+.game-detail .game-players-container .player-card .player-avatar
+{
+    @media(min-width: $md-width)
+    {
+        order: 1;
+        margin-top: 1rem;
+        margin-left: 1rem;
+    }
+}
+
+.game-detail .game-players-container .player-card:nth-child(1) .player-avatar
+{
+    order: -1;
+}
+
 
 // Cameo / Stats breakdown
 .game-detail .stats-breakdown
@@ -311,6 +428,18 @@
 .game-detail .stats-breakdown .player-card 
 {
     margin: auto;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-top: 1rem;
+    text-align: center;
+
+    @media(min-width: $md-width)
+    {
+        padding-top:0;
+        flex-direction: row;
+        text-align: left;
+    }
 }
 
 .game-detail .stats 
@@ -318,6 +447,7 @@
     display: flex;
     flex-direction: column;
     background: #181b26;
+    padding: 1rem;
     
     @media(min-width: $lg-width)
     {
@@ -330,7 +460,6 @@
 .game-detail .stats .cameo-row 
 {
     min-height: 150px;
-    padding: 2rem;
 }
 
 .game-detail .stats .cameo-title 
