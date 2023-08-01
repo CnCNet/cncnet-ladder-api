@@ -19,7 +19,7 @@
         @endif
 
         <div class="points font-secondary-bold {{ $pgr->won ? 'won' : 'lost' }}">
-            @if ($pgr->points >= 0)
+            @if ($pgr->points > 0)
                 <strong class="me-1">Won {{ '+' }}</strong>
             @else
                 <strong class="me-1">Lost</strong>
