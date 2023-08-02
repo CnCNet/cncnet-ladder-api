@@ -21,7 +21,7 @@
     <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:type" content="website" />
 
-    <link rel="stylesheet" href="/css/app.css?v=2.1.7" />
+    <link rel="stylesheet" href="/css/app.css?v=2.1.8" />
     <link rel="apple-touch-icon" sizes="152x152" href="/images/meta/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/meta/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/meta/favicon-16x16.png">
@@ -38,6 +38,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500" rel="stylesheet">
     <script src="/js/lottie.js"></script>
+    <script src="/js/popper.js"></script>
+    <script src="/js/tippy.js"></script>
 </head>
 
 <body class="@yield('body-class'){{ $bodyClass }}">
@@ -85,6 +87,7 @@
             });
     </script>
     @yield('js')
+    @yield('scripts')
     <script>
         window.addEventListener("load", (event) => {
             document.body.classList.add("loaded");

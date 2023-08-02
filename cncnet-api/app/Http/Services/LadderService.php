@@ -353,6 +353,10 @@ class LadderService
             ];
         }
 
+        $last24HoursGames = $player->totalGames24Hours($history);
+        $lastActive = $player->lastActive($history);
+        $lastFiveGames = $player->lastFiveGames($history);
+
         return [
             "id" => $playerCache->player_id,
             "player" => $player,
@@ -364,6 +368,9 @@ class LadderService
             "games_lost" => $playerCache->games - $playerCache->wins,
             "average_fps" => $playerCache->fps,
             "rating" => $playerCache->rating,
+            "games_last_24_hours" => $last24HoursGames,
+            "last_active" => $lastActive,
+            "last_five_games" => $lastFiveGames
         ];
     }
 

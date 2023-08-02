@@ -15,6 +15,8 @@ use \App;
 use App\Clan;
 use App\Http\Services\ClanService;
 use App\Http\Services\PointService;
+use App\Ladder;
+use App\Player;
 use Illuminate\Support\Facades\Log;
 use DB;
 use Exception;

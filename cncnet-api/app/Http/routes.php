@@ -241,6 +241,7 @@ Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'],
 Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.public'], function ()
 {
     Route::get('/{game}/top/{count}', 'ApiLadderController@getLadderTopList');
+    Route::get('/{ladder}/{player}/stats', 'ApiLadderController@getLadderPlayerStats');
     Route::get('/{game}/player/{player}', 'ApiLadderController@getLadderPlayer');
     Route::get('/{game}/player/{player}/webview', 'ApiLadderStatsProfile@getWebview');
 });

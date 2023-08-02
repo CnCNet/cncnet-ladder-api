@@ -116,6 +116,40 @@ class Player extends Model
             ->count();
     }
 
+    public function lastActive($history)
+    {
+        $lastGamePlayed = $this->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->orderBy("created_at", "DESC")
+            ->first();
+
+        if ($lastGamePlayed)
+        {
+            return $lastGamePlayed->created_at->diffForHumans();
+        }
+        return null;
+    }
+
+    public function lastFiveGames($history)
+    {
+        $queryResults = $this->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->orderBy("created_at", "DESC")
+            ->limit(5)
+            ->get();
+
+        $last5GamesPlayed = [];
+        foreach ($queryResults as $game)
+        {
+            $last5GamesPlayed[] = [
+                "won" => $game->won,
+                "game_id" => $game->game_id
+            ];
+        }
+
+        return $last5GamesPlayed;
+    }
+
     public function averageFPS($history)
     {
         $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();

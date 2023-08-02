@@ -1,0 +1,67 @@
+.tippy-box[data-theme~='player-card']
+{
+    background: #253265;
+}
+
+.tippy-box[data-theme~='player-card'] .tippy-arrow 
+{
+    color: #6661bb;
+}
+
+.tippy-box[data-theme~='player-card'] .tippy-content
+{
+    display: flex;
+    border: 1px solid #605ac1;
+    border-radius: 4px;
+}
+
+.tippy-box[data-theme~='player-card'] .player-info-col 
+{
+    padding: 0.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.tippy-box[data-theme~='player-card'] .player-info-row 
+{
+    padding: 0.5rem;
+}
+
+.tippy-box[data-theme~='player-card'] .last-five-games 
+{
+    display: flex;
+}
+
+.tippy-box[data-theme~='player-card'] .badge 
+{
+    border-radius: 4px;
+    padding: 0.2rem;
+    height: 20px;
+    width: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right:0.1rem;
+    color: #000;
+}
+
+.tippy-box[data-theme~='player-card'] .badge.badge-won
+{
+    background: $wonColour;
+}
+
+.tippy-box[data-theme~='player-card'] .badge.badge-lost
+{
+    background: $lostColour;
+}
+
+.tippy-box[data-theme~='player-card'] .title 
+{
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+}
+
+.tippy-box[data-theme~='player-card'] .player-avatar
+{
+    background: #1f2857;
+    border-radius: 100%;
+}
