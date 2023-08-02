@@ -383,7 +383,7 @@ class LadderService
             "games_last_24_hours" => $last24HoursGames,
             "last_active" => $lastActive,
             "last_five_games" => $lastFiveGames,
-            "elo" => $eloProfile
+            "elo" => null //$eloProfile
         ];
     }
 
