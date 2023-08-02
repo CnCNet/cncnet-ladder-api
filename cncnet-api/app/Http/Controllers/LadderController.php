@@ -439,8 +439,8 @@ class LadderController extends Controller
         $mod = $request->user();
 
         $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
-        $userPlayer = User::where("id", $player->user_id)->first();
-        $userTier = $player->getCachedPlayerTierByLadderHistory($history);
+        $user = User::where("id", $player->user_id)->first();
+        $userTier = $user->getUserLadderTier($history->ladder)->tier;
 
         # Stats
         $graphGamesPlayedByMonth = $this->chartService->getPlayerGamesPlayedByMonth($player, $history);
@@ -449,8 +449,8 @@ class LadderController extends Controller
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
         $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
-        $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $userPlayer, 3);
-        $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $userPlayer);
+        $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
+        $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);
 
         return view(
             "ladders.player-detail",
@@ -471,7 +471,7 @@ class LadderController extends Controller
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
                 "playerWinLossByMaps" => $playerWinLossByMaps,
                 "playerOfTheDayAward" => $playerOfTheDayAward,
-                "userPlayer" => $userPlayer,
+                "userPlayer" => $user,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
                 "playerMatchups" => $playerMatchups,
                 "achievements" => $recentAchievements,

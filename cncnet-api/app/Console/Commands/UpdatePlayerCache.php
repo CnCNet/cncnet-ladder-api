@@ -2,6 +2,9 @@
 
 namespace App\Console\Commands;
 
+use App\Ladder;
+use App\User;
+use Exception;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -50,13 +53,15 @@ class UpdatePlayerCache extends Command
             $player = $pc->player;
             $history = $pc->history;
 
+            $user = User::find($player->user_id);
             $pc->ladder_history_id = $history->id;
             $pc->player_id = $player->id;
             $pc->player_name = $player->username;
 
             # PlayerHistory will never be null
-            $playerHistory = $player->playerHistory($history);
-            $pc->tier = $playerHistory->tier;
+            $ladder = Ladder::find($history->ladder_id);
+            $tier = $user->getUserLadderTier($ladder)->tier;
+            $pc->tier = $tier;
 
             $pc->card = $player->card_id;
             $pc->points = $player->points($history);

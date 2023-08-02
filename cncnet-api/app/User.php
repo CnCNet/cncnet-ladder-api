@@ -45,7 +45,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return in_array($this->group, [self::God, self::Admin, self::Moderator]);
     }
 
-
     public function isLadderAdmin($ladder)
     {
         if ($this->isGod())
@@ -272,7 +271,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getUserLadderTier($ladder)
     {
-        $userTier = $this->userTier()->where("ladder_id", $ladder->id)->first();
+        $userTier = $this->userTier()
+            ->where("user_id", $this->id)
+            ->where("ladder_id", $ladder->id)
+            ->first();
 
         if ($userTier == null)
         {

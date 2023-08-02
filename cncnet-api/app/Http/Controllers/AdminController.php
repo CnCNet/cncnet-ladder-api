@@ -989,6 +989,17 @@ class AdminController extends Controller
         }
         $userTier->save();
 
+        // Trigger cache update
+        $history = $ladder->currentHistory();
+        if ($history)
+        {
+            $updates = \App\PlayerCache::where("ladder_history_id", '=', $history->id)->get();
+            foreach ($updates as $update)
+            {
+                $update->mark();
+            }
+        }
+
         $request->session()->flash('success', "User Tier updated");
         return redirect()->back();
     }
