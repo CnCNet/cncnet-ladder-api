@@ -74,7 +74,7 @@ class RankingController extends Controller
         {
             foreach ($usernames as $username)
             {
-                if ($username == $json["name"])
+                if (strtolower($username) == strtolower($json["name"]))
                 {
                     $eloProfile = $json;
                     break;

@@ -360,6 +360,10 @@ class LadderService
 
         $rankingController = new RankingController();
         $knownUsernames = $player->user->usernames()->pluck("username")->unique()->toArray();
+        if ($player->user->alias)
+        {
+            $knownUsernames[] = $player->user->alias;
+        }
         $eloProfile = $rankingController->getEloProfileByKnownUsernames(
             $history->ladder->abbreviation,
             $knownUsernames
