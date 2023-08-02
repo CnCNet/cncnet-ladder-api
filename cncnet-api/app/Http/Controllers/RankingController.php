@@ -65,7 +65,7 @@ class RankingController extends Controller
         $mode = isset($gameMode) ? strval($gameMode) : "blitz";
 
         $jsonFiles = ["players_active.json", "players_inactive.json", "players_new.json", "players_all.json"];
-        $jsonPath = $mode . "_" . $jsonFiles[3];
+        $jsonPath = $mode . "_" . $jsonFiles[0];
         $jsonFile = Storage::disk('rating')->get($jsonPath);
         $jsonData = json_decode($jsonFile, true);
 
