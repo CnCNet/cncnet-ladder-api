@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\ClanCache;
 use App\ClanPlayer;
+use App\Http\Controllers\RankingController;
 use App\Ladder;
 use App\PlayerRating;
 use \Illuminate\Database\Eloquent\Collection;
@@ -357,6 +358,13 @@ class LadderService
         $lastActive = $player->lastActive($history);
         $lastFiveGames = $player->lastFiveGames($history);
 
+        $rankingController = new RankingController();
+        $knownUsernames = $player->user->usernames()->pluck("username")->unique()->toArray();
+        $eloProfile = $rankingController->getEloProfileByKnownUsernames(
+            $history->ladder->abbreviation,
+            $knownUsernames
+        );
+
         return [
             "id" => $playerCache->player_id,
             "player" => $player,
@@ -370,7 +378,8 @@ class LadderService
             "rating" => $playerCache->rating,
             "games_last_24_hours" => $last24HoursGames,
             "last_active" => $lastActive,
-            "last_five_games" => $lastFiveGames
+            "last_five_games" => $lastFiveGames,
+            "elo" => $eloProfile
         ];
     }
 

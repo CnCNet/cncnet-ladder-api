@@ -98,6 +98,17 @@
                 </div>
             </div>
         </div>
+        <div class="player-info-row">
+            <div class="player-info-col js-elo">
+                <h5 class="title">Elo</h5>
+                <div>
+                    Elo: @@elo@@
+                </div>
+                <div>
+                    Rank: #@@elo_rank@@
+                </div>
+            </div>
+        </div>
     </div>
     <script>
         (function() {
@@ -111,6 +122,7 @@
                 theme: "player-card",
                 placement: "auto-start",
                 touch: false,
+                maxWidth: 450,
                 interactive: true,
                 interactiveBorder: 10,
                 content: getLoadingContent(), // Initial loading state
@@ -163,10 +175,16 @@
                     badgesHTML += `<div class="badge ${won ? 'badge-won' : 'badge-lost'}">${won ? "W" : "L"}</div>`;
                 }
 
+                if (data.elo == null) {
+                    template.querySelector(".js-elo").style.display = "none";
+                }
+
                 // Replace the loading message with the actual badge divs and last_active value
                 let content = template.innerHTML
                     .replace("@@badges@@", badgesHTML)
-                    .replace("@@last_active@@", data.last_active);
+                    .replace("@@last_active@@", data.last_active)
+                    .replace("@@elo@@", data.elo?.all_elo)
+                    .replace("@@elo_rank@@", data.elo?.rank);
 
                 // Update Tippy.js content
                 tippyInstance.setContent(content);

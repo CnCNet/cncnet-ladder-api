@@ -48,4 +48,40 @@ class RankingController extends Controller
             ]
         );
     }
+
+    public function getEloProfileByKnownUsernames($gameMode, $usernames)
+    {
+        $gameModesShort = [
+            GameHelper::$GAME_BLITZ,
+            GameHelper::$GAME_RA2,
+            GameHelper::$GAME_YR
+        ];
+
+        if (!in_array($gameMode, $gameModesShort))
+        {
+            $gameMode = GameHelper::$GAME_BLITZ;
+        }
+
+        $mode = isset($gameMode) ? strval($gameMode) : "blitz";
+
+        $jsonFiles = ["players_active.json", "players_inactive.json", "players_new.json", "players_all.json"];
+        $jsonPath = $mode . "_" . $jsonFiles[3];
+        $jsonFile = Storage::disk('rating')->get($jsonPath);
+        $jsonData = json_decode($jsonFile, true);
+
+        $eloProfile = null;
+        foreach ($jsonData as $json)
+        {
+            foreach ($usernames as $username)
+            {
+                if ($username == $json["name"])
+                {
+                    $eloProfile = $json;
+                    break;
+                }
+            }
+        }
+
+        return $eloProfile;
+    }
 }
