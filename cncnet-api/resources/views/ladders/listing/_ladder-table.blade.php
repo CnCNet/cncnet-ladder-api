@@ -46,6 +46,7 @@
             'twitch' => $playerCache->player->user->getTwitchProfile(),
             'youtube' => $playerCache->player->user->getYouTubeProfile(),
             'discord' => $playerCache->player->user->getDiscordProfile(),
+            'ladderHasEnded' => $ladderHasEnded,
         ])
     @endforeach
 </div>

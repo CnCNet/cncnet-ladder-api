@@ -28,6 +28,6 @@ class UserSettings extends Model
 
     public function getIsAnonymous()
     {
-        return $this->enableAnonymous;
+        return $this->enableAnonymous == true;
     }
 }

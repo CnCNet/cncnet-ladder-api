@@ -526,10 +526,26 @@ class ApiLadderController extends Controller
     {
         $date = Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
-        return Cache::remember("getLadderPlayerrr/$date/$game/$player", 5, function () use ($ladderService, $date, $game, $player)
+        return Cache::remember("getLadderPlayer/$date/$game/$player", 5, function () use ($ladderService, $date, $game, $player)
         {
             $history = $ladderService->getActiveLadderByDate($date, $game);
             return $ladderService->getLadderPlayer($history, $player);
+        });
+    }
+
+    public function getLadderPlayerFromPublicApi(Request $request, $game = null, $player = null)
+    {
+        $date = Carbon::now()->format('m-Y');
+        $ladderService = $this->ladderService;
+        return Cache::remember("getLadderPlayerFromPublicApi/$date/$game/$player", 5, function () use ($ladderService, $date, $game, $player)
+        {
+            $history = $ladderService->getActiveLadderByDate($date, $game);
+            $response = $ladderService->getLadderPlayer($history, $player);
+
+            // Emit user info
+            $response["player"] = null;
+
+            return $response;
         });
     }
 

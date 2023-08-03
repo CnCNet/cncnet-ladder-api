@@ -358,16 +358,20 @@ class LadderService
         $lastActive = $player->lastActive($history);
         $lastFiveGames = $player->lastFiveGames($history);
 
-        $rankingController = new RankingController();
-        $knownUsernames = $player->user->usernames()->pluck("username")->unique()->toArray();
-        if ($player->user->alias)
+        $eloProfile = null;
+        if ($player->user->userSettings->getIsAnonymous() == false)
         {
-            $knownUsernames[] = $player->user->alias;
+            $rankingController = new RankingController();
+            $knownUsernames = $player->user->usernames()->pluck("username")->unique()->toArray();
+            if ($player->user->alias)
+            {
+                $knownUsernames[] = $player->user->alias;
+            }
+            $eloProfile = $rankingController->getEloProfileByKnownUsernames(
+                $history->ladder->abbreviation,
+                $knownUsernames
+            );
         }
-        $eloProfile = $rankingController->getEloProfileByKnownUsernames(
-            $history->ladder->abbreviation,
-            $knownUsernames
-        );
 
         return [
             "id" => $playerCache->player_id,
@@ -383,7 +387,7 @@ class LadderService
             "games_last_24_hours" => $last24HoursGames,
             "last_active" => $lastActive,
             "last_five_games" => $lastFiveGames,
-            "elo" => null //$eloProfile
+            "elo" => $eloProfile
         ];
     }
 
