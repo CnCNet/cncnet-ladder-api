@@ -188,6 +188,7 @@
                     if (data.elo == null) {
                         template.querySelector(".js-elo").style.display = "none";
                     }
+
                     if (data.user_since == null) {
                         template.querySelector(".js-joined").style.display = "none";
                     }
@@ -196,7 +197,7 @@
                     let content = template.innerHTML
                         .replace("@@badges@@", badgesHTML)
                         .replace("@@last_active@@", data.last_active ?? "")
-                        .replace("@@elo@@", data.elo?.all_elo ?? "")
+                        .replace("@@elo@@", data.elo?.elo ?? "")
                         .replace("@@user_since@@", data.user_since ?? "")
                         .replace("@@elo_rank@@", data.elo?.rank ?? "");
 
