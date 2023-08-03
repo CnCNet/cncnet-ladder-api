@@ -107,6 +107,12 @@
                 <div>
                     Rank: #@@elo_rank@@
                 </div>
+                <div>
+                    Games: @@elo_games@@
+                </div>
+                <div>
+                    Deviation: @@elo_deviation@@
+                </div>
             </div>
         </div>
         <div class="player-info-row">
@@ -171,7 +177,6 @@
                         // Update the Tippy.js tooltip content with the actual data
                         updateTippyContent(data);
                     } catch (error) {
-                        console.error('Error fetching data:', error);
                         // Display an error message if needed
                         tippyInstance.setContent(`<div class="error-message">Error loading data</div>`);
                     }
@@ -198,8 +203,10 @@
                         .replace("@@badges@@", badgesHTML)
                         .replace("@@last_active@@", data.last_active ?? "")
                         .replace("@@elo@@", data.elo?.elo ?? "")
-                        .replace("@@user_since@@", data.user_since ?? "")
-                        .replace("@@elo_rank@@", data.elo?.rank ?? "");
+                        .replace("@@elo_rank@@", data.elo?.rank ?? "")
+                        .replace("@@elo_games@@", data.elo?.game_count ?? "")
+                        .replace("@@elo_deviation@@", data.elo?.deviation ?? "")
+                        .replace("@@user_since@@", data.user_since ?? "");
 
                     // Update Tippy.js content
                     tippyInstance.setContent(content);
