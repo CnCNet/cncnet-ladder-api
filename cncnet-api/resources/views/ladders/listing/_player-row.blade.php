@@ -132,7 +132,7 @@
                     theme: "player-card",
                     placement: "auto-start",
                     touch: false,
-                    maxWidth: 450,
+                    maxWidth: 500,
                     interactive: true,
                     interactiveBorder: 10,
                     content: getLoadingContent(), // Initial loading state
