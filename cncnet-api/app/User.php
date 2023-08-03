@@ -296,6 +296,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $userTier;
     }
 
+    public function userSince()
+    {
+        return $this->created_at->diffForHumans();
+    }
+
     public function canUserPlayBothTiers($ladder)
     {
         $userTier = $this->getUserLadderTier($ladder);

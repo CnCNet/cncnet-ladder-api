@@ -109,6 +109,14 @@
                 </div>
             </div>
         </div>
+        <div class="player-info-row">
+            <div class="player-info-col js-joined">
+                <h5 class="title">User Joined</h5>
+                <div class="last-online">
+                    @@user_since@@
+                </div>
+            </div>
+        </div>
     </div>
 
     @if ($ladderHasEnded == false)
@@ -180,12 +188,16 @@
                     if (data.elo == null) {
                         template.querySelector(".js-elo").style.display = "none";
                     }
+                    if (data.user_since == null) {
+                        template.querySelector(".js-joined").style.display = "none";
+                    }
 
                     // Replace the loading message with the actual badge divs and last_active value
                     let content = template.innerHTML
                         .replace("@@badges@@", badgesHTML)
                         .replace("@@last_active@@", data.last_active ?? "")
                         .replace("@@elo@@", data.elo?.all_elo ?? "")
+                        .replace("@@user_since@@", data.user_since ?? "")
                         .replace("@@elo_rank@@", data.elo?.rank ?? "");
 
                     // Update Tippy.js content

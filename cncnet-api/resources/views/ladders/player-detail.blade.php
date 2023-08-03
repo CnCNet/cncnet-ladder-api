@@ -110,7 +110,7 @@
                             'type' => $history->ladder->clans_allowed ? 'clan' : 'player',
                         ])
                     </div>
-                    <div class="player-rank pt-3 me-5">
+                    <div class="player-rank pt-3 me-md-5">
                         <h1 class="username">{{ $ladderPlayer->username }}</h1>
 
                         @if ($history->ladder->clans_allowed)
@@ -118,14 +118,24 @@
                         @endif
 
                         <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $ladderPlayer->rank }}</h3>
-                        <div>
-                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier($userTier) !!}
-                            - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($userTier) }}
+                        <div class="font-secondary-bold mb-1">
+                            <span class="me-2">{!! \App\Helpers\LeagueHelper::getLeagueIconByTier($userTier) !!}</span>
+                            {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($userTier) }}
                         </div>
+                        <div>
+                            <span class="font-secondary-bold">Last online:</span>
+                            <span class="font-secondary">{{ $ladderPlayer->last_active }}</span>
+                        </div>
+                        @if ($userPlayer->userSettings->getIsAnonymous() == false)
+                            <div>
+                                <span class="font-secondary-bold">User joined:</span>
+                                <span class="font-secondary">{{ $userPlayer->userSince() }}</span>
+                            </div>
+                        @endif
                     </div>
 
                     @if ($userIsMod)
-                        <div>
+                        <div class="mt-2 mb-2">
                             @include('ladders._modal-edit-player-name')
                             <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName" data-bs-toggle="modal"
                                 data-bs-target="#editPlayerName"> Edit Player Name </button>
@@ -177,6 +187,15 @@
                                 <div class="stat-item">
                                     <span class="name">Played today:</span> {{ $playerGamesLast24Hours }}
                                 </div>
+
+                                @if ($userPlayer->userSettings->getIsAnonymous() == false)
+                                    <div class="stat-item">
+                                        <span class="name">Elo:</span> {{ $ladderPlayer->elo->elo ?? '' }}
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="name">Elo Rank:</span> {{ $ladderPlayer->elo->rank ?? '' }}
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
@@ -215,7 +234,8 @@
                                     style="width: {{ $achievementsCount['percentage'] }}%">
                                 </div>
                             </div>
-                            <small class="ms-1">{{ $achievementsCount['unlockedCount'] }}/{{ $achievementsCount['totalToUnlock'] }} unlocked</small>
+                            <small class="ms-1">{{ $achievementsCount['unlockedCount'] }}/{{ $achievementsCount['totalToUnlock'] }}
+                                unlocked</small>
                         </div>
 
                         <div class="d-flex flex-wrap">
