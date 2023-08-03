@@ -25,4 +25,9 @@ class UserSettings extends Model
     {
         return $this->match_ai;
     }
+
+    public function getIsAnonymous()
+    {
+        return $this->enableAnonymous;
+    }
 }

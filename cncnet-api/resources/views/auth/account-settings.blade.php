@@ -84,7 +84,7 @@
         <div class="container">
 
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 mt-2">
                     @include('components.form-messages')
                 </div>
             </div>
@@ -98,10 +98,14 @@
                     <form method="POST" action="/account/settings" enctype="multipart/form-data">
                         {{ csrf_field() }}
 
-                        {{-- TODO future functionality will use this value, no need to have users touch this yet
-                    <input id="enableAnonymous" type="checkbox" name="enableAnonymous"  value="{{ $userSettings->enableAnonymous }}" @if ($userSettings->enableAnonymous) checked @endif />
-                    <label for="enableAnonymous"> Enable Anonymity </label>
-                    --}}
+                        <div class="form-group mb-5">
+                            <h3>Ladder Anonymity</h3>
+                            <p>
+                                Keeps ladder usernames anonymous. This will hide certain features or stats from your profiles.
+                            </p>
+                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous" @if ($userSettings->enableAnonymous) checked @endif />
+                            <label for="enableAnonymous">Enable Anonymity</label>
+                        </div>
 
                         @if ($user->getIsAllowedToUploadAvatar() == false)
                             <h4>Ladder Avatar Disabled</h4>

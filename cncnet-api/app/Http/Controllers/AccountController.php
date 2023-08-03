@@ -351,7 +351,7 @@ class AccountController extends Controller
         $userSettings->disabledPointFilter = $request->disabledPointFilter == "on" ? true : false;
         $userSettings->skip_score_screen = $request->skip_score_screen == "on" ? true : false;
         $userSettings->match_any_map = $request->match_any_map == "on" ? true : false;
-        // $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false; TODO later
+        $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false;
         $userSettings->match_ai = $request->matchAI == "on" ? true : false;
         $userSettings->is_observer = $request->isObserver == "on" ? true : false;
         $userSettings->allow_observers = $request->allowObservers == "on" ? true : false;
