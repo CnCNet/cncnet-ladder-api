@@ -9,6 +9,7 @@ use App\Ladder;
 use App\PlayerRating;
 use \Illuminate\Database\Eloquent\Collection;
 use \Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Exception;
 use \Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Cache;
@@ -337,7 +338,6 @@ class LadderService
             return ["error" => "No such player"];
 
         $playerCache = $player->playerCache($history->id);
-
         if ($playerCache == null)
         {
             return [

@@ -62,11 +62,19 @@
 @section('content')
     <section class="pt-3 pb-3">
         <div class="container">
-            <div class="countdown announcement m-auto" style="width: 450px; max-width: 100%;">
-                <a href="/news/clan-ladder" title="Clan Ladder Announcement">
-                    2vs2 - Clan Ladders Announced
-                </a>
-            </div>
+            @if ($history->ladder->qmLadderRules->tier2_rating > 0)
+                <div class="league-selection">
+                    <a href="{{ \App\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">
+                        {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(1) !!}
+                        <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(1) }}</h3>
+                    </a>
+                    <a href="{{ \App\UrlHelper::getLadderLeague($history, 2) }}" title="{{ $history->ladder->name }}" class="league-box tier-2">
+                        {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(2) !!}
+                        <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(2) }}</h3>
+                    </a>
+                </div>
+            @endif
+
         </div>
     </section>
 
@@ -79,7 +87,6 @@
                             <i class="bi bi-youtube pe-2"></i> How-To Play Blitz Online
                         </a>
                     </div>
-
                     <div>
                         <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-primary btn-size-md" target="_blank">
                             <i class="bi bi-youtube pe-2"></i> Tips & Tricks - New Blitz Players
@@ -166,19 +173,6 @@
             @endif
 
             <section>
-                @if ($history->ladder->qmLadderRules->tier2_rating > 0)
-                    <div class="league-selection">
-                        <a href="{{ \App\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">
-                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(1) !!}
-                            <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(1) }}</h3>
-                        </a>
-                        <a href="{{ \App\UrlHelper::getLadderLeague($history, 2) }}" title="{{ $history->ladder->name }}" class="league-box tier-2">
-                            {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(2) !!}
-                            <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(2) }}</h3>
-                        </a>
-                    </div>
-                @endif
-
                 @if (request()->input('filterBy') == 'games')
                     <p>
                         You are ordering by game count, <a href="?#listing">reset by rank?</a>
