@@ -1,6 +1,6 @@
 <div class="news-box" style="background-image: url( {{ $newsItem->getFeaturedImagePath() }})">
     <div class="news-container">
-        <h5 class="news-title">{{ $newsItem->title }}</h5>
+        <h4 class="news-title">{{ $newsItem->title }}</h4>
         <p class="news-description">{{ $newsItem->description }}</p>
         <a href="/news/{{ $newsItem->slug }}" class="btn btn-icon read-more">
             Read more

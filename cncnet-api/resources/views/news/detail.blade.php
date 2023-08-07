@@ -1,13 +1,13 @@
 @extends('layouts.app')
-@section('title', 'Ladder')
 @section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
 @section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('title', $news->title)
 
 @section('feature')
     <div class="feature pt-3 pb-3">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12 text-center">
+                <div class="col-12">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
                         <strong>{{ $news->title }}</strong>
                     </h1>
@@ -15,6 +15,26 @@
                     <p class="lead">
                         {{ $news->description }}
                     </p>
+                </div>
+
+                <div class="mini-breadcrumb d-none d-lg-flex">
+                    <div class="mini-breadcrumb-item">
+                        <a href="/" title="Home">
+                            <span class="material-symbols-outlined">
+                                home
+                            </span>
+                        </a>
+                    </div>
+                    <div class="mini-breadcrumb-item">
+                        <a href="/news" title="News">
+                            <span class="material-symbols-outlined">
+                                news
+                            </span>
+                        </a>
+                    </div>
+                    <div class="mini-breadcrumb-item">
+                        {{ $news->title }}
+                    </div>
                 </div>
             </div>
         </div>

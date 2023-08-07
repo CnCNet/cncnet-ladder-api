@@ -47,6 +47,36 @@
 
 @section('content')
     <div class="ladder-index">
+
+        <section class="pt-5 pb-5">
+            <div class="container">
+                <h2 class="mb-3">
+                    <div class="icon-box me-2">
+                        <span class="material-symbols-outlined color-green" style="font-size: 1.9rem">
+                            feed
+                        </span>
+                    </div>
+                    <strong>News</strong>
+                </h2>
+
+                <div class="news-boxes news-boxes-swiper">
+                    <div class="swiper js-news-listings">
+                        <div class="swiper-wrapper">
+                            @foreach ($news as $newsItem)
+                                <div class="swiper-slide" data-swiper-autoplay="8000">
+                                    @include('news.components.news-box', ['newsItem' => $newsItem])
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                    <div class="me-auto">
+                        <button class="btn swiper-btn-prev"><i class="bi bi-chevron-left"></i></button>
+                        <button class="btn swiper-btn-next"><i class="bi bi-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section class="pt-3 pb-3">
             <div class="container">
                 <h2>

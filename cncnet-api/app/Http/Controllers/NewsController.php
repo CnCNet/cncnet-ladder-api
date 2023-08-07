@@ -11,6 +11,15 @@ class NewsController extends Controller
     {
     }
 
+    public function getNews(Request $request)
+    {
+        $news = News::orderBy("created_at", "DESC")->get();
+
+        return view("news.index", [
+            "news" => $news,
+        ]);
+    }
+
     public function getNewsBySlug(Request $request, $slug)
     {
         $news = News::where("slug", $slug)->first();

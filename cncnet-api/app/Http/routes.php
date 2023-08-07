@@ -4,15 +4,12 @@ use App\GameReport;
 use App\Http\Services\LadderService;
 use \App\User;
 
-Route::get('/', function ()
-{
-    return redirect('ladder/');
-});
-
+Route::get('/', 'SiteController@getIndex');
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
 Route::get('/help/obs', 'SiteController@getOBSHelp');
 Route::get('/donate', 'SiteController@getDonate');
 Route::get('/ranking', 'RankingController@getIndex');
+Route::get('/news', 'NewsController@getNews');
 Route::get('/news/{slug}', 'NewsController@getNewsBySlug');
 
 

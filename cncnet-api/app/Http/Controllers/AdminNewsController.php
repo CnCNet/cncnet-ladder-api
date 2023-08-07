@@ -73,11 +73,14 @@ class AdminNewsController extends Controller
         {
             $image = Image::make($request->file('featured_image')->getRealPath());
 
-            $image->resize(720, null);
+            $image->resize(720, null, function ($constraint)
+            {
+                $constraint->aspectRatio();
+            });
 
             // Save the image as WebP format
             $webpHash = md5(time() . $request->file('featured_image')->getClientOriginalName());
-            $outputPath = "news/{$webpHash}.webp";
+            $outputPath = "media/{$webpHash}.webp";
             $image->encode('webp', 80)->save(public_path($outputPath));
 
             $news->featured_image = $outputPath;
