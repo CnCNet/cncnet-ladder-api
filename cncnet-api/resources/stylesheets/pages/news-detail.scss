@@ -37,3 +37,10 @@
 {
     margin-bottom: 1.1rem;
 }
+
+.news-body a 
+{
+    text-decoration: underline;
+    font-weight: 600;
+    color: $primary;
+}
