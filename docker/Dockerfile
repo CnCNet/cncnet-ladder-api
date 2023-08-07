@@ -23,6 +23,8 @@ RUN apt-get update && \
     nano \
     libxml2-dev
 
+COPY docker/custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
+
 # Install soap extention
 RUN docker-php-ext-install soap
 

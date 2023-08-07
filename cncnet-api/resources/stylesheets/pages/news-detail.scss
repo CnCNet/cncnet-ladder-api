@@ -1,0 +1,28 @@
+.news-detail .news-detail-container
+{
+    width: 720px;
+    max-width: 100%;
+    margin: auto;
+}
+
+.news-detail .news-feature img
+{
+    max-width: 100%;
+}
+
+.news-detail .news-meta 
+{
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+}
+
+.news-detail .news-meta .author 
+{
+    color: silver;
+}
+
+.news-detail .news-body img 
+{
+    max-width: 100%;
+}

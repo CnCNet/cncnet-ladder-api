@@ -21,7 +21,7 @@ $enable-cssgrid: true;
 $primary:  #00ff8a;
 $secondary: #0c0e14;
 $success: $primary;
-$warning:#ffb700;
+$warning:#ffc31b;
 $danger: #8d000d;
 $blue: #03bcd4;
 $red: #ff0000;
@@ -109,3 +109,14 @@ $tooltip-font-size: 1rem;
 // Borders
 $border-style: solid;
 $border-color: #1c1c1c;
+
+
+.color-gold 
+{
+    color: $warning;
+}
+
+.color-green 
+{
+    color: #00ffc6;
+}

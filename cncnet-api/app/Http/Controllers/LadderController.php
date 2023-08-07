@@ -16,6 +16,7 @@ use \App\Http\Services\LadderService;
 use App\Http\Services\UserRatingService;
 use \App\Http\Services\StatsService;
 use App\Ladder;
+use App\News;
 use App\Player;
 use App\PlayerHistory;
 use App\QmCanceledMatch;
@@ -40,11 +41,14 @@ class LadderController extends Controller
 
     public function getLadders(Request $request)
     {
+        $news = News::orderBy("created_at", "desc")->limit(4)->get();
+
         return view(
             "ladders.index",
             [
                 "ladders" => $this->ladderService->getLatestLadders(),
-                "clan_ladders" => $this->ladderService->getLatestClanLadders()
+                "clan_ladders" => $this->ladderService->getLatestClanLadders(),
+                "news" => $news
             ]
         );
     }

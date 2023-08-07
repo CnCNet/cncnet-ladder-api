@@ -45,7 +45,10 @@
         "components/games-table",
         "components/achievement",
         "components/league-selection",
-        "components/player-hover-card";
+        "components/player-hover-card",
+        "components/news-editor",
+        "components/admin-news",
+        "components/news-boxes";
 
 //
 // Pages
@@ -56,7 +59,8 @@
         "pages/ladder-admin",
         "pages/game-detail",
         "pages/components/clan-versus-header",
-        "pages/clan-detail";
+        "pages/clan-detail",
+        "pages/news-detail";
 
 
 @import "ladder-global";

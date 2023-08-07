@@ -1,0 +1,22 @@
+.admin-news .news-item .news-body 
+{
+    max-width: 100%;
+
+    & img 
+    {
+        max-width: 100%;
+    }
+}
+
+.admin-news .news-item 
+{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background: #1e212b;
+    padding: 2rem;
+
+    & img 
+    {
+        max-width: 100%;
+    }
+}

@@ -37,7 +37,8 @@
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
                     <input name="game_id" type="hidden" value="{{ $game->id }}" />
                     <input name="game_report_id" type="hidden" value="{{ $gameReport->id }}" />
-                <button type="submit" class="btn btn-md btn-danger" @if ($gameReport->best_report) disabled>@if ($count < 1) Wash @else Current @endif @else>
+                    <button type="submit" class="btn btn-md btn-danger"
+                    @if ($gameReport->best_report) disabled>@if ($count < 1) Wash @else Current @endif @else>
                         @if ($count < 1) Wash
                         @else
                             Switch @endif

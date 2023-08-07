@@ -18,13 +18,6 @@
                             <a class="btn btn-primary" href="/" role="button" title="Play Now">Back to Home</a>
                         </li>
                     </ul>
-
-                    @if (!\Auth::user())
-                        <div class="mt-4">
-                            <a class="btn btn--outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
-                            <a class="btn btn--outline-secondary btn-size-lg" href="/auth/login">Login</a>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
