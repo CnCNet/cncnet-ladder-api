@@ -64,6 +64,8 @@ class ApiUserController extends Controller
 
             if ($activeHandle->player->ladder)
             {
+                $activeHandle->player["rank"] = null;
+
                 if ($ladder->clans_allowed)
                 {
                     // Check player has clan
@@ -71,17 +73,25 @@ class ApiUserController extends Controller
                     {
                         continue;
                     }
+
                     $clan = $player->clanPlayer->clan;
                     $player->clanPlayer;
+
+                    if ($ladder->currentHistory())
+                    {
+                        $clanCache = $player->clanPlayer->clanCache($ladder->currentHistory());
+                        $activeHandle->player["rank"] = $clanCache ? $clanCache->rank() : null;
+                    }
                 }
-
-                $activeHandle->player["rank"] = null;
-
-                if ($ladder->currentHistory())
+                else
                 {
-                    $playerCache = $activeHandle->player->playerCache($ladder->currentHistory()->id);
-                    $activeHandle->player["rank"] = $playerCache ? $playerCache->rank() : null;
+                    if ($ladder->currentHistory())
+                    {
+                        $playerCache = $activeHandle->player->playerCache($ladder->currentHistory()->id);
+                        $activeHandle->player["rank"] = $playerCache ? $playerCache->rank() : null;
+                    }
                 }
+
                 $playerList[] = $activeHandle->player;
             }
         }
