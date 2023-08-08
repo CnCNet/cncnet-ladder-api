@@ -60,7 +60,7 @@ class ApiUserController extends Controller
             // No idea why.
             $ladder = $activeHandle->player->ladder;
             $player = $activeHandle->player;
-            $player['user_avatar_path'] = $player->user->avatar_path;
+            $player["user"] = $player->user;
 
             if ($activeHandle->player->ladder)
             {
@@ -73,6 +73,14 @@ class ApiUserController extends Controller
                     }
                     $clan = $player->clanPlayer->clan;
                     $player->clanPlayer;
+                }
+
+                $activeHandle->player["rank"] = null;
+
+                if ($ladder->currentHistory())
+                {
+                    $playerCache = $activeHandle->player->playerCache($ladder->currentHistory()->id);
+                    $activeHandle->player["rank"] = $playerCache ? $playerCache->rank() : null;
                 }
                 $playerList[] = $activeHandle->player;
             }
