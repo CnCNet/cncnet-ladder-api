@@ -96,3 +96,14 @@
     width: 1900px;
     max-width: 100%;
 }
+
+.icon-box 
+{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 100%;
+    background: #232735;
+    width: 60px;
+    height: 60px;
+}

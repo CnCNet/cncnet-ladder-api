@@ -21,14 +21,14 @@ $enable-cssgrid: true;
 $primary:  #00ff8a;
 $secondary: #0c0e14;
 $success: $primary;
-$warning:#ffb700;
+$warning:#ffc31b;
 $danger: #8d000d;
 $blue: #03bcd4;
 $red: #ff0000;
 $generic-bg: #0c0e14;;
 $body-bg: #07080c;
-$body-color: #a0a0a1;
-$link-color: #e5e5e5;
+$body-color: #ebebeb;
+$link-color: #f8f8f8;
 $link-hover-color: #fff;
 $text-light-color: #ececec;
 
@@ -42,8 +42,8 @@ $headings-font-family: $font-oswald;
 
 // Buttons
 $btn-font-family: $font-oswald;
-$btn-padding-y: 0.95rem;
-$btn-padding-x: 2rem;
+$btn-padding-y: 0.85rem;
+$btn-padding-x: 1.8rem;
 $btn-font-weight: 400;
 $btn-font-size: 1rem;
 
@@ -109,3 +109,14 @@ $tooltip-font-size: 1rem;
 // Borders
 $border-style: solid;
 $border-color: #1c1c1c;
+
+
+.color-gold 
+{
+    color: $warning;
+}
+
+.color-green 
+{
+    color: #00ffc6;
+}

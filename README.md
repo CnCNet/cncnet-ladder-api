@@ -17,6 +17,7 @@ This is the main repository for the CnCNet Ladder API.
 ### Storage links
 Replace user with the host user
 `ln -s /home/user/site/storage/app/avatars /home/user/site/public/avatars`
+`ln -s /home/user/site/storage/app/media /home/user/site/public/media`
 
 ### Production
 - `docker-compose build` and `docker-compose up -d`

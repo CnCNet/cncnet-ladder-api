@@ -1,0 +1,82 @@
+.news-boxes 
+{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: space-around;
+}
+
+.news-boxes .news-box
+{
+    width: 100%;
+    min-height: 400px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+
+    @media(min-width: $md-width)
+    {
+        margin: 1rem;
+        width: calc(50% - 2rem);
+    }
+}
+
+.news-boxes-swiper .news-box 
+{
+    width: 100%;
+    margin: 0;
+}
+
+.news-boxes-swiper .swiper 
+{
+    width: 100%;
+}
+
+.news-boxes .news-container 
+{
+    position: absolute;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: linear-gradient(0deg, black, transparent);
+    padding: 0rem 1.5rem 0.5rem;
+    color: #fff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    border-radius: 8px;
+
+    @media(min-width: $md-width)
+    {
+        height: 200px;
+    }
+}
+
+.news-boxes .read-more 
+{
+    display: flex;
+    align-items: center;
+    margin: 0;
+    margin-left: auto;
+    padding: 0.8rem;
+}
+
+.news-boxes .news-description 
+{
+    margin-bottom: 0;
+}
+
+.news-boxes .news-box:before 
+{
+    background: linear-gradient(180deg, rgb(0 0 0 / 3%), transparent);
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+}

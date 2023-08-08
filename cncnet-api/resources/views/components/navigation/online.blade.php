@@ -5,7 +5,6 @@
         </span>
 
         <span class="online ms-2 me-2 text ps-2">...</span>
-        <span class="d-block d-xl-none">Online</span>
-        <span class="d-none d-xl-block">Players Online</span>
+        <span>Online</span>
     </a>
 </li>

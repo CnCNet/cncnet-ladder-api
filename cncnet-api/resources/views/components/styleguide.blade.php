@@ -1,25 +1,39 @@
 <div class="container mt-5">
-    <h1>Headings</h1>
-</div>
+    <h1>Heading h1 - Lorem ipsum dolor sit amet, consectetur adipiscing elit</h1>
+    <h2>Heading h2 - Lorem ipsum dolor sit amet, consectetur adipiscing elit</h2>
+    <h3>Heading h3 - Lorem ipsum dolor sit amet, consectetur adipiscing elit</h3>
+    <h4>Heading h4 - Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
+    <h5>Heading h5 - Lorem ipsum dolor sit amet, consectetur adipiscing elit</h5>
 
-<div class="container">
-    <h1>heading h1</h1>
-    <h2>heading h2</h2>
-    <h3>heading h3</h3>
-    <h4>heading h4</h4>
-    <h5>heading h5</h5>
-    <p>
-        paragraph
-    </p>
-    <p class="lead">
-        lead paragraph
-    </p>
-    <small>
-        small tag
-    </small>
-    <strong>
-        strong tag
-    </strong>
+    <div class="mt-5">
+        <p class="lead">
+            Lead paragraph - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+            aliqua. Ut
+            enim ad minim Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut
+            enim ad minim
+        </p>
+
+        <p>
+            Normal paragraph - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+            aliqua. Ut enim ad
+            minim
+        </p>
+    </div>
+
+    <div>
+        <small>
+            Small tag - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+            enim ad minim
+        </small>
+    </div>
+    <div>
+        <strong>
+            Strong tag - Small tag - Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+            magna
+            aliqua. enim ad minim
+        </strong>
+    </div>
 </div>
 
 <div class="container mt-5">
@@ -124,7 +138,7 @@
     <button type="button" class="btn btn-light">Light</button>
     <button type="button" class="btn btn-dark">Dark</button>
     <button type="button" class="btn btn-link">Link</button>
-    <button type="button" class="btn btn-outline btn-size-lg">Outline</button>
+    <button type="button" class="btn btn-outline">Outline</button>
 </div>
 
 
@@ -220,7 +234,8 @@
     <div class="row align-items-center g-lg-5 py-5">
         <div class="col-lg-7 text-center text-lg-start">
             <h1 class="display-4 fw-bold lh-1 mb-3">Vertically centered hero sign-up form</h1>
-            <p class="col-lg-10 fs-4">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a validation state that can be triggered by attempting to
+            <p class="col-lg-10 fs-4">Below is an example form built entirely with Bootstrap’s form controls. Each required form group has a
+                validation state that can be triggered by attempting to
                 submit the form without completing it.
             </p>
             <button type="button" class="btn btn-primary">Primary</button>
@@ -253,7 +268,8 @@
     <img class="d-block mx-auto mb-4" src="/images/cncnet-logo.png" alt="">
     <h1 class="display-5 fw-bold">Centered hero</h1>
     <div class="col-lg-6 mx-auto">
-        <p class="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins,
+        <p class="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open
+            source toolkit, featuring Sass variables and mixins,
             responsive grid system, extensive prebuilt components, and powerful JavaScript plugins.</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <button type="button" class="btn btn-primary px-4 gap-3">Primary button</button>
@@ -272,31 +288,34 @@
                 </span>
             </div>
             <h3>Featured title</h3>
-            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going
+                until we run out of words.</p>
             <div class="d-grid gap-2 d-sm-flex">
                 <button type="button" class="btn btn-secondary px-4">Secondary</button>
             </div>
         </div>
         <div class="feature col">
-            <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-secondary fs-2 mb-3">
+            <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-secondary  fs-2 mb-3 p-3 b-radius-5">
                 <span class="material-symbols-outlined fs-2">
                     star
                 </span>
             </div>
             <h3>Featured title</h3>
-            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going
+                until we run out of words.</p>
             <div class="d-grid gap-2 d-sm-flex">
                 <button type="button" class="btn btn-secondary px-4">Secondary</button>
             </div>
         </div>
         <div class="feature col">
-            <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-secondary fs-2 mb-3">
+            <div class="feature-icon d-inline-flex align-items-center justify-content-center text-bg-secondary  fs-2 mb-3 p-3 b-radius-5">
                 <span class="material-symbols-outlined fs-2">
                     bolt
                 </span>
             </div>
             <h3>Featured title</h3>
-            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
+            <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going
+                until we run out of words.</p>
             <div class="d-grid gap-2 d-sm-flex">
                 <button type="button" class="btn btn-secondary px-4">Secondary</button>
             </div>

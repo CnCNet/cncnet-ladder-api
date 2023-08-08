@@ -63,6 +63,18 @@
     <section class="pt-4">
         <div class="container">
             <div>
+                <div class="row mb-5">
+                    <div class="col-md-4">
+                        <div class="player-box player-card">
+                            <h3>News</h3>
+                            <p>Post news to the ladder </p>
+                            <ul class="list-unstyled">
+                                <li><a href="/admin/news" class="btn btn-md btn-secondary">News</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
                     <div class="col-md-4">
                         <div class="player-box player-card">

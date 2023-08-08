@@ -4,16 +4,14 @@ use App\GameReport;
 use App\Http\Services\LadderService;
 use \App\User;
 
-Route::get('/', function ()
-{
-    return redirect('ladder/');
-});
-
+Route::get('/', 'SiteController@getIndex');
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
 Route::get('/help/obs', 'SiteController@getOBSHelp');
 Route::get('/donate', 'SiteController@getDonate');
+Route::get('/styleguide', 'SiteController@getStyleguide');
 Route::get('/ranking', 'RankingController@getIndex');
-Route::get('/news/clan-ladder', 'SiteController@getClanLadderNews');
+Route::get('/news', 'NewsController@getNews');
+Route::get('/news/{slug}', 'NewsController@getNewsBySlug');
 
 
 # 1vs1 Player Ladders
@@ -78,6 +76,14 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => t
 
     Route::get('clans', 'AdminController@getManageClansIndex');
     Route::post('clans', 'AdminController@updateClan');
+});
+
+Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => true], function ()
+{
+    Route::get('news/', 'AdminNewsController@getIndex');
+    Route::get('news/create', 'AdminNewsController@getCreate');
+    Route::get('news/edit/{id}', 'AdminNewsController@getEdit');
+    Route::post('news/save', 'AdminNewsController@save');
 });
 
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()

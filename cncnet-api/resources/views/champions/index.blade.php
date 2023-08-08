@@ -45,6 +45,7 @@
                         'players' => $ladderWinners['players'],
                         'history' => $ladderWinners['history'],
                         'sides' => $ladderWinners['sides'],
+                        'ladderHasEnded' => true,
                     ])
                 </div>
             @endforeach

@@ -1,0 +1,18 @@
+.news-editor .ql-toolbar.ql-snow,
+.news-editor .ql-container.ql-snow
+{
+    border: 1px solid #0c0e14;
+    background: #0c0e14;
+}
+
+.news-editor .ql-snow *
+{
+    font-size: 1rem;
+}
+
+.news-editor .featured-image
+{
+    width: 300px;
+
+    & img { max-width: 100%;}
+}
