@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ClanCache;
 use Illuminate\Http\Request;
 use \App\Http\Services\LadderService;
 use \App\Http\Services\GameService;
@@ -24,8 +25,10 @@ use \App\Helpers\LeagueHelper;
 use App\Http\Services\QuickMatchService;
 use App\Http\Services\QuickMatchSpawnService;
 use App\Http\Services\StatsService;
+use App\Ladder;
 use App\LeaguePlayer;
 use App\MapPool;
+use App\PlayerCache;
 use App\QmMatch;
 use App\QmMatchPlayer;
 use BadMethodCallException;
@@ -705,6 +708,43 @@ class ApiQuickMatchController extends Controller
         {
             return ["type" => "please wait", "checkback" => 10, "no_sooner_than" => 5];
         }
+    }
+
+    public function getPlayerRankingsByLadder(Request $request, $ladderAbbrev)
+    {
+        $ladder = Ladder::where("abbreviation", $ladderAbbrev)->first();
+        if ($ladder == null)
+        {
+            abort(404);
+        }
+
+        $rankings = [];
+        $tier = $request->tier == 2 ? 2 : 1;
+
+        $history = $ladder->currentHistory();
+
+        if ($history->ladder->clans_allowed)
+        {
+            $rankings = ClanCache::where("ladder_history_id", "=", $history->id)
+                ->where("clan_name", "like", "%" . $request->search . "%")
+                ->orderBy("points", "desc")
+                ->limit(200)
+                ->get();
+        }
+        else
+        {
+            $rankings = PlayerCache::where("ladder_history_id", "=", $history->id)
+                ->where("tier", "=", $tier)
+                ->where("player_name", "like", "%" . $request->search . "%")
+                ->orderBy("points", "desc")
+                ->limit(200)
+                ->get();
+        }
+
+        return [
+            "ladder" => $ladder,
+            "rankings" => $rankings
+        ];
     }
 
     public function getPlayerRankings($count = 50)
