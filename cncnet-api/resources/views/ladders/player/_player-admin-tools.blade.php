@@ -3,14 +3,16 @@
         <div class="d-flex">
             @if ($userIsMod)
                 <div>
-                    <a href="/admin/moderate/{{ $ladderId }}/player/{{ $ladderPlayer->id }}" class="btn btn-secondary btn-size-md me-3">Moderation
-                        Actions</a>
+                    <a href="/admin/moderate/{{ $ladderId }}/player/{{ $ladderPlayer->id }}" class="btn btn-secondary btn-size-md me-3">
+                        Moderation Actions
+                    </a>
                 </div>
             @endif
 
             @if (isset($mod) && $mod->isLadderAdmin($player['ladder']))
-                <button type="button" class="btn btn-secondary btn-size-md" data-bs-toggle="modal" data-bs-target="#submitLaundryService">Laundry
-                    Service</button>
+                <button type="button" class="btn btn-secondary btn-size-md" data-bs-toggle="modal" data-bs-target="#submitLaundryService">
+                    Laundry Service
+                </button>
 
                 <div class="modal fade" id="submitLaundryService" tabIndex="-1" role="dialog">
                     <div class="modal-dialog">

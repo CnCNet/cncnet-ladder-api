@@ -124,7 +124,7 @@
                         </div>
                         <div>
                             <span class="font-secondary-bold">Last online:</span>
-                            <span class="font-secondary">{{ $ladderPlayer->last_active }}</span>
+                            <span class="font-secondary">{{ $ladderPlayer->last_active ?? 'Unknown' }}</span>
                         </div>
                         @if ($userPlayer->userSettings->getIsAnonymous() == false)
                             <div>

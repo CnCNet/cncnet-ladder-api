@@ -325,11 +325,20 @@ class ApiQuickMatchController extends Controller
         # Check player has an active nick to play with, set one if not
         $this->playerService->setActiveUsername($player, $ladder);
 
-        # Check for player bans
-        $playerBan = $this->playerService->checkPlayerForBans($player, $request->getClientIp());
-        if ($playerBan)
+        # Check for shadowbans first
+        $userIsShadowBanned = $user->checkForShadowBan($request->getClientIp());
+        if ($userIsShadowBanned)
         {
-            return $this->onMatchFatalError($playerBan);
+            Log::info("Shadow banned: " . $user->name);
+            # Player is in a fake queue
+            return $this->onCheckback(null);
+        }
+
+        # Check for player bans 
+        $playerIsBanned = $this->playerService->checkPlayerForBans($player, $request->getClientIp());
+        if ($playerIsBanned)
+        {
+            return $this->onMatchFatalError($playerIsBanned);
         }
 
         # Require a verified email address
@@ -470,6 +479,12 @@ class ApiQuickMatchController extends Controller
             $ladder,
             $ladderRules
         );
+    }
+
+    private function checkPlayerForShadowBan(
+        $qmPlayer
+    )
+    {
     }
 
     private function checkPlayerWillMatchAI(

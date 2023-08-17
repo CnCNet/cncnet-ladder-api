@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Ban;
 use App\Ladder;
 use App\Player;
 use App\PlayerActiveHandle;
