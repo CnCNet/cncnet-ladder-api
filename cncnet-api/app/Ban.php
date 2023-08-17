@@ -1,11 +1,14 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
-class Ban extends Model {
+class Ban extends Model
+{
 
-	//
+    //
     protected $dates = ['expires'];
     public $fillable = ['admin_id', 'user_id', 'ban_type', 'internal_note', 'plubic_reason', 'expires', 'ip_address_id'];
 
@@ -14,6 +17,7 @@ class Ban extends Model {
     const BAN48H     = 0;
     const BAN1WEEK   = 1;
     const BAN2WEEK   = 2;
+    const BAN_SHADOW = 3;
     const BAN_END    = 99;
     const START_ON_CONNECT_END = 99;
 
@@ -40,7 +44,7 @@ class Ban extends Model {
 
     public function ip()
     {
-        return $this->belongsTo('App\IpAddress','ip_address_id');
+        return $this->belongsTo('App\IpAddress', 'ip_address_id');
     }
 
     public static function unstartedBanTime()
@@ -87,99 +91,99 @@ class Ban extends Model {
                 $banned = true;
             else if ($this->ban_type <= Ban::COOLDOWN_END && $this->ban_type >= Ban::COOLDOWN_BEGIN)
                 $cooldown = true;
-         }
+        }
         else
         {
             switch ($this->ban_type)
             {
-            case Ban::BAN48H:
-                if (!$this->started())
-                {
-                    $this->expires = Carbon::now()->addHours(48);
-                    $this->save();
+                case Ban::BAN48H:
+                    if (!$this->started())
+                    {
+                        $this->expires = Carbon::now()->addHours(48);
+                        $this->save();
+                        $banned = true;
+                    }
+                    else if ($this->expires->gt(Carbon::now()))
+                        $banned = true;
+                    break;
+
+                case Ban::BAN1WEEK:
+                    if (!$this->started())
+                    {
+                        $this->expires = Carbon::now()->addWeek(1);
+                        $this->save();
+                        $banned = true;
+                    }
+                    else if ($this->expires->gt(Carbon::now()))
+                        $banned = true;
+                    break;
+
+                case Ban::BAN2WEEK:
+                    if (!$this->started())
+                    {
+                        $this->expires = Carbon::now()->addWeek(2);
+                        $this->save();
+                        $banned = true;
+                    }
+                    else if ($this->expires->gt(Carbon::now()))
+                        $banned = true;
+                    break;
+
+                case Ban::PERMBAN:
+                    if (!$this->started())
+                    {
+                        $this->expires = Carbon::create(2038, 1, 1, 0, 0, 0, 'UTC');
+                        $this->save();
+                    }
                     $banned = true;
-                }
-                else if ($this->expires->gt(Carbon::now()))
-                    $banned = true;
-                break;
+                    break;
 
-            case Ban::BAN1WEEK:
-                if (!$this->started())
-                {
-                    $this->expires = Carbon::now()->addWeek(1);
-                    $this->save();
-                    $banned = true;
-                }
-                else if ($this->expires->gt(Carbon::now()))
-                    $banned = true;
-                break;
+                case Ban::COOLDOWN1H:
+                    if (!$this->started())
+                    {
+                        $this->expires = Carbon::now()->addHours(1);
+                        $this->save();
+                        $cooldown = true;
+                    }
+                    else if ($this->expires->gt(Carbon::now()))
+                        $cooldown = true;
+                    break;
 
-            case Ban::BAN2WEEK:
-                if (!$this->started())
-                {
-                    $this->expires = Carbon::now()->addWeek(2);
-                    $this->save();
-                    $banned = true;
-                }
-                else if ($this->expires->gt(Carbon::now()))
-                    $banned = true;
-                break;
+                case Ban::COOLDOWN2H:
+                    if (!$this->started())
+                    {
+                        $this->expires = Carbon::now()->addHours(2);
+                        $this->save();
+                        $cooldown = true;
+                    }
+                    else if ($this->expires->gt(Carbon::now()))
+                        $cooldown = true;
+                    break;
 
-            case Ban::PERMBAN:
-                if (!$this->started())
-                {
-                    $this->expires = Carbon::create(2038,1,1,0,0,0,'UTC');
-                    $this->save();
-                }
-                $banned = true;
-                break;
+                case Ban::COOLDOWN4H:
+                    if (!$this->started())
+                    {
+                        $this->expires = Carbon::now()->addHours(4);
+                        $this->save();
+                        $cooldown = true;
+                    }
+                    else if ($this->expires->gt(Carbon::now()))
+                        $cooldown = true;
+                    break;
 
-            case Ban::COOLDOWN1H:
-                if (!$this->started())
-                {
-                    $this->expires = Carbon::now()->addHours(1);
-                    $this->save();
-                    $cooldown = true;
-                }
-                else if ($this->expires->gt(Carbon::now()))
-                    $cooldown = true;
-                break;
+                case Ban::COOLDOWN12H:
+                    if (!$this->started())
+                    {
+                        $this->expires = Carbon::now()->addHours(12);
+                        $this->save();
+                        $cooldown = true;
+                    }
+                    else if ($this->expires->gt(Carbon::now()))
+                        $cooldown = true;
+                    break;
 
-            case Ban::COOLDOWN2H:
-                if (!$this->started())
-                {
-                    $this->expires = Carbon::now()->addHours(2);
-                    $this->save();
-                    $cooldown = true;
-                }
-                else if ($this->expires->gt(Carbon::now()))
-                    $cooldown = true;
-                break;
-
-            case Ban::COOLDOWN4H:
-                if (!$this->started())
-                {
-                    $this->expires = Carbon::now()->addHours(4);
-                    $this->save();
-                    $cooldown = true;
-                }
-                else if ($this->expires->gt(Carbon::now()))
-                    $cooldown = true;
-                break;
-
-            case Ban::COOLDOWN12H:
-                if (!$this->started())
-                {
-                    $this->expires = Carbon::now()->addHours(12);
-                    $this->save();
-                    $cooldown = true;
-                }
-                else if ($this->expires->gt(Carbon::now()))
-                    $cooldown = true;
-                break;
-
-            default:
-                break;
+                default:
+                    break;
             }
         }
 
@@ -206,41 +210,44 @@ class Ban extends Model {
     {
         switch ($ban_type)
         {
-        case Ban::BAN48H:
-            return "48 Hours";
-            break;
+            case Ban::BAN48H:
+                return "48 Hours";
+                break;
 
-        case Ban::BAN1WEEK:
-            return "1 Week";
-            break;
+            case Ban::BAN1WEEK:
+                return "1 Week";
+                break;
 
-        case Ban::BAN2WEEK:
-            return "2 Weeks";
-            break;
+            case Ban::BAN2WEEK:
+                return "2 Weeks";
+                break;
 
-        case Ban::PERMBAN:
-            return "Permanent";
-            break;
+            case Ban::PERMBAN:
+                return "Permanent";
+                break;
 
-        case Ban::COOLDOWN1H:
-            return "1 Hour Cooldown";
-            break;
+            case Ban::COOLDOWN1H:
+                return "1 Hour Cooldown";
+                break;
 
-        case Ban::COOLDOWN2H:
-            return "2 Hour Cooldown";
-            break;
+            case Ban::COOLDOWN2H:
+                return "2 Hour Cooldown";
+                break;
 
-        case Ban::COOLDOWN4H:
-            return "4 Hour Cooldown";
-            break;
+            case Ban::COOLDOWN4H:
+                return "4 Hour Cooldown";
+                break;
 
-        case Ban::COOLDOWN12H:
-            return "12 Hour Cooldown";
-            break;
+            case Ban::COOLDOWN12H:
+                return "12 Hour Cooldown";
+                break;
 
-        default:
-            return "nope";
-            break;
+            case Ban::BAN_SHADOW:
+                return "Shadow ban";
+
+            default:
+                return "nope";
+                break;
         }
         return "";
     }

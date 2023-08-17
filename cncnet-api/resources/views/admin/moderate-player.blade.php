@@ -35,15 +35,38 @@
                 </div>
                 @include('components.form-messages')
                 <div class="col-5">
-                    <a class="btn btn-sm btn-primary mb-2" href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::COOLDOWN1H }}">1 Hour Cooldown</a>
-                    <a class="btn btn-sm btn-primary mb-2" href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::COOLDOWN2H }}">2 Hour Cooldown</a>
-                    <a class="btn btn-sm btn-primary mb-2" href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::COOLDOWN4H }}">4 Hour Cooldown</a>
-                    <a class="btn btn-sm btn-primary mb-2" href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::COOLDOWN12H }}">12 Hour Cooldown</a>
-                    <a class="btn btn-sm btn-danger mb-2" href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::BAN48H }}">48 Hour Ban</a>
-                    <a class="btn btn-sm btn-danger mb-2" href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::BAN1WEEK }}">1 Week Ban</a>
-                    <a class="btn btn-sm btn-danger mb-2" href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::BAN2WEEK }}">2 Week Ban</a>
+                    <a class="btn btn-sm btn-primary mb-2"
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::COOLDOWN1H }}">
+                        1 Hour Cooldown</a>
+                    <a class="btn btn-sm btn-primary mb-2"
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::COOLDOWN2H }}">
+                        2 Hour Cooldown</a>
+                    <a class="btn btn-sm btn-primary mb-2"
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::COOLDOWN4H }}">
+                        4 Hour
+                        Cooldown</a>
+                    <a class="btn btn-sm btn-primary mb-2"
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::COOLDOWN12H }}">
+                        12 Hour
+                        Cooldown</a>
+                    <a class="btn btn-sm btn-danger mb-2"
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::BAN48H }}">
+                        48 Hour Ban</a>
+                    <a class="btn btn-sm btn-danger mb-2"
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::BAN1WEEK }}">
+                        1 Week Ban</a>
+                    <a class="btn btn-sm btn-danger mb-2"
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::BAN2WEEK }}">
+                        2 Week Ban</a>
+                    <a class="btn btn-sm btn-danger"
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::BAN_SHADOW }}">
+                        {{ \App\Ban::typeToDescription(App\Ban::BAN_SHADOW) }}
+                    </a>
                     @if (isset($mod) && $mod->isLadderAdmin($player->ladder))
-                        <a class="btn btn-sm btn-danger" href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::PERMBAN }}">Indefinite Ban</a>
+                        <a class="btn btn-sm btn-danger"
+                            href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Ban::PERMBAN }}">
+                            Indefinite Ban
+                        </a>
                     @endif
                 </div>
             </div>
@@ -116,7 +139,8 @@
                                 @if ($ban->expires === null || $ban->expires->eq(\App\Ban::unstartedBanTime()))
                                     <td>Not Started</td>
                                     <td>
-                                        <form method="POST" action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
+                                        <form method="POST"
+                                            action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input type="hidden" name="start_or_end" value="1">
                                             <button type="submit" class="btn btn-danger btn-sm">Start</button>
@@ -125,7 +149,8 @@
                                 @elseif ($ban->expires !== null && $ban->expires->gt(\Carbon\Carbon::now()))
                                     <td>{{ $ban->expires }}</td>
                                     <td>
-                                        <form method="POST" action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
+                                        <form method="POST"
+                                            action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input type="hidden" name="start_or_end" value="1">
                                             <button type="submit" class="btn btn-danger btn-sm">Stop</button>
@@ -135,11 +160,12 @@
                                     <td>{{ $ban->expires }}</td>
                                     <td></td>
                                 @endif
-                                    <td>
-                                        <a href="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}" class="btn btn-primary btn-sm" ">Edit</a>
-                                    </td>
-                            </tr>
-                        @endforeach
+                                <td>
+                                    <a href="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}"
+                                        class="btn btn-primary btn-sm" ">Edit</a>
+                                                            </td>
+                                                    </tr>
+     @endforeach
                     </tbody>
                 </table>
             </div>

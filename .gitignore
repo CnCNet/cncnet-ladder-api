@@ -3,7 +3,7 @@
 env
 .env
 stats
-
+backups
 # User-specific files
 *.suo
 *.user
