@@ -243,7 +243,7 @@ class Ban extends Model
                 break;
 
             case Ban::BAN_SHADOW:
-                return "Shadow ban";
+                return "Never match anyone";
 
             default:
                 return "nope";
