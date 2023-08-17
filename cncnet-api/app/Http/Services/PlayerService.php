@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Ban;
 use App\Ladder;
 use App\Player;
 use App\PlayerActiveHandle;
@@ -170,16 +171,6 @@ class PlayerService
         }
 
         return null;
-    }
-
-    public function checkPlayerForShadowBan($player, $ip)
-    {
-        $ban = $this->checkPlayerForBans($player, $ip);
-        if ($ban->ban_type === \App\Ban::BAN_SHADOW)
-        {
-            return true;
-        }
-        return false;
     }
 
     public function checkPlayerHasVerifiedEmail($player)

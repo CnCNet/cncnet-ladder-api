@@ -8,9 +8,11 @@ use Carbon\Carbon;
 class Ban extends Model
 {
 
-    //
     protected $dates = ['expires'];
-    public $fillable = ['admin_id', 'user_id', 'ban_type', 'internal_note', 'plubic_reason', 'expires', 'ip_address_id'];
+
+    public $fillable = [
+        'admin_id', 'user_id', 'ban_type', 'internal_note', 'plubic_reason', 'expires', 'ip_address_id'
+    ];
 
     const START_ON_CONNECT_BEGIN = 0;
     const BAN_BEGIN  = 0;
@@ -52,6 +54,22 @@ class Ban extends Model
         return Carbon::create(0, 0, 0, 0, 0, 0);
     }
 
+    public function banHasExpired()
+    {
+        // Convert the timestamp to a Carbon instance
+        $expiryTime = Carbon::parse($this->expires);
+
+        // Get the current date and time
+        $currentDateTime = Carbon::now();
+
+        // Compare the current date and time with the expiry time
+        if ($currentDateTime->gt($expiryTime))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public function timeTill()
     {
         if ($this->started())
@@ -78,11 +96,11 @@ class Ban extends Model
         return true;
     }
 
-    public function checkStartBan($start = false)
+    public function checkStartBan($startBanStraightAway = false)
     {
         $banned = false;
         $cooldown = false;
-        if (!$start && !($this->ban_type >= \App\Ban::START_NOW_BEGIN && $this->ban_type <= \App\Ban::START_NOW_END))
+        if (!$startBanStraightAway && !($this->ban_type >= \App\Ban::START_NOW_BEGIN && $this->ban_type <= \App\Ban::START_NOW_END))
         {
             if ($this->ban_type == Ban::PERMBAN)
                 return "You are permanently banned!\n{$this->plubic_reason}";
@@ -130,6 +148,7 @@ class Ban extends Model
                     break;
 
                 case Ban::PERMBAN:
+                case Ban::BAN_SHADOW:
                     if (!$this->started())
                     {
                         $this->expires = Carbon::create(2038, 1, 1, 0, 0, 0, 'UTC');

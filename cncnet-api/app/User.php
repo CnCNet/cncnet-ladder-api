@@ -108,6 +108,43 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return null;
     }
 
+    public function checkForShadowBan($ip)
+    {
+        try
+        {
+            $currentDateTime = Carbon::now();
+
+            $shadowBans = Ban::where("user_id", $this->id)
+                ->where("ban_type", Ban::BAN_SHADOW)
+                ->where("expires", ">", $currentDateTime)
+                ->count();
+
+            if ($shadowBans > 0)
+            {
+                return true;
+            }
+
+            $users = \App\IpAddress::findByIP($ip)->users;
+            foreach ($users as $user)
+            {
+                $shadowBans = Ban::where("user_id", $user->id)
+                    ->where("ban_type", Ban::BAN_SHADOW)
+                    ->where("expires", ">", $currentDateTime)
+                    ->count();
+
+                if ($shadowBans > 0)
+                {
+                    return true;
+                }
+            }
+        }
+        catch (Exception $e)
+        {
+        }
+
+        return false;
+    }
+
     public function privateLadders()
     {
         if ($this->isGod())

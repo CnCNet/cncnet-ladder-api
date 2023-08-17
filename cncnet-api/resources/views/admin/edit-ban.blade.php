@@ -44,7 +44,7 @@
 @section('content')
     <?php $card = \App\Card::find($player->card_id); ?>
 
-    <div class="player">
+    <div class="player mt-4">
         <div class="feature-background player-card {{ $card->short or 'no-card' }}">
             <div class="container">
                 <div class="player-header">
@@ -75,8 +75,7 @@
         </div>
     </div>
 
-
-    <div class="player">
+    <div class="player mt-4">
         <section class="dark-texture">
             <div class="container">
                 <div class="row">
@@ -97,11 +96,17 @@
                                 <label for="internal_note">Note for Internal Use</label>
                                 <textarea class="form-control" id="internal_note" name="internal_note">{{ $internal_note }}</textarea>
                             </div>
-                            <div class="form-group">
-                                <label for="plubic_reason">Publicly Viewable Reason</label>
-                                <textarea class="form-control" id="plubic_reason" name="plubic_reason">{{ $plubic_reason }}</textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-lg">Save</button>
+                            @if (!$ban_type == \App\Ban::BAN_SHADOW)
+                                <div class="form-group">
+                                    <label for="plubic_reason">Publicly Viewable Reason</label>
+                                    <textarea class="form-control" id="plubic_reason" name="plubic_reason">{{ $plubic_reason }}</textarea>
+                                </div>
+                            @else
+                                <p>
+                                    Public reason is diabled for this ban type
+                                </p>
+                            @endif
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </form>
                     </div>
                 </div>

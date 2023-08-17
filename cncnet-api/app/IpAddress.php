@@ -1,11 +1,14 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use MaxMind\Db\Reader;
 
-class IpAddress extends Model {
+class IpAddress extends Model
+{
 
-	//
+    //
 
     public static function findByIP($address)
     {

@@ -326,9 +326,10 @@ class ApiQuickMatchController extends Controller
         $this->playerService->setActiveUsername($player, $ladder);
 
         # Check for shadowbans first
-        $playerIsShadowBanned = $this->playerService->checkPlayerForShadowBan($player, $request->getClientIp());
-        if ($playerIsShadowBanned)
+        $userIsShadowBanned = $user->checkForShadowBan($request->getClientIp());
+        if ($userIsShadowBanned)
         {
+            Log::info("Shadow banned: " . $user->name);
             # Player is in a fake queue
             return $this->onCheckback(null);
         }

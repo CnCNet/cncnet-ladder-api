@@ -700,8 +700,10 @@ class AdminController extends Controller
     public function saveUserBan(Request $request, $ladderId = null, $playerId = null, $banId = null)
     {
         $mod = $request->user();
+
         if ($playerId === null)
             return;
+
         $player = \App\Player::find($playerId);
 
         if ($player === null || !$mod->isLadderMod($player->ladder))
@@ -725,7 +727,14 @@ class AdminController extends Controller
                 $ban[$col] = $request[$col];
             }
         }
+
         $ban->save();
+
+        if (!$request->start_or_end && $ban->ban_type == \App\Ban::BAN_SHADOW)
+        {
+            // Start ban straight away
+            $ban->checkStartBan(true);
+        }
 
         $banFlash = \App\Ban::banStyle($request->ban_type);
 
