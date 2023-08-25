@@ -1,10 +1,13 @@
-<?php namespace App;
+<?php
+
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class IpAddressHistory extends Model {
+class IpAddressHistory extends Model
+{
 
-	//
+    //
 
     public static function addHistory($user_id, $ip_address_id)
     {

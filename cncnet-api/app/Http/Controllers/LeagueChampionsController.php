@@ -22,8 +22,11 @@ class LeagueChampionsController extends Controller
         $prevWinners = [];
         $prevLadders = [];
 
-
         $ladder = Ladder::where("abbreviation", $game)->first();
+        if ($ladder == null)
+        {
+            abort(404);
+        }
         $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($game, 10)->splice(0, 9);
 
         foreach ($prevLadders as $h)
