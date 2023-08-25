@@ -31,6 +31,7 @@ use App\MapPool;
 use App\PlayerCache;
 use App\QmMatch;
 use App\QmMatchPlayer;
+use App\QmUserId;
 use BadMethodCallException;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -293,15 +294,14 @@ class ApiQuickMatchController extends Controller
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
 
-        $requiresUpdate = false; //$this->checkQMClientRequiresUpdate($ladder, $request->version);
+        $requiresUpdate = $this->checkQMClientRequiresUpdate($ladder, $request->version);
 
         if ($requiresUpdate === true)
         {
             # Deprecate older versions
-            $error = "Quick Match Version is no longer supported, please restart the CnCNet client to get the latest updates";
+            $error = "This version of the client is no longer supported, please restart the CnCNet client to get the latest updates";
             return $this->onMatchFatalError($error);
         }
-
 
         $playerHasAuth = $this->ladderService->checkPlayer($request);
         if ($playerHasAuth !== null)
@@ -322,11 +322,23 @@ class ApiQuickMatchController extends Controller
             return $this->onMatchFailError("Failed");
         }
 
+        if ($request->hwid)
+        {
+            try
+            {
+                QmUserId::createNew($user->id, $request->hwid);
+            }
+            catch (Exception $ex)
+            {
+                Log::info("Error saving id: " . $ex->getMessage());
+            }
+        }
+
         # Check player has an active nick to play with, set one if not
         $this->playerService->setActiveUsername($player, $ladder);
 
         # Check for shadowbans first
-        $userIsShadowBanned = $user->checkForShadowBan($request->getClientIp());
+        $userIsShadowBanned = $user->checkForShadowBan($request->getClientIp(), $request->hwid);
         if ($userIsShadowBanned)
         {
             Log::info("Shadow banned: " . $user->name);
@@ -335,7 +347,7 @@ class ApiQuickMatchController extends Controller
         }
 
         # Check for player bans 
-        $playerIsBanned = $this->playerService->checkPlayerForBans($player, $request->getClientIp());
+        $playerIsBanned = $this->playerService->checkPlayerForBans($player, $request->getClientIp(), $request->hwid);
         if ($playerIsBanned)
         {
             return $this->onMatchFatalError($playerIsBanned);

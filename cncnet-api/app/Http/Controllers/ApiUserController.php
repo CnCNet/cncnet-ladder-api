@@ -33,7 +33,9 @@ class ApiUserController extends Controller
     {
         $user = $request->user();
 
-        $this->createPlayerForLaddersIfNoneExist($user);
+        // With this commented out it allows people to select their ladders for auto-queuing ladders they have accounts for
+        // In future it would be good to sort out this flow properly.
+        // $this->createPlayerForLaddersIfNoneExist($user);
 
         return $this->getActivePlayersByUser($user);
     }

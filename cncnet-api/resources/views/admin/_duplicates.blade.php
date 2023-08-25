@@ -18,6 +18,22 @@
         <?php endforeach; ?>
     </ul>
 
+    <h5 class="mt-2 mb-2">QM Client Ids:</h5>
+
+    <?php $qmUserIds = \App\QmUserId::where('user_id', $user->id)->get(); ?>
+    <ul class="list-styled">
+        @foreach ($qmUserIds as $qmUserId)
+            <li>
+                Client Id: {{ $qmUserId->qm_user_id }}
+                <ul class="list-styled">
+                    <li><strong>User: {{ $qmUserId->user->name }}</strong></li>
+                    <li><strong>Created: {{ $qmUserId->created_at }}</li>
+                    <li><strong>Updated: {{ $qmUserId->updated_at }}</li>
+                </ul>
+            </li>
+        @endforeach
+    </ul>
+
     <h5 class="mt-2 mb-2">Ip address:</h5>
     <ul class="list-styled">
         <?php foreach($user->ipHistory as $ipHistory): ?>

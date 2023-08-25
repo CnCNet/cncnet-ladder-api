@@ -7,8 +7,11 @@ use App\Ladder;
 use App\Player;
 use App\PlayerActiveHandle;
 use App\PlayerRating;
+use App\QmUserId;
 use App\UserRating;
 use Carbon\Carbon;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -156,7 +159,7 @@ class PlayerService
         }
     }
 
-    public function checkPlayerForBans($player, $ip)
+    public function checkPlayerForBans($player, $ip, $qmClientId)
     {
         $ban = $player->user->getBan(true);
         if ($ban !== null)
@@ -168,6 +171,23 @@ class PlayerService
         if ($ban !== null)
         {
             return $ban;
+        }
+
+        try
+        {
+            $qmUserIds = QmUserId::where("qm_user_id", $qmClientId)->get();
+            foreach ($qmUserIds as $qmUserId)
+            {
+                $ban = $qmUserId->user->getBan(true);
+                if ($ban !== null)
+                {
+                    return $ban;
+                }
+            }
+        }
+        catch (Exception $ex)
+        {
+            Log::info("Error checking player for bans: " . $ex->getMessage());
         }
 
         return null;

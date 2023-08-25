@@ -108,13 +108,16 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return null;
     }
 
-    public function checkForShadowBan($ip)
+    public function checkForShadowBan($ip, $qmClientId)
     {
         try
         {
             $currentDateTime = Carbon::now();
 
-            $shadowBans = Ban::where("user_id", $this->id)
+            $userIds[] = $this->id;
+            $userIds = QmUserId::where("qm_user_id", $qmClientId)->pluck("user_id")->toArray();
+
+            $shadowBans = Ban::whereIn("user_id", $userIds)
                 ->where("ban_type", Ban::BAN_SHADOW)
                 ->where("expires", ">", $currentDateTime)
                 ->count();
@@ -138,8 +141,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 }
             }
         }
-        catch (Exception $e)
+        catch (Exception $ex)
         {
+            Log::info("Error checking for shadow ban: " . $ex->getMessage());
         }
 
         return false;
