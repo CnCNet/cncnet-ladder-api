@@ -9,11 +9,6 @@ class PlayerActiveHandle extends Model
 {
     protected $table = 'player_active_handles';
 
-    public function player()
-    {
-        return $this->belongsTo('App\Player');
-    }
-
     public static function setPlayerActiveHandle($ladderId, $playerId, $userId)
     {
         $activeHandle = new PlayerActiveHandle();
@@ -24,6 +19,14 @@ class PlayerActiveHandle extends Model
 
         return $activeHandle;
     }
+
+    public static function getUserPlayerHandles($userId, $ladderId)
+    {
+        return PlayerActiveHandle::where("user_id", $userId)
+            ->where("ladder_id", $ladderId)
+            ->get();
+    }
+
 
     public static function getPlayerActiveHandles($playerId, $ladderId)
     {
@@ -117,8 +120,14 @@ class PlayerActiveHandle extends Model
         return $count;
     }
 
+    # Relationships
     public function user()
     {
         $this->belongsTo('App\User');
+    }
+
+    public function player()
+    {
+        return $this->belongsTo('App\Player');
     }
 }
