@@ -38,7 +38,6 @@ class StatsService
 
             $recentMatchedPlayers = QmMatchPlayer::where('qm_match_players.created_at', '>', $carbonDateSubHour)
                 ->where('ladder_id', '=', $ladderId)
-                ->where('qm_match_players.tier', '=', $tierId)
                 ->count();
 
             $clans = [];
@@ -72,20 +71,17 @@ class StatsService
                     ->count();
             }
 
-            $recentMatches = QmMatch::where('qm_matches.tier', '=', $tierId)
-                ->where('qm_matches.created_at', '>', $carbonDateSubHour)
+            $recentMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSubHour)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->count();
 
             $activeMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSubHour)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
-                ->where('qm_matches.tier', '=', $tierId)
                 ->count();
 
             $past24hMatches = \App\QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
-                ->where('qm_matches.tier', '=', $tierId)
                 ->count();
 
             $matchesByMonth = QmMatch::where("updated_at", ">", $startOfMonth)
