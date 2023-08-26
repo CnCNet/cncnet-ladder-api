@@ -6,6 +6,7 @@ use App\QmQueueEntry;
 use App\Commands\Command;
 use App\Commands\Matchup\ClanMatchupHandler;
 use App\Commands\Matchup\PlayerMatchupHandler;
+use App\Commands\Matchup\Random2vs2MatchupHandler;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -105,6 +106,17 @@ class FindOpponent extends Command implements ShouldQueue
             Log::info("FindOpponent ** Clan Matchup Requested");
 
             $matchupHandler = new ClanMatchupHandler(
+                $history,
+                $qmQueueEntry,
+                $qmPlayer,
+                $this->gameType
+            );
+        }
+        else if ($ladder->random_2vs2)
+        {
+            Log::info("FindOpponent ** Random 2vs2 Matchup Requested");
+
+            $matchupHandler = new Random2vs2MatchupHandler(
                 $history,
                 $qmQueueEntry,
                 $qmPlayer,

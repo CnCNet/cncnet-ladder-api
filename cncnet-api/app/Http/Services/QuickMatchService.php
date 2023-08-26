@@ -317,6 +317,184 @@ class QuickMatchService
         return $hasObservers;
     }
 
+
+    private function setRandom2v2TeamSpawns($otherQmQueueEntries, $ladder, $qmMap, $qmMatch, $qmPlayer, $perMS, $qEntry)
+    {
+        Log::info("QuickMatchService ** setClanSpawns: " . $qmPlayer->player->username);
+
+        // Check if team spots are configured, if this is a clan match
+        $team1SpawnOrder = explode(',', $qmMap->team1_spawn_order); // e.g. 1,2
+        $team2SpawnOrder = explode(',', $qmMap->team2_spawn_order); // e.g. 3,4
+
+        // Default to random spots
+        $teamSpotsAssigned = false;
+        $spawnOrder = $this->getLocationsArr($qmMap->map->spawn_count, true);
+
+
+        if (
+            count($team1SpawnOrder) == $ladder->qmLadderRules->player_count / 2 &&
+            count($team2SpawnOrder) == $ladder->qmLadderRules->player_count / 2
+        )
+        {
+            // Initialize team arrays
+            // Map each player to their clan
+
+            $team1 = [];
+            $team2 = [];
+            $teams = [];
+
+            /* What we need
+            $teams = [
+                "1" => [
+                    "playerA" => [],
+                    "playerB" => []
+                ],
+                "2" => [
+                    "playerC" => [],
+                    "playerD" => []
+                ]
+            ];
+            */
+
+            // Group up players into teams first
+            if ($qmPlayer->isObserver() == false)
+            {
+                // If we're not an obs, make sure we're in the teams array
+                $teams[$qmPlayer->team_name][] = $qmPlayer;
+            }
+
+            foreach ($otherQmQueueEntries as $otherQmQueueEntry)
+            {
+                if ($otherQmQueueEntry->qmPlayer->isObserver())
+                {
+                    // Don't add observers to teams
+                    continue;
+                }
+
+                $teams[$otherQmQueueEntry->qmPlayer->team_name][] = $otherQmQueueEntry->qmPlayer;
+            }
+
+            // Get the values (sub-arrays) from the $teams array
+            $teamValues = array_values($teams);
+
+            // Assign the values to separate variables
+            $team1 = $teamValues[0];
+            $team2 = $teamValues[1];
+
+
+            if (count($team1) != count($team1SpawnOrder))
+            {
+                Log::info("Team1: Expected " . count($team1SpawnOrder) . " players but found " . count($team1));
+            }
+            else if (count($team2) != count($team2SpawnOrder))
+            {
+                Log::info("Team2: Expected " . count($team2SpawnOrder) . " players but found " . count($team2));
+            }
+            else
+            {
+                // Assign team 1 spots
+                $color = 0;
+                for ($i = 0; $i < count($team1SpawnOrder); $i++) //red + yellow
+                {
+                    $currentQmPlayer = $team1[$i];
+                    $currentQmPlayer->color = $color++;
+                    $currentQmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
+                    $currentQmPlayer->save();
+                }
+
+                // Assign team 2 spots
+                for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
+                {
+                    $currentQmPlayer = $team2[$i];
+                    $currentQmPlayer->color = $color++;
+                    $currentQmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
+                    $currentQmPlayer->save();
+                }
+
+                $teamSpotsAssigned = true;
+
+                Log::info("QuickMatchService ** Team Spots Assigned Successfully: " . $teamSpotsAssigned);
+            }
+        }
+
+        if ($teamSpotsAssigned == false)
+        {
+            $colorsArr = $this->getColorsArr(8, false);
+
+            $i = 0;
+
+            if ($qmPlayer->isObserver() == false)
+            {
+                $qmPlayer->color = $colorsArr[$i];
+                $qmPlayer->location = $spawnOrder[$i] - 1;
+                $qmPlayer->save();
+                $i++;
+
+                Log::info("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . "Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+            }
+        }
+
+        foreach ($otherQmQueueEntries as $otherQmQueueEntry)
+        {
+            $otherQmPlayer = QmMatchPlayer::where('id', $otherQmQueueEntry->qmPlayer->id)->first();
+            $otherQmQueueEntry->delete();
+
+            if ($otherQmPlayer === null)
+            {
+                $qEntry->delete();
+                return;
+            }
+
+            $osides = explode(',', $otherQmPlayer->mapSides->value);
+
+            if (count($osides) > $qmMap->bit_idx)
+            {
+                $otherQmPlayer->actual_side = $osides[$qmMap->bit_idx];
+            }
+
+            if ($otherQmPlayer->actual_side  < -1)
+            {
+                $otherQmPlayer->actual_side = $otherQmPlayer->chosen_side;
+            }
+
+            if ($otherQmPlayer->actual_side == -1)
+            {
+                $otherQmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+            }
+
+            if ($teamSpotsAssigned == false) //spots were not team assigned
+            {
+                foreach ($spawnOrder as $so)
+                {
+                    Log::info("QuickMatchService ** Spawn Order Output:" . $so . " i: " . $i);
+                }
+                if ($otherQmPlayer->isObserver() == true)
+                {
+                    $this->setQmPlayerObserverColorLocation($otherQmPlayer);
+                }
+                else
+                {
+                    $otherQmPlayer->color = $colorsArr[$i];
+                    $otherQmPlayer->location = $spawnOrder[$i] - 1;
+                    $i++;
+
+                    Log::info("QuickMatchService ** Assigning Spot for " . $otherQmPlayer->player->username . "Color: " . $otherQmPlayer->color .  " Location: " . $otherQmPlayer->location);
+                }
+            }
+
+            $otherQmPlayer->qm_match_id = $qmMatch->id;
+            $otherQmPlayer->tunnel_id = $qmMatch->seed + $otherQmPlayer->color;
+            $otherQmPlayer->save();
+        }
+
+        if ($qmPlayer->actual_side == -1)
+        {
+            $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+        }
+
+        $qmPlayer->save();
+    }
+
     private function setClanSpawns($otherQmQueueEntries, $ladder, $qmMap, $qmMatch, $qmPlayer,  $perMS, $qEntry)
     {
         Log::info("QuickMatchService ** setClanSpawns: " . $qmPlayer->player->username);
@@ -675,6 +853,18 @@ class QuickMatchService
         if ($ladder->clans_allowed)
         {
             $this->setClanSpawns(
+                $otherQmQueueEntries,
+                $ladder,
+                $qmMap,
+                $qmMatch,
+                $qmPlayer,
+                $perMS,
+                $qEntry
+            );
+        }
+        else if ($ladder->random_2vs2)
+        {
+            $this->setRandom2v2TeamSpawns(
                 $otherQmQueueEntries,
                 $ladder,
                 $qmMap,

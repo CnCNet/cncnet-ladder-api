@@ -480,6 +480,10 @@ class ApiQuickMatchController extends Controller
             {
                 $gameType = Game::GAME_TYPE_2VS2;
             }
+            else if ($history->ladder->random_2vs2)
+            {
+                $gameType = Game::GAME_TYPE_RANDOM_2VS2;
+            }
         }
 
         return $this->onHandlePlayersMatchupRequest(
@@ -491,12 +495,6 @@ class ApiQuickMatchController extends Controller
             $ladder,
             $ladderRules
         );
-    }
-
-    private function checkPlayerForShadowBan(
-        $qmPlayer
-    )
-    {
     }
 
     private function checkPlayerWillMatchAI(

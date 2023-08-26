@@ -7,6 +7,7 @@ use App\Game;
 use App\GameReport;
 use App\Player;
 use App\PlayerGameReport;
+use App\QmMatchPlayer;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -54,6 +55,7 @@ class GameService
         }
 
         $isClanLadderGame = $ladder->clans_allowed;
+        $isRandom2vs2Game = $ladder->random_2vs2;
 
         $reporter = null;
 
@@ -69,6 +71,11 @@ class GameService
                 $clan = $clanPlayer->clan;
                 $gameReport->clan_id = $clan->id;
             }
+        }
+        else if ($isRandom2vs2Game)
+        {
+            $qmMatchPlayer = QmMatchPlayer::where("player_id", $player->id)->where("qm_match_id", $game->qm_match_id)->first();
+            $gameReport->team_name = $qmMatchPlayer->team_name;
         }
 
         $gameReport->best_report = false;
@@ -139,6 +146,13 @@ class GameService
                 {
                     $clan = $playerHere->clanPlayer->clan;
                     $playerGameReports[$id]->clan_id = $clan->id;
+                }
+                else if ($isRandom2vs2Game)
+                {
+                    $qmMatchPlayer = QmMatchPlayer::where("player_id", $playerHere->id)->where("qm_match_id", $game->qm_match_id)->first();
+                    $teamName = $qmMatchPlayer->team_name;
+
+                    $playerGameReports[$id]->team_name = $teamName;
                 }
 
                 $playerGameReports[$id]->save();

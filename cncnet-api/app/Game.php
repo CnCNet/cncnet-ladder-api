@@ -12,6 +12,7 @@ class Game extends Model
     const GAME_TYPE_1VS1_AI = 1;
     const GAME_TYPE_2VS2_AI = 2;
     const GAME_TYPE_2VS2 = 3;
+    const GAME_TYPE_RANDOM_2VS2 = 4;
 
     protected $table = 'games';
 

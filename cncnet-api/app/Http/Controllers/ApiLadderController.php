@@ -109,6 +109,10 @@ class ApiLadderController extends Controller
         {
             $status = $this->awardClanPoints($gameReport, $history);
         }
+        else if ($history->ladder->random_2vs2)
+        {
+            $status = 200;
+        }
         else
         {
             $status = $this->awardPlayerPoints($gameReport, $history);
