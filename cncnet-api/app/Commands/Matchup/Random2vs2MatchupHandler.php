@@ -42,7 +42,7 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
 
         foreach ($groupedQmQueueEntriesByClan as $teamName => $allQMQueueEntries)
         {
-            # Check this clan has enough players to play
+            # Check this team has enough players to play
             # Add them to players ready if so
             if (count($allQMQueueEntries) == $playerCountPerClanRequired)
             {
@@ -70,15 +70,15 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
                 && $this->qmPlayer->id !== $qmQueueEntry->qmPlayer->id
             )
             {
-                Log::info("ClanMatchUpHandler ** Adding observer to our ready entries: " . $qmQueueEntry->qmPlayer->player->username);
+                Log::info("Random2vs2MatchupHandler ** Adding observer to our ready entries: " . $qmQueueEntry->qmPlayer->player->username);
                 $otherQMQueueEntries->add($qmQueueEntry);
                 break; //1x only
             }
         }
 
         $playersReadyCount = $otherQMQueueEntries->count() + 1; # Add ourselves to this count
-        Log::info("ClanMatchUpHandler ** Match has observer: " . $this->matchHasObservers);
-        Log::info("ClanMatchUpHandler ** Player count for matchup: Ready: " . $playersReadyCount . "  Required: " . $playerCountForMatchup);
+        Log::info("Random2vs2MatchupHandler ** Match has observer: " . $this->matchHasObservers);
+        Log::info("Random2vs2MatchupHandler ** Player count for matchup: Ready: " . $playersReadyCount . "  Required: " . $playerCountForMatchup);
 
         if ($playersReadyCount === $playerCountForMatchup)
         {
@@ -91,7 +91,7 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
             else
             {
                 $playerNames = implode(",", $this->getPlayerNamesInQueue($otherQMQueueEntries));
-                Log::info("Launching clan match with players $playerNames, " . $currentPlayer->username);
+                Log::info("Launching Random2vs2Matchup with players $playerNames, " . $currentPlayer->username);
 
                 return $this->createMatch(
                     $commonQmMaps,
@@ -113,7 +113,7 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
 
         foreach ($allQMQueueEntries as $qmQueueEntry)
         {
-            Log::info("ClanMatchupHandler ** Checking for observer: " . $qmQueueEntry->qmPlayer->player->username . " : " . $qmQueueEntry->qmPlayer->isObserver());
+            Log::info("Random2vs2MatchupHandler ** Checking for observer: " . $qmQueueEntry->qmPlayer->player->username . " : " . $qmQueueEntry->qmPlayer->isObserver());
 
             if ($qmQueueEntry->qmPlayer->isObserver())
             {
@@ -197,7 +197,7 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
             }
             else
             {
-                Log::info("ClanMatchupHandler.removeRejectedMaps() ** Rejecting QmMap: " . $qmMap->map->name);
+                Log::info("Random2vs2MatchupHandler.removeRejectedMaps() ** Rejecting QmMap: " . $qmMap->map->name);
             }
         }
 
@@ -205,9 +205,9 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
     }
 
     /**
-     * Return QM Queue Entries grouped by clan
+     * Return QM Queue Entries grouped by "Team1" and "Team2"
      * @param mixed $allQMQueueEntries - All queue entries
-     * @param mixed $limit - Number of entries per clan
+     * @param mixed $limit - Number of entries per team
      * @return array 
      */
     private function groupAndLimitRandomTeams($allQMQueueEntries, $limit)
@@ -246,85 +246,6 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
                 }
             }
             $result[$teamName][] = $qmQueueEntry;
-        }
-
-        return $result;
-    }
-
-    /**
-     * Remove any clans in queue if the current user has a player who also belongs in that clan
-     */
-    public function removeClansCurrentPlayerIsIn($currentUserClanPlayer, $ladderId, $groupedQmQueueEntriesByClan)
-    {
-        $result = [];
-
-        //grab my clan's QM Entries
-        $myClansQmEntries = [];
-        foreach ($groupedQmQueueEntriesByClan as $clanId => $allQMQueueEntries)
-        {
-            if ($clanId == $currentUserClanPlayer->clan->id)
-            {
-                $myClansQmEntries = $allQMQueueEntries;
-                $result[$clanId] = $myClansQmEntries;
-            }
-        }
-
-        //loop through opponent clans, check if any of my clan members in queue are in their clan also
-        foreach ($groupedQmQueueEntriesByClan as $opponentClanId => $opponentQmEntries)
-        {
-            if ($opponentClanId == $currentUserClanPlayer->clan->id) //self
-            {
-                continue;
-            }
-
-            $canMatch = true;
-            foreach ($myClansQmEntries as $qmEntry) //loop through the members in my clan, check if a player in my clan is also in opponent's clan
-            {
-                $players = $qmEntry->qmPlayer->player->user->usernames()->where("ladder_id", '=', $ladderId)->get();
-
-                foreach ($players as $player)
-                {
-                    if ($player->clanPlayer && $player->clanPlayer->clan->id == $opponentClanId)
-                    {
-                        $opponentClanName = \App\Clan::where('id', $opponentClanId)->first()->short;
-                        $currentPlayerName = $qmEntry->qmPlayer->player->username;
-                        $playerName = $player->username;
-                        $currentClanName = $currentUserClanPlayer->clan->short;
-                        Log::info("(CurrentUser=[$currentClanName]" . $currentUserClanPlayer->player->username . ") Player being matched: '$currentPlayerName' has another player: '$playerName' who belongs to opponent clan: '$opponentClanName'.");
-                        $canMatch = false;
-                        break;
-                    }
-                }
-
-                if (!$canMatch)
-                    break;
-            }
-
-            //loop through the members in opponent clan, check if any opponent is also in my clan
-            foreach ($opponentQmEntries as $opponentQmEntry)
-            {
-                $opponentPlayers = $opponentQmEntry->qmPlayer->player->user->usernames()->where("ladder_id", '=', $ladderId)->get();
-
-                foreach ($opponentPlayers as $opponentPlayer)
-                {
-                    if ($opponentPlayer->clanPlayer && $opponentPlayer->clanPlayer->clan->id == $currentUserClanPlayer->clan->id)
-                    {
-                        $myClanName = \App\Clan::where('id', $currentUserClanPlayer->clan->id)->first()->short;
-                        $oppontnePlayerName = $opponentQmEntry->qmPlayer->player->username;
-                        $playerName = $opponentPlayer->username;
-                        $currentClanName = $currentUserClanPlayer->clan->short;
-                        Log::info("(CurrentUser=[$currentClanName]" . $currentUserClanPlayer->player->username . ") Player being matched: '$oppontnePlayerName' has another player: '$playerName' who belongs to my clan: '$myClanName'.");
-                        $canMatch = false;
-                        break;
-                    }
-                }
-
-                if (!$canMatch)
-                    break;
-            }
-
-            if ($canMatch)
-                $result[$clanId] = $opponentQmEntries;
         }
 
         return $result;
