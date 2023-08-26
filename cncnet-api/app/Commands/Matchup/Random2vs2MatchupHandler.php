@@ -70,15 +70,15 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
                 && $this->qmPlayer->id !== $qmQueueEntry->qmPlayer->id
             )
             {
-                Log::info("ClanMatchUpHandler ** Adding observer to our ready entries: " . $qmQueueEntry->qmPlayer->player->username);
+                Log::info("Random2vs2MatchupHandler ** Adding observer to our ready entries: " . $qmQueueEntry->qmPlayer->player->username);
                 $otherQMQueueEntries->add($qmQueueEntry);
                 break; //1x only
             }
         }
 
         $playersReadyCount = $otherQMQueueEntries->count() + 1; # Add ourselves to this count
-        Log::info("ClanMatchUpHandler ** Match has observer: " . $this->matchHasObservers);
-        Log::info("ClanMatchUpHandler ** Player count for matchup: Ready: " . $playersReadyCount . "  Required: " . $playerCountForMatchup);
+        Log::info("Random2vs2MatchupHandler ** Match has observer: " . $this->matchHasObservers);
+        Log::info("Random2vs2MatchupHandler ** Player count for matchup: Ready: " . $playersReadyCount . "  Required: " . $playerCountForMatchup);
 
         if ($playersReadyCount === $playerCountForMatchup)
         {
@@ -91,7 +91,7 @@ class Random2vs2MatchupHandler extends BaseMatchupHandler
             else
             {
                 $playerNames = implode(",", $this->getPlayerNamesInQueue($otherQMQueueEntries));
-                Log::info("Launching clan match with players $playerNames, " . $currentPlayer->username);
+                Log::info("Launching Random2vs2Matchup with players $playerNames, " . $currentPlayer->username);
 
                 return $this->createMatch(
                     $commonQmMaps,
