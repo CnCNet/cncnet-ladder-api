@@ -45,6 +45,19 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return in_array($this->group, [self::God, self::Admin, self::Moderator]);
     }
 
+    public function isNewsAdmin()
+    {
+        if ($this->isGod())
+            return true;
+
+        $ladderAdmin = $this->ladderAdmins()->where("user_id", $this->id)
+            ->where("admin", true)
+            ->orWhere("moderator", true)
+            ->first();
+
+        return $ladderAdmin->moderator || $ladderAdmin->admin;
+    }
+
     public function isLadderAdmin($ladder)
     {
         if ($this->isGod())

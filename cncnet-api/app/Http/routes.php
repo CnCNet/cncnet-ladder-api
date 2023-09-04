@@ -78,12 +78,13 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => t
     Route::post('clans', 'AdminController@updateClan');
 });
 
-Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true, 'canModLadder' => true], function ()
+
+Route::group(['prefix' => 'admin/news', 'middleware' => 'auth', 'isNewsAdmin' => true], function ()
 {
-    Route::get('news/', 'AdminNewsController@getIndex');
-    Route::get('news/create', 'AdminNewsController@getCreate');
-    Route::get('news/edit/{id}', 'AdminNewsController@getEdit');
-    Route::post('news/save', 'AdminNewsController@save');
+    Route::get('/', 'AdminNewsController@getIndex');
+    Route::get('/create', 'AdminNewsController@getCreate');
+    Route::get('/edit/{id}', 'AdminNewsController@getEdit');
+    Route::post('/save', 'AdminNewsController@save');
 });
 
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()

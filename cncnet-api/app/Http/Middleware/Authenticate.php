@@ -71,6 +71,13 @@ class Authenticate
                     $response = response('Unauthorized.', 401);
                 }
             }
+            else if (isset($actions["isNewsAdmin"]))
+            {
+                if (!$this->auth->user()->isNewsAdmin())
+                {
+                    $response = response('Unauthorized.', 401);
+                }
+            }
             else # ladder-specific mod/admin privilege 
             {
                 $ladder = \App\Ladder::find($request->ladderId);
