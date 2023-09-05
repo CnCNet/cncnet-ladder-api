@@ -103,9 +103,15 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="{{ $qmMap->id }}_difficulty"> Difficulty </label>
+                                            <label for="{{ $qmMap->id }}_difficulty"> Map Tier </label>
                                             <input type="number" id="{{ $qmMap->id }}_difficulty" name="difficulty" min="0" max="5"
                                                 value="{{ $qmMap->difficulty }}" class="form-control" />
+                                        </div>
+
+                                        <div class="form-group col-md-12">
+                                            <label for="{{ $qmMap->id }}_weight"> Map Weight </label>
+                                            <input type="number" id="{{ $qmMap->id }}_weight" name="weight" min="1" default="1" max="30"
+                                                value="{{ $qmMap->weight }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-4">
