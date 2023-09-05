@@ -774,12 +774,13 @@ class ApiQuickMatchController extends Controller
         ];
     }
 
-    public function getPlayerRankings($count = 50)
+    public function getPlayerRankings(Request $request, $count = 50)
     {
         $month = Carbon::now()->month;
         $year = Carbon::now()->format('Y');
 
         $rankings = [];
+        $tier = $request->tier == 2 ? 2 : 1;
 
         foreach ($this->ladderService->getLadders() as $ladder)
         {
@@ -793,6 +794,7 @@ class ApiQuickMatchController extends Controller
             $pc = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
                 ->join('players as p', 'player_caches.player_id', '=', 'p.id')
                 ->join('users as u', 'p.user_id', '=', 'u.id')
+                ->where("tier", "=", $tier)
                 ->orderBy('player_caches.points', 'DESC')
                 ->select('u.discord_profile as discord_name', 'player_caches.*')
                 ->limit($count)
