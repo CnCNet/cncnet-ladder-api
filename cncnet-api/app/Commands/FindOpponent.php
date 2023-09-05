@@ -102,8 +102,6 @@ class FindOpponent extends Command implements ShouldQueue
 
         if ($ladder->clans_allowed)
         {
-            Log::info("FindOpponent ** Clan Matchup Requested");
-
             $matchupHandler = new ClanMatchupHandler(
                 $history,
                 $qmQueueEntry,
@@ -113,8 +111,6 @@ class FindOpponent extends Command implements ShouldQueue
         }
         else
         {
-            Log::info("FindOpponent ** Player Matchup Requested");
-
             $matchupHandler = new PlayerMatchupHandler(
                 $history,
                 $qmQueueEntry,
