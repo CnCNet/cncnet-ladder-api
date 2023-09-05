@@ -268,7 +268,7 @@ class QuickMatchService
         $qmPlayer->save();
     }
 
-    private function pickQmMapId($otherQMQueueEntries, $useRankedMapPicker, $qmPlayer, $history, $maps)
+    private function pickQmMapId($otherQMQueueEntries, $useRankedMapPicker, $qmPlayer, $history, $qmMaps)
     {
         $qmMapId = -1;
         if ($useRankedMapPicker) //use ranked map selection
@@ -288,12 +288,24 @@ class QuickMatchService
                     && $qmPlayer->player->user->userSettings->match_any_map;
             }
 
-            $qmMapId = $this->rankedMapPicker($maps, $rank, $points, $matchAnyMap);  //select a map dependent on player rank and map tiers
+            $qmMapId = $this->rankedMapPicker($qmMaps, $rank, $points, $matchAnyMap);  //select a map dependent on player rank and map tiers
         }
         else
         {
-            $randomMapIdx = mt_rand(0, count($maps) - 1);
-            $qmMapId = $maps[$randomMapIdx]->id;
+            $qmMapsWeighted = [];
+
+            foreach ($qmMaps as $qmMap)
+            {
+                $weight = $qmMap->weight; //defaults to 1
+
+                for ($i = 0; $i < $weight; $i++)
+                {
+                    $qmMapsWeighted[] = $qmMap; //add maps to the pool additional times depending on their weight
+                }
+            }
+
+            $randomMapIdx = mt_rand(0, count($qmMapsWeighted) - 1);
+            $qmMapId = $qmMapsWeighted[$randomMapIdx]->id;
         }
 
         return $qmMapId;

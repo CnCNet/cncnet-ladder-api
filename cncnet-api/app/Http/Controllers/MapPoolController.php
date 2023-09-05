@@ -52,6 +52,15 @@ class MapPoolController extends Controller
         $qmMap->random_spawns = $request->random_spawns == "on" ? true : false;
         $qmMap->difficulty = $request->difficulty;
 
+        // map weight
+        if (!$qmMap->weight || $qmMap->weight < 1)
+        {
+            $qmMap->weight = 1;
+        } else
+        {
+            $qmMap->weight = $request->weight;
+        }
+      
         $ladderRules = \App\MapPool::find($request->map_pool_id)->ladder->qmLadderRules;
         if ($ladderRules->use_ranked_map_picker && ($request->difficulty > 5 || $request->difficulty < 0))
         {
