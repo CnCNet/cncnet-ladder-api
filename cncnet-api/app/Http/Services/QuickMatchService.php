@@ -270,8 +270,8 @@ class QuickMatchService
             foreach ($otherQMQueueEntries as $otherQMQueueEntry)
             {
                 //choose the person who has the worst rank to base our map pick off of
-                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history)); 
-                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history)); 
+                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history));
+                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history));
 
                 //true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
@@ -332,62 +332,69 @@ class QuickMatchService
         }
 
         //check if team spots are configured, if this is a clan match
-        $team1SpawnOrder = explode(',', $qmMap->team1_spawn_order); //e.g. 1,2
-        $team2SpawnOrder = explode(',', $qmMap->team2_spawn_order); //e.g. 3,4
+        $team1SpawnOrder = $qmMap->team1_spawn_order;
+        $team2SpawnOrder = $qmMap->team2_spawn_order;
+
         $teamSpotsAssigned = false;
         if (
-            $ladder->clans_allowed && count($team1SpawnOrder) == $ladder->qmLadderRules->player_count / 2
-            && count($team2SpawnOrder) == $ladder->qmLadderRules->player_count / 2
+            $ladder->clans_allowed
+            && $team1SpawnOrder && strlen(trim($team1SpawnOrder)) > 0
+            && $team2SpawnOrder && strlen(trim($team2SpawnOrder)) > 0
         )
         {
-            if ($qmPlayer->clan_id)
+            $team1SpawnOrders = explode('|', $team1SpawnOrder); //e.g. 1,2|1,3
+            $team2SpawnOrders = explode('|', $team2SpawnOrder); //e.g. 3,4|2,4
+
+            $teamSpawnIndex = mt_rand(0, count($team1SpawnOrders) - 1);
+
+            $team1SpawnOrder = explode(',', $team1SpawnOrders[$teamSpawnIndex]); //e.g. 1,2
+            $team2SpawnOrder = explode(',', $team2SpawnOrders[$teamSpawnIndex]); //e.g. 3,4
+
+            //map each player to their clan
+            $team1 = [];
+            $team2 = [];
+            $team1[] = $qmPlayer;
+
+            //assign other players to correct clan (assumes there are 2 clans)
+            foreach ($otherQMQueueEntries as $qmOpnEntry)
             {
-                //map each player to their clan
-                $team1 = [];
-                $team2 = [];
-                $team1[] = $qmPlayer;
-
-                //assign other players to correct clan (assumes there are 2 clans)
-                foreach ($otherQMQueueEntries as $qmOpnEntry)
-                {
-                    if ($qmOpnEntry->qmPlayer->clan_id == $qmPlayer->clan_id && $qmOpnEntry->qmPlayer->id != $qmPlayer->id)
-                        $team1[] = $qmOpnEntry->qmPlayer;
-                    else
-                        $team2[] = $qmOpnEntry->qmPlayer;
-                }
-
-                if (count($team1) != count($team1SpawnOrder))
-                {
-                    Log::info("Team1: Expected " . count($team1SpawnOrder) . " players but found " . count($team1));
-                }
-                else if (count($team2) != count($team2SpawnOrder))
-                {
-                    Log::info("Team2: Expected " . count($team2SpawnOrder) . " players but found " . count($team2));
-                }
+                if ($qmOpnEntry->qmPlayer->clan_id == $qmPlayer->clan_id && $qmOpnEntry->qmPlayer->id != $qmPlayer->id)
+                    $team1[] = $qmOpnEntry->qmPlayer;
                 else
+                    $team2[] = $qmOpnEntry->qmPlayer;
+            }
+
+            if (count($team1) != count($team1SpawnOrder))
+            {
+                Log::info("Team1: Expected " . count($team1SpawnOrder) . " players but found " . count($team1));
+            }
+            else if (count($team2) != count($team2SpawnOrder))
+            {
+                Log::info("Team2: Expected " . count($team2SpawnOrder) . " players but found " . count($team2));
+            }
+            else
+            {
+                //assign team 1 spots
+                $color = 0;
+                for ($i = 0; $i < count($team1SpawnOrder); $i++) //red + yellow
                 {
-                    //assign team 1 spots
-                    $color = 0;
-                    for ($i = 0; $i < count($team1SpawnOrder); $i++) //red + yellow
-                    {
-                        $currentQmPlayer = $team1[$i];
-                        $currentQmPlayer->color = $color++;
-                        $currentQmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
-                        $currentQmPlayer->save();
-                    }
-
-                    //assign team 2 spots
-                    for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
-                    {
-                        $currentQmPlayer = $team2[$i];
-                        $currentQmPlayer->color = $color++;
-                        $currentQmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
-                        $currentQmPlayer->save();
-                    }
-
-                    $mapName = $qmMap->map->name;
-                    $teamSpotsAssigned = true;
+                    $currentQmPlayer = $team1[$i];
+                    $currentQmPlayer->color = $color++;
+                    $currentQmPlayer->location = trim($team1SpawnOrder[$i]) - 1;
+                    $currentQmPlayer->save();
                 }
+
+                //assign team 2 spots
+                for ($i = 0; $i < count($team2SpawnOrder); $i++) //green + blue
+                {
+                    $currentQmPlayer = $team2[$i];
+                    $currentQmPlayer->color = $color++;
+                    $currentQmPlayer->location = trim($team2SpawnOrder[$i]) - 1;
+                    $currentQmPlayer->save();
+                }
+
+                $mapName = $qmMap->map->name;
+                $teamSpotsAssigned = true;
             }
         }
 

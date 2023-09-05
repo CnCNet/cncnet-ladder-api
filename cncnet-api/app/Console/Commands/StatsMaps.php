@@ -11,8 +11,8 @@ class GenerateBulkRecords extends Command
 {
 
 
-    protected $name = 'generate_bulk';
-    protected $description = "Generate Bulk Game stats for last month";
+    protected $name = 'stats_maps';
+    protected $description = "Generate Bulk Game stats for maps played";
     /**
      * Create a new command instance.
      *
@@ -90,13 +90,9 @@ class GenerateBulkRecords extends Command
                             $stats_out = [
                                 "side" => $playerGR->stats->sid,
                                 "country" => $playerGR->stats->cty,
-                                "color" => $playerGR->stats->col,
-                                "credits" => $playerGR->stats->crd,
-                                "harvested" => $playerGR->stats->harv,
+                                "color" => $playerGR->stats->col
                             ];
-                            foreach ($playerGR->stats->gameObjectCounts as $goc) {
-                                $counts_out[$goc->countableGameObject->heap_name][] = [$goc->countableGameObject->name => $goc->count];
-                            }
+
                         }
                         $player_out = array_merge($player_out, $stats_out);
 
