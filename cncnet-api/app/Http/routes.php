@@ -203,7 +203,9 @@ Route::group([
     Route::get('/ping', 'ApiLadderController@pingLadder');
 
     // Player Endpoints
-    Route::post('/player/{username}', 'ApiPlayerController@createPlayer');
+    Route::post('/player/usernames', 'ApiPlayerController@getUsernames');
+    Route::post('/player/create', 'ApiPlayerController@createPlayer');
+    Route::post('/player/status', 'ApiPlayerController@togglePlayerStatus');
 
     // Debug
     Route::get('/ladder/raw/{gameId}', 'ApiLadderController@viewRawGame');
@@ -211,6 +213,7 @@ Route::group([
     // QuickMatch Endpoints
     Route::get('/qm/version/{platform}', 'ApiQuickMatchController@clientVersion');
     Route::get('/qm/ladder/{ladderAbbrev}/maps', 'ApiQuickMatchController@mapListRequest');
+
     Route::post('/qm/{ladderAbbrev}/{playerName}', 'ApiQuickMatchController@matchRequest');
 });
 

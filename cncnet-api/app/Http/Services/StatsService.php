@@ -25,7 +25,7 @@ class StatsService
 
     public function getQmStats($ladderAbbrev, $tierId = 1)
     {
-        return Cache::remember("getQmStats/$ladderAbbrev", 1, function () use ($ladderAbbrev, $tierId)
+        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1, function () use ($ladderAbbrev, $tierId)
         {
             $carbonDateSubHour = Carbon::now()->subHour();
             $carbonDateSub24Hours = Carbon::now()->subHours(24);
@@ -38,7 +38,6 @@ class StatsService
 
             $recentMatchedPlayers = QmMatchPlayer::where('qm_match_players.created_at', '>', $carbonDateSubHour)
                 ->where('ladder_id', '=', $ladderId)
-                ->where('qm_match_players.tier', '=', $tierId)
                 ->count();
 
             $clans = [];
@@ -72,20 +71,17 @@ class StatsService
                     ->count();
             }
 
-            $recentMatches = QmMatch::where('qm_matches.tier', '=', $tierId)
-                ->where('qm_matches.created_at', '>', $carbonDateSubHour)
+            $recentMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSubHour)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->count();
 
             $activeMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSubHour)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
-                ->where('qm_matches.tier', '=', $tierId)
                 ->count();
 
             $past24hMatches = \App\QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
-                ->where('qm_matches.tier', '=', $tierId)
                 ->count();
 
             $matchesByMonth = QmMatch::where("updated_at", ">", $startOfMonth)
