@@ -509,6 +509,12 @@ class ApiQuickMatchController extends Controller
     {
         $qmQueueEntry = $qmPlayer->qEntry;
 
+        // Test user
+        if ($user->email == "neogrant3@gmail.com")
+        {
+            return true;
+        }
+
         if (
             $userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE
             && $qmQueueEntry !== null
