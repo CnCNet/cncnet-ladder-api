@@ -113,6 +113,7 @@ class URLHelper
         {
             case "yr":
             case "ra2":
+            case "ra2-beta":
             case "ra2-cl":
             case "blitz":
             case "blitz-cl":
@@ -140,6 +141,7 @@ class URLHelper
             case "yr":
             case "ra2":
             case "ra2-cl":
+            case "ra2-beta":
             case "blitz":
             case "blitz-cl":
                 return "/images/posters/red-alert-2.jpg";
@@ -165,8 +167,8 @@ class URLHelper
         {
             case "ra2":
             case "ra2-cl":
+            case "ra2-beta":
                 return "/images/games/ra2/logo.png";
-
             case "blitz":
             case "blitz-cl":
                 return "/images/games/blitz/logo.png";
