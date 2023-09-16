@@ -165,7 +165,8 @@ class MapPoolController extends Controller
 
         if ($request->hasFile('mapImage'))
         {
-            $filename = $map->hash . ".png";
+            $map->image_hash = sha1_file($request->file('mapImage'));
+            $filename = $map->image_hash . ".png";
             $filepath = config('filesystems')['map_images'] . "/" . $map->ladder->game; //store map images in game directory
             $map->image_path = "/images/maps/" . $map->ladder->game . "/" . $filename;
             $map->save();
