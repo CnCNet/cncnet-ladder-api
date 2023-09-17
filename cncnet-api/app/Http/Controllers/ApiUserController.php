@@ -29,6 +29,12 @@ class ApiUserController extends Controller
         $this->ladderService = new LadderService;
     }
 
+    public function getUserInfo(Request $request)
+    {
+        $user = $request->user();
+        return $user;
+    }
+
     public function getAccount(Request $request)
     {
         $user = $request->user();

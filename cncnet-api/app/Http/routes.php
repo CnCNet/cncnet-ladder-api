@@ -35,6 +35,7 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], '
     Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
 });
 
+# Clan Ladders
 Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
 {
     Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
@@ -77,7 +78,6 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => t
     Route::get('clans', 'AdminController@getManageClansIndex');
     Route::post('clans', 'AdminController@updateClan');
 });
-
 
 Route::group(['prefix' => 'admin/news', 'middleware' => 'auth', 'isNewsAdmin' => true], function ()
 {
@@ -173,6 +173,7 @@ Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
     Route::post('/settings', 'AccountController@updateUserSettings');
 });
 
+# API Endpoints
 Route::group(['prefix' => 'api/v1/auth/', 'middleware' => 'auth.basic.once'], function ()
 {
     Route::get('/token', 'ApiAuthController@getAuth');
@@ -184,13 +185,16 @@ Route::group(['prefix' => 'api/v1/auth/'], function ()
     Route::post('/login', 'ApiAuthController@login');
 });
 
+
+Route::get("api/v1/news", "ApiNewsController@getNews");
+
 Route::group([
     'prefix' => 'api/v1/',
     'middleware' => 'jwt.auth'
 ], function ()
 {
+    Route::get('/user/info', 'ApiUserController@getUserInfo');
     Route::get('/user/account', 'ApiUserController@getAccount');
-
     Route::get('/user/ladders', 'ApiUserController@getPrivateLadders');
     Route::post('/user/create', 'ApiUserController@createUser');
 
