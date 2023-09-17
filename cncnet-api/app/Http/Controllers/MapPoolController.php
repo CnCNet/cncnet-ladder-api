@@ -11,7 +11,9 @@ use \App\MapPool;
 use \App\Ladder;
 use \App\SpawnOptionString;
 use Illuminate\Http\Request;
-use Log;
+use Illuminate\Support\Facades\Log;
+use CurlFile;
+use ZipArchive;
 
 class MapPoolController extends Controller
 {
@@ -45,7 +47,7 @@ class MapPoolController extends Controller
         if ($request->allowed_sides)
             $qmMap->allowed_sides = implode(",", $request->allowed_sides);
         else
-        $qmMap->allowed_sides = "";
+            $qmMap->allowed_sides = "";
         $qmMap->spawn_order = $request->spawn_order;
         $qmMap->team1_spawn_order = $request->team1_spawn_order;
         $qmMap->team2_spawn_order = $request->team2_spawn_order;
@@ -56,11 +58,12 @@ class MapPoolController extends Controller
         if (!$qmMap->weight || $qmMap->weight < 1)
         {
             $qmMap->weight = 1;
-        } else
+        }
+        else
         {
             $qmMap->weight = $request->weight;
         }
-      
+
         $ladderRules = \App\MapPool::find($request->map_pool_id)->ladder->qmLadderRules;
         if ($ladderRules->use_ranked_map_picker && ($request->difficulty > 5 || $request->difficulty < 0))
         {
@@ -166,24 +169,137 @@ class MapPoolController extends Controller
         if ($request->hasFile('mapImage'))
         {
             $map->image_hash = sha1_file($request->file('mapImage'));
-            $filename = $map->image_hash . ".png";
+            $imgFilename = $map->image_hash . ".png";
             $filepath = config('filesystems')['map_images'] . "/" . $map->ladder->game; //store map images in game directory
-            $map->image_path = "/images/maps/" . $map->ladder->game . "/" . $filename;
+            $map->image_path = "/images/maps/" . $map->ladder->game . "/" . $imgFilename;
             $map->save();
 
-            $request->file('mapImage')->move($filepath, $filename);
+            $request->file('mapImage')->move($filepath, $imgFilename);
         }
 
         if ($mapFile != null)
-            $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id, $map->ladder->game);
-
-        if (isset($errMessage) && $errMessage != null && !empty($errMessage))
         {
-            $request->session()->flash('error', $errMessage);
-            return redirect()->back();
+            // parse map headers
+            $game = $map->ladder->game;
+            $errMessage = $this->parseMapHeaders($mapFile->getPathName(), $map->id, $game);
+
+            if (isset($errMessage) && $errMessage != null && !empty($errMessage))
+            {
+                $request->session()->flash('error', $errMessage);
+                return redirect()->back();
+            }
+
+            // upload map to cnc database
+            $hash = sha1_file($mapFile);
+         
+            $mapUploaded = $this->uploadMapToCncDatabase($mapFile, $hash, $game);
+            $request->session()->flash('success', "Map Uploaded to the CnC Database!");
+
+            if (!$mapUploaded)
+            {
+                $request->session()->flash('error', "Failed to upload map '$mapFileName' ('$hash') to the $game cnc database");
+                return redirect()->back();
+            }
         }
 
         return redirect()->back()->withInput();
+    }
+
+    private function uploadMapToCncDatabase($mapFile, $hash, $game)
+    {
+        Log::info("Beginning file upload for map " . $mapFile->getClientOriginalName());
+
+        if (filesize($mapFile) > 800000)
+        {
+            Log::error("Map file is too large " . $mapFile->getClientOriginalName());
+            return;
+        }
+
+        if (filesize($mapFile) == 0)
+        {
+            Log::error("Map file has no data " . $mapFile->getClientOriginalName());
+            return;
+        }
+
+        if ($this->mapExists($hash, $game))
+        {
+            Log::info("Map file '$hash' already exists in $game cnc database " . $mapFile->getClientOriginalName());
+            return;
+        }
+
+        $fileExtension = $mapFile->getClientOriginalExtension();
+
+        // move the map file
+        $targetDir = config('filesystems')['map_files'];
+        $targetFileName = $hash . "." . $fileExtension;
+        $mapFile->move($targetDir, $targetFileName);
+
+        // zip the map file
+        $zipFileName = $targetDir . "/" . $hash . ".zip";
+        $zip = new ZipArchive;
+        $zip->open($zipFileName, ZipArchive::CREATE);
+        $zip->addFile($targetDir . "/" . $targetFileName);
+        $zip->close();
+        unlink($targetDir . "/" . $targetFileName); // delete the map file
+
+        $curl = curl_init();
+        Log::info("Uploading $zipFileName to the $game cnc database.");
+        curl_setopt($curl, CURLOPT_URL, "http://mapdb.cncnet.org/upload");
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_POST, true);
+
+        // Create a cURL file object
+        $curlFile = new CurlFile($zipFileName);
+        $postData = array(
+            'file' => $curlFile,
+            'game' => $game
+        );
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $postData);
+
+        $response = curl_exec($curl);
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        Log::info("Response after attempted map upload: [$status_code]: $response");
+        unlink($zipFileName); // delete the temp zip
+
+        if (curl_errno($curl))
+        {
+            Log::error('cURL Error: ' . curl_error($curl));
+            return false;
+        }
+
+        curl_close($curl);
+        if ($response === false)
+        {
+            Log::error('Error: Unable to send the POST request.');
+            return false;
+        }
+
+        if (!$this->mapExists($hash, $game))
+        {
+            Log::info("Map does $hash not exist in cnc db after attempted upload");
+            return false;
+        }
+        return true;
+    }
+
+    private function mapExists($hash, $game)
+    {
+        $targetUrl = "http://mapdb.cncnet.org/$game/$hash.zip";
+
+        $curl = curl_init();
+
+        curl_setopt($curl, CURLOPT_URL, $targetUrl);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
+
+        Log::info($targetUrl);
+        curl_exec($curl);
+
+        $status_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        curl_close($curl);
+
+        return $status_code === 200;
     }
 
     private function parseMapHeaders($fileName, $mapId, $ladderGame)
