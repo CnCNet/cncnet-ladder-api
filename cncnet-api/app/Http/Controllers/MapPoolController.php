@@ -193,7 +193,7 @@ class MapPoolController extends Controller
             $hash = sha1_file($mapFile);
          
             $mapUploaded = $this->uploadMapToCncDatabase($mapFile, $hash, $game);
-            $request->session()->flash('success', "Map Uploaded to the CnC Database!");
+            $request->session()->flash('success', "QM Map saved and Map Uploaded to the CnC Database!");
 
             if (!$mapUploaded)
             {
@@ -212,19 +212,19 @@ class MapPoolController extends Controller
         if (filesize($mapFile) > 800000)
         {
             Log::error("Map file is too large " . $mapFile->getClientOriginalName());
-            return;
+            return true;
         }
 
         if (filesize($mapFile) == 0)
         {
             Log::error("Map file has no data " . $mapFile->getClientOriginalName());
-            return;
+            return true;
         }
 
         if ($this->mapExists($hash, $game))
         {
             Log::info("Map file '$hash' already exists in $game cnc database " . $mapFile->getClientOriginalName());
-            return;
+            return true;
         }
 
         $fileExtension = $mapFile->getClientOriginalExtension();
