@@ -1,6 +1,7 @@
 <?php
 
 use App\GameReport;
+use App\Http\Controllers\SiteController;
 use App\Http\Services\LadderService;
 use \App\User;
 
@@ -12,6 +13,7 @@ Route::get('/styleguide', 'SiteController@getStyleguide');
 Route::get('/ranking', 'RankingController@getIndex');
 Route::get('/news', 'NewsController@getNews');
 Route::get('/news/{slug}', 'NewsController@getNewsBySlug');
+// Route::get("/stats", "SiteController@getStats");
 
 
 # 1vs1 Player Ladders

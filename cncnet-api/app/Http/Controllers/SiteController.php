@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Game;
 use App\Http\Services\LadderService;
+use App\Ladder;
+use App\LadderHistory;
 use App\News;
+use App\QmMatch;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SiteController extends Controller
@@ -19,6 +24,23 @@ class SiteController extends Controller
             "ladders" => $ladderService->getLatestLadders(),
             "clan_ladders" => $ladderService->getLatestClanLadders(),
         ]);
+    }
+
+    public function getStats()
+    {
+        $date = Carbon::now();
+
+        $end = $date->endOfMonth()->toDateTimeString();
+        $start = $date->subMonths(12)->startOfMonth()->toDateTimeString();
+
+        $ladderIds = Ladder::where("game", "yr")->pluck("id");
+        $ladderHistoryIds = LadderHistory::where("starts", ">=", $start)
+            ->where("ends", "<=", $end)
+            ->whereIn("ladder_id", $ladderIds)
+            ->pluck("id");
+
+        $matchCount = Game::whereIn("ladder_history_id", $ladderHistoryIds)->groupBy("ladder_history_id")->count();
+        return view("stats", ["start" => $start, "end" => $end, "matchCount" => $matchCount]);
     }
 
     public function getOBSHelp(Request $request)
