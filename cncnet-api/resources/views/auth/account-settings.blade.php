@@ -137,12 +137,15 @@
                             </div>
                         @endif
 
-                        {{-- MJ, Matt, Iver, Grant --}}
-                        @if ($user->name == 9466 || $user->id == 30045 || $user->id == 53431 || $user->id == 1)
+
+
+                        @if (in_array($user->id, config('app.allowed_observer_user_ids')))
                             <div class="form-group mt-5 mb-5">
                                 <h3>Observer Mode (Invite only)</h3>
+                                <strong>Strictly for streaming games only</strong>
                                 <p>
-                                    Watch any match on any ladder. Enabling this will take any username you have in the ladder and make you an observer.
+                                    Watch any match on any ladder. Enabling this will take any username you have in the ladder and make you an
+                                    observer.
                                 </p>
                                 <p>
                                     <label>
@@ -214,7 +217,8 @@
                             <label>
                                 <input id="allow_observers" type="checkbox" name="allowObservers" @if ($userSettings->allow_observers) checked @endif />
                                 Allow CnCNet vetted streamers to stream your matches? <br />
-                                (Note: While we maximise testing of this feature, your preference will not work yet and there may be 1 streamer in your
+                                (Note: While we maximise testing of this feature, your preference will not work yet and there may be 1 streamer in
+                                your
                                 match)
                             </label>
                         </div>
