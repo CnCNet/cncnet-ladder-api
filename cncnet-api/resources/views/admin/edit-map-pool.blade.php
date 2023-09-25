@@ -329,7 +329,9 @@
             let mapSels = document.querySelectorAll(".map-selector")
             for (let i = 0; i < mapSels.length; i++) {
                 mapSels[i].onchange = function() {
-                    document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + ladderMaps[this.value].image_hash + ".png";
+                    let ladderMap = ladderMaps[this.value]
+                    let hash = ladderMap.image_hash ? ladderMap.image_hash : ladderMap.hash;
+                    document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + hash + ".png";
                 }
             }
         })();
@@ -340,15 +342,20 @@
 
                 document.getElementById("ladderMapId").value = this.value;
                 document.getElementById("ladderMapName").value = ladderMap.name;
-                document.getElementById("ladderMapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + ladderMap.image_hash + ".png"
+
+                let hash = ladderMap.image_hash ? ladderMap.image_hash : ladderMap.hash;
+                document.getElementById("ladderMapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + hash + ".png"
             };
         })();
 
         (function() {
             let mps = document.getElementById("mapPoolSelector");
             mps.onchange = function() {
-                document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + ladderMaps[maps[this.value].map_id].image_hash +
-                    ".png";
+
+                let ladderMap = ladderMaps[maps[this.value].map_id]
+                let hash = ladderMap.image_hash ? ladderMap.image_hash : ladderMap.hash;
+                document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + hash + ".png";
+
                 let hideList = document.querySelectorAll("div.map");
                 for (let i = 0; i < hideList.length; i++) {
                     if (!hideList[i].classList.contains("hidden"))
