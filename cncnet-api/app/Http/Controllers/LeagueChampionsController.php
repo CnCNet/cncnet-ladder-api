@@ -35,7 +35,7 @@ class LeagueChampionsController extends Controller
             {
                 # Default
                 $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
-                    ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
+                    ->where('tier', '=', $request->tier ?? 1)
                     ->where('player_name', 'like', '%' . $request->search . '%')
                     ->orderBy('points', 'desc')
                     ->get()
