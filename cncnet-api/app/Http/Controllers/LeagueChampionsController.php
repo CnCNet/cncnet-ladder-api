@@ -44,7 +44,8 @@ class LeagueChampionsController extends Controller
                     $clans = ClanCache::where("ladder_history_id", "=", $history->id)
                         ->where("clan_name", "like", "%" . $request->search . "%")
                         ->orderBy("points", "desc")
-                        ->paginate(45);
+                        ->get()
+                        ->splice(0, 5);
                 }
                 else
                 {
@@ -52,7 +53,8 @@ class LeagueChampionsController extends Controller
                         ->where("tier", "=", $tier)
                         ->where("player_name", "like", "%" . $request->search . "%")
                         ->orderBy("points", "desc")
-                        ->paginate(45);
+                        ->get()
+                        ->splice(0, 5);
                 }
 
                 $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
