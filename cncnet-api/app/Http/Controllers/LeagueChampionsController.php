@@ -58,6 +58,8 @@ class LeagueChampionsController extends Controller
             "champions.index",
             [
                 "ladder" => $ladder,
+                "isTierLeague" => $history->ladder->qmLadderRules->tier2_rating > 0,
+                "isClanLadder" => $history->ladder->clans_allowed,
                 "abbreviation" => $game,
                 "ladders_winners" => $prevWinners,
                 "ladders" => $this->ladderService->getLatestLadders(),

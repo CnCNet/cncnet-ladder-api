@@ -10,9 +10,11 @@
     </a>
 
     <ul class="dropdown-menu dropdown-menu-dark">
+
         <li>
-            <h4 class="dropdown-header text-uppercase">Hall of Fame</h4>
+            <h4 class="dropdown-header text-uppercase">Hall of Fame - 1 vs 1 Ladders</h4>
         </li>
+
         @foreach ($ladders as $history)
             <li>
                 <a href="{{ \App\URLHelper::getChampionsLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
@@ -24,5 +26,27 @@
                 </a>
             </li>
         @endforeach
+
+
+        @if (isset($clan_ladders))
+            @if (count($clan_ladders) > 0)
+                <li>
+                    <h4 class="dropdown-header text-uppercase">Hall of Fame - Clan Ladders</h4>
+                </li>
+            @endif
+
+            @foreach ($clan_ladders as $history)
+                @if (!$history->ladder->private)
+                    <li>
+                        <a href="{{ \App\URLHelper::getChampionsLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
+                            <span class="d-flex align-items-center">
+                                <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
+                                {{ $history->ladder->name }}
+                            </span>
+                        </a>
+                    </li>
+                @endif
+            @endforeach
+        @endif
     </ul>
 </li>
