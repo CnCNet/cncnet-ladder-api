@@ -73,12 +73,23 @@
                         </a>
                     </div>
 
-                    @include('ladders.listing._ladder-table', [
-                        'players' => $ladderWinners['players'],
-                        'history' => $ladderWinners['history'],
-                        'sides' => $ladderWinners['sides'],
-                        'ladderHasEnded' => true,
-                    ])
+                    @if ($ladderWinners['players'])
+                        @include('ladders.listing._ladder-table', [
+                            'players' => $ladderWinners['players'],
+                            'history' => $ladderWinners['history'],
+                            'sides' => $ladderWinners['sides'],
+                            'ladderHasEnded' => true,
+                        ])
+                    @endif
+
+                    @if ($ladderWinners['clans'])
+                        @include('ladders.listing.clan._ladder-table', [
+                            'clans' => $ladderWinners['clans'],
+                            'history' => $ladderWinners['history'],
+                            'sides' => $ladderWinners['sides'],
+                            'ladderHasEnded' => true,
+                        ])
+                    @endif
                 </div>
             @endforeach
         </div>
