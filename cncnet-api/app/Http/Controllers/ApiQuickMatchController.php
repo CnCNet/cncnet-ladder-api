@@ -493,12 +493,6 @@ class ApiQuickMatchController extends Controller
         );
     }
 
-    private function checkPlayerForShadowBan(
-        $qmPlayer
-    )
-    {
-    }
-
     private function checkPlayerWillMatchAI(
         $version,
         $user,

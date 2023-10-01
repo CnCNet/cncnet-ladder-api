@@ -184,14 +184,19 @@ class QuickMatchSpawnService
                 $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes"
             )
             {
-                # If p1 is allied and p2 is yuri
-                # or if p1 is yuri and p2 is allied then disable SW for this match
-                if (
-                    ($qmPlayer->actual_side < 5 && $opn->actual_side == 9) ||
-                    ($opn->actual_side < 5 && $qmPlayer->actual_side == 9)
-                )
+                # We should be OK to check we're not observers here
+                # Note we don't want to break out of the loop as otherIndex is incremented below
+                if (!$qmPlayer->isObserver() && !$opn->isObserver())
                 {
-                    $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
+                    # If p1 is allied and p2 is yuri
+                    # or if p1 is yuri and p2 is allied then disable SW for this match
+                    if (
+                        ($qmPlayer->actual_side < 5 && $opn->actual_side == 9)
+                        || ($opn->actual_side < 5 && $qmPlayer->actual_side == 9)
+                    )
+                    {
+                        $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
+                    }
                 }
             }
 
