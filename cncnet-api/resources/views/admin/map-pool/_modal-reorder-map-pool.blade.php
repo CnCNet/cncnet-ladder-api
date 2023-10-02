@@ -16,7 +16,7 @@
                                     @foreach ($qmMaps as $qmMap)
                                         @if ($qmMap->id != 'new')
                                             <li class="map-in-list" value="{{ $qmMap->bit_idx }}">
-                                                <input type="radio" id="rinput_idx_{{ $qmMap->bit_idx }}" name="maphandle" value="{{ $qmMap->id }},{{ $qmMap->bit_idx }},{{$qmMap->difficulty}}" class="maphandle">
+                                                <input type="radio" id="rinput_idx_{{ $qmMap->bit_idx }}" name="maphandle" value="{{ $qmMap->id }},{{ $qmMap->bit_idx }},{{$qmMap->map_tier}}" class="maphandle">
                                                 </radio>
                                                 <label id="linput_idx_{{ $qmMap->bit_idx }}" for="rinput_idx_{{ $qmMap->bit_idx }}" style="margin-bottom: 0;">{{ $qmMap->admin_description }}</label>
                                                 <input type="hidden" id="input_idx_{{ $qmMap->bit_idx }}" name="bit_idx_{{ $qmMap->bit_idx }}" value="{{ $qmMap->id }}" />
@@ -32,7 +32,7 @@
                                 <i class="bi bi-arrow-down-circle-fill"></i>
                             </a>
                             <a href="#reorderMapPool" class="alphabetical-sort btn btn-danger"><span>A-Z</span></a>
-                            <a href="#reorderMapPool" class="difficulty-sort btn btn-danger"><span>Difficulty</span></a>
+                            <a href="#reorderMapPool" class="map_tier-sort btn btn-danger"><span>Map Tier</span></a>
                             <button type="submit" class="btn btn-primary">Save</button>
                         </div>
                         </form>

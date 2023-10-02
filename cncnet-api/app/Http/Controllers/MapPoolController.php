@@ -52,7 +52,7 @@ class MapPoolController extends Controller
         $qmMap->team1_spawn_order = $request->team1_spawn_order;
         $qmMap->team2_spawn_order = $request->team2_spawn_order;
         $qmMap->random_spawns = $request->random_spawns == "on" ? true : false;
-        $qmMap->difficulty = $request->difficulty;
+        $qmMap->map_tier = $request->map_tier;
 
         // map weight
         if (!$qmMap->weight || $qmMap->weight < 1)
@@ -65,9 +65,9 @@ class MapPoolController extends Controller
         }
 
         $ladderRules = \App\MapPool::find($request->map_pool_id)->ladder->qmLadderRules;
-        if ($ladderRules->use_ranked_map_picker && ($request->difficulty > 5 || $request->difficulty < 0))
+        if ($ladderRules->use_ranked_map_picker && ($request->map_tier > 5 || $request->map_tier < 0))
         {
-            $request->session()->flash('error', "Map difficulty $request->difficulty cannot be less than 0 or greater than 5");
+            $request->session()->flash('error', "Map map_tier $request->map_tier cannot be less than 0 or greater than 5");
             return redirect()->back();
         }
 
@@ -496,6 +496,7 @@ class MapPoolController extends Controller
                 'mapPool' => $mapPool,
                 'ladderAbbrev' => $ladder->abbreviation,
                 'qmMaps' => $mapPool->maps()->orderBy('bit_idx')->get(),
+                'mapTiers' => $mapPool->tiers,
                 'ladder' => $ladder,
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
@@ -538,6 +539,13 @@ class MapPoolController extends Controller
         $mapPool->name = $request->name;
         $mapPool->ladder_id = $ladderId;
         $mapPool->save();
+
+        // create initial map tier 1
+        $mapTier = new \App\MapTier();
+        $mapTier->map_pool_id = $mapPool->id;
+        $mapTier->tier = 1;
+        $mapTier->max_vetoes = 0; // default 0 vetoes
+        $mapTier->save();
 
         return redirect("/admin/setup/{$ladderId}/mappool/{$mapPool->id}/edit");
     }
@@ -629,6 +637,55 @@ class MapPoolController extends Controller
         }
 
         $request->session()->flash('success', "Map Pool Reordered");
+        return redirect()->back();
+    }
+
+    public function editMapTier(Request $request)
+    {
+        $mapTier = \App\MapTier::where('tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->first();
+        if (!$mapTier || $mapTier == null)
+        {
+            $mapTier = new \App\MapTier();
+            $mapTier->map_pool_id = $request->map_pool_id;
+        }
+        
+        //check for invalid tier
+        if (!$request->tier || $request->tier < 1)
+        {
+            $request->session()->flash('error', "Map Tier " . $request->tier . " must be above zero.");
+            return redirect()->back();
+        }
+
+        $mapTier->tier = $request->tier;
+        $mapTier->name = $request->name;
+        $mapTier->max_vetoes = $request->max_vetoes;
+
+        $mapTier->save();
+
+        $request->session()->flash('success', "Saved Map Tier '" . $mapTier->tier . " - " . $mapTier->name. "'");
+        return redirect()->back();
+    }
+
+    public function deleteMapTier(Request $request)
+    {
+        $mapTier = \App\MapTier::where('tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->first();
+        if (!$mapTier || $mapTier == null)
+        {
+            $request->session()->flash('error', "Map Tier not found " . $mapTier->tier);
+            return redirect()->back();
+        }
+
+        // check if any maps in this pool belong to this tier
+        $qmMaps = \App\QmMap::where('map_tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->get();
+        if ($qmMaps->count() > 0)
+        {
+            $request->session()->flash('error', "Cannot delete tier " . $request->tier . " because there are maps in this map pool assigned to this tier.");
+            return redirect()->back();
+        }
+
+        $mapTier->delete();
+
+        $request->session()->flash('success', "Deleted Map Tier '" . $mapTier->name . "'.");
         return redirect()->back();
     }
 }

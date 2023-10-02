@@ -21,4 +21,9 @@ class MapPool extends Model {
     {
         return $this->hasMany('\App\QmMap')->valid()->orderBy('bit_idx');
     }
+
+    public function tiers()
+    {
+        return $this->hasMany('App\MapTier', 'map_pool_id');
+    }
 }

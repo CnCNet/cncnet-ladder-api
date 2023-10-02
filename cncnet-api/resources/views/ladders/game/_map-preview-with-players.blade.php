@@ -1,7 +1,8 @@
 @php
     $mapPreview = '';
     try {
-        $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $map->hash . '.png';
+        $imageHash = $map->image_hash != null ? $map->image_hash : $map->hash;
+        $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png';
         $mapPreviewSize = getimagesize($mapPreview);
     
         $webMapWidth = $mapPreviewSize[0];

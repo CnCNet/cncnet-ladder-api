@@ -41,6 +41,9 @@ class LadderService
             $current = $this->getActiveLadderByDate(Carbon::now()->format('m-Y'), $ladder->abbreviation);
             if ($current !== null)
                 $ladder["current"] = $current->short;
+
+            if ($ladder->mapPool)
+                $ladder->mapPool->tiers;
         }
         return $ladders;
     }

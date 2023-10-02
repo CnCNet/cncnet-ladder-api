@@ -108,6 +108,10 @@ Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'can
 
     Route::post('editmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMap']);
 
+    // update/delete map tier endpoints
+    Route::post('mappool/{mapPoolId}/editMapTier', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMapTier']);
+    Route::post('mappool/{mapPoolId}/deleteMapTier', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@deleteMapTier']);
+
     Route::post('optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue']);
     Route::post('mappool/{mapPoolId}/optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue']);
 

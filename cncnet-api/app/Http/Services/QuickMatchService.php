@@ -625,11 +625,11 @@ class QuickMatchService
             $maps
         );
 
-        $matchHasObserver = $this->checkMatchForObserver(
-            $qmPlayer,
-            $otherQmQueueEntries
-        );
-
+                    $matchHasObserver = $this->checkMatchForObserver(
+                $qmPlayer,
+                $otherQmQueueEntries
+            );
+         
         $currentQueuePlayerCount = count($otherQmQueueEntries) + 1; // Total player counts equals myself plus other players to be matched
         $expectedPlayerQueueCount = $matchHasObserver ? $ladder->qmLadderRules->player_count + 1 :  $ladder->qmLadderRules->player_count;
 
@@ -731,7 +731,7 @@ class QuickMatchService
     {
         $mapsArr = array_filter($mapsArr, function ($map)
         {
-            return $map->difficulty && $map->difficulty > 0;
+            return $map->map_tier && $map->map_tier > 0;
         });
 
         Log::info("Selecting map for rank $rank, points $points, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
@@ -740,7 +740,7 @@ class QuickMatchService
         foreach ($mapsArr as $map)
         {
             //difficulties: 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
-            $mapsRanked[$map->difficulty][] = $map;
+            $mapsRanked[$map->map_tier][] = $map;
         }
 
         $randVal = mt_rand(0, 99); //rand val between 0 and 99
@@ -809,10 +809,10 @@ class QuickMatchService
         if ($map == null)
         {
             Log::error("null map chosen");
-            Log::error("null map chosen, difficulty=$map->difficulty, from rank=$rank, used randIdx=$randIdx");
+            Log::error("null map chosen, map_tier=$map->map_tier, from rank=$rank, used randIdx=$randIdx");
         }
 
-        Log::info("Ranked map chosen=$map->description, difficulty=$map->difficulty, from rank=$rank, used randIdx=$randIdx");
+        Log::info("Ranked map chosen=$map->description, map_tier=$map->map_tier, from rank=$rank, used randIdx=$randIdx");
 
         return $map->id;
     }

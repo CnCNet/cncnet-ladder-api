@@ -39,6 +39,12 @@
                         <h2>{{ $mapPool->name }}</h2>
                         <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editMapPool"> Edit </button>
                     </div>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mapTierModal">
+                            Add/Edit Map Tiers
+                        </button>
+                    </div>
+
                     <div class="col-md-6">
                         <form method="POST" action="rempoolmap">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}" />
@@ -103,9 +109,9 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="{{ $qmMap->id }}_difficulty"> Map Tier </label>
-                                            <input type="number" id="{{ $qmMap->id }}_difficulty" name="difficulty" min="0" max="5"
-                                                value="{{ $qmMap->difficulty }}" class="form-control" />
+                                            <label for="{{ $qmMap->id }}_map_tier"> Map Tier </label>
+                                            <input type="number" id="{{ $qmMap->id }}_map_tier" name="map_tier" min="0" max="5"
+                                                value="{{ $qmMap->map_tier }}" class="form-control" />
                                         </div>
 
                                         <div class="form-group col-md-12">
@@ -225,6 +231,7 @@
 
     @include('admin.map-pool._modal-edit-map-pool')
     @include('admin.map-pool._modal-edit-ladder-map')
+    @include('admin.map-pool._modal-edit-map-tier')
 
     @foreach ($qmMaps as $qmMap)
         <div class="modal fade" id="newOptions_{{ $qmMap->id }}" tabIndex="-1" role="dialog">
@@ -524,10 +531,10 @@
                 });
             }
 
-            let difficultySorts = document.querySelectorAll(".difficulty-sort");
-            for (i = 0; i < difficultySorts.length; i++) {
+            let map_tierSorts = document.querySelectorAll(".map_tier-sort");
+            for (i = 0; i < map_tierSorts.length; i++) {
 
-                difficultySorts[i].addEventListener('click', function() {
+                map_tierSorts[i].addEventListener('click', function() {
 
                     var mapList = document.getElementById("mapList");
 
@@ -535,7 +542,7 @@
                     Array.from(mapList.getElementsByTagName("li"))
                         .sort( function(a, b) {
 
-                            //sort by difficulty, difficulty is the input element's 3rd index in the value attribute
+                            //sort by map_tier, map_tier is the input element's 3rd index in the value attribute
                             var valueA = a.getElementsByTagName("input")[0].value.split(",")[2];
                             var valueB = b.getElementsByTagName("input")[0].value.split(",")[2];
                             var diff = valueA - valueB;
