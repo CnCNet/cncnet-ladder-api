@@ -22,7 +22,7 @@ class PopulateMapTiers extends Migration
             {
                 $ladderRules = $ladder->qmLadderRules;
 
-                $tier1 = \App\MapTier::where('tier', 1)->first();
+                $tier1 = \App\MapTier::where('tier', 1)->where('map_pool_id', $mapPool->id)->first();
 
                 if (!$tier1 || $tier1 == null)
                 {

@@ -662,7 +662,7 @@ class MapPoolController extends Controller
 
         $mapTier->save();
 
-        $request->session()->flash('success', "Saved Map Tier '" . $mapTier->tier . " - " . $mapTier->name. "'");
+        $request->session()->flash('success', "Saved Map Tier '" . $mapTier->name. "'");
         return redirect()->back();
     }
 

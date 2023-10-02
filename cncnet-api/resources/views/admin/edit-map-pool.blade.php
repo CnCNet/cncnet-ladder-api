@@ -304,6 +304,17 @@
 
 @section('js')
     <script type="text/javascript">
+        $(document).ready(function() {
+        $('.mapTierForm').hide();
+
+        $('#mapTierSelector').on('change', function() {
+            var selectedOption = $(this).val();
+            $('.mapTierForm').hide();
+
+            $('#' + (selectedOption + '_addMapTierForm')).show();
+            $('#' + (selectedOption + '_deleteMapTierForm')).show();
+        });
+    });
         let maps = {
             "new": {
                 "map_id": "new"
