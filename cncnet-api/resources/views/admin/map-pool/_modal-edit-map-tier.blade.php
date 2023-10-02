@@ -41,7 +41,7 @@
                         </div>
                         <div class="form-group">
                             <label for="max_vetoes">Veto Count</label>
-                            <input type="number" class="form-control border" id="max_vetoes" name="max_vetoes" min=0 value="{{ $mapTier->max_vetoes }}">
+                            <input type="number" class="form-control border" id="max_vetoes" name="max_vetoes" min="0" value="{{ $mapTier->max_vetoes }}">
                         </div>
                         <button type="submit" class="btn btn-primary" id="editMapTier">Save Map Tier</button>
                     </form>
