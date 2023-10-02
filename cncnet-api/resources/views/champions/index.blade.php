@@ -29,24 +29,67 @@
 @section('content')
     <section class="ladder-listing game-{{ $abbreviation }}">
         <div class="container">
+
+            @if ($isTierLeague)
+                <div class="league-selection pt-2">
+                    <a href="{{ \App\UrlHelper::getLadderChampionsUrl($abbreviation, 1) }}" class="league-box tier-1">
+                        {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(1) !!}
+                        <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(1) }}</h3>
+                    </a>
+                    <a href="{{ \App\UrlHelper::getLadderChampionsUrl($abbreviation, 2) }}" class="league-box tier-2">
+                        {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(2) !!}
+                        <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(2) }}</h3>
+                    </a>
+                </div>
+            @endif
+
             @foreach ($ladders_winners as $ladderWinners)
                 <div>
                     <div class="mb-2">
-                        <h2 class="pb-2 pt-5" style="color:#bbb">
-                            {{ $ladderWinners['history']['ends']->format('F Y') }} - <strong>Ladder Champions</strong>
-                        </h2>
 
-                        <a href="{{ \App\URLHelper::getLadderUrl($ladderWinners['history']) }}" class="btn btn-secondary">
+                        @if (request()->tier == null || request()->tier == 1)
+                            <h3 class="mt-4 mb-4">
+                                @if ($isClanLadder)
+                                    <i class="bi bi-flag-fill icon-clan pe-3"></i>
+                                    {{ $ladderWinners['history']['ends']->format('F Y') }} Champions Clan League
+                                @else
+                                    <i class="bi bi-trophy pe-3"></i>
+                                    {{ $ladderWinners['history']['ends']->format('F Y') }} 1vs1 - Champions Players League
+                                @endif
+                            </h3>
+                        @else
+                            <h3 class="mt-4 mb-4">
+                                <i class="bi bi-shield-slash-fill pe-3"></i>
+                                @if ($isClanLadder)
+                                    {{ $ladderWinners['history']['ends']->format('F Y') }} Contenders Clan League
+                                @else
+                                    {{ $ladderWinners['history']['ends']->format('F Y') }} 1vs1 - Contenders Players League
+                                @endif
+                            </h3>
+                        @endif
+
+                        <a href="{{ \App\URLHelper::getLadderUrl($ladderWinners['history']) }}?tier={{ request()->tier }}" class="btn btn-secondary">
                             View Full {{ $ladderWinners['history']['ends']->format('F Y') }} ladder
                         </a>
                     </div>
 
-                    @include('ladders.listing._ladder-table', [
-                        'players' => $ladderWinners['players'],
-                        'history' => $ladderWinners['history'],
-                        'sides' => $ladderWinners['sides'],
-                        'ladderHasEnded' => true,
-                    ])
+                    @if ($ladderWinners['players'])
+                        @include('ladders.listing._ladder-table', [
+                            'players' => $ladderWinners['players'],
+                            'history' => $ladderWinners['history'],
+                            'sides' => $ladderWinners['sides'],
+                            'ladderHasEnded' => true,
+                        ])
+                    @endif
+
+                    @if ($ladderWinners['clans'])
+                        @include('ladders.listing.clan._ladder-table', [
+                            'clans' => $ladderWinners['clans'],
+                            'history' => $ladderWinners['history'],
+                            'sides' => $ladderWinners['sides'],
+                            'ladderHasEnded' => true,
+                        ])
+                    @endif
                 </div>
             @endforeach
         </div>

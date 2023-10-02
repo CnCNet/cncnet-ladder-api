@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ClanCache;
 use \Carbon\Carbon;
 use App\LadderHistory;
 use Illuminate\Http\Request;
@@ -34,12 +35,27 @@ class LeagueChampionsController extends Controller
             foreach ($h as $history)
             {
                 # Default
-                $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
-                    ->where('tier', $request->tier ? '=' : '>', $request->tier + 0)
-                    ->where('player_name', 'like', '%' . $request->search . '%')
-                    ->orderBy('points', 'desc')
-                    ->get()
-                    ->splice(0, 20);
+                $clans = null;
+                $players = null;
+                $tier = $request->tier ?? 1;
+
+                if ($history->ladder->clans_allowed)
+                {
+                    $clans = ClanCache::where("ladder_history_id", "=", $history->id)
+                        ->where("clan_name", "like", "%" . $request->search . "%")
+                        ->orderBy("points", "desc")
+                        ->get()
+                        ->splice(0, 5);
+                }
+                else
+                {
+                    $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
+                        ->where("tier", "=", $tier)
+                        ->where("player_name", "like", "%" . $request->search . "%")
+                        ->orderBy("points", "desc")
+                        ->get()
+                        ->splice(0, 5);
+                }
 
                 $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
                     ->where('local_id', '>=', 0)
@@ -49,6 +65,7 @@ class LeagueChampionsController extends Controller
                 $prevWinners[] = [
                     "history" => $history,
                     "players" => $players,
+                    "clans" => $clans,
                     "sides" => $sides
                 ];
             }
@@ -58,6 +75,8 @@ class LeagueChampionsController extends Controller
             "champions.index",
             [
                 "ladder" => $ladder,
+                "isTierLeague" => $history->ladder->qmLadderRules->tier2_rating > 0,
+                "isClanLadder" => $history->ladder->clans_allowed,
                 "abbreviation" => $game,
                 "ladders_winners" => $prevWinners,
                 "ladders" => $this->ladderService->getLatestLadders(),

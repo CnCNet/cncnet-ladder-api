@@ -9,6 +9,10 @@ class URLHelper
         return "/ladder/" . $history->short . "/" . $tier . "/" . $history->ladder->abbreviation;
     }
 
+    public static function getLadderChampionsUrl($abbreviation, $tier)
+    {
+        return "/ladder-champions/" . $abbreviation . "?tier=" . $tier;
+    }
 
     /**
      * 
