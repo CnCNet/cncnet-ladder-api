@@ -54,6 +54,13 @@ class MapPoolController extends Controller
         $qmMap->random_spawns = $request->random_spawns == "on" ? true : false;
         $qmMap->map_tier = $request->map_tier;
 
+        $mapTier = \App\MapTier::where('map_pool_id', $qmMap->map_pool_id)->where('tier', $qmMap->map_tier)->first();
+        if (!$mapTier || $mapTier == null)
+        {
+            $request->session()->flash('error', "Map map_tier $request->map_tier does not exist");
+            return redirect()->back();
+        }
+
         // map weight
         if (!$qmMap->weight || $qmMap->weight < 1)
         {

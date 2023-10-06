@@ -37,7 +37,7 @@
                     </div>
                     <div class="col-md-12">
                         <h2>{{ $mapPool->name }}</h2>
-                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editMapPool"> Edit </button>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editMapPool"> Edit Map Pool Name </button>
                     </div>
                     <div class="col-md-12">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#mapTierModal">
