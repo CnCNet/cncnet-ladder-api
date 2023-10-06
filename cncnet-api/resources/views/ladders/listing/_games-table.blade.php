@@ -1,12 +1,12 @@
 <div class="table-responsive">
     <table class="games-table table align-middle mb-0">
         <tbody>
-            @foreach ($games as $gameReport)
+            @foreach ($games as $game)
                 <?php
                 
-                $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->id);
-                $playerGameReports = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)->get();
-                $timestamp = $gameReport->updated_at->timestamp;
+                $gameUrl = \App\URLHelper::getGameUrl($history, $game->id);
+                $playerGameReports = \App\PlayerGameReport::where('game_report_id', $game->game_report_id)->get();
+                $timestamp = $game->updated_at->timestamp;
                 $teamAReport = null;
                 $teamBReport = null;
                 
@@ -55,13 +55,13 @@
                     <td class="td-game-details">
                         <div class="d-flex align-items-center game-details">
                             <div>
-                                <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
-                                <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->report->duration) }}</p>
+                                <p class="fw-bold mb-1">{{ $game->scen }}</p>
+                                <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $game->report->duration) }}</p>
                                 <p class="text-muted mb-0">
-                                    Played: {{ $gameReport->updated_at->diffForHumans() }}
+                                    Played: {{ $game->updated_at->diffForHumans() }}
                                 </p>
                                 <p class="text-muted mb-0">
-                                    FPS: {{ $teamAReport->gameReport->fps }}
+                                    FPS: {{ $teamAReport->game->fps }}
                                 </p>
                             </div>
                         </div>
@@ -69,7 +69,7 @@
 
                     <td>
                         <div class="d-flex align-items-center">
-                            @php $imageHash = $gameReport->game->map->image_hash != null ? $gameReport->game->map->image_hash : $gameReport->game->map->hash; @endphp
+                            @php $imageHash = $game->map->image_hash ?? $game->map->hash; @endphp
                             @php $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png'; @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>

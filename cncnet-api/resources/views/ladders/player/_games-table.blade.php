@@ -26,8 +26,8 @@
                     <td class="td-player">
                         @include('ladders.components._games-player-row', [
                             'profileUrl' => $playerProfileUrl,
-                            'username' => $playerGameReport->player->username,
-                            'avatar' => $playerGameReport->player->user->getUserAvatar(),
+                            'username' => $gameReport->player->username,
+                            'avatar' => $gameReport->player->user->getUserAvatar(),
                             'playerGameReport' => $playerGameReport,
                         ])
                     </td>
@@ -55,7 +55,7 @@
                                 <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
                                 <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->duration) }}</p>
                                 <p class="text-muted mb-0">
-                                    Played: {{ $gameReport->gameReport->updated_at->diffForHumans() }}
+                                    Played: {{ $playerGameReport->updated_at->diffForHumans() }}
                                 </p>
                                 <p class="text-muted mb-0">
                                     FPS: {{ $gameReport->fps }}
@@ -66,8 +66,10 @@
 
                     <td>
                         <div class="d-flex align-items-center">
-                            @php $imageHash = $gameReport->game->map->image_hash ?? $gameReport->game->map->hash; @endphp
-                            @php $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png'; @endphp
+                            @php
+                                $imageHash = $playerGameReport->game->map->image_hash ?? $playerGameReport->game->map->hash;
+                                $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png';
+                            @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>
                         </div>
