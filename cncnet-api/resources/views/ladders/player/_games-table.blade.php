@@ -66,7 +66,7 @@
 
                     <td>
                         <div class="d-flex align-items-center">
-                            @php $imageHash = $gameReport->game->map->image_hash ? $gameReport->game->map->image_hash : $gameReport->game->map->hash; @endphp
+                            @php $imageHash = $gameReport->game->map->image_hash ?? $gameReport->game->map->hash; @endphp
                             @php $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png'; @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>
