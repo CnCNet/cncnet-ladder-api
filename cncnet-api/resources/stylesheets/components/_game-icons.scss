@@ -1,10 +1,8 @@
-.icon-game
-{
+.icon-game {
     position: relative;
 }
 
-.icon-game:before
-{
+.icon-game:before {
     content: "";
     display: inline-block;
     background-image: url(../images/games/icons.png);
@@ -13,25 +11,21 @@
     height: 25px;
 }
 
-.icon-ra:before
-{
+.icon-ra:before {
     background-position: calc(0px);
 }
 
-.icon-blitz:before
-{
+.icon-blitz:before {
     background-position: calc(-25px * 10);
 }
 
-.icon-sfj:before
-{
+.icon-sfj:before {
     background-position: calc(-25px * 11);
 }
 
 // New icons
 .icon-yr-cl:before,
-.icon-yr:before
-{
+.icon-yr:before {
     content: "";
     display: inline-block;
     background-image: url(../images/games/yr/yr-icon.png);
@@ -42,10 +36,10 @@
     height: 25px;
 }
 
+.icon-ra2-new-maps:before,
 .icon-ra2-cl:before,
 .icon-ra2-beta:before,
-.icon-ra2:before
-{
+.icon-ra2:before {
     content: "";
     display: inline-block;
     background-image: url(../images/games/ra2/ra2-icon.png);
@@ -57,8 +51,7 @@
 }
 
 .icon-ts-cl:before,
-.icon-ts:before
-{
+.icon-ts:before {
     content: "";
     display: inline-block;
     background-image: url(../images/games/ts/ts-icon.png);
@@ -70,8 +63,7 @@
 }
 
 .icon-ra-cl:before,
-.icon-ra:before
-{
+.icon-ra:before {
     content: "";
     display: inline-block;
     background-image: url(../images/games/ra/ra-icon.png);
@@ -83,8 +75,7 @@
 }
 
 .icon-cl-blitz:before,
-.icon-blitz:before
-{
+.icon-blitz:before {
     content: "";
     display: inline-block;
     background-image: url(../images/games/blitz/blitz-icon.png);
@@ -95,20 +86,17 @@
     height: 25px;
 }
 
-.icon-sm:before 
-{
+.icon-sm:before {
     width: 25px;
     height: 25px;
 }
 
-.icon-md:before 
-{
+.icon-md:before {
     width: 35px;
     height: 35px;
 }
 
-.icon-lg:before 
-{
+.icon-lg:before {
     width: 50px;
     height: 50px;
 }
