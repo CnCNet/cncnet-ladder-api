@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 use Exception;
-use Illuminate\Contracts\Logging\Log;
+use Illuminate\Support\Facades\Log;
 
 class SiteHelper
 {
@@ -26,7 +26,6 @@ class SiteHelper
         catch (Exception $ex)
         {
             Log::info("Error fetting map preview url: " . $ex->getMessage());
-            dd($ex->getTraceAsString());
             return "";
         }
     }
