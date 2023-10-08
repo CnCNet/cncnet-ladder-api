@@ -211,50 +211,50 @@ class StatsService
 
     public function getMapWinLossByPlayer($player, $history)
     {
-        return Cache::remember("getMapWinLossByPlayer/$history->short/$player->id", 5, function () use ($player, $history)
-        {
-            $now = $history->starts;
-            $from = $now->copy()->startOfMonth()->toDateTimeString();
-            $to = $now->copy()->endOfMonth()->toDateTimeString();
+        // return Cache::remember("getMapWinLossByPlayer/$history->short/$player->id", 5, function () use ($player, $history)
+        // {
+        $now = $history->starts;
+        $from = $now->copy()->startOfMonth()->toDateTimeString();
+        $to = $now->copy()->endOfMonth()->toDateTimeString();
 
-            $playerGamesByMaps = $player->playerGames()
+        $playerGamesByMaps = $player->playerGames()
+            ->where("ladder_history_id", $history->id)
+            ->whereBetween("player_game_reports.created_at", [$from, $to])
+            ->groupBy("scen")
+            ->get();
+
+        $mapResults = [];
+        foreach ($playerGamesByMaps as $pg)
+        {
+            $mapWins = $player->playerGames()
                 ->where("ladder_history_id", $history->id)
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->groupBy("scen")
-                ->get();
+                ->where("scen", $pg->scen)
+                ->where("won", true)
+                ->count();
 
-            $mapResults = [];
-            foreach ($playerGamesByMaps as $pg)
-            {
-                $mapWins = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("scen", $pg->scen)
-                    ->where("won", true)
-                    ->count();
+            $mapLosses = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("scen", $pg->scen)
+                ->where("won", false)
+                ->count();
 
-                $mapLosses = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("scen", $pg->scen)
-                    ->where("won", false)
-                    ->count();
+            $mapTotal = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where("scen", $pg->scen)
+                ->count();
 
-                $mapTotal = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("scen", $pg->scen)
-                    ->count();
-
-                $mapResults[$pg->scen] = [
-                    "preview" => $pg->hash,
-                    "won" => $mapWins,
-                    "lost" => $mapLosses,
-                    "total" => $mapTotal
-                ];
-            }
-            return $mapResults;
-        });
+            $mapResults[$pg->scen] = [
+                "map" => $pg->game->map,
+                "won" => $mapWins,
+                "lost" => $mapLosses,
+                "total" => $mapTotal
+            ];
+        }
+        return $mapResults;
+        // });
     }
 
     public function getPlayerOfTheDay($history)

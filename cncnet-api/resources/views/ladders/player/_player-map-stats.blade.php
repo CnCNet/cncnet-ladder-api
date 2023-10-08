@@ -7,8 +7,11 @@
                 <h6>{{ $mapName }}</h6>
             </div>
             <div class="map-row">
-                <div class="map-preview"
-                    style="background-image:url(https://ladder.cncnet.org/images/maps/{{ $history->ladder->game }}/{{ $v['preview'] }}.png)"></div>
+                @php
+                    $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $v['map']);
+                @endphp
+
+                <div class="map-preview" style="background-image:url({{ $mapPreview }})"></div>
                 <div class="counts">
                     <div class="count won">
                         x{{ $v['won'] }} wins

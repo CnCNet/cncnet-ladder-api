@@ -1,8 +1,6 @@
 @php
-    $mapPreview = '';
     try {
-        $imageHash = $map->image_hash != null ? $map->image_hash : $map->hash;
-        $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png';
+        $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $map);
         $mapPreviewSize = getimagesize($mapPreview);
     
         $webMapWidth = $mapPreviewSize[0];

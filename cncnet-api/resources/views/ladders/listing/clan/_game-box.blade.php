@@ -1,6 +1,6 @@
 <div class="game-box">
 
-    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map or '' }}.png)">
+    <div class="preview" style="background-image:url({{ $mapPreview }})">
         <a href="{{ $url or '' }}" class="status">
             <i class="bi bi-flag-fill icon-clan"></i>
         </a>

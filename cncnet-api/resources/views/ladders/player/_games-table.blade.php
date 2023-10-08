@@ -67,8 +67,7 @@
                     <td>
                         <div class="d-flex align-items-center">
                             @php
-                                $imageHash = ($playerGameReport->game->map->image_hash && $playerGameReport->game->map->image_hash != null) ? $playerGameReport->game->map->image_hash : $playerGameReport->game->map->hash;
-                                $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png';
+                                $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $playerGameReport->game->map);
                             @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>

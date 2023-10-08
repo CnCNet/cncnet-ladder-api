@@ -1,5 +1,5 @@
 <div class="game-box">
-    <div class="preview" style="background-image:url(/images/maps/{{ $game }}/{{ $map or '' }}.png)">
+    <div class="preview" style="background-image:url({{ $mapPreview }})">
         <a href="{{ $url or '' }}" class="status status-{{ $status }}">
             <span class="material-symbols-outlined">
                 swords

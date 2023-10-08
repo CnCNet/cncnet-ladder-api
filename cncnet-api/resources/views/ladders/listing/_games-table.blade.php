@@ -69,8 +69,7 @@
 
                     <td>
                         <div class="d-flex align-items-center">
-                            @php $imageHash = $game->map->image_hash ?? $game->map->hash; @endphp
-                            @php $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png'; @endphp
+                            @php $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map); @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>
                         </div>

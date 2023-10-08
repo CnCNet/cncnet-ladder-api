@@ -6,13 +6,12 @@
                 @php
                     $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->game_id);
                     $timestamp = $gameReport->gameReport->updated_at->timestamp;
-
+                    
                     $playerGameReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
                         ->where('clan_id', '=', $gameReport->clan->id)
                         ->groupBy('won')
                         ->orderByRaw('won = false')
                         ->first();
-                    
                     
                     $clanProfileUrl = \App\URLHelper::getClanProfileLadderUrl($history, $playerGameReport->clan_id);
                     $playerProfileUrl = \App\URLHelper::getPlayerProfileUrl($history, $playerGameReport->player->username);
@@ -77,8 +76,9 @@
 
                     <td>
                         <div class="d-flex align-items-center">
-                            @php $imageHash = $gameReport->game->map->image_hash != null ? $gameReport->game->map->image_hash : $gameReport->game->map->hash; @endphp
-                            @php $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png'; @endphp
+                            @php
+                                $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $gameReport->game->map);
+                            @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>
                         </div>
