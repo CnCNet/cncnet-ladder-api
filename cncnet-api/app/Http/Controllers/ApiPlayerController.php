@@ -55,10 +55,17 @@ class ApiPlayerController extends Controller
 
             $response = [];
             $players = $user->usernames()->where("ladder_id", $ladder->id)->get();
+
+            $now = Carbon::now();
+            $dateStart = $now->startOfMonth()->toDateTimeString();
+            $dateEnd = $now->endOfMonth()->toDateTimeString();
+            $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $dateStart, $dateEnd)
+                ->where('ladder_id', $ladder->id)
+                ->get();
+
             foreach ($players as $player)
             {
-                $playerActive = PlayerActiveHandle::where("player_id", $player->id)->where("user_id", $user->id)->count() > 0;
-                $player["active"] = $playerActive;
+                $player["active"] = $activeHandles->where('player_id', $player->id)->count() > 0;
                 $response[] = $player;
             }
 
