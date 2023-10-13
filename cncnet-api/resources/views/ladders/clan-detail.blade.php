@@ -99,7 +99,10 @@
                         @include('components.avatar', ['avatar' => $clanCache->getClanAvatar(), 'size' => 150, 'type' => 'clan'])
                     </div>
                     <div class="player-rank pt-3 me-5">
-                        <h1 class="username">{{ $clanCache->clan_name }}</h1>
+                        <h1 class="username">
+                            {{ $clanCache->clan_name }} 
+                        </h1>
+                        
                         <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $clanCache->rank() }}</h3>
                     </div>
 

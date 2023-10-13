@@ -39,7 +39,7 @@ class StatsCache
     public static function setClansTodayCache($history)
     {
         $now = Carbon::now();
-        $from = $now->copy()->startOfDay()->toDateTimeString();
+        $from = $now->copy()->startOfMonth()->toDateTimeString();
         $to = $now->copy()->endOfDay()->toDateTimeString();
 
         $clansToday =  PlayerGameReport::join("game_reports", "game_reports.id", "=", "player_game_reports.game_report_id")

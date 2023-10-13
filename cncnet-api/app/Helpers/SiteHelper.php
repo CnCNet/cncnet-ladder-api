@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
@@ -28,5 +29,26 @@ class SiteHelper
             Log::info("Error fetting map preview url: " . $ex->getMessage());
             return "";
         }
+    }
+
+    public static function getEmojiByMonth()
+    {
+        $now = Carbon::now();
+        $emoji = null;
+
+        switch ($now->month)
+        {
+            case 10:
+                $emoji = "🎃"; // Halloween
+                break;
+            case 11:
+                $emoji = "🦃"; // Thanksgiving
+                break;
+            case 12:
+                $emoji = "🎅";
+                break;
+        }
+
+        return $emoji;
     }
 }

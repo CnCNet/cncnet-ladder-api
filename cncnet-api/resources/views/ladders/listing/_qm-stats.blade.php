@@ -63,11 +63,21 @@
 
                     <a class="stat gold potd" style="position:relative" href="{{ $url }}" title="{{ $statsXOfTheDay->name }}">
                         <div class="text-center">
+
+                            @if(\Carbon\Carbon::now()->month == 10)
+                                @include('animations.player', [
+                                    'src' => '/animations/pumpkin.json',
+                                    'loop' => 'true',
+                                    'width' => '100%',
+                                    'height' => '80px',
+                                ])
+                            @else
                             <div class="icon icon-crown pt-4">
                                 @include('icons.crown', [
                                     'colour' => '#ffcd00',
                                 ])
                             </div>
+                            @endif
 
                             <h4>
                                 @if ($history->ladder->clans_allowed)

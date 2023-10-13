@@ -31,8 +31,16 @@
     </div>
 
     @foreach ($players as $k => $playerCache)
+        @php
+            $playerOfTheDay = false;
+            if ($statsXOfTheDay)
+            {
+                $playerOfTheDay = $playerCache->player_name == $statsXOfTheDay->name;
+            }
+        @endphp
+
         @include('ladders.listing._player-row', [
-            'username' => $playerCache->player_name,
+            'username' => $playerCache->player_name . ($playerOfTheDay ? ' ' . \App\Helpers\SiteHelper::getEmojiByMonth() : ''),
             'points' => $playerCache->points,
             'rank' => $playerCache->rank(),
             'wins' => $playerCache->wins,

@@ -15,8 +15,11 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
-                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img 
+                        src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" 
+                        alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto"
+                    />
                 </div>
 
                 <div class="col-12 col-lg-6">
@@ -111,7 +114,12 @@
                         ])
                     </div>
                     <div class="player-rank pt-3 me-md-5">
-                        <h1 class="username">{{ $ladderPlayer->username }}</h1>
+                        <h1 class="username">
+                            {{ $ladderPlayer->username }} 
+                            @if($playerOfTheDayAward)
+                            {{ \App\Helpers\SiteHelper::getEmojiByMonth() }}
+                            @endif
+                        </h1>
 
                         @if ($history->ladder->clans_allowed)
                             <h2 class="rank text-uppercase mt-0">Clan {{ $player->clanPlayer->clan->short }}</h2>

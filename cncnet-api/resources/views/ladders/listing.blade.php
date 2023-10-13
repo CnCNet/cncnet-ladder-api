@@ -227,14 +227,23 @@
                 @endif
 
                 @if ($players)
-                    @include('ladders.listing._ladder-table', ['players' => $players, 'ladderHasEnded' => $history->hasEnded()])
+                    @include('ladders.listing._ladder-table', [
+                        'players' => $players, 
+                        'ladderHasEnded' => $history->hasEnded(),
+                        'statsXOfTheDay' => $statsXOfTheDay
+                    ])
+                    
                     <div class="mt-5">
                         @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
                     </div>
                 @endif
 
                 @if ($clans)
-                    @include('ladders.listing.clan._ladder-table', ['clans' => $clans, 'ladderHasEnded' => $history->hasEnded()])
+                    @include('ladders.listing.clan._ladder-table', [
+                        'clans' => $clans, 
+                        'ladderHasEnded' => $history->hasEnded(),
+                        'statsXOfTheDay' => $statsXOfTheDay
+                    ])
 
                     <div class="mt-5">
                         @include('components.pagination.paginate', ['paginator' => $clans->appends(request()->query())])
