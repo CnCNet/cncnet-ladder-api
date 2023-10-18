@@ -96,7 +96,7 @@
                                 <label for="internal_note">Note for Internal Use</label>
                                 <textarea class="form-control" id="internal_note" name="internal_note">{{ $internal_note }}</textarea>
                             </div>
-                            @if (!$ban_type == \App\Ban::BAN_SHADOW)
+                            @if ($ban_type != \App\Ban::BAN_SHADOW)
                                 <div class="form-group">
                                     <label for="plubic_reason">Publicly Viewable Reason</label>
                                     <textarea class="form-control" id="plubic_reason" name="plubic_reason">{{ $plubic_reason }}</textarea>
