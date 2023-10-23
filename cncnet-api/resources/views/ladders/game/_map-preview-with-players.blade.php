@@ -43,7 +43,6 @@
                         try {
                             $clan = $pgr->clan;
                         } catch (Exception $ex) {
-                            dd($ex);
                         }
                         
                         # Player positions plotted onto map preview

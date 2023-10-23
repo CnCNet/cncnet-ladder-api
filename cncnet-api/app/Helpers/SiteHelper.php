@@ -18,7 +18,6 @@ class SiteHelper
     {
         try
         {
-
             $imageHash = $map->image_hash;
             if ($imageHash == "") $imageHash = $map->hash;
             $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png';
@@ -26,7 +25,7 @@ class SiteHelper
         }
         catch (Exception $ex)
         {
-            Log::info("Error fetting map preview url: " . $ex->getMessage());
+            Log::info("Error fetting map preview url: " . $ex->getMessage() . " Stack: " . $ex->getTraceAsString());
             return "";
         }
     }

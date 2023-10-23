@@ -1,14 +1,14 @@
 <div class="table-responsive">
     <table class="games-table table align-middle mb-0">
         <tbody>
-            @foreach ($games as $gameReport)
+            @foreach ($games as $game)
                 <?php
                 
-                $gameUrl = \App\URLHelper::getGameUrl($history, $gameReport->id);
-                $timestamp = $gameReport->updated_at->timestamp;
+                $gameUrl = \App\URLHelper::getGameUrl($history, $game->id);
+                $timestamp = $game->updated_at->timestamp;
                 
-                $playerGameReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
-                    ->where('clan_id', '=', $gameReport->report->clan_id)
+                $playerGameReport = \App\PlayerGameReport::where('game_report_id', $game->game_report_id)
+                    ->where('clan_id', '=', $game->report->clan_id)
                     ->first();
                 
                 if ($playerGameReport) {
@@ -18,7 +18,7 @@
                     if ($clanProfileUrl == null || $playerProfileUrl == null) {
                         continue;
                     }
-                    $opponentPlayerReport = \App\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
+                    $opponentPlayerReport = \App\PlayerGameReport::where('game_report_id', $game->game_report_id)
                         ->where('clan_id', '!=', $playerGameReport->clan->id)
                         ->first();
                 
@@ -65,13 +65,13 @@
                     <td class="td-game-details">
                         <div class="d-flex align-items-center game-details">
                             <div>
-                                <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
-                                <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->report->duration) }}</p>
+                                <p class="fw-bold mb-1">{{ $game->scen }}</p>
+                                <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $game->report->duration) }}</p>
                                 <p class="text-muted mb-0">
-                                    Played: {{ $gameReport->report->updated_at->diffForHumans() }}
+                                    Played: {{ $game->report->updated_at->diffForHumans() }}
                                 </p>
                                 <p class="text-muted mb-0">
-                                    FPS: {{ $gameReport->report->fps }}
+                                    FPS: {{ $game->report->fps }}
                                 </p>
                             </div>
                         </div>
@@ -80,7 +80,10 @@
                     <td>
                         <div class="d-flex align-items-center">
                             @php
-                                $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $gameReport->game->map);
+                                try {
+                                    $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map);
+                                } catch (\Exception $ex) {
+                                }
                             @endphp
 
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
