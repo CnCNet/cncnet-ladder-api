@@ -81,7 +81,7 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => t
     Route::post('clans', 'AdminController@updateClan');
 });
 
-Route::group(['prefix' => 'admin/news', 'middleware' => 'auth', 'isNewsAdmin' => true], function ()
+Route::group(['prefix' => 'admin/news', 'middleware' => 'auth', 'adminRequired' => true, 'isNewsAdmin' => true], function ()
 {
     Route::get('/', 'AdminNewsController@getIndex');
     Route::get('/create', 'AdminNewsController@getCreate');
