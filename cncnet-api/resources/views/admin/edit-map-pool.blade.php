@@ -52,7 +52,7 @@
                                 <?php $lastmap = null; ?>
                                 @foreach ($qmMaps as $qmMap)
                                     <option value="{{ $qmMap->id }}" {{ old('map_selected') == $qmMap->id ? 'selected' : '' }}>
-                                        {{ $qmMap->admin_description }}
+                                        <span>({{ $qmMap->map_tier }}) {{ $qmMap->admin_description }}</span>
                                     </option>
                                     <?php $lastmap = $qmMap; ?>
                                 @endforeach
