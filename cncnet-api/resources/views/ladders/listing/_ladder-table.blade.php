@@ -33,8 +33,7 @@
     @foreach ($players as $k => $playerCache)
         @php
             $playerOfTheDay = false;
-            if ($statsXOfTheDay)
-            {
+            if (isset($statsXOfTheDay)) {
                 $playerOfTheDay = $playerCache->player_name == $statsXOfTheDay->name;
             }
         @endphp
