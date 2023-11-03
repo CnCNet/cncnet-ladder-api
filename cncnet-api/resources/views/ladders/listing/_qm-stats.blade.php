@@ -52,7 +52,6 @@
                         <div><small>(Right now)</small></div>
                     </div>
                 </div>
-
                 @if ($statsXOfTheDay)
 
                     @if ($history->ladder->clans_allowed)
@@ -64,19 +63,26 @@
                     <a class="stat gold potd" style="position:relative" href="{{ $url }}" title="{{ $statsXOfTheDay->name }}">
                         <div class="text-center">
 
-                            @if(\Carbon\Carbon::now()->month == 10)
+                            @if (\Carbon\Carbon::now()->month == 10)
                                 @include('animations.player', [
                                     'src' => '/animations/pumpkin.json',
                                     'loop' => 'true',
                                     'width' => '100%',
                                     'height' => '80px',
                                 ])
-                            @else
-                            <div class="icon icon-crown pt-4">
-                                @include('icons.crown', [
-                                    'colour' => '#ffcd00',
+                            @elseif(\Carbon\Carbon::now()->month == 11)
+                                @include('animations.player', [
+                                    'src' => '/animations/turkey.json',
+                                    'loop' => 'true',
+                                    'width' => '100%',
+                                    'height' => '150px',
                                 ])
-                            </div>
+                            @else
+                                <div class="icon icon-crown pt-4">
+                                    @include('icons.crown', [
+                                        'colour' => '#ffcd00',
+                                    ])
+                                </div>
                             @endif
 
                             <h4>
