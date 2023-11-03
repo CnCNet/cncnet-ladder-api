@@ -216,6 +216,18 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    public function getChatBannedUsers(Request $request)
+    {
+        if ($request->user() == null || !$request->user()->isAdmin())
+            return response('Unauthorized.', 401);
+
+        $users = User::where("chat_allowed", false)->get();
+
+        return view("admin.chatban-users", [
+            "users" => $users,
+        ]);
+    }
+
     public function getManageUsersIndex(Request $request)
     {
         $hostname = $request->hostname;
@@ -314,6 +326,17 @@ class AdminController extends Controller
         else
         {
             $user->restrictAvatarUpload(false);
+        }
+
+        if ($request->userAllowedToChat == "on")
+        {
+            $user->chat_allowed = true;
+            $user->save();
+        }
+        else
+        {
+            $user->chat_allowed = false;
+            $user->save();
         }
 
         $user->updateAlias($request->alias);

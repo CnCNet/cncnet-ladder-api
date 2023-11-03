@@ -247,6 +247,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->avatar_upload_allowed;
     }
 
+    public function getIsAllowedToChat()
+    {
+        return $this->chat_allowed;
+    }
+
     public function getDiscordProfile()
     {
         return $this->discord_profile;

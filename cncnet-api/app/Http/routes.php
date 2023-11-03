@@ -73,6 +73,7 @@ Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canEditAnyLadders' 
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => true], function ()
 {
     Route::get('users/', 'AdminController@getManageUsersIndex');
+    Route::get('users/chatbans', 'AdminController@getChatBannedUsers');
     Route::get('users/edit/{userId}', 'AdminController@getEditUser');
     Route::post('users/edit/{userId}', 'AdminController@updateUser');
     Route::post('users/tier/update', 'AdminController@updateUserLadderTier');
