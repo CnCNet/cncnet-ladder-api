@@ -530,6 +530,13 @@ class MapPoolController extends Controller
 
         $prototype = MapPool::find($request->map_pool_id);
 
+        foreach ($prototype->tiers as $tier)
+        {
+            $new_tier = $tier->replicate();
+            $new_tier->map_pool_id = $mapPool->id;
+            $new_tier->save();
+        }
+
         foreach ($prototype->maps as $map)
         {
             $new_map = $map->replicate();
