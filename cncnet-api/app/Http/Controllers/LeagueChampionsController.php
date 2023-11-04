@@ -45,7 +45,7 @@ class LeagueChampionsController extends Controller
                         ->where("clan_name", "like", "%" . $request->search . "%")
                         ->orderBy("points", "desc")
                         ->get()
-                        ->splice(0, 5);
+                        ->splice(0, 10);
                 }
                 else
                 {
@@ -54,7 +54,7 @@ class LeagueChampionsController extends Controller
                         ->where("player_name", "like", "%" . $request->search . "%")
                         ->orderBy("points", "desc")
                         ->get()
-                        ->splice(0, 5);
+                        ->splice(0, 10);
                 }
 
                 $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)

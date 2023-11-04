@@ -63,7 +63,15 @@
 
                     <p class="mt-2 mb-2">
                         <label>
-                            Update Alias <input type="text" id="alias" type="checkbox" name="alias" class="form-control border" value="{{ $user->alias }}"/> 
+                            <input id="userAllowedToChat" type="checkbox" name="userAllowedToChat" {{ $user->getIsAllowedToChat() ? 'checked' : '' }} />
+                            User allowed to chat in game?
+                        </label>
+                    </p>
+
+                    <p class="mt-2 mb-2">
+                        <label>
+                            Update Alias <input type="text" id="alias" type="checkbox" name="alias" class="form-control border"
+                                value="{{ $user->alias }}" />
                         </label>
                     </p>
                     <button class="btn btn-primary mt-2">Update User</button>
