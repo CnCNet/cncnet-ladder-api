@@ -25,7 +25,7 @@ class SiteHelper
         }
         catch (Exception $ex)
         {
-            Log::info("Error fetting map preview url: " . $ex->getMessage() . " Stack: " . $ex->getTraceAsString());
+            Log::info("Error fetting map preview url for map: " . $map->name . ". " . $ex->getMessage());
             return "";
         }
     }
