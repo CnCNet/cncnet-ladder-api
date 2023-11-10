@@ -67,7 +67,7 @@
                     <td>
                         <div class="d-flex align-items-center">
                             @php
-                                $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $playerGameReport->game->map);
+                                $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $playerGameReport->game->map, $playerGameReport->game->hash);
                             @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>

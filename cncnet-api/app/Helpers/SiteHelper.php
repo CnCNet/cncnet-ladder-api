@@ -14,11 +14,18 @@ class SiteHelper
      * @param mixed $map - App\Map
      * @return string 
      */
-    public static function getMapPreviewUrl($history, $map)
+    public static function getMapPreviewUrl($history, $map, $hash)
     {
         try
         {
+            if (!$map || $map == null)
+            {
+                Log::info("Null map found for hash='$hash'");
+                return "";
+            }
+
             $description = $map && $map !== null ? $map->description : "";
+            $ladderName = $history && $history !== null ? $history->ladder->name : "";
             $imageHash = $map->image_hash;
             if ($imageHash == "") $imageHash = $map->hash;
             $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png';
@@ -26,7 +33,7 @@ class SiteHelper
         }
         catch (Exception $ex)
         {
-            Log::info("Error fetting map preview url for map: " . $description);
+            Log::info("Error fetching map preview url for map='$description', ladder='$ladderName', hash='$hash'");
             return "";
         }
     }

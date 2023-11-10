@@ -19,7 +19,7 @@
                             'points' => $pp,
                             'title' => $game->scen,
                             'date' => $game->updated_at,
-                            'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map),
+                            'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map, $game->hash),
                         ])
                     @else
                         @include('ladders.listing._game-box', [
@@ -32,7 +32,7 @@
                             'points' => $pp,
                             'title' => $game->scen,
                             'date' => $game->updated_at,
-                            'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map),
+                            'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map, $game->hash),
                         ])
                     @endif
                 </div>

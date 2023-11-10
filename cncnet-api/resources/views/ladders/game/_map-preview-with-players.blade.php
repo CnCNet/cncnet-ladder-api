@@ -1,6 +1,6 @@
 @php
     try {
-        $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $map);
+        $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $map, $gameReport->game);
         $mapPreviewSize = getimagesize($mapPreview);
     
         $webMapWidth = $mapPreviewSize[0];

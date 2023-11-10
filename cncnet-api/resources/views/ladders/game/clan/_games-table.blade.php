@@ -58,7 +58,7 @@
                     <td class="td-game-details">
                         <div class="d-flex align-items-center game-details">
                             <div>
-                                <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
+                              <p class="fw-bold mb-1">{{ $gameReport->scen }}</p>
                                 <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $gameReport->duration) }}</p>
                                 <p class="text-muted mb-0">
                                     Played: {{ $gameReport->gameReport->updated_at->diffForHumans() }}
@@ -71,13 +71,13 @@
                     </td>
 
                     <td>
-                        <div class="d-flex align-items-center">
-                            @php $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $gameReport->game->map); @endphp
+                                            <div class="d-flex align-items-center">
+                            @php $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $gameReport->game->map, $gameReport->game->hash); @endphp
                             <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>
                         </div>
                     </td>
-
+                    
                     <td class="td-link">
                         <a href="{{ $gameUrl }}" class="game-link">
                             <i class="bi bi-chevron-right"></i>

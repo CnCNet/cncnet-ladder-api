@@ -23,6 +23,7 @@ use App\QmCanceledMatch;
 use App\User;
 use App\UserRating;
 use GuzzleHttp\Subscriber\History;
+use Illuminate\Support\Facades\Log;
 
 class LadderController extends Controller
 {
