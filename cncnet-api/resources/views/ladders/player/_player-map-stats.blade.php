@@ -8,7 +8,7 @@
             </div>
             <div class="map-row">
                 @php
-                    $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $v['map']);
+                    $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $v['map'], "");
                 @endphp
 
                 <div class="map-preview" style="background-image:url({{ $mapPreview }})"></div>
