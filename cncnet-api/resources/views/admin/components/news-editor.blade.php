@@ -1,7 +1,5 @@
 @section('head')
-    <!-- Main Quill library -->
-    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
 @endsection
 
 <div class="news-editor">
@@ -38,71 +36,43 @@
         <button type="submit" class="btn btn-primary">Save</button>
     </form>
 </div>
-
 @section('scripts')
-    <script type="module">
-        import {
-            ImageActions
-        } from 'https://cdn.jsdelivr.net/npm/@xeger/quill-image-actions/lib/index.mjs';
-        import {
-            ImageFormats
-        } from 'https://cdn.jsdelivr.net/npm/@xeger/quill-image-formats/lib/index.mjs';
-
-        Quill.register('modules/imageActions', ImageActions);
-        Quill.register('modules/imageFormats', ImageFormats);
-
-        var quill = new Quill('#editor', {
-            theme: 'snow',
-            formats: [
-                "align",
-                "background",
-                "blockquote",
-                "bold",
-                "code-block",
-                "color",
-                "float",
-                "font",
-                "header",
-                "height",
-                "image",
-                "italic",
-                "link",
-                "script",
-                "strike",
-                "size",
-                "underline",
-                "width"
-            ],
-            modules: {
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
                 toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{
-                        'header': 2
-                    }, {
-                        'header': 3
-                    }],
-                    ['link'],
-                    [{
-                        'list': 'ordered'
-                    }, {
-                        'list': 'bullet'
-                    }],
-                    ['image'] // Include the image button in the toolbar
+                    'heading',
+                    '|',
+                    'bold',
+                    'italic',
+                    'link',
+                    '|',
+                    'bulletedList',
+                    'numberedList',
+                    '|',
+                    'undo',
+                    'redo',
+                    '|',
+                    'image'
                 ],
-                imageActions: {},
-                imageFormats: {},
-            }
-        });
+                image: {
+                    // Configure image options if needed
+                },
+                language: 'en', // Change this to the appropriate language code
+            })
+            .then(editor => {
+                var form = document.querySelector('form');
+                form.onsubmit = function() {
+                    var editorContent = document.querySelector('input[name=body]');
+                    editorContent.value = editor.getData();
+                };
 
-        // Retrieve the content from Quill and set it to a hidden input before submitting the form
-        var form = document.querySelector('form');
-        form.onsubmit = function() {
-            var editorContent = document.querySelector('input[name=body]');
-            editorContent.value = quill.root.innerHTML;
-        };
-
-        // Get the default content from Laravel and set it in the editor
-        var defaultContent = {!! json_encode($news->body ?? '') !!};
-        quill.setContents(quill.clipboard.convert(defaultContent));
+                // Get the default content from Laravel and set it in the editor
+                var defaultContent = {!! json_encode($news->body ?? '') !!};
+                editor.setData(defaultContent);
+            })
+            .catch(error => {
+                console.error(error);
+            });
     </script>
 @endsection
