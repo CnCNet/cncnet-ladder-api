@@ -107,3 +107,48 @@
     width: 60px;
     height: 60px;
 }
+
+.support-cncnet 
+{
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    flex-direction: column;
+
+    @media(min-width: $lg-width)
+    {
+        flex-direction: row;
+    }
+}
+
+.support-cncnet .lead 
+{ 
+    margin: 0;
+}
+
+.support-cncnet .support-cta 
+{
+    padding-top: 1rem;
+
+    @media(min-width: $lg-width)
+    {
+        padding-top: 0;
+        padding-left: 2rem;
+    }
+}
+
+@media(max-width: $lg-width)
+{
+    .support-cncnet .lead 
+    {
+        font-size: 16px;
+    }
+
+    .support-cncnet .btn 
+    {
+        font-size: 14px;
+        padding: 0.5rem 1rem;
+    }
+}

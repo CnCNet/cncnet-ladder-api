@@ -44,6 +44,13 @@
 
 <body class="@yield('body-class'){{ $bodyClass }}">
 
+    <div class="support-cncnet">
+        <p class="lead">CnCNet relies on your support ❤️</p>
+        <div class="support-cta">
+            <a href="https://opencollective.com/cncnet" class="btn btn-primary" target="_blank" rel="nofollow">Support CnCNet via Open Collective</a>
+        </div>
+    </div>
+
     @if(isset($history))
         @include('components.countdown', ['target' => $history->ends->toISO8601String()])
     @endif
