@@ -222,7 +222,7 @@ return [
 		38417, // Doofus
 		332, // Burg
 		1, 	// Grant
-		8701, // Root
+		48373, // Root
 		2152 // Edd
 	]
 ];
