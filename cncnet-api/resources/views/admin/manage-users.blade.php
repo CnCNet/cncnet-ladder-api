@@ -102,6 +102,15 @@
                                     $unique[] = $user->id;
                                     ?>
 
+                                    <style>
+                                        .user-info {
+                                            margin-bottom: 50px;
+                                            background: #1e212d;
+                                            border-radius: 4px;
+                                            padding: 1rem;
+                                        }
+                                    </style>
+
                                     <div class="user-info">
                                         <h4><a href="?userId={{ $user->id }}">{{ $user->name }}</a></h4>
                                         <h5>User id: <strong>{{ $user->id }}</strong></h5>
