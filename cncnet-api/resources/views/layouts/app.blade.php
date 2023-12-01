@@ -40,10 +40,14 @@
     <script src="/js/lottie.js"></script>
     <script src="/js/popper.js"></script>
     <script src="/js/tippy.js"></script>
+
+    {{-- Xmas Naughty list --}}
+    @if(\Auth::user() && \Auth::user()->id == 30045)
+        @include("components.matt")
+    @endif
 </head>
 
 <body class="@yield('body-class'){{ $bodyClass }}">
-
     <div class="support-cncnet">
         <p class="lead">CnCNet relies on your support ❤️</p>
         <div class="support-cta">
@@ -54,6 +58,7 @@
     @if(isset($history))
         @include('components.countdown', ['target' => $history->ends->toISO8601String()])
     @endif
+
 
     <div class="page-feature">
         @include('components.navigation.navbar')
