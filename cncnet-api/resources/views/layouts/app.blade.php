@@ -41,9 +41,8 @@
     <script src="/js/popper.js"></script>
     <script src="/js/tippy.js"></script>
 
-    {{-- Xmas Naughty list --}}
-    @if(\Auth::user() && \Auth::user()->id == 30045)
-        @include("components.matt")
+    @if(\Carbon\Carbon::now()->month == 12)
+        @include("components.snow")
     @endif
 </head>
 
@@ -105,6 +104,8 @@
             document.body.classList.add("loaded");
         });
     </script>
+
+    <div id="tsparticles"></div>
 </body>
 
 </html>
