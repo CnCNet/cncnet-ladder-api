@@ -21,7 +21,7 @@
     <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:type" content="website" />
 
-    <link rel="stylesheet" href="/css/app.css?v=2.1.9" />
+    <link rel="stylesheet" href="/css/app.css?v=2.1.10" />
     <link rel="apple-touch-icon" sizes="152x152" href="/images/meta/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/meta/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/meta/favicon-16x16.png">
@@ -77,6 +77,7 @@
                 @yield('feature')
             </div>
         @endif
+        <div id="tsparticles"></div>
     </div>
 
     <main class="main">
@@ -104,8 +105,6 @@
             document.body.classList.add("loaded");
         });
     </script>
-
-    <div id="tsparticles"></div>
 </body>
 
 </html>
