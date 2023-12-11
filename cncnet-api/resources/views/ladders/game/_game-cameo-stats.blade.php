@@ -2,6 +2,8 @@
     @foreach ($playerGameReports as $k => $pgr)
         @php $gameStats = $pgr->stats; @endphp
         @php $player = $pgr->player()->first(); @endphp
+        @php $playerCache = $player->playerCache($history->id);@endphp
+        @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
         @php
             $pointReport = $pgr;
             if ($history->ladder->clans_allowed) {
