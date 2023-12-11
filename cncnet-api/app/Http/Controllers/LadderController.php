@@ -99,7 +99,7 @@ class LadderController extends Controller
 
         $players = null;
         $clans = null;
-        $tier = $request->tier ?? 1; // Default to tier 1
+        $tier = isset($request->tier) && !empty($request->tier) ? $request->tier : 1; // Default to tier 1
 
 
         # Filter & Ordering
@@ -157,6 +157,7 @@ class LadderController extends Controller
             ->where('local_id', '>=', 0)
             ->orderBy('local_id', 'asc')
             ->lists('name');
+
 
         $data = [
             "isClanLadder" => $history->ladder->clans_allowed,
