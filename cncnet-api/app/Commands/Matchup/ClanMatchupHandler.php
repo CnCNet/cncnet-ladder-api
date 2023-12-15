@@ -12,102 +12,158 @@ class ClanMatchupHandler extends BaseMatchupHandler
     {
         Log::info("ClanMatchupHandler ** Started");
 
+        // its 2v2 so we need 2 clans
+        $numberOfClanRequired = 2;
+
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
         $ladderMaps = $ladder->mapPool->maps;
 
         $currentPlayer = $this->qmPlayer->player;
-        $currentUserClanPlayer = $currentPlayer->clanPlayer;
-        $playerCountPerClanRequired = floor($ladderRules->player_count / 2); # (2) for a 2v2
+        $playerCountPerClanRequired = floor($ladderRules->player_count / $numberOfClanRequired); # (2) for a 2v2
         $playerCountForMatchup = $ladderRules->player_count; # (4) for a 2v2
 
         # Fetch all entries who are currently in queue for this ladder
         $allQMQueueEntries = QmQueueEntry::where('ladder_history_id', '=', $this->history->id)->get();
 
-        $this->matchHasObservers = $this->checkMatchForObserver($allQMQueueEntries);
-        if ($this->matchHasObservers === true)
-        {
-            $playerCountForMatchup = $playerCountForMatchup + 1; # E.g. 4 players + 1x observer
-        }
+        // get all observers from qm queue entries
+        $observersQmQueueEntries = $allQMQueueEntries->filter(function($qmQueueEntry) {
+            return $qmQueueEntry->qmPlayer->isObserver();
+        });
+        $this->matchHasObservers = $observersQmQueueEntries->count() > 0;
 
         Log::info("ClanMatchupHandler ** Players Per Clan Required: " . $playerCountPerClanRequired);
         Log::info("ClanMatchupHandler ** Players For Matchup Required: " . $playerCountForMatchup);
-        Log::info("ClanMatchupHandler ** Match Has Observer Present: " . $this->matchHasObservers);
+        Log::info("ClanMatchupHandler ** Match Has Observer Present: " . ($this->matchHasObservers ? 'yes' : 'no'));
 
-
-        if ($currentUserClanPlayer == null)
+        // if a player has no clan, then remove him from the queue
+        if (!isset($currentPlayer->clanPlayer))
         {
             Log::info("ClanMatchupHandler ** Clan Player Null, removing $currentPlayer from queue");
-            return $this->removeQueueEntry();
+            $this->removeQueueEntry();
+            return;
         }
 
-        # Group queue entries by clan and make sure we only have the exact number of players in each
-        $groupedQmQueueEntriesByClan = $this->groupAndLimitClanPlayers($allQMQueueEntries, $playerCountPerClanRequired);
+        $groupedQmQueueEntriesByClan = $allQMQueueEntries
+            // filter out observers
+            ->reject(function($qmQueueEntry) {
+                return $qmQueueEntry->qmPlayer->isObserver();
+            })
+            // group all qm queue entries by clan
+            ->groupBy(function($qmQueueEntry) {
+                return $qmQueueEntry->qmPlayer->clan_id;
+            })
+            // filter out clans that don't have enough players
+            ->reject(function($clanQmQueueEntries) use ($playerCountPerClanRequired) {
+                return $clanQmQueueEntries->count() < $playerCountPerClanRequired;
+            });
 
-        # remove other clans who current user has a player who belongs to it
-        // $groupedQmQueueEntriesByClan = $this->removeClansCurrentPlayerIsIn($currentUserClanPlayer, $ladder->id, $groupedQmQueueEntriesByClan);
+        // now $groupedQmQueueEntriesByClan is a collection of clan with at least 2 players per clan
 
-        # Collection of other QM Queued Players ready 
-        $otherQMQueueEntries = (new QmQueueEntry())->newCollection();
-
-        foreach ($groupedQmQueueEntriesByClan as $clanId => $allQMQueueEntries)
+        // if there is not enough clan ready, then exit
+        if($groupedQmQueueEntriesByClan->count() < $numberOfClanRequired)
         {
-            # Check this clan has enough players to play
-            # Add them to players ready if so
-            if (count($allQMQueueEntries) == $playerCountPerClanRequired)
-            {
-                foreach ($allQMQueueEntries as $qmQueueEntry)
+            Log::info("ClanMatchupHandler ** There is " . $groupedQmQueueEntriesByClan->count() . " clans ready, but we need $numberOfClanRequired clans");
+            Log::info("ClanMatchupHandler ** There is " . $allQMQueueEntries->count() . " queue entries");
+            Log::info("ClanMatchupHandler ** Not enough clans/players in queue, exiting...");
+            return;
+        }
+
+        // we need to find the clan that has the current player in it
+        $currentPlayerClan = $groupedQmQueueEntriesByClan->filter(function($clanQmQueueEntries) use ($currentPlayer) {
+            return $clanQmQueueEntries->filter(function($qmQueueEnitry) use ($currentPlayer) {
+                    return $qmQueueEnitry->qmPlayer->clan_id == $currentPlayer->clanPlayer->clan_id;
+                })->count() === 1;
+        })->take(1);
+        $currentPlayerClanClanId = $currentPlayerClan->keys()->first();
+
+        Log::info("ClanMatchupHandler ** Current player clan id: " . $currentPlayerClanClanId);
+
+        // and we need to find $numberOfClanRequired - 1 other clans
+        // lets just exclude the currentPlayerClan and remove from the list players that are already in currentPlayerClan
+        $otherClans = $groupedQmQueueEntriesByClan
+            // remove currentPlayerClan from the collection
+            ->reject(function($clanQmQueueEntries, $clanId) use ($currentPlayerClanClanId, $currentPlayerClan) {
+                return $clanId == $currentPlayerClanClanId;
+            })
+            // remove players from currentPlayerClan from other clan
+            ->map(function ($clanQmQueueEntries) use ($currentPlayerClan) {
+                return $clanQmQueueEntries->reject(function($qmQueueEntry) use ($currentPlayerClan) {
+                    return $currentPlayerClan->flatten(1)->pluck('id')->contains($qmQueueEntry->id);
+                });
+            })
+            // remove clans that don't have enough players
+            ->reject(function($clanQmQueueEntries) use ($playerCountPerClanRequired) {
+                return $clanQmQueueEntries->count() < $playerCountPerClanRequired;
+            })
+            // take randomly 2 players from clan that have too many players
+            ->map(function($clanQmQueueEntries, $clanId) use ($playerCountPerClanRequired) {
+                if($clanQmQueueEntries->count() > $playerCountPerClanRequired)
                 {
-                    if ($qmQueueEntry->id == $this->qmQueueEntry->id)
-                    {
-                        # Don't add ourselves
-                        continue;
-                    }
-                    $otherQMQueueEntries->add($qmQueueEntry);
+                    Log::info("ClanMatchupHandler ** There is " . $clanQmQueueEntries->count() . " players in clan id = " . $clanId . ", but we need only $playerCountPerClanRequired players");
+                    Log::info("ClanMatchupHandler ** Taking $playerCountPerClanRequired players randomly from clan id = " . $clanId);
+                    return $clanQmQueueEntries->random($playerCountPerClanRequired);
                 }
-            }
-
-            if ($otherQMQueueEntries->count() == $playerCountForMatchup) //required number of players found
-                break;
-        }
+                return $clanQmQueueEntries;
+            })
+        ;
 
 
-        # Check for observers and add to our ready qm entries
-        foreach ($allQMQueueEntries as $qmQueueEntry)
+        // if there is not enough other clan ready, then exit
+        if($otherClans->count() < $numberOfClanRequired -1)
         {
-            if (
-                $qmQueueEntry->qmPlayer->isObserver() === true
-                && $this->qmPlayer->id !== $qmQueueEntry->qmPlayer->id
-            )
-            {
-                Log::info("ClanMatchUpHandler ** Adding observer to our ready entries: " . $qmQueueEntry->qmPlayer->player->username);
-                $otherQMQueueEntries->add($qmQueueEntry);
-                break; //1x only
-            }
+            Log::info("ClanMatchupHandler ** There is " . $otherClans->count() . " other clans ready, but we need " . ($numberOfClanRequired - 1) . " other clans");
+            Log::info("ClanMatchupHandler ** Not enough other clans/players in queue, exiting...");
+            return;
         }
 
-        $playersReadyCount = $otherQMQueueEntries->count() + 1; # Add ourselves to this count
-        Log::info("ClanMatchUpHandler ** Match has observer: " . $this->matchHasObservers);
+        // if there is more than $numberOfClanRequired - 1 clan ready, then randomly take $numberOfClanRequired - 1 clans
+        if($otherClans->count() > $numberOfClanRequired - 1)
+        {
+            Log::info("ClanMatchupHandler ** There is " . $otherClans->count() + 1 . " clans ready, but we need only $numberOfClanRequired clans");
+            Log::info("ClanMatchupHandler ** Taking $numberOfClanRequired clans randomly");
+
+            $otherClans = $otherClans->random($numberOfClanRequired - 1);
+        }
+
+        // now $groupedQmQueueEntriesByClan is a collection of clan that is ready for matchup
+        // and the current player is in one of these clans
+        // and all players are unique and in only one clan
+        $groupedQmQueueEntriesByClan = $currentPlayerClan->merge($otherClans);
+
+        // get a collection with all players ready (without current player)
+        $readyQmQueueEntries = $groupedQmQueueEntriesByClan
+            ->flatten(1)
+            ->filter(function($qmQueueEntry) use ($currentPlayer) {
+                return $qmQueueEntry->qmPlayer->player->id != $currentPlayer->id;
+            });
+
+        $playersReadyCount = $readyQmQueueEntries->count() + 1;
         Log::info("ClanMatchUpHandler ** Player count for matchup: Ready: " . $playersReadyCount . "  Required: " . $playerCountForMatchup);
+        Log::info("ClanMatchUpHandler ** Observers count for matchup: " . $observersQmQueueEntries->count());
 
-        if ($playersReadyCount === $playerCountForMatchup)
+        // find common maps of all players
+        $commonQmMaps = $this->removeRejectedMaps($ladderMaps, $this->qmPlayer, $readyQmQueueEntries);
+
+        if (count($commonQmMaps) <= 0)
         {
-            $commonQmMaps = $this->removeRejectedMaps($ladderMaps, $this->qmPlayer, $otherQMQueueEntries);
+            Log::info("ClanMatchUpHandler ** 0 commonQmMaps found, exiting...");
+        }
+        else
+        {
+            $playerNames = implode(",", $this->getPlayerNamesInQueue($readyQmQueueEntries));
+            Log::info("Launching clan match with players $playerNames, " . $currentPlayer->username);
+            Log::info("    with oberservers: " . ($this->matchHasObservers ? 'yes' : 'no'));
 
-            if (count($commonQmMaps) <= 0)
-            {
-                Log::info("0 commonQmMaps found, exiting...");
-            }
-            else
-            {
-                $playerNames = implode(",", $this->getPlayerNamesInQueue($otherQMQueueEntries));
-                Log::info("Launching clan match with players $playerNames, " . $currentPlayer->username);
+            // add observers to our ready qm entries so they will be added to the match
+            $observersQmQueueEntries->each(function($qmQueueEntry) use ($readyQmQueueEntries) {
+                $readyQmQueueEntries->push($qmQueueEntry);
+            });
 
-                return $this->createMatch(
-                    $commonQmMaps,
-                    $otherQMQueueEntries
-                );
-            }
+            return $this->createMatch(
+                $commonQmMaps,
+                $readyQmQueueEntries
+            );
         }
     }
 
