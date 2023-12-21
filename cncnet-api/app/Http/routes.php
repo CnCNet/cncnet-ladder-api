@@ -246,6 +246,12 @@ Route::group(['prefix' => 'api/v1/', 'middleware' => 'cache.short.public'], func
 });
 
 // Ladder Endpoints
+Route::group(['prefix' => 'api/v2/ladder', 'middleware' => 'cache.long.public'], function ()
+{
+    Route::get('/', 'ApiLadderController@getAllLadders');
+});
+
+// Ladder Endpoints
 Route::group(['prefix' => 'api/v1/ladder', 'middleware' => 'cache.long.public'], function ()
 {
     Route::get('/', 'ApiLadderController@getAllLadders');

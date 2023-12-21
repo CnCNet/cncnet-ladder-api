@@ -509,7 +509,7 @@ class ApiLadderController extends Controller
 
     public function getAllLadders(Request $request)
     {
-        return $this->ladderService->getAllLadders();
+        return $this->ladderService->getAllNonMigratedLadders();
     }
 
     public function getCurrentLadders(Request $request)

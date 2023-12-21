@@ -48,6 +48,30 @@ class LadderService
         return $ladders;
     }
 
+    /**
+     * Only return ladders that have not migrated to new client. Legacy QM client can pull ladders not yet migrated.
+     */
+    public function getAllNonMigratedLadders()
+    {
+        $ladders = \App\Ladder::where('is_migrated_to_new_client', 0)->get();
+
+        foreach ($ladders as $ladder)
+        {
+            $ladder["sides"] = $ladder->sides()->get();
+            $rules = $ladder->qmLadderRules;
+
+            if ($rules !== null)
+            {
+                $ladder["vetoes"] = $rules->map_vetoes;
+                $ladder["allowed_sides"] = array_map('intval', explode(',', $rules->allowed_sides));
+            }
+            $current = $this->getActiveLadderByDate(Carbon::now()->format('m-Y'), $ladder->abbreviation);
+            if ($current !== null)
+                $ladder["current"] = $current->short;
+        }
+        return $ladders;
+    }
+
     public function getLadders($private = false)
     {
         $ladders = \App\Ladder::where('private', '=', $private)->get();
