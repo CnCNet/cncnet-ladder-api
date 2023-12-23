@@ -8,16 +8,9 @@
         z-index: -1;
     }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@1.37.5/tsparticles.min.js"></script>
 <script type="module">
-    import {
-        tsParticles
-    } from "https://cdn.jsdelivr.net/npm/tsparticles-engine/+esm";
-    import {
-        loadFull
-    } from "https://cdn.jsdelivr.net/npm/tsparticles/+esm";
-
     async function loadParticles(options) {
-        await loadFull(tsParticles);
         await tsParticles.load("tsparticles", options);
     }
 

@@ -52,6 +52,7 @@
                         <div><small>(Right now)</small></div>
                     </div>
                 </div>
+
                 @if ($statsXOfTheDay)
 
                     @if ($history->ladder->clans_allowed)
@@ -73,6 +74,13 @@
                             @elseif(\Carbon\Carbon::now()->month == 11)
                                 @include('animations.player', [
                                     'src' => '/animations/turkey.json',
+                                    'loop' => 'true',
+                                    'width' => '100%',
+                                    'height' => '150px',
+                                ])
+                            @elseif(\Carbon\Carbon::now()->month == 12)
+                                @include('animations.player', [
+                                    'src' => '/animations/santa.json',
                                     'loop' => 'true',
                                     'width' => '100%',
                                     'height' => '150px',
