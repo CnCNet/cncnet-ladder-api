@@ -12,8 +12,8 @@ class AddBlitzSpawnOptions extends Migration
      */
     public function up()
     {
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWNMAP_INI, "GAWEAP.BuildTimeMultiplier", "E1", "BuildTimeMultiplier")->save();
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWNMAP_INI, "NAWEAP.BuildTimeMultiplier", "E1", "BuildTimeMultiplier")->save();
+        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWNMAP_INI, "GAWEAP.BuildTimeMultiplier", "GAWEAP", "BuildTimeMultiplier")->save();
+        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWNMAP_INI, "NAWEAP.BuildTimeMultiplier", "NAWEAP", "BuildTimeMultiplier")->save();
         \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWNMAP_INI, "GAOREP.UnitsCostBonus", "GAOREP", "UnitsCostBonus")->save();
     }
 
