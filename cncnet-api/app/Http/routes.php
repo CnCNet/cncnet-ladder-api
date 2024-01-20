@@ -203,7 +203,7 @@ Route::group([
     Route::get('/user/info', 'ApiUserController@getUserInfo');
     Route::get('/user/account', 'ApiUserController@getAccount');
     Route::get('/user/ladders', 'ApiUserController@getPrivateLadders');
-    Route::post('/user/create', 'ApiUserController@createUser');
+    Route::post('/user/preferences', 'ApiUserController@updateUserPreferences');
 
     // Result Endpoints
     Route::post('/result/{game}/{username}', 'ApiLadderController@postLadder');
