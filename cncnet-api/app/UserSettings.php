@@ -8,6 +8,17 @@ class UserSettings extends Model
 {
     protected $table = 'user_settings';
 
+    protected $fillable = [
+        'disabledPointFilter',
+        'skip_score_screen',
+        'match_any_map',
+        'enableAnonymous',
+        'match_ai',
+        'is_observer',
+        'allow_observers',
+    ];
+
+
     public function __construct()
     {
         $this->timestamps = false;

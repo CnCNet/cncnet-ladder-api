@@ -8,6 +8,7 @@ use App\Player;
 use App\PlayerActiveHandle;
 use App\PlayerRating;
 use App\QmUserId;
+use App\User;
 use App\UserRating;
 use Carbon\Carbon;
 use Exception;
@@ -218,5 +219,60 @@ class PlayerService
             $playerRating->save();
         }
         return $rating;
+    }
+
+    public function getActivePlayersByUser(User $user)
+    {
+        $playerList = [];
+
+        $date = Carbon::now();
+        $startOfMonth = $date->startOfMonth()->toDateTimeString();
+        $endOfMonth = $date->endOfMonth()->toDateTimeString();
+
+        $activeHandles = PlayerActiveHandle::getUserActiveHandles($user->id, $startOfMonth, $endOfMonth)->get();
+
+        foreach ($activeHandles as $activeHandle)
+        {
+            // IMPORTANT: Include this $player->ladder in this check to trigger it in the response
+            // No idea why.
+            $ladder = $activeHandle->player->ladder;
+            $player = $activeHandle->player;
+            $player["user"] = $player->user;
+
+            if ($activeHandle->player->ladder)
+            {
+                $activeHandle->player["rank"] = null;
+
+                if ($ladder->clans_allowed)
+                {
+                    // Check player has clan
+                    if ($player && $player->clanPlayer == null)
+                    {
+                        continue;
+                    }
+
+                    $clan = $player->clanPlayer->clan;
+                    $player->clanPlayer;
+
+                    if ($ladder->currentHistory())
+                    {
+                        $clanCache = $player->clanPlayer->clanCache($ladder->currentHistory());
+                        $activeHandle->player["rank"] = $clanCache ? $clanCache->rank() : null;
+                    }
+                }
+                else
+                {
+                    if ($ladder->currentHistory())
+                    {
+                        $playerCache = $activeHandle->player->playerCache($ladder->currentHistory()->id);
+                        $activeHandle->player["rank"] = $playerCache ? $playerCache->rank() : null;
+                    }
+                }
+
+                $playerList[] = $activeHandle->player;
+            }
+        }
+
+        return $playerList;
     }
 }
