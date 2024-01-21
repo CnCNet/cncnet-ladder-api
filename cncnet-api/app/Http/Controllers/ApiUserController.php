@@ -70,14 +70,13 @@ class ApiUserController extends Controller
         {
             $user = $request->user();
 
-            return $this->userService->updateUserPreferences(
+            return $this->userService->updateUserPreferencesFromRequest(
                 $request,
                 $user
             );
         }
         catch (Exception $ex)
         {
-            dd($ex);
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }

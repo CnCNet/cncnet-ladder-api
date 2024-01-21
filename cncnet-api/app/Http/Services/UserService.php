@@ -11,14 +11,13 @@ class UserService
     {
     }
 
-
     /**
      * 
      * @param Request $request 
      * @param mixed $user 
      * @return \App\UserSettings 
      */
-    public function updateUserPreferences(Request $request, $user)
+    public function updateUserPreferencesFromRequest(Request $request, $user)
     {
         $userSettings = $user->userSettings;
         if ($userSettings === null)
@@ -27,17 +26,21 @@ class UserService
             $userSettings->user_id = $user->id;
         }
 
-        // Update only the keys that exist in the request
-        $userSettings->update($request->only([
+        $requestData = array_map('intval', array_filter($request->only([
             'skip_score_screen',
             'match_any_map',
-            'disabledPointFilter',
-            'enableAnonymous',
+            'disabledPointFilter', // As column in database 
+            'enableAnonymous', // As column in database 
             'match_ai',
             'is_observer',
             'allow_observers',
-        ]));
+        ]), function ($value)
+        {
+            return $value !== null; // Include 0 in the filtered array
+        }));
 
-        return $userSettings;
+        $userSettings->update($requestData);
+
+        return $user->userSettings;
     }
 }
