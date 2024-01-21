@@ -8,6 +8,7 @@ use App\Http\Services\UserService;
 use App\Ladder;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class ApiUserController extends Controller
 {
@@ -29,6 +30,7 @@ class ApiUserController extends Controller
         }
         catch (Exception $ex)
         {
+            Log::error($ex);
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }
@@ -47,6 +49,7 @@ class ApiUserController extends Controller
         }
         catch (Exception $ex)
         {
+            Log::error($ex);
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }
@@ -60,6 +63,22 @@ class ApiUserController extends Controller
         }
         catch (Exception $ex)
         {
+            Log::error($ex);
+            return response()->json(["message" => "Something went wrong"], 500);
+        }
+    }
+
+    public function getUserPreferences(Request $request)
+    {
+        try
+        {
+            $user = $request->user();
+
+            return $user->userSettings;
+        }
+        catch (Exception $ex)
+        {
+            Log::error($ex);
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }
@@ -77,6 +96,7 @@ class ApiUserController extends Controller
         }
         catch (Exception $ex)
         {
+            Log::error($ex);
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }

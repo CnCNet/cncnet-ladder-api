@@ -203,6 +203,7 @@ Route::group([
     Route::get('/user/info', 'ApiUserController@getUserInfo');
     Route::get('/user/account', 'ApiUserController@getAccount');
     Route::get('/user/ladders', 'ApiUserController@getPrivateLadders');
+    Route::get('/user/preferences', 'ApiUserController@getUserPreferences');
     Route::post('/user/preferences', 'ApiUserController@updateUserPreferences');
 
     // Result Endpoints
