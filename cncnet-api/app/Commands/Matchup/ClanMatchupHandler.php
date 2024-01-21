@@ -76,7 +76,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
         // we need to find the clan that has the current player in it
         $currentPlayerClan = $groupedQmQueueEntriesByClan->filter(function($clanQmQueueEntries) use ($currentPlayer) {
             return $clanQmQueueEntries->filter(function($qmQueueEnitry) use ($currentPlayer) {
-                    return $qmQueueEnitry->qmPlayer->clan_id == $currentPlayer->clanPlayer->clan_id;
+                    return $qmQueueEnitry->id == $this->qmQueueEntry->id;
                 })->count() === 1;
         })->take(1);
         $currentPlayerClanClanId = $currentPlayer->clanPlayer->clan_id;
@@ -152,7 +152,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
             //Log::info("ClanMatchupHandler ** otherClans " . print_r($otherClans, true));
         }
 
-        //Log::info("ClanMatchupHandler ** currentPlayerClan " . print_r($currentPlayerClan, true));
+        // Log::info("ClanMatchupHandler ** currentPlayerClan " . print_r($currentPlayerClan, true));
         // now $groupedQmQueueEntriesByClan is a collection of clan that is ready for matchup
         // and the current player is in one of these clans
         // and all players are unique and in only one clan
