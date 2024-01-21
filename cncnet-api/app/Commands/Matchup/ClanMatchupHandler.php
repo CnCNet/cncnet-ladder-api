@@ -120,7 +120,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
         // if there is more than $numberOfClanRequired - 1 clan ready, then randomly take $numberOfClanRequired - 1 clans
         if($otherClans->count() > $numberOfClanRequired - 1)
         {
-            Log::info("ClanMatchupHandler ** There is " . $otherClans->count() + 1 . " clans ready, but we need only $numberOfClanRequired clans");
+            Log::info("ClanMatchupHandler ** There is " . ($otherClans->count() + 1) . " clans ready, but we need only $numberOfClanRequired clans");
             Log::info("ClanMatchupHandler ** Taking $numberOfClanRequired clans randomly");
 
             $otherClans = $otherClans->random($numberOfClanRequired - 1);
