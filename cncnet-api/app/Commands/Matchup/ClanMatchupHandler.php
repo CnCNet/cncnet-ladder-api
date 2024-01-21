@@ -129,7 +129,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
         // now $groupedQmQueueEntriesByClan is a collection of clan that is ready for matchup
         // and the current player is in one of these clans
         // and all players are unique and in only one clan
-        $groupedQmQueueEntriesByClan = $currentPlayerClan->merge($otherClans);
+        $groupedQmQueueEntriesByClan = $otherClans->put($currentPlayerClanClanId, $currentPlayerClan);
 
         // get a collection with all players ready (without current player)
         $readyQmQueueEntries = $groupedQmQueueEntriesByClan
