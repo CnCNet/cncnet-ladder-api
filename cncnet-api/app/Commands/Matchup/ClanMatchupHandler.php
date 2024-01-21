@@ -58,6 +58,10 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 return $clanQmQueueEntries->count() < $playerCountPerClanRequired;
             });
 
+
+        //Log::info("ClanMatchupHandler ** groupedQmQueueEntriesByClan " . print_r($groupedQmQueueEntriesByClan, true));
+
+
         // now $groupedQmQueueEntriesByClan is a collection of clan with at least 2 players per clan
 
         // if there is not enough clan ready, then exit
@@ -75,7 +79,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
                     return $qmQueueEnitry->qmPlayer->clan_id == $currentPlayer->clanPlayer->clan_id;
                 })->count() === 1;
         })->take(1);
-        $currentPlayerClanClanId = $currentPlayerClan->keys()->first();
+        $currentPlayerClanClanId = $currentPlayer->clanPlayer->clan_id;
 
         Log::info("ClanMatchupHandler ** Current player clan id: " . $currentPlayerClanClanId);
 
@@ -85,29 +89,33 @@ class ClanMatchupHandler extends BaseMatchupHandler
             // remove currentPlayerClan from the collection
             ->reject(function($clanQmQueueEntries, $clanId) use ($currentPlayerClanClanId, $currentPlayerClan) {
                 return $clanId == $currentPlayerClanClanId;
-            })
-            // remove players from currentPlayerClan from other clan
-            ->map(function ($clanQmQueueEntries) use ($currentPlayerClan) {
-                return $clanQmQueueEntries->reject(function($qmQueueEntry) use ($currentPlayerClan) {
-                    return $currentPlayerClan->flatten(1)->pluck('id')->contains($qmQueueEntry->id);
-                });
-            })
-            // remove clans that don't have enough players
-            ->reject(function($clanQmQueueEntries) use ($playerCountPerClanRequired) {
-                return $clanQmQueueEntries->count() < $playerCountPerClanRequired;
-            })
-            // take randomly 2 players from clan that have too many players
-            ->map(function($clanQmQueueEntries, $clanId) use ($playerCountPerClanRequired) {
-                if($clanQmQueueEntries->count() > $playerCountPerClanRequired)
-                {
-                    Log::info("ClanMatchupHandler ** There is " . $clanQmQueueEntries->count() . " players in clan id = " . $clanId . ", but we need only $playerCountPerClanRequired players");
-                    Log::info("ClanMatchupHandler ** Taking $playerCountPerClanRequired players randomly from clan id = " . $clanId);
-                    return $clanQmQueueEntries->random($playerCountPerClanRequired);
-                }
-                return $clanQmQueueEntries;
-            })
-        ;
+            });
 
+        // remove players that are already in currentPlayerClan from other clans
+        foreach($otherClans as $clanId => $clanQmQueueEntries)
+        {
+            $otherClans[$clanId] = $clanQmQueueEntries->reject(function($qmQueueEntry) use ($currentPlayerClan) {
+                return $currentPlayerClan->flatten(1)->pluck('id')->contains($qmQueueEntry->id);
+            });
+        }
+
+        // remove clans that don't have enough players
+        $otherClans->reject(function($clanQmQueueEntries) use ($playerCountPerClanRequired) {
+            return $clanQmQueueEntries->count() < $playerCountPerClanRequired;
+        });
+
+        foreach($otherClans as $clanId => $clanQmQueueEntries)
+        {
+            if($clanQmQueueEntries->count() > $playerCountPerClanRequired) {
+                Log::info("ClanMatchupHandler ** There is " . $clanQmQueueEntries->count() . " players in clan id = " . $clanId . ", but we need only $playerCountPerClanRequired players");
+                Log::info("ClanMatchupHandler ** Taking $playerCountPerClanRequired players randomly from clan id = " . $clanId);
+                $players = $clanQmQueueEntries->random($playerCountPerClanRequired);
+                $otherClans[$clanId] = $players instanceof \Illuminate\Support\Collection ? $players : collect([$players]);
+            }
+        }
+
+
+        //Log::info("ClanMatchupHandler ** otherclan 1st " . print_r($otherClans, true));
 
         // if there is not enough other clan ready, then exit
         if($otherClans->count() < $numberOfClanRequired -1)
@@ -123,20 +131,49 @@ class ClanMatchupHandler extends BaseMatchupHandler
             Log::info("ClanMatchupHandler ** There is " . ($otherClans->count() + 1) . " clans ready, but we need only $numberOfClanRequired clans");
             Log::info("ClanMatchupHandler ** Taking $numberOfClanRequired clans randomly");
 
-            $otherClans = $otherClans->random($numberOfClanRequired - 1);
+            //Log::info("ClanMatchupHandler ** otherClans before random " . print_r($otherClans, true));
+
+            // choose a random clan
+            $selectedClanIds = $otherClans->keys()->random($numberOfClanRequired - 1);
+            if(! $selectedClanIds instanceof \Illuminate\Support\Collection)
+            {
+                $selectedClanIds = collect([$selectedClanIds]);
+            }
+
+            // extract the selected clans and store them into $otherClans
+            $selectedClan = collect([]);
+            foreach ($selectedClanIds as $selectedClanId)
+            {
+                $selectedClan->put($selectedClanId, $otherClans->get($selectedClanId));
+            }
+            $otherClans = $selectedClan;
+
+            //Log::info("ClanMatchupHandler ** otherClans class name " . get_class($otherClans));
+            //Log::info("ClanMatchupHandler ** otherClans " . print_r($otherClans, true));
         }
 
+        //Log::info("ClanMatchupHandler ** currentPlayerClan " . print_r($currentPlayerClan, true));
         // now $groupedQmQueueEntriesByClan is a collection of clan that is ready for matchup
         // and the current player is in one of these clans
         // and all players are unique and in only one clan
-        $groupedQmQueueEntriesByClan = $otherClans->put($currentPlayerClanClanId, $currentPlayerClan);
+        $otherClans[$currentPlayerClanClanId] = $currentPlayerClan[$currentPlayerClanClanId];
+        $groupedQmQueueEntriesByClan = $otherClans;
+
+        //Log::info("ClanMatchupHandler ** groupedQmQueueEntriesByClan " . print_r($groupedQmQueueEntriesByClan, true));
 
         // get a collection with all players ready (without current player)
         $readyQmQueueEntries = $groupedQmQueueEntriesByClan
-            ->flatten(1)
+            ->flatten(1);
+
+
+        //Log::info("ClanMatchupHandler ** flatten readyQmQueueEntries " . print_r($readyQmQueueEntries, true));
+
+        $readyQmQueueEntries = $readyQmQueueEntries->values()
             ->filter(function($qmQueueEntry) use ($currentPlayer) {
                 return $qmQueueEntry->qmPlayer->player->id != $currentPlayer->id;
             });
+
+        //Log::info("ClanMatchupHandler ** readyQmQueueEntries " . print_r($readyQmQueueEntries, true));
 
         $playersReadyCount = $readyQmQueueEntries->count() + 1;
         Log::info("ClanMatchUpHandler ** Player count for matchup: Ready: " . $playersReadyCount . "  Required: " . $playerCountForMatchup);
