@@ -20,7 +20,7 @@ class SiteHelper
         {
             if (!$map || $map == null)
             {
-                Log::info("Null map found for hash='$hash'");
+                // Log::info("Null map found for hash='$hash'");
                 return "";
             }
 
