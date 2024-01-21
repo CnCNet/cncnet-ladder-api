@@ -11,6 +11,20 @@ class UserService
     {
     }
 
+
+    public function getUserPreferences($user)
+    {
+        $userSettings = $user->userSettings;
+
+        // Check this user is allowed to set this
+        if (!in_array($user->id, config('app.allowed_observer_user_ids')))
+        {
+            unset($userSettings["is_observer"]);
+        }
+
+        return $userSettings;
+    }
+
     /**
      * 
      * @param Request $request 
@@ -38,6 +52,12 @@ class UserService
         {
             return $value !== null; // Include 0 in the filtered array
         }));
+
+        // Check this user is allowed to set this
+        if (!in_array($user->id, config('app.allowed_observer_user_ids')))
+        {
+            $requestData["is_observer"] = 0;
+        }
 
         $userSettings->update($requestData);
 

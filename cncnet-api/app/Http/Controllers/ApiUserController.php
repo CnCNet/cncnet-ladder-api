@@ -73,8 +73,7 @@ class ApiUserController extends Controller
         try
         {
             $user = $request->user();
-
-            return $user->userSettings;
+            return $this->userService->getUserPreferences($user);
         }
         catch (Exception $ex)
         {
