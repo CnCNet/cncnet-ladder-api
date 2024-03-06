@@ -4,12 +4,14 @@ namespace App;
 
 use App\Http\Services\UserRatingService;
 use Illuminate\Auth\Authenticatable;
+use App\Notifications\Auth\ResetPasswordNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
 use Mail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -17,7 +19,7 @@ use Illuminate\Support\Facades\Log;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, JWTSubject
 {
-    use Authenticatable, CanResetPassword;
+    use Authenticatable, CanResetPassword, Notifiable;
 
     const God = "God";
     const Admin = "Admin";
@@ -198,6 +200,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $message->to($email)->subject('Email verification for CnCNet Ladder');
         });
         return true;
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     public function getUserAvatar()

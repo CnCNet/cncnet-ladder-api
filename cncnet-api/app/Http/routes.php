@@ -1,9 +1,8 @@
 <?php
 
-use App\GameReport;
-use App\Http\Controllers\SiteController;
-use App\Http\Services\LadderService;
-use \App\User;
+use App\User;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 Route::get('/', 'SiteController@getIndex');
 Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
@@ -56,11 +55,10 @@ Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], funct
     Route::post('/leave/{clanId}', 'ClanController@leave');
 });
 
-
-Route::controllers([
-    'auth' => 'Auth\AuthController',
-    'password' => 'Auth\PasswordController',
-]);
+Route::group(['prefix' => 'auth'], function() {
+    Auth::routes();
+    Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
+});
 
 Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
 

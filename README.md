@@ -36,6 +36,7 @@ You are ready to go !
 - Watch scss for changes: `npm run watch`
 - Access to phpmyadmin: open up [http://localhost:8080](http://localhost:8080)
 - Access to database with you dbms : host:localhost port:3307 user:DB_USER pass:DB_PASS
+- Open a shell : `docker exec -it cncnet_ladder_app /bin/bash`
 
 ### Storage links
 Replace user with the host user

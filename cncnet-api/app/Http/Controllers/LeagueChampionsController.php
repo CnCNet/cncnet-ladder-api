@@ -60,7 +60,7 @@ class LeagueChampionsController extends Controller
                 $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
                     ->where('local_id', '>=', 0)
                     ->orderBy('local_id', 'asc')
-                    ->lists('name');
+                    ->pluck('name');
 
                 $prevWinners[] = [
                     "history" => $history,

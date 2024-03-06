@@ -109,7 +109,7 @@
                         <hr class="my-4">
 
                         <p>
-                            <a href="/password/email">Forgot your password?</a> or <a href="/auth/register">create an account?</a>
+                            <a href="/auth/password/reset">Forgot your password?</a> or <a href="/auth/register">create an account?</a>
                         </p>
                     </form>
                 </div>

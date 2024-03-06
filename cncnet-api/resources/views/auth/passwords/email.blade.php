@@ -71,7 +71,7 @@
                                 </div>
                             @endif
 
-                            <form class="form-horizontal" role="form" method="POST" action="/password/email">
+                            <form class="form-horizontal" role="form" method="POST" action="/auth/password/email">
                                 {{ csrf_field() }}
 
                                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
