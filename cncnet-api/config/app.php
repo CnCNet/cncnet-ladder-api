@@ -2,6 +2,8 @@
 
 return [
 
+    'name' => 'Cnc Ladder',
+
 	/*
 	|--------------------------------------------------------------------------
 	| Application Debug Mode
@@ -152,11 +154,12 @@ return [
 		App\Providers\AuthServiceProvider::class,
 		App\Providers\EventServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
 
-		'App\Providers\Navigation',
-		'App\Providers\IrcCache',
-		'App\MyMailer\MailServiceProvider',
-		'App\LockedCache\LockedCacheServiceProvider',
+		App\Providers\Navigation::class,
+		App\Providers\IrcCache::class,
+		App\MyMailer\MailServiceProvider::class,
+		App\LockedCache\LockedCacheServiceProvider::class,
 
 		Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
 		Intervention\Image\ImageServiceProvider::class,
@@ -212,6 +215,8 @@ return [
 		'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
 		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
 		'Image' => 'Intervention\Image\Facades\Image',
+
+        'Notification ' => \Illuminate\Support\Facades\Notification::class,
 	],
 
 	'irc_pipe' => env('IRC_PIPE', '/tmp/pp_file'),
