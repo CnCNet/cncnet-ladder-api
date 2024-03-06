@@ -30,6 +30,7 @@ class LockedCacheServiceProvider extends CacheServiceProvider {
 			return new MemcachedConnector;
 		});
 
-		$this->registerCommands();
+        // this has been removed in 5.4
+		//$this->registerCommands();
 	}
 }

@@ -40,7 +40,7 @@ class StartLazySession extends StartSession {
 		{
 			$session = $this->startSession($request);
 
-			$request->setSession($session);
+			$request->setLaravelSession($session);
 		}
 
 		$response = $next($request);
