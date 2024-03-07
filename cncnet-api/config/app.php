@@ -144,7 +144,6 @@ return [
 
 		App\Providers\Navigation::class,
 		App\Providers\IrcCache::class,
-		App\MyMailer\MailServiceProvider::class,
 		App\LockedCache\LockedCacheServiceProvider::class,
 
 		Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
