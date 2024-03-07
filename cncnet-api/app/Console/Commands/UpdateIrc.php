@@ -36,7 +36,7 @@ class UpdateIrc extends Command {
      *
      * @return mixed
      */
-    public function fire()
+    public function handle()
     {
         //
         //fork() && exit;

@@ -35,7 +35,7 @@ class AprilFoolsPurge extends Command {
      *
      * @return mixed
      */
-    public function fire()
+    public function handle()
     {
         //
         $lh = \App\LadderHistory::where('short', '=', '4-2021')->first();
