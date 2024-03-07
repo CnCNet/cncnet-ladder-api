@@ -17,6 +17,7 @@ class Kernel extends HttpKernel
         // \App\Http\Middleware\ApiMiddleware::class, ???
         \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
         \App\Http\Middleware\HackStatApiHeaders::class,
+        \App\Http\Middleware\TrustProxies::class,
     ];
 
     /**
