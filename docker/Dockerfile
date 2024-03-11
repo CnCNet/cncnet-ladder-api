@@ -1,6 +1,6 @@
 # PHP-FPM is a FastCGI implementation for PHP.
 # Read more here: https://hub.docker.com/_/php
-FROM php:7.1-fpm
+FROM php:7.4-fpm
 
 # Args from Docker-compose
 ARG user
@@ -9,6 +9,7 @@ ARG uid
 RUN apt-get update && \
     apt-get install -y --force-yes --no-install-recommends \
     libmemcached-dev \
+    libzip-dev \
     libz-dev \
     libpq-dev \
     libjpeg-dev \
@@ -21,6 +22,7 @@ RUN apt-get update && \
     git \
     cron \
     nano \
+    zip \
     libxml2-dev
 
 COPY docker/custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
@@ -30,9 +32,6 @@ RUN docker-php-ext-install soap
 
 # Install for image manipulation
 RUN docker-php-ext-install exif
-
-# Install the PHP mcrypt extention
-RUN docker-php-ext-install mcrypt
 
 # Install the PHP pcntl extention
 RUN docker-php-ext-install pcntl
@@ -60,23 +59,29 @@ RUN pecl install imagick && \
     docker-php-ext-enable imagick
 
 #####################################
+# mcrypt:
+#####################################
+
+RUN pecl install mcrypt && \
+    docker-php-ext-enable mcrypt
+
+#####################################
 # GD:
 #####################################
 
 # Install the PHP gd library
 RUN docker-php-ext-install gd && \
     docker-php-ext-configure gd \
-    --enable-gd-native-ttf \
-    --with-jpeg-dir=/usr/lib \
-    --with-freetype-dir=/usr/include/freetype2 && \
-    docker-php-ext-install gd
+    --with-jpeg \
+    --with-freetype \
+    && docker-php-ext-install gd
 
 #####################################
 # xDebug:
 #####################################
 
 # Install the xdebug extension
-RUN pecl install xdebug-2.6.0
+RUN pecl install xdebug-3.1.0
 
 #####################################
 # PHP Memcached:

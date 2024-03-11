@@ -54,5 +54,6 @@ class SaveLadderResult extends Command implements ShouldQueue
         $this->delete();
         $alc = new \App\Http\Controllers\ApiLadderController;
         $alc->saveLadderResult($this->dmpFile, $this->ladderId, $this->gameId, $this->playerId, $this->pingSent, $this->pingReceived);
+        return 0;
     }
 }

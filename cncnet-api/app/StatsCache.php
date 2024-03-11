@@ -27,7 +27,7 @@ class StatsCache
             ->groupBy("player_game_reports.player_id")
             ->pluck("player_game_reports.player_id");
 
-        Cache::put("playersToday.$history->id", $playersToday, 1800);
+        Cache::put("playersToday.$history->id", $playersToday, 1800 * 60);
     }
 
 
@@ -50,7 +50,7 @@ class StatsCache
             ->groupBy("player_game_reports.clan_id")
             ->pluck("player_game_reports.clan_id");
 
-        Cache::put("clansToday.$history->id", $clansToday, 1800);
+        Cache::put("clansToday.$history->id", $clansToday, 1800 * 60);
     }
 
     /**

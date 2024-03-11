@@ -13,11 +13,15 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middleware = [
+        \App\Http\Middleware\TrustProxies::class,
+        \Fruitcake\Cors\HandleCors::class,
+        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\BlockBadBots::class,
         // \App\Http\Middleware\ApiMiddleware::class, ???
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
         \App\Http\Middleware\HackStatApiHeaders::class,
-        \App\Http\Middleware\TrustProxies::class,
     ];
 
     /**
@@ -29,8 +33,12 @@ class Kernel extends HttpKernel
         'web' => [
             \Illuminate\Cookie\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \App\Http\Middleware\StartLazySession::class,
-            \App\Http\Middleware\ShareErrorsLazySession::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+
+            //\App\Http\Middleware\StartLazySession::class,
+            //\App\Http\Middleware\ShareErrorsLazySession::class,
+
             \App\Http\Middleware\VerifyCsrfToken::class,
             \App\Http\Middleware\CorsMiddleware::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
