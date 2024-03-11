@@ -118,7 +118,6 @@ class AccountController extends Controller
             'players',
             'activeHandles',
             'activePlayersNotInAClan',
-            'clan',
             'myOldClans',
             'clanPlayers',
             'invitations'

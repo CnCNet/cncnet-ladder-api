@@ -1,181 +1,193 @@
 <?php
-
 use App\User;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
-Route::get('/', 'SiteController@getIndex');
-Route::get('/ladder-champions/{game}', 'LeagueChampionsController@getLeagueChampions');
-Route::get('/help/obs', 'SiteController@getOBSHelp');
-Route::get('/donate', 'SiteController@getDonate');
-Route::get('/styleguide', 'SiteController@getStyleguide');
-Route::get('/ranking', 'RankingController@getIndex');
-Route::get('/news', 'NewsController@getNews');
-Route::get('/news/{slug}', 'NewsController@getNewsBySlug');
+Route::get('/', [\App\Http\Controllers\SiteController::class, 'getIndex']);
+Route::get('/ladder-champions/{game}', [\App\Http\Controllers\LeagueChampionsController::class, 'getLeagueChampions']);
+Route::get('/help/obs', [\App\Http\Controllers\SiteController::class, 'getOBSHelp']);
+Route::get('/donate', [\App\Http\Controllers\SiteController::class, 'getDonate']);
+Route::get('/styleguide', [\App\Http\Controllers\SiteController::class, 'getStyleguide']);
+Route::get('/ranking', [\App\Http\Controllers\RankingController::class, 'getIndex']);
+Route::get('/news', [\App\Http\Controllers\NewsController::class, 'getNews']);
+Route::get('/news/{slug}', [\App\Http\Controllers\NewsController::class, 'getNewsBySlug']);
 // Route::get("/stats", "SiteController@getStats");
 
 
 # 1vs1 Player Ladders
-Route::group(['prefix' => 'ladder/', 'middleware' => ['auth', 'cache.public'], 'guestsAllowed' => true], function ()
+Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function ()
 {
-    Route::get('/', 'LadderController@getLadders');
-    Route::get('/play', 'LadderController@getPopularTimes');
-    Route::get('{date}/{game}', 'LadderController@getLadderIndex');
-    Route::get('{date}/{game}/games', 'LadderController@getLadderGames');
-    Route::get('{date}/{tier}/{game}', 'LadderController@getLadderIndex');
+    Route::get('/', [\App\Http\Controllers\LadderController::class, 'getLadders']);
+    Route::get('/play', [\App\Http\Controllers\LadderController::class, 'getPopularTimes']);
+    Route::get('{date}/{game}', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
+    Route::get('{date}/{game}/games', [\App\Http\Controllers\LadderController::class, 'getLadderGames']);
+    Route::get('{date}/{tier}/{game}', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
 
-    Route::get('{date}/{game}/player/', 'LadderController@getLadderIndex');
-    Route::get('{date}/{game}/player/{player}', 'LadderController@getLadderPlayer');
-    Route::get('{date}/{game}/player/{player}/achievements', 'LadderController@getPlayerAchievementsPage');
+    Route::get('{date}/{game}/player/', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
+    Route::get('{date}/{game}/player/{player}', [\App\Http\Controllers\LadderController::class, 'getLadderPlayer']);
+    Route::get('{date}/{game}/player/{player}/achievements', [\App\Http\Controllers\LadderController::class, 'getPlayerAchievementsPage']);
 
-    Route::get('{date}/{game}/clan/', 'LadderController@getLadderIndex');
-    Route::get('{date}/{game}/clan/{clan}', 'LadderController@getLadderClan');
-    Route::get('{date}/{game}/clan/{clan}/achievements', 'LadderController@getPlayerAchievementsPage');
+    Route::get('{date}/{game}/clan/', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
+    Route::get('{date}/{game}/clan/{clan}', [\App\Http\Controllers\LadderController::class, 'getLadderClan']);
+    Route::get('{date}/{game}/clan/{clan}/achievements', [\App\Http\Controllers\LadderController::class, 'getPlayerAchievementsPage']);
 
-    Route::get('{date}/{game}/games/{gameId}', 'LadderController@getLadderGame');
-    Route::get('{date}/{game}/games/{gameId}/{reportId}', 'LadderController@getLadderGame');
+    Route::get('{date}/{game}/games/{gameId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame']);
+    Route::get('{date}/{game}/games/{gameId}/{reportId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame']);
 });
 
 # Clan Ladders
 Route::group(['prefix' => 'clans/{ladderAbbrev}', 'middleware' => 'auth'], function ()
 {
-    Route::get('/edit/{clanId}/main', 'ClanController@editLadderClan');
+    Route::get('/edit/{clanId}/main', [\App\Http\Controllers\ClanController::class, 'editLadderClan']);
 
-    Route::post('/edit/{clanId}', 'ClanController@saveLadderClan');
-    Route::post('/edit/{clanId}/members', 'ClanController@saveMembers');
-    Route::post('/edit/{clanId}/avatar', 'ClanController@saveLadderAvatar');
+    Route::post('/edit/{clanId}', [\App\Http\Controllers\ClanController::class, 'saveLadderClan']);
+    Route::post('/edit/{clanId}/members', [\App\Http\Controllers\ClanController::class, 'saveMembers']);
+    Route::post('/edit/{clanId}/avatar', [\App\Http\Controllers\ClanController::class, 'saveLadderAvatar']);
     //Route::post('/edit/new', 'ClanController@saveLadderClan');
 
-    Route::post('/invite/{clanId}', 'ClanController@saveInvitation');
-    Route::post('/invite/{clanId}/process', 'ClanController@processInvitation');
-    Route::post('/invite/{clanId}/cancel', 'ClanController@cancelInvitation');
-    Route::post('/activate/{id}', 'ClanController@activateClan');
-    Route::post('/role/{clanId}', 'ClanController@role');
-    Route::post('/kick/{clanId}', 'ClanController@kick');
-    Route::post('/leave/{clanId}', 'ClanController@leave');
+    Route::post('/invite/{clanId}', [\App\Http\Controllers\ClanController::class, 'saveInvitation']);
+    Route::post('/invite/{clanId}/process', [\App\Http\Controllers\ClanController::class, 'processInvitation']);
+    Route::post('/invite/{clanId}/cancel', [\App\Http\Controllers\ClanController::class, 'cancelInvitation']);
+    Route::post('/activate/{id}', [\App\Http\Controllers\ClanController::class, 'activateClan']);
+    Route::post('/role/{clanId}', [\App\Http\Controllers\ClanController::class, 'role']);
+    Route::post('/kick/{clanId}', [\App\Http\Controllers\ClanController::class, 'kick']);
+    Route::post('/leave/{clanId}', [\App\Http\Controllers\ClanController::class, 'leave']);
 });
 
 Route::group(['prefix' => 'auth'], function() {
     Auth::routes();
-    Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
+    Route::get('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout']);
 });
 
-Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
+Route::group(['prefix' => 'admin'], function() {
 
-Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canEditAnyLadders' => true], function ()
-{
-    Route::get('players/ratings', 'AdminController@getPlayerRatings');
-    Route::get('players/ratings/{ladderAbbreviation}', 'AdminController@getPlayerRatings');
+    Route::get('/', [\App\Http\Controllers\AdminController::class, 'getAdminIndex'])->middleware('allow:canEditAnyLadders');
+
+    Route::group(['middleware' => 'auth'], function() {
+
+        Route::group(['middleware' => 'allow:canEditAnyLadders'], function () {
+
+            Route::get('players/ratings', [\App\Http\Controllers\AdminController::class, 'getPlayerRatings']);
+            Route::get('players/ratings/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getPlayerRatings']);
+        });
+
+        Route::group(['middleware' => 'allow:adminRequired'], function () {
+
+            Route::get('users/', [\App\Http\Controllers\AdminController::class, 'getManageUsersIndex']);
+            Route::get('users/chatbans', [\App\Http\Controllers\AdminController::class, 'getChatBannedUsers']);
+            Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser']);
+            Route::post('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'updateUser']);
+            Route::post('users/tier/update', [\App\Http\Controllers\AdminController::class, 'updateUserLadderTier']);
+
+            Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
+            Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
+        });
+
+        Route::group(['prefix' => 'news', 'middleware' => ['allow:adminRequired', 'allow:isNewsAdmin']], function () {
+
+            Route::get('/', [\App\Http\Controllers\AdminNewsController::class, 'getIndex']);
+            Route::get('/create', [\App\Http\Controllers\AdminNewsController::class, 'getCreate']);
+            Route::get('/edit/{id}', [\App\Http\Controllers\AdminNewsController::class, 'getEdit']);
+            Route::post('/save', [\App\Http\Controllers\AdminNewsController::class, 'save']);
+        });
+
+        Route::group(['middleware' => ['allow:canAdminLadder']], function () {
+
+            Route::post('ladder/new', [\App\Http\Controllers\LadderController::class, 'saveLadder'])->middleware('allow:isGod');
+            Route::get('canceledMatches/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getCanceledMatches']);
+            Route::get('washedGames/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getWashedGames']);
+        });
+
+        Route::group(['prefix' => 'setup/{ladderId}', 'middleware' => ['allow:canModLadder']], function () {
+
+            Route::get('edit', [\App\Http\Controllers\AdminController::class, 'getLadderSetupIndex']);
+
+            Route::group(['middleware' => ['allow:canAdminLadder']], function () {
+
+                Route::post('ladder', [\App\Http\Controllers\LadderController::class, 'saveLadder']);
+
+                Route::post('addSide', [\App\Http\Controllers\AdminController::class, 'addSide']);
+                Route::post('remSide', [\App\Http\Controllers\AdminController::class, 'remSide']);
+
+                Route::post('rules', [\App\Http\Controllers\AdminController::class, 'postLadderSetupRules']);
+
+                Route::post('editmap', [\App\Http\Controllers\MapPoolController::class, 'editMap']);
+
+                // update/delete map tier endpoints
+                Route::post('mappool/{mapPoolId}/editMapTier', [\App\Http\Controllers\MapPoolController::class, 'editMapTier']);
+                Route::post('mappool/{mapPoolId}/deleteMapTier', [\App\Http\Controllers\MapPoolController::class, 'deleteMapTier']);
+
+                Route::post('optval', [\App\Http\Controllers\AdminController::class, 'editSpawnOptionValue']);
+                Route::post('mappool/{mapPoolId}/optval', [\App\Http\Controllers\AdminController::class, 'editSpawnOptionValue']);
+
+                Route::post('mappool/{mapPoolId}/rempoolmap', [\App\Http\Controllers\MapPoolController::class, 'removeQuickMatchMap']);
+                Route::get('mappool/{mapPoolId}/edit', [\App\Http\Controllers\MapPoolController::class, 'editMapPool']);
+                Route::post('mappool/{mapPoolId}/edit', [\App\Http\Controllers\MapPoolController::class, 'postQuickMatchMap']);
+                Route::post('mappool/{mapPoolId}/rename',  [\App\Http\Controllers\MapPoolController::class, 'renameMapPool']);
+                Route::post('mappool', [\App\Http\Controllers\MapPoolController::class, 'changeMapPool']);
+                Route::post('mappool/new', [\App\Http\Controllers\MapPoolController::class, 'newMapPool']);
+                Route::post('mappool/{mapPoolId}/remove', [\App\Http\Controllers\MapPoolController::class, 'removeMapPool']);
+                Route::post('mappool/{mapPoolId}/reorder', [\App\Http\Controllers\MapPoolController::class, 'reorderMapPool']);
+                Route::post('mappool/clone', [\App\Http\Controllers\MapPoolController::class, 'cloneMapPool']);
+                Route::post('mappool/{mapPoolId}/cloneladdermaps', [\App\Http\Controllers\MapPoolController::class, 'copyMaps']);
+
+                Route::post('add/moderator', [\App\Http\Controllers\AdminController::class, 'addModerator']);
+                Route::post('remove/moderator', [\App\Http\Controllers\AdminController::class, 'removeModerator']);
+
+                Route::post('alert', [\App\Http\Controllers\AdminController::class, 'editLadderAlert']);
+            });
+
+            Route::post('add/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@addAdmin']);
+            Route::post('remove/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@removeAdmin']);
+
+            Route::post('add/tester', [\App\Http\Controllers\AdminController::class, 'addTester']);
+            Route::post('remove/tester', [\App\Http\Controllers\AdminController::class, 'removeTester']);
+
+        });
+
+        Route::group(['prefix' => 'schema/{gameSchemaId}', 'objectSchemaManager' => true], function () {
+
+            Route::get('/', 'AdminController@getGameSchemaSetup');
+            Route::post('/', 'AdminController@saveGameSchema');
+            Route::post('/object/{objectId}', 'AdminController@saveGameObject');
+            Route::post('/manager', 'AdminController@saveSchemaManager');
+        });
+
+        Route::group(['prefix' => 'moderate/{ladderId}', 'canModLadder' => true], function () {
+
+            Route::get('/games/{cncnetGame}', 'AdminController@getManageGameIndex');
+            Route::post('/games/{cncnetGame}/delete', 'AdminController@deleteGame');
+            Route::post('/games/switch', 'AdminController@switchGameReport');
+            Route::post('/games/wash', 'AdminController@washGame');
+
+            Route::get('/player/{playerId}', 'AdminController@getLadderPlayer');
+            Route::get('/player/{playerId}/newban/{banType}', 'AdminController@getUserBan');
+            Route::get('/player/{playerId}/editban/{banId}', 'AdminController@editUserBan');
+            Route::post('/player/{playerId}/editban/{banId}', 'AdminController@saveUserBan');
+            Route::post('/player/{playerId}/editban', 'AdminController@saveUserBan');
+            Route::post('/player/{playerId}/alert', 'AdminController@editPlayerAlert');
+            Route::post('/player/{playerId}/laundry', 'AdminController@laundryService');
+            Route::post('/player/{playerId}/undoLaundry', 'AdminController@undoLaundryService');
+            Route::post('/player/{playerId}/editName', 'AdminController@editPlayerName');
+        });
+    });
+
 });
 
-Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'adminRequired' => true], function ()
-{
-    Route::get('users/', 'AdminController@getManageUsersIndex');
-    Route::get('users/chatbans', 'AdminController@getChatBannedUsers');
-    Route::get('users/edit/{userId}', 'AdminController@getEditUser');
-    Route::post('users/edit/{userId}', 'AdminController@updateUser');
-    Route::post('users/tier/update', 'AdminController@updateUserLadderTier');
-
-    Route::get('clans', 'AdminController@getManageClansIndex');
-    Route::post('clans', 'AdminController@updateClan');
-});
-
-Route::group(['prefix' => 'admin/news', 'middleware' => 'auth', 'adminRequired' => true, 'isNewsAdmin' => true], function ()
-{
-    Route::get('/', 'AdminNewsController@getIndex');
-    Route::get('/create', 'AdminNewsController@getCreate');
-    Route::get('/edit/{id}', 'AdminNewsController@getEdit');
-    Route::post('/save', 'AdminNewsController@save');
-});
-
-Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canAdminLadder' => true], function ()
-{
-    Route::post('ladder/new', ['middleware' => 'auth', 'isGod' => true, 'uses' => 'LadderController@saveLadder']);
-    Route::get('canceledMatches/{ladderAbbreviation}', 'AdminController@getCanceledMatches');
-    Route::get('washedGames/{ladderAbbreviation}', 'AdminController@getWashedGames');
-});
-
-Route::group(['prefix' => 'admin/setup/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
-{
-    Route::get('edit', 'AdminController@getLadderSetupIndex');
-    Route::post('ladder', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'LadderController@saveLadder']);
-
-    Route::post('addSide', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@addSide']);
-    Route::post('remSide', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@remSide']);
-
-    Route::post('rules', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@postLadderSetupRules']);
-
-    Route::post('editmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMap']);
-
-    // update/delete map tier endpoints
-    Route::post('mappool/{mapPoolId}/editMapTier', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMapTier']);
-    Route::post('mappool/{mapPoolId}/deleteMapTier', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@deleteMapTier']);
-
-    Route::post('optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue']);
-    Route::post('mappool/{mapPoolId}/optval', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editSpawnOptionValue']);
-
-    Route::post('mappool/{mapPoolId}/rempoolmap', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@removeQuickMatchMap']);
-    Route::get('mappool/{mapPoolId}/edit', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@editMapPool']);
-    Route::post('mappool/{mapPoolId}/edit', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@postQuickMatchMap']);
-    Route::post('mappool/{mapPoolId}/rename',  ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@renameMapPool']);
-    Route::post('mappool', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@changeMapPool']);
-    Route::post('mappool/new', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@newMapPool']);
-    Route::post('mappool/{mapPoolId}/remove', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@removeMapPool']);
-    Route::post('mappool/{mapPoolId}/reorder', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@reorderMapPool']);
-    Route::post('mappool/clone', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@cloneMapPool']);
-    Route::post('mappool/{mapPoolId}/cloneladdermaps', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'MapPoolController@copyMaps']);
-
-    Route::post('add/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@addAdmin']);
-    Route::post('remove/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@removeAdmin']);
-
-    Route::post('add/moderator', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@addModerator']);
-    Route::post('remove/moderator', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@removeModerator']);
-
-    Route::post('add/tester', 'AdminController@addTester');
-    Route::post('remove/tester', 'AdminController@removeTester');
-
-    Route::post('alert', ['middleware' => 'auth', 'canAdminLadder' => true, 'uses' => 'AdminController@editLadderAlert']);
-});
-
-Route::group(['prefix' => 'admin/schema/{gameSchemaId}', 'middleware' => 'auth', 'objectSchemaManager' => true], function ()
-{
-    Route::get('/', 'AdminController@getGameSchemaSetup');
-    Route::post('/', 'AdminController@saveGameSchema');
-    Route::post('/object/{objectId}', 'AdminController@saveGameObject');
-    Route::post('/manager', 'AdminController@saveSchemaManager');
-});
-
-Route::group(['prefix' => 'admin/moderate/{ladderId}', 'middleware' => 'auth', 'canModLadder' => true], function ()
-{
-    Route::get('/games/{cncnetGame}', 'AdminController@getManageGameIndex');
-    Route::post('/games/{cncnetGame}/delete', 'AdminController@deleteGame');
-    Route::post('/games/switch', 'AdminController@switchGameReport');
-    Route::post('/games/wash', 'AdminController@washGame');
-
-    Route::get('/player/{playerId}', 'AdminController@getLadderPlayer');
-    Route::get('/player/{playerId}/newban/{banType}', 'AdminController@getUserBan');
-    Route::get('/player/{playerId}/editban/{banId}', 'AdminController@editUserBan');
-    Route::post('/player/{playerId}/editban/{banId}', 'AdminController@saveUserBan');
-    Route::post('/player/{playerId}/editban', 'AdminController@saveUserBan');
-    Route::post('/player/{playerId}/alert', 'AdminController@editPlayerAlert');
-    Route::post('/player/{playerId}/laundry', 'AdminController@laundryService');
-    Route::post('/player/{playerId}/undoLaundry', 'AdminController@undoLaundryService');
-    Route::post('/player/{playerId}/editName', 'AdminController@editPlayerName');
-});
 
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
 {
-    Route::get('/', 'AccountController@getAccountIndex');
-    Route::get('/{ladderAbbrev}/list', 'AccountController@getLadderAccountIndex');
-    Route::post('/{ladderAbbrev}/username-status', 'AccountController@toggleUsernameStatus');
-    Route::post('/rename', 'AccountController@rename');
+    Route::get('/', [\App\Http\Controllers\AccountController::class, 'getAccountIndex']);
+    Route::get('/{ladderAbbrev}/list', [\App\Http\Controllers\AccountController::class, 'getLadderAccountIndex']);
+    Route::post('/{ladderAbbrev}/username-status', [\App\Http\Controllers\AccountController::class, 'toggleUsernameStatus']);
+    Route::post('/rename', [\App\Http\Controllers\AccountController::class, 'rename']);
 
-    Route::post('/{ladderAbbrev}/username', 'AccountController@createUsername');
-    Route::get('/verify', 'AccountController@getNewVerification');
-    Route::post('/verify', 'AccountController@createNewVerification');
-    Route::get('/verify/{verify_token}', 'AccountController@verifyEmail');
-    Route::get('/settings', 'AccountController@getUserSettings');
-    Route::post('/settings', 'AccountController@updateUserSettings');
+    Route::post('/{ladderAbbrev}/username', [\App\Http\Controllers\AccountController::class, 'createUsername']);
+    Route::get('/verify', [\App\Http\Controllers\AccountController::class, 'getNewVerification']);
+    Route::post('/verify', [\App\Http\Controllers\AccountController::class, 'createNewVerification']);
+    Route::get('/verify/{verify_token}', [\App\Http\Controllers\AccountController::class, 'verifyEmail']);
+    Route::get('/settings', [\App\Http\Controllers\AccountController::class, 'getUserSettings']);
+    Route::post('/settings', [\App\Http\Controllers\AccountController::class, 'updateUserSettings']);
 });
 
 # API Endpoints

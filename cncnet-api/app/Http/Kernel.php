@@ -64,15 +64,13 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
 
-        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
-        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
+        'cache.public' => \App\Http\Middleware\CachePublicMiddleware::class,
+        'cache.private' => \App\Http\Middleware\CachePrivateMiddleware::class,
+        'cache.long.public' => \App\Http\Middleware\CacheLongPublicMiddleware::class,
+        'cache.long.private' => \App\Http\Middleware\CacheLongPrivateMiddleware::class,
+        'cache.short.public' => \App\Http\Middleware\CacheShortPublic::class,
+        'cache.ultra.public' => \App\Http\Middleware\CacheUltraShortPublic::class,
 
-        'cache.public' => 'App\Http\Middleware\CachePublicMiddleware',
-        'cache.private' => 'App\Http\Middleware\CachePrivateMiddleware',
-        'cache.long.public' => 'App\Http\Middleware\CacheLongPublicMiddleware',
-        'cache.long.private' => 'App\Http\Middleware\CacheLongPrivateMiddleware',
-        'cache.short.public' => 'App\Http\Middleware\CacheShortPublic',
-        'cache.ultra.public' => 'App\Http\Middleware\CacheUltraShortPublic',
-
+        'allow' => \App\Http\Middleware\Allow::class,
     ];
 }
