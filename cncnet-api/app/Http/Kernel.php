@@ -71,6 +71,7 @@ class Kernel extends HttpKernel
         'cache.short.public' => \App\Http\Middleware\CacheShortPublic::class,
         'cache.ultra.public' => \App\Http\Middleware\CacheUltraShortPublic::class,
 
-        'allow' => \App\Http\Middleware\Allow::class,
+        'restrict' => \App\Http\Middleware\Restrict::class,
+        'group' => \App\Http\Middleware\Group::class,
     ];
 }

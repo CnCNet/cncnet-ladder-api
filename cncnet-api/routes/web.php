@@ -61,17 +61,17 @@ Route::group(['prefix' => 'auth'], function() {
 
 Route::group(['prefix' => 'admin'], function() {
 
-    Route::get('/', [\App\Http\Controllers\AdminController::class, 'getAdminIndex'])->middleware('allow:canEditAnyLadders');
+    Route::get('/', [\App\Http\Controllers\AdminController::class, 'getAdminIndex'])->middleware('restrict:canEditAnyLadders');
 
     Route::group(['middleware' => 'auth'], function() {
 
-        Route::group(['middleware' => 'allow:canEditAnyLadders'], function () {
+        Route::group(['middleware' => 'restrict:canEditAnyLadders'], function () {
 
             Route::get('players/ratings', [\App\Http\Controllers\AdminController::class, 'getPlayerRatings']);
             Route::get('players/ratings/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getPlayerRatings']);
         });
 
-        Route::group(['middleware' => 'allow:adminRequired'], function () {
+        Route::group(['middleware' => 'restrict:adminRequired'], function () {
 
             Route::get('users/', [\App\Http\Controllers\AdminController::class, 'getManageUsersIndex']);
             Route::get('users/chatbans', [\App\Http\Controllers\AdminController::class, 'getChatBannedUsers']);
@@ -83,7 +83,7 @@ Route::group(['prefix' => 'admin'], function() {
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
         });
 
-        Route::group(['prefix' => 'news', 'middleware' => ['allow:adminRequired', 'allow:isNewsAdmin']], function () {
+        Route::group(['prefix' => 'news', 'middleware' => ['restrict:adminRequired', 'restrict:isNewsAdmin']], function () {
 
             Route::get('/', [\App\Http\Controllers\AdminNewsController::class, 'getIndex']);
             Route::get('/create', [\App\Http\Controllers\AdminNewsController::class, 'getCreate']);
@@ -91,18 +91,18 @@ Route::group(['prefix' => 'admin'], function() {
             Route::post('/save', [\App\Http\Controllers\AdminNewsController::class, 'save']);
         });
 
-        Route::group(['middleware' => ['allow:canAdminLadder']], function () {
+        Route::group(['middleware' => ['restrict:canAdminLadder']], function () {
 
-            Route::post('ladder/new', [\App\Http\Controllers\LadderController::class, 'saveLadder'])->middleware('allow:isGod');
+            Route::post('ladder/new', [\App\Http\Controllers\LadderController::class, 'saveLadder'])->middleware('restrict:isGod');
             Route::get('canceledMatches/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getCanceledMatches']);
             Route::get('washedGames/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getWashedGames']);
         });
 
-        Route::group(['prefix' => 'setup/{ladderId}', 'middleware' => ['allow:canModLadder']], function () {
+        Route::group(['prefix' => 'setup/{ladderId}', 'middleware' => ['restrict:canModLadder']], function () {
 
             Route::get('edit', [\App\Http\Controllers\AdminController::class, 'getLadderSetupIndex']);
 
-            Route::group(['middleware' => ['allow:canAdminLadder']], function () {
+            Route::group(['middleware' => ['restrict:canAdminLadder']], function () {
 
                 Route::post('ladder', [\App\Http\Controllers\LadderController::class, 'saveLadder']);
 
@@ -137,8 +137,10 @@ Route::group(['prefix' => 'admin'], function() {
                 Route::post('alert', [\App\Http\Controllers\AdminController::class, 'editLadderAlert']);
             });
 
-            Route::post('add/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@addAdmin']);
-            Route::post('remove/admin', ['middleware' => 'auth', 'group' => User::God, 'uses' => 'AdminController@removeAdmin']);
+            Route::group(['middleware' => ['group:'.User::God]], function () {
+                Route::post('add/admin', [\App\Http\Controllers\AdminController::class, 'addAdmin']);
+                Route::post('remove/admin', [\App\Http\Controllers\AdminController::class, 'removeAdmin']);
+            });
 
             Route::post('add/tester', [\App\Http\Controllers\AdminController::class, 'addTester']);
             Route::post('remove/tester', [\App\Http\Controllers\AdminController::class, 'removeTester']);

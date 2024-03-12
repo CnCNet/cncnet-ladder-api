@@ -7,7 +7,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Allow
+class Restrict
 {
 
     /**
