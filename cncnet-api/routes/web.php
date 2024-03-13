@@ -147,30 +147,30 @@ Route::group(['prefix' => 'admin'], function() {
 
         });
 
-        Route::group(['prefix' => 'schema/{gameSchemaId}', 'objectSchemaManager' => true], function () {
+        Route::group(['prefix' => 'schema/{gameSchemaId}', 'middleware' => ['restrict:objectSchemaManager']], function () {
 
-            Route::get('/', 'AdminController@getGameSchemaSetup');
-            Route::post('/', 'AdminController@saveGameSchema');
-            Route::post('/object/{objectId}', 'AdminController@saveGameObject');
-            Route::post('/manager', 'AdminController@saveSchemaManager');
+            Route::get('/', [\App\Http\Controllers\AdminController::class, 'getGameSchemaSetup']);
+            Route::post('/', [\App\Http\Controllers\AdminController::class, 'saveGameSchema']);
+            Route::post('/object/{objectId}', [\App\Http\Controllers\AdminController::class, 'saveGameObject']);
+            Route::post('/manager', [\App\Http\Controllers\AdminController::class, 'saveSchemaManager']);
         });
 
-        Route::group(['prefix' => 'moderate/{ladderId}', 'canModLadder' => true], function () {
+        Route::group(['prefix' => 'moderate/{ladderId}', 'middleware' => ['restrict:canModLadder']], function () {
 
-            Route::get('/games/{cncnetGame}', 'AdminController@getManageGameIndex');
-            Route::post('/games/{cncnetGame}/delete', 'AdminController@deleteGame');
-            Route::post('/games/switch', 'AdminController@switchGameReport');
-            Route::post('/games/wash', 'AdminController@washGame');
+            Route::get('/games/{cncnetGame}', [\App\Http\Controllers\AdminController::class, 'getManageGameIndex']);
+            Route::post('/games/{cncnetGame}/delete', [\App\Http\Controllers\AdminController::class, 'deleteGame']);
+            Route::post('/games/switch', [\App\Http\Controllers\AdminController::class, 'switchGameReport']);
+            Route::post('/games/wash', [\App\Http\Controllers\AdminController::class, 'washGame']);
 
-            Route::get('/player/{playerId}', 'AdminController@getLadderPlayer');
-            Route::get('/player/{playerId}/newban/{banType}', 'AdminController@getUserBan');
-            Route::get('/player/{playerId}/editban/{banId}', 'AdminController@editUserBan');
-            Route::post('/player/{playerId}/editban/{banId}', 'AdminController@saveUserBan');
-            Route::post('/player/{playerId}/editban', 'AdminController@saveUserBan');
-            Route::post('/player/{playerId}/alert', 'AdminController@editPlayerAlert');
-            Route::post('/player/{playerId}/laundry', 'AdminController@laundryService');
-            Route::post('/player/{playerId}/undoLaundry', 'AdminController@undoLaundryService');
-            Route::post('/player/{playerId}/editName', 'AdminController@editPlayerName');
+            Route::get('/player/{playerId}', [\App\Http\Controllers\AdminController::class, 'getLadderPlayer']);
+            Route::get('/player/{playerId}/newban/{banType}', [\App\Http\Controllers\AdminController::class, 'getUserBan']);
+            Route::get('/player/{playerId}/editban/{banId}', [\App\Http\Controllers\AdminController::class, 'editUserBan']);
+            Route::post('/player/{playerId}/editban/{banId}', [\App\Http\Controllers\AdminController::class, 'saveUserBan']);
+            Route::post('/player/{playerId}/editban', [\App\Http\Controllers\AdminController::class, 'saveUserBan']);
+            Route::post('/player/{playerId}/alert', [\App\Http\Controllers\AdminController::class, 'editPlayerAlert']);
+            Route::post('/player/{playerId}/laundry', [\App\Http\Controllers\AdminController::class, 'laundryService']);
+            Route::post('/player/{playerId}/undoLaundry', [\App\Http\Controllers\AdminController::class, 'undoLaundryService']);
+            Route::post('/player/{playerId}/editName', [\App\Http\Controllers\AdminController::class, 'editPlayerName']);
         });
     });
 
