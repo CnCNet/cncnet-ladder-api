@@ -2,18 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use \App\Http\Services\AuthService;
-use \App\Http\Services\PlayerService;
-use App\PlayerActiveHandle;
+use App\Http\Services\AuthService;
+use App\Http\Services\PlayerService;
+use App\Models\PlayerActiveHandle;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Log;
-use RuntimeException;
 
 class ApiPlayerController extends Controller
 {
@@ -47,7 +43,7 @@ class ApiPlayerController extends Controller
             }
 
             # Check ladder exists
-            $ladder = \App\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
+            $ladder = \App\Models\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
             if ($ladder === null)
             {
                 return response()->json(["message" => "Ladder does not exist"], 400);
@@ -59,7 +55,7 @@ class ApiPlayerController extends Controller
             $now = Carbon::now();
             $dateStart = $now->startOfMonth()->toDateTimeString();
             $dateEnd = $now->endOfMonth()->toDateTimeString();
-            $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $dateStart, $dateEnd)
+            $activeHandles = \App\Models\PlayerActiveHandle::getUserActiveHandles($user->id, $dateStart, $dateEnd)
                 ->where('ladder_id', $ladder->id)
                 ->get();
 
@@ -103,7 +99,7 @@ class ApiPlayerController extends Controller
             }
 
             # Check ladder exists
-            $ladder = \App\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
+            $ladder = \App\Models\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
             if ($ladder === null)
             {
                 return response()->json(["message" => "Ladder does not exist"], 400);
@@ -149,7 +145,7 @@ class ApiPlayerController extends Controller
             }
 
             # Check ladder exists
-            $ladder = \App\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
+            $ladder = \App\Models\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
             if ($ladder === null)
             {
                 return response()->json(["message" => "Ladder does not exist"], 400);
@@ -158,7 +154,7 @@ class ApiPlayerController extends Controller
             $maxActivePlayersAllowed = $ladder->qmLadderRules->max_active_players;
 
             // Check request is linked to the auth'd user
-            $player = \App\Player::where("username", "=", $request->username)
+            $player = \App\Models\Player::where("username", "=", $request->username)
                 ->where("ladder_id", "=", $ladder->id)
                 ->where("user_id", "=", $user->id)
                 ->first();

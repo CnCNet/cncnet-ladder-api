@@ -2,9 +2,8 @@
 
 namespace App\Http\Services;
 
-use App\Achievement;
-use App\AchievementProgress;
-use App\QmLadderRules;
+use App\Models\Achievement;
+use App\Models\AchievementProgress;
 
 class AchievementService
 {

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateSidesTable extends Migration {
 
@@ -28,33 +28,33 @@ class CreateSidesTable extends Migration {
 
             if ($yr_sides[$i] != "France" && $yr_sides[$i] != "Yuri")
             {
-                $side = new \App\Side();
-                $side->ladder_id = \App\Ladder::where('abbreviation', 'yr')->first()->id;
+                $side = new \App\Models\Side();
+                $side->ladder_id = \App\Models\Ladder::where('abbreviation', 'yr')->first()->id;
                 $side->local_id = $i;
                 $side->name = $yr_sides[$i];
                 $side->save();
             }
         }
-        $random = new \App\Side();
-        $random->ladder_id = \App\Ladder::where('abbreviation', 'yr')->first()->id;
+        $random = new \App\Models\Side();
+        $random->ladder_id = \App\Models\Ladder::where('abbreviation', 'yr')->first()->id;
         $random->local_id = -1;
         $random->name = "Random";
         $random->save();
 
-        $ts_side0 = new \App\Side();
-        $ts_side0->ladder_id = \App\Ladder::where('abbreviation', 'ts')->first()->id;
+        $ts_side0 = new \App\Models\Side();
+        $ts_side0->ladder_id = \App\Models\Ladder::where('abbreviation', 'ts')->first()->id;
         $ts_side0->local_id = 0;
         $ts_side0->name = 'GDI';
         $ts_side0->save();
 
-        $ts_side0 = new \App\Side();
-        $ts_side0->ladder_id = \App\Ladder::where('abbreviation', 'ts')->first()->id;
+        $ts_side0 = new \App\Models\Side();
+        $ts_side0->ladder_id = \App\Models\Ladder::where('abbreviation', 'ts')->first()->id;
         $ts_side0->local_id = 1;
         $ts_side0->name = 'NOD';
         $ts_side0->save();
 
-        $random = new \App\Side();
-        $random->ladder_id = \App\Ladder::where('abbreviation', 'ts')->first()->id;
+        $random = new \App\Models\Side();
+        $random->ladder_id = \App\Models\Ladder::where('abbreviation', 'ts')->first()->id;
         $random->local_id = -1;
         $random->name = "Random";
         $random->save();

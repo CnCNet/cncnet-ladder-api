@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCardsTable extends Migration 
 {
@@ -24,7 +24,7 @@ class CreateCardsTable extends Migration
 
     private function seed($name, $short)
     {
-        $card = new \App\Card();
+        $card = new \App\Models\Card();
         $card->short = $short;
         $card->name = $name;
         $card->save();

@@ -1,5 +1,6 @@
 <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle d-flex align-items-center me-1 ms-1 ps-2 pe-4" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle d-flex align-items-center me-1 ms-1 ps-2 pe-4" href="#" data-bs-toggle="dropdown"
+       aria-expanded="false">
         <span class="material-symbols-outlined icon">
             hotel_class
         </span>
@@ -17,7 +18,8 @@
 
         @foreach ($ladders as $history)
             <li>
-                <a href="{{ \App\URLHelper::getChampionsLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
+                <a href="{{ \App\Models\URLHelper::getChampionsLadderUrl($history) }}"
+                   title="{{ $history->ladder->name }}" class="dropdown-item">
 
                     <span class="d-flex align-items-center">
                         <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
@@ -38,7 +40,8 @@
             @foreach ($clan_ladders as $history)
                 @if (!$history->ladder->private)
                     <li>
-                        <a href="{{ \App\URLHelper::getChampionsLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
+                        <a href="{{ \App\Models\URLHelper::getChampionsLadderUrl($history) }}"
+                           title="{{ $history->ladder->name }}" class="dropdown-item">
                             <span class="d-flex align-items-center">
                                 <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
                                 {{ $history->ladder->name }}

@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 @section('title', $news->title)
 
 @section('feature')
@@ -74,7 +74,7 @@
                 <div class="news-detail-container">
                     @if ($news->getFeaturedImagePath())
                         <div class="news-feature">
-                            <img src="{{ $news->getFeaturedImagePath() }}" alt="Featured image" />
+                            <img src="{{ $news->getFeaturedImagePath() }}" alt="Featured image"/>
                         </div>
                     @endif
 

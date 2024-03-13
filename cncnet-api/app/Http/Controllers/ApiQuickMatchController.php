@@ -2,41 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\ClanCache;
-use Illuminate\Http\Request;
-use \App\Http\Services\LadderService;
-use \App\Http\Services\GameService;
-use \App\Http\Services\PlayerService;
-use \App\Http\Services\EloService;
-use \App\Http\Services\AuthService;
-use \App\PlayerActiveHandle;
-use \Carbon\Carbon;
-use DB;
-use \App\Commands\FindOpponent;
-use App\Game;
+use App\Commands\FindOpponent;
 use App\Helpers\AIHelper;
 use App\Helpers\GameHelper;
-use App\PlayerRating;
-use \App\QmQueueEntry;
-use Illuminate\Support\Facades\Cache;
-use \App\SpawnOptionType;
-use DateTime;
-use \App\Helpers\LeagueHelper;
+use App\Helpers\LeagueHelper;
+use App\Http\Services\LadderService;
+use App\Http\Services\PlayerService;
 use App\Http\Services\QuickMatchService;
 use App\Http\Services\QuickMatchSpawnService;
 use App\Http\Services\StatsService;
-use App\Ladder;
-use App\LeaguePlayer;
-use App\MapPool;
-use App\PlayerCache;
-use App\QmMatch;
-use App\QmMatchPlayer;
-use App\QmUserId;
-use BadMethodCallException;
+use App\Models\ClanCache;
+use App\Models\Game;
+use App\Models\Ladder;
+use App\Models\MapPool;
+use App\Models\PlayerCache;
+use App\Models\QmMatch;
+use App\Models\QmMatchPlayer;
+use App\Models\QmQueueEntry;
+use App\Models\QmUserId;
+use Carbon\Carbon;
+use DateTime;
+use DB;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
-use MaxMind\Db\Reader\InvalidDatabaseException;
 
 class ApiQuickMatchController extends Controller
 {
@@ -175,7 +164,7 @@ class ApiQuickMatchController extends Controller
         foreach ($clans as $clanId => $players)
         {
             $i = 0;
-            $clanName = \App\Clan::where('id', $clanId)->first()->short;
+            $clanName = \App\Models\Clan::where('id', $clanId)->first()->short;
             foreach ($players as $player)
             {
                 $playersString .= "[$clanName]" . $player->name . " (" . $player->faction . ")";
@@ -216,7 +205,7 @@ class ApiQuickMatchController extends Controller
 
     public function mapListRequest(Request $request, $ladderAbbrev = null)
     {
-        return \App\QmMap::findMapsByLadder($this->ladderService->getLadderByGame($ladderAbbrev)->id);
+        return \App\Models\QmMap::findMapsByLadder($this->ladderService->getLadderByGame($ladderAbbrev)->id);
     }
 
     public function sidesListRequest(Request $request, $ladderAbbrev = null)
@@ -667,15 +656,15 @@ class ApiQuickMatchController extends Controller
                         break;
 
                     default:
-                        $qmState = new \App\QmMatchState;
+                        $qmState = new \App\Models\QmMatchState;
                         $qmState->player_id = $player->id;
                         $qmState->qm_match_id = $qmMatch->id;
-                        $qmState->state_type_id = \App\StateType::findByName($status)->id;
+                        $qmState->state_type_id = \App\Models\StateType::findByName($status)->id;
                         $qmState->save();
 
                         if ($qmState->state_type_id === 7) //match not ready
                         {
-                            $canceledMatch = new \App\QmCanceledMatch;
+                            $canceledMatch = new \App\Models\QmCanceledMatch;
                             $canceledMatch->qm_match_id = $qmMatch->id;
                             $canceledMatch->player_id = $player->id;
                             $canceledMatch->ladder_id = $qmMatch->ladder_id;
@@ -686,11 +675,11 @@ class ApiQuickMatchController extends Controller
                         {
                             foreach ($peers as $peer)
                             {
-                                $con = new \App\QmConnectionStats;
+                                $con = new \App\Models\QmConnectionStats;
                                 $con->qm_match_id = $qmMatch->id;
                                 $con->player_id = $player->id;
                                 $con->peer_id = $peer['id'];
-                                $con->ip_address_id = \App\IpAddress::getID($peer['address']);
+                                $con->ip_address_id = \App\Models\IpAddress::getID($peer['address']);
                                 $con->port = $peer['port'];
                                 $con->rtt = $peer['rtt'];
                                 $con->save();
@@ -790,14 +779,14 @@ class ApiQuickMatchController extends Controller
 
         foreach ($this->ladderService->getLadders() as $ladder)
         {
-            $history = \App\LadderHistory::where('short', '=', $month . "-" . $year)
+            $history = \App\Models\LadderHistory::where('short', '=', $month . "-" . $year)
                 ->where('ladder_id', $ladder->id)
                 ->first();
 
             if ($history == null)
                 continue;
 
-            $pc = \App\PlayerCache::where('ladder_history_id', '=', $history->id)
+            $pc = \App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)
                 ->join('players as p', 'player_caches.player_id', '=', 'p.id')
                 ->join('users as u', 'p.user_id', '=', 'u.id')
                 ->where("tier", "=", $tier)
@@ -815,20 +804,20 @@ class ApiQuickMatchController extends Controller
 
     public function getErroredGames($ladderAbbrev)
     {
-        $ladder = \App\Ladder::where('abbreviation', $ladderAbbrev)->first();
+        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbrev)->first();
 
         if ($ladder == null)
             return "Bad ladder abbreviation " . $ladderAbbrev;
 
         $ladderHistory = $ladder->currentHistory();
 
-        $numErroredGames = \App\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
+        $numErroredGames = \App\Models\Game::join('game_reports', 'games.game_report_id', '=', 'game_reports.id')
             ->where("ladder_history_id", "=", $ladderHistory->id)
             ->where('game_reports.duration', '<=', 3)
             ->where('finished', '=', 1)
             ->get()->count();
 
-        $url = \App\URLHelper::getLadderUrl($ladderHistory) . '/games?errorGames=true';
+        $url = \App\Models\URLHelper::getLadderUrl($ladderHistory) . '/games?errorGames=true';
 
         $data = [];
         $data["url"] = "https://ladder.cncnet.org" . $url;
@@ -839,7 +828,7 @@ class ApiQuickMatchController extends Controller
 
     public function getRecentLadderWashedGamesCount($ladderAbbrev, $hours)
     {
-        $ladder = \App\Ladder::where("abbreviation", $ladderAbbrev)->first();
+        $ladder = \App\Models\Ladder::where("abbreviation", $ladderAbbrev)->first();
 
         if ($ladder == null)
             return "Bad ladder abbreviation " . $ladderAbbrev;
@@ -848,12 +837,12 @@ class ApiQuickMatchController extends Controller
 
         $start = Carbon::now()->subHour($hours);
 
-        $gameAuditsCount = \App\GameAudit::where("created_at", ">=", $start)
+        $gameAuditsCount = \App\Models\GameAudit::where("created_at", ">=", $start)
             ->where("ladder_history_id", $ladderHistory->id)
             ->where("username", "ladder-auto-wash")
             ->count();
 
-        $url = \App\URLHelper::getWashGamesUrl($ladderAbbrev);
+        $url = \App\Models\URLHelper::getWashGamesUrl($ladderAbbrev);
 
         $data = [];
         $data["count"] = $gameAuditsCount;

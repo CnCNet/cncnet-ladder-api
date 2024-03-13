@@ -2,19 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use \App\Http\Services\AuthService;
-use \App\Http\Services\PlayerService;
-use App\News;
-use App\PlayerActiveHandle;
-use Carbon\Carbon;
+use App\Models\News;
 use Exception;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Log;
-use RuntimeException;
 
 class ApiNewsController extends Controller
 {

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class FixAchievements extends Migration
@@ -12,7 +11,7 @@ class FixAchievements extends Migration
      */
     public function up()
     {
-        $infantryAchievements = \App\Achievement::where('object_name', 'FLAKT')
+        $infantryAchievements = \App\Models\Achievement::where('object_name', 'FLAKT')
             ->orWhere('object_name', 'INIT')
             ->orWhere('object_name', 'BRUTE')
             ->get();
@@ -23,7 +22,7 @@ class FixAchievements extends Migration
             $infantryAchievement->save();
         }
 
-        $aircraftAchievements = \App\Achievement::where('object_name', 'ORCA')
+        $aircraftAchievements = \App\Models\Achievement::where('object_name', 'ORCA')
             ->orWhere('object_name', 'BEAG')
             ->get();
 

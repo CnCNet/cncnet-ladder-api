@@ -2,8 +2,7 @@
 
 namespace App\Commands\Matchup;
 
-use App\QmQueueEntry;
-use Illuminate\Database\Eloquent\Collection;
+use App\Models\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
 
 class ClanMatchupHandler extends BaseMatchupHandler
@@ -377,7 +376,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 {
                     if ($player->clanPlayer && $player->clanPlayer->clan->id == $opponentClanId)
                     {
-                        $opponentClanName = \App\Clan::where('id', $opponentClanId)->first()->short;
+                        $opponentClanName = \App\Models\Clan::where('id', $opponentClanId)->first()->short;
                         $currentPlayerName = $qmEntry->qmPlayer->player->username;
                         $playerName = $player->username;
                         $currentClanName = $currentUserClanPlayer->clan->short;
@@ -400,7 +399,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
                 {
                     if ($opponentPlayer->clanPlayer && $opponentPlayer->clanPlayer->clan->id == $currentUserClanPlayer->clan->id)
                     {
-                        $myClanName = \App\Clan::where('id', $currentUserClanPlayer->clan->id)->first()->short;
+                        $myClanName = \App\Models\Clan::where('id', $currentUserClanPlayer->clan->id)->first()->short;
                         $oppontnePlayerName = $opponentQmEntry->qmPlayer->player->username;
                         $playerName = $opponentPlayer->username;
                         $currentClanName = $currentUserClanPlayer->clan->short;

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddLadderRules extends Migration
 {
@@ -18,7 +18,7 @@ class AddLadderRules extends Migration
             $table->string('ladder_discord'); //invitation url to the ladder discord
         });
 
-        $ladder_rules = \App\QmLadderRules::all();
+        $ladder_rules = \App\Models\QmLadderRules::all();
 
         foreach ($ladder_rules as $ladder_rule)
         {

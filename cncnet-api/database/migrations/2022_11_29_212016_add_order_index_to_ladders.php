@@ -1,8 +1,8 @@
 <?php
 
-use App\Ladder;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Ladder;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddOrderIndexToLadders extends Migration
 {

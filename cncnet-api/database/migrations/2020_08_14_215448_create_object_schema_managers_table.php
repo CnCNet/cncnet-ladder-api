@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateObjectSchemaManagersTable extends Migration {
 
@@ -20,11 +20,11 @@ class CreateObjectSchemaManagersTable extends Migration {
             $table->timestamps();
         });
 
-        foreach (\App\User::where('group', '=', \App\User::God)->get() as $user)
+        foreach (\App\Models\User::where('group', '=', \App\Models\User::God)->get() as $user)
         {
-            foreach (\App\GameObjectSchema::all() as $gos)
+            foreach (\App\Models\GameObjectSchema::all() as $gos)
             {
-                \App\ObjectSchemaManager::firstOrCreate(['game_object_schema_id' => $gos->id, 'user_id' => $user->id ]);
+                \App\Models\ObjectSchemaManager::firstOrCreate(['game_object_schema_id' => $gos->id, 'user_id' => $user->id ]);
             }
         }
 

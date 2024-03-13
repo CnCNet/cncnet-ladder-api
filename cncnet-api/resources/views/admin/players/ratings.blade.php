@@ -71,7 +71,7 @@
                         @foreach ($ladders as $l)
                             <div>
                                 <a href="/admin/players/ratings/{{ $l->abbreviation }}"
-                                    class="btn me-3 btn-size-md {{ $abbreviation == $l->abbreviation ? 'btn-primary' : 'btn-outline' }}">
+                                   class="btn me-3 btn-size-md {{ $abbreviation == $l->abbreviation ? 'btn-primary' : 'btn-outline' }}">
                                     {{ $l->abbreviation }}
                                 </a>
                             </div>
@@ -90,9 +90,11 @@
 
                     <div class="search mb-2 mt-2">
                         <form action="/admin/players/ratings/{{ $abbreviation }}">
-                            <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}"
-                                style="height: 50px" />
-                            <a href="?" style="color: silver;padding: 5px;margin-bottom: 5px; display: block;float: right;">
+                            <input class="form-control" name="search" placeholder="Search by player username"
+                                   value="{{ $search }}"
+                                   style="height: 50px"/>
+                            <a href="?"
+                               style="color: silver;padding: 5px;margin-bottom: 5px; display: block;float: right;">
                                 Clear search
                             </a>
                         </form>
@@ -101,79 +103,80 @@
                     <div class="table-responsive">
                         <table class="table">
                             <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Usernames</th>
-                                    <th>
-                                        User Tier
-                                    </th>
-                                    <th>Current Elo Ratings</th>
-                                </tr>
+                            <tr>
+                                <th>Name</th>
+                                <th>Usernames</th>
+                                <th>
+                                    User Tier
+                                </th>
+                                <th>Current Elo Ratings</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                @foreach ($users as $user)
-                                    <tr>
-                                        <td>
-                                            {{ $user->name }}
-                                            @if ($user->alias)
-                                                <br />
-                                                Alias: {{ $user->alias }}
-                                            @endif
-                                        </td>
-                                        <td width="30%">
-                                            @php
-                                                $usernames = $user
-                                                    ->usernames()
-                                                    ->where('ladder_id', $history->ladder->id)
-                                                    ->get();
-                                            @endphp
-                                            @foreach ($usernames as $player)
-                                                <span class="d-flex">
+                            @foreach ($users as $user)
+                                <tr>
+                                    <td>
+                                        {{ $user->name }}
+                                        @if ($user->alias)
+                                            <br/>
+                                            Alias: {{ $user->alias }}
+                                        @endif
+                                    </td>
+                                    <td width="30%">
+                                        @php
+                                            $usernames = $user
+                                                ->usernames()
+                                                ->where('ladder_id', $history->ladder->id)
+                                                ->get();
+                                        @endphp
+                                        @foreach ($usernames as $player)
+                                            <span class="d-flex">
                                                     <span class="me-1 icon-game icon-{{ $player->ladder->abbreviation }}"></span>
                                                     <span class="me-3">
                                                         <a
-                                                            href="{{ \App\URLHelper::getPlayerProfileUrl($player->ladder->currentHistory(), $player->username) }}">
+                                                                href="{{ \App\Models\URLHelper::getPlayerProfileUrl($player->ladder->currentHistory(), $player->username) }}">
                                                             {{ $player->username }}
                                                         </a>
                                                     </span>
-                                                    <br />
+                                                    <br/>
                                                 </span>
-                                            @endforeach
+                                        @endforeach
 
-                                            @if (count($usernames) == 0)
-                                                No {{ $history->ladder->name }} usernames for this user
-                                            @endif
-                                        </td>
-                                        <td>
-                                            <form method="POST" action="/admin/users/tier/update">
-                                                {{ csrf_field() }}
-                                                <input type="hidden" name="user_id" value="{{ $user->id }}" />
-                                                <input type="hidden" name="ladder_id" value="{{ $history->ladder->id }}" />
+                                        @if (count($usernames) == 0)
+                                            No {{ $history->ladder->name }} usernames for this user
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <form method="POST" action="/admin/users/tier/update">
+                                            {{ csrf_field() }}
+                                            <input type="hidden" name="user_id" value="{{ $user->id }}"/>
+                                            <input type="hidden" name="ladder_id" value="{{ $history->ladder->id }}"/>
 
-                                                @php
-                                                    $userTier = $user->getUserLadderTier($history->ladder);
-                                                @endphp
-                                                <input type="text" name="tier" class="form-control" value="{{ $userTier->tier }}" />
+                                            @php
+                                                $userTier = $user->getUserLadderTier($history->ladder);
+                                            @endphp
+                                            <input type="text" name="tier" class="form-control"
+                                                   value="{{ $userTier->tier }}"/>
 
-                                                <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" name="canPlayBothTiers"
-                                                        id="canPlayBothTiers_{{ $user->id }}" {{ $userTier->both_tiers ? 'checked' : '' }} />
-                                                    <label class="form-check-label" for="canPlayBothTiers_{{ $user->id }}">
-                                                        Can play both Tiers
-                                                    </label>
-                                                </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="canPlayBothTiers"
+                                                       id="canPlayBothTiers_{{ $user->id }}" {{ $userTier->both_tiers ? 'checked' : '' }} />
+                                                <label class="form-check-label" for="canPlayBothTiers_{{ $user->id }}">
+                                                    Can play both Tiers
+                                                </label>
+                                            </div>
 
-                                                <button type="submit" class="btn btn-outline btn-size-md">Save</button>
-                                            </form>
-                                        </td>
+                                            <button type="submit" class="btn btn-outline btn-size-md">Save</button>
+                                        </form>
+                                    </td>
 
-                                        <td>
-                                            Rating: {{ $user->rating }} <br />
-                                            Rated games:{{ $user->rated_games }}<br />
-                                            Peek rating: {{ $user->peak_rating }} <br />
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                    <td>
+                                        Rating: {{ $user->rating }} <br/>
+                                        Rated games:{{ $user->rated_games }}<br/>
+                                        Peek rating: {{ $user->peak_rating }} <br/>
+                                    </td>
+                                </tr>
+                            @endforeach
                             </tbody>
                         </table>
                         @include('components.pagination.paginate', ['paginator' => $users->appends(request()->query())])

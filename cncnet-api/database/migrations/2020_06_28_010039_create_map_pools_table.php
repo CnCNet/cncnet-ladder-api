@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateMapPoolsTable extends Migration {
 
@@ -29,11 +29,11 @@ class CreateMapPoolsTable extends Migration {
             $table->integer('map_pool_id');
         });
 
-        $qmLadderRules = \App\QmLadderRules::all();
+        $qmLadderRules = \App\Models\QmLadderRules::all();
 
         foreach ($qmLadderRules as $qm)
         {
-            $pool = new \App\MapPool;
+            $pool = new \App\Models\MapPool;
             $pool->qm_ladder_rules_id = $qm->id;
             $pool->name = "June Map Pool";
             $pool->save();

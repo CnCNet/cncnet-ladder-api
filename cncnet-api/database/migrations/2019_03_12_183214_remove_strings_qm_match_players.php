@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class RemoveStringsQmMatchPlayers extends Migration {
 
@@ -39,30 +39,30 @@ class RemoveStringsQmMatchPlayers extends Migration {
             $table->integer('ddraw_id')->unsigned()->nullable();
 
 		});
-        \App\QmMatchPlayer::chunk(500, function($qmPlayers) {
+        \App\Models\QmMatchPlayer::chunk(500, function($qmPlayers) {
             foreach ($qmPlayers as $qp)
             {
-                $ip = \App\IpAddress::findByIp($qp->ip_address);
+                $ip = \App\Models\IpAddress::findByIp($qp->ip_address);
                 if ($ip !== null)
                     $qp->ip_address_id = $ip->id;
 
-                $ip = \App\IpAddress::findByIp($qp->ipv6_address);
+                $ip = \App\Models\IpAddress::findByIp($qp->ipv6_address);
                 if ($ip !== null)
                     $qp->ipv6_address_id = $ip->id;
 
-                $ip = \App\IpAddress::findByIp($qp->lan_ip);
+                $ip = \App\Models\IpAddress::findByIp($qp->lan_ip);
                 if ($ip !== null)
                     $qp->lan_address_id = $ip->id;
 
-                $v = \App\PlayerDataString::findValue($qp->version);
+                $v = \App\Models\PlayerDataString::findValue($qp->version);
                 if ($v !== null)
                     $qp->version_id = $v->id;
 
-                $v = \App\PlayerDataString::findValue($qp->platform);
+                $v = \App\Models\PlayerDataString::findValue($qp->platform);
                 if ($v !== null)
                     $qp->platform_id = $v->id;
 
-                $ms = \App\MapSideString::findValue($qp->map_sides);
+                $ms = \App\Models\MapSideString::findValue($qp->map_sides);
                 if ($ms !== null)
                     $qp->map_sides_id = $ms->id;
 
@@ -100,7 +100,7 @@ class RemoveStringsQmMatchPlayers extends Migration {
             $table->text('map_sides')->nullable();
 		});
 
-        $qmPlayers = \App\QmMatchPlayer::all();
+        $qmPlayers = \App\Models\QmMatchPlayer::all();
         foreach ($qmPlayers as $qp)
         {
             $qp->ip_address = $qp->ipAddress ? $qp->ipAddress->address : "";

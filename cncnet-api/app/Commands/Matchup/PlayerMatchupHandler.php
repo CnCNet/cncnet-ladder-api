@@ -2,8 +2,7 @@
 
 namespace App\Commands\Matchup;
 
-use App\LeaguePlayer;
-use App\QmQueueEntry;
+use App\Models\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
 
 class PlayerMatchupHandler extends BaseMatchupHandler

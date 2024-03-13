@@ -1,14 +1,11 @@
 <?php namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Models\Clan;
+use App\Models\ClanPlayer;
+use App\Models\IrcHostmask;
+use App\Models\IrcPlayer;
 use Illuminate\Support\Facades\Cache;
-use App\User;
-use App\Player;
-use App\Clan;
-use App\ClanPlayer;
-use App\IrcAssociation;
-use App\IrcHostmask;
-use App\IrcPlayer;
+use Illuminate\Support\ServiceProvider;
 
 class IrcCache extends ServiceProvider {
 

@@ -2,12 +2,6 @@
 
 namespace App\Http\Services;
 
-use App\LadderHistory;
-use App\PlayerCache;
-use App\PlayerHistory;
-use App\User;
-use Carbon\Carbon;
-
 class UserRatingService
 {
     /**

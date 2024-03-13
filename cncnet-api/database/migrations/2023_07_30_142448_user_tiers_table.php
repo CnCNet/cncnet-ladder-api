@@ -1,9 +1,9 @@
 <?php
 
-use App\PlayerHistory;
+use App\Models\PlayerHistory;
 use Carbon\Carbon;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class UserTiersTable extends Migration
 {
@@ -28,7 +28,7 @@ class UserTiersTable extends Migration
         $start = $now->startOfMonth()->toDateTimeString();
         $end = $now->endOfMonth()->toDateTimeString();
 
-        $ladderHistories = \App\LadderHistory::whereBetween("starts", [$start, $start])
+        $ladderHistories = \App\Models\LadderHistory::whereBetween("starts", [$start, $start])
             ->whereBetween("ends", [$end, $end])
             ->get();
 
@@ -42,13 +42,13 @@ class UserTiersTable extends Migration
 
             foreach ($usersThisMonth as $user)
             {
-                $player = \App\Player::find($user->player_id);
+                $player = \App\Models\Player::find($user->player_id);
 
                 // Migrates current data 
                 $cachedTier = $player->getCachedPlayerTierByLadderHistory($ladderHistory);
                 $bothTiers = $this->checkLegacyLeaguePlayer($user, $ladderHistory->ladder);
 
-                $userTier = new \App\UserTier();
+                $userTier = new \App\Models\UserTier();
                 $userTier->user_id = $user->id;
                 $userTier->ladder_id = $ladderHistory->ladder->id;
                 $userTier->tier = $cachedTier ?? 1;
@@ -60,7 +60,7 @@ class UserTiersTable extends Migration
 
     private function checkLegacyLeaguePlayer($user, $ladder)
     {
-        $leaguePlayer = \App\LeaguePlayer::where("user_id", $user->id)->where("ladder_id", $ladder->id)->first();
+        $leaguePlayer = \App\Models\LeaguePlayer::where("user_id", $user->id)->where("ladder_id", $ladder->id)->first();
         if ($leaguePlayer)
         {
             return $leaguePlayer->can_play_both_tiers;

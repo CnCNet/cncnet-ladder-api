@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class Migrate2v2MapstoRa2Cl extends Migration
@@ -44,9 +43,9 @@ class Migrate2v2MapstoRa2Cl extends Migration
             "e9536a6edff4dcff7ccb1f2ff94268ee2c5d5bde"
         ];
 
-        $maps = \App\Map::whereIn('hash', $map_hashes)->where('ladder_id', 5)->get();
+        $maps = \App\Models\Map::whereIn('hash', $map_hashes)->where('ladder_id', 5)->get();
 
-        $clanLadder = \App\Ladder::where('abbreviation', 'ra2-cl')->first();
+        $clanLadder = \App\Models\Ladder::where('abbreviation', 'ra2-cl')->first();
 
         foreach ($maps as $map)
         {

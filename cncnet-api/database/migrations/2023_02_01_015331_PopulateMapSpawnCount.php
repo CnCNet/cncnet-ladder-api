@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class PopulateMapSpawnCount extends Migration
@@ -12,7 +11,7 @@ class PopulateMapSpawnCount extends Migration
      */
     public function up()
     {
-        $maps = \App\Map::all();
+        $maps = \App\Models\Map::all();
 
         foreach ($maps as $map)
         {

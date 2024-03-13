@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateAchievementTables extends Migration
 {
@@ -68,7 +68,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $numGames => $achName)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Win ' . $ladderName . ' QM Games';
@@ -109,7 +109,7 @@ class CreateAchievementTables extends Migration
 					//create the achievement
 					foreach ($map as $numGames => $achName)
 					{
-						$a = new \App\Achievement();
+						$a = new \App\Models\Achievement();
 						$a->ladder_id = $ladderId;
 						$a->order = $order++;
 						$a->tag = explode(" ", $achName)[0] . ': Win QM Games';
@@ -134,7 +134,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Play Games in one Month';
@@ -157,7 +157,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Win QM Games in One Month';
@@ -203,7 +203,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Conscripts';
@@ -229,7 +229,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Soviet Attack Dogs';
@@ -255,7 +255,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Flak Troopers';
@@ -281,7 +281,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Tesla Troopers';
@@ -307,7 +307,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Crazy Ivans';
@@ -333,7 +333,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Desolators';
@@ -359,7 +359,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Terrorists';
@@ -387,7 +387,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Boris Desolators';
@@ -414,7 +414,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Rhino Tanks';
@@ -440,7 +440,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Flak Traks';
@@ -466,7 +466,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Terror Drones';
@@ -492,7 +492,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Tesla Tanks';
@@ -518,7 +518,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Demolition Trucks';
@@ -544,7 +544,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Apocalypse Tanks';
@@ -572,7 +572,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Siege Choppers';
@@ -599,7 +599,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Kirovs';
@@ -631,7 +631,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Conscripts';
@@ -653,7 +653,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Soviet Attack Dogs';
@@ -675,7 +675,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Flak Troopers';
@@ -697,7 +697,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Tesla Troopers';
@@ -719,7 +719,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Crazy Ivans';
@@ -741,7 +741,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Desolators';
@@ -763,7 +763,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Terrorists';
@@ -785,7 +785,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Rhino Tanks';
@@ -807,7 +807,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Flak Traks';
@@ -829,7 +829,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Terror Drones';
@@ -851,7 +851,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Tesla Tanks';
@@ -873,7 +873,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Demolition Trucks';
@@ -895,7 +895,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Apocalypse Tanks';
@@ -919,7 +919,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Siege Choppers';
@@ -942,7 +942,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Kirovs';
@@ -978,7 +978,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build GIs';
@@ -1004,7 +1004,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Allied Attack Dogs';
@@ -1032,7 +1032,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Guardian GIs';
@@ -1059,7 +1059,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Snipers';
@@ -1087,7 +1087,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Navy Seals';
@@ -1114,7 +1114,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Rocketeers';
@@ -1140,7 +1140,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Chrono Legionnaires';
@@ -1166,7 +1166,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Boris Tanyas';
@@ -1192,7 +1192,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Grizzly Tanks';
@@ -1218,7 +1218,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build IFVs';
@@ -1244,7 +1244,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Mirage Tanks';
@@ -1270,7 +1270,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Prism Tanks';
@@ -1296,7 +1296,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Tank Destroyers';
@@ -1324,7 +1324,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Battle Fortresses';
@@ -1353,7 +1353,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Harriers';
@@ -1379,7 +1379,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Black Eagles';
@@ -1411,7 +1411,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build GIs';
@@ -1433,7 +1433,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Allied Attack Dogs';
@@ -1457,7 +1457,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Guardian GIs';
@@ -1480,7 +1480,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Snipers';
@@ -1504,7 +1504,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Navy Seals';
@@ -1527,7 +1527,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Rocketeers';
@@ -1549,7 +1549,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Chrono Legionnaires';
@@ -1571,7 +1571,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Grizzly Tanks';
@@ -1593,7 +1593,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build IFVs';
@@ -1615,7 +1615,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Mirage Tanks';
@@ -1637,7 +1637,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Prism Tanks';
@@ -1659,7 +1659,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Tank Destroyers';
@@ -1683,7 +1683,7 @@ class CreateAchievementTables extends Migration
 			];
 			foreach ($map as $key => $val)
 			{
-				$a = new \App\Achievement();
+				$a = new \App\Models\Achievement();
 				$a->ladder_id = $ladderId;
 				$a->order = $order++;
 				$a->tag = 'Build Battle Fortresses';
@@ -1706,7 +1706,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Harriers';
@@ -1728,7 +1728,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Black Eagles';
@@ -1764,7 +1764,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Initiates';
@@ -1790,7 +1790,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Viruses';
@@ -1816,7 +1816,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Yuri Clones';
@@ -1842,7 +1842,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Brutes';
@@ -1868,7 +1868,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Yuri Primes';
@@ -1894,7 +1894,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Lasher Tanks';
@@ -1920,7 +1920,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Gattling Tanks';
@@ -1946,7 +1946,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Magnetrons';
@@ -1972,7 +1972,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Masterminds';
@@ -1998,7 +1998,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Floating Disks';
@@ -2030,7 +2030,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Initiates';
@@ -2052,7 +2052,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Viruses';
@@ -2074,7 +2074,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Yuri Clones';
@@ -2096,7 +2096,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Brutes';
@@ -2118,7 +2118,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Lasher Tanks';
@@ -2140,7 +2140,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Gattling Tanks';
@@ -2162,7 +2162,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Magnetrons';
@@ -2184,7 +2184,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Masterminds';
@@ -2206,7 +2206,7 @@ class CreateAchievementTables extends Migration
 		];
 		foreach ($map as $key => $val)
 		{
-			$a = new \App\Achievement();
+			$a = new \App\Models\Achievement();
 			$a->ladder_id = $ladderId;
 			$a->order = $order++;
 			$a->tag = 'Build Floating Disks';

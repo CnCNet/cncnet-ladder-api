@@ -2,17 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ladder;
+use App\Models\MapPool;
+use CurlFile;
 use ErrorException;
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use \Carbon\Carbon;
-use \App\User;
-use \App\MapPool;
-use \App\Ladder;
-use \App\SpawnOptionString;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use CurlFile;
 use ZipArchive;
 
 class MapPoolController extends Controller
@@ -21,12 +16,12 @@ class MapPoolController extends Controller
     {
         if ($request->id == "new" || $request->id == 0)
         {
-            $qmMap = new \App\QmMap;
+            $qmMap = new \App\Models\QmMap;
             $message = "Successfully created new map";
         }
         else
         {
-            $qmMap = \App\QmMap::where('id', $request->id)->first();
+            $qmMap = \App\Models\QmMap::where('id', $request->id)->first();
             $message = "Sucessfully updated map";
         }
 
@@ -54,7 +49,7 @@ class MapPoolController extends Controller
         $qmMap->random_spawns = $request->random_spawns == "on" ? true : false;
         $qmMap->map_tier = $request->map_tier;
 
-        $mapTier = \App\MapTier::where('map_pool_id', $qmMap->map_pool_id)->where('tier', $qmMap->map_tier)->first();
+        $mapTier = \App\Models\MapTier::where('map_pool_id', $qmMap->map_pool_id)->where('tier', $qmMap->map_tier)->first();
         if (!$mapTier || $mapTier == null)
         {
             $request->session()->flash('error', "Map map_tier $request->map_tier does not exist");
@@ -71,7 +66,7 @@ class MapPoolController extends Controller
             $qmMap->weight = $request->weight;
         }
 
-        $ladderRules = \App\MapPool::find($request->map_pool_id)->ladder->qmLadderRules;
+        $ladderRules = \App\Models\MapPool::find($request->map_pool_id)->ladder->qmLadderRules;
         if ($ladderRules->use_ranked_map_picker && ($request->map_tier > 5 || $request->map_tier < 0))
         {
             $request->session()->flash('error', "Map map_tier $request->map_tier cannot be less than 0 or greater than 5");
@@ -125,7 +120,7 @@ class MapPoolController extends Controller
             }
 
             //check if a map with this hash already exists, shouldn't be creating duplicate maps...
-            $existingMapsWithHash = \App\Map::where('hash', $hash)->where('ladder_id', $request->ladder_id)->first();
+            $existingMapsWithHash = \App\Models\Map::where('hash', $hash)->where('ladder_id', $request->ladder_id)->first();
 
             if ($existingMapsWithHash != null)
             {
@@ -145,11 +140,11 @@ class MapPoolController extends Controller
                 return redirect()->back();
             }
 
-            $map = new \App\Map;
+            $map = new \App\Models\Map;
         }
         else
         {
-            $map = \App\Map::find($request->map_id);
+            $map = \App\Models\Map::find($request->map_id);
             if ($map === null)
             {
                 $request->session()->flash('error', "Map Not found");
@@ -340,7 +335,7 @@ class MapPoolController extends Controller
         if ($header == null)
             return "No 'Map' section found from INI";
 
-        $mapHeader = new \App\MapHeader();
+        $mapHeader = new \App\Models\MapHeader();
         $mapHeader->map_id = $mapId;
         $mapHeader->width = $header["Width"];
         $mapHeader->height = $header["Height"];
@@ -366,7 +361,7 @@ class MapPoolController extends Controller
             $x = intval($wayPointValue % 128);
             $y = intval($wayPointValue / 128);
 
-            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint = new \App\Models\MapWaypoint();
             $mapWaypoint->x = $x;
             $mapWaypoint->y = $y;
             $mapWaypoint->bit_idx = $i;
@@ -377,7 +372,7 @@ class MapPoolController extends Controller
                 $spawnsArr[] = $wayPointValue;
         }
 
-        $map = \App\Map::where('id', $mapId)->first();
+        $map = \App\Models\Map::where('id', $mapId)->first();
         $map->spawn_count = count($spawnsArr);
         $map->save();
     }
@@ -391,7 +386,7 @@ class MapPoolController extends Controller
 
         $localSize = $header["LocalSize"];
 
-        $mapHeader = new \App\MapHeader();
+        $mapHeader = new \App\Models\MapHeader();
         $mapHeader->map_id = $mapId;
         $mapHeader->width = intval(explode(",", $localSize)[2]);
         $mapHeader->height = intval(explode(",", $localSize)[3]);
@@ -416,7 +411,7 @@ class MapPoolController extends Controller
             $x = intval($wayPointValue % 1000);
             $y = intval($wayPointValue / 1000);
 
-            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint = new \App\Models\MapWaypoint();
             $mapWaypoint->x = $x;
             $mapWaypoint->y = $y;
             $mapWaypoint->bit_idx = $i;
@@ -427,7 +422,7 @@ class MapPoolController extends Controller
                 $spawnsArr[] = $wayPointValue;
         }
 
-        $map = \App\Map::where('id', $mapId)->first();
+        $map = \App\Models\Map::where('id', $mapId)->first();
         $map->spawn_count = count($spawnsArr);
         $map->save();
     }
@@ -439,7 +434,7 @@ class MapPoolController extends Controller
         if ($header == null)
             return "No header section found from INI";
 
-        $mapHeader = new \App\MapHeader();
+        $mapHeader = new \App\Models\MapHeader();
         $mapHeader->map_id = $mapId;
         $mapHeader->width = intval($header["Width"]);
         $mapHeader->height = intval($header["Height"]);
@@ -455,7 +450,7 @@ class MapPoolController extends Controller
             $x = intval(explode(',', $wayPointValue)[0]);
             $y = intval(explode(',', $wayPointValue)[1]);
 
-            $mapWaypoint = new \App\MapWaypoint();
+            $mapWaypoint = new \App\Models\MapWaypoint();
             $mapWaypoint->x = $x;
             $mapWaypoint->y = $y;
             $mapWaypoint->bit_idx = $i;
@@ -463,7 +458,7 @@ class MapPoolController extends Controller
             $mapWaypoint->save();
         }
 
-        $map = \App\Map::where('id', $mapId)->first();
+        $map = \App\Models\Map::where('id', $mapId)->first();
         $map->spawn_count = $mapHeader->numStartingPoints;
         $map->save();
     }
@@ -507,8 +502,8 @@ class MapPoolController extends Controller
                 'ladder' => $ladder,
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
-                'spawnOptions' =>  \App\SpawnOption::all(),
-                'allLadders' => \App\Ladder::all(),
+                'spawnOptions' =>  \App\Models\SpawnOption::all(),
+                'allLadders' => \App\Models\Ladder::all(),
                 'use_ranked_map_picker' => $ladderRules->use_ranked_map_picker
             ]
         );
@@ -555,7 +550,7 @@ class MapPoolController extends Controller
         $mapPool->save();
 
         // create initial map tier 1
-        $mapTier = new \App\MapTier();
+        $mapTier = new \App\Models\MapTier();
         $mapTier->map_pool_id = $mapPool->id;
         $mapTier->tier = 1;
         $mapTier->max_vetoes = 0; // default 0 vetoes
@@ -566,9 +561,9 @@ class MapPoolController extends Controller
 
     public function copyMaps(Request $request, $ladderId, $mapPoolId)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
         $mapPool = MapPool::find($mapPoolId);
-        $copyFrom = \App\Ladder::find($request->clone_ladder_id);
+        $copyFrom = \App\Models\Ladder::find($request->clone_ladder_id);
 
         foreach ($copyFrom->maps as $map)
         {
@@ -583,7 +578,7 @@ class MapPoolController extends Controller
 
     public function changeMapPool(Request $request, $ladderId)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
 
         $ladder->map_pool_id = $request->map_pool_id;
         $ladder->save();
@@ -604,7 +599,7 @@ class MapPoolController extends Controller
 
     public function removeQuickMatchMap(Request $request, $ladderId, $mapPoolId)
     {
-        $qmMap = \App\QmMap::find($request->map_id);
+        $qmMap = \App\Models\QmMap::find($request->map_id);
         $mapPool = MapPool::find($mapPoolId);
 
         if ($qmMap !== null)
@@ -631,7 +626,7 @@ class MapPoolController extends Controller
         {
             $map_id = $request->input("bit_idx_{$i}");
 
-            $map = \App\QmMap::find($map_id);
+            $map = \App\Models\QmMap::find($map_id);
             if ($map !== null)
             {
                 $toSave[] = $map;
@@ -656,10 +651,10 @@ class MapPoolController extends Controller
 
     public function editMapTier(Request $request)
     {
-        $mapTier = \App\MapTier::where('tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->first();
+        $mapTier = \App\Models\MapTier::where('tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->first();
         if (!$mapTier || $mapTier == null)
         {
-            $mapTier = new \App\MapTier();
+            $mapTier = new \App\Models\MapTier();
             $mapTier->map_pool_id = $request->map_pool_id;
         }
         
@@ -682,7 +677,7 @@ class MapPoolController extends Controller
 
     public function deleteMapTier(Request $request)
     {
-        $mapTier = \App\MapTier::where('tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->first();
+        $mapTier = \App\Models\MapTier::where('tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->first();
         if (!$mapTier || $mapTier == null)
         {
             $request->session()->flash('error', "Map Tier not found " . $mapTier->tier);
@@ -690,7 +685,7 @@ class MapPoolController extends Controller
         }
 
         // check if any maps in this pool belong to this tier
-        $qmMaps = \App\QmMap::where('map_tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->get();
+        $qmMaps = \App\Models\QmMap::where('map_tier', $request->tier)->where('map_pool_id', $request->map_pool_id)->get();
         if ($qmMaps->count() > 0)
         {
             $request->session()->flash('error', "Cannot delete tier " . $request->tier . " because there are maps in this map pool assigned to this tier.");

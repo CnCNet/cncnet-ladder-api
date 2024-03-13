@@ -2,10 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class GenerateBulkRecords extends Command
 {
@@ -37,13 +35,13 @@ class GenerateBulkRecords extends Command
 
         echo "Querying for data from ".$month."-".$year;
 
-        $histories = \App\LadderHistory::where('short', '=', $month . "-" . $year)->get();
+        $histories = \App\Models\LadderHistory::where('short', '=', $month . "-" . $year)->get();
 
         $ladders = [];
 
         foreach ($histories as $history) {
 
-            \App\Game::where('ladder_history_id', '=', $history->id)->whereNotNull('game_report_id')->chunk(500, function ($games) use (&$history, &$ladders) {
+            \App\Models\Game::where('ladder_history_id', '=', $history->id)->whereNotNull('game_report_id')->chunk(500, function ($games) use (&$history, &$ladders) {
 
                 foreach ($games as $game) {
  

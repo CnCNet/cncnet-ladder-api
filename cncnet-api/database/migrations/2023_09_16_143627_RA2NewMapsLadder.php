@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class RA2NewMapsLadder extends Migration
@@ -12,7 +11,7 @@ class RA2NewMapsLadder extends Migration
 	 */
 	public function up()
 	{
-		$ra2Ladder = \App\Ladder::where('abbreviation', 'ra2')->first();
+		$ra2Ladder = \App\Models\Ladder::where('abbreviation', 'ra2')->first();
 
 		#create test ladder
 		$ra2TestLadder = $ra2Ladder->replicate()->fill([
@@ -26,10 +25,10 @@ class RA2NewMapsLadder extends Migration
 		$lc->addLadder($ra2TestLadder->id); #create ladder histories
 
 		#add sides
-		$sides = \App\Side::where('ladder_id', $ra2Ladder->id)->get();
+		$sides = \App\Models\Side::where('ladder_id', $ra2Ladder->id)->get();
 		for ($i = 0; $i < count($sides); ++$i)
 		{
-			$side = new \App\Side();
+			$side = new \App\Models\Side();
 			$side->ladder_id = $ra2TestLadder->id;
 			$side->local_id = $i;
 			$side->name = $sides[$i]->name;
@@ -37,18 +36,18 @@ class RA2NewMapsLadder extends Migration
 		}
 
 		#create ladder rules			
-		$ra2LadderRules = \App\QmLadderRules::where('ladder_id', $ra2Ladder->id)->first();
+		$ra2LadderRules = \App\Models\QmLadderRules::where('ladder_id', $ra2Ladder->id)->first();
 		$newLadderRules = $ra2LadderRules->replicate()->fill([
 			'ladder_id' => $ra2TestLadder->id
 		]);
 		$newLadderRules->save();
 
 		#Copy over the RA2 spawn options
-		$options = \App\SpawnOptionValue::where('ladder_id', $ra2Ladder->id)->get();
+		$options = \App\Models\SpawnOptionValue::where('ladder_id', $ra2Ladder->id)->get();
 
 		foreach ($options as $option)
 		{
-			$o = new \App\SpawnOptionValue;
+			$o = new \App\Models\SpawnOptionValue;
 			$o->ladder_id = $ra2TestLadder->id;
 			$o->spawn_option_id = $option->spawn_option_id;
 			$o->value_id = $option->value_id;
@@ -63,10 +62,10 @@ class RA2NewMapsLadder extends Migration
 	 */
 	public function down()
 	{
-		$testLadder = \App\Ladder::where('abbreviation', 'ra2-beta')->first();
-		\App\SpawnOptionValue::where('ladder_id', $testLadder->id)->delete();
-		\App\QmLadderRules::where('ladder_id', $testLadder->id)->delete();
-		\App\Side::where('ladder_id', $testLadder->id)->delete();
+		$testLadder = \App\Models\Ladder::where('abbreviation', 'ra2-beta')->first();
+		\App\Models\SpawnOptionValue::where('ladder_id', $testLadder->id)->delete();
+		\App\Models\QmLadderRules::where('ladder_id', $testLadder->id)->delete();
+		\App\Models\Side::where('ladder_id', $testLadder->id)->delete();
 
 		$testLadder->delete();
 	}

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -82,7 +82,7 @@
                         <h3>Step 2</h3>
                         <p class="lead">In OBS, create a browser source</p>
                         <div class="tutorial-image">
-                            <img src="/images/obs/browser-source.png" alt="Browser source OBS" />
+                            <img src="/images/obs/browser-source.png" alt="Browser source OBS"/>
                         </div>
                     </div>
 
@@ -92,7 +92,7 @@
                             roughly to 635x110
                         </p>
                         <div class="tutorial-image">
-                            <img src="/images/obs/browser-source-url.png" alt="Browser source OBS" />
+                            <img src="/images/obs/browser-source-url.png" alt="Browser source OBS"/>
                         </div>
                     </div>
 
@@ -100,7 +100,7 @@
                         <h3>Step 4</h3>
                         <p class="lead">Click OK and resize, place in your stream as required.</p>
                         <div class="tutorial-image">
-                            <img src="/images/obs/drag-resize.png" alt="Browser source OBS" />
+                            <img src="/images/obs/drag-resize.png" alt="Browser source OBS"/>
                         </div>
                     </div>
 
@@ -109,7 +109,7 @@
                         <p class="lead">Save and see the result. The stats will automatically update every 30 seconds.
                         </p>
                         <div class="tutorial-image">
-                            <img src="/images/obs/browser-source-result.png" alt="Browser source OBS result" />
+                            <img src="/images/obs/browser-source-result.png" alt="Browser source OBS result"/>
                         </div>
                     </div>
                 </div>

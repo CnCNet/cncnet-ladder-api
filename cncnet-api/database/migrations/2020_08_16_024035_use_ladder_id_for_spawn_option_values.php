@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class UseLadderIdForSpawnOptionValues extends Migration {
 
@@ -18,7 +18,7 @@ class UseLadderIdForSpawnOptionValues extends Migration {
             $table->integer('ladder_id')->nullable();
         });
 
-        foreach(\App\SpawnOptionValue::all() as $sov)
+        foreach(\App\Models\SpawnOptionValue::all() as $sov)
         {
             $sov->ladder_id = $sov->qmLadderRules ? $sov->qmLadderRules->ladder->id : 0;
             $sov->save();
@@ -44,7 +44,7 @@ class UseLadderIdForSpawnOptionValues extends Migration {
             $table->integer('qm_ladder_rules_id')->nullable();
         });
 
-        foreach(\App\SpawnOptionValue::all() as $sov)
+        foreach(\App\Models\SpawnOptionValue::all() as $sov)
         {
             $sov->qm_ladder_rules_id = $sov->ladder !== null ? $sov->ladder->qmLadderRules->id : null;
             $sov->save();

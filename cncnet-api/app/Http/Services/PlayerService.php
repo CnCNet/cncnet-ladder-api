@@ -2,19 +2,16 @@
 
 namespace App\Http\Services;
 
-use App\Ban;
-use App\Ladder;
-use App\Player;
-use App\PlayerActiveHandle;
-use App\PlayerRating;
-use App\QmUserId;
-use App\User;
-use App\UserRating;
+use App\Models\Ladder;
+use App\Models\Player;
+use App\Models\PlayerActiveHandle;
+use App\Models\PlayerRating;
+use App\Models\QmUserId;
+use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use JWTAuth;
-use Tymon\JWTAuth\Exceptions\JWTException;
 
 class PlayerService
 {
@@ -35,7 +32,7 @@ class PlayerService
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
-        $player = \App\Player::where("username", "=", $username)
+        $player = \App\Models\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladderId)
             ->first();
 
@@ -43,13 +40,13 @@ class PlayerService
 
         if ($player == null)
         {
-            $player = new \App\Player();
+            $player = new \App\Models\Player();
             $player->username = $username;
             $player->user_id = $user->id;
             $player->ladder_id = $ladderId;
             $player->save();
 
-            $activeHandle = new \App\PlayerActiveHandle();
+            $activeHandle = new \App\Models\PlayerActiveHandle();
             $activeHandle->ladder_id = $ladderId;
             $activeHandle->player_id = $player->id;
             $activeHandle->user_id = $user->id;
@@ -65,7 +62,7 @@ class PlayerService
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
-        $player = \App\Player::where("username", "=", $username)
+        $player = \App\Models\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladderId)
             ->first();
 
@@ -73,7 +70,7 @@ class PlayerService
 
         if ($player == null)
         {
-            $player = new \App\Player();
+            $player = new \App\Models\Player();
             $player->username = $username;
             $player->user_id = $user->id;
             $player->ladder_id = $ladderId;
@@ -96,7 +93,7 @@ class PlayerService
 
     public function findPlayerByUsername($name, $ladder)
     {
-        return \App\Player::where("username", "=", $name)
+        return \App\Models\Player::where("username", "=", $name)
             ->where("ladder_id", "=", $ladder->id)
             ->first();
     }
@@ -168,7 +165,7 @@ class PlayerService
             return $ban;
         }
 
-        $ban = \App\IpAddress::findByIP($ip)->getBan(true);
+        $ban = \App\Models\IpAddress::findByIP($ip)->getBan(true);
         if ($ban !== null)
         {
             return $ban;

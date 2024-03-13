@@ -1,10 +1,8 @@
 <?php namespace App\Console\Commands;
 
+use App\Models\IrcAssociation;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use JWTAuth;
-use App\IrcAssociation;
 
 class UpdateIrc extends Command {
 

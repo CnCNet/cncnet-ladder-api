@@ -4,7 +4,7 @@ namespace App\Http\Services;
 
 use App\Helpers\AIHelper;
 use App\Helpers\GameHelper;
-use App\SpawnOptionType;
+use App\Models\SpawnOptionType;
 use Illuminate\Support\Facades\Log;
 
 class QuickMatchSpawnService

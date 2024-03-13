@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateGameObjectSchemasTable extends Migration {
 
@@ -29,13 +29,13 @@ class CreateGameObjectSchemasTable extends Migration {
             $table->integer('game_object_schema_id');
         });
 
-        foreach (\App\Ladder::all() as $ladder)
+        foreach (\App\Models\Ladder::all() as $ladder)
         {
-            $gos = \App\GameObjectSchema::firstOrCreate([ 'name' => "{$ladder->name} Schema" ]);
+            $gos = \App\Models\GameObjectSchema::firstOrCreate([ 'name' => "{$ladder->name} Schema" ]);
             $ladder->game_object_schema_id = $gos->id;
             $ladder->save();
 
-            foreach (\App\CountableGameObject::where('ladder_id', '=', $ladder->id)->get() as $cgo)
+            foreach (\App\Models\CountableGameObject::where('ladder_id', '=', $ladder->id)->get() as $cgo)
             {
                 $cgo->game_object_schema_id = $gos->id;
                 $cgo->save();
@@ -61,9 +61,9 @@ class CreateGameObjectSchemasTable extends Migration {
             $table->integer('ladder_id');
         });
 
-        foreach (\App\Ladder::all() as $ladder)
+        foreach (\App\Models\Ladder::all() as $ladder)
         {
-            foreach (\App\CountableGameObject::where('game_object_schema_id', '=', $ladder->game_object_schema_id)->get() as $cgo)
+            foreach (\App\Models\CountableGameObject::where('game_object_schema_id', '=', $ladder->game_object_schema_id)->get() as $cgo)
             {
                 $cgo->ladder_id = $ladder->id;
                 $cgo->save();

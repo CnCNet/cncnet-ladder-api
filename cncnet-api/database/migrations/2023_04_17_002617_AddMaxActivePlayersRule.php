@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddMaxActivePlayersRule extends Migration
 {
@@ -19,7 +19,7 @@ class AddMaxActivePlayersRule extends Migration
 
         // Migration failed on staging
 
-        $ladderRules = \App\QmLadderRules::all();
+        $ladderRules = \App\Models\QmLadderRules::all();
 
         foreach ($ladderRules as $ladderRule)
         {

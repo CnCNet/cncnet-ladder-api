@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class AddOilCameo extends Migration
@@ -13,7 +12,7 @@ class AddOilCameo extends Migration
 	 */
 	public function up()
 	{
-		$gcos = \App\CountableGameObject::where('name', 'CAOILD')->get();
+		$gcos = \App\Models\CountableGameObject::where('name', 'CAOILD')->get();
 		foreach ($gcos as $gco)
 		{
 			$gco->cameo = 'psybicon';

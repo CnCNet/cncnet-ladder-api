@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCountableObjectHeapsTable extends Migration {
 
@@ -20,23 +20,23 @@ class CreateCountableObjectHeapsTable extends Migration {
 			$table->timestamps();
 		});
 
-        \App\CountableObjectHeap::newFromNameDesc("UNB", "Units Bought");
-        \App\CountableObjectHeap::newFromNameDesc("INB", "Infantry Bought");
-        \App\CountableObjectHeap::newFromNameDesc("PLB", "Planes Bought");
-        \App\CountableObjectHeap::newFromNameDesc("VSB", "Ships Built");
-        \App\CountableObjectHeap::newFromNameDesc("BLB", "Buildings Bought");
-        \App\CountableObjectHeap::newFromNameDesc("UNK", "Units Killed");
-        \App\CountableObjectHeap::newFromNameDesc("INK", "Infantry Killed");
-        \App\CountableObjectHeap::newFromNameDesc("PLK", "Planes Killed");
-        \App\CountableObjectHeap::newFromNameDesc("VSK", "Ships Killed");
-        \App\CountableObjectHeap::newFromNameDesc("BLK", "Buildings Killed");
-        \App\CountableObjectHeap::newFromNameDesc("BLC", "Buildings Captured");
-        \App\CountableObjectHeap::newFromNameDesc("UNL", "Units Lost");
-        \App\CountableObjectHeap::newFromNameDesc("INL", "Infantry Lost");
-        \App\CountableObjectHeap::newFromNameDesc("PLL", "Planes Lost");
-        \App\CountableObjectHeap::newFromNameDesc("BLL", "Buildings Lost");
-        \App\CountableObjectHeap::newFromNameDesc("VSL", "Ships Lost");
-        \App\CountableObjectHeap::newFromNameDesc("CRA", "Crates Found");
+        \App\Models\CountableObjectHeap::newFromNameDesc("UNB", "Units Bought");
+        \App\Models\CountableObjectHeap::newFromNameDesc("INB", "Infantry Bought");
+        \App\Models\CountableObjectHeap::newFromNameDesc("PLB", "Planes Bought");
+        \App\Models\CountableObjectHeap::newFromNameDesc("VSB", "Ships Built");
+        \App\Models\CountableObjectHeap::newFromNameDesc("BLB", "Buildings Bought");
+        \App\Models\CountableObjectHeap::newFromNameDesc("UNK", "Units Killed");
+        \App\Models\CountableObjectHeap::newFromNameDesc("INK", "Infantry Killed");
+        \App\Models\CountableObjectHeap::newFromNameDesc("PLK", "Planes Killed");
+        \App\Models\CountableObjectHeap::newFromNameDesc("VSK", "Ships Killed");
+        \App\Models\CountableObjectHeap::newFromNameDesc("BLK", "Buildings Killed");
+        \App\Models\CountableObjectHeap::newFromNameDesc("BLC", "Buildings Captured");
+        \App\Models\CountableObjectHeap::newFromNameDesc("UNL", "Units Lost");
+        \App\Models\CountableObjectHeap::newFromNameDesc("INL", "Infantry Lost");
+        \App\Models\CountableObjectHeap::newFromNameDesc("PLL", "Planes Lost");
+        \App\Models\CountableObjectHeap::newFromNameDesc("BLL", "Buildings Lost");
+        \App\Models\CountableObjectHeap::newFromNameDesc("VSL", "Ships Lost");
+        \App\Models\CountableObjectHeap::newFromNameDesc("CRA", "Crates Found");
 	}
 
 	/**

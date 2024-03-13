@@ -2,11 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\ClanCache;
-use App\ClanCacheUpdate;
+use App\Models\ClanCache;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class ForceUpdateClanCache extends Command
 {

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class ReformatGamesTable extends Migration {
 
@@ -44,10 +44,10 @@ class ReformatGamesTable extends Migration {
             $table->integer('game_report_id')->nullable()->unsigned();
         });
 
-        $games = \App\Game::all();
+        $games = \App\Models\Game::all();
         foreach ($games as $game)
         {
-            $gr = \App\GameReport::where('game_id', $game->id)->first();
+            $gr = \App\Models\GameReport::where('game_id', $game->id)->first();
             if ($gr !== null)
             {
                 $game->game_report_id = $gr->id;

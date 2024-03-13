@@ -2,28 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Clan;
-use App\ClanCache;
-use App\CountableObjectHeap;
-use App\Game;
 use App\Helpers\GameHelper;
 use App\Http\Services\AchievementService;
 use App\Http\Services\ChartService;
-use \Carbon\Carbon;
-use App\LadderHistory;
-use Illuminate\Http\Request;
-use \App\Http\Services\LadderService;
-use App\Http\Services\UserRatingService;
-use \App\Http\Services\StatsService;
-use App\Ladder;
-use App\News;
-use App\Player;
-use App\PlayerHistory;
-use App\QmCanceledMatch;
-use App\User;
-use App\UserRating;
+use App\Http\Services\LadderService;
+use App\Http\Services\StatsService;
+use App\Models\Clan;
+use App\Models\ClanCache;
+use App\Models\CountableObjectHeap;
+use App\Models\Ladder;
+use App\Models\LadderHistory;
+use App\Models\Player;
+use App\Models\User;
+use Carbon\Carbon;
 use GuzzleHttp\Subscriber\History;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class LadderController extends Controller
 {
@@ -117,7 +110,7 @@ class LadderController extends Controller
             }
             else
             {
-                $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
+                $players = \App\Models\PlayerCache::where("ladder_history_id", "=", $history->id)
                     ->where("tier", "=", $tier)
                     ->where("player_name", "like", "%" . $request->search . "%")
                     ->orderBy("games", $orderBy)
@@ -135,7 +128,7 @@ class LadderController extends Controller
             }
             else
             {
-                $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
+                $players = \App\Models\PlayerCache::where("ladder_history_id", "=", $history->id)
                     ->where("tier", "=", $tier)
                     ->where("player_name", "like", "%" . $request->search . "%")
                     ->orderBy("points", "desc")
@@ -153,7 +146,7 @@ class LadderController extends Controller
             $statsXOfTheDay = $this->statsService->getPlayerOfTheDay($history);
         }
 
-        $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
+        $sides = \App\Models\Side::where('ladder_id', '=', $history->ladder_id)
             ->where('local_id', '>=', 0)
             ->orderBy('local_id', 'asc')
             ->pluck('name');
@@ -599,7 +592,7 @@ class LadderController extends Controller
 
     public function addLadder($ladderId)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
 
         for ($times = 0; $times < 5; $times++)
         {
@@ -630,11 +623,11 @@ class LadderController extends Controller
 
     public function saveLadder(Request $request, $ladderId = null)
     {
-        $ladder = \App\Ladder::find($ladderId);
+        $ladder = \App\Models\Ladder::find($ladderId);
 
         if ($request->id === "new")
         {
-            $ladder = new \App\Ladder;
+            $ladder = new \App\Models\Ladder;
         }
 
         else if ($ladderId === null || $ladder === null)

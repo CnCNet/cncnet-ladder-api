@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class BlitzLadder extends Migration {
@@ -11,7 +10,7 @@ class BlitzLadder extends Migration {
 	*/
    public function up()
    {
-	   $yrLadder = \App\Ladder::where('abbreviation', 'yr')->first();
+	   $yrLadder = \App\Models\Ladder::where('abbreviation', 'yr')->first();
 
 	   #create blitz ladder copying from the yr ladder
 	   $blitzLadder = $yrLadder->replicate()->fill([
@@ -24,10 +23,10 @@ class BlitzLadder extends Migration {
 	   $lc->addLadder($blitzLadder->id); #create ladder histories
 
 	   #add sides
-	   $sides = \App\Side::where('ladder_id', $yrLadder->id)->get();
+	   $sides = \App\Models\Side::where('ladder_id', $yrLadder->id)->get();
 	   for ($i = 0; $i < count($sides); ++$i)
 	   {
-		   $side = new \App\Side();
+		   $side = new \App\Models\Side();
 		   $side->ladder_id = $blitzLadder->id;
 		   $side->local_id = $i;
 		   $side->name = $sides[$i]->name;
@@ -35,18 +34,18 @@ class BlitzLadder extends Migration {
 	   }
 
 	   #create ladder rules			
-	   $yrLadderRules = \App\QmLadderRules::where('ladder_id', $yrLadder->id)->first();
+	   $yrLadderRules = \App\Models\QmLadderRules::where('ladder_id', $yrLadder->id)->first();
 	   $newLadderRules = $yrLadderRules->replicate()->fill([
 		   'ladder_id' => $blitzLadder->id
 	   ]);
 	   $newLadderRules->save();
 
 	   #Copy over the YR spawn options
-	   $options = \App\SpawnOptionValue::where('ladder_id', $yrLadder->id)->get();
+	   $options = \App\Models\SpawnOptionValue::where('ladder_id', $yrLadder->id)->get();
 
 	   foreach ($options as $option)
 	   {
-		   $o = new \App\SpawnOptionValue;
+		   $o = new \App\Models\SpawnOptionValue;
 		   $o->ladder_id = $blitzLadder->id;
 		   $o->spawn_option_id = $option->spawn_option_id;
 		   $o->value_id = $option->value_id;
@@ -61,10 +60,10 @@ class BlitzLadder extends Migration {
 	*/
    public function down()
    {
-	   $blitzLadder = \App\Ladder::where('name', 'blitz')->first();
-	   \App\SpawnOptionValue::where('ladder_id', $blitzLadder->id)->delete();
-	   \App\QmLadderRules::where('ladder_id', $blitzLadder->id)->delete();
-	   \App\Side::where('ladder_id', $blitzLadder->id)->delete();
+	   $blitzLadder = \App\Models\Ladder::where('name', 'blitz')->first();
+	   \App\Models\SpawnOptionValue::where('ladder_id', $blitzLadder->id)->delete();
+	   \App\Models\QmLadderRules::where('ladder_id', $blitzLadder->id)->delete();
+	   \App\Models\Side::where('ladder_id', $blitzLadder->id)->delete();
 
 	   $blitzLadder->delete();
    }

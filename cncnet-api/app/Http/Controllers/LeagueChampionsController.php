@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\ClanCache;
-use \Carbon\Carbon;
-use App\LadderHistory;
+use App\Http\Services\LadderService;
+use App\Models\ClanCache;
+use App\Models\Ladder;
 use Illuminate\Http\Request;
-use \App\Http\Services\LadderService;
-use App\Ladder;
 
 class LeagueChampionsController extends Controller
 {
@@ -49,7 +47,7 @@ class LeagueChampionsController extends Controller
                 }
                 else
                 {
-                    $players = \App\PlayerCache::where("ladder_history_id", "=", $history->id)
+                    $players = \App\Models\PlayerCache::where("ladder_history_id", "=", $history->id)
                         ->where("tier", "=", $tier)
                         ->where("player_name", "like", "%" . $request->search . "%")
                         ->orderBy("points", "desc")
@@ -57,7 +55,7 @@ class LeagueChampionsController extends Controller
                         ->splice(0, 10);
                 }
 
-                $sides = \App\Side::where('ladder_id', '=', $history->ladder_id)
+                $sides = \App\Models\Side::where('ladder_id', '=', $history->ladder_id)
                     ->where('local_id', '>=', 0)
                     ->orderBy('local_id', 'asc')
                     ->pluck('name');

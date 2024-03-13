@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CorrectQmLadderRulesFranceYuri extends Migration {
 
@@ -16,19 +16,19 @@ class CorrectQmLadderRulesFranceYuri extends Migration {
 		{
 			//
 		});
-        $qmRules = \App\Ladder::where('abbreviation', 'yr')->first()->qmLadderRules()->first();
+        $qmRules = \App\Models\Ladder::where('abbreviation', 'yr')->first()->qmLadderRules()->first();
         if ($qmRules !== null)
         {
             $qmRules->all_sides = "0,1,2,3,4,5,6,7,8,9";
             $qmRules->save();
 
-            $side = new \App\Side;
+            $side = new \App\Models\Side;
             $side->local_id = 2;
             $side->name = "France";
             $side->ladder_id = $qmRules->ladder_id;
             $side->save();
 
-            $side = new \App\Side;
+            $side = new \App\Models\Side;
             $side->local_id = 9;
             $side->name = "Yuri";
             $side->ladder_id = $qmRules->ladder_id;

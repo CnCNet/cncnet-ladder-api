@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 @section('title', 'CnCNet News')
 
 @section('feature')

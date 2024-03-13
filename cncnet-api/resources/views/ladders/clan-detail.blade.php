@@ -6,21 +6,22 @@
 
 @section('title', 'Viewing - ' . $clanCache->clan_name)
 @section('body-class', 'body-player-detail')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
 @section('feature')
     <div class="feature">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
-                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}"
+                         alt="{{ $history->ladder->name }}"
+                         class="d-block img-fluid me-lg-0 ms-lg-auto"/>
                 </div>
 
                 <div class="col-12 col-lg-6">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold"> {{ $clanCache->clan_name }}</strong> <br />
+                        <strong class="fw-bold"> {{ $clanCache->clan_name }}</strong> <br/>
                         <span>{{ $history->ladder->name }}</span>
                     </h1>
 
@@ -39,7 +40,7 @@
                             </a>
                         </div>
                         <div class="mini-breadcrumb-item">
-                            <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                            <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
                                 <span class="material-symbols-outlined icon">
                                     military_tech
                                 </span>
@@ -73,7 +74,7 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                    <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
                         <i class="bi bi-flag-fill pe-3"></i>
                         {{ $history->ladder->name }}
                     </a>
@@ -100,9 +101,9 @@
                     </div>
                     <div class="player-rank pt-3 me-5">
                         <h1 class="username">
-                            {{ $clanCache->clan_name }} 
+                            {{ $clanCache->clan_name }}
                         </h1>
-                        
+
                         <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $clanCache->rank() }}</h3>
                     </div>
 
@@ -178,30 +179,30 @@
                                 <div class="table-responsive" style="width:100%">
                                     <table class="table table player-factions-table">
                                         <thead>
-                                            <tr>
-                                                <th scope="col">Player</th>
-                                                <th scope="col">Wins</th>
-                                                <th scope="col">Lost</th>
-                                                <th scope="col">Played</th>
-                                            </tr>
+                                        <tr>
+                                            <th scope="col">Player</th>
+                                            <th scope="col">Wins</th>
+                                            <th scope="col">Lost</th>
+                                            <th scope="col">Played</th>
+                                        </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($clanPlayerWinLossByMonth as $playerId => $report)
-                                                <tr>
-                                                    <td>
-                                                        @foreach ($clanPlayers as $clanPlayer)
-                                                            @php $player = $clanPlayer->player; @endphp
+                                        @foreach ($clanPlayerWinLossByMonth as $playerId => $report)
+                                            <tr>
+                                                <td>
+                                                    @foreach ($clanPlayers as $clanPlayer)
+                                                        @php $player = $clanPlayer->player; @endphp
 
-                                                            @if ($playerId == $player->id)
-                                                                {{ $player->username }}
-                                                            @endif
-                                                        @endforeach
-                                                    </td>
-                                                    <td class="count won">{{ $report['wins'] }}</td>
-                                                    <td class="count lost">{{ $report['losses'] }}</td>
-                                                    <td>{{ $report['total'] }}</td>
-                                                </tr>
-                                            @endforeach
+                                                        @if ($playerId == $player->id)
+                                                            {{ $player->username }}
+                                                        @endif
+                                                    @endforeach
+                                                </td>
+                                                <td class="count won">{{ $report['wins'] }}</td>
+                                                <td class="count lost">{{ $report['losses'] }}</td>
+                                                <td>{{ $report['total'] }}</td>
+                                            </tr>
+                                        @endforeach
                                         </tbody>
                                     </table>
                                 </div>
@@ -223,15 +224,15 @@
                         @foreach ($clanPlayers as $clanPlayer)
                             @php $player = $clanPlayer->player; @endphp
                             <div>
-                                <a class="" href="{{ \App\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
-                                    title="Go to {{ $player->username }}'s profile">
+                                <a class=""
+                                   href="{{ \App\Models\URLHelper::getPlayerProfileUrl($history, $player->username) }}"
+                                   title="Go to {{ $player->username }}'s profile">
                                     {{ $player->username }}
                                 </a>
                             </div>
                         @endforeach
                     </div>
                 </div>
-
 
 
                 <!-- Toggle achievements on for Blitz ladder only, TODO remove -->

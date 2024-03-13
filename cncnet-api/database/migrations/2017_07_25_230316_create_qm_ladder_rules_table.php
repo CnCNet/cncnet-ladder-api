@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateQmLadderRulesTable extends Migration {
 
@@ -23,8 +23,8 @@ class CreateQmLadderRulesTable extends Migration {
             $table->string('allowed_sides'); // minus france/yuri "0,1,3,4,5,6,7,8"
 			$table->timestamps();
 		});
-        $yr_entry = new \App\QmLadderRules();
-        $yr_entry->ladder_id = \App\Ladder::where('abbreviation', 'yr')->first()->id;
+        $yr_entry = new \App\Models\QmLadderRules();
+        $yr_entry->ladder_id = \App\Models\Ladder::where('abbreviation', 'yr')->first()->id;
         $yr_entry->player_count = 2;
         $yr_entry->all_sides = "0,1,2,3,4,5,6,7,8,9";
         $yr_entry->allowed_sides = "0,1,3,4,5,6,7,8";
@@ -32,8 +32,8 @@ class CreateQmLadderRulesTable extends Migration {
         $yr_entry->max_difference = 100;
         $yr_entry->save();
 
-        $ts_entry = new \App\QmLadderRules();
-        $ts_entry->ladder_id = \App\Ladder::where('abbreviation', 'ts')->first()->id;
+        $ts_entry = new \App\Models\QmLadderRules();
+        $ts_entry->ladder_id = \App\Models\Ladder::where('abbreviation', 'ts')->first()->id;
         $ts_entry->player_count = 2;
         $ts_entry->all_sides = "0,1";
         $ts_entry->allowed_sides = "0,1";

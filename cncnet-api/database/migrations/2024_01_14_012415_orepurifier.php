@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class Orepurifier extends Migration
@@ -12,7 +11,7 @@ class Orepurifier extends Migration
      */
     public function up()
     {
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWNMAP_INI, "GAOREP.TechLevel", "GAOREP", "TechLevel")->save();
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWNMAP_INI, "GAOREP.TechLevel", "GAOREP", "TechLevel")->save();
     }
 
     /**

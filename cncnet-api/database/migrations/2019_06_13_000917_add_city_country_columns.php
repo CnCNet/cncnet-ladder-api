@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use MaxMind\Db\Reader;
 
 class AddCityCountryColumns extends Migration {
@@ -22,7 +22,7 @@ class AddCityCountryColumns extends Migration {
 
         $reader = new Reader(config('database.mmdb.file'));
 
-        foreach (\App\IpAddress::all() as $ip)
+        foreach (\App\Models\IpAddress::all() as $ip)
         {
             $mmData = $reader->get($ip->address);
             try

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreatePlayerHistoriesTable extends Migration {
 
@@ -20,7 +20,7 @@ class CreatePlayerHistoriesTable extends Migration {
             $table->integer('tier')->default(1);
 			$table->timestamps();
 		});
-        $ladder_histories = \App\LadderHistory::all();
+        $ladder_histories = \App\Models\LadderHistory::all();
 
         foreach ($ladder_histories as $history)
         {
@@ -30,7 +30,7 @@ class CreatePlayerHistoriesTable extends Migration {
                                                               ->groupBy('pgr.player_id')->get();
             foreach ($players as $player)
             {
-                $pHist = new \App\PlayerHistory;
+                $pHist = new \App\Models\PlayerHistory;
                 $pHist->player_id = $player->player_id;
                 $pHist->ladder_history_id = $history->id;
                 $pHist->tier = 1;

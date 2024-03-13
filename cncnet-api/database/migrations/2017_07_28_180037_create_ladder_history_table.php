@@ -1,10 +1,9 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
-use App\LadderHistory;
-use App\Ladder;
+use App\Models\LadderHistory;
 use Carbon\Carbon;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateLadderHistoryTable extends Migration 
 {
@@ -25,7 +24,7 @@ class CreateLadderHistoryTable extends Migration
 
     private function seed()
     {
-        $ladders = \App\Ladder::all();
+        $ladders = \App\Models\Ladder::all();
         foreach($ladders as $ladder)
         {
             for($times = 0; $times < 5; $times++)

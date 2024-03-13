@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder Login')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -34,7 +34,8 @@
                                     <label for="email" class="col-md-4 control-label">Email Address</label>
 
                                     <div class="col-md-6">
-                                        <input id="email" type="email" class="form-control" name="email" value="{{ $email or old('email') }}">
+                                        <input id="email" type="email" class="form-control" name="email"
+                                               value="{{ $email or old('email') }}">
 
                                         @if ($errors->has('email'))
                                             <span class="help-block">
@@ -59,9 +60,11 @@
                                 </div>
 
                                 <div class="form-group{{ $errors->has('password_confirmation') ? ' has-error' : '' }}">
-                                    <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
+                                    <label for="password-confirm" class="col-md-4 control-label">Confirm
+                                        Password</label>
                                     <div class="col-md-6">
-                                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation">
+                                        <input id="password-confirm" type="password" class="form-control"
+                                               name="password_confirmation">
 
                                         @if ($errors->has('password_confirmation'))
                                             <span class="help-block">

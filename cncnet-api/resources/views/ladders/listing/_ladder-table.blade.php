@@ -48,7 +48,7 @@
             'game' => $history->ladder->game,
             'abbreviation' => $history->ladder->abbreviation,
             'mostPlayedFaction' => $playerCache->mostPlayedFactionNameByLadderHistory($history),
-            'url' => \App\URLHelper::getPlayerProfileUrl($history, $playerCache->player_name),
+            'url' => \App\Models\URLHelper::getPlayerProfileUrl($history, $playerCache->player_name),
             'avatar' => $playerCache->player->user->getUserAvatar(),
             'twitch' => $playerCache->player->user->getTwitchProfile(),
             'youtube' => $playerCache->player->user->getYouTubeProfile(),

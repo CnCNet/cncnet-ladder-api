@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateUserSettingsTable extends Migration {
 
@@ -26,10 +26,10 @@ class CreateUserSettingsTable extends Migration {
 		});
 
 		//initialize user settings for all users
-		\App\User::chunk(500, function ($allUsers)  {
+		\App\Models\User::chunk(500, function ($allUsers)  {
 			foreach ($allUsers as $user)
 			{
-				$userSettings = new \App\UserSettings();
+				$userSettings = new \App\Models\UserSettings();
 				$userSettings->user_id = $user->id;
 				$userSettings->save();
 			}

@@ -61,10 +61,10 @@ class Restrict
             }
             else # ladder-specific mod/admin privilege
             {
-                $ladder = \App\Ladder::find($request->ladderId);
+                $ladder = \App\Models\Ladder::find($request->ladderId);
 
                 if ($ladder == null)
-                    $ladder = \App\Ladder::where('abbreviation', $request->ladderAbbreviation)->first();
+                    $ladder = \App\Models\Ladder::where('abbreviation', $request->ladderAbbreviation)->first();
 
                 if ($permission === "canAdminLadder")
                 {
@@ -96,7 +96,7 @@ class Restrict
 
             if ($request->gameSchemaId !== null)
             {
-                $gameSchema = \App\GameObjectSchema::find($request->gameSchemaId);
+                $gameSchema = \App\Models\GameObjectSchema::find($request->gameSchemaId);
 
                 if ($permission === 'objectSchemaManager')
                 {

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreatePlayerGameReportsTable extends Migration {
 
@@ -41,11 +41,11 @@ class CreatePlayerGameReportsTable extends Migration {
             if ($game === null)
                 continue;
 
-            $gameReport = \App\GameReport::where('game_id', $game->id)->first();
+            $gameReport = \App\Models\GameReport::where('game_id', $game->id)->first();
 
             if ($gameReport == null)
             {
-                $gameReport = new \App\GameReport;
+                $gameReport = new \App\Models\GameReport;
                 $gameReport->game_id = $game->id;
                 $gameReport->player_id = $playerPoints->player_id;
                 $gameReport->best_report = true;
@@ -63,7 +63,7 @@ class CreatePlayerGameReportsTable extends Migration {
                 $local_id++;
             }
 
-            $playerGR = new \App\PlayerGameReport;
+            $playerGR = new \App\Models\PlayerGameReport;
             $playerGR->game_report_id = $gameReport->id;
             $playerGR->game_id = $playerPoints->game_id;
             $playerGR->player_id = $playerPoints->player_id;

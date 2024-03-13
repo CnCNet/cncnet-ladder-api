@@ -6,8 +6,8 @@
 
 @section('title', 'Viewing - ' . $ladderPlayer->username)
 @section('body-class', 'body-player-detail')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
 @section('feature')
 
@@ -15,16 +15,16 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img 
-                        src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" 
-                        alt="{{ $history->ladder->name }}"
-                        class="d-block img-fluid me-lg-0 ms-lg-auto"
+                    <img
+                            src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}"
+                            alt="{{ $history->ladder->name }}"
+                            class="d-block img-fluid me-lg-0 ms-lg-auto"
                     />
                 </div>
 
                 <div class="col-12 col-lg-6">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold"> {{ $ladderPlayer->username }}</strong> <br />
+                        <strong class="fw-bold"> {{ $ladderPlayer->username }}</strong> <br/>
                         <span>{{ $history->ladder->name }}</span>
                     </h1>
 
@@ -47,7 +47,7 @@
                             </a>
                         </div>
                         <div class="mini-breadcrumb-item">
-                            <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                            <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
                                 <span class="material-symbols-outlined icon">
                                     military_tech
                                 </span>
@@ -81,7 +81,7 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                    <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
                         <span class="material-symbols-outlined icon pe-3">
                             military_tech
                         </span>
@@ -115,9 +115,9 @@
                     </div>
                     <div class="player-rank pt-3 me-md-5">
                         <h1 class="username">
-                            {{ $ladderPlayer->username }} 
+                            {{ $ladderPlayer->username }}
                             @if($playerOfTheDayAward)
-                            {{ \App\Helpers\SiteHelper::getEmojiByMonth() }}
+                                {{ \App\Helpers\SiteHelper::getEmojiByMonth() }}
                             @endif
                         </h1>
 
@@ -145,8 +145,10 @@
                     @if ($userIsMod)
                         <div class="mt-2 mb-2">
                             @include('ladders._modal-edit-player-name')
-                            <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName" data-bs-toggle="modal"
-                                data-bs-target="#editPlayerName"> Edit Player Name </button>
+                            <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editPlayerName"> Edit Player Name
+                            </button>
                         </div>
                     @endif
 
@@ -238,11 +240,13 @@
                         <div class="ms-1 me-3 d-flex align-items-center mb-2">
                             <div class="achievement-progress progress" style="width:150px;">
                                 <div class="progress-bar" role="progressbar" aria-label="Default striped example"
-                                    aria-valuenow="{{ $achievementsCount['percentage'] }}" aria-valuemin="0" aria-valuemax="100"
-                                    style="width: {{ $achievementsCount['percentage'] }}%">
+                                     aria-valuenow="{{ $achievementsCount['percentage'] }}" aria-valuemin="0"
+                                     aria-valuemax="100"
+                                     style="width: {{ $achievementsCount['percentage'] }}%">
                                 </div>
                             </div>
-                            <small class="ms-1">{{ $achievementsCount['unlockedCount'] }}/{{ $achievementsCount['totalToUnlock'] }}
+                            <small class="ms-1">{{ $achievementsCount['unlockedCount'] }}
+                                /{{ $achievementsCount['totalToUnlock'] }}
                                 unlocked</small>
                         </div>
 
@@ -261,8 +265,8 @@
                         </div>
 
                         <div class="ms-2 mt-2 mb-2">
-                            <a href="{{ \App\URLHelper::getPlayerProfileAchievementsUrl($history, $ladderPlayer->username) }}"
-                                title="View all achievements" class="btn btn-outline btn-size-md">
+                            <a href="{{ \App\Models\URLHelper::getPlayerProfileAchievementsUrl($history, $ladderPlayer->username) }}"
+                               title="View all achievements" class="btn btn-outline btn-size-md">
                                 View All Achievements
                             </a>
                         </div>

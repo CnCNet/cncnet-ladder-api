@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateCountableGameObjectsTable extends Migration {
 
@@ -27,7 +27,7 @@ class CreateCountableGameObjectsTable extends Migration {
             $table->index(['heap_name', 'name']);
 		});
 
-        foreach (\App\Ladder::all() as $ladder)
+        foreach (\App\Models\Ladder::all() as $ladder)
         {
             $heaps = array ("CRA","BLC","BLK","PLK","UNK","INK","BLL","PLL","UNL","INL","BLB","PLB","UNB","INB","VSK","VSL","VSB");
 
@@ -41,7 +41,7 @@ class CreateCountableGameObjectsTable extends Migration {
 
                 foreach ($objects[$heapName] as $id => $name)
                 {
-                    $countable = new \App\CountableGameObject;
+                    $countable = new \App\Models\CountableGameObject;
                     $countable->ladder_id = $ladder->id;
                     $countable->heap_name = $heapDesc;
                     $countable->heap_id = $id;

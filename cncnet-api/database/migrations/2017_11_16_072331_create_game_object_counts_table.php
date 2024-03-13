@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Database\Migrations\Migration;
 use App\Log;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateGameObjectCountsTable extends Migration {
 
@@ -33,16 +33,16 @@ class CreateGameObjectCountsTable extends Migration {
             $table->integer('player_game_report_id')->unsigned()->index();
 		});
 
-        \App\PlayerGameReport::chunk(500, function($pgrs) {
+        \App\Models\PlayerGameReport::chunk(500, function($pgrs) {
             foreach ($pgrs as $pgr)
             {
                 $heaps = array("CRA","BLC","BLK","PLK","UNK","INK","BLL","PLL","UNL","INL","BLB",
                                "PLB","UNB","INB","VSK","VSL","VSB");
-                $stats = \App\Stats::find($pgr->stats_id);
+                $stats = \App\Models\Stats::find($pgr->stats_id);
                 $ladder_id = $pgr->game->ladderHistory->ladder_id;
                 if ($stats !== null)
                 {
-                    $stats2 = new \App\Stats2;
+                    $stats2 = new \App\Models\Stats2;
                     $stats2->id = $stats->id;
                     $stats2->sid = json_decode($stats->sid !== null ? $stats->sid :'{"value": null}')->value;
                     $stats2->sid = json_decode($stats->col !== null ? $stats->col :'{"value": null}')->value;
@@ -71,12 +71,12 @@ class CreateGameObjectCountsTable extends Migration {
                             if ($count == 0)
                                 continue;
 
-                            $cgo = \App\CountableGameObject::where('heap_name', '=', $col)
+                            $cgo = \App\Models\CountableGameObject::where('heap_name', '=', $col)
                                                            ->where('name', '=', $heap_name)
                                                            ->where('ladder_id', '=', $ladder_id)->first();
                             if ($cgo !== null)
                             {
-                                $goc = new \App\GameObjectCounts;
+                                $goc = new \App\Models\GameObjectCounts;
                                 $goc->stats_id = $stats->id;
                                 $goc->countable_game_objects_id = $cgo->id;
                                 $goc->count = $count;

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class AddObjectManager extends Migration {
@@ -12,13 +11,13 @@ class AddObjectManager extends Migration {
 	 */
 	public function up()
 	{
-		$game_objects = \App\GameObjectSchema::all();
+		$game_objects = \App\Models\GameObjectSchema::all();
 
 		#add Alex P as object game schema manager
 		foreach ($game_objects as $game_object) {
-			$osm = new \App\ObjectSchemaManager;
+			$osm = new \App\Models\ObjectSchemaManager;
 			$osm->game_object_schema_id=$game_object->id;
-			$osm->user_id=\App\User::where('email', 'amp1993@gmail.com')->first()->id;
+			$osm->user_id= \App\Models\User::where('email', 'amp1993@gmail.com')->first()->id;
 			$osm->save();
 		}
 	}

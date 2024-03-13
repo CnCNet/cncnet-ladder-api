@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddFiltersToQmRules extends Migration {
 
@@ -20,7 +20,7 @@ class AddFiltersToQmRules extends Migration {
             $table->double('points_per_second');
 
 		});
-        $qmLadders = \App\QmLadderRules::all();
+        $qmLadders = \App\Models\QmLadderRules::all();
         foreach ($qmLadders as $qmRules)
         {
             $qmRules->rating_per_second = 0.25;

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class TrimMapNames extends Migration
@@ -12,7 +11,7 @@ class TrimMapNames extends Migration
      */
     public function up()
     {
-        $maps = \App\Map::where('name', 'like', '% ')->get();
+        $maps = \App\Models\Map::where('name', 'like', '% ')->get();
 
         foreach($maps as $map)
         {
@@ -23,7 +22,7 @@ class TrimMapNames extends Migration
             }
         }
 
-        $qmMaps = \App\QmMap::where('description', 'like', '% ')->get();
+        $qmMaps = \App\Models\QmMap::where('description', 'like', '% ')->get();
 
         foreach($qmMaps as $qmMap)
         {

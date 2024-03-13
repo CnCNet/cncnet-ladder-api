@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class RootMapPoolsAtLadderId extends Migration {
 
@@ -24,13 +24,13 @@ class RootMapPoolsAtLadderId extends Migration {
             $table->integer('map_pool_id')->nullable();
         });
 
-        foreach(\App\MapPool::all() as $pool)
+        foreach(\App\Models\MapPool::all() as $pool)
         {
             $pool->ladder_id = $pool->qmLadderRules->ladder->id;
             $pool->save();
         }
 
-        foreach(\App\QmLadderRules::all() as $rule)
+        foreach(\App\Models\QmLadderRules::all() as $rule)
         {
             $ladder = $rule->ladder;
             $ladder->map_pool_id = $rule->map_pool_id;
@@ -69,13 +69,13 @@ class RootMapPoolsAtLadderId extends Migration {
             $table->integer('map_pool_id');
         });
 
-        foreach(\App\MapPool::all() as $pool)
+        foreach(\App\Models\MapPool::all() as $pool)
         {
             $pool->qm_ladder_rules_id = $pool->ladder->qmLadderRules->id;
             $pool->save();
         }
 
-        foreach(\App\QmLadderRules::all() as $rule)
+        foreach(\App\Models\QmLadderRules::all() as $rule)
         {
             $ladder = $rule->ladder;
             $rule->map_pool_id = $ladder->map_pool_id;

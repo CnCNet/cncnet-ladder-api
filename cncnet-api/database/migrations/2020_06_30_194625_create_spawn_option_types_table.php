@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\SpawnOptionType;
 use Illuminate\Database\Migrations\Migration;
-use \App\SpawnOptionType;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateSpawnOptionTypesTable extends Migration {
 

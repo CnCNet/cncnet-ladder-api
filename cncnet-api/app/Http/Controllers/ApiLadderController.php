@@ -2,24 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use \App\Http\Services\LadderService;
-use \App\Http\Services\GameService;
-use \App\Http\Services\PlayerService;
-use \App\Http\Services\EloService;
-use \App\Http\Services\AdminService;
-use \Carbon\Carbon;
-use \App\PlayerGameReport;
-use Illuminate\Support\Facades\Cache;
-use \App;
-use App\Clan;
+use App;
+use App\Http\Services\AdminService;
 use App\Http\Services\ClanService;
+use App\Http\Services\EloService;
+use App\Http\Services\GameService;
+use App\Http\Services\LadderService;
+use App\Http\Services\PlayerService;
 use App\Http\Services\PointService;
-use App\Ladder;
-use App\Player;
-use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 use DB;
-use Exception;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ApiLadderController extends Controller
 {
@@ -52,8 +46,8 @@ class ApiLadderController extends Controller
 
     public function newPostLadder(Request $request, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
     {
-        $ladder = App\Ladder::find($ladderId);
-        $player = App\Player::find($playerId);
+        $ladder = App\Models\Ladder::find($ladderId);
+        $player = App\Models\Player::find($playerId);
 
         // Player checks
         $check = $this->ladderService->checkPlayer($request, $player->username, $ladder);
@@ -73,9 +67,9 @@ class ApiLadderController extends Controller
 
     public function saveLadderResult($file, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
     {
-        $ladder = App\Ladder::find($ladderId);
-        $player = App\Player::find($playerId);
-        $game = App\Game::find($gameId);
+        $ladder = App\Models\Ladder::find($ladderId);
+        $player = App\Models\Player::find($playerId);
+        $game = App\Models\Game::find($gameId);
 
         # Game stats result
         $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder);
@@ -150,7 +144,7 @@ class ApiLadderController extends Controller
             ($bestReport->oos && $gameReport->oos)
         )
         {
-            $wash = new \App\GameReport();
+            $wash = new App\Models\GameReport();
             $wash->game_id = $gameReport->game_id;
             $wash->player_id = $gameReport->player_id;
             $wash->best_report = false;
@@ -164,7 +158,7 @@ class ApiLadderController extends Controller
 
             foreach ($gameReport->playerGameReports()->get() as $pgr)
             {
-                $playerGR = new \App\PlayerGameReport;
+                $playerGR = new App\Models\PlayerGameReport;
                 $playerGR->game_report_id = $wash->id;
                 $playerGR->game_id = $pgr->game_id;
                 $playerGR->player_id = $pgr->player_id;
@@ -551,7 +545,7 @@ class ApiLadderController extends Controller
 
     public function viewRawGame(Request $request, $gameId)
     {
-        $rawGame = \App\GameRaw::where("game_id", "=", $gameId)->get();
+        $rawGame = App\Models\GameRaw::where("game_id", "=", $gameId)->get();
 
         return response($rawGame, 200)->header('Content-Type', 'application/json');
     }
@@ -567,7 +561,7 @@ class ApiLadderController extends Controller
             {
                 $date = Carbon::now()->format('m-Y');
                 $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
-                $players = \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
+                $players = App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'DESC')->limit($count)->get();
                 $top = [];
                 foreach ($players as $player)
                 {
@@ -626,7 +620,7 @@ class ApiLadderController extends Controller
                     "full" => $history->ladder->name,
                     "abbreviation" => $history->ladder->abbreviation,
                     "ends" => $history->ends,
-                    "players" => \App\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
+                    "players" => App\Models\PlayerCache::where('ladder_history_id', '=', $history->id)->orderBy('points', 'desc')->get()->splice(0, 2)
                 ];
             }
         }
@@ -636,7 +630,7 @@ class ApiLadderController extends Controller
 
     public function reRunDisconnectionPoints()
     {
-        $grs = \App\GameReport::where('game_reports.created_at', '>', '2018-03-01 00:00:00')
+        $grs = App\Models\GameReport::where('game_reports.created_at', '>', '2018-03-01 00:00:00')
             ->where('disconnected', '=', true)->where('points', '>', 0)
             ->join('player_game_reports', 'player_game_reports.game_report_id', '=', 'game_reports.id')
             ->orderBy('game_reports.id', 'ASC')->select('game_reports.*')->get();
@@ -650,8 +644,8 @@ class ApiLadderController extends Controller
 
     public function countMapVetos($ladderId)
     {
-        $ladder = \App\Ladder::find($ladderId);
-        $qmMapSides = \App\QmMatchPlayer::select('map_sides')
+        $ladder = App\Models\Ladder::find($ladderId);
+        $qmMapSides = App\Models\QmMatchPlayer::select('map_sides')
             ->where('ladder_id', '=', $ladderId)
             ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
             ->get();
@@ -676,7 +670,7 @@ class ApiLadderController extends Controller
         $map_vetos = [];
         foreach ($map_vetos_raw as $index => $count)
         {
-            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
+            $map = App\Models\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
             if ($map !== null)
                 $map_vetos[$map->admin_description] = $count;
             else
@@ -687,8 +681,8 @@ class ApiLadderController extends Controller
 
     public function countUniqueMapVetos($ladderId)
     {
-        $ladder = \App\Ladder::find($ladderId);
-        $qmMapSides = \App\QmMatchPlayer::select('map_sides')
+        $ladder = App\Models\Ladder::find($ladderId);
+        $qmMapSides = App\Models\QmMatchPlayer::select('map_sides')
             ->where('ladder_id', '=', $ladderId)
             ->whereNotNull('qm_match_id')->where('qm_match_id', '>', 90932)
             ->groupBy('player_id')
@@ -715,7 +709,7 @@ class ApiLadderController extends Controller
         $map_vetos = [];
         foreach ($map_vetos_raw as $index => $count)
         {
-            $map = \App\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
+            $map = App\Models\QmMap::where('ladder_id', '=', $ladderId)->where('bit_idx', '=', $index)->where('valid', '=', true)->first();
             if ($map !== null)
                 $map_vetos[$map->admin_description] = $count;
             else
@@ -729,13 +723,13 @@ class ApiLadderController extends Controller
         if ($stats === null)
             return;
 
-        $user = \App\Player::where('id', $playerId)->first()->user;
+        $user = App\Models\Player::where('id', $playerId)->first()->user;
 
         //fetch achievements that have not been unlocked for this ladder
-        $achievements = \App\Achievement::where('ladder_id', $ladder->id)->get();
+        $achievements = App\Models\Achievement::where('ladder_id', $ladder->id)->get();
 
         //fetch the game object counts from the game stats for this game
-        $gocs = \App\GameObjectCounts::where('stats_id', $stats->id)->get();
+        $gocs = App\Models\GameObjectCounts::where('stats_id', $stats->id)->get();
 
         foreach ($gocs as $goc)
         {
@@ -824,13 +818,13 @@ class ApiLadderController extends Controller
         if ($lockedAchievement == null || $lockedAchievement->achievement_id == null)
             return;
 
-        $lockedAchievementProgress = \App\AchievementProgress::where('achievement_id', $lockedAchievement->achievement_id)
+        $lockedAchievementProgress = App\Models\AchievementProgress::where('achievement_id', $lockedAchievement->achievement_id)
             ->where('user_id', $user->id)
             ->first();
 
         if ($lockedAchievementProgress == null)
         {
-            $lockedAchievementProgress = new \App\AchievementProgress();
+            $lockedAchievementProgress = new App\Models\AchievementProgress();
             $lockedAchievementProgress->achievement_id = $lockedAchievement->achievement_id;
             $lockedAchievementProgress->user_id = $user->id;
             $lockedAchievementProgress->count = 0;
@@ -862,13 +856,13 @@ class ApiLadderController extends Controller
     {
         foreach ($achievements as $achievement)
         {
-            $achievementProgress = \App\AchievementProgress::where('achievement_id', $achievement->id)
+            $achievementProgress = App\Models\AchievementProgress::where('achievement_id', $achievement->id)
                 ->where('user_id', $user->id)
                 ->first();
 
             if ($achievementProgress == null)  //first time user is making progress towards this achievement
             {
-                $achievementProgress = new \App\AchievementProgress();
+                $achievementProgress = new App\Models\AchievementProgress();
                 $achievementProgress->achievement_id = $achievement->id;
                 $achievementProgress->count = 0;
                 $achievementProgress->user_id = $user->id;

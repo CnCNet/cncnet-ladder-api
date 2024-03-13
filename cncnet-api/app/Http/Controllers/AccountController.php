@@ -2,19 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use \App\Http\Services\PlayerService;
-use \App\Http\Services\LadderService;
-use \App\EmailVerification;
-use \App\PlayerActiveHandle;
+use App\Http\Services\LadderService;
+use App\Http\Services\PlayerService;
+use App\Models\EmailVerification;
+use App\Models\PlayerActiveHandle;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\App;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
-use Mail;
 use Log;
+use Mail;
 
 class AccountController extends Controller
 {
@@ -30,11 +28,11 @@ class AccountController extends Controller
     public function getAccountIndex(Request $request)
     {
         $user = \Auth::user();
-        $user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+        $user->ip_address_id = \App\Models\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
             ? $_SERVER["HTTP_CF_CONNECTING_IP"]
             : $request->getClientIp());
 
-        \App\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
+        \App\Models\IpAddressHistory::addHistory($user->id, $user->ip_address_id);
         $user->save();
 
         return view(
@@ -53,7 +51,7 @@ class AccountController extends Controller
     {
         $ladders = $this->ladderService->getLatestLadders();
         $clan_ladders =  $this->ladderService->getLatestClanLadders();
-        $ladder = \App\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
+        $ladder = \App\Models\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
         $user = $request->user();
         $players = $user->usernames()->where("ladder_id", '=', $ladder->id)
             ->orderBy("ladder_id", "DESC")
@@ -64,7 +62,7 @@ class AccountController extends Controller
         $start = $date->startOfMonth()->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        $activeHandles = \App\PlayerActiveHandle::getUserActiveHandles($user->id, $start, $end)->where('ladder_id', $ladder->id)->get();
+        $activeHandles = \App\Models\PlayerActiveHandle::getUserActiveHandles($user->id, $start, $end)->where('ladder_id', $ladder->id)->get();
 
         //grab active players who are not in a clan
         $activePlayersNotInAClan = [];
@@ -101,11 +99,11 @@ class AccountController extends Controller
 
         foreach ($players as $player)
         {
-            $results = \App\Clan::where('ex_player_id', $player->id)->get();
+            $results = \App\Models\Clan::where('ex_player_id', $player->id)->get();
 
             foreach ($results as $result)
             {
-                $result['playerName'] = \App\Player::where('id', $result->ex_player_id)->first()->username;
+                $result['playerName'] = \App\Models\Player::where('id', $result->ex_player_id)->first()->username;
                 $myOldClans[] = $result;
             }
         }
@@ -128,7 +126,7 @@ class AccountController extends Controller
     {
         $this->validate($request, ['name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11|unique:users']);
 
-        $user = \App\User::find($request->id);
+        $user = \App\Models\User::find($request->id);
 
         if ($request->user()->id == $user->id || $request->user()->isGod())
         {
@@ -150,7 +148,7 @@ class AccountController extends Controller
             'username' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
         ]);
 
-        $ladder = \App\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
+        $ladder = \App\Models\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
 
         if ($ladder === null)
         {
@@ -168,7 +166,7 @@ class AccountController extends Controller
         }
 
         // If we're creating a username for the first time for this ladder type
-        $isNewUser = \App\Player::where("user_id", $user->id)
+        $isNewUser = \App\Models\Player::where("user_id", $user->id)
             ->where("ladder_id", $ladder->id)
             ->count();
 
@@ -194,7 +192,7 @@ class AccountController extends Controller
         ]);
 
         $user = \Auth::user();
-        $ladder = \App\Ladder::where("abbreviation", $ladderAbbrev)->first();
+        $ladder = \App\Models\Ladder::where("abbreviation", $ladderAbbrev)->first();
         $maxActivePlayersAllowed = $ladder->qmLadderRules->max_active_players;
 
         if ($user == null || $ladder == null)
@@ -205,7 +203,7 @@ class AccountController extends Controller
         $username = $request->username;
 
         // Check request is linked to the auth'd user
-        $player = \App\Player::where("username", "=", $username)
+        $player = \App\Models\Player::where("username", "=", $username)
             ->where("ladder_id", "=", $ladder->id)
             ->where("user_id", "=", $user->id)
             ->first();
@@ -344,7 +342,7 @@ class AccountController extends Controller
         $userSettings = $user->userSettings;
         if ($userSettings === null)
         {
-            $userSettings = new \App\UserSettings();
+            $userSettings = new \App\Models\UserSettings();
             $userSettings->user_id = $user->id;
         }
         $userSettings->disabledPointFilter = $request->disabledPointFilter == "on" ? true : false;
@@ -364,7 +362,7 @@ class AccountController extends Controller
 
         $newDiscordProfile = $request->discord_profile;
 
-        $userWithDiscordProfile = \App\User::where('discord_profile', '=', $newDiscordProfile)->first();
+        $userWithDiscordProfile = \App\Models\User::where('discord_profile', '=', $newDiscordProfile)->first();
 
         // if a user already has this discord profile, and the user with the discord profile is not the current user, exit
         if ($userWithDiscordProfile !== null && $user->id !== $userWithDiscordProfile->id)

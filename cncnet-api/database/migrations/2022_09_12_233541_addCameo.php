@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class AddCameo extends Migration
@@ -13,21 +12,21 @@ class AddCameo extends Migration
 	 */
 	public function up()
 	{
-		$gcos = \App\CountableGameObject::where('name', 'DTRUCK')->get();
+		$gcos = \App\Models\CountableGameObject::where('name', 'DTRUCK')->get();
 		foreach ($gcos as $gco)
 		{
 			$gco->cameo = 'dtruckicon';
 			$gco->save();
 		}
 
-		$gcos = \App\CountableGameObject::where('name', 'GTGCAN')->get();
+		$gcos = \App\Models\CountableGameObject::where('name', 'GTGCAN')->get();
 		foreach ($gcos as $gco)
 		{
 			$gco->cameo = 'gcanicon';
 			$gco->save();
 		}
 
-		$gcos = \App\CountableGameObject::where('name', 'CAOS')->get();
+		$gcos = \App\Models\CountableGameObject::where('name', 'CAOS')->get();
 		foreach ($gcos as $gco)
 		{
 			$gco->cameo = 'caosicon';

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class Grandcannonrangenerf extends Migration
@@ -12,7 +11,7 @@ class Grandcannonrangenerf extends Migration
      */
     public function up()
     {
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWNMAP_INI, "GrandCannonWeapon.Range", "GrandCannonWeapon", "Range")->save();
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWNMAP_INI, "GrandCannonWeapon.Range", "GrandCannonWeapon", "Range")->save();
     }
 
     /**

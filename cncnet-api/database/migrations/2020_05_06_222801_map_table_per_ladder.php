@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class MapTablePerLadder extends Migration {
 
@@ -27,18 +27,18 @@ class MapTablePerLadder extends Migration {
                 $table->integer('ladder_id')->nullable();
 	    });
 
-        $currentMaps = \App\Map::all();
+        $currentMaps = \App\Models\Map::all();
 
         foreach ($currentMaps as $map)
         {
-            $qmMap = \App\QmMap::where('map_id', '=', $map->id)->first();
+            $qmMap = \App\Models\QmMap::where('map_id', '=', $map->id)->first();
 
             if ($qmMap !== null)
             {
                 $map->ladder_id = $qmMap->ladder_id;
             }
 
-            $game = \App\Game::where('hash', '=', $map->hash)->first();
+            $game = \App\Models\Game::where('hash', '=', $map->hash)->first();
 
             if ($game !== null)
             {

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class FixAchievmentType extends Migration
@@ -12,7 +11,7 @@ class FixAchievmentType extends Migration
      */
     public function up()
     {
-        $achievements = \App\Achievement::where('achievement_type', '')->get();
+        $achievements = \App\Models\Achievement::where('achievement_type', '')->get();
 
         foreach ($achievements as $achievement)
         {

@@ -40,7 +40,7 @@
             'game' => $history->ladder->game,
             'abbreviation' => $history->ladder->abbreviation,
             'mostPlayedFaction' => $clanCache->mostPlayedFactionNameByLadderHistory($history),
-            'url' => \App\URLHelper::getClanProfileLadderUrl($history, $clanCache->clan_id),
+            'url' => \App\Models\URLHelper::getClanProfileLadderUrl($history, $clanCache->clan_id),
             'avatar' => $clanCache->getClanAvatar(),
             'twitch' => null,
             'youtube' => null,

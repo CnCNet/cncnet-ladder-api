@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder Login')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature">
@@ -76,7 +76,8 @@
                 </ol>
 
                 <p>
-                    If you have trouble registering <a href="https://cncnet.org/discord">please contact us on our Discord.</a>
+                    If you have trouble registering <a href="https://cncnet.org/discord">please contact us on our
+                        Discord.</a>
                 </p>
 
                 @if (count($errors) > 0)
@@ -99,29 +100,34 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input id="emailAddress" type="email" class="form-control" name="email" value="{{ old('email') }}">
+                        <input id="emailAddress" type="email" class="form-control" name="email"
+                               value="{{ old('email') }}">
                         <label for="emailAddress">Email address</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input id="password" type="password" class="form-control" name="password" value="{{ old('password') }}">
+                        <input id="password" type="password" class="form-control" name="password"
+                               value="{{ old('password') }}">
                         <label for="password">Password</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input id="password_confirmation" type="password" class="form-control" name="password_confirmation"
-                            value="{{ old('password_confirmation') }}">
+                        <input id="password_confirmation" type="password" class="form-control"
+                               name="password_confirmation"
+                               value="{{ old('password_confirmation') }}">
                         <label for="password_confirmation">Password (confirmed)</label>
                     </div>
 
-                    <input type="hidden" name="play_nay" />
+                    <input type="hidden" name="play_nay"/>
 
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-4">
                             <p class="mb-2">
                                 <small>
-                                    By registering and using the Quick Match software and related sites, you agree to the CnCNet <a
-                                        href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp; Conditions</a>
+                                    By registering and using the Quick Match software and related sites, you agree to
+                                    the CnCNet <a
+                                            href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp;
+                                        Conditions</a>
                                 </small>
                             </p>
 

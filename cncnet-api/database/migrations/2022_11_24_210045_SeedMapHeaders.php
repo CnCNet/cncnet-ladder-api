@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class SeedMapHeaders extends Migration
@@ -29,7 +28,7 @@ class SeedMapHeaders extends Migration
     {
         foreach ($json_data as $hash => $headers)
         {
-            $map = \App\Map::where('hash', '=', $hash)->first();
+            $map = \App\Models\Map::where('hash', '=', $hash)->first();
 
             if ($map == null)
             {
@@ -37,7 +36,7 @@ class SeedMapHeaders extends Migration
                 continue;
             }
 
-            $mapHeader = new \App\MapHeader();
+            $mapHeader = new \App\Models\MapHeader();
             $mapHeader->map_id = $map->id;
             $mapHeader->width = $headers["width"];
             $mapHeader->height = $headers["height"];
@@ -48,7 +47,7 @@ class SeedMapHeaders extends Migration
 
             foreach ($headers["waypoints"] as $waypointData)
             {
-                $mapWaypoint = new \App\MapWaypoint();
+                $mapWaypoint = new \App\Models\MapWaypoint();
                 $mapWaypoint->x = $waypointData["x"];
                 $mapWaypoint->y = $waypointData["y"];
                 $mapWaypoint->bit_idx = $waypointData["index"];

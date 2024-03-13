@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Services\UserRatingService;
-use App\Ladder;
-use App\UserTier;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\Ladder;
+use App\Models\UserTier;
 use Illuminate\Database\Migrations\Migration;
 
 class DeleteDuplicateUserTiers extends Migration

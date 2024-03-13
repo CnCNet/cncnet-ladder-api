@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class AdminDevo extends Migration
@@ -14,15 +13,15 @@ class AdminDevo extends Migration
 	 */
 	public function up()
 	{
-		$user = \App\User::where('name', 'devo1929')->first();
+		$user = \App\Models\User::where('name', 'devo1929')->first();
 		$user->group = 'Admin';
 		$user->save();
 
-		$privateLadder = \App\Ladder::where('abbreviation', 'yr-test')->first();
+		$privateLadder = \App\Models\Ladder::where('abbreviation', 'yr-test')->first();
 
 		if (isset($privateLadder))
 		{
-			$ladderAdmin = new \App\LadderAdmin();
+			$ladderAdmin = new \App\Models\LadderAdmin();
 			$ladderAdmin->user_id = $user->id;
 			$ladderAdmin->ladder_id = $privateLadder->id;
 			$ladderAdmin->admin = 1;

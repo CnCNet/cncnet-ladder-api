@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class AchievmentsTypeDataFix extends Migration
@@ -12,7 +11,7 @@ class AchievmentsTypeDataFix extends Migration
      */
     public function up()
     {
-        $achs = \App\Achievement::where('achievement_type', "")->get();
+        $achs = \App\Models\Achievement::where('achievement_type', "")->get();
 
         echo $achs->count() . " achievements with empty achievement type";
 
@@ -22,7 +21,7 @@ class AchievmentsTypeDataFix extends Migration
             $ach->save();
         }
 
-        $achs = \App\Achievement::where('achievement_type', "")->get();
+        $achs = \App\Models\Achievement::where('achievement_type', "")->get();
 
         echo $achs->count() . " achievements with empty achievement type";
     }

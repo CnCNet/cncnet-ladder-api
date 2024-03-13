@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddColsToQmMaps extends Migration {
 
@@ -18,7 +18,7 @@ class AddColsToQmMaps extends Migration {
             $table->string("allowed_sides");
         });
 
-        $ladders = \App\Ladder::all();
+        $ladders = \App\Models\Ladder::all();
         foreach ($ladders as $ladder)
         {
             $qmLadderRules = $ladder->qmLadderRules()->first();

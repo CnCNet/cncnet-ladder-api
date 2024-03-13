@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\SpawnOption;
+use App\Models\SpawnOptionType;
 use Illuminate\Database\Migrations\Migration;
-use \App\SpawnOption;
-use \App\SpawnOptionType;
 
 class SeedSpawnOptionDisableSwVsYuri extends Migration {
 

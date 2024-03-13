@@ -1,10 +1,9 @@
 <?php
 
-use App\AIPlayer;
-use App\Clan;
-use App\ClanPlayer;
-use App\LadderHistory;
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\AIPlayer;
+use App\Models\Clan;
+use App\Models\ClanPlayer;
+use App\Models\LadderHistory;
 use Illuminate\Database\Migrations\Migration;
 
 class SeedBrutalBotWithClan extends Migration

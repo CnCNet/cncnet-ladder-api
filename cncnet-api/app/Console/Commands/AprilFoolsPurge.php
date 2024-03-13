@@ -1,8 +1,6 @@
 <?php namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class AprilFoolsPurge extends Command {
 
@@ -38,8 +36,8 @@ class AprilFoolsPurge extends Command {
     public function handle()
     {
         //
-        $lh = \App\LadderHistory::where('short', '=', '4-2021')->first();
-        $games = \App\Game::where('ladder_history_id', '=', $lh->id)
+        $lh = \App\Models\LadderHistory::where('short', '=', '4-2021')->first();
+        $games = \App\Models\Game::where('ladder_history_id', '=', $lh->id)
                           ->get();
 
         foreach ($games as $game)

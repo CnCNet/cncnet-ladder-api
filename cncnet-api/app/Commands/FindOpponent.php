@@ -2,13 +2,12 @@
 
 namespace App\Commands;
 
-use App\QmQueueEntry;
-use App\Commands\Command;
 use App\Commands\Matchup\ClanMatchupHandler;
 use App\Commands\Matchup\PlayerMatchupHandler;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Models\QmQueueEntry;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
 class FindOpponent extends Command implements ShouldQueue

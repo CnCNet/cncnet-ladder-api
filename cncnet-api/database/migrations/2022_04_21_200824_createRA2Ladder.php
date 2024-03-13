@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateRA2Ladder extends Migration {
@@ -13,7 +12,7 @@ class CreateRA2Ladder extends Migration {
 	public function up()
 	{
 		#create ra2 ladder
-		$ra2Ladder = new \App\Ladder;
+		$ra2Ladder = new \App\Models\Ladder;
 		$ra2Ladder->name = 'Red Alert 2';
 		$ra2Ladder->abbreviation = 'ra2';
 		$ra2Ladder->game = 'yr'; #use yr game
@@ -22,7 +21,7 @@ class CreateRA2Ladder extends Migration {
 		$ra2Ladder->private = 0;
 		$ra2Ladder->save();
 
-		$ra2Ladder = \App\Ladder::where('abbreviation', 'ra2')->first();
+		$ra2Ladder = \App\Models\Ladder::where('abbreviation', 'ra2')->first();
 
 		$lc = new \App\Http\Controllers\LadderController;
 		$lc->addLadder($ra2Ladder->id); #create ladder histories
@@ -31,7 +30,7 @@ class CreateRA2Ladder extends Migration {
 		$ra2_sides = ["America", "Korea", "France", "Germany", "Great Britain", "Libya", "Iraq", "Cuba", "Russia"];
 		for ($i = 0; $i < count($ra2_sides); ++$i)
 		{
-			$side = new \App\Side();
+			$side = new \App\Models\Side();
 			$side->ladder_id = $ra2Ladder->id;
 			$side->local_id = $i;
 			$side->name = $ra2_sides[$i];
@@ -39,7 +38,7 @@ class CreateRA2Ladder extends Migration {
 		}
 
 		#create ra2 ladder rules			
-		$ra2LadderRules = new \App\QmLadderRules;
+		$ra2LadderRules = new \App\Models\QmLadderRules;
 		$ra2LadderRules->ladder_id=$ra2Ladder->id;
 		$ra2LadderRules->player_count=2;
 		$ra2LadderRules->map_vetoes=8;
@@ -59,10 +58,10 @@ class CreateRA2Ladder extends Migration {
 		$ra2LadderRules->save();
 
 		#Copy over the YR spawn options to RA2 ladder
-		$options = \App\SpawnOptionValue::where('ladder_id', 1)->get();
+		$options = \App\Models\SpawnOptionValue::where('ladder_id', 1)->get();
 
 		foreach ($options as $option) {
-			$o = new \App\SpawnOptionValue;
+			$o = new \App\Models\SpawnOptionValue;
 			$o->ladder_id=$ra2Ladder->id;
 			$o->spawn_option_id=$option->spawn_option_id;
 			$o->value_id=$option->value_id;

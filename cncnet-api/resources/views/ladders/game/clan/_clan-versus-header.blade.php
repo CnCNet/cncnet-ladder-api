@@ -1,5 +1,5 @@
 @if ($playerGameReport->stats)
-    @php $playerStats2 = \App\Stats2::where("id", $playerGameReport->stats->id)->first(); @endphp
+    @php $playerStats2 = \App\Models\Stats2::where("id", $playerGameReport->stats->id)->first(); @endphp
     @php $clanWon = $playerGameReport->gameReport->checkIsWinningClan($playerGameReport->clan_id); @endphp
 @endif
 

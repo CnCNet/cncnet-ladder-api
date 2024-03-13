@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+use App\Models\ClanRole;
 use Illuminate\Database\Migrations\Migration;
-use App\ClanRole;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateClanRolesTable extends Migration {
 

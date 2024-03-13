@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddMapPath extends Migration
 {
@@ -18,7 +18,7 @@ class AddMapPath extends Migration
         });
 
         # add image path to all map objects
-        \App\Map::chunk(500, function ($maps)
+        \App\Models\Map::chunk(500, function ($maps)
         {
             foreach ($maps as $map)
             {

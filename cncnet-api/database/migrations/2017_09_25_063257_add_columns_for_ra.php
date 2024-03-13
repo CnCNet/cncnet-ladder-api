@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class AddColumnsForRa extends Migration {
 
@@ -12,59 +12,59 @@ class AddColumnsForRa extends Migration {
 	 */
 	public function up()
 	{
-        $ladder = \App\Ladder::where("abbreviation", "ra")->first();
+        $ladder = \App\Models\Ladder::where("abbreviation", "ra")->first();
 
         if ($ladder !== null)
         {
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = -1;
             $side->name = "Random";
             $side->save();
 
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = 0;
             $side->name = "Spain";
             $side->save();
 
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = 1;
             $side->name = "Greece";
             $side->save();
 
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = 2;
             $side->name = "Russia";
             $side->save();
 
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = 3;
             $side->name = "England";
             $side->save();
 
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = 4;
             $side->name = "Ukraine";
             $side->save();
 
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = 5;
             $side->name = "Germany";
             $side->save();
 
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = 6;
             $side->name = "France";
             $side->save();
 
-            $side = new \App\Side();
+            $side = new \App\Models\Side();
             $side->ladder_id = $ladder->id;
             $side->local_id = 7;
             $side->name = "Turkey";

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreatePlayerRatingsTable extends Migration {
 
@@ -21,11 +21,11 @@ class CreatePlayerRatingsTable extends Migration {
             $table->integer('rated_games');
 			$table->timestamps();
 		});
-        $players = \App\Player::all();
+        $players = \App\Models\Player::all();
 
         foreach ($players as $player)
         {
-            $prating = new \App\PlayerRating();
+            $prating = new \App\Models\PlayerRating();
             $prating->player_id = $player['id'];
             //$prating->rating = 1200;
             //$prating->peak_rating = 0;
