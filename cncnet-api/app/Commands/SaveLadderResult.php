@@ -3,11 +3,8 @@
 namespace App\Commands;
 
 use App\Commands\Command;
-
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Bus\SelfHandling;
-use Illuminate\Contracts\Queue\ShouldBeQueued;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SaveLadderResult extends Command implements ShouldQueue
