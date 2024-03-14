@@ -1090,7 +1090,34 @@ class AdminController extends Controller
         $request->session()->flash('success', "Player name has been updated to " . $player->username);
         return redirect()->to($url);
     }
+
+    /**
+     * God view only. Returns users who are in group 'Moderator' or 'Admin' or 'God'
+     */
+    public function getSuperAdmin(Request $request)
+    {
+        if ($request->user() == null || !$request->user()->isGod())
+            return response('Unauthorized.', 401);
+
+        $users = \App\User::where('group', 'Moderator')
+            ->orWhere('group', 'Admin')
+            ->orWhere('group', 'God')
+            ->get();
+        $groups = User::getPossibleEnumValues('group');
+        
+        return view(
+            "admin.super_admin",
+            [
+                "users" => $users,
+                "groups" => $groups
+            ]
+        );
+    }
+
+
 }
+
+
 
 function ini_to_b($string)
 {

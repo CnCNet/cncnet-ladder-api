@@ -54,6 +54,14 @@ class Authenticate
             }
         }
 
+        if (isset($actions["isGod"]))
+        {
+            if (!$this->auth->user()->isGod()) //user must be 'god' to view this page
+            {
+                return response('Unauthorized.', 401);
+            }
+        }
+
         if (!$this->auth->user()->isGod())
         {
             $response = null;

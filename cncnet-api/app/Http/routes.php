@@ -64,6 +64,8 @@ Route::controllers([
 
 Route::get('/admin', ['middleware' => 'auth', 'canEditAnyLadders' => true, 'uses' => 'AdminController@getAdminIndex']);
 
+Route::get('/admin/super', ['middleware' => 'auth', 'isGod' => true, 'uses' => 'AdminController@getSuperAdmin']);
+
 Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'canEditAnyLadders' => true], function ()
 {
     Route::get('players/ratings', 'AdminController@getPlayerRatings');
