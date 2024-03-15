@@ -12,10 +12,11 @@ class LockedCacheManager extends CacheManager {
 	/**
 	 * Create a new cache repository with the given implementation.
 	 *
-	 * @param  \Illuminate\Contracts\Cache\Store  $store
-	 * @return \Illuminate\Cache\Repository
+     * @param Store $store
+     * @param array $config
+     * @return \Illuminate\Cache\Repository
 	 */
-	public function repository(Store $store)
+	public function repository(Store $store, array $config = [])
 	{
 		$repository = new LockedCacheRepository($store);
 
