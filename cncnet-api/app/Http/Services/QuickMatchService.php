@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Commands\Matchup\ClanMatchupHandler;
 use App\Models\Game;
+use App\Models\IpAddress;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
 use App\Models\QmQueueEntry;
@@ -30,15 +31,15 @@ class QuickMatchService
         $qmPlayer->qm_match_id = null;
         $qmPlayer->tunnel_id = null;
 
-        $addr = \App\Models\IpAddress::findByIP($request->ip_address);
+        $addr = IpAddress::findByIP($request->ip_address);
         $qmPlayer->ip_address_id = $addr ? $addr->id : null;
         $qmPlayer->port = $request->ip_port;
 
-        $addr = \App\Models\IpAddress::findByIP($request->lan_ip);
+        $addr = IpAddress::findByIP($request->lan_ip);
         $qmPlayer->lan_address_id = $addr ? $addr->id : null;
         $qmPlayer->lan_port = $request->lan_port;
 
-        $addr = \App\Models\IpAddress::findByIP($request->ipv6_address);
+        $addr = IpAddress::findByIP($request->ipv6_address);
         $qmPlayer->ipv6_address_id = $addr ? $addr->id : null;
         $qmPlayer->ipv6_port = $request->ipv6_port;
 
