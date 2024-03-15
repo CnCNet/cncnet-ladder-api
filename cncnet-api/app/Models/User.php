@@ -142,7 +142,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 return true;
             }
 
-            $users = Models\IpAddress::findByIP($ip)->users;
+            $users = IpAddress::findByIP($ip)->users;
             foreach ($users as $user)
             {
                 $shadowBans = Ban::where("user_id", $user->id)
@@ -167,7 +167,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function privateLadders()
     {
         if ($this->isGod())
-            return Models\Ladder::where('private', '=', true);
+            return Ladder::where('private', '=', true);
 
         return $this->ladders()->where('private', '=', true);
     }

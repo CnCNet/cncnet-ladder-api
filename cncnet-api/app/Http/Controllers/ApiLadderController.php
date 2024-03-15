@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App;
+use Illuminate\Support\Facades\App;
 use App\Http\Services\AdminService;
 use App\Http\Services\ClanService;
 use App\Http\Services\EloService;
@@ -11,7 +11,7 @@ use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
 use App\Http\Services\PointService;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 

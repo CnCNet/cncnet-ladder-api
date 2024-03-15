@@ -11,7 +11,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PlayerService
 {

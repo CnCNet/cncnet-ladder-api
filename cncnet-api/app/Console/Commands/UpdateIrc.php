@@ -2,7 +2,7 @@
 
 use App\Models\IrcAssociation;
 use Illuminate\Console\Command;
-use JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UpdateIrc extends Command {
 

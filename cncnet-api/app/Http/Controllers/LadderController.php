@@ -15,7 +15,6 @@ use App\Models\LadderHistory;
 use App\Models\Player;
 use App\Models\User;
 use Carbon\Carbon;
-use GuzzleHttp\Subscriber\History;
 use Illuminate\Http\Request;
 
 class LadderController extends Controller

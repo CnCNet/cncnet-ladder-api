@@ -22,7 +22,7 @@ use App\Models\QmQueueEntry;
 use App\Models\QmUserId;
 use Carbon\Carbon;
 use DateTime;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

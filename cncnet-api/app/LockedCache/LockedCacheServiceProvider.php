@@ -1,5 +1,6 @@
 <?php namespace App\LockedCache;
 
+use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\Console\ClearCommand;

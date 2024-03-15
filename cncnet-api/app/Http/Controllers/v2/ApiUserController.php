@@ -9,8 +9,8 @@ use App\Http\Services\PlayerService;
 use App\Models\PlayerActiveHandle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use JWTAuth;
-use Log;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Illuminate\Support\Facades\Log;
 
 class ApiUserController extends Controller
 {

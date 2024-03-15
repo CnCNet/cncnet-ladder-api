@@ -6,7 +6,7 @@ use App\Models\IrcHostmask;
 use App\Models\IrcPlayer;
 use App\Models\Ladder;
 use Carbon\Carbon;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
