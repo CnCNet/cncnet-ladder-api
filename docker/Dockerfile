@@ -1,6 +1,6 @@
 # PHP-FPM is a FastCGI implementation for PHP.
 # Read more here: https://hub.docker.com/_/php
-FROM php:7.4-fpm
+FROM php:8.3-fpm
 
 # Args from Docker-compose
 ARG user
@@ -81,7 +81,7 @@ RUN docker-php-ext-install gd && \
 #####################################
 
 # Install the xdebug extension
-RUN pecl install xdebug-3.1.0
+RUN pecl install xdebug-3.3.0
 
 #####################################
 # PHP Memcached:

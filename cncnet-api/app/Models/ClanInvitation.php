@@ -9,7 +9,9 @@ class ClanInvitation extends Model {
 
 	//
     protected $fillable = [ 'clan_id', 'author_id', 'player_id', 'type' ];
-    protected $dates = ['deleted_at'];
+    protected $casts = [
+        'deleted_at' => 'datetime'
+    ];
 
     public function clan()
     {

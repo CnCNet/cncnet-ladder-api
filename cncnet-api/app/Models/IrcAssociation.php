@@ -8,7 +8,11 @@ class IrcAssociation extends Model {
 
     //
     protected $fillable = [ 'user_id', 'ladder_id', 'player_id', 'clan_id', 'irc_hostmask' ];
-    protected $dates = [ 'created_at', 'updated_at', 'refreshed_at' ];
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'refreshed_at'  => 'datetime'
+    ];
 
     protected $hidden = [ 'created_at', 'updated_at' ];
 

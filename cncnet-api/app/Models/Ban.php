@@ -8,10 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Ban extends Model
 {
 
-    protected $dates = ['expires'];
 
     public $fillable = [
         'admin_id', 'user_id', 'ban_type', 'internal_note', 'plubic_reason', 'expires', 'ip_address_id'
+    ];
+
+    protected $casts = [
+        'expires' => 'datetime',
     ];
 
     const START_ON_CONNECT_BEGIN = 0;

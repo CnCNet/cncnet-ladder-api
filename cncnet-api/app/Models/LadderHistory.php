@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class LadderHistory extends Model
 {
     protected $table = 'ladder_history';
-    protected $dates = ['starts', 'ends'];
+    protected $casts = [
+        'starts' => 'datetime',
+        'ends' => 'datetime'
+    ];
     public $timestamps = false;
 
     public function ladder()
