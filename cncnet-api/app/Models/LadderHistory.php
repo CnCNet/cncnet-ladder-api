@@ -12,6 +12,14 @@ class LadderHistory extends Model
         'starts' => 'datetime',
         'ends' => 'datetime'
     ];
+
+    protected $fillable = [
+        'ladder_id',
+        'starts',
+        'ends',
+        'short',
+    ];
+
     public $timestamps = false;
 
     public function ladder()

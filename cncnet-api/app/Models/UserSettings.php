@@ -9,6 +9,7 @@ class UserSettings extends Model
     protected $table = 'user_settings';
 
     protected $fillable = [
+        'user_id',
         'disabledPointFilter',
         'skip_score_screen',
         'match_any_map',
