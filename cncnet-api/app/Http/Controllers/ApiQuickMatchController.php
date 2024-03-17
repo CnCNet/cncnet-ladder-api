@@ -565,7 +565,8 @@ class ApiQuickMatchController extends Controller
 
             # No match found yet
             # Push a job to find an opponent
-            $this->dispatch(new FindOpponent($qmQueueEntry->id, $gameType));
+            Log::info('queue FindOpponent');
+            dispatch(new FindOpponent($qmQueueEntry->id, $gameType));
 
             $qmPlayer->touch();
 

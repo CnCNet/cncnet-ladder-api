@@ -3,14 +3,15 @@
 namespace App\Commands;
 
 use App\Commands\Command;
+use Illuminate\Bus\Queueable;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SaveLadderResult extends Command implements ShouldQueue
+class SaveLadderResult implements ShouldQueue
 {
-
-    use InteractsWithQueue, SerializesModels;
+    use InteractsWithQueue, SerializesModels, Dispatchable, Queueable;
 
     public $dmpFile;
     public $ladderId;
@@ -33,13 +34,8 @@ class SaveLadderResult extends Command implements ShouldQueue
         $this->playerId = $playerId;
         $this->pingSent = $pingSent;
         $this->pingReceived = $pingReceived;
+        $this->onQueue('saveladderresult');
     }
-
-    public function queue($queue, $arguments)
-    {
-        $queue->pushOn('saveladderresult', $arguments);
-    }
-
     /**
      * Execute the command.
      *
@@ -47,7 +43,6 @@ class SaveLadderResult extends Command implements ShouldQueue
      */
     public function handle()
     {
-        //
         $this->delete();
         $alc = new \App\Http\Controllers\ApiLadderController;
         $alc->saveLadderResult($this->dmpFile, $this->ladderId, $this->gameId, $this->playerId, $this->pingSent, $this->pingReceived);

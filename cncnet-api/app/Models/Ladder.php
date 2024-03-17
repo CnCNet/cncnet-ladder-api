@@ -9,7 +9,15 @@ class Ladder extends Model
 {
     protected $table = 'ladders';
 
-    protected $fillable = ['name', 'abbreviation', 'game', 'clans_allowed', 'game_object_schema_id', 'private'];
+    protected $fillable = [
+        'name',
+        'abbreviation',
+        'game',
+        'clans_allowed',
+        'game_object_schema_id',
+        'private',
+        'map_pool_id',
+    ];
 
     public function allowedToView($user)
     {

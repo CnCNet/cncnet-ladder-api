@@ -4,7 +4,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class MapPool extends Model {
 
-    //
+    protected $fillable = [
+        'name',
+        'ladder_id'
+    ];
 
     public function ladder()
     {
