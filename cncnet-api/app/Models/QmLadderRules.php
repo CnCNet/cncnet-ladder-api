@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class QmLadderRules extends Model
 {
+    use HasFactory;
 
     protected $fillable = [
         'ladder_id', 'player_count', 'map_vetoes', 'max_difference', 'all_sides',

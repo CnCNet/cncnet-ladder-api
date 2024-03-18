@@ -148,6 +148,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
             foreach ($qmMaps as $qmMap)
             {
                 $match = true;
+
                 if (
                     array_key_exists(
                         $qmMap->bit_idx,

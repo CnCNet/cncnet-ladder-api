@@ -23,7 +23,8 @@ RUN apt-get update && \
     cron \
     nano \
     zip \
-    libxml2-dev
+    libxml2-dev \
+    default-mysql-client
 
 COPY docker/custom-php.ini /usr/local/etc/php/conf.d/custom-php.ini
 
@@ -81,7 +82,7 @@ RUN docker-php-ext-install gd && \
 #####################################
 
 # Install the xdebug extension
-RUN pecl install xdebug-3.3.0
+RUN pecl install xdebug-3.3.0 && docker-php-ext-enable xdebug
 
 #####################################
 # PHP Memcached:

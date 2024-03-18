@@ -39,7 +39,8 @@
 			"tests/TestCase.php"
 		],
 		"psr-4": {
-			"Tests\\": "tests/"
+			"Tests\\": "tests/",
+			"Database\\Factories\\": "app/database/factories/"
 		}
 	},
 	"scripts": {

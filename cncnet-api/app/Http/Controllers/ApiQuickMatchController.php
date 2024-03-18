@@ -396,6 +396,9 @@ class ApiQuickMatchController extends Controller
      */
     private function onMatchMeUp($request, $ladder, $player, $qmPlayer)
     {
+
+        Log::info('request : ' . json_encode($request->all()));
+
         $ladderRules = $ladder->qmLadderRules()->first();
         $history = $ladder->currentHistory();
         $user = $player->user;

@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class LadderHistory extends Model
 {
+    use HasFactory;
+
     protected $table = 'ladder_history';
     protected $casts = [
         'starts' => 'datetime',
