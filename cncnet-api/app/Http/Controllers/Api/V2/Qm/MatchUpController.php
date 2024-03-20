@@ -1,0 +1,276 @@
+<?php
+
+namespace App\Http\Controllers\Api\V2\Qm;
+
+use App\Http\Services\PlayerService;
+use App\Http\Services\QuickMatchService;
+use App\Models\Game;
+use App\Models\IpAddress;
+use App\Models\Ladder;
+use App\Models\Player;
+use App\Models\QmCanceledMatch;
+use App\Models\QmConnectionStats;
+use App\Models\QmLadderRules;
+use App\Models\QmMatch;
+use App\Models\QmMatchPlayer;
+use App\Models\QmMatchState;
+use App\Models\QmUserId;
+use App\Models\StateType;
+use App\Models\User;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+
+class MatchUpController
+{
+    private $playerService;
+    private $quickMatchService;
+
+    public function __construct(
+        PlayerService $playerService,
+        QuickMatchService $quickMatchService
+    ) {
+        $this->playerService = $playerService;
+        $this->quickMatchService = $quickMatchService;
+    }
+
+    public function __invoke(Request $request, Ladder $ladder, string $playerName)
+    {
+        // check that the player is registered in the ladder
+        $player = $this->playerService->findPlayerByUsername($playerName, $ladder);
+        if (!isset($player)) {
+            return $this->quickMatchService->onFatalError(
+                $playerName . ' is not registered in ' . $ladder->abbreviation
+            );
+        }
+
+        // check that the player is related to the authenticated user
+        $user = $request->user();
+        if ($user->id !== $player->user->id) {
+            return $this->quickMatchService->onFatalError(
+                'Failed'
+            );
+        }
+
+        // what is this ?
+        if ($request->hwid)  {
+            QmUserId::createNew($user->id, $request->hwid);
+        }
+
+        # Check player has an active nick to play with, set one if not
+        $this->playerService->setActiveUsername($player, $ladder);
+
+        $this->playerService->createPlayerRatingIfNull($player);
+
+        $qmPlayer = QmMatchPlayer::where("player_id", $player->id)
+            ->where("waiting", true)
+            ->first();
+
+        switch ($request->type)
+        {
+            case "quit":
+                return $this->onQuit($qmPlayer);
+
+            case "update":
+                return $this->onUpdate($player, $request);
+
+            case "match me up":
+                return $this->onMatchMeUp($request, $ladder, $player, $qmPlayer);
+
+            default:
+                return response()->json([
+                    "type" => "error",
+                    "description" => "unknown type: " . $request->type
+                ]);
+        }
+    }
+
+    /**
+     * The player is leaving the queue.
+     * Clear up the database and remove the player from the queue.
+     * @param QmMatchPlayer $qmPlayer
+     * @return JsonResponse
+     */
+    private function onQuit(?QmMatchPlayer $qmPlayer)
+    {
+        if (isset($qmPlayer)) {
+
+            if (isset($qmPlayer->qm_match_id)) {
+                $qmPlayer->qmMatch->save();
+            }
+
+            if (isset($qmPlayer->qEntry)) {
+                $qmPlayer->qEntry->delete();
+            }
+
+            $qmPlayer->delete();
+        }
+
+        return response()->json([
+            "type" => "quit"
+        ]);
+    }
+
+
+    /**
+     * Update the status of the match related to the given player
+     * @param Player $player
+     * @param $request
+     * @return JsonResponse
+     */
+    private function onUpdate(Player $player, $request)
+    {
+        $status = $request->status;
+        $seed = $request->seed;
+        $peers = $request->peers;
+
+        if ($seed)
+        {
+            $qmMatch = QmMatch::where('seed', '=', $seed)
+                ->join('qm_match_players', 'qm_match_id', '=', 'qm_matches.id')
+                ->where('qm_match_players.player_id', '=', $player->id)
+                ->select('qm_matches.*')
+                ->first();
+
+            if (isset($qmMatch)) {
+                if($status === 'touch') {
+                    $qmMatch->touch();
+                }
+                else {
+
+                    $qmState = new QmMatchState();
+                    $qmState->player_id = $player->id;
+                    $qmState->qm_match_id = $qmMatch->id;
+                    $qmState->state_type_id = StateType::findByName($status)->id;
+                    $qmState->save();
+
+                    //match not ready
+                    if ($qmState->state_type_id === 7) {
+                        $canceledMatch = new QmCanceledMatch();
+                        $canceledMatch->qm_match_id = $qmMatch->id;
+                        $canceledMatch->player_id = $player->id;
+                        $canceledMatch->ladder_id = $qmMatch->ladder_id;
+                        $canceledMatch->save();
+                    }
+
+                    if (isset($peers)) {
+                        foreach ($peers as $peer) {
+                            $con = new QmConnectionStats();
+                            $con->qm_match_id = $qmMatch->id;
+                            $con->player_id = $player->id;
+                            $con->peer_id = $peer['id'];
+                            $con->ip_address_id = IpAddress::getID($peer['address']);
+                            $con->port = $peer['port'];
+                            $con->rtt = $peer['rtt'];
+                            $con->save();
+                        }
+                    }
+                }
+
+                $qmMatch->save();
+
+                return response()->json([
+                    "message"  => "update qm match: " . $status]
+                );
+            }
+        }
+
+        return response()->json([
+            "type" => "update"
+        ]);
+    }
+
+    /**
+     * This matchup system is restful, a player will have to check in to see if there is a matchup waitin.
+     * If there is already a matchup then all these top level ifs will fall through and the game info will be sent.
+     * Else we'll try to set up a match.
+     *
+     * @param Request $request
+     * @param Ladder $ladder
+     * @param Player $player
+     * @param ?QmMatchPlayer $qmPlayer
+     */
+    private function onMatchMeUp(Request $request, Ladder $ladder, Player $player, ?QmMatchPlayer $qmPlayer) {
+
+        Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
+
+        // If we're new to the queue, create required QmMatchPlayer model
+        if (!isset($qmPlayer)) {
+            $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $ladder->current_history);
+            $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladder->qmLadderRules);
+
+            if (!$validSides) {
+                return $this->quickMatchService->onFatalError(
+                    'Side ('.$request->side.') is not allowed'
+                );
+            }
+        }
+
+        // Important check, sent from qm client
+        if ($request->ai_dat) {
+            $qmPlayer->ai_dat = $request->ai_dat;
+            $qmPlayer->save();
+            return $this->quickMatchService->onFatalError(
+                'Error, please contact us on the CnCNet Discord'
+            );
+        }
+        $qmPlayer->save();
+
+        $alert = $this->quickMatchService->checkForAlerts($ladder, $player);
+        $userPlayerTier = $player->user->getUserLadderTier($ladder)->tier;
+
+        # Check if player should match AI
+        $playerWillMatchAI = $this->checkPlayerWillMatchAI(
+            $request->version,
+            $player->user,
+            $ladder->qmLadderRules,
+            $userPlayerTier,
+            $qmPlayer
+        );
+
+        if ($playerWillMatchAI == true)
+        {
+            # Delete player from queue if they were in one.
+            if ($qmPlayer->qEntry != null)
+            {
+                $qmPlayer->qEntry->delete();
+            }
+
+            $gameType = Game::GAME_TYPE_1VS1_AI;
+
+            # Match against AI
+            return $this->onHandle1vs1AIMatchupRequest(
+                $qmPlayer,
+                $userPlayerTier,
+                $ladder->current_history,
+                $gameType,
+                $ladder,
+                $ladder->qmLadderRules
+            );
+        }
+
+        if ($qmPlayer->qEntry !== null)
+        {
+            $gameType = $qmPlayer->qEntry->game_type;
+        }
+        else
+        {
+            $gameType = Game::GAME_TYPE_1VS1;
+
+            if ($ladder->clans_allowed)
+            {
+                $gameType = Game::GAME_TYPE_2VS2;
+            }
+        }
+
+        return $this->onHandlePlayersMatchupRequest(
+            $qmPlayer,
+            $player,
+            $ladder->current_history,
+            $gameType,
+            $alert,
+            $ladder,
+            $ladder->qmLadderRules
+        );
+    }
+}

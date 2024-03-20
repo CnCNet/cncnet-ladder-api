@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -115,9 +114,20 @@ Route::group(['prefix' => 'v1'], function () {
 Route::group(['prefix' => 'v2'], function () {
 
     Route::group(['middleware' => 'jwt.auth'], function () {
-        Route::get('/user/account', [\App\Http\Controllers\v2\ApiUserController::class, 'getAccount']);
+        Route::get('/user/account', [\App\Http\Controllers\Api\V2\User\ApiUserController::class, 'getAccount']);
     });
 
+
+    Route::group(['middleware' => 'jwt.auth'], function () {
+        Route::post('/qm/{ladder:abbreviation}/{playerName}', \App\Http\Controllers\Api\V2\Qm\MatchUpController::class)
+            ->middleware([
+                \App\Http\Middleware\Api\ClientUpToDateMiddleware::class,
+                \App\Http\Middleware\Api\ShadowBanMiddleware::class,
+                \App\Http\Middleware\Api\BanMiddleware::class,
+                \App\Http\Middleware\Api\VerifiedEmailMiddleware::class,
+            ]);
+
+    });
 });
 
 

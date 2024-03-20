@@ -91,9 +91,9 @@ class PlayerService
         return $userRating;
     }
 
-    public function findPlayerByUsername($name, $ladder)
+    public function findPlayerByUsername($name, $ladder) : ?Player
     {
-        return \App\Models\Player::where("username", "=", $name)
+        return Player::where("username", "=", $name)
             ->where("ladder_id", "=", $ladder->id)
             ->first();
     }
@@ -157,6 +157,13 @@ class PlayerService
         }
     }
 
+    /**
+     * @param $player
+     * @param $ip
+     * @param $qmClientId
+     * @return mixed|null
+     * @deprecated use checkUserForBans
+     */
     public function checkPlayerForBans($player, $ip, $qmClientId)
     {
         $ban = $player->user->getBan(true);
@@ -191,6 +198,51 @@ class PlayerService
         return null;
     }
 
+    /**
+     * @param $player
+     * @param $ip
+     * @param $qmClientId
+     * @return mixed|null
+     */
+    public function checkUserForBans($user, $ip, $qmClientId)
+    {
+        $ban = $user->getBan(true);
+        if ($ban !== null)
+        {
+            return $ban;
+        }
+
+        $ban = \App\Models\IpAddress::findByIP($ip)->getBan(true);
+        if ($ban !== null)
+        {
+            return $ban;
+        }
+
+        try
+        {
+            $qmUserIds = QmUserId::where("qm_user_id", $qmClientId)->get();
+            foreach ($qmUserIds as $qmUserId)
+            {
+                $ban = $qmUserId->user->getBan(true);
+                if ($ban !== null)
+                {
+                    return $ban;
+                }
+            }
+        }
+        catch (Exception $ex)
+        {
+            Log::info("Error checking player for bans: " . $ex->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $player
+     * @return bool
+     * @deprecated use checkUserHasVerifiedEmail
+     */
     public function checkPlayerHasVerifiedEmail($player)
     {
         if (!$player->user->email_verified)
@@ -198,6 +250,22 @@ class PlayerService
             if (!$player->user->verificationSent())
             {
                 $player->user->sendNewVerification();
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public function checkUserHasVerifiedEmail($user)
+    {
+        if (!$user->email_verified)
+        {
+            if (!$user->verificationSent())
+            {
+                $user->sendNewVerification();
             }
 
             return false;

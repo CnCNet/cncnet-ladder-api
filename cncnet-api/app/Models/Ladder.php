@@ -35,11 +35,10 @@ class Ladder extends Model
         return $user->isLadderAdmin($this) || $user->isLadderMod($this) || $user->isLadderTester($this);
     }
 
-    public function currentHistory()
+    public function currentHistory() : ?LadderHistory
     {
-        $date = Carbon::now();
-        $start = $date->startOfMonth()->toDateTimeString();
-        $end = $date->endOfMonth()->toDateTimeString();
+        $start = now()->startOfMonth()->toDateTimeString();
+        $end = now()->endOfMonth()->toDateTimeString();
 
         return LadderHistory::where('ladder_id', '=', $this->id)
             ->where('ladder_history.starts', '=', $start)
@@ -106,6 +105,15 @@ class Ladder extends Model
     public function qmMaps()
     {
         return $this->hasMany(QmMap::class);
+    }
+
+    public function current_history() {
+        $start = now()->startOfMonth()->toDateTimeString();
+        $end = now()->endOfMonth()->toDateTimeString();
+        return $this->hasOne(LadderHistory::class)
+            ->where('ladder_history.starts', '=', $start)
+            ->where('ladder_history.ends', '=', $end);
+
     }
 
     public function maps()

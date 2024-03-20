@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\v2;
+namespace App\Http\Controllers\Api\V2\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Services\AuthService;
@@ -9,8 +9,6 @@ use App\Http\Services\PlayerService;
 use App\Models\PlayerActiveHandle;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Facades\JWTAuth;
-use Illuminate\Support\Facades\Log;
 
 class ApiUserController extends Controller
 {

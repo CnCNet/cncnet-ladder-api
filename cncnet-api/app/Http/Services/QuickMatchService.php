@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Commands\Matchup\ClanMatchupHandler;
 use App\Models\Game;
 use App\Models\IpAddress;
+use App\Models\Ladder;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
 use App\Models\QmQueueEntry;
@@ -859,5 +860,55 @@ class QuickMatchService
         }
 
         return $locations;
+    }
+
+
+    public function checkQMClientRequiresUpdate(Ladder $ladder, $version)
+    {
+        # YR Games check
+        if ($ladder->game == "yr")
+        {
+            if ($version < 1.79)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        # RA/TS Games check
+        if ($ladder->game == "ra" || $ladder->game == "ts")
+        {
+            if ($version < 1.69)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    public function onFatalError(string $error) {
+        return response()->json([
+            "type" => "fatal",
+            "message" => $error
+        ]);
+    }
+
+    public function onCheckback($alert = null)
+    {
+        $response = [
+            "type" => "please wait",
+            "checkback" => 10,
+            "no_sooner_than" => 5
+        ];
+
+        if (isset($alert)) {
+            $response['warning'] = $alert;
+        }
+
+        return response()->json($response);
     }
 }
