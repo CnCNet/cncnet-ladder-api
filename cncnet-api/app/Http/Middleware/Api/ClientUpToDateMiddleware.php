@@ -25,8 +25,7 @@ class ClientUpToDateMiddleware
     public function handle($request, Closure $next) {
 
         // Deprecate older versions
-        if ($this->qmService->checkQMClientRequiresUpdate($request->route('ladder'), $request->version) === true)
-        {
+        if ($this->qmService->checkQMClientRequiresUpdate($request->route('ladder'), $request->version) === true) {
             return $this->qmService->onFatalError(
                 "This version of the client is no longer supported, please restart the CnCNet client to get the latest updates"
             );

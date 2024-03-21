@@ -126,7 +126,6 @@ Route::group(['prefix' => 'v2'], function () {
                 \App\Http\Middleware\Api\BanMiddleware::class,
                 \App\Http\Middleware\Api\VerifiedEmailMiddleware::class,
             ]);
-
     });
 });
 

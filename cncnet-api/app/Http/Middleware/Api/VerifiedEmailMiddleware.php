@@ -26,7 +26,7 @@ class VerifiedEmailMiddleware
         if(!$this->playerService->checkUserHasVerifiedEmail($request->user())) {
             return $this->qmService->onFatalError(
                 'Quick Match now requires a verified email address to play.' . PHP_EOL .
-                'A verification code has been sent to '. $user->email . PHP_EOL
+                'A verification code has been sent to '. $request->user()->email . PHP_EOL
             );
         }
         return $next($request);
