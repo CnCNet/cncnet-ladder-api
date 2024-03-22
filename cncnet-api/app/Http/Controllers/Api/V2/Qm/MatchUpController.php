@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Api\V2\Qm;
 
-use App\Commands\FindOpponent;
 use App\Helpers\AIHelper;
 use App\Helpers\GameHelper;
 use App\Helpers\LeagueHelper;
 use App\Http\Services\PlayerService;
 use App\Http\Services\QuickMatchService;
 use App\Http\Services\QuickMatchSpawnService;
+use App\Jobs\Qm\FindOpponentJob;
 use App\Models\Game;
 use App\Models\IpAddress;
 use App\Models\Ladder;
@@ -16,13 +16,11 @@ use App\Models\MapPool;
 use App\Models\Player;
 use App\Models\QmCanceledMatch;
 use App\Models\QmConnectionStats;
-use App\Models\QmLadderRules;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
 use App\Models\QmMatchState;
 use App\Models\QmUserId;
 use App\Models\StateType;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -58,7 +56,6 @@ class MatchUpController
             );
         }
 
-        // what is this ?
         if ($request->hwid)  {
             QmUserId::createNew($user->id, $request->hwid);
         }
@@ -266,7 +263,7 @@ class MatchUpController
 
             // Push a job to find an opponent
             Log::info('Queued FindOpponent job');
-            dispatch(new FindOpponent($qmQueueEntry->id, $gameType));
+            dispatch(new FindOpponentJob($qmQueueEntry, $gameType));
 
             $qmPlayer->touch();
 

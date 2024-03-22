@@ -343,7 +343,7 @@ class PlayerService
     public function checkPlayerShouldMatchAI(Request $request, Player $player, Ladder $ladder, QmMatchPlayer $qmPlayer) {
 
         $user = $player->user;
-        $ladderRules = $ladder->ladderRules;
+        $ladderRules = $ladder->qmLadderRules;
         $userPlayerTier = $player->user->getUserLadderTier($ladder)->tier;
         $version = $request->version;
 

@@ -151,4 +151,61 @@ class PlayerMatchRequestTest extends TestCase
 
         $this->assertEquals('spawn', $json['type']);
     }
+
+    public function test_match_me_up_and_find_opponent_v2(): void
+    {
+        $d = Carbon::create(2024, 4, 20, 10, 10, 0);
+        Carbon::setTestNow($d);
+
+        $ladderName = $this->ladder->abbreviation;
+
+        $lh = $this->makeLadderHistory($this->ladder);
+        $this->makePlayerHistory($this->player1, $lh);
+
+        $u2 = $this->makeUser('test2');
+        $p2 = $this->makePlayerForLadder('test2', $this->ladder, $u2);
+        $this->makePlayerHistory($p2, $lh);
+
+        // queue a 1st player
+        $this
+            ->jwtAuth($this->user1)
+            ->post('/api/v2/qm/'.$ladderName.'/'.$this->player1->username, [
+                'version' => '1.83',
+                'type' => 'match me up',
+                'map_bitfield' => 0xffffffff,
+                'side' => 1,
+                'map_sides' => [1,1,1,1]
+            ]);
+
+
+        Carbon::setTestNow($d->clone()->addSeconds(8));
+
+        // queue a 2nd player
+        $this
+            ->jwtAuth($u2)
+            ->post('/api/v2/qm/'.$ladderName.'/'.$p2->username, [
+                'version' => '1.83',
+                'type' => 'match me up',
+                'map_bitfield' => 0xffffffff,
+                'side' => 1,
+                'map_sides' => [1,1,1,1]
+            ]);
+
+        Carbon::setTestNow($d->clone()->addSeconds(8));
+
+        // queue a 2nd player
+        $response = $this
+            ->jwtAuth($u2)
+            ->post('/api/v2/qm/'.$ladderName.'/'.$p2->username, [
+                'version' => '1.83',
+                'type' => 'match me up',
+                'map_bitfield' => 0xffffffff,
+                'side' => 1,
+                'map_sides' => [1,1,1,1]
+            ]);
+
+        $json = $response->json();
+
+        $this->assertEquals('spawn', $json['type']);
+    }
 }

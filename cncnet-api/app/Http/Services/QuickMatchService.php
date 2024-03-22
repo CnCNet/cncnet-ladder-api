@@ -6,10 +6,14 @@ use App\Commands\Matchup\ClanMatchupHandler;
 use App\Models\Game;
 use App\Models\IpAddress;
 use App\Models\Ladder;
+use App\Models\LadderHistory;
+use App\Models\PlayerGameReport;
+use App\Models\QmMap;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
 use App\Models\QmQueueEntry;
 use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class QuickMatchService
@@ -204,6 +208,159 @@ class QuickMatchService
         }
 
         return $qEntry;
+    }
+
+    public function fetchQmQueueEntry(LadderHistory $history, ?QmQueueEntry $qmQueueEntry = null): \Illuminate\Database\Eloquent\Collection|array
+    {
+        return QmQueueEntry::query()
+            ->when(isset($qmQueueEntry), fn($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
+            ->where('ladder_history_id', '=', $history->id)
+            ->get();
+    }
+
+    /**
+     * Find all opponents that can be matched with the current player in queue.
+     * We exclude observers
+     * @param QmQueueEntry $currentQmQueueEntry
+     * @param QmQueueEntry[]|Collection $opponents
+     * @return QmQueueEntry[]|Collection
+     */
+    public function getMatchableOpponents(QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection {
+
+        $history = $currentQmQueueEntry->ladderHistory;
+        $ladder = $history->ladder;
+        $currentTier = $currentQmQueueEntry->qmPlayer->player->user->getUserLadderTier($ladder)->tier;
+
+        $matchableOpponents = collect();
+
+        foreach($opponents as $opponent) {
+
+            // If the opponent is an observer we skip him
+            if($opponent->qmPlayer->isObserver()) {
+                continue;
+            }
+
+            $oppTier = $opponent->qmPlayer->player->user->getUserLadderTier($ladder)->tier;
+
+            // If players are not in the same league (same tier), then we don't match them together
+            if($currentTier !== $oppTier) {
+                // Except if any of them have both_tiers feature enabled.
+                // Check both as either player could be tier 1
+                if(
+                    ($oppTier === 1 && $opponent->qmPlayer->player->user->canUserPlayBothTiers($ladder))
+                    ||
+                    ($currentTier === 1 && $currentQmQueueEntry->qmPlayer->player->user->canUserPlayBothTiers($ladder))
+                ) {
+                    // Players can match so we can continue with the rest of the process
+                    Log::info("PlayerMatchupHandler ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  "
+                        . $ladder->abbreviation . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
+                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                }
+                else {
+                    // Player cannot match so we skip it
+                    Log::info("PlayerMatchupHandler ** Players in different tiers for ladder " . $ladder->abbreviation
+                        . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
+                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                    continue;
+                }
+            }
+
+
+            // Checks players point filter settings
+            if ($currentQmQueueEntry->qmPlayer->player->user->userSettings->disabledPointFilter
+                && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter)
+            {
+                // Do both players rank meet the minimum rank required for no pt filter to apply
+                if (abs($currentQmQueueEntry->qmPlayer->player->rank($history) - $opponent->qmPlayer->player->rank($history))
+                        <=
+                    $ladder->qmLadderRules->point_filter_rank_threshold)
+                {
+                    // Both players have the point filter disabled, we will ignore the point filter and match them
+                    $matchableOpponents->add($opponent);
+                    continue;
+                }
+            }
+
+
+            // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
+            $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $ladder->qmLadderRules->points_per_second;
+
+            // is the opponent within the point filter
+            if ($pointsTime + $ladder->qmLadderRules->max_points_difference > abs($currentQmQueueEntry->points - $opponent->points))
+            {
+                $matchableOpponents->add($opponent);
+            }
+        }
+
+        return $matchableOpponents;
+    }
+
+    /**
+     * Get maps in common of all the given players for the given ladder
+     * @param Ladder $ladder
+     * @param QmQueueEntry[]|Collection $players
+     * @return QmMap[]
+     */
+    public function getCommonMapsForPlayers(Ladder $ladder, Collection $players): array {
+
+        $qmMaps = $ladder->mapPool->maps;
+
+        $is_rejected_bit = -2;
+
+        $commonQmMaps = [];
+        foreach($qmMaps as $qmMap) {
+            $rejectedMap = false;
+            foreach($players as $player) {
+                $playerMapSides = $player->qmPlayer->map_side_array();
+                if (!(
+                    array_key_exists($qmMap->bit_idx, $playerMapSides) // if the map exists in the player map side
+                    && $playerMapSides[$qmMap->bit_idx] > $is_rejected_bit // and if the map is not refjected by the player
+                    && in_array($playerMapSides[$qmMap->bit_idx], $qmMap->sides_array()) // and if the side chose by the player is allowed in the map
+                ))
+                {
+                    // this means the player reject this map
+                    $rejectedMap = true;
+                    break;
+                }
+            }
+            if(!$rejectedMap) {
+                $commonQmMaps[] = $qmMap;
+            }
+        }
+
+        return $commonQmMaps;
+    }
+
+    /**
+     * @param array $maps
+     * @param QmQueueEntry[]|Collection $players
+     * @return array
+     */
+    public function filterOutRecentsMaps(LadderHistory $history, array $maps, Collection $players): array {
+
+        $maps = collect($maps);
+
+        foreach($players as $player) {
+            /** @var Collection $playerGameReports */
+            $playerGameReports = $player->qmPlayer->player->playerGames()
+                ->where("ladder_history_id", "=", $history->id)
+                ->where("disconnected", "=", 0)
+                ->where("no_completion", "=", 0)
+                ->where("draw", "=", 0)
+                ->orderBy('created_at', 'DESC')
+                ->limit($history->ladder->qmLadderRules->reduce_map_repeats)
+                ->get();
+
+            $recentMapsHash = $playerGameReports
+                ->map(fn (PlayerGameReport $item) => $item->game->map)
+                ->filter()
+                ->pluck('hash')
+                ->toArray();
+
+            $maps = $maps->filter(fn(QmMap $map) => !in_array($map->map->hash, $recentMapsHash));
+        }
+
+        return $maps->all();
     }
 
     public function createQmAIMatch($qmPlayer, $userPlayerTier, $maps, $gameType)
