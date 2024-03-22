@@ -3,6 +3,7 @@
 namespace App\Extensions\Qm\Matchup;
 
 use App\Models\QmQueueEntry;
+use Illuminate\Support\Facades\Log;
 
 class TeamMatchupHandler extends BaseMatchupHandler
 {
@@ -11,26 +12,50 @@ class TeamMatchupHandler extends BaseMatchupHandler
     {
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
-        $ladderMaps = $ladder->mapPool->maps;
 
-        $numberOfTeamRequired = 2;
-        $numberOfPlayerRequired = $ladderRules->player_count;
+        // Check if current player is an observer
+        if ($this->qmPlayer->isObserver()) {
+            // If yes, then we skip the matchup because we don't want to compare
+            // observer with other actual players to find a match.
+            // Observer will be added to the match later on.
+            return;
+        }
 
-        $currentPlayer = $this->qmPlayer->player;
+        // Fetch all other players in the queue
+        $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
 
-        # Fetch all entries who are currently in queue for this ladder
-        $allQMQueueEntries = QmQueueEntry::query()
-            ->where('qm_match_player_id', '<>', $this->qmQueueEntry->qmPlayer->id)
-            ->where('ladder_history_id', '=', $this->history->id)
-                ->get();
+        // Find opponents that can be matched with current player.
+        $matchableOpponents = $opponents;
 
-        // get all observers from qm queue entries
-        $observersQmQueueEntries = $allQMQueueEntries->filter(function($qmQueueEntry) {
-            return $qmQueueEntry->qmPlayer->isObserver();
-        });
-        $this->matchHasObservers = $observersQmQueueEntries->count() > 0;
+        // Count the number of players we need to start a match
+        // Excluding current player
+        $numberOfOpponentsNeeded = $ladderRules->player_count - 1;
 
-        // todo : match up x players by their ranking
+        // Check if there is enough opponents
+        if ($matchableOpponents->count() < $numberOfOpponentsNeeded) {
+            Log::info("FindOpponent ** Not enough players for match yet");
+            $this->qmPlayer->touch();
+            return;
+        }
 
+        [$teamAPlayers, $teamBPlayers] = $this->quickMatchService->getBestMatch2v2ForPlayer(
+            $this->qmQueueEntry,
+            $matchableOpponents,
+            $this->history
+        );
+
+        $players = $teamAPlayers->merge($teamBPlayers);
+
+        $commonQmMaps = $this->quickMatchService->getCommonMapsForPlayers($ladder, $players);
+
+        if (count($commonQmMaps) < 1) {
+            Log::info("FindOpponent ** No common maps available");
+            $this->qmPlayer->touch();
+            return;
+        }
+
+        // todo create match
+        // ...
+        // $this->createMatch($commonQmMaps, $teamAPlayers, $teamBPlayers)
     }
 }

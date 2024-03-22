@@ -1019,6 +1019,99 @@ class QuickMatchService
         return $locations;
     }
 
+    public function findPossibleMatches($currentPlayerId, $currentPlayerRank, $opponentsRating) {
+        $possibleMatches = [];
+        for ($i = 0; $i < count($opponentsRating); $i++) {
+            $teamA = [
+                'player1' => $currentPlayerId,
+                'player2' => $opponentsRating[$i]['id'],
+                'team_elo' => $currentPlayerRank + $opponentsRating[$i]['rank'],
+                'elo_gap' => abs($currentPlayerRank - $opponentsRating[$i]['rank'])
+            ];
+
+            for ($j = 0; $j < count($opponentsRating); $j++) {
+                if($opponentsRating[$j]['id'] == $teamA['player2']) continue;
+                $player1B = $opponentsRating[$j]['id'];
+
+                for ($k = 0; $k < count($opponentsRating); $k++) {
+                    if($opponentsRating[$k]['id'] == $player1B || $opponentsRating[$k]['id'] == $teamA['player2']) continue;
+                    $player2B = $opponentsRating[$k]['id'];
+
+                    $teamB = [
+                        'player1' => $player1B,
+                        'player2' => $player2B,
+                        'team_elo' => $opponentsRating[$j]['rank'] + $opponentsRating[$k]['rank'],
+                        'elo_gap' => abs($opponentsRating[$j]['rank'] - $opponentsRating[$k]['rank'])
+                    ];
+
+                    $diff = abs($teamA['team_elo'] - $teamB['team_elo']);
+                    $gap = $teamA['elo_gap'] + $teamB['elo_gap'];
+                    $possibleMatches[] = [
+                        'teamA' => $teamA,
+                        'teamB' => $teamB,
+                        'teams_elo_diff' => $diff,
+                        'elo_gap_sum' => $gap,
+                        'match_ranking' => $diff + $gap
+                    ];
+                }
+            }
+        }
+        return $possibleMatches;
+    }
+    public function findBestMatch($possibleMatches) {
+
+        $minRanking = PHP_INT_MAX;
+        $bestBatch = null;
+        foreach($possibleMatches as $match) {
+            if($match['match_ranking'] < $minRanking) {
+                $minRanking = $match['match_ranking'];
+                $bestBatch = $match;
+            }
+        }
+
+        return $bestBatch;
+    }
+
+    /**
+     * @param QmQueueEntry $currentPlayer
+     * @param Collection $matchableOpponents
+     * @param LadderHistory $history
+     * @return QmQueueEntry[][]|Collection[]
+     */
+    public function getBestMatch2v2ForPlayer(QmQueueEntry $currentPlayer, Collection $matchableOpponents, LadderHistory $history): array {
+
+        $players = $matchableOpponents->concat([$currentPlayer]);
+
+        $opponentsRating = [];
+        $currentPlayerRank = $currentPlayer->qmPlayer->player->rank($history);
+        foreach($matchableOpponents as $opponent) {
+            $opponentsRating[] = [
+                'id' => $opponent->id,
+                'rank' => $opponent->qmPlayer->player->rank($history)
+            ];
+        }
+
+        // find all possible matches
+        $possibleMatches = $this->findPossibleMatches(
+            $currentPlayer->id,
+            $currentPlayerRank,
+            $opponentsRating
+        );
+
+        $best = $this->findBestMatch($possibleMatches);
+
+        $g = function($players, $match, $team) {
+            return $players
+                ->filter(fn(QmQueueEntry $qmQueueEntry) => in_array($qmQueueEntry->id, [
+                    $match[$team]['player1'], $match[$team]['player2']
+                ]));
+        };
+
+        $teamAPlayers = $g($players, $best, 'teamA');
+        $teamBPlayers = $g($players, $best, 'teamB');
+
+        return [$teamAPlayers, $teamBPlayers];
+    }
 
     public function checkQMClientRequiresUpdate(Ladder $ladder, $version)
     {
