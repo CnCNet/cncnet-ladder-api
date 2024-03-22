@@ -53,7 +53,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
 
         // Randomly choose the opponents from the best matches.
         // To prevent long runs of identical matchups.
-        $matchedOpponents = $matchableOpponents->shuffle()->take($numberOfOpponentsNeeded);
+        $matchedOpponents = $matchableOpponents->take($numberOfOpponentsNeeded);
 
         // Get a collection with all players that will be matched together
         $players = $matchedOpponents->concat([$this->qmQueueEntry]);

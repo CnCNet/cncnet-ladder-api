@@ -7,7 +7,7 @@ use App\Models\QmQueueEntry;
 class TeamMatchupHandler extends BaseMatchupHandler
 {
 
-    public function matchup()
+    public function matchup() : void
     {
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
