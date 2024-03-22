@@ -1019,7 +1019,8 @@ class QuickMatchService
         return $locations;
     }
 
-    public function findPossibleMatches($currentPlayerId, $currentPlayerRank, $opponentsRating) {
+    public function findPossibleMatches($currentPlayerId, $currentPlayerRank, $opponentsRating): array
+    {
         $possibleMatches = [];
         for ($i = 0; $i < count($opponentsRating); $i++) {
             $teamA = [
@@ -1058,7 +1059,7 @@ class QuickMatchService
         }
         return $possibleMatches;
     }
-    public function findBestMatch($possibleMatches) {
+    public function findBestMatch($possibleMatches) : array {
 
         $minRanking = PHP_INT_MAX;
         $bestBatch = null;
