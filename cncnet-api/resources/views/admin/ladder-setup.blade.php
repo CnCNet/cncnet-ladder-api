@@ -483,12 +483,6 @@
                                                         class="form-control" value="{{ $rule->max_active_players }}" />
                                                 </div>
 
-                                                <div class="form-group col-md-4">
-                                                    <input type="checkbox" id="{{ $rule->ladder_id }}_use_ranked_map_picker" name="use_ranked_map_picker"
-                                                        @if ($rule->use_ranked_map_picker) checked @endif />
-                                                    <label for="{{ $rule->ladder_id }}_use_ranked_map_picker">Use Ranked Map Picker</label>
-                                                </div>
-
                                                 <button type="submit" class="btn btn-primary">Save</button>
                                             </form>
 
