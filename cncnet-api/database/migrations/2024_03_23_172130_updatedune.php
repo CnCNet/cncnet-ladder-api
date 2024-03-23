@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddD2kGame extends Migration
+class Updatedune extends Migration
 {
     /**
      * Run the migrations.
@@ -12,7 +12,7 @@ class AddD2kGame extends Migration
      */
     public function up()
     {
-        Schema::getConnection()->statement("ALTER TABLE ladders MODIFY game ENUM('ra', 'yr', 'ts', 'dune') NOT NULL");
+        Schema::getConnection()->statement("ALTER TABLE ladders MODIFY game ENUM('ra', 'yr', 'ts', 'd2k') NOT NULL");
     }
 
     /**

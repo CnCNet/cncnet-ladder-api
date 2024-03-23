@@ -311,6 +311,9 @@ class MapPoolController extends Controller
 
     private function parseMapHeaders($fileName, $mapId, $ladderGame)
     {
+        if ($ladderGame == "dune") // not an INI file, not yet supported
+            return "";
+
         try
         {
             $ini = parse_ini_file($fileName, true, INI_SCANNER_RAW); //parse the map file, map files are INI files
@@ -324,11 +327,11 @@ class MapPoolController extends Controller
             return "Failure parsing INI from file";
 
         if ($ladderGame == "ra")
-            $this->parseRaMapHeaders($ini, $mapId);
+            return $this->parseRaMapHeaders($ini, $mapId);
         else if ($ladderGame == "ts")
-            $this->parseTsMapHeaders($ini, $mapId);
+            return $this->parseTsMapHeaders($ini, $mapId);
         else if ($ladderGame == "yr")
-            $this->parseYrMapHeaders($ini, $mapId);
+            return $this->parseYrMapHeaders($ini, $mapId);
         else
             return "Map headers not supported for ladder game: " . $ladderGame;
     }
