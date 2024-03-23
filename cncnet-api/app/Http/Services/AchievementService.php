@@ -17,7 +17,7 @@ class AchievementService
             ->where("user_id", "=", $user->id)
             ->where("a.ladder_id", "=", $history->ladder->id)
             ->where("achievements_progress.achievement_unlocked_date", "!=", null)
-            ->orderBy("achievements_progress.achievement_unlocked_date", "=", "DESC")
+            ->orderBy("achievements_progress.achievement_unlocked_date", "DESC")
             ->limit($limit)
             ->get();
 
