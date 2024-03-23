@@ -54,8 +54,13 @@ class TeamMatchupHandler extends BaseMatchupHandler
             return;
         }
 
+        $observers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver());
+        if($observers->count() < 0) {
+            $this->matchHasObservers = true;
+        }
+
         // todo create match
         // ...
-        // $this->createMatch($commonQmMaps, $teamAPlayers, $teamBPlayers)
+        // $this->createMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers)
     }
 }
