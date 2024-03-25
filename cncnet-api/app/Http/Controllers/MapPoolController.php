@@ -103,12 +103,14 @@ class MapPoolController extends Controller
 
         if ($mapFile)
         {
-            $mapFileName = strtolower($mapFile->getClientOriginalName());
+            $mapFileNameWithExtension = $mapFile->getClientOriginalName();
+            $mapFileName = pathinfo($mapFileNameWithExtension, PATHINFO_FILENAME);
+
             if ($mapFile != null)
             {
-                if (!($this->str_ends_with($mapFileName, ".map") || $this->str_ends_with($mapFileName, ".mpr")))
+                if (!($this->str_ends_with(strtolower($mapFileNameWithExtension), ".map") || $this->str_ends_with(strtolower($mapFileNameWithExtension), ".mpr")))
                 {
-                    $request->session()->flash('error', "Map file does not end in .map or .mpr, for mapfile: " . $mapFileName);
+                    $request->session()->flash('error', "Map file does not end in .map or .mpr, for mapfile: " . $mapFileNameWithExtension);
                     return redirect()->back();
                 }
 
@@ -116,6 +118,8 @@ class MapPoolController extends Controller
             }
         }
 
+        //check if a map with this hash already exists
+        $existingMapsWithHash = \App\Map::where('hash', $hash)->where('ladder_id', $request->ladder_id)->first();
         if ($request->map_id == 'new')
         {
             if ($mapFile == null)
@@ -123,9 +127,6 @@ class MapPoolController extends Controller
                 $request->session()->flash('error', "Map file is required for new maps");
                 return redirect()->back();
             }
-
-            //check if a map with this hash already exists, shouldn't be creating duplicate maps...
-            $existingMapsWithHash = \App\Map::where('hash', $hash)->where('ladder_id', $request->ladder_id)->first();
 
             if ($existingMapsWithHash != null)
             {
@@ -158,6 +159,10 @@ class MapPoolController extends Controller
         }
 
         $map->ladder_id = $request->ladder_id;
+
+        if ($mapFileName != null)
+            $map->filename = $mapFileName;
+
         if ($hash != null)
             $map->hash = $hash;
 
@@ -171,7 +176,7 @@ class MapPoolController extends Controller
         }
 
         $map->save();
-        $request->session()->flash('success', "Map Saved");
+        $request->session()->flash('success', "Map '$mapFileName' Saved");
 
         if ($request->hasFile('mapImage'))
         {
@@ -184,7 +189,7 @@ class MapPoolController extends Controller
             $request->file('mapImage')->move($filepath, $imgFilename);
         }
 
-        if ($mapFile != null)
+        if ($mapFile != null && !$existingMapsWithHash) // if a file provided and file hash doesn't already exist in mapdb
         {
             // parse map headers
             $game = $map->ladder->game;
@@ -199,12 +204,12 @@ class MapPoolController extends Controller
             // upload map to cnc database
             $hash = sha1_file($mapFile);
          
-            $mapUploaded = $this->uploadMapToCncDatabase($mapFile, $hash, $game);
+            $mapUploadedMsg = $this->uploadMapToCncDatabase($mapFile, $hash, $game);
             $request->session()->flash('success', "QM Map saved and Map Uploaded to the CnC Database!");
 
-            if (!$mapUploaded)
+            if ($mapUploadedMsg) // error returned
             {
-                $request->session()->flash('error', "Failed to upload map '$mapFileName' ('$hash') to the $game cnc database");
+                $request->session()->flash('error', "Failed to upload map='$mapFileName', hash='$hash' to the $game cnc database, reason='$mapUploadedMsg'");
                 return redirect()->back();
             }
         }
@@ -219,19 +224,19 @@ class MapPoolController extends Controller
         if (filesize($mapFile) > 800000)
         {
             Log::error("Map file is too large " . $mapFile->getClientOriginalName());
-            return true;
+            return "Map file is too large";
         }
 
         if (filesize($mapFile) == 0)
         {
             Log::error("Map file has no data " . $mapFile->getClientOriginalName());
-            return true;
+            return "Map file is empty";
         }
 
         if ($this->mapExists($hash, $game))
         {
             Log::info("Map file '$hash' already exists in $game cnc database " . $mapFile->getClientOriginalName());
-            return true;
+            return "Map file '$hash' already exists in $game cnc database";
         }
 
         $fileExtension = $mapFile->getClientOriginalExtension();
@@ -271,22 +276,23 @@ class MapPoolController extends Controller
         if (curl_errno($curl))
         {
             Log::error('cURL Error: ' . curl_error($curl));
-            return false;
+            return "Network error";
         }
 
         curl_close($curl);
         if ($response === false)
         {
             Log::error('Error: Unable to send the POST request.');
-            return false;
+            return "Network error";
         }
 
         if (!$this->mapExists($hash, $game))
         {
             Log::info("Map does $hash not exist in cnc db after attempted upload");
-            return false;
+            return "Upload error";
         }
-        return true;
+
+        return null;
     }
 
     private function mapExists($hash, $game)
