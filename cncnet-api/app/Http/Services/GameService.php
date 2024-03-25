@@ -588,7 +588,7 @@ class GameService
 
     private function getUniqueGameIdentifier($result)
     {
-        if ($result["IDNO"])
+        if (isset($result["IDNO"]) && $result["IDNO"])
             return $result["IDNO"]["value"];
         return null;
     }

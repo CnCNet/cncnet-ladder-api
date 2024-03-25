@@ -43,11 +43,12 @@ class QuickMatchSpawnService
                 "Seed" =>           $qmMatch->seed,
                 "GameID" =>         $qmMatch->seed,
                 "WOLGameID" =>      $qmMatch->seed,
-                "Host" =>           "No",
+                "Host" =>           ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
                 "Name" =>           $qmPlayer->player()->first()->username,
                 "Port" =>           $qmPlayer->port,
                 "Side" =>           $qmPlayer->actual_side,
                 "Color" =>          $qmPlayer->color,
+                "MyIndex" =>        $qmPlayer->color,
                 "IsSpectator" =>    "False"
                 // Filter null values
             ],
@@ -137,13 +138,15 @@ class QuickMatchSpawnService
                 "Name"          => $opn->player()->first()->username,
                 "Side"          => $opn->actual_side,
                 "Color"         => $opn->color,
+                "MyIndex"       => $opn->color,
                 "Ip"            => $opn->ipAddress ? $opn->ipAddress->address : "",
                 "Port"          => $opn->port,
                 "IPv6"          => $opn->ipv6Address ? $opn->ipv6Address->address : "",
                 "PortV6"        => $opn->ipv6_port,
                 "LanIP"         => $opn->lan_address ? $opn->lan_address->address : "",
                 "LanPort"       => $opn->lan_port,
-                "IsSpectator"   => $opn->isObserver() ? "True" : "False"
+                "IsSpectator"   => $opn->isObserver() ? "True" : "False",
+                "Host"          => ($opn->color == 0 && $qmPlayer->ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
             ];
 
 
