@@ -2,7 +2,9 @@
 
 namespace App\Extensions\Qm\Matchup;
 
+use App\Models\Game;
 use App\Models\QmQueueEntry;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class TeamMatchupHandler extends BaseMatchupHandler
@@ -59,8 +61,27 @@ class TeamMatchupHandler extends BaseMatchupHandler
             $this->matchHasObservers = true;
         }
 
-        // todo create match
-        // ...
-        // $this->createMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers)
+        $this->createTeamMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers, );
+    }
+
+    private function createTeamMatch(Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers) {
+
+        // filter out placeholder maps
+        $filteredMaps = $maps->filter(function ($map) {
+            return
+                !strpos($map->description, 'Map Info')
+                && !strpos($map->description, 'Map Guide')
+                && !strpos($map->description, 'Ladder Guide')
+                && !strpos($map->description, 'Ladder Rules');
+        });
+
+        $this->quickMatchService->createTeamQmMatch(
+            $this->history,
+            $filteredMaps,
+            $teamAPlayers,
+            $teamBPlayers,
+            $observers,
+            Game::GAME_TYPE_2VS2
+        );
     }
 }
