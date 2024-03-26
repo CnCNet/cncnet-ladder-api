@@ -251,7 +251,7 @@ class MatchUpController
         }
         else {
             $gameType = Game::GAME_TYPE_1VS1;
-            if ($ladder->clans_allowed) {
+            if ($ladder->clans_allowed || $ladder->qmLadderRules->player_count == 4) {
                 $gameType = Game::GAME_TYPE_2VS2;
             }
         }
@@ -277,7 +277,10 @@ class MatchUpController
         $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladder->qmLadderRules);
 
         // Check we have all players ready before writing them to spawn.ini
-        $otherQmMatchPlayers = $qmMatch->players()->where('id', '<>', $qmPlayer->id)->orderBy('color', 'ASC')->get();
+        $otherQmMatchPlayers = $qmMatch->players()
+            ->where('id', '<>', $qmPlayer->id)
+            ->orderBy('color', 'ASC')
+            ->get();
         if (count($otherQmMatchPlayers) == 0) {
             $qmPlayer->waiting = false;
             $qmPlayer->save();
@@ -290,8 +293,16 @@ class MatchUpController
             $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
         }
 
-        // Write the spawn.ini "Others" sections
-        $spawnStruct = QuickMatchSpawnService::appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
+
+        // if its a 2v2 match but not clan
+        if (!$ladder->clans_allowed && $ladder->qmLadderRules->player_count < 2) {
+            $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
+            $spawnStruct = QuickMatchSpawnService::appendAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
+        }
+        else {
+            // Write the spawn.ini "Others" sections
+            $spawnStruct = QuickMatchSpawnService::appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
+        }
 
         // Write the observers
         $spawnStruct = QuickMatchSpawnService::appendObservers($spawnStruct, $qmPlayer, $otherQmMatchPlayers);

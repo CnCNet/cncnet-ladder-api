@@ -4,7 +4,9 @@ namespace App\Http\Services;
 
 use App\Helpers\AIHelper;
 use App\Helpers\GameHelper;
+use App\Models\QmMatchPlayer;
 use App\Models\SpawnOptionType;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class QuickMatchSpawnService
@@ -248,6 +250,131 @@ class QuickMatchSpawnService
         return $spawnStruct;
     }
 
+    /**
+     * Appends the "other" section of all players to the spawn.ini
+     * @param mixed $spawnStruct
+     * @param mixed $qmPlayer
+     * @param mixed $otherQmMatchPlayers
+     * @return mixed
+     */
+    public static function appendOthersToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers)
+    {
+        Log::info("QuickMatchSpawnService ** appendOthersAndTeamAlliancesToSpawnIni: Is Observer: " . $qmPlayer->isObserver());
+
+        $otherIndex = 1;
+        $multiIndex = $qmPlayer->color + 1;
+        $currentQmPlayerIndex = $multiIndex;
+
+        if ($qmPlayer->isObserver() == false)
+        {
+            $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIndex}"] = $qmPlayer->location;
+        }
+
+        if ($qmPlayer->player->user->userSettings->skip_score_screen)
+        {
+            $spawnStruct["spawn"]["Settings"]["SkipScoreScreen"] = "Yes";
+        }
+
+        $myTeamIndices = [];
+        $myTeamIndices[] = $currentQmPlayerIndex;
+
+        foreach ($otherQmMatchPlayers as $opn)
+        {
+            # Other{1,2,3} etc
+            $spawnStruct["spawn"]["Other{$otherIndex}"] = [
+                "Name"          => $opn->player()->first()->username,
+                "Side"          => $opn->actual_side,
+                "Color"         => $opn->color,
+                "Ip"            => $opn->ipAddress ? $opn->ipAddress->address : "",
+                "Port"          => $opn->port,
+                "IPv6"          => $opn->ipv6Address ? $opn->ipv6Address->address : "",
+                "PortV6"        => $opn->ipv6_port,
+                "LanIP"         => $opn->lan_address ? $opn->lan_address->address : "",
+                "LanPort"       => $opn->lan_port,
+                "IsSpectator"   => $opn->isObserver() ? "True" : "False"
+            ];
+
+
+            $multiIndex = $opn->color + 1;
+
+            if ($opn->isObserver() == false)
+            {
+                $spawnStruct["spawn"]["SpawnLocations"]["Multi{$multiIndex}"] = $opn->location;
+            }
+
+
+            # Check if other player is in my clan, if so add alliance
+            if (
+                $qmPlayer->clan_id
+                && $qmPlayer->clan_id == $opn->clan_id
+            )
+            {
+                $clanName = $qmPlayer->clan->name;
+                $p1Name = $qmPlayer->player->username;
+                $p1IsObserver = $qmPlayer->isObserver();
+
+                $p2Name = $opn->player->username;
+                $p2IsObserver  = $opn->isObserver();
+
+                if ($p1IsObserver == false && $p2IsObserver == false)
+                {
+                    Log::info("QuickMatchSpawnService 1 ** Alliances: Teaming for $clanName, Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $$p2IsObserver)");
+
+                    $spawnStruct["spawn"]["Multi{$currentQmPlayerIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
+                    $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $currentQmPlayerIndex - 1;
+                    $myTeamIndices[] = $multiIndex;
+                }
+            }
+
+
+            # Superweapon/faction logic
+            if (
+                array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) &&
+                $spawnStruct["spawn"]["Settings"]["DisableSWvsYuri"] === "Yes"
+            )
+            {
+                # If p1 is allied and p2 is yuri
+                # or if p1 is yuri and p2 is allied then disable SW for this match
+                if (
+                    ($qmPlayer->actual_side < 5 && $opn->actual_side == 9) ||
+                    ($opn->actual_side < 5 && $qmPlayer->actual_side == 9)
+                )
+                {
+                    $spawnStruct["spawn"]["Settings"]["Superweapons"] = "False";
+                }
+            }
+
+            $otherIndex++;
+        }
+
+        return $spawnStruct;
+    }
+
+    /**
+     * Appents the alliences section to the spawn.ini
+     * @param $spawnStruct
+     * @param QmMatchPlayer $qmPlayer
+     * @param Collection $otherQmMatchPlayers
+     * @return mixed
+     */
+    public static function appendAlliancesToSpawnIni($spawnStruct, QmMatchPlayer $qmPlayer, Collection $otherQmMatchPlayers) {
+
+        // group all players by team
+        $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn($p) => $p->team);
+        foreach($playersByTeam as $team => $players) {
+            for($i = 0; $i < $players->count(); $i++) {
+                for($j = 0; $j < $players->count(); $j++) {
+                    if($players[$i] == $players[$j]) break;
+                    $p1Index = $players[$i]->color;
+                    $p2Index = $players[$j]->color;
+                    Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$i]->player->username} with Player: {$players[$j]->player->username}");
+                    $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p2Index;
+                }
+            }
+        }
+
+        return $spawnStruct;
+    }
 
     /**
      * Checks if any players are observers and writes to spawnstruct

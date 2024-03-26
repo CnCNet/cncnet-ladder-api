@@ -921,15 +921,15 @@ class QuickMatchService
         $spawns = collect([$qmMap->team1_spawn_order, $qmMap->team2_spawn_order])->shuffle();
         $colors = 0;
 
-        $this->setTeamSpawns($spawns[0], $teamAPlayers, $qmMatch, $colors);
-        $this->setTeamSpawns($spawns[1], $teamBPlayers, $qmMatch, $colors);
+        $this->setTeamSpawns('A', $spawns[0], $teamAPlayers, $qmMatch, $colors);
+        $this->setTeamSpawns('B', $spawns[1], $teamBPlayers, $qmMatch, $colors);
 
         $this->setObserversSpawns($observers, $qmMatch, $colors);
 
         return $qmMatch;
     }
 
-    private function setTeamSpawns(string $spawnOrders, Collection $teamPlayers, QmMatch $qmMatch, int &$colors) {
+    private function setTeamSpawns(string $team, string $spawnOrders, Collection $teamPlayers, QmMatch $qmMatch, int &$colors) {
 
         $spawnOrder = explode(',', $spawnOrders);
         $qmMap = $qmMatch->map;
@@ -961,6 +961,7 @@ class QuickMatchService
 
             $qmPlayer->qm_match_id = $qmMatch->id;
             $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
+            $qmPlayer->team = $team;
 
             $qmPlayer->save();
         }
