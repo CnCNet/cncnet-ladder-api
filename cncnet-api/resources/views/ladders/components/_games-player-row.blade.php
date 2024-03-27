@@ -6,7 +6,7 @@
             </a>
         </div>
         <div class="player-username">
-            <a href="{{ $profileUrl or '' }}" title="View {{ $playerGameReport->player->username }}'s profile">
+            <a href="{{ $profileUrl ?? '' }}" title="View {{ $playerGameReport->player->username }}'s profile">
                 <p class="fw-bold mb-1">{{ $playerGameReport->player->username }}</p>
             </a>
         </div>
