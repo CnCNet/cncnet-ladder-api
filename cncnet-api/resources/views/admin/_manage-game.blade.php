@@ -1,6 +1,6 @@
 <a href="/ladder/{{ $history->short . '/' . $ladder->abbreviation . '/games/' . $game->id }}" class="profile-link">
     <div class="profile-listing">
-        <?php $map = \App\Map::where('hash', '=', $game->hash)->first(); ?>
+        <?php $map = \App\Models\Map::where('hash', '=', $game->hash)->first(); ?>
         @if ($map != null)
             <div class="feature-map text-center">
                 <img src="/images/maps/{{ $ladder->game }}/{{ $map->hash . '.png' }}">
@@ -29,40 +29,47 @@
         <h3 class="text-center small">
             <?php $hasWash = false; ?>
             @foreach ($game->allReports()->get() as $gameReport)
-                <?php $count = $gameReport->playerGameReports()->count();
-                if ($count < 1) {
-                    $hasWash = true;
-                } ?>
+                    <?php $count = $gameReport->playerGameReports()->count();
+                    if ($count < 1) {
+                        $hasWash = true;
+                    } ?>
                 <form action="/admin/games/switch" class="text-center" method="POST">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input name="game_id" type="hidden" value="{{ $game->id }}" />
-                    <input name="game_report_id" type="hidden" value="{{ $gameReport->id }}" />
+                    <input name="game_id" type="hidden" value="{{ $game->id }}"/>
+                    <input name="game_report_id" type="hidden" value="{{ $gameReport->id }}"/>
                     <button type="submit" class="btn btn-md btn-danger"
-                    @if ($gameReport->best_report) disabled>@if ($count < 1) Wash @else Current @endif @else>
-                        @if ($count < 1) Wash
+                            @if ($gameReport->best_report) disabled>@if ($count < 1)
+                            Wash
                         @else
-                            Switch @endif
-            @endif
-            </button>
-            </form>
+                            Current
+                        @endif @else
+                            >
+                            @if ($count < 1)
+                                Wash
+                            @else
+                                Switch
+                            @endif
+                        @endif
+                    </button>
+                </form>
 
-            @foreach ($gameReport->playerGameReports()->get() as $pgr)
-                <?php $player = $pgr->player()->first(); ?>
+                @foreach ($gameReport->playerGameReports()->get() as $pgr)
+                        <?php $player = $pgr->player()->first(); ?>
 
-                <span class="player">
+                    <span class="player">
                     {{ $player->username or 'Unknown' }} +{{ $pgr->points or '' }}
-                    @if ($pgr->won)
-                        <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
-                    @else
-                        <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
-                    @endif
+                        @if ($pgr->won)
+                            <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
+                        @else
+                            <i class="fa fa-sun-o fa-fw" style="color: #00BCD4;"></i>
+                        @endif
                 </span>
-            @endforeach
+                @endforeach
             @endforeach
             @if (!$hasWash)
                 <form action="/admin/games/wash" class="text-center" method="POST">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input name="game_id" type="hidden" value="{{ $game->id }}" />
+                    <input name="game_id" type="hidden" value="{{ $game->id }}"/>
                     <button type="submit" class="btn btn-md btn-danger">Wash</button>
                 </form>
             @endif

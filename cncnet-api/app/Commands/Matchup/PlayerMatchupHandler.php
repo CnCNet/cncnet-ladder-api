@@ -2,8 +2,7 @@
 
 namespace App\Commands\Matchup;
 
-use App\LeaguePlayer;
-use App\QmQueueEntry;
+use App\Models\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
 
 class PlayerMatchupHandler extends BaseMatchupHandler
@@ -149,6 +148,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
             foreach ($qmMaps as $qmMap)
             {
                 $match = true;
+
                 if (
                     array_key_exists(
                         $qmMap->bit_idx,

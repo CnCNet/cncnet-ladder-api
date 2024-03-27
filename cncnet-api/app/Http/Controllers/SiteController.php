@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Game;
 use App\Http\Services\LadderService;
-use App\Ladder;
-use App\LadderHistory;
-use App\News;
-use App\QmMatch;
+use App\Models\Game;
+use App\Models\Ladder;
+use App\Models\LadderHistory;
+use App\Models\News;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 

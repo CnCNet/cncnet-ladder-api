@@ -2,17 +2,14 @@
 
 namespace App\Http\Services;
 
-use App\Clan;
+use App\Models\Clan;
+use App\Models\Player;
+use App\Models\QmMatch;
+use App\Models\QmMatchPlayer;
+use App\Models\QmQueueEntry;
+use App\Models\StatsCache;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use \App\Http\Services\LadderService;
-use App\Player;
-use App\PlayerGameReport;
-use \App\QmMatchPlayer;
-use \App\QmMatch;
-use App\QmQueueEntry;
-use App\StatsCache;
-use \Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class StatsService
 {
@@ -80,7 +77,7 @@ class StatsService
                 ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
                 ->count();
 
-            $past24hMatches = \App\QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
+            $past24hMatches = \App\Models\QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->count();
 
@@ -364,7 +361,7 @@ class StatsService
                 if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
                     continue;
 
-                $opponent = \App\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                $opponent = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
                     ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
                     ->where('p.id', '!=', $player->id)
                     ->where('gr.valid', true)

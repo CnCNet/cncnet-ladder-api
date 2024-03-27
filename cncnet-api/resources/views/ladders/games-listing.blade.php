@@ -1,20 +1,21 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name)
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 
 @section('feature')
     <div class="feature">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="{{ \App\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
-                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}"
+                         alt="{{ $history->ladder->name }}"
+                         class="d-block img-fluid me-lg-0 ms-lg-auto"/>
                 </div>
 
                 <div class="col-12 col-lg-6">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
+                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br/>
                         <span>Ladder Rankings</span>
                     </h1>
                     <p class="lead text-uppercase">
@@ -37,7 +38,7 @@
                         </a>
                     </div>
                     <div class="mini-breadcrumb-item">
-                        <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                        <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
                             <span class="material-symbols-outlined icon">
                                 military_tech
                             </span>
@@ -62,7 +63,7 @@
                     </a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="{{ \App\URLHelper::getLadderUrl($history) }}">
+                    <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
                         <span class="material-symbols-outlined icon pe-3">
                             military_tech
                         </span>
@@ -87,7 +88,8 @@
         <div class="container">
             @if ($userIsMod && ($errorGames === null || $errorGames === false))
                 <div class="mb-4 mt-4">
-                    <a href="{{ \App\URLHelper::getLadderUrl($history) . '/games?errorGames=true' }}" class="btn btn-danger btn-md">
+                    <a href="{{ \App\Models\URLHelper::getLadderUrl($history) . '/games?errorGames=true' }}"
+                       class="btn btn-danger btn-md">
                         View 0:03 Games
                     </a>
                 </div>

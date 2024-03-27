@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Account')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -101,9 +101,11 @@
                         <div class="form-group mb-5">
                             <h3>Ladder Anonymity</h3>
                             <p>
-                                Keeps ladder usernames anonymous. This will hide certain features or stats from your profiles.
+                                Keeps ladder usernames anonymous. This will hide certain features or stats from your
+                                profiles.
                             </p>
-                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous" @if ($userSettings->enableAnonymous) checked @endif />
+                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous"
+                                   @if ($userSettings->enableAnonymous) checked @endif />
                             <label for="enableAnonymous">Enable Anonymity</label>
                         </div>
 
@@ -113,10 +115,12 @@
                             <div class="form-group mb-5">
                                 <h3>Ladder Avatar</h3>
                                 <p>
-                                    <strong>Recommended dimensions are 300x300. Max file size: 1mb.<br /> File types allowed: jpg, png, gif </strong>
+                                    <strong>Recommended dimensions are 300x300. Max file size: 1mb.<br/> File types
+                                        allowed: jpg, png, gif </strong>
                                 </p>
                                 <p>
-                                    Avatars that are not deemed suitable by CnCNet will be removed without warning. <br />
+                                    Avatars that are not deemed suitable by CnCNet will be removed without warning.
+                                    <br/>
                                     Inappropriate images and advertising is not allowed.
                                 </p>
 
@@ -128,9 +132,9 @@
                                 <input type="file" id="avatar" name="avatar">
 
                                 @if ($user->getUserAvatar())
-                                    <br />
+                                    <br/>
                                     <label>
-                                        <input id="removeAvatar" type="checkbox" name="removeAvatar" />
+                                        <input id="removeAvatar" type="checkbox" name="removeAvatar"/>
                                         Remove avatar?
                                     </label>
                                 @endif
@@ -144,12 +148,14 @@
                                 <h3>Observer Mode (Invite only)</h3>
                                 <strong>Strictly for streaming games only</strong>
                                 <p>
-                                    Watch any match on any ladder. Enabling this will take any username you have in the ladder and make you an
+                                    Watch any match on any ladder. Enabling this will take any username you have in the
+                                    ladder and make you an
                                     observer.
                                 </p>
                                 <p>
                                     <label>
-                                        <input id="isObserver" type="checkbox" name="isObserver" @if ($userSettings->is_observer) checked @endif />
+                                        <input id="isObserver" type="checkbox" name="isObserver"
+                                               @if ($userSettings->is_observer) checked @endif />
                                         Enable Observer Mode
                                     </label>
                                 </p>
@@ -164,7 +170,8 @@
                             </p>
                             <p>
                                 <label>
-                                    <input id="matchAI" type="checkbox" name="matchAI" @if ($userSettings->match_ai) checked @endif />
+                                    <input id="matchAI" type="checkbox" name="matchAI"
+                                           @if ($userSettings->match_ai) checked @endif />
                                     Enable Matches against AI
                                 </label>
                             </p>
@@ -175,26 +182,29 @@
                                 @if (isset($userSettings))
                                     <h3>Ladder Point Filter</h3>
                                     <p>
-                                        <strong class="highlight">Advanced Players Only! Disabling this as a new player is strongly
+                                        <strong class="highlight">Advanced Players Only! Disabling this as a new player
+                                            is strongly
                                             discouraged.
                                         </strong>
                                     </p>
                                     <p>
-                                        Disabling the Point Filter will match you against any player on the ladder regardless of your rank. <br />
+                                        Disabling the Point Filter will match you against any player on the ladder
+                                        regardless of your rank. <br/>
                                         Opponents will also need it disabled.
                                     </p>
                                     <p>
                                         <label>
                                             <input id="disablePointFilter" type="checkbox" name="disabledPointFilter"
-                                                @if ($userSettings->disabledPointFilter) checked @endif />
+                                                   @if ($userSettings->disabledPointFilter) checked @endif />
                                             Disable Point Filter &amp; Match with anyone
                                         </label>
                                     </p>
                                     <p>
                                         <label>
                                             <input id="match_any_map" type="checkbox" name="match_any_map"
-                                                @if ($userSettings->match_any_map) checked @endif />
-                                            Allow matching on any map regardless of your rank. Is used when both matched players have this option
+                                                   @if ($userSettings->match_any_map) checked @endif />
+                                            Allow matching on any map regardless of your rank. Is used when both matched
+                                            players have this option
                                             selected.
                                             (Affects ladders which use map divisions like RA2.)
                                         </label>
@@ -207,7 +217,8 @@
                         <div class="form-group mt-5 mb-5">
                             <h3>Skip Score Screen</h3>
                             <label>
-                                <input id="skip_score_screen" type="checkbox" name="skip_score_screen" @if ($userSettings->skip_score_screen) checked @endif />
+                                <input id="skip_score_screen" type="checkbox" name="skip_score_screen"
+                                       @if ($userSettings->skip_score_screen) checked @endif />
                                 Skip the score screen after a match ends
                             </label>
                         </div>
@@ -215,9 +226,11 @@
                         <div class="form-group mt-5 mb-5">
                             <h3>Observers</h3>
                             <label>
-                                <input id="allow_observers" type="checkbox" name="allowObservers" @if ($userSettings->allow_observers) checked @endif />
-                                Allow CnCNet vetted streamers to stream your matches? <br />
-                                (Note: While we maximise testing of this feature, your preference will not work yet and there may be 1 streamer in
+                                <input id="allow_observers" type="checkbox" name="allowObservers"
+                                       @if ($userSettings->allow_observers) checked @endif />
+                                Allow CnCNet vetted streamers to stream your matches? <br/>
+                                (Note: While we maximise testing of this feature, your preference will not work yet and
+                                there may be 1 streamer in
                                 your
                                 match)
                             </label>
@@ -226,7 +239,8 @@
                         <div class="form-group mt-5">
                             <h3>Social profiles</h3>
                             <p>
-                                These will be shown on all your ladder profiles. <strong class="highlight">Do not enter URLs to your social
+                                These will be shown on all your ladder profiles. <strong class="highlight">Do not enter
+                                    URLs to your social
                                     profiles</strong>.
                             </p>
                         </div>
@@ -234,20 +248,23 @@
                         <div class="form-group
                             mt-2">
                             <label for="twitch">Twitch username <strong>E.g. myTwitchUsername</strong></label>
-                            <input id="twitch" type="text" class="form-control" name="twitch_profile" value="{{ $user->twitch_profile }}"
-                                placeholder="Enter your Twitch username only" style="max-width:300px;" />
+                            <input id="twitch" type="text" class="form-control" name="twitch_profile"
+                                   value="{{ $user->twitch_profile }}"
+                                   placeholder="Enter your Twitch username only" style="max-width:300px;"/>
                         </div>
 
                         <div class="form-group mt-2">
                             <label for="discord">Discord username, <strong>E.g. user#9999</strong></label>
-                            <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}"
-                                placeholder="Enter your Discord username only" style="max-width:300px;" />
+                            <input id="discord" type="text" class="form-control" name="discord_profile"
+                                   value="{{ $user->discord_profile }}"
+                                   placeholder="Enter your Discord username only" style="max-width:300px;"/>
                         </div>
 
                         <div class="form-group mt-2">
                             <label for="youtube">YouTube channel name <strong>E.g. myYouTubeChannel</strong></label>
-                            <input id="youtube" type="text" class="form-control" name="youtube_profile" value="{{ $user->youtube_profile }}"
-                                placeholder="Enter your YouTube username only" style="max-width:300px;" />
+                            <input id="youtube" type="text" class="form-control" name="youtube_profile"
+                                   value="{{ $user->youtube_profile }}"
+                                   placeholder="Enter your YouTube username only" style="max-width:300px;"/>
                         </div>
 
                         <div class="form-group mt-2 mb-2">

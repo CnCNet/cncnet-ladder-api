@@ -2,18 +2,19 @@
 
 namespace App\Commands;
 
-use App\QmQueueEntry;
-use App\Commands\Command;
 use App\Commands\Matchup\ClanMatchupHandler;
 use App\Commands\Matchup\PlayerMatchupHandler;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Models\QmQueueEntry;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class FindOpponent extends Command implements ShouldQueue
+class FindOpponent implements ShouldQueue
 {
-    use InteractsWithQueue, SerializesModels;
+    use InteractsWithQueue, SerializesModels, Dispatchable, Queueable;
 
     public $qmQueueEntryId = null;
     public $gameType = null;
@@ -27,12 +28,13 @@ class FindOpponent extends Command implements ShouldQueue
     {
         $this->qmQueueEntryId = $id;
         $this->gameType = $gameType;
+        $this->onQueue('findmatch');
     }
 
-    public function queue($queue, $arguments)
+    /*public function queue($queue, $arguments)
     {
         $queue->pushOn('findmatch', $arguments);
-    }
+    }*/
 
     /**
      * Execute the command.
@@ -41,12 +43,15 @@ class FindOpponent extends Command implements ShouldQueue
      */
     public function handle()
     {
+        Log::info('FIND OPPONENT');
+
         $this->delete();
 
         $qmQueueEntry = QmQueueEntry::find($this->qmQueueEntryId);
 
         if ($qmQueueEntry === null)
         {
+            Log::info('No qmqueue entry');
             return;
         }
 
@@ -57,6 +62,7 @@ class FindOpponent extends Command implements ShouldQueue
         # A player could cancel out of queue before this function runs
         if ($qmPlayer === null)
         {
+            Log::info('Cancelled out');
             $qmQueueEntry->delete();
             return;
         }

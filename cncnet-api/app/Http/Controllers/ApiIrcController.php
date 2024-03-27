@@ -1,21 +1,14 @@
 <?php namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
-
-use Illuminate\Support\Facades\Cache;
+use App\Models\Clan;
+use App\Models\IrcAssociation;
+use App\Models\IrcHostmask;
+use App\Models\IrcPlayer;
+use App\Models\Ladder;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
-use DB;
-use \Carbon\Carbon;
-use App\IrcHostmask;
-use App\IrcAssociation;
-use App\IrcPlayer;
-use App\Ladder;
-use App\User;
-use App\Player;
-use App\PlayerRating;
-use App\PlayerActiveHandle;
-use App\Clan;
+use Illuminate\Support\Facades\Cache;
 
 class ApiIrcController extends Controller {
 

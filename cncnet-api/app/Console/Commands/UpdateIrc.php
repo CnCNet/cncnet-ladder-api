@@ -1,10 +1,8 @@
 <?php namespace App\Console\Commands;
 
+use App\Models\IrcAssociation;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
-use JWTAuth;
-use App\IrcAssociation;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UpdateIrc extends Command {
 
@@ -36,7 +34,7 @@ class UpdateIrc extends Command {
      *
      * @return mixed
      */
-    public function fire()
+    public function handle()
     {
         //
         //fork() && exit;

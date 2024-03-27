@@ -42,7 +42,7 @@
 @endsection
 
 @section('content')
-    <?php $card = \App\Card::find($player->card_id); ?>
+    <?php $card = \App\Models\Card::find($player->card_id); ?>
 
     <div class="player mt-4">
         <div class="feature-background player-card {{ $card->short or 'no-card' }}">
@@ -65,8 +65,9 @@
                     <div class="player-achievements">
                         @if ($player->game_count >= 200)
                             <div>
-                                <img src="/images/badges/achievement-games.png" style="height:50px" />
-                                <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />200+ Games</h5>
+                                <img src="/images/badges/achievement-games.png" style="height:50px"/>
+                                <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>200+
+                                    Games</h5>
                             </div>
                         @endif
                     </div>
@@ -83,7 +84,8 @@
                         @include('components.form-messages')
 
                         <h3>{{ $banDesc }}</h3>
-                        <form method="POST" action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $id }}">
+                        <form method="POST"
+                              action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $id }}">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <input type="hidden" name="ban_type" value="{{ $ban_type }}">
                             <input type="hidden" name="admin_id" value="{{ $admin_id }}">
@@ -94,12 +96,14 @@
 
                             <div class="form-group">
                                 <label for="internal_note">Note for Internal Use</label>
-                                <textarea class="form-control" id="internal_note" name="internal_note">{{ $internal_note }}</textarea>
+                                <textarea class="form-control" id="internal_note"
+                                          name="internal_note">{{ $internal_note }}</textarea>
                             </div>
-                            @if ($ban_type != \App\Ban::BAN_SHADOW)
+                            @if ($ban_type != \App\Models\Ban::BAN_SHADOW)
                                 <div class="form-group">
                                     <label for="plubic_reason">Publicly Viewable Reason</label>
-                                    <textarea class="form-control" id="plubic_reason" name="plubic_reason">{{ $plubic_reason }}</textarea>
+                                    <textarea class="form-control" id="plubic_reason"
+                                              name="plubic_reason">{{ $plubic_reason }}</textarea>
                                 </div>
                             @else
                                 <p>

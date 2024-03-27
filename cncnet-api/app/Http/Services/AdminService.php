@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\QmLadderRules;
+use App\Models\QmLadderRules;
 
 class AdminService
 {
@@ -68,7 +68,7 @@ class AdminService
 
     public function doWashGame($gameId, $userName)
     {
-        $game = \App\Game::find($gameId);
+        $game = \App\Models\Game::find($gameId);
         if ($game === null) return "Game not found";
 
         $gameReport = $game->report()->first();
@@ -76,7 +76,7 @@ class AdminService
 
         $gameReport->best_report = false;
 
-        $wash = new \App\GameReport();
+        $wash = new \App\Models\GameReport();
         $wash->game_id = $gameReport->game_id;
         $wash->player_id = $gameReport->player_id;
         $wash->best_report = true;
@@ -94,7 +94,7 @@ class AdminService
         $this->ladderService->undoCache($gameReport);
 
         //log the user who washed the game
-        $gameAudit = new \App\GameAudit;
+        $gameAudit = new \App\Models\GameAudit;
         $gameAudit->game_id = $game->id;
         $gameAudit->username = $userName;
         $gameAudit->ladder_history_id = $game->ladderHistory->id;

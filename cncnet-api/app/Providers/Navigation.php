@@ -3,9 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Http\Request;
-use \App\Http\Services\PlayerService;
-use \App\Http\Services\LadderService;
+use App\Http\Services\PlayerService;
+use App\Http\Services\LadderService;
 
 class Navigation extends ServiceProvider
 {

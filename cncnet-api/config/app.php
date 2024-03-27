@@ -2,6 +2,8 @@
 
 return [
 
+    'name' => 'Cnc Ladder',
+
 	/*
 	|--------------------------------------------------------------------------
 	| Application Debug Mode
@@ -86,21 +88,6 @@ return [
 
 	/*
 	|--------------------------------------------------------------------------
-	| Logging Configuration
-	|--------------------------------------------------------------------------
-	|
-	| Here you may configure the log settings for your application. Out of
-	| the box, Laravel uses the Monolog PHP logging library. This gives
-	| you a variety of powerful log handlers / formatters to utilize.
-	|
-	| Available Settings: "single", "daily", "syslog", "errorlog"
-	|
-	*/
-
-	'log' => 'daily',
-
-	/*
-	|--------------------------------------------------------------------------
 	| Autoloaded Service Providers
 	|--------------------------------------------------------------------------
 	|
@@ -117,7 +104,7 @@ return [
          */
 		Illuminate\Auth\AuthServiceProvider::class,
 		Illuminate\Broadcasting\BroadcastServiceProvider::class,
-		Illuminate\Bus\BusServiceProvider::class,
+        Illuminate\Bus\BusServiceProvider::class,
 		Illuminate\Cache\CacheServiceProvider::class,
 		Illuminate\Foundation\Providers\ConsoleSupportServiceProvider::class,
 		Illuminate\Cookie\CookieServiceProvider::class,
@@ -136,6 +123,8 @@ return [
 		Illuminate\Translation\TranslationServiceProvider::class,
 		Illuminate\Validation\ValidationServiceProvider::class,
 		Illuminate\View\ViewServiceProvider::class,
+        Illuminate\Notifications\NotificationServiceProvider::class,
+        Laravel\Tinker\TinkerServiceProvider::class,
 
 		/*
          * Package Service Providers...
@@ -151,15 +140,14 @@ return [
 		App\Providers\AuthServiceProvider::class,
 		App\Providers\EventServiceProvider::class,
 		App\Providers\RouteServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
 
-		'App\Providers\Navigation',
-		'App\Providers\IrcCache',
-		'App\MyMailer\MailServiceProvider',
-		'App\LockedCache\LockedCacheServiceProvider',
+		App\Providers\Navigation::class,
+		App\Providers\IrcCache::class,
+		App\LockedCache\LockedCacheServiceProvider::class,
 
 		Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
 		Intervention\Image\ImageServiceProvider::class,
-		//'Clarification\MailDrivers\Sparkpost\SparkpostServiceProvider',
 
 	],
 
@@ -211,6 +199,8 @@ return [
 		'JWTAuth' => 'Tymon\JWTAuth\Facades\JWTAuth',
 		'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
 		'Image' => 'Intervention\Image\Facades\Image',
+
+        'Notification ' => \Illuminate\Support\Facades\Notification::class,
 	],
 
 	'irc_pipe' => env('IRC_PIPE', '/tmp/pp_file'),

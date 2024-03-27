@@ -1,8 +1,7 @@
 <?php namespace App\Console\Commands;
 
+use App\Models\GameRaw;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Model;
-use \App\GameRaw;
 
 class PruneRawLogs extends Command 
 {

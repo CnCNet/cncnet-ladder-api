@@ -28,7 +28,7 @@ class VerifyCsrfToken extends BaseVerifier
         return parent::handle($request, $next);
     }
 
-    private function inExceptArray($request)
+    protected function inExceptArray($request)
     {
         foreach ($this->except as $except)
         {

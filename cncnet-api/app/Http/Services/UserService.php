@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\UserSettings;
+use App\Models\UserSettings;
 use Illuminate\Http\Request;
 
 class UserService
@@ -29,7 +29,7 @@ class UserService
      * 
      * @param Request $request 
      * @param mixed $user 
-     * @return \App\UserSettings 
+     * @return \App\Models\UserSettings
      */
     public function updateUserPreferencesFromRequest(Request $request, $user)
     {

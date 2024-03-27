@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\LeaguePlayer;
+use App\Models\LeaguePlayer;
 
 class LeaguePlayerService
 {

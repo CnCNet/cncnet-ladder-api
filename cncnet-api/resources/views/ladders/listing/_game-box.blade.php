@@ -1,14 +1,15 @@
 <div class="game-box">
     <div class="preview" style="background-image:url({{ $mapPreview }})">
-        <a href="{{ $url or '' }}" class="status status-{{ $status }}">
+        <a href="{{ $url ?? '' }}" class="status status-{{ $status }}">
             <span class="material-symbols-outlined">
                 swords
             </span>
         </a>
     </div>
 
-    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" data-timestamp="{{ $date->timestamp }}"
-        title="View game">
+    <a href="{{ $url ?? '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top"
+       data-timestamp="{{ $date->timestamp }}"
+       title="View game">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
             <small class="status text-capitalize">{{ $status . ' ' . $date->diffForHumans() }}</small>
@@ -40,7 +41,7 @@
                 <div class="player {{ $gamePlayer->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
 
                     @if ($gamePlayer->stats)
-                        @php $playerStats2 = \App\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
+                        @php $playerStats2 = \App\Models\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
                         @php $playerCountry = $playerStats2->faction($history->ladder->game, $gamePlayer->stats->cty); @endphp
                         <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                     @endif

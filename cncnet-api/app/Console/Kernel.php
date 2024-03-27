@@ -14,21 +14,21 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        'App\Console\Commands\PruneRawLogs',
-        'App\Console\Commands\PruneOldStats',
-        'App\Console\Commands\UpdatePlayerCache',
-        'App\Console\Commands\UpdateClanCache',
-        'App\Console\Commands\GenerateBulkRecords',
-        'App\Console\Commands\UpdateIrc',
-        'App\Console\Commands\AprilFoolsPurge',
-        'App\Console\Commands\CleanupQmMatchPlayers',
-        'App\Console\Commands\CleanupQmMatches',
-        'App\Console\Commands\CleanupGameReports',
-        'App\Console\Commands\UpdateStatsCache',
-        'App\Console\Commands\CleanupQmCanceledMatches',
-        'App\Console\Commands\UpdatePlayerRatings',
-        'App\Console\Commands\ClearInactiveQueueEntries',
-        'App\Console\Commands\ForceUpdateClanCache'
+        \App\Console\Commands\PruneRawLogs::class,
+        \App\Console\Commands\PruneOldStats::class,
+        \App\Console\Commands\UpdatePlayerCache::class,
+        \App\Console\Commands\UpdateClanCache::class,
+        \App\Console\Commands\GenerateBulkRecords::class,
+        \App\Console\Commands\UpdateIrc::class,
+        \App\Console\Commands\AprilFoolsPurge::class,
+        \App\Console\Commands\CleanupQmMatchPlayers::class,
+        \App\Console\Commands\CleanupQmMatches::class,
+        \App\Console\Commands\CleanupGameReports::class,
+        \App\Console\Commands\UpdateStatsCache::class,
+        \App\Console\Commands\CleanupQmCanceledMatches::class,
+        \App\Console\Commands\UpdatePlayerRatings::class,
+        \App\Console\Commands\ClearInactiveQueueEntries::class,
+        \App\Console\Commands\ForceUpdateClanCache::class
     ];
 
     /**

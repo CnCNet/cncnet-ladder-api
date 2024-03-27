@@ -6,6 +6,10 @@
  * @author   Taylor Otwell <taylorotwell@gmail.com>
  */
 
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
 /*
 |--------------------------------------------------------------------------
 | Register The Auto Loader

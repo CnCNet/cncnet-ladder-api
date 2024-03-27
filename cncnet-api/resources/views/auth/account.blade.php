@@ -2,8 +2,8 @@
 @section('title', 'Account')
 @section('body-class', 'ladder-account')
 
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -70,7 +70,8 @@
             <div class="row">
                 @if (!$user->email_verified)
                     <div class="mt-4 mb-4">
-                        <h2 class="text-center mb-5 mt-5 "><strong>Verify Your Email Address Before You Can Play!</strong></h2>
+                        <h2 class="text-center mb-5 mt-5 "><strong>Verify Your Email Address Before You Can
+                                Play!</strong></h2>
                         <div class="text-center">
                             <form class="form" method="POST" name="verify" action="/account/verify">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -118,7 +119,7 @@
                             @foreach ($ladders as $history)
                                 @include('components.ladder-box', [
                                     'history' => $history,
-                                    'url' => \App\URLHelper::getAccountLadderUrl($history),
+                                    'url' => \App\Models\URLHelper::getAccountLadderUrl($history),
                                 ])
                             @endforeach
                         </div>
@@ -136,7 +137,7 @@
                                 @if (!$history->ladder->private)
                                     @include('components.ladder-box', [
                                         'history' => $history,
-                                        'url' => \App\URLHelper::getAccountLadderUrl($history),
+                                        'url' => \App\Models\URLHelper::getAccountLadderUrl($history),
                                         'abbrev' => $history->ladder->abbrev,
                                     ])
                                 @endif
@@ -155,7 +156,7 @@
                             @foreach ($private_ladders as $history)
                                 @include('components.ladder-box', [
                                     'history' => $history,
-                                    'url' => \App\URLHelper::getAccountLadderUrl($history),
+                                    'url' => \App\Models\URLHelper::getAccountLadderUrl($history),
                                     'abbrev' => $history->ladder->game,
                                 ])
                             @endforeach

@@ -35,6 +35,8 @@ services:
         image: mariadb:latest
         container_name: cncnet_ladder_mysql
         restart: always
+        ports:
+            - "3307:3306"
         env_file: ./cncnet-api/.env
         volumes:
             - cncnet-ladder-db:/var/lib/mysql

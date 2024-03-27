@@ -2,9 +2,6 @@
 
 namespace App\Http\Services;
 
-use App\Game;
-use App\Ladder;
-use App\LadderHistory;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Facades\Cache;

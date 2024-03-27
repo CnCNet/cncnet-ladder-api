@@ -6,8 +6,9 @@
         </a>
     </div>
 
-    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top" data-timestamp="{{ $date->timestamp }}"
-        title="View game">
+    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top"
+       data-timestamp="{{ $date->timestamp }}"
+       title="View game">
         <div class="details text-center">
             <h4 class="title">{{ $title }}</h4>
             <small class="status text-capitalize">{{ $status . ' ' . $date->diffForHumans() }}</small>
@@ -37,7 +38,7 @@
                     <div class="player {{ $clanPointReport->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
 
                         @if ($clanReport->stats)
-                            @php $playerStats2 = \App\Stats2::where("id", $clanReport->stats->id)->first(); @endphp
+                            @php $playerStats2 = \App\Models\Stats2::where("id", $clanReport->stats->id)->first(); @endphp
                             @php $playerCountry = $playerStats2->faction($history->ladder->game, $clanReport->stats->cty); @endphp
                             <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                         @endif

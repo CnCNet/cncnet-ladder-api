@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class CleanupQmMatches extends Command
 {
@@ -41,13 +41,13 @@ class CleanupQmMatches extends Command
     {
         //Get QM Matches older than previous week
         $date = Carbon::now()->subWeek();
-        $quickMatches = \App\QmMatch::where('created_at', '<', $date);
+        $quickMatches = \App\Models\QmMatch::where('created_at', '<', $date);
         echo "Deleting " . $quickMatches->count() . " records from qm_matches created before date $date\n";
         $quickMatches->delete();
 
 
         // Delete orphaned qm_match_states
-        $quickMatchStates = \App\QmMatchState::leftJoin('qm_matches', function($join) {
+        $quickMatchStates = \App\Models\QmMatchState::leftJoin('qm_matches', function($join) {
             $join->on('qm_matches.id', '=', 'qm_match_states.qm_match_id');
         })->whereNull('qm_matches.id');
 
