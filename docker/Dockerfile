@@ -5,6 +5,7 @@ FROM php:8.3-fpm
 # Args from Docker-compose
 ARG user
 ARG uid
+ARG debug
 
 RUN apt-get update && \
     apt-get install -y --force-yes --no-install-recommends \
@@ -81,8 +82,11 @@ RUN docker-php-ext-install gd && \
 # xDebug:
 #####################################
 
-# Install the xdebug extension
-RUN pecl install xdebug-3.3.0 && docker-php-ext-enable xdebug
+# Install and enable the xdebug extension when debug
+RUN if [ "$debug" = 1 ] ; then \
+    pecl install xdebug-3.3.0 && \
+    docker-php-ext-enable xdebug; \
+fi
 
 #####################################
 # PHP Memcached:

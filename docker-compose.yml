@@ -7,8 +7,10 @@ services:
             args:
                 user: ${HOST_USER}
                 uid: ${HOST_UID}
+                debug: 0
             context: .
             dockerfile: ./docker/Dockerfile
+
         env_file: ./cncnet-api/.env
         volumes:
             - ./cncnet-api:/home/${HOST_USER}/site
