@@ -95,6 +95,13 @@ fi
 # Install the php memcached extension
 RUN pecl install memcached && docker-php-ext-enable memcached
 
+#####################################
+# PHP OPCache:
+#####################################
+
+# Install the php opcache extension
+RUN docker-php-ext-install opcache && docker-php-ext-enable opcache
+COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Install Composer
 COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
