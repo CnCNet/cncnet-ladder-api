@@ -44,8 +44,8 @@ Replace user with the host user
 `ln -s /home/user/site/storage/app/media /home/user/site/public/media`
 
 ### Built with
-- PHP 7.0
-- Laravel 5
+- PHP 8.3
+- Laravel 11
 - Docker (PHP, Nginx, Mysql (Mariadb))
 
 ### Useful resources
