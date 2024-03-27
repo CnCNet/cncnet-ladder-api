@@ -34,7 +34,7 @@ trait QmPlayerHelper
         return $user;
     }
 
-    protected function makeLadder($playerCount = 2) {
+    protected function makeLadder($playerCount = 2, $team = false) {
 
         $ladder = Ladder::factory()->create([
             'name' => 'Test ladder',
@@ -69,7 +69,7 @@ trait QmPlayerHelper
             ]);
 
         foreach($maps as $index => $map) {
-            QmMap::factory()->create([
+            $m = QmMap::factory()->create([
                 'ladder_id' => $ladder->id,
                 'map_pool_id' => $mpool->id,
                 'map_id' => $map->id,
@@ -79,6 +79,11 @@ trait QmPlayerHelper
                 'spawn_order' => join(',', array_fill(0, $playerCount, 0)),
                 'allowed_sides' => $qmlr->allowed_sides,
             ]);
+            if($team) {
+                $m->team1_spawn_order = join(',', range(1, $playerCount/2));
+                $m->team2_spawn_order = join(',', range($playerCount/2 + 1, $playerCount));
+                $m->save();
+            }
         }
 
         return $ladder;
@@ -87,6 +92,8 @@ trait QmPlayerHelper
     protected function makeLadderHistory(Ladder $ladder) {
         return LadderHistory::factory()->create([
             'ladder_id' => $ladder->id,
+            'starts' => now()->startOfMonth(),
+            'ends' => now()->endOfMonth(),
         ]);
     }
 

@@ -263,7 +263,7 @@ class MatchUpController
 
             // Push a job to find an opponent
             Log::info('Queued FindOpponent job');
-            dispatch(new FindOpponentJob($qmQueueEntry, $gameType));
+            dispatch(new FindOpponentJob($qmQueueEntry?->id, $gameType));
 
             $qmPlayer->touch();
 
@@ -293,9 +293,8 @@ class MatchUpController
             $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
         }
 
-
         // if its a 2v2 match but not clan
-        if (!$ladder->clans_allowed && $ladder->qmLadderRules->player_count < 2) {
+        if (!$ladder->clans_allowed && $ladder->qmLadderRules->player_count > 2) {
             $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
             $spawnStruct = QuickMatchSpawnService::appendAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
         }

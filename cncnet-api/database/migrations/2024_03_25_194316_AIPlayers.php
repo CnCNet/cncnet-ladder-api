@@ -12,7 +12,7 @@ class AIPlayers extends Migration
      */
     public function up()
     {
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.AIPlayers", "Settings", "AIPlayers")->save(); // 0
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWN_INI, "Settings.AIPlayers", "Settings", "AIPlayers")->save(); // 0
     }
 
     /**

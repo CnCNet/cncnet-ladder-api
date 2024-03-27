@@ -12,7 +12,7 @@ class DuneGameObjectSchema extends Migration
      */
     public function up()
     {
-        $gos = new \App\GameObjectSchema();
+        $gos = new \App\Models\GameObjectSchema();
         $gos->name = "Dune Schema";
         $gos->save();
     }

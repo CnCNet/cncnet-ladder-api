@@ -301,13 +301,13 @@ class QuickMatchService
      * @param QmQueueEntry[]|Collection $players
      * @return QmMap[]
      */
-    public function getCommonMapsForPlayers(Ladder $ladder, Collection $players): array {
+    public function getCommonMapsForPlayers(Ladder $ladder, Collection $players): Collection {
 
         $qmMaps = $ladder->mapPool->maps;
 
         $is_rejected_bit = -2;
 
-        $commonQmMaps = [];
+        $commonQmMaps = collect([]);
         foreach($qmMaps as $qmMap) {
             $rejectedMap = false;
             foreach($players as $player) {
@@ -898,7 +898,7 @@ class QuickMatchService
         $currentQueuePlayerCount = $teamAPlayers->count() + $teamBPlayers->count();
         $expectedPlayerQueueCount = $currentQueuePlayerCount + $observers->count();
 
-        Log::info("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver);
+        Log::info("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver ? 'Yes' : 'No');
         Log::info("ApiQuickMatchController ** createQmMatch: Player counts " . $currentQueuePlayerCount . "/" . $expectedPlayerQueueCount);
 
         # Create the qm_matches db entry
@@ -931,9 +931,8 @@ class QuickMatchService
 
     private function setTeamSpawns(string $team, string $spawnOrders, Collection $teamPlayers, QmMatch $qmMatch, int &$colors) {
 
-        $spawnOrder = explode(',', $spawnOrders);
+        $spawnOrder = array_map(fn($i) => intval($i), explode(',', $spawnOrders));
         $qmMap = $qmMatch->map;
-
 
         $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn ($s) => $s >= 0));
 

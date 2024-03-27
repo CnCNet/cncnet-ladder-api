@@ -307,30 +307,6 @@ class QuickMatchSpawnService
             }
 
 
-            # Check if other player is in my clan, if so add alliance
-            if (
-                $qmPlayer->clan_id
-                && $qmPlayer->clan_id == $opn->clan_id
-            )
-            {
-                $clanName = $qmPlayer->clan->name;
-                $p1Name = $qmPlayer->player->username;
-                $p1IsObserver = $qmPlayer->isObserver();
-
-                $p2Name = $opn->player->username;
-                $p2IsObserver  = $opn->isObserver();
-
-                if ($p1IsObserver == false && $p2IsObserver == false)
-                {
-                    Log::info("QuickMatchSpawnService 1 ** Alliances: Teaming for $clanName, Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $$p2IsObserver)");
-
-                    $spawnStruct["spawn"]["Multi{$currentQmPlayerIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
-                    $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $currentQmPlayerIndex - 1;
-                    $myTeamIndices[] = $multiIndex;
-                }
-            }
-
-
             # Superweapon/faction logic
             if (
                 array_key_exists("DisableSWvsYuri", $spawnStruct["spawn"]["Settings"]) &&
@@ -372,7 +348,9 @@ class QuickMatchSpawnService
                     $p1Index = $players[$i]->color;
                     $p2Index = $players[$j]->color;
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$i]->player->username} with Player: {$players[$j]->player->username}");
+                    Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$j]->player->username} with Player: {$players[$i]->player->username}");
                     $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p2Index;
+                    $spawnStruct["spawn"]["Multi{$p2Index}_Alliances"]["HouseAllyOne"] = $p1Index;
                 }
             }
         }

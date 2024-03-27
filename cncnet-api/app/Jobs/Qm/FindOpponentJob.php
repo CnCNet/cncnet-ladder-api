@@ -17,14 +17,13 @@ class FindOpponentJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-
-    private ?QmQueueEntry $qmQueueEntry;
+    private $qmQueueEntry;
     private int $gameType;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(?QmQueueEntry $qmQueueEntry, int $gameType)
+    public function __construct($qmQueueEntry, int $gameType)
     {
         $this->onQueue('findmatch');
 
@@ -37,9 +36,11 @@ class FindOpponentJob implements ShouldQueue
      */
     public function handle(): void
     {
-        Log::info('FIND OPPONENT');
+        $this->qmQueueEntry = QmQueueEntry::find($this->qmQueueEntry);
+        Log::info('FIND OPPONENT v2');
 
         if(!$this->readyToFindOpponent()) {
+            Log::info('Not ready to find opponents');
             return;
         }
 

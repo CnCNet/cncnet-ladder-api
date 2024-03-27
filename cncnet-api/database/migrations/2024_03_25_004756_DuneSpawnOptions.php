@@ -12,12 +12,12 @@ class DuneSpawnOptions extends Migration
      */
     public function up()
     {
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.DisableEngineer", "Settings", "DisableEngineer")->save(); // Yes
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.DisableTurrets", "Settings", "DisableTurrets")->save(); // Yes
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.Worms", "Settings", "Worms")->save(); // 0
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.Handicap", "Settings", "Handicap")->save(); // 0
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.MaxAhead", "Settings", "MaxAhead")->save(); // 125
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.NoCarryall", "Settings", "NoCarryall")->save(); // Yes
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWN_INI, "Settings.DisableEngineer", "Settings", "DisableEngineer")->save(); // Yes
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWN_INI, "Settings.DisableTurrets", "Settings", "DisableTurrets")->save(); // Yes
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWN_INI, "Settings.Worms", "Settings", "Worms")->save(); // 0
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWN_INI, "Settings.Handicap", "Settings", "Handicap")->save(); // 0
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWN_INI, "Settings.MaxAhead", "Settings", "MaxAhead")->save(); // 125
+        \App\Models\SpawnOption::makeOne(\App\Models\SpawnOptionType::SPAWN_INI, "Settings.NoCarryall", "Settings", "NoCarryall")->save(); // Yes
 
 
         // [Debug]
