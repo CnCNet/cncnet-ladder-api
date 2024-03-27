@@ -132,3 +132,19 @@
     background-size: contain;
     background-position: center;
 }
+
+// Dune / d2k
+.d2k.player-faction-ordos:before
+{
+    background-image: url(../images/game-icons/ordos.png);
+}
+
+.d2k.player-faction-atreides:before
+{
+    background-image: url(../images/game-icons/atreides.png);
+}
+
+.d2k.player-faction-harkonnen:before
+{
+    background-image: url(../images/game-icons/harkonnen.png);
+}

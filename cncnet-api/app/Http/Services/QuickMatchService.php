@@ -82,7 +82,7 @@ class QuickMatchService
         }
         else
         {
-            Log::info("Player ** Is NOT observing Game: " . $player->username);
+            // Log::info("Player ** Is NOT observing Game: " . $player->username);
         }
 
         $qmPlayer->save();
@@ -634,7 +634,7 @@ class QuickMatchService
         $currentQueuePlayerCount = count($otherQmQueueEntries) + 1; // Total player counts equals myself plus other players to be matched
         $expectedPlayerQueueCount = $matchHasObserver ? $ladder->qmLadderRules->player_count + 1 :  $ladder->qmLadderRules->player_count;
 
-        Log::info("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver);
+        // Log::info("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver);
         Log::info("ApiQuickMatchController ** createQmMatch: Player counts " . $currentQueuePlayerCount . "/" . $expectedPlayerQueueCount);
 
 
