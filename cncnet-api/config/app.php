@@ -142,6 +142,8 @@ return [
 		App\Providers\RouteServiceProvider::class,
         App\Providers\BroadcastServiceProvider::class,
 
+        Barryvdh\Debugbar\ServiceProvider::class,
+
 		App\Providers\Navigation::class,
 		App\Providers\IrcCache::class,
 		App\LockedCache\LockedCacheServiceProvider::class,
