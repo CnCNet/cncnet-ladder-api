@@ -23,7 +23,7 @@
                             <h3 class="game-intro">
                                 <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if ($k == 0) order:0; @else order: 1; @endif">
                                     <span class="player">
-                                        {{ $player->username or 'Unknown' }} <strong>
+                                        {{ $player->username ?? 'Unknown' }} <strong>
                                             @if ($pgr->points >= 0)
                                                 +
                                             @endif{{ $pgr->points ?? '' }}
@@ -46,7 +46,7 @@
                                 @if ($playerGameReports->count() == 1)
                                     <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if ($k == 0) order:1; @endif">
                                         <span class="player">
-                                            {{ $player->username or 'Unknown' }} <strong>
+                                            {{ $player->username ?? 'Unknown' }} <strong>
                                                 @if ($pgr->points >= 0)
                                                     +
                                                 @endif{{ $pgr->points ?? '' }}

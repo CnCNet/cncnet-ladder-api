@@ -7,7 +7,7 @@
             </div>
         @endif
         <p class="username text-center" style="margin-bottom:0">1vs1</p>
-        <p class="points text-center">{{ $game->scen or 'Unknown' }}</p>
+        <p class="points text-center">{{ $game->scen ?? 'Unknown' }}</p>
         <ul class="text-center list-unstyled">
             <li> Players: {{ $game->plrs }} </li>
         </ul>
