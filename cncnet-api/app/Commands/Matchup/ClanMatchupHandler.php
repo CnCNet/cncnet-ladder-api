@@ -33,7 +33,7 @@ class ClanMatchupHandler extends BaseMatchupHandler
 
         Log::info("ClanMatchupHandler ** Players Per Clan Required: " . $playerCountPerClanRequired);
         Log::info("ClanMatchupHandler ** Players For Matchup Required: " . $playerCountForMatchup);
-        Log::info("ClanMatchupHandler ** Match Has Observer Present: " . ($this->matchHasObservers ? 'yes' : 'no'));
+        // Log::info("ClanMatchupHandler ** Match Has Observer Present: " . ($this->matchHasObservers ? 'yes' : 'no'));
 
         // if a player has no clan, then remove him from the queue
         if (!isset($currentPlayer->clanPlayer))
