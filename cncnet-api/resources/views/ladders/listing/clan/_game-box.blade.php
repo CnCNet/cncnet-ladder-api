@@ -1,12 +1,12 @@
 <div class="game-box">
 
     <div class="preview" style="background-image:url({{ $mapPreview }})">
-        <a href="{{ $url or '' }}" class="status">
+        <a href="{{ $url ?? '' }}" class="status">
             <i class="bi bi-flag-fill icon-clan"></i>
         </a>
     </div>
 
-    <a href="{{ $url or '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top"
+    <a href="{{ $url ?? '' }}" class="game-box-link" data-toggle="tooltip" data-placement="top"
        data-timestamp="{{ $date->timestamp }}"
        title="View game">
         <div class="details text-center">
