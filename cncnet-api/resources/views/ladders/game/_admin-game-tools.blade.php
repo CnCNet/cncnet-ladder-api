@@ -26,7 +26,7 @@
                                         {{ $player->username or 'Unknown' }} <strong>
                                             @if ($pgr->points >= 0)
                                                 +
-                                            @endif{{ $pgr->points or '' }}
+                                            @endif{{ $pgr->points ?? '' }}
                                         </strong>
                                     </span>
                                 </a>
@@ -49,7 +49,7 @@
                                             {{ $player->username or 'Unknown' }} <strong>
                                                 @if ($pgr->points >= 0)
                                                     +
-                                                @endif{{ $pgr->points or '' }}
+                                                @endif{{ $pgr->points ?? '' }}
                                             </strong>
                                             @if ($pgr->won)
                                                 <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>

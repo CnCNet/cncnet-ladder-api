@@ -57,7 +57,7 @@
                         <?php $player = $pgr->player()->first(); ?>
 
                     <span class="player">
-                    {{ $player->username or 'Unknown' }} +{{ $pgr->points or '' }}
+                    {{ $player->username ?? 'Unknown' }} +{{ $pgr->points ?? '' }}
                         @if ($pgr->won)
                             <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
                         @else

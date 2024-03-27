@@ -8,7 +8,7 @@
         </a>
         <a class="player-username player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             <?php
-            ($playername = $username) or '';
+            ($playername = $username) ?? '';
             $emoji = '';
             if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'baguette')) {
                 #for zedd
@@ -40,7 +40,7 @@
         </a>
         <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             <?php
-            ($playername = $username) or '';
+            ($playername = $username) ?? '';
             $emoji = '';
             if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'baguette')) {
                 # for zedd
