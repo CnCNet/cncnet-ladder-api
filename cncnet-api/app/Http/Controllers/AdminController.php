@@ -778,7 +778,7 @@ class AdminController extends Controller
         $ban->save();
 
         $request->session()->flash('success', "Ban " . $banFlash);
-        return redirect()->action('AdminController@getLadderPlayer', ['ladderId' => $ladderId, 'playerId' => $playerId]);
+        return redirect()->action([AdminController::class, 'getLadderPlayer'], ['ladderId' => $ladderId, 'playerId' => $playerId]);
     }
 
     public function editLadderAlert(Request $request, $ladderId)

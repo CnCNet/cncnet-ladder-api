@@ -68,7 +68,7 @@
                             @if ($k == 0)
                                 @if ($userIsMod && $thisGameReport->id != $gameReport->id)
                                     <a class="btn btn-outline"
-                                        href="{{ action('LadderController@getLadderGame', ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
+                                        href="{{ action([\App\Http\Controllers\LadderController::class, 'getLadderGame'], ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
                                 @elseif ($userIsMod && $thisGameReport->id == $gameReport->id && !$thisGameReport->best_report)
                                     <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
