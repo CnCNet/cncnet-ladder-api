@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api\Qm\MatchRequest;
 
+use App\Models\Clan;
 use App\Models\GameObjectSchema;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
@@ -34,10 +35,11 @@ trait QmPlayerHelper
         return $user;
     }
 
-    protected function makeLadder($playerCount = 2, $team = false) {
+    protected function makeLadder($playerCount = 2, $team = false, $clan = false) {
 
         $ladder = Ladder::factory()->create([
             'name' => 'Test ladder',
+            'clans_allowed' => $clan,
             'abbreviation' => 'tl',
         ]);
 
@@ -79,7 +81,7 @@ trait QmPlayerHelper
                 'spawn_order' => join(',', array_fill(0, $playerCount, 0)),
                 'allowed_sides' => $qmlr->allowed_sides,
             ]);
-            if($team) {
+            if($team || $clan) {
                 $m->team1_spawn_order = join(',', range(1, $playerCount/2));
                 $m->team2_spawn_order = join(',', range($playerCount/2 + 1, $playerCount));
                 $m->save();
@@ -110,6 +112,12 @@ trait QmPlayerHelper
             'player_id' => $player->id,
             'ladder_history_id' => $lh->id,
             'tier' => 1
+        ]);
+    }
+
+    protected function makeClan($name, Ladder $ladder) {
+        return Clan::factory()->create([
+            'ladder_id' => $ladder->id,
         ]);
     }
 }
