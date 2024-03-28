@@ -235,14 +235,14 @@ class AdminController extends Controller
 
         if ($search)
         {
-            $players = Cache::remember("admin/users/{$search}", 20, function () use ($search)
+            $players = Cache::remember("admin/users/{$search}", 20 * 60, function () use ($search)
             {
                 return \App\Models\Player::where('username', '=', $search)->get();
             });
         }
         else if ($userId)
         {
-            $users = Cache::remember("admin/users/users/{$userId}", 20, function () use ($userId)
+            $users = Cache::remember("admin/users/users/{$userId}", 20 * 60, function () use ($userId)
             {
                 return \App\Models\User::where("id", $userId)->get();
             });

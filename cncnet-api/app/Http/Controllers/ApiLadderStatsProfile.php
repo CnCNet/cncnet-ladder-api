@@ -20,7 +20,7 @@ class ApiLadderStatsProfile extends Controller
         $date = Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
 
-        return Cache::remember("$date/$game/$player", 5, function () use ($ladderService, $date, $game, $player)
+        return Cache::remember("$date/$game/$player", 5 * 60, function () use ($ladderService, $date, $game, $player)
         {
             $history = $ladderService->getActiveLadderByDate($date, $game);
             return $ladderService->getLadderPlayer($history, $player);

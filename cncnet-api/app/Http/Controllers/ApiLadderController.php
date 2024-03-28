@@ -531,7 +531,7 @@ class ApiLadderController extends Controller
     {
         $date = Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
-        return Cache::remember("getLadderPlayer/$date/$game/$player", 5, function () use ($ladderService, $date, $game, $player)
+        return Cache::remember("getLadderPlayer/$date/$game/$player", 5 * 60, function () use ($ladderService, $date, $game, $player)
         {
             $history = $ladderService->getActiveLadderByDate($date, $game);
             return $ladderService->getLadderPlayer($history, $player);
@@ -542,7 +542,7 @@ class ApiLadderController extends Controller
     {
         $date = Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
-        return Cache::remember("getLadderPlayerFromPublicApi/$date/$game/$player", 5, function () use ($ladderService, $date, $game, $player)
+        return Cache::remember("getLadderPlayerFromPublicApi/$date/$game/$player", 5 * 60, function () use ($ladderService, $date, $game, $player)
         {
             $history = $ladderService->getActiveLadderByDate($date, $game);
             $response = $ladderService->getLadderPlayer($history, $player);
@@ -567,7 +567,7 @@ class ApiLadderController extends Controller
 
         return Cache::remember(
             "$cncnetGame/top/$count",
-            5,
+            5 * 60,
             function () use (&$cncnetGame, &$count)
             {
                 $date = Carbon::now()->format('m-Y');
@@ -589,7 +589,7 @@ class ApiLadderController extends Controller
 
         return Cache::remember(
             "$cncnetGame/games/recent/$count",
-            5,
+            5 * 60,
             function () use (&$request, &$cncnetGame, &$count)
             {
                 $date = Carbon::now()->format('m-Y');
