@@ -43,8 +43,6 @@ class FindOpponent implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('FIND OPPONENT');
-
         $this->delete();
 
         $qmQueueEntry = QmQueueEntry::find($this->qmQueueEntryId);
