@@ -2,8 +2,8 @@
 
 namespace App\Http\Services;
 
-use App\Clan;
-use App\ClanRating;
+use App\Models\Clan;
+use App\Models\ClanRating;
 
 class ClanService
 {

@@ -4,19 +4,6 @@ return [
 
 	/*
 	|--------------------------------------------------------------------------
-	| PDO Fetch Style
-	|--------------------------------------------------------------------------
-	|
-	| By default, database results will be returned as instances of the PHP
-	| stdClass object; however, you may desire to retrieve records in an
-	| array format for simplicity. Here you can tweak the fetch style.
-	|
-	*/
-
-	'fetch' => PDO::FETCH_CLASS,
-
-	/*
-	|--------------------------------------------------------------------------
 	| Default Database Connection Name
 	|--------------------------------------------------------------------------
 	|
@@ -26,7 +13,7 @@ return [
 	|
 	*/
 
-	'default' => 'mysql',
+    'default' => env('DB_CONNECTION', 'mariadb'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -52,8 +39,8 @@ return [
 			'prefix'   => '',
 		],
 
-		'mysql' => [
-			'driver'    => 'mysql',
+		'mariadb' => [
+			'driver'    => 'mariadb',
 			'host'      => env('DB_HOST', 'localhost'),
 			'database'  => env('DB_DATABASE', 'forge'),
 			'username'  => env('DB_USERNAME', 'forge'),
@@ -64,25 +51,17 @@ return [
 			'strict'    => false,
 		],
 
-		'pgsql' => [
-			'driver'   => 'pgsql',
-			'host'     => env('DB_HOST', 'localhost'),
-			'database' => env('DB_DATABASE', 'forge'),
-			'username' => env('DB_USERNAME', 'forge'),
-			'password' => env('DB_PASSWORD', ''),
-			'charset'  => 'utf8',
-			'prefix'   => '',
-			'schema'   => 'public',
-		],
-
-		'sqlsrv' => [
-			'driver'   => 'sqlsrv',
-			'host'     => env('DB_HOST', 'localhost'),
-			'database' => env('DB_DATABASE', 'forge'),
-			'username' => env('DB_USERNAME', 'forge'),
-			'password' => env('DB_PASSWORD', ''),
-			'prefix'   => '',
-		],
+        'testing' => [
+            'driver'    => 'mariadb',
+            'host'      => env('DB_HOST', 'localhost'),
+            'database'  => 'cncnet_api_testing',
+            'username'  => env('DB_USERNAME', 'forge'),
+            'password'  => env('DB_PASSWORD', ''),
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+        ],
 
 	],
 

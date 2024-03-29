@@ -2,13 +2,14 @@
 
 namespace App\Http\Services;
 
-use App\Game;
-use App\QmMatch;
-use App\QmMatchPlayer;
-use App\QmQueueEntry;
-use Illuminate\Support\Facades\Log;
 use App\Commands\Matchup\ClanMatchupHandler;
+use App\Models\Game;
+use App\Models\IpAddress;
+use App\Models\QmMatch;
+use App\Models\QmMatchPlayer;
+use App\Models\QmQueueEntry;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class QuickMatchService
 {
@@ -30,15 +31,15 @@ class QuickMatchService
         $qmPlayer->qm_match_id = null;
         $qmPlayer->tunnel_id = null;
 
-        $addr = \App\IpAddress::findByIP($request->ip_address);
+        $addr = IpAddress::findByIP($request->ip_address);
         $qmPlayer->ip_address_id = $addr ? $addr->id : null;
         $qmPlayer->port = $request->ip_port;
 
-        $addr = \App\IpAddress::findByIP($request->lan_ip);
+        $addr = IpAddress::findByIP($request->lan_ip);
         $qmPlayer->lan_address_id = $addr ? $addr->id : null;
         $qmPlayer->lan_port = $request->lan_port;
 
-        $addr = \App\IpAddress::findByIP($request->ipv6_address);
+        $addr = IpAddress::findByIP($request->ipv6_address);
         $qmPlayer->ipv6_address_id = $addr ? $addr->id : null;
         $qmPlayer->ipv6_port = $request->ipv6_port;
 
@@ -46,30 +47,30 @@ class QuickMatchService
 
         if ($request->map_sides)
         {
-            $qmPlayer->map_sides_id = \App\MapSideString::findValue(join(',', $request->map_sides))->id;
+            $qmPlayer->map_sides_id = \App\Models\MapSideString::findValue(join(',', $request->map_sides))->id;
         }
 
         if ($request->version && $request->platform)
         {
-            $qmPlayer->version_id  = \App\PlayerDataString::findValue($request->version)->id;
-            $qmPlayer->platform_id = \App\PlayerDataString::findValue($request->platform)->id;
+            $qmPlayer->version_id  = \App\Models\PlayerDataString::findValue($request->version)->id;
+            $qmPlayer->platform_id = \App\Models\PlayerDataString::findValue($request->platform)->id;
         }
 
         if ($request->ddraw)
         {
-            $qmPlayer->ddraw_id = \App\PlayerDataString::findValue($request->ddraw)->id;
+            $qmPlayer->ddraw_id = \App\Models\PlayerDataString::findValue($request->ddraw)->id;
         }
 
         // Save user IP Address
-        $player->user->ip_address_id = \App\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+        $player->user->ip_address_id = \App\Models\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
             ? $_SERVER["HTTP_CF_CONNECTING_IP"]
             : $request->getClientIp());
 
-        \App\IpAddressHistory::addHistory($player->user->id, $player->user->ip_address_id);
+        \App\Models\IpAddressHistory::addHistory($player->user->id, $player->user->ip_address_id);
 
-        \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ip_address_id);
+        \App\Models\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ip_address_id);
 
-        \App\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ipv6_address_id);
+        \App\Models\IpAddressHistory::addHistory($player->user->id, $qmPlayer->ipv6_address_id);
 
         $player->user->save();
 
@@ -126,7 +127,7 @@ class QuickMatchService
             else
             {
                 $alert .= "@everyone {$a->message}<br>\n<br>\n";
-                $lap = new \App\LadderAlertPlayer;
+                $lap = new \App\Models\LadderAlertPlayer;
                 $lap->player_id = $player->id;
                 $lap->ladder_alert_id = $a->id;
                 $lap->show = true;
@@ -614,7 +615,7 @@ class QuickMatchService
         $gameType
     )
     {
-        $ladder = \App\Ladder::where('id', $qmPlayer->ladder_id)->first();
+        $ladder = \App\Models\Ladder::where('id', $qmPlayer->ladder_id)->first();
         $history = $ladder->currentHistory();
 
         $qmMapId = $this->pickQmMapId(
@@ -656,7 +657,7 @@ class QuickMatchService
 
         # Set up player specific information
         # Color will be used for spawn location
-        $qmPlayer = \App\QmMatchPlayer::where('id', $qmPlayer->id)->first();
+        $qmPlayer = \App\Models\QmMatchPlayer::where('id', $qmPlayer->id)->first();
         $qmPlayer->qm_match_id = $qmMatch->id;
         $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
         $qmMap = $qmMatch->map;

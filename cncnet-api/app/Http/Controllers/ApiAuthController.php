@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class ApiAuthController extends Controller
 {
@@ -15,7 +16,7 @@ class ApiAuthController extends Controller
 
     public function getAuth(Request $request)
     {
-        $user = \Auth::user();
+        $user = Auth::user();
         $user_name = $user->name;
         $token = JWTAuth::fromUser($user);
         return response()->json(compact('token', 'user_name'));

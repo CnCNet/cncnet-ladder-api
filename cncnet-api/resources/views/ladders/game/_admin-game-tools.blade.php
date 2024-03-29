@@ -23,10 +23,10 @@
                             <h3 class="game-intro">
                                 <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if ($k == 0) order:0; @else order: 1; @endif">
                                     <span class="player">
-                                        {{ $player->username or 'Unknown' }} <strong>
+                                        {{ $player->username ?? 'Unknown' }} <strong>
                                             @if ($pgr->points >= 0)
                                                 +
-                                            @endif{{ $pgr->points or '' }}
+                                            @endif{{ $pgr->points ?? '' }}
                                         </strong>
                                     </span>
                                 </a>
@@ -46,10 +46,10 @@
                                 @if ($playerGameReports->count() == 1)
                                     <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if ($k == 0) order:1; @endif">
                                         <span class="player">
-                                            {{ $player->username or 'Unknown' }} <strong>
+                                            {{ $player->username ?? 'Unknown' }} <strong>
                                                 @if ($pgr->points >= 0)
                                                     +
-                                                @endif{{ $pgr->points or '' }}
+                                                @endif{{ $pgr->points ?? '' }}
                                             </strong>
                                             @if ($pgr->won)
                                                 <i class="fa fa-trophy fa-fw" style="color: #E91E63;"></i>
@@ -68,7 +68,7 @@
                             @if ($k == 0)
                                 @if ($userIsMod && $thisGameReport->id != $gameReport->id)
                                     <a class="btn btn-outline"
-                                        href="{{ action('LadderController@getLadderGame', ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
+                                        href="{{ action([\App\Http\Controllers\LadderController::class, 'getLadderGame'], ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
                                 @elseif ($userIsMod && $thisGameReport->id == $gameReport->id && !$thisGameReport->best_report)
                                     <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">

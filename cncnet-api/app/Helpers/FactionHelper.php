@@ -2,7 +2,7 @@
 
 namespace App\Helpers;
 
-use App\Side;
+use App\Models\Side;
 
 class FactionHelper
 {
@@ -18,13 +18,13 @@ class FactionHelper
     {
         if ($history->ladder->game == 'yr')
         {
-            $side = \App\Side::where('local_id', $playerCache->country)
+            $side = \App\Models\Side::where('local_id', $playerCache->country)
                 ->where('ladder_id', $history->ladder->id)
                 ->first();
         }
         else
         {
-            $side = \App\Side::where('local_id', $playerCache->side)
+            $side = \App\Models\Side::where('local_id', $playerCache->side)
                 ->where('ladder_id', $history->ladder->id)
                 ->first();
         }

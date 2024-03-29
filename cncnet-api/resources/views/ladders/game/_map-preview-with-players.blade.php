@@ -1,19 +1,25 @@
 @php
     try {
         $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $map, $gameReport->game);
-        $mapPreviewSize = getimagesize($mapPreview);
-    
-        $webMapWidth = $mapPreviewSize[0];
-        $webMapHeight = $mapPreviewSize[1];
-    
-        $mapStartX = $map->mapHeaders->startX ?? -1;
-        $mapStartY = $map->mapHeaders->startY ?? -1;
-        $mapWidth = $map->mapHeaders->width ?? -1;
-        $mapHeight = $map->mapHeaders->height ?? -1;
-        $ratioX = $webMapWidth / $mapWidth;
-        $ratioY = $webMapHeight / $mapHeight;
-    
-        $hasMapData = true;
+        if(isset($mapPreview) && !empty($mapPreview)) {
+
+            $mapPreviewSize = getimagesize($mapPreview);
+
+            $webMapWidth = $mapPreviewSize[0];
+            $webMapHeight = $mapPreviewSize[1];
+
+            $mapStartX = $map->mapHeaders->startX ?? -1;
+            $mapStartY = $map->mapHeaders->startY ?? -1;
+            $mapWidth = $map->mapHeaders->width ?? -1;
+            $mapHeight = $map->mapHeaders->height ?? -1;
+            $ratioX = $webMapWidth / $mapWidth;
+            $ratioY = $webMapHeight / $mapHeight;
+
+            $hasMapData = true;
+        }
+        else{
+            $hasMapData = false;
+        }
     } catch (\Exception $ex) {
         $hasMapData = false;
     }
@@ -26,11 +32,12 @@
                 <img src="{{ $mapPreview }}" style="max-width:100%" />
             </div> --}}
 
-            <div class="map-preview d-lg-flex" style="background-image:url('{{ $mapPreview }}'); " data-map-width="{{ $webMapWidth }}"
-                data-map-height="{{ $webMapHeight }}">
+            <div class="map-preview d-lg-flex" style="background-image:url('{{ $mapPreview }}'); "
+                 data-map-width="{{ $webMapWidth }}"
+                 data-map-height="{{ $webMapHeight }}">
                 @foreach ($playerGameReports as $k => $pgr)
                     @php
-                        
+
                         $pointReport = $pgr;
                         if ($history->ladder->clans_allowed) {
                             $pointReport = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
@@ -66,15 +73,17 @@
                     @endphp
 
                     @if ($hasValidSpawnData)
-                        <div id="marker-{{ $k }}" class="player-marker" style="left: {{ $playerX }}px; top: {{ $playerY }}px;"
-                            data-x="{{ $playerX }}" data-y="{{ $playerY }}">
+                        <div id="marker-{{ $k }}" class="player-marker"
+                             style="left: {{ $playerX }}px; top: {{ $playerY }}px;"
+                             data-x="{{ $playerX }}" data-y="{{ $playerY }}">
                             <div class="player-start-position {{ $gameStats->colour($gameStats->col) }}">
                                 {{ $playerSpawnPosition != -1 ? $playerSpawnPosition : 'No spawn data' }}
                             </div>
                         </div>
 
-                        <div id="playerdetails-{{ $k }}" class="player player-{{ $gameStats->colour($gameStats->col) }} player-details"
-                            style="display:none;">
+                        <div id="playerdetails-{{ $k }}"
+                             class="player player-{{ $gameStats->colour($gameStats->col) }} player-details"
+                             style="display:none;">
 
                             <div class="player-avatar">
                                 @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 35])
@@ -103,7 +112,7 @@
 
                                 <div class="faction">
                                     @if ($pgr->stats)
-                                        @php $playerStats2 = \App\Stats2::where("id", $pgr->stats->id)->first(); @endphp
+                                        @php $playerStats2 = \App\Models\Stats2::where("id", $pgr->stats->id)->first(); @endphp
                                         @php $playerCountry = $playerStats2->faction($history->ladder->game, $pgr->stats->cty); @endphp
                                         <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                                     @endif
@@ -115,7 +124,7 @@
             </div>
         @else
             <div class="map-preview d-lg-none">
-                <img src="{{ $mapPreview }}" style="max-width:100%" />
+                <img src="{{ $mapPreview }}" style="max-width:100%"/>
             </div>
         @endif
     </div>
@@ -124,7 +133,7 @@
 @section('js')
     <script src="/js/popper.js"></script>
     <script>
-        ((function() {
+        ((function () {
 
             let marker1 = document.querySelector('#marker-0');
             let player1 = document.querySelector('#playerdetails-0');
@@ -135,7 +144,7 @@
                     options: {
                         offset: [5, 5],
                     },
-                }, ],
+                },],
             });
 
             let marker2 = document.querySelector('#marker-1');
@@ -147,7 +156,7 @@
                     options: {
                         offset: [5, 5],
                     },
-                }, ],
+                },],
             });
 
             let marker3 = document.querySelector('#marker-2');
@@ -159,7 +168,7 @@
                     options: {
                         offset: [5, 5],
                     },
-                }, ],
+                },],
             });
 
             let marker4 = document.querySelector('#marker-3');
@@ -171,7 +180,7 @@
                     options: {
                         offset: [5, 5],
                     },
-                }, ],
+                },],
             });
 
             player1 ? player1.style.display = "" : "";
@@ -181,7 +190,7 @@
 
         })());
 
-        ((function() {
+        ((function () {
             // Function to update the positions of the player markers and scale the map container
             function updateMapPreview() {
                 let mapPreview = document.querySelector(".map-preview");

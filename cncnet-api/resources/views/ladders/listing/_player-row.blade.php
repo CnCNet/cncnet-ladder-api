@@ -1,14 +1,14 @@
 <div id="js_profile_{{ $username }}" class="player-row rank-{{ $rank }}">
     <div class="player-profile d-flex d-lg-none">
         <div class="player-rank player-stat">
-            #{{ $rank or 'Unranked' }}
+            #{{ $rank ?? 'Unranked' }}
         </div>
         <a class="player-avatar player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             @include('components.avatar', ['avatar' => $avatar, 'size' => 50])
         </a>
         <a class="player-username player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             <?php
-            ($playername = $username) or '';
+            ($playername = $username) ?? '';
             $emoji = '';
             if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'baguette')) {
                 #for zedd
@@ -26,7 +26,7 @@
 
     <div class="player-profile d-none d-lg-flex">
         <div class="player-rank player-stat">
-            #{{ $rank or 'Unranked' }}
+            #{{ $rank ?? 'Unranked' }}
         </div>
 
         <a class="player-avatar player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
@@ -40,7 +40,7 @@
         </a>
         <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
             <?php
-            ($playername = $username) or '';
+            ($playername = $username) ?? '';
             $emoji = '';
             if ($abbreviation == 'yr' && str_contains(strtolower($playername), 'baguette')) {
                 # for zedd
@@ -62,7 +62,7 @@
                 <a href="{{ $twitch }}"><i class="bi bi-twitch"></i></a>
             @endif
             @if ($youtube)
-                <a href="{{ $youtube }}"<i class="bi bi-youtube"></i></a>
+                <a href="{{ $youtube }}"><i class="bi bi-youtube"></i></a>
             @endif
             {{-- @if ($discord)
             <a href=" {{ $discord }}"><i class="fa fa-discord"></i></a>

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use \App\Http\Services\PlayerService;
+use App\Http\Services\PlayerService;
 use App\Http\Services\UserService;
-use App\Ladder;
+use App\Models\Ladder;
 use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class ApiUserController extends Controller

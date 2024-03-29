@@ -2,17 +2,9 @@
 
 use \Illuminate\Cache\Repository;
 use Closure;
-use DateTime;
-use ArrayAccess;
-use Carbon\Carbon;
 use Illuminate\Contracts\Cache\Store;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Cache\Repository as CacheContract;
-
+use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Lock\Store\FlockStore;
-use Symfony\Component\Lock\Store\SemaphoreStore;
-use Symfony\Component\Lock\Factory;
 use Exception;
 
 class LockedCacheRepository extends Repository {
@@ -23,7 +15,7 @@ class LockedCacheRepository extends Repository {
     public function __construct(Store $store)
     {
         $this->lockStore = new FlockStore(storage_path() . '/locks/');
-        $this->lockFactory = new Factory($this->lockStore);
+        $this->lockFactory = new LockFactory($this->lockStore);
         parent::__construct($store);
     }
 

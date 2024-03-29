@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -14,7 +14,8 @@
                     </h1>
 
                     <p class="lead">
-                        Compete in <strong>1vs1</strong> or <strong>2vs2</strong> ranked matches with players all over the world.
+                        Compete in <strong>1vs1</strong> or <strong>2vs2</strong> ranked matches with players all over
+                        the world.
                     </p>
 
                     @if (!\Auth::user())
@@ -92,7 +93,7 @@
                     @foreach ($ladders as $history)
                         @include('components.ladder-box', [
                             'history' => $history,
-                            'url' => \App\URLHelper::getLadderUrl($history),
+                            'url' => \App\Models\URLHelper::getLadderUrl($history),
                         ])
                     @endforeach
                 </div>
@@ -113,7 +114,7 @@
                         @if (!$history->ladder->private)
                             @include('components.ladder-box', [
                                 'history' => $history,
-                                'url' => \App\URLHelper::getLadderUrl($history),
+                                'url' => \App\Models\URLHelper::getLadderUrl($history),
                             ])
                         @endif
                     @endforeach
@@ -126,7 +127,7 @@
 @section('js')
     <script src="/js/swiper.js"></script>
     <script>
-        (function() {
+        (function () {
             var swiper = new Swiper(".js-news-listings", {
                 slidesPerView: 3,
                 spaceBetween: 10,

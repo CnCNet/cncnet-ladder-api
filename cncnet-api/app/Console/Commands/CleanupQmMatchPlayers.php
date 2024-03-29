@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class CleanupQmMatchPlayers extends Command
 {
@@ -41,13 +41,13 @@ class CleanupQmMatchPlayers extends Command
 	{
 		//Get QM Match Players older than one week
 		$date = Carbon::now()->subWeek();
-		$quickMatchPlayers = \App\QmMatchPlayer::where('created_at', '<', $date);
+		$quickMatchPlayers = \App\Models\QmMatchPlayer::where('created_at', '<', $date);
 
 		echo "Deleting " . $quickMatchPlayers->count() . " records from qm_match_players created before date $date\n";
 
 		$quickMatchPlayers->delete();
 
-        $mapSides = \App\MapSideString::leftJoin('qm_match_players', function($join) {
+        $mapSides = \App\Models\MapSideString::leftJoin('qm_match_players', function($join) {
             $join->on('qm_match_players.map_sides_id', '=', 'map_side_strings.id');
         })->whereNull('qm_match_players.map_sides_id');
 

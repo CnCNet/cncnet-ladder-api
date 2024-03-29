@@ -2,10 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Services\UserRatingService;
-use App\LadderHistory;
-use App\StatsCache;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class UpdatePlayerRatings extends Command

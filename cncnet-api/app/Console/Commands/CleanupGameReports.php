@@ -1,9 +1,7 @@
 <?php namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class CleanupGameReports extends Command {
 
@@ -40,7 +38,7 @@ class CleanupGameReports extends Command {
     {
         // Deletes the unused GameReports and the associated stats.
         $date = Carbon::now()->startOfMonth();
-        $gameReports = \App\GameReport::where('created_at', '<', $date)->where('best_report', '=', false);
+        $gameReports = \App\Models\GameReport::where('created_at', '<', $date)->where('best_report', '=', false);
 
         echo "Deleting " . $gameReports->count() . " game_reports where best_report = false and older than $date\n";
 
@@ -72,7 +70,7 @@ class CleanupGameReports extends Command {
             // Be extra nice during the cleanup
             sleep(10);
         });
-        $gameReports = \App\GameReport::where('created_at', '<', $date)->where('best_report', '=', false);
+        $gameReports = \App\Models\GameReport::where('created_at', '<', $date)->where('best_report', '=', false);
         $gameReports->delete();
 
         /*

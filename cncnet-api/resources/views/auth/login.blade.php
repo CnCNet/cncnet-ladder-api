@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder Login')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -70,7 +70,8 @@
                 <div class="col-md-6 m-auto">
                     <p class="lead mb-5 mt-5">
                         Login with your email and password below.
-                        If you have trouble logging in <a href="https://cncnet.org/discord">please contact us on our Discord for help.</a>
+                        If you have trouble logging in <a href="https://cncnet.org/discord">please contact us on our
+                            Discord for help.</a>
                     </p>
 
                     <form class="" method="POST" action="/auth/login">
@@ -88,13 +89,15 @@
                         @endif
 
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email"
-                                value="{{ old('email') }}">
+                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                                   name="email"
+                                   value="{{ old('email') }}">
                             <label for="floatingInput">Email address</label>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
+                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                                   name="password">
                             <label for="floatingPassword">Password</label>
                         </div>
 
@@ -109,7 +112,8 @@
                         <hr class="my-4">
 
                         <p>
-                            <a href="/password/email">Forgot your password?</a> or <a href="/auth/register">create an account?</a>
+                            <a href="/auth/password/reset">Forgot your password?</a> or <a href="/auth/register">create
+                                an account?</a>
                         </p>
                     </form>
                 </div>

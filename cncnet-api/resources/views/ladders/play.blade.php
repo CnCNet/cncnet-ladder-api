@@ -5,8 +5,8 @@
 @endsection
 
 @section('title', 'Ladder')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -65,7 +65,7 @@
 
                 <p class="lead">
                     Below is a 24 hour graph showing what time of day is most popular to play ranked matches.
-                    <br />
+                    <br/>
                     Data is taken from the current and previous months ladder games.
                 </p>
 
@@ -86,8 +86,8 @@
         const data = {
             labels: labels,
             datasets: [
-                <?php foreach($games as $game => $data): ?>
-                <?php $l = \App\Ladder::where('abbreviation', $game)->first(); ?> {
+                    <?php foreach ($games as $game => $data): ?>
+                        <?php $l = \App\Models\Ladder::where('abbreviation', $game)->first(); ?> {
                     label: "{!! $l->name !!}",
                     data: {!! json_encode($data[0]) !!},
                     fill: true,

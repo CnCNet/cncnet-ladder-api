@@ -2,12 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Ladder;
-use App\User;
-use Exception;
+use App\Models\Ladder;
+use App\Models\User;
 use Illuminate\Console\Command;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 
 class UpdatePlayerCache extends Command
 {
@@ -43,11 +40,11 @@ class UpdatePlayerCache extends Command
      */
     public function handle()
     {
-        $updates = \App\PlayerCacheUpdate::get();
+        $updates = \App\Models\PlayerCacheUpdate::get();
 
         foreach ($updates as $update)
         {
-            $pc = \App\PlayerCache::find($update->player_cache_id);
+            $pc = \App\Models\PlayerCache::find($update->player_cache_id);
             $update->delete();
 
             $player = $pc->player;

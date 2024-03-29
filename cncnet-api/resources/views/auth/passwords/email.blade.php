@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('title', 'Ladder Login')
-@section('feature-video', \App\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <div class="feature pt-5 pb-5">
@@ -71,14 +71,15 @@
                                 </div>
                             @endif
 
-                            <form class="form-horizontal" role="form" method="POST" action="/password/email">
+                            <form class="form-horizontal" role="form" method="POST" action="/auth/password/email">
                                 {{ csrf_field() }}
 
                                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                                     <label for="email" class="col-md-4 control-label">Email Address</label>
 
                                     <div class="col-md-6">
-                                        <input id="email" type="email" class="form-control border mb-2" name="email" value="{{ old('email') }}">
+                                        <input id="email" type="email" class="form-control border mb-2" name="email"
+                                               value="{{ old('email') }}">
 
                                         @if ($errors->has('email'))
                                             <span class="help-block">

@@ -1,5 +1,6 @@
 <?php namespace App\LockedCache;
 
+use Illuminate\Cache\MemcachedConnector;
 use Illuminate\Cache\CacheServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\Console\ClearCommand;
@@ -30,6 +31,7 @@ class LockedCacheServiceProvider extends CacheServiceProvider {
 			return new MemcachedConnector;
 		});
 
-		$this->registerCommands();
+        // this has been removed in 5.4
+		//$this->registerCommands();
 	}
 }

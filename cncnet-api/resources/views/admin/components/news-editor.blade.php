@@ -6,16 +6,16 @@
     <form action="/admin/news/save" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="_token" value="{{ csrf_token() }}">
         <input type="hidden" name="body">
-        <input type="hidden" name="id" value="{{ $news->id or '' }}" />
+        <input type="hidden" name="id" value="{{ $news->id ?? '' }}" />
 
         <div class="form-group">
             <label for="title">News title</label>
-            <input type="text" name="title" placeholder="Title" class="form-control" id="title" value="{{ $news->title or '' }}">
+            <input type="text" name="title" placeholder="Title" class="form-control" id="title" value="{{ $news->title ?? '' }}">
         </div>
 
         <div class="form-group">
             <label for="description">Short description</label>
-            <input type="text" name="description" class="form-control" id="description" value="{{ $news->description or '' }}">
+            <input type="text" name="description" class="form-control" id="description" value="{{ $news->description ?? '' }}">
         </div>
 
         <div class="form-group">

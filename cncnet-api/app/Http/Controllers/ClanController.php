@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests;
-use App\Http\Controllers\Controller;
+use App\Models\Clan;
+use App\Models\ClanInvitation;
+use App\Models\ClanPlayer;
+use App\Models\ClanRole;
+use App\Models\Ladder;
+use App\Models\Player;
+use App\Models\PlayerActiveHandle;
+use Carbon\Carbon;
+use ErrorException;
 use Illuminate\Http\Request;
-use App\Ladder;
-use App\Clan;
-use App\ClanCache;
-use App\ClanPlayer;
-use App\ClanRole;
-use App\ClanInvitation;
-use App\Player;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use Carbon\Carbon;
-use \App\PlayerActiveHandle;
-use ErrorException;
-use Illuminate\Support\Facades\Log;
 
 class ClanController extends Controller
 {
@@ -191,7 +188,7 @@ class ClanController extends Controller
             $request->session()->flash('success', "Successfully updated clan.");
         }
 
-        return redirect()->action('ClanController@editLadderClan', ['ladderAbbrev' => $ladderAbbrev, 'clanId' => $clan->id]);
+        return redirect()->action([ClanController::class, 'editLadderClan'], ['ladderAbbrev' => $ladderAbbrev, 'clanId' => $clan->id]);
     }
 
     public function saveInvitation(Request $request, $ladderAbbrev, $clanId)
@@ -266,7 +263,7 @@ class ClanController extends Controller
             return redirect()->back();
         }
 
-        $player = \App\Player::find($request->player_id);
+        $player = \App\Models\Player::find($request->player_id);
 
         if ($player === null)
         {
@@ -487,7 +484,7 @@ class ClanController extends Controller
             return redirect()->back();
         }
 
-        $player = \App\Player::find($request->player_id);
+        $player = \App\Models\Player::find($request->player_id);
         $user = $request->user();
 
         if (($player === null || !$player->clanPlayer->isOwner()) && !$user->isGod())
@@ -553,7 +550,7 @@ class ClanController extends Controller
         if ($ladder === null)
             abort(404);
 
-        $clan = \App\Clan::where('id', $clanId)->first();
+        $clan = \App\Models\Clan::where('id', $clanId)->first();
 
         // clan not found
         if ($clan == null)
@@ -563,7 +560,7 @@ class ClanController extends Controller
         }
 
         $playerId = $clan->ex_player_id;
-        $player = \App\Player::where('id', $playerId)->first();
+        $player = \App\Models\Player::where('id', $playerId)->first();
 
         if ($player == null)
         {

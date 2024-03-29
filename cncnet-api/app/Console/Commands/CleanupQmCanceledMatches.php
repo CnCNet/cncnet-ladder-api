@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use Carbon\Carbon;
+use Illuminate\Console\Command;
 
 class CleanupQmCanceledMatches extends Command
 {
@@ -41,7 +41,7 @@ class CleanupQmCanceledMatches extends Command
     {
         //Get QM Canceled Matches older than previous month
         $date = Carbon::now()->subMonth();
-        $canceledQuickMatches = \App\QmCanceledMatch::where('created_at', '<', $date);
+        $canceledQuickMatches = \App\Models\QmCanceledMatch::where('created_at', '<', $date);
         echo "Deleting " . $canceledQuickMatches->count() . " records from qm_canceled_matches created before date: " . $date;
         $canceledQuickMatches->delete();
     }

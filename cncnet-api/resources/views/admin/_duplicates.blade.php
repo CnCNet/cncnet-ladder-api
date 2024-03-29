@@ -1,15 +1,15 @@
 <div class="duplicate-accounts">
-    <?php if($user->ip_address_id != null) :?>
+    <?php if ($user->ip_address_id != null) : ?>
     <h5 class="mt-2 mb-2">Duplicates/Shared accounts:</h5>
 
-    <?php $ips = \App\IpAddressHistory::where('ip_address_id', $user->ip_address_id)->get(); ?>
+        <?php $ips = \App\Models\IpAddressHistory::where('ip_address_id', $user->ip_address_id)->get(); ?>
 
     <ul class="list-styled">
-        <?php foreach($ips as $ip): ?>
-        <?php $u = \App\User::where('id', $ip->user_id)
+            <?php foreach ($ips as $ip): ?>
+            <?php $u = \App\Models\User::where('id', $ip->user_id)
             ->where('id', '!=', $user->id)
             ->first();
-        ?>
+            ?>
         @if ($u != null)
             <li>
                 <a href="?userId={{ $u->id }}">{{ $u->name }}</a> - {{ $u->email }}
@@ -20,7 +20,7 @@
 
     <h5 class="mt-2 mb-2">QM Client Ids:</h5>
 
-    <?php $qmUserIds = \App\QmUserId::where('user_id', $user->id)->get(); ?>
+        <?php $qmUserIds = \App\Models\QmUserId::where('user_id', $user->id)->get(); ?>
     <ul class="list-styled">
         @foreach ($qmUserIds as $qmUserId)
             <li>
@@ -36,7 +36,7 @@
 
     <h5 class="mt-2 mb-2">Ip address:</h5>
     <ul class="list-styled">
-        <?php foreach($user->ipHistory as $ipHistory): ?>
+            <?php foreach ($user->ipHistory as $ipHistory): ?>
         <li>
             <div>
                 @if ($hostname == 'true')

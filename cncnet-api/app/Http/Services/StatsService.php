@@ -2,17 +2,14 @@
 
 namespace App\Http\Services;
 
-use App\Clan;
+use App\Models\Clan;
+use App\Models\Player;
+use App\Models\QmMatch;
+use App\Models\QmMatchPlayer;
+use App\Models\QmQueueEntry;
+use App\Models\StatsCache;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
-use \App\Http\Services\LadderService;
-use App\Player;
-use App\PlayerGameReport;
-use \App\QmMatchPlayer;
-use \App\QmMatch;
-use App\QmQueueEntry;
-use App\StatsCache;
-use \Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
 
 class StatsService
 {
@@ -25,7 +22,7 @@ class StatsService
 
     public function getQmStats($ladderAbbrev, $tierId = 1)
     {
-        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1, function () use ($ladderAbbrev, $tierId)
+        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1 * 60, function () use ($ladderAbbrev, $tierId)
         {
             $carbonDateSubHour = Carbon::now()->subHour();
             $carbonDateSub24Hours = Carbon::now()->subHours(24);
@@ -80,7 +77,7 @@ class StatsService
                 ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
                 ->count();
 
-            $past24hMatches = \App\QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
+            $past24hMatches = \App\Models\QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->count();
 
@@ -104,7 +101,7 @@ class StatsService
 
     public function getFactionsPlayedByPlayer($player, $history)
     {
-        return Cache::remember("getFactionsPlayedByPlayer/$history->short/$player->id", 5, function () use ($player, $history)
+        return Cache::remember("getFactionsPlayedByPlayer/$history->short/$player->id", 5 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
@@ -348,7 +345,7 @@ class StatsService
 
     public function getPlayerMatchups($player, $history)
     {
-        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5, function () use ($player, $history)
+        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
@@ -364,7 +361,7 @@ class StatsService
                 if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
                     continue;
 
-                $opponent = \App\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                $opponent = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
                     ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
                     ->where('p.id', '!=', $player->id)
                     ->where('gr.valid', true)
@@ -400,7 +397,7 @@ class StatsService
     {
         // Get clan games reports
         // Group by players and get their wins/losses breakdown
-        return Cache::remember("getClanPlayerWinLosses/$history->short/$clan->id", 5, function () use ($clan, $history)
+        return Cache::remember("getClanPlayerWinLosses/$history->short/$clan->id", 5 * 60, function () use ($clan, $history)
         {
             $clanGames = $clan->clanGames()->where('ladder_history_id', $history->id)->get();
             $results = [];

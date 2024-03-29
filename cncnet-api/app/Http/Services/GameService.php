@@ -2,13 +2,12 @@
 
 namespace App\Http\Services;
 
-use App\AIPlayer;
-use App\Game;
-use App\GameReport;
-use App\Player;
-use App\PlayerGameReport;
+use App\Models\AIPlayer;
+use App\Models\Game;
+use App\Models\GameReport;
+use App\Models\Player;
+use App\Models\PlayerGameReport;
 use Exception;
-use Illuminate\Support\Facades\Log;
 
 class GameService
 {
@@ -143,7 +142,7 @@ class GameService
 
                 $playerGameReports[$id]->save();
 
-                $playerStats[$id] = new \App\Stats2;
+                $playerStats[$id] = new \App\Models\Stats2;
                 $playerStats[$id]->player_game_report_id = $playerGameReports[$id]->id;
                 $playerStats[$id]->save();
 
@@ -166,7 +165,7 @@ class GameService
 
                     if (array_key_exists($countable->heap_id, $objects))
                     {
-                        $goc = new \App\GameObjectCounts;
+                        $goc = new \App\Models\GameObjectCounts;
                         $goc->stats_id = $value->id;
                         $goc->countable_game_objects_id = $countable->id;
                         $goc->count = $objects[$countable->heap_id];
@@ -369,7 +368,7 @@ class GameService
 
     public function saveRawStats($result, $gameId, $ladderId)
     {
-        $raw = new \App\GameRaw();
+        $raw = new \App\Models\GameRaw();
         try
         {
             $raw->packet = json_encode($result);
@@ -555,11 +554,11 @@ class GameService
     {
         $id = $this->getUniqueGameIdentifier($result);
 
-        $game = \App\Game::where("wol_game_id", "=", $id)->first();
+        $game = \App\Models\Game::where("wol_game_id", "=", $id)->first();
 
         if ($game === null)
         {
-            $game = new \App\Game();
+            $game = new \App\Models\Game();
             $game->ladder_history_id = $ladder->id;
             //$game->save();
         }
@@ -577,7 +576,7 @@ class GameService
             if (!is_numeric($gameProperty))
             {
                 // Save Game Details like average fps, out of sync errors etc
-                if (in_array(strtolower($key), \App\Game::$gameColumns))
+                if (in_array(strtolower($key), \App\Models\Game::$gameColumns))
                 {
                     $game->{strtolower($key)} = $value["value"];
                 }

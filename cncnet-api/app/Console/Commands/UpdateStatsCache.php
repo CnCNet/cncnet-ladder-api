@@ -2,8 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\LadderHistory;
-use App\StatsCache;
+use App\Models\StatsCache;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 
@@ -45,7 +44,7 @@ class UpdateStatsCache extends Command
         $now = Carbon::now();
         $start = $now->startOfMonth()->toDateTimeString();
         $end = $now->endOfMonth()->toDateTimeString();
-        $ladderHistories = \App\LadderHistory::whereBetween("starts", [$start, $start])
+        $ladderHistories = \App\Models\LadderHistory::whereBetween("starts", [$start, $start])
             ->whereBetween("ends", [$end, $end])
             ->get();
 
