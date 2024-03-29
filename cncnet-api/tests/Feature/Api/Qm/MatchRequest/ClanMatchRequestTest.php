@@ -32,6 +32,7 @@ class ClanMatchRequestTest extends TestCase
         $this->ladder = $this->makeLadder(4, clan: true);
         $this->history = $this->makeLadderHistory($this->ladder);
 
+        $this->createClanRoles();
     }
 
     private function matchMeUpRequestV1(Player $player, ?array $body = null) {
@@ -50,14 +51,20 @@ class ClanMatchRequestTest extends TestCase
             ->post($matchMeUpUrl.$player->username, $matchMeUpPayload);
     }
 
-    public function test_match_up(): void
+    public function test_match_up_clan(): void
     {
+        $clanA = $this->makeClan('ca', $this->ladder);
+        $clanB = $this->makeClan('cb', $this->ladder);
+
 
 
         $p1 = $this->makePlayerForLadder('test1', $this->ladder, $this->makeUser('test1'));
         $p2 = $this->makePlayerForLadder('test2', $this->ladder, $this->makeUser('test2'));
         $p3 = $this->makePlayerForLadder('test3', $this->ladder, $this->makeUser('test3'));
         $p4 = $this->makePlayerForLadder('test4', $this->ladder, $this->makeUser('test4'));
+
+        $this->addPlayersInClan($clanA, [$p1, $p2]);
+        $this->addPlayersInClan($clanB, [$p3, $p4]);
 
         $this->makePlayerHistory($p1, $this->history);
         $this->makePlayerHistory($p2, $this->history);

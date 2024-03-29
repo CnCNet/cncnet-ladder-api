@@ -3,7 +3,7 @@
 namespace Tests\Unit\Api\Qm;
 
 use App\Http\Services\QuickMatchService;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class TeamMatchMakingLogicTest extends TestCase
 {

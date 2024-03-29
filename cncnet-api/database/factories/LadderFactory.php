@@ -18,8 +18,8 @@ class LadderFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(3, true),
-            'abbreviation' => $this->faker->randomLetter() . $this->faker->randomLetter(),
+            'name' => fake()->words(3, true),
+            'abbreviation' => fake()->randomLetter . fake()->randomLetter,
             'game' => 'yr',
             'clans_allowed' => false,
             'game_object_schema_id' => GameObjectSchema::factory(),

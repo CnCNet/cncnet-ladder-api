@@ -17,9 +17,9 @@ class ClanFactory extends Factory
     public function definition(): array
     {
         return [
-            'short' => $this->faker->slug(1),
-            'name' => $this->faker->word,
-            'description' => $this->faker->text,
+            'short' => fake()->slug(1),
+            'name' => fake()->word,
+            'description' => fake()->text,
         ];
     }
 }

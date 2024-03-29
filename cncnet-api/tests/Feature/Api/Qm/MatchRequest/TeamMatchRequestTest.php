@@ -51,7 +51,7 @@ class TeamMatchRequestTest extends TestCase
             ->post($matchMeUpUrl.$player->username, $matchMeUpPayload);
     }
 
-    public function test_match_up(): void {
+    public function test_match_up_team(): void {
 
 
         $p1 = $this->makePlayerForLadder('test1', $this->ladder, $this->makeUser('test1'));

@@ -267,7 +267,6 @@ class QuickMatchSpawnService
 
         $otherIndex = 1;
         $multiIndex = $qmPlayer->color + 1;
-        $currentQmPlayerIndex = $multiIndex;
 
         if ($qmPlayer->isObserver() == false)
         {
@@ -279,9 +278,6 @@ class QuickMatchSpawnService
             $spawnStruct["spawn"]["Settings"]["SkipScoreScreen"] = "Yes";
         }
 
-        $myTeamIndices = [];
-        $myTeamIndices[] = $currentQmPlayerIndex;
-
         foreach ($otherQmMatchPlayers as $opn)
         {
             # Other{1,2,3} etc
@@ -289,13 +285,15 @@ class QuickMatchSpawnService
                 "Name"          => $opn->player()->first()->username,
                 "Side"          => $opn->actual_side,
                 "Color"         => $opn->color,
+                "MyIndex"       => $opn->color,
                 "Ip"            => $opn->ipAddress ? $opn->ipAddress->address : "",
                 "Port"          => $opn->port,
                 "IPv6"          => $opn->ipv6Address ? $opn->ipv6Address->address : "",
                 "PortV6"        => $opn->ipv6_port,
                 "LanIP"         => $opn->lan_address ? $opn->lan_address->address : "",
                 "LanPort"       => $opn->lan_port,
-                "IsSpectator"   => $opn->isObserver() ? "True" : "False"
+                "IsSpectator"   => $opn->isObserver() ? "True" : "False",
+                "Host"          => ($opn->color == 0 && $qmPlayer->ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
             ];
 
 
@@ -331,7 +329,7 @@ class QuickMatchSpawnService
     }
 
     /**
-     * Appents the alliences section to the spawn.ini
+     * Appents the alliences section to the spawn.ini for TEAM only (no clan)
      * @param $spawnStruct
      * @param QmMatchPlayer $qmPlayer
      * @param Collection $otherQmMatchPlayers
@@ -345,12 +343,12 @@ class QuickMatchSpawnService
             for($i = 0; $i < $players->count(); $i++) {
                 for($j = 0; $j < $players->count(); $j++) {
                     if($players[$i] == $players[$j]) break;
-                    $p1Index = $players[$i]->color;
-                    $p2Index = $players[$j]->color;
+                    $p1Index = $players[$i]->color + 1;
+                    $p2Index = $players[$j]->color + 1;
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$i]->player->username} with Player: {$players[$j]->player->username}");
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$j]->player->username} with Player: {$players[$i]->player->username}");
-                    $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p2Index;
-                    $spawnStruct["spawn"]["Multi{$p2Index}_Alliances"]["HouseAllyOne"] = $p1Index;
+                    $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p2Index - 1;
+                    $spawnStruct["spawn"]["Multi{$p2Index}_Alliances"]["HouseAllyOne"] = $p1Index - 1;
                 }
             }
         }

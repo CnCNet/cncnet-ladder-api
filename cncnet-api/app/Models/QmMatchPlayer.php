@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class QmMatchPlayer extends Model
 {
+    protected $fillable = [
+        'player_id',
+        'ladder_id',
+        'tier',
+        'qm_match_id',
+        'color',
+        'actual_side',
+    ];
+
     protected $_map_side_array = null;
 
     public function map_side_array()

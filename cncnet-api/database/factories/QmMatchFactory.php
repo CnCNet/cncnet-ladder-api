@@ -5,9 +5,9 @@ namespace Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MapPool>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\QmMatch>
  */
-class MapPoolFactory extends Factory
+class QmMatchFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class MapPoolFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name,
+            //
         ];
     }
 }

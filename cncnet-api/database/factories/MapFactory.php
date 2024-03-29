@@ -18,8 +18,8 @@ class MapFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->words(2, true),
-            'hash' => Hash::make($this->faker->name),
+            'name' => fake()->words(2, true),
+            'hash' => Hash::make(fake()->name),
             'spawn_count' => 2,
         ];
     }
