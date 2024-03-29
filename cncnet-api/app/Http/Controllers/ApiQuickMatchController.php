@@ -192,7 +192,7 @@ class ApiQuickMatchController extends Controller
         {
             $player = $players[$i];
             $playerName = "Player" . ($i + 1);
-            if (Carbon::now()->diffInSeconds($dt) > 120) //only show real player name if 2mins has passed
+            if (Carbon::now()->diffInSeconds($dt) > -120) //only show real player name if 2mins has passed
                 $playerName = $player->name;
 
             $playersString .= $playerName . " (" . $player->faction . ")";
@@ -232,7 +232,7 @@ class ApiQuickMatchController extends Controller
 
         foreach ($queuedPlayers as $queuedPlayer)
         {
-            $secondsSinceQMClientTouch = $now->copy()->diffInSeconds($queuedPlayer->updated_at);
+            $secondsSinceQMClientTouch = $queuedPlayer->updated_at->diffInSeconds($now->copy());
 
             # QM client calls API calls every 10-15 seconds when in queue, cron called every minute
             if ($secondsSinceQMClientTouch > 20)
@@ -244,7 +244,7 @@ class ApiQuickMatchController extends Controller
                 }
                 catch (Exception $ex)
                 {
-                    Log::info("Removing player from queue due to inactivity: $queuedPlayer");
+                    Log::info("Failed removing player from queue due to inactivity: $queuedPlayer");
                 }
 
                 $queuedPlayer->delete();
@@ -396,9 +396,6 @@ class ApiQuickMatchController extends Controller
      */
     private function onMatchMeUp($request, $ladder, $player, $qmPlayer)
     {
-
-        Log::info('request : ' . json_encode($request->all()));
-
         $ladderRules = $ladder->qmLadderRules()->first();
         $history = $ladder->currentHistory();
         $user = $player->user;
@@ -568,7 +565,6 @@ class ApiQuickMatchController extends Controller
 
             # No match found yet
             # Push a job to find an opponent
-            Log::info('queue FindOpponent');
             dispatch(new FindOpponent($qmQueueEntry->id, $gameType));
 
             $qmPlayer->touch();
