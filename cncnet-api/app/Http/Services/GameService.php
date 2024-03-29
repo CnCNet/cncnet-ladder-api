@@ -188,7 +188,7 @@ class GameService
 
             if (is_numeric($cid) && $cid >= 0 && $cid < 8)
             {
-                if (in_array(strtolower($property),  $playerStats[$cid]->gameStatsColumns))
+                if (isset($playerStats[$cid]) && in_array(strtolower($property),  $playerStats[$cid]->gameStatsColumns))
                 {
                     $playerStats[$cid]->{strtolower($property)} = $value["value"];
                 }
