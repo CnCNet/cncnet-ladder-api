@@ -192,7 +192,7 @@ class ApiQuickMatchController extends Controller
         {
             $player = $players[$i];
             $playerName = "Player" . ($i + 1);
-            if (Carbon::now()->diffinSeconds($dt) > -120) //only show real player name if 2mins has passed
+            if (abs(Carbon::now()->diffinSeconds($dt)) > 120) //only show real player name if 2mins has passed
                 $playerName = $player->name;
 
             $playersString .= $playerName . " (" . $player->faction . ")";
