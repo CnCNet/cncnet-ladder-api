@@ -104,6 +104,8 @@ class FindOpponent implements ShouldQueue
         $qmPlayer->map_bitfield = 0xffffffff;
         $qmPlayer->save();
 
+        Log::info("FindOpponent QM Player Check: ** " . $qmPlayer);
+
         if ($ladder->clans_allowed)
         {
             $matchupHandler = new ClanMatchupHandler(
