@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Models\SpawnOption;
+use App\Models\SpawnOptionType;
 
 class DuneSpawnOptions extends Migration
 {
@@ -12,12 +14,12 @@ class DuneSpawnOptions extends Migration
      */
     public function up()
     {
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.DisableEngineer", "Settings", "DisableEngineer")->save(); // Yes
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.DisableTurrets", "Settings", "DisableTurrets")->save(); // Yes
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.Worms", "Settings", "Worms")->save(); // 0
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.Handicap", "Settings", "Handicap")->save(); // 0
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.MaxAhead", "Settings", "MaxAhead")->save(); // 125
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.NoCarryall", "Settings", "NoCarryall")->save(); // Yes
+        SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "Settings.DisableEngineer", "Settings", "DisableEngineer")->save(); // Yes
+        SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "Settings.DisableTurrets", "Settings", "DisableTurrets")->save(); // Yes
+        SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "Settings.Worms", "Settings", "Worms")->save(); // 0
+        SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "Settings.Handicap", "Settings", "Handicap")->save(); // 0
+        SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "Settings.MaxAhead", "Settings", "MaxAhead")->save(); // 125
+        SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "Settings.NoCarryall", "Settings", "NoCarryall")->save(); // Yes
 
 
         // [Debug]

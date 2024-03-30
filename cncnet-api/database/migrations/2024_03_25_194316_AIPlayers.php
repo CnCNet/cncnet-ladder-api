@@ -2,6 +2,9 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+use App\Models\SpawnOption;
+use App\Models\SpawnOptionType;
 
 class AIPlayers extends Migration
 {
@@ -12,7 +15,7 @@ class AIPlayers extends Migration
      */
     public function up()
     {
-        \App\SpawnOption::makeOne(\App\SpawnOptionType::SPAWN_INI, "Settings.AIPlayers", "Settings", "AIPlayers")->save(); // 0
+        SpawnOption::makeOne(SpawnOptionType::SPAWN_INI, "Settings.AIPlayers", "Settings", "AIPlayers")->save(); // 0
     }
 
     /**

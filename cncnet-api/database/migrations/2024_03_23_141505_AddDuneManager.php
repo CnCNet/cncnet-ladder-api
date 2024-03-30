@@ -2,6 +2,9 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Models\User;
+use App\Models\GameObjectSchema;
+use App\Models\ObjectSchemaManager;
 
 class AddDuneManager extends Migration
 {
@@ -12,11 +15,11 @@ class AddDuneManager extends Migration
      */
     public function up()
     {
-        foreach (\App\User::where('group', '=', \App\User::God)->get() as $user)
+        foreach (User::where('group', '=', User::God)->get() as $user)
         {
-            foreach (\App\GameObjectSchema::all() as $gos)
+            foreach (GameObjectSchema::all() as $gos)
             {
-                \App\ObjectSchemaManager::firstOrCreate(['game_object_schema_id' => $gos->id, 'user_id' => $user->id ]);
+                ObjectSchemaManager::firstOrCreate(['game_object_schema_id' => $gos->id, 'user_id' => $user->id]);
             }
         }
     }

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use App\Models\GameObjectSchema;
 
 class DuneGameObjectSchema extends Migration
 {
@@ -12,7 +13,7 @@ class DuneGameObjectSchema extends Migration
      */
     public function up()
     {
-        $gos = new \App\GameObjectSchema();
+        $gos = new GameObjectSchema();
         $gos->name = "Dune Schema";
         $gos->save();
     }
