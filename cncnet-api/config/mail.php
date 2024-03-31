@@ -83,8 +83,8 @@ return [
     */
 
     'from' => [
-        'address' => 'ladder@cncnet.org',
-        'name' => 'CnCNet Ladder'
+        'address' => env('MAIL_FROM_ADDRESS', ''),
+        'name' => env('MAIL_FROM_NAME', ''),
     ],
 
     /*
