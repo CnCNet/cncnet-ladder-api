@@ -240,7 +240,9 @@ class ApiQuickMatchController extends Controller
                 try
                 {
                     $player = $queuedPlayer->qmPlayer->player;
-                    Log::info("Removing player from queue due to inactivity: $player");
+                    $timeInQueue = $queuedPlayer->created_at->diffInSeconds($queuedPlayer->updated_at);
+                    $qmId = $queuedPlayer->qmPlayer->id;
+                    Log::info("Removing player from queue due to inactivity: $player, qmId=$qmId, time in queue: $timeInQueue (secs)");
                 }
                 catch (Exception $ex)
                 {
