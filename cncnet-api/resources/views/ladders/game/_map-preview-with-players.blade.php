@@ -1,19 +1,25 @@
 @php
     try {
         $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $map, $gameReport->game);
-        $mapPreviewSize = getimagesize($mapPreview);
-    
-        $webMapWidth = $mapPreviewSize[0];
-        $webMapHeight = $mapPreviewSize[1];
-    
-        $mapStartX = $map->mapHeaders->startX ?? -1;
-        $mapStartY = $map->mapHeaders->startY ?? -1;
-        $mapWidth = $map->mapHeaders->width ?? -1;
-        $mapHeight = $map->mapHeaders->height ?? -1;
-        $ratioX = $webMapWidth / $mapWidth;
-        $ratioY = $webMapHeight / $mapHeight;
-    
-        $hasMapData = true;
+        if(isset($mapPreview) && !empty($mapPreview)) {
+
+            $mapPreviewSize = getimagesize($mapPreview);
+
+            $webMapWidth = $mapPreviewSize[0];
+            $webMapHeight = $mapPreviewSize[1];
+
+            $mapStartX = $map->mapHeaders->startX ?? -1;
+            $mapStartY = $map->mapHeaders->startY ?? -1;
+            $mapWidth = $map->mapHeaders->width ?? -1;
+            $mapHeight = $map->mapHeaders->height ?? -1;
+            $ratioX = $webMapWidth / $mapWidth;
+            $ratioY = $webMapHeight / $mapHeight;
+
+            $hasMapData = true;
+        }
+        else{
+            $hasMapData = false;
+        }
     } catch (\Exception $ex) {
         $hasMapData = false;
     }

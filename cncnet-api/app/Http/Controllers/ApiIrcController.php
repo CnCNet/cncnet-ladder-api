@@ -31,7 +31,7 @@ class ApiIrcController extends Controller {
         }
 
         $ladderId = $ladder->id;
-        $ret = Cache::remember("getActive/{$ladderId}", 5, function() use($ladderId)
+        $ret = Cache::remember("getActive/{$ladderId}", 5 * 60, function() use($ladderId)
         {
             $hostmasks = IrcAssociation::loggedIn()->whereLadder($ladderId)->get();
             return [ 'check_back' => 5, 'cached_at' => (string)Carbon::now(), 'hostmasks' => $hostmasks ];
@@ -71,7 +71,7 @@ class ApiIrcController extends Controller {
             return [];
         }
 
-        $clans = Cache::remember("getClans/{$ladder->id}", 30, function () use($ladder)
+        $clans = Cache::remember("getClans/{$ladder->id}", 30 * 60, function () use($ladder)
         {
             return Clan::select('id', 'short', 'name')->where('ladder_id', '=', $ladder->id)->get();
         });

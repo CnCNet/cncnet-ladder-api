@@ -44,8 +44,6 @@ class FindOpponent implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('FIND OPPONENT');
-
         $this->delete();
 
         $qmQueueEntry = QmQueueEntry::find($this->qmQueueEntryId);
@@ -106,6 +104,8 @@ class FindOpponent implements ShouldQueue
         # map_bitfield is an old and unused bit of code
         $qmPlayer->map_bitfield = 0xffffffff;
         $qmPlayer->save();
+
+        Log::info("FindOpponent QM Player Check: ** " . $qmPlayer);
 
         if ($ladder->clans_allowed)
         {

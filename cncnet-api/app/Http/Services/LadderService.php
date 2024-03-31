@@ -67,7 +67,7 @@ class LadderService
 
     public function getLatestLadders()
     {
-        return Cache::remember("ladderService::getLatestLadders", 1, function ()
+        return Cache::remember("ladderService::getLatestLadders", 1 * 60, function ()
         {
             $date = Carbon::now();
 
@@ -122,7 +122,7 @@ class LadderService
 
     public function getLatestClanLadders()
     {
-        return Cache::remember("ladderService::getLatestClanLadders", -1, function ()
+        return Cache::remember("ladderService::getLatestClanLadders", -1 * 60, function ()
         {
             $date = Carbon::now();
 

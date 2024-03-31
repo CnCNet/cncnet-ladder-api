@@ -115,7 +115,6 @@ class Clan extends Model
                 'cred',
                 'shrt',
                 'supr',
-                'supr',
                 'unit',
                 'plrs',
                 'scen',

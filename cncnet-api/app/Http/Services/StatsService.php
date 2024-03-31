@@ -22,7 +22,7 @@ class StatsService
 
     public function getQmStats($ladderAbbrev, $tierId = 1)
     {
-        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1, function () use ($ladderAbbrev, $tierId)
+        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1 * 60, function () use ($ladderAbbrev, $tierId)
         {
             $carbonDateSubHour = Carbon::now()->subHour();
             $carbonDateSub24Hours = Carbon::now()->subHours(24);
@@ -101,7 +101,7 @@ class StatsService
 
     public function getFactionsPlayedByPlayer($player, $history)
     {
-        return Cache::remember("getFactionsPlayedByPlayer/$history->short/$player->id", 5, function () use ($player, $history)
+        return Cache::remember("getFactionsPlayedByPlayer/$history->short/$player->id", 5 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
@@ -345,7 +345,7 @@ class StatsService
 
     public function getPlayerMatchups($player, $history)
     {
-        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5, function () use ($player, $history)
+        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
@@ -397,7 +397,7 @@ class StatsService
     {
         // Get clan games reports
         // Group by players and get their wins/losses breakdown
-        return Cache::remember("getClanPlayerWinLosses/$history->short/$clan->id", 5, function () use ($clan, $history)
+        return Cache::remember("getClanPlayerWinLosses/$history->short/$clan->id", 5 * 60, function () use ($clan, $history)
         {
             $clanGames = $clan->clanGames()->where('ladder_history_id', $history->id)->get();
             $results = [];

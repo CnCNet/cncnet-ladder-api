@@ -188,7 +188,7 @@ class ClanController extends Controller
             $request->session()->flash('success', "Successfully updated clan.");
         }
 
-        return redirect()->action('ClanController@editLadderClan', ['ladderAbbrev' => $ladderAbbrev, 'clanId' => $clan->id]);
+        return redirect()->action([ClanController::class, 'editLadderClan'], ['ladderAbbrev' => $ladderAbbrev, 'clanId' => $clan->id]);
     }
 
     public function saveInvitation(Request $request, $ladderAbbrev, $clanId)

@@ -45,7 +45,9 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
-            'throttle:60,1',
+            // @TODO: Value needs altering based on how many requests qm client will do in a minute.
+            // For now commenting out
+            // 'throttle:60,1',
             'bindings',
         ],
     ];
