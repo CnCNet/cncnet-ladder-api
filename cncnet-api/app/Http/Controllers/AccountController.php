@@ -319,10 +319,10 @@ class AccountController extends Controller
     public function updateUserSettings(Request $request)
     {
         $this->validate($request, [
-            "avatar" => "image|mimes:jpg,jpeg,png,gif|max:2000",
-            "discord_profile" => "string",
-            "youtube_profile" => "string",
-            "twitch_profile" => "string"
+            "avatar" => "nullable|image|mimes:jpg,jpeg,png,gif|max:2000",
+            "discord_profile" => "nullable|string",
+            "youtube_profile" => "nullable|string",
+            "twitch_profile" => "nullable|string"
         ]);
 
         # Check if urls
