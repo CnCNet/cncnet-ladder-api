@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class QmMatchPlayer extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'player_id',
         'ladder_id',
@@ -13,6 +16,7 @@ class QmMatchPlayer extends Model
         'qm_match_id',
         'color',
         'actual_side',
+        'location',
     ];
 
     protected $_map_side_array = null;

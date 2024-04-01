@@ -131,7 +131,7 @@ trait QmPlayerHelper
     }
 
     protected function makeQmMatchPlayer(Player $player, Ladder $ladder, ?QmMatch $qmMatch = null, ?array $attributes = null): QmMatchPlayer {
-        return QmMatchPlayer::create(array_merge([
+        return QmMatchPlayer::factory()->create(array_merge([
             'player_id' => $player->id,
             'ladder_id' => $ladder->id,
             'tier' => 1,
