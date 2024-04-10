@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\GameHelper;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -51,37 +52,43 @@ class RankingController extends Controller
 
     public function getEloProfileByKnownUsernames($gameMode, $usernames)
     {
-        $gameModesShort = [
-            GameHelper::$GAME_BLITZ,
-            GameHelper::$GAME_RA2,
-            GameHelper::$GAME_YR
-        ];
-
-        if (!in_array($gameMode, $gameModesShort))
+        try
         {
-            $gameMode = GameHelper::$GAME_BLITZ;
-        }
+            $gameModesShort = [
+                GameHelper::$GAME_BLITZ,
+                GameHelper::$GAME_RA2,
+                GameHelper::$GAME_YR
+            ];
 
-        $mode = isset($gameMode) ? strval($gameMode) : "blitz";
-
-        $jsonFiles = ["players_active.json", "players_inactive.json", "players_new.json", "players_all.json"];
-        $jsonPath = $mode . "_" . $jsonFiles[0];
-        $jsonFile = Storage::disk('rating')->get($jsonPath);
-        $jsonData = json_decode($jsonFile, true);
-
-        $eloProfile = null;
-        foreach ($jsonData as $json)
-        {
-            foreach ($usernames as $username)
+            if (!in_array($gameMode, $gameModesShort))
             {
-                if (strtolower($username) == strtolower($json["name"]))
+                $gameMode = GameHelper::$GAME_BLITZ;
+            }
+
+            $mode = isset($gameMode) ? strval($gameMode) : "blitz";
+
+            $jsonFiles = ["players_active.json", "players_inactive.json", "players_new.json", "players_all.json"];
+            $jsonPath = $mode . "_" . $jsonFiles[0];
+            $jsonFile = Storage::disk('rating')->get($jsonPath);
+            $jsonData = json_decode($jsonFile, true);
+
+            $eloProfile = null;
+            foreach ($jsonData as $json)
+            {
+                foreach ($usernames as $username)
                 {
-                    $eloProfile = $json;
-                    break;
+                    if (strtolower($username) == strtolower($json["name"]))
+                    {
+                        $eloProfile = $json;
+                        break;
+                    }
                 }
             }
-        }
 
-        return $eloProfile;
+            return $eloProfile;
+        }
+        catch (Exception $ex)
+        {
+        }
     }
 }

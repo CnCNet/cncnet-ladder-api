@@ -76,6 +76,14 @@ class ApiLadderController extends Controller
         return response()->json(['success' => 'Queued for processing.'], 200);
     }
 
+    public function testStatsDmp(Request $request)
+    {
+        $ladder = Ladder::where("abbreviation", "d2k")->first();
+        $gameId = 862667;
+        $playerId = 201181; //Franky
+        return $this->saveLadderResult($request->file, $ladder->id, $gameId,  $playerId, 1, 1);
+    }
+
     public function saveLadderResult($file, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
     {
         $ladder = Ladder::find($ladderId);
@@ -84,7 +92,6 @@ class ApiLadderController extends Controller
 
         # Game stats result
         $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder);
-
         if (count($result) == 0 || $result == null)
         {
             return response()->json(['No data'], 400);
@@ -94,10 +101,24 @@ class ApiLadderController extends Controller
 
         # Keep a record of the raw stats sent in
         $this->gameService->saveRawStats($result, $game->id, $history->id);
-        $this->gameService->fillGameCols($game, $result);
+        if ($ladder->abbreviation == "d2k")
+        {
+            $this->gameService->fillDuneGameCols($game, $result);
+        }
+        else
+        {
+            $this->gameService->fillGameCols($game, $result);
+        }
 
         # Now save the processed stats
-        $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
+        if ($ladder->abbreviation == "d2k")
+        {
+            $result = $this->gameService->saveDuneGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
+        }
+        else
+        {
+            $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
+        }
         $gameReport = $result['gameReport'];
 
         if ($gameReport === null)
