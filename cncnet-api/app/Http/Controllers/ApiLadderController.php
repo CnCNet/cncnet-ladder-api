@@ -17,6 +17,7 @@ use App\Models\QmMap;
 use App\Models\QmMatchPlayer;
 use App\Http\Services\AdminService;
 use App\Http\Services\ClanService;
+use App\Http\Services\DuneGameService;
 use App\Http\Services\EloService;
 use App\Http\Services\GameService;
 use App\Http\Services\LadderService;
@@ -34,11 +35,13 @@ class ApiLadderController extends Controller
     private $clanService;
     private $adminService;
     private $pointService;
+    private $duneGameService;
 
     public function __construct()
     {
         $this->ladderService = new LadderService();
         $this->gameService = new GameService();
+        $this->duneGameService = new DuneGameService();
         $this->playerService = new PlayerService();
         $this->clanService = new ClanService();
         $this->adminService = new AdminService();
@@ -76,6 +79,15 @@ class ApiLadderController extends Controller
         return response()->json(['success' => 'Queued for processing.'], 200);
     }
 
+    public function saveLadderTestOnly(Request $request)
+    {
+        $ladderId = 14;
+        $gameId = 862667;
+        $frankyPlayerId = 201181; // Franky
+        $kipPlayerId = 201156; // Kip
+        return $this->saveLadderResult($request->file, $ladderId, $gameId, $frankyPlayerId, 1, 1);
+    }
+
     public function saveLadderResult($file, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
     {
         $ladder = Ladder::find($ladderId);
@@ -94,10 +106,18 @@ class ApiLadderController extends Controller
 
         # Keep a record of the raw stats sent in
         $this->gameService->saveRawStats($result, $game->id, $history->id);
-        $this->gameService->fillGameCols($game, $result);
 
-        # Now save the processed stats
-        $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
+        if ($ladder->abbreviation == "d2k")
+        {
+            $this->duneGameService->fillGameCols($game, $result);
+            $result = $this->duneGameService->saveGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
+        }
+        else
+        {
+            $this->gameService->fillGameCols($game, $result);
+            $result = $this->gameService->saveGameStats($result, $game->id, $player->id, $ladder, $ladder->game);
+        }
+
         $gameReport = $result['gameReport'];
 
         if ($gameReport === null)
