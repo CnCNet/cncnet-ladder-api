@@ -82,10 +82,12 @@ class ApiLadderController extends Controller
     public function saveLadderTestOnly(Request $request)
     {
         $ladderId = 14;
-        $gameId = 862667;
-        $frankyPlayerId = 201181; // Franky
-        $kipPlayerId = 201156; // Kip
-        return $this->saveLadderResult($request->file, $ladderId, $gameId, $frankyPlayerId, 1, 1);
+        $gameId = $request->gameId;
+        $playerId = $request->playerId;
+        $pingSent = $request->pingSent;
+        $pingReceived = $request->pingReceived;
+
+        return $this->saveLadderResult($request->file, $ladderId, $gameId, $playerId, $pingSent, $pingReceived);
     }
 
     public function saveLadderResult($file, $ladderId, $gameId, $playerId, $pingSent, $pingReceived)
