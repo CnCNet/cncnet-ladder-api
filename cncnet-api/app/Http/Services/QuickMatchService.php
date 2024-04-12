@@ -269,10 +269,10 @@ class QuickMatchService
         $qmPlayer->save();
     }
 
-    private function pickQmMapId($otherQMQueueEntries, $useRankedMapPicker, $qmPlayer, $history, $qmMaps)
+    private function pickQmMapId($otherQMQueueEntries, $ladderRules, $qmPlayer, $history, $qmMaps)
     {
         $qmMapId = -1;
-        if ($useRankedMapPicker) //use ranked map selection
+        if ($ladderRules->use_ranked_map_picker) // consider a player's ladder rank when selecting a map
         {
             $rank = $qmPlayer->player->rank($history);
             $points = $qmPlayer->player->points($history);
@@ -291,6 +291,25 @@ class QuickMatchService
 
             $qmMapId = $this->rankedMapPicker($qmMaps, $rank, $points, $matchAnyMap);  //select a map dependent on player rank and map tiers
         }
+
+        else if ($ladderRules->use_elo_map_picker) // consider a player's ELO when selecting a map
+        {
+            $myEloRating = $qmPlayer->player->user->userRating->rating;
+
+            $matchAnyMap = false;
+            foreach ($otherQMQueueEntries as $otherQMQueueEntry)
+            {
+                // choose the person who has the lowest elo rating to base our map pick off of
+                $minEloRating = min($myEloRating, $otherQMQueueEntry->qmPlayer->player->user->userRating->rating);
+
+                // true if both players allow any map
+                $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
+                    && $qmPlayer->player->user->userSettings->match_any_map;
+            }
+
+            $qmMapId = $this->eloMapPicker($qmMaps, $minEloRating, $matchAnyMap);  //select a map dependent on playe elo
+        }
+
         else
         {
             $qmMapsWeighted = [];
@@ -620,17 +639,17 @@ class QuickMatchService
 
         $qmMapId = $this->pickQmMapId(
             $otherQmQueueEntries,
-            $ladder->qmLadderRules->use_ranked_map_picker,
+            $ladder->qmLadderRules,
             $qmPlayer,
             $history,
             $maps
         );
 
-                    $matchHasObserver = $this->checkMatchForObserver(
-                $qmPlayer,
-                $otherQmQueueEntries
-            );
-         
+        $matchHasObserver = $this->checkMatchForObserver(
+            $qmPlayer,
+            $otherQmQueueEntries
+        );
+
         $currentQueuePlayerCount = count($otherQmQueueEntries) + 1; // Total player counts equals myself plus other players to be matched
         $expectedPlayerQueueCount = $matchHasObserver ? $ladder->qmLadderRules->player_count + 1 :  $ladder->qmLadderRules->player_count;
 
@@ -818,6 +837,63 @@ class QuickMatchService
         return $map->id;
     }
 
+
+    /**
+     * Given a player's ELO, choose a map based on map ranked difficulties
+     * @param mixed $mapsArr array of QM maps
+     * @param mixed $elo elo threshold
+     * @param mixed $matchAnyMap if true, match on a random map
+     * @return mixed qmMapId of the map to be played
+     */
+    private function eloMapPicker($mapsArr, $elo, $matchAnyMap)
+    {
+        $mapsArr = array_filter($mapsArr, function ($map)
+        {
+            return $map->map_tier && $map->map_tier > 0;
+        });
+
+        Log::info("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
+
+        // group maps by tier
+        $mapsRanked = [];
+        foreach ($mapsArr as $map)
+        {
+            $mapsRanked[$map->map_tier][] = $map;
+        }
+
+        try
+        {
+            // TODO set the ELO threshold as a qm ladder rules configurable value
+            $eloThreshold = 1200;
+
+            if (!$matchAnyMap && $elo < $eloThreshold) // use a tier 1 map, if ELO < 1200
+            {
+                $randIdx = mt_rand(0, count($mapsRanked[1]) - 1);  // pick a tier 1 map
+                $map = $mapsRanked[1][$randIdx];
+            }
+            else
+            {
+                $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
+                $map = $mapsArr[$randIdx];
+            }
+        }
+        catch (Exception $ex)
+        {
+            Log::error("Error in eloMapPicker: " . $ex->getMessage());
+            $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
+            $map = $mapsArr[$randIdx];
+        }
+
+        if ($map == null)
+        {
+            Log::error("null map chosen");
+            Log::error("null map chosen, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
+        }
+
+        Log::info("Elo map chosen=$map->description, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
+
+        return $map->id;
+    }
 
     /**
      * Given $numPlayers, return an array of numbers, length of array = $numPlayers.
