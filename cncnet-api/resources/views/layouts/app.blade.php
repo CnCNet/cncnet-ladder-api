@@ -46,7 +46,7 @@
     @endif
 </head>
 
-<body class="@yield('body-class'){{ $bodyClass }}">
+<body class="@yield('body-class'){{ $bodyClass }} @hasSection('page-body-class')@yield('page-body-class')@endif">
     <div class="support-cncnet">
         <p class="lead">CnCNet relies on your support ❤️</p>
         <div class="support-cta">
