@@ -79,6 +79,16 @@ class MapPoolController extends Controller
             return redirect()->back();
         }
 
+        if ($qmMap->team1_spawn_order == null || empty(trim($qmMap->team1_spawn_order)))
+        {
+            $qmMap->team1_spawn_order = 0;
+        }
+
+        if ($qmMap->team2_spawn_order == null || empty(trim($qmMap->team2_spawn_order)))
+        {
+            $qmMap->team2_spawn_order = 0;
+        }
+
         $qmMap->save();
 
         $request->session()->flash('success', $message);
@@ -94,6 +104,7 @@ class MapPoolController extends Controller
         ]);
 
         $mapFile = $request->file('mapFile');
+        $mapFileName = null;
         $hash = null;
 
         if ($mapFile)
