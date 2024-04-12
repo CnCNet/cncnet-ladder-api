@@ -132,7 +132,7 @@ class URLHelper
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-1.mp4";
 
             case "d2k":
-                return "//cdn.jsdelivr.net/gh/cnc-community/files@1.5/dune.mp4";
+                return "//cdn.jsdelivr.net/gh/cnc-community/files@1.6/dune.mp4";
         }
     }
 
