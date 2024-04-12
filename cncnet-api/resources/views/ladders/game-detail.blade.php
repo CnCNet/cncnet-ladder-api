@@ -8,19 +8,20 @@ $reports = $playerGameReports;
 ?>
 
 @foreach ($reports as $k => $pgr)
-        <?php
-        $player = $pgr->player()->first();
-        $clan = $pgr->clan()->first();
-        if ($k == 1) {
-            $pageTitle .= ' vs ';
-        }
-        $pageTitle .= "$player->username";
-        ?>
+    <?php
+    $player = $pgr->player()->first();
+    $clan = $pgr->clan()->first();
+    if ($k == 1) {
+        $pageTitle .= ' vs ';
+    }
+    $pageTitle .= "$player->username";
+    ?>
 @endforeach
 
 @section('title', $pageTitle)
 @section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
+@section('page-body-class', $history->ladder->abbreviation)
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -59,21 +60,20 @@ $reports = $playerGameReports;
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}"
-                         alt="{{ $history->ladder->name }}"
-                         class="d-block img-fluid me-lg-0 ms-lg-auto"/>
+                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br/>
+                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
                     </h1>
 
                     <p class="lead">
                         <?php $reports = $playerGameReports; ?>
                         @foreach ($reports as $k => $pgr)
-                                <?php $gameStats = $pgr->stats; ?>
-                                <?php $player = $pgr->player()->first(); ?>
+                            <?php $gameStats = $pgr->stats; ?>
+                            <?php $player = $pgr->player()->first(); ?>
 
                             @if ($history->ladder->clans_allowed)
                                 @if ($player->clanPlayer)
@@ -122,8 +122,7 @@ $reports = $playerGameReports;
 @section('content')
     @if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder))
         <div class="container mt-5 mb-5">
-            <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false"
-               aria-controls="adminTools">
+            <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
                 Show admin tools
             </a>
             <div class="collapse " id="adminTools">
@@ -158,14 +157,14 @@ $reports = $playerGameReports;
                                         <p>
                                             {{ $gameReport->created_at->diffForHumans() }} -
                                             <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
-                                            <br/>
+                                            <br />
                                             <strong>Duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
-                                            <br/>
+                                            <br />
                                             <strong>FPS:</strong> {{ $gameReport->fps }}
 
                                             @if ($gameReport !== null)
                                                 @if ($gameReport->oos)
-                                                    <br/>
+                                                    <br />
                                                     <strong>Game ended in reconnection error (OOS)</strong>
                                                 @endif
                                                 @if ($gameReport->disconnected())

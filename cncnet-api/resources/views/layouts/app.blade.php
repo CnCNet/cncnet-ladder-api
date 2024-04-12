@@ -21,7 +21,7 @@
     <meta property="og:url" content="{{ Request::url() }}" />
     <meta property="og:type" content="website" />
 
-    <link rel="stylesheet" href="/css/app.css?v=2.1.10" />
+    <link rel="stylesheet" href="/css/app.css?v=2.1.11" />
     <link rel="apple-touch-icon" sizes="152x152" href="/images/meta/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/meta/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/meta/favicon-16x16.png">
@@ -46,7 +46,7 @@
     @endif
 </head>
 
-<body class="@yield('body-class'){{ $bodyClass }}">
+<body class="@yield('body-class'){{ $bodyClass }} @hasSection('page-body-class')@yield('page-body-class')@endif">
     <div class="support-cncnet">
         <p class="lead">CnCNet relies on your support ❤️</p>
         <div class="support-cta">

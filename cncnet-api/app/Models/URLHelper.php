@@ -130,6 +130,9 @@ class URLHelper
             case "ra":
             case "ra-cl":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-1.mp4";
+
+            case "d2k":
+                return "//cdn.jsdelivr.net/gh/cnc-community/files@1.6/dune.mp4";
         }
     }
 
@@ -156,6 +159,9 @@ class URLHelper
 
             case "ra":
             case "ra-cl":
+                return "/images/posters/red-alert-1.jpg";
+
+            case "d2k":
                 return "/images/posters/red-alert-1.jpg";
         }
     }

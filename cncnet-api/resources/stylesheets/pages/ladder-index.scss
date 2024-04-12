@@ -3,3 +3,13 @@
     margin-left: 0;
     margin-right: 1rem;
 }
+
+.player-ladders .game-box-ladder-link 
+{
+    @media(min-width: $xxl-width)
+    {
+        width: 15%;
+        margin-right: 1rem;
+        margin-left: 0;
+    }
+}
