@@ -333,10 +333,7 @@ class DuneGameService
                     break;
 
                 case "SDFX":
-                    foreach ($playerGameReports as $playerGR)
-                    {
-                        $playerGR->disconnected = $value["value"];
-                    }
+                    // Not sure.
                     break;
 
                 case "TIME":

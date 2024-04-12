@@ -98,7 +98,6 @@ class ApiLadderController extends Controller
 
         # Game stats result
         $result = $this->gameService->processStatsDmp($file, $ladder->game, $ladder);
-
         if (count($result) == 0 || $result == null)
         {
             return response()->json(['No data'], 400);
