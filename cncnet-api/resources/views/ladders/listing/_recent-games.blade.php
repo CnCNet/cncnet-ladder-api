@@ -17,9 +17,12 @@
                             'gameReport' => $game->report()->first(),
                             'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
                             'points' => $pp,
-                            'title' => $game->scen,
+                            'title' => $game->qmMatch->map->map->name,
                             'date' => $game->updated_at,
-                            'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map, $game->hash),
+                            'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl(
+                                $history,
+                                $game->qmMatch->map->map,
+                                $game->qmMatch->map->map->hash),
                         ])
                     @else
                         @include('ladders.listing._game-box', [
@@ -30,9 +33,12 @@
                             'gameReport' => $game->report()->first(),
                             'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
                             'points' => $pp,
-                            'title' => $game->scen,
+                            'title' => $game->qmMatch->map->map->name,
                             'date' => $game->updated_at,
-                            'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map, $game->hash),
+                            'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl(
+                                $history,
+                                $game->qmMatch->map->map,
+                                $game->qmMatch->map->map->hash),
                         ])
                     @endif
                 </div>

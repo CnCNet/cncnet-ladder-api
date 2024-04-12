@@ -6,3 +6,4 @@ bulk.json
 public/dmp/
 public/files/maps/
 **/debugbar/*
+public/css/app.css
