@@ -284,13 +284,39 @@ class DuneGameService
 
             switch ($key)
             {
-                case "GEND":
+                case "ENDS":
                     $gameWon = !$reporter->defeated && !$reporter->quit;
 
-                    switch ($value["value"])
+                    $gameResult = $value["value"];
+                    switch ($gameResult)
                     {
-                        case "END_STATUS : OPPONENT SURRENDERED":
+                        case DuneGameResult::GES_ENDEDNORMALLY:
+                            // hmm?
+                            break;
+
+                        case DuneGameResult::GES_CONNECTIONLOST:
+                            $gameWon = false;
+                            break;
+
+                        case DuneGameResult::GES_ISURRENDERED:
+                            $gameWon = false;
+                            break;
+
+                        case DuneGameResult::GES_OPPONENTSURRENDERED:
                             $gameWon = true;
+                            break;
+
+                        case DuneGameResult::GES_OUTOFSYNC:
+                            $gameReport->oos = true;
+                            if ($gameReport->oos)
+                            {
+                                // If the game recons then the reporter marks himself as winner, admin will sort it out later
+                                foreach ($playerGameReports as $playerGR)
+                                {
+                                    $playerGR->won = false;
+                                }
+                                $reporter->won = true;
+                            }
                             break;
                     }
 
@@ -298,32 +324,18 @@ class DuneGameService
                     {
                         $playerGR->won = !$gameWon;
                         $playerGR->defeated = !$playerGR->won;
-                        $playerGR->no_completion = false;
+                        //$playerGR->no_completion = false;
                     }
 
                     $reporter->won = $gameWon;
-                    $reporter->no_completion = false;
+                    //$reporter->no_completion = false;
                     $reporter->defeated = !$reporter->won;
-                    break;
-
-                case "OOSY":
-                    $gameReport->oos = $value["value"];
-                    if ($gameReport->oos)
-                    {
-                        // If the game recons then the reporter marks himself as winner, admin will sort it out later
-                        foreach ($playerGameReports as $playerGR)
-                        {
-                            $playerGR->won = false;
-                        }
-                        $reporter->won = true;
-                    }
                     break;
 
                 case "SDFX":
                     foreach ($playerGameReports as $playerGR)
                     {
-                        // @TODO - put back, not had a stats.dmp without this being true yet.
-                        // $playerGR->disconnected = $value["value"];
+                        $playerGR->disconnected = $value["value"];
                     }
                     break;
 

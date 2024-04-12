@@ -108,7 +108,6 @@ class ApiLadderController extends Controller
 
         # Keep a record of the raw stats sent in
         $this->gameService->saveRawStats($result, $game->id, $history->id);
-
         if ($ladder->abbreviation == "d2k")
         {
             $this->duneGameService->fillGameCols($game, $result);
