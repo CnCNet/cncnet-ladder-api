@@ -184,6 +184,9 @@
                                                 <label>
                                                     <small for="hash"> Map Hash: {{ $qmMap->map->hash }} </small>
                                                 </label>
+                                                <label>
+                                                    <small for="filename"> Map Filename: {{ $qmMap->map->filename }} </small>
+                                                </label>
                                             </div>
                                         @endif
                                         <div class="col-md-12">
