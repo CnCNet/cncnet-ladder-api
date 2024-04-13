@@ -1,4 +1,5 @@
 @php
+    $mapPreview = null;
     try {
         $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $gameReport->game->qmMatch->map->map, $gameReport->game);
         if (isset($mapPreview) && !empty($mapPreview)) {
@@ -30,8 +31,8 @@
                 <img src="{{ $mapPreview }}" style="max-width:100%" />
             </div> --}}
 
-            <div class="map-preview d-lg-flex" style="background-image:url('{{ $mapPreview }}'); " data-map-width="{{ $webMapWidth }}"
-                data-map-height="{{ $webMapHeight }}">
+            <div class="map-preview d-lg-flex" @if ($mapPreview) style="background-image:url('{{ $mapPreview }}'); " @endif
+                data-map-width="{{ $webMapWidth }}" data-map-height="{{ $webMapHeight }}">
                 @foreach ($playerGameReports as $k => $pgr)
                     @php
 
@@ -119,7 +120,9 @@
             </div>
         @else
             <div class="map-preview d-lg-none">
-                <img src="{{ $mapPreview }}" style="max-width:100%" />
+                @if ($mapPreview)
+                    <img src="{{ $mapPreview }}" style="max-width:100%" />
+                @endif
             </div>
         @endif
     </div>
