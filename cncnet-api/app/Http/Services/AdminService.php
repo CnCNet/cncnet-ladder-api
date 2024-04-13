@@ -60,6 +60,7 @@ class AdminService
         $ladderRule->match_ai_after_seconds = $request->match_ai_after_seconds;
         $ladderRule->max_active_players = $request->max_active_players;
         $ladderRule->use_ranked_map_picker = $request->use_ranked_map_picker == "on" ? true : false;
+        $ladderRule->use_elo_map_picker = $request->use_elo_map_picker == "on" ? true : false;
         $ladderRule->save();
 
         $request->session()->flash('success', 'Changes Saved');
