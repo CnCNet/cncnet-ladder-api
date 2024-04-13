@@ -77,12 +77,12 @@ class QuickMatchService
         // Is player an observer?
         if ($player->user->userSettings->is_observer)
         {
-            Log::info("Player ** Is observing Game: " . $player->username);
+            Log::debug("Player ** Is observing Game: " . $player->username);
             $qmPlayer->is_observer = true;
         }
         else
         {
-            // Log::info("Player ** Is NOT observing Game: " . $player->username);
+            // Log::debug("Player ** Is NOT observing Game: " . $player->username);
         }
 
         $qmPlayer->save();
@@ -351,7 +351,7 @@ class QuickMatchService
 
     private function setClanSpawns($otherQmQueueEntries, $ladder, $qmMap, $qmMatch, $qmPlayer,  $perMS, $qEntry)
     {
-        Log::info("QuickMatchService ** setClanSpawns: " . $qmPlayer->player->username);
+        Log::debug("QuickMatchService ** setClanSpawns: " . $qmPlayer->player->username);
 
         // Check if team spots are configured, if this is a clan match
         $team1SpawnOrder = explode(',', $qmMap->team1_spawn_order); // e.g. 1,2
@@ -415,11 +415,11 @@ class QuickMatchService
 
             if (count($team1) != count($team1SpawnOrder))
             {
-                Log::info("Team1: Expected " . count($team1SpawnOrder) . " players but found " . count($team1));
+                Log::debug("Team1: Expected " . count($team1SpawnOrder) . " players but found " . count($team1));
             }
             else if (count($team2) != count($team2SpawnOrder))
             {
-                Log::info("Team2: Expected " . count($team2SpawnOrder) . " players but found " . count($team2));
+                Log::debug("Team2: Expected " . count($team2SpawnOrder) . " players but found " . count($team2));
             }
             else
             {
@@ -444,7 +444,7 @@ class QuickMatchService
 
                 $teamSpotsAssigned = true;
 
-                Log::info("QuickMatchService ** Team Spots Assigned Successfully: " . $teamSpotsAssigned);
+                Log::debug("QuickMatchService ** Team Spots Assigned Successfully: " . $teamSpotsAssigned);
             }
         }
 
@@ -461,7 +461,7 @@ class QuickMatchService
                 $qmPlayer->save();
                 $i++;
 
-                Log::info("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . "Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+                Log::debug("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . "Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
             }
         }
 
@@ -497,7 +497,7 @@ class QuickMatchService
             {
                 foreach ($spawnOrder as $so)
                 {
-                    Log::info("QuickMatchService ** Spawn Order Output:" . $so . " i: " . $i);
+                    Log::debug("QuickMatchService ** Spawn Order Output:" . $so . " i: " . $i);
                 }
                 if ($otherQmPlayer->isObserver() == true)
                 {
@@ -509,7 +509,7 @@ class QuickMatchService
                     $otherQmPlayer->location = $spawnOrder[$i] - 1;
                     $i++;
 
-                    Log::info("QuickMatchService ** Assigning Spot for " . $otherQmPlayer->player->username . "Color: " . $otherQmPlayer->color .  " Location: " . $otherQmPlayer->location);
+                    Log::debug("QuickMatchService ** Assigning Spot for " . $otherQmPlayer->player->username . "Color: " . $otherQmPlayer->color .  " Location: " . $otherQmPlayer->location);
                 }
             }
 
@@ -530,8 +530,8 @@ class QuickMatchService
     {
         $spawnOrder = explode(',', $qmMap->spawn_order);
 
-        Log::info("QuickMatchService ** set1v1QmSpawns: " . $qmPlayer->player->username . " Playing " . $qmMap->map->name);
-        Log::info("QuickMatchService ** set1v1QmSpawns: Qm Map" . $qmMap->description);
+        Log::debug("QuickMatchService ** set1v1QmSpawns: " . $qmPlayer->player->username . " Playing " . $qmMap->map->name);
+        Log::debug("QuickMatchService ** set1v1QmSpawns: Qm Map" . $qmMap->description);
 
         if (
             $qmMap->random_spawns == true
@@ -539,7 +539,7 @@ class QuickMatchService
             && ($expectedPlayerQueueCount == ($matchHasObserver ? 3 : 2))
         )
         {
-            Log::info("QuickMatchService ** set1v1QmSpawns: Random Spawns for " . $qmMap->description);
+            Log::debug("QuickMatchService ** set1v1QmSpawns: Random Spawns for " . $qmMap->description);
 
             # This map uses 1v1 random spawns
             $spawnOrder = [];
@@ -555,7 +555,7 @@ class QuickMatchService
             $spawnOrder[0] = $spawnArr[0];
             $spawnOrder[1] = $spawnArr[1];
 
-            Log::info("QuickMatchService ** Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawnOrder[0] . "," . $spawnOrder[1]);
+            Log::debug("QuickMatchService ** Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawnOrder[0] . "," . $spawnOrder[1]);
         }
 
 
@@ -571,7 +571,7 @@ class QuickMatchService
             $qmPlayer->save();
             $i++;
 
-            Log::info("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . "Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+            Log::debug("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . "Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
         }
 
         foreach ($otherQmQueueEntries as $otherQmQueueEntry)
@@ -610,7 +610,7 @@ class QuickMatchService
                 $otherQmPlayer->location = $spawnOrder[$i] - 1;
                 $i++;
 
-                Log::info("ApiQuickMatchController ** Assigning Spot for " . $otherQmPlayer->player->username . "Color: " . $otherQmPlayer->color .  " Location: " . $otherQmPlayer->location);
+                Log::debug("ApiQuickMatchController ** Assigning Spot for " . $otherQmPlayer->player->username . "Color: " . $otherQmPlayer->color .  " Location: " . $otherQmPlayer->location);
             }
 
             $otherQmPlayer->qm_match_id = $qmMatch->id;
@@ -653,8 +653,8 @@ class QuickMatchService
         $currentQueuePlayerCount = count($otherQmQueueEntries) + 1; // Total player counts equals myself plus other players to be matched
         $expectedPlayerQueueCount = $matchHasObserver ? $ladder->qmLadderRules->player_count + 1 :  $ladder->qmLadderRules->player_count;
 
-        // Log::info("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver);
-        Log::info("ApiQuickMatchController ** createQmMatch: Player counts " . $currentQueuePlayerCount . "/" . $expectedPlayerQueueCount);
+        // Log::debug("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver);
+        Log::debug("ApiQuickMatchController ** createQmMatch: Player counts " . $currentQueuePlayerCount . "/" . $expectedPlayerQueueCount);
 
 
         # Create the qm_matches db entry
@@ -733,7 +733,7 @@ class QuickMatchService
 
         $playerNames = implode(",", ClanMatchupHandler::getPlayerNamesInQueue($otherQmQueueEntries));
 
-        Log::info("Launching match with players $playerNames, " . $qmPlayer->player->username . " on map: " . $qmMatch->map->description);
+        Log::debug("Launching match with players $playerNames, " . $qmPlayer->player->username . " on map: " . $qmMatch->map->description);
 
         return $qmMatch;
     }
@@ -754,7 +754,7 @@ class QuickMatchService
             return $map->map_tier && $map->map_tier > 0;
         });
 
-        Log::info("Selecting map for rank $rank, points $points, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
+        Log::debug("Selecting map for rank $rank, points $points, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
 
         $mapsRanked = [];
         foreach ($mapsArr as $map)
@@ -821,7 +821,7 @@ class QuickMatchService
         {
             // Safety until its fixed
 
-            Log::info("Error in rankedMapPicker: " . $ex->getMessage());
+            Log::debug("Error in rankedMapPicker: " . $ex->getMessage());
             $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
             $map = $mapsArr[$randIdx];
         }
@@ -832,7 +832,7 @@ class QuickMatchService
             Log::error("null map chosen, map_tier=$map->map_tier, from rank=$rank, used randIdx=$randIdx");
         }
 
-        Log::info("Ranked map chosen=$map->description, map_tier=$map->map_tier, from rank=$rank, used randIdx=$randIdx");
+        Log::debug("Ranked map chosen=$map->description, map_tier=$map->map_tier, from rank=$rank, used randIdx=$randIdx");
 
         return $map->id;
     }
@@ -852,7 +852,7 @@ class QuickMatchService
             return $map->map_tier && $map->map_tier > 0;
         });
 
-        Log::info("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
+        Log::debug("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
 
         // group maps by tier
         $mapsRanked = [];
@@ -890,7 +890,7 @@ class QuickMatchService
             Log::error("null map chosen, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
         }
 
-        Log::info("Elo map chosen=$map->description, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
+        Log::debug("Elo map chosen=$map->description, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
 
         return $map->id;
     }

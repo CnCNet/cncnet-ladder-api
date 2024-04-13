@@ -321,7 +321,7 @@ class ApiQuickMatchController extends Controller
             }
             catch (Exception $ex)
             {
-                Log::info("Error saving id: " . $ex->getMessage());
+                Log::info("Error saving hwid: " . $ex->getMessage());
             }
         }
 
@@ -591,7 +591,7 @@ class ApiQuickMatchController extends Controller
             $qmPlayer->waiting = false;
             $qmPlayer->save();
 
-            Log::info("ApiQuickMatchController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
+            Log::debug("ApiQuickMatchController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
 
             return $this->onCheckback($alert);
         }
