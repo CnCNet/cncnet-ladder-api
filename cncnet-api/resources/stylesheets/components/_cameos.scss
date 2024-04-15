@@ -875,6 +875,19 @@
 .d2k-cameo.cameo-harkonnenpalace { background-position: -2580px 0; }
 .d2k-cameo.cameo-ordospalace { background-position: -2640px 0; }
 
+.d2k .stats .cameo-row.cameo-type-inb,
+.d2k .stats .cameo-row.cameo-type-plb,
+.d2k .stats .cameo-row.cameo-type-vsb,
+.d2k .stats .cameo-row.cameo-type-ink,
+.d2k .stats .cameo-row.cameo-type-plk,
+.d2k .stats .cameo-row.cameo-type-vsb,
+.d2k .stats .cameo-row.cameo-type-inl,
+.d2k .stats .cameo-row.cameo-type-pll,
+.d2k .stats .cameo-row.cameo-type-cra
+{
+    display:none;
+}
+
 .ra-cl-cameo 
 {
     @extend .ra-cameo;

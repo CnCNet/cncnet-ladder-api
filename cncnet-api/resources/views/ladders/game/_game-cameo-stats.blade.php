@@ -22,7 +22,7 @@
 
                 @foreach ($heaps as $heap)
                     <div>
-                        <div class="cameo-row">
+                        <div class="cameo-row cameo-type-{{ strtolower($heap->name) }}">
                             <div class="cameo-title">
                                 <h5>{{ $heap->description }}</h5>
                             </div>
