@@ -455,7 +455,6 @@ class GameService
         }
 
         $types = $ladder->countableGameObjects()->groupBy("heap_name")->get();
-
         foreach ($types as $type)
         {
             $tag = $type->heap_name;

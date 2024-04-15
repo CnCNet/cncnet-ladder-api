@@ -28,7 +28,7 @@
                             </div>
                             <div class="cameo-body">
                                 @foreach ($gameStats->gameObjectCounts as $goc)
-                                    @if ($goc->countableGameObject->heap_name == $heap->name && $goc->countableGameObject->cameo != '')
+                                    @if ($goc->countableGameObject?->heap_name == $heap->name && $goc->countableGameObject->cameo != '')
                                         <div class="{{ $gameAbbreviation }}-cameo cameo-tile cameo-{{ $goc->countableGameObject->cameo }}">
                                             <span class="number">{{ $goc->count }}</span>
                                         </div>
