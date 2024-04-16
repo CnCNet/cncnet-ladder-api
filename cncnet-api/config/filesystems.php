@@ -75,4 +75,22 @@ return [
 	'dmp' => public_path() . '/dmp',
 	'map_images' => public_path() . '/images/maps',
 	'map_files' => public_path() . '/files/maps',
+
+
+	/*
+    |--------------------------------------------------------------------------
+    | Symbolic Links
+    |--------------------------------------------------------------------------
+    |
+    | Here you may configure the symbolic links that will be created when the
+    | `storage:link` Artisan command is executed. The array keys should be
+    | the locations of the links and the values should be their targets.
+    |
+    */
+
+	'links' => [
+		public_path('storage') => storage_path('app/public'),
+		public_path('avatars') => storage_path('app/avatars'),
+	],
+
 ];
