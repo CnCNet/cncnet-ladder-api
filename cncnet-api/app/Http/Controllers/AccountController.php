@@ -386,6 +386,9 @@ class AccountController extends Controller
         if ($request->hasFile("avatar"))
         {
             $file = $request->file("avatar");
+            Storage::createDirectory("avatars/{$user->id}/", [
+                "visibility" => "public"
+            ]);
             if ($file->getClientOriginalExtension() == "gif")
             {
                 $hash = md5($file->__toString());
