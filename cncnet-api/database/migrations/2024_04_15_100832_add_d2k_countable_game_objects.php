@@ -151,8 +151,6 @@ return new class extends Migration
                 $this->createNew($gameObjectSchema->id, "BLL", $heapId, $cameoName, $name);
             }
         }
-
-        die();
     }
 
     private function createNew($schemaId, $heapName, $heapId, $cameoName, $uiName)
