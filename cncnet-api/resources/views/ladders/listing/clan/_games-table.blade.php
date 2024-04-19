@@ -65,7 +65,7 @@
                     <td class="td-game-details">
                         <div class="d-flex align-items-center game-details">
                             <div>
-                                <p class="fw-bold mb-1">{{ $game->qmMatch->map->map->name }}</p>
+                                <p class="fw-bold mb-1">{{ $game->qmMatch?->map?->description }}</p>
                                 <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $game->report->duration) }}</p>
                                 <p class="text-muted mb-0">
                                     Played: {{ $game->report->updated_at->diffForHumans() }}
