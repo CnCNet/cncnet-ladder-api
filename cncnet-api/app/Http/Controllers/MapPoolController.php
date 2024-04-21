@@ -81,12 +81,12 @@ class MapPoolController extends Controller
 
         if ($qmMap->team1_spawn_order == null || empty(trim($qmMap->team1_spawn_order)))
         {
-            $qmMap->team1_spawn_order = 0;
+            $qmMap->team1_spawn_order = "0,0";
         }
 
         if ($qmMap->team2_spawn_order == null || empty(trim($qmMap->team2_spawn_order)))
         {
-            $qmMap->team2_spawn_order = 0;
+            $qmMap->team2_spawn_order = "0,0";
         }
 
         $qmMap->save();
