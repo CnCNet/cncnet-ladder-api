@@ -11,7 +11,7 @@
                 <select id="mapTierSelector" name="map_tier" size="6" class="form-control mt-2 mb-2">
                     @foreach ($mapTiers as $mapTier)
                         <option value="{{ $mapTier->tier }}">
-                            {{ $mapTier->name }}
+                            {{ $mapTier->tier }} {{ $mapTier->name }}
                         </option>
                     @endforeach
 

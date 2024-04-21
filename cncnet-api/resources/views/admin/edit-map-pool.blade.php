@@ -116,10 +116,14 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="{{ $qmMap->id }}_map_tier"> Map Tier </label>
-                                            <input type="number" id="{{ $qmMap->id }}_map_tier" name="map_tier" min="0"
-                                                   max="5"
-                                                   value="{{ $qmMap->map_tier }}" class="form-control"/>
+                                        <label for="{{ $qmMap->id }}_map_tier"> Map Tier </label>
+                                            <select id="{{ $qmMap->id }}_map_tier" name="map_tier" size="6" class="form-control mt-2 mb-2">
+                                                @foreach ($mapTiers as $mapTier)
+                                                    <option value="{{ $mapTier->tier }}" @if ($qmMap->map_tier == $mapTier->tier) selected @endif>
+                                                        {{ $mapTier->tier }} {{ $mapTier->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         <div class="form-group col-md-12">
