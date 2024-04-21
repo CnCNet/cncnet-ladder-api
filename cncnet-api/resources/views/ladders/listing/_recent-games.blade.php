@@ -17,7 +17,7 @@
                             'gameReport' => $game->report()->first(),
                             'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
                             'points' => $pp,
-                            'title' => $game->qmMatch?->map?->map->name,
+                            'title' => $game->qmMatch?->map?->description,
                             'date' => $game->updated_at,
                             'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl(
                                 $history,
@@ -33,7 +33,7 @@
                             'gameReport' => $game->report()->first(),
                             'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
                             'points' => $pp,
-                            'title' => $game->qmMatch?->map?->map->name,
+                            'title' => $game->qmMatch?->map?->description,
                             'date' => $game->updated_at,
                             'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl(
                                 $history,

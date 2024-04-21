@@ -4,7 +4,7 @@ $type = isset($type) ? $type : 'player';
 ?>
 
 <div class="avatar-container" style="width: {{ $size }}px; height: {{ $size }}px;">
-    <div class="avatar" style="background-image: url({{ $avatar }});">
+    <div class="avatar" style="background-image: url('{{ $avatar }}');">
         @if (!$avatar)
             @if ($type == 'player')
                 <span class="material-symbols-outlined icon">

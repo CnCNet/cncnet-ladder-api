@@ -105,8 +105,7 @@ class DuneGameService
 
                 $playerUsername = explode("/", $value["value"])[0];
                 $playerHere = Player::where('ladder_id', $ladder->id)->where('username', $playerUsername)->first();
-
-                if ($playerHere === null)
+                if ($playerHere == null)
                 {
                     return [
                         'error' => 'playerHere is null for username ' . json_decode($value["value"]), 'gameReport' => null

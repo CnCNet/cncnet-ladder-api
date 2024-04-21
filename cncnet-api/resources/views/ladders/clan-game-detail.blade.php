@@ -137,7 +137,7 @@ $pageTitle = 'Viewing Game - ';
                         @if ($cgr)
                             @php $clanPointReport = $cgr->gameReport->getPointReportByClan($cgr->clan_id); @endphp
 
-                            @if ($clanPointReport)
+                            @if ($clanPointReport && $cgr->clan)
                                 @php $url = \App\Models\URLHelper::getClanProfileUrl($history, $cgr->clan->short); @endphp
                                 @include('ladders.game.clan._clan-versus-header', [
                                     'clanName' => $cgr->clan->short,

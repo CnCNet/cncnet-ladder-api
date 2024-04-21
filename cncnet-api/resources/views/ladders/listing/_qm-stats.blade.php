@@ -10,9 +10,9 @@
         <div class="qm-stats">
             <div class="stat purple">
                 <div class="text-center">
-                        <span class="material-symbols-outlined">
-                            insights
-                        </span>
+                    <span class="material-symbols-outlined">
+                        insights
+                    </span>
                     <h5>Games this Month</h5>
                 </div>
                 <div class="text-center">
@@ -23,9 +23,9 @@
 
             <div class="stat pink">
                 <div class="text-center">
-                        <span class="material-symbols-outlined">
-                            insights
-                        </span>
+                    <span class="material-symbols-outlined">
+                        insights
+                    </span>
                     <h5>Games Played</h5>
                 </div>
                 <div class="text-center">
@@ -42,8 +42,8 @@
                         <h5>Queued Clans</h5>
                     @else
                         <span class="material-symbols-outlined">
-                                group
-                            </span>
+                            group
+                        </span>
                         <h5>Queued Players</h5>
                     @endif
                 </div>
@@ -53,16 +53,15 @@
                 </div>
             </div>
 
-            @if ($statsXOfTheDay)
+            @if ($statsXOfTheDay && $statsXOfTheDay->wins > 0)
 
                 @if ($history->ladder->clans_allowed)
-                        <?php $url = \App\Models\URLHelper::getClanProfileUrl($history, $statsXOfTheDay->name); ?>
+                    <?php $url = \App\Models\URLHelper::getClanProfileUrl($history, $statsXOfTheDay->name); ?>
                 @else
-                        <?php $url = \App\Models\URLHelper::getPlayerProfileUrl($history, $statsXOfTheDay->name); ?>
+                    <?php $url = \App\Models\URLHelper::getPlayerProfileUrl($history, $statsXOfTheDay->name); ?>
                 @endif
 
-                <a class="stat gold potd" style="position:relative" href="{{ $url }}"
-                   title="{{ $statsXOfTheDay->name }}">
+                <a class="stat gold potd" style="position:relative" href="{{ $url }}" title="{{ $statsXOfTheDay->name }}">
                     <div class="text-center">
 
                         @if (\Carbon\Carbon::now()->month == 10)
@@ -104,7 +103,7 @@
                     </div>
                     <div class="text-center" style="z-index:1;position:relative;">
                         <div class="value">{{ $statsXOfTheDay->name }}</div>
-                        <div><small>{{ $statsXOfTheDay->wins }} wins <br/>(Today)</small></div>
+                        <div><small>{{ $statsXOfTheDay->wins }} wins <br />(Today)</small></div>
                     </div>
                     <div style="position: absolute; top: 0; left: 0;width:100%; z-index: 0;">
                         @include('animations.player', [
