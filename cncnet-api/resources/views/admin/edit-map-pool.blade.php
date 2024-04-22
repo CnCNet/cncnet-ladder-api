@@ -49,6 +49,7 @@
                     </div>
 
                     <div class="col-md-6">
+                    <span>{{ count($qmMaps) }} maps</span>
                         <form method="POST" action="rempoolmap">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
                             <select id="mapPoolSelector" name="map_id" size="18" class="form-control mt-2 mb-2">
@@ -420,7 +421,7 @@
                     for (map_id in ladderMaps) {
                         let option = document.createElement("option");
                         option.value = map_id;
-                        option.text = ladderMaps[map_id].name;
+                        option.text = (ladderMaps[map_id].name == null || ladderMaps[map_id].name.trim() == "")? "" : (ladderMaps[map_id].name + " (hash=" + ladderMaps[map_id].hash.substring(0, 7) + "...)");
                         if (map_id == maps[this.value].map_id)
                             option.selected = true;
                         mapSel.add(option);
