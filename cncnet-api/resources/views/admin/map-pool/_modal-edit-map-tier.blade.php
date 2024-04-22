@@ -11,7 +11,7 @@
                 <select id="mapTierSelector" name="map_tier" size="6" class="form-control mt-2 mb-2">
                     @foreach ($mapTiers as $mapTier)
                         <option value="{{ $mapTier->tier }}">
-                            {{ $mapTier->tier }} {{ $mapTier->name }}
+                            {{ $mapTier->tier }} - {{ $mapTier->name }}
                         </option>
                     @endforeach
 
@@ -35,7 +35,7 @@
 
                         <div class="form-group">
                             <label for="tier">Map Tier</label>
-                            <input type="number" class="form-control border" id="tier" name="tier" min=1
+                            <input type="number" class="form-control border" id="tier" name="tier" min="0"
                                    value="{{ $mapTier->tier }}">
                         </div>
                         <div class="form-group">
