@@ -49,6 +49,7 @@
                     </div>
 
                     <div class="col-md-6">
+                    <span>{{ count($qmMaps) }} maps</span>
                         <form method="POST" action="rempoolmap">
                             <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
                             <select id="mapPoolSelector" name="map_id" size="18" class="form-control mt-2 mb-2">
@@ -116,10 +117,14 @@
                                         </div>
 
                                         <div class="form-group col-md-12">
-                                            <label for="{{ $qmMap->id }}_map_tier"> Map Tier </label>
-                                            <input type="number" id="{{ $qmMap->id }}_map_tier" name="map_tier" min="0"
-                                                   max="5"
-                                                   value="{{ $qmMap->map_tier }}" class="form-control"/>
+                                        <label for="{{ $qmMap->id }}_map_tier"> Map Tier </label>
+                                            <select id="{{ $qmMap->id }}_map_tier" name="map_tier" size="6" class="form-control mt-2 mb-2">
+                                                @foreach ($mapTiers as $mapTier)
+                                                    <option value="{{ $mapTier->tier }}" @if ($qmMap->map_tier == $mapTier->tier) selected @endif>
+                                                        {{ $mapTier->tier }} {{ $mapTier->name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         <div class="form-group col-md-12">
@@ -416,7 +421,7 @@
                     for (map_id in ladderMaps) {
                         let option = document.createElement("option");
                         option.value = map_id;
-                        option.text = ladderMaps[map_id].name;
+                        option.text = (ladderMaps[map_id].name == null || ladderMaps[map_id].name.trim() == "")? "" : (ladderMaps[map_id].name + " (hash=" + ladderMaps[map_id].hash.substring(0, 7) + "...)");
                         if (map_id == maps[this.value].map_id)
                             option.selected = true;
                         mapSel.add(option);

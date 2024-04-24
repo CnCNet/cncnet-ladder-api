@@ -153,7 +153,7 @@ $reports = $playerGameReports;
                                     <h1>Vs</h1>
                                 </div>
                                 <div class="match-details text-center mt-2">
-                                    <h6>{{ $game->qmMatch?->map?->map->name }}</h4>
+                                    <h6>{{ $game->qmMatch?->map?->description }}</h4>
                                         <p>
                                             {{ $gameReport->created_at->diffForHumans() }} -
                                             <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
