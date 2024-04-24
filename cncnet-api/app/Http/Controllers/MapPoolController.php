@@ -518,7 +518,7 @@ class MapPoolController extends Controller
                 'mapPool' => $mapPool,
                 'ladderAbbrev' => $ladder->abbreviation,
                 'qmMaps' => $mapPool->maps()->orderBy('bit_idx')->get(),
-                'mapTiers' => $mapPool->tiers,
+                'mapTiers' => $mapPool->tiers->sortBy('tier'),
                 'ladder' => $ladder,
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
@@ -679,9 +679,9 @@ class MapPoolController extends Controller
         }
         
         //check for invalid tier
-        if (!$request->tier || $request->tier < 1)
+        if ($request->tier < 0)
         {
-            $request->session()->flash('error', "Map Tier " . $request->tier . " must be above zero.");
+            $request->session()->flash('error', "Map Tier " . $request->tier . " cannot be negative.");
             return redirect()->back();
         }
 
