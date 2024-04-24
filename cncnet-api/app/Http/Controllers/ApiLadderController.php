@@ -114,6 +114,9 @@ class ApiLadderController extends Controller
         {
             $status = $this->awardClanPoints($gameReport, $history);
         }
+        elseif ($history->ladder->qmLadderRules->player_count > 2) {
+            $status = $this->awardTeamPoints($gameReport, $history);
+        }
         else
         {
             $status = $this->awardPlayerPoints($gameReport, $history);
@@ -510,6 +513,24 @@ class ApiLadderController extends Controller
         }
 
         return 200;
+    }
+
+    public function awardTeamPoints($gameReport, $history) {
+
+
+        if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
+        {
+            // FPS too low, no points awarded
+            return 630;
+        }
+
+        if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
+        {
+            // Duration too low, no points awarded
+            return 660;
+        }
+
+        
     }
 
     public function getAllLadders(Request $request)
