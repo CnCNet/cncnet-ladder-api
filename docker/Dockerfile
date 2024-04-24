@@ -100,7 +100,7 @@ RUN pecl install memcached && docker-php-ext-enable memcached
 #####################################
 
 # Install the php opcache extension
-RUN if [ "$debug" = 1 ] ; then \
+RUN if [ "$debug" = 0 ] ; then \
     docker-php-ext-install opcache &&  \
     docker-php-ext-enable opcache \
 fi
