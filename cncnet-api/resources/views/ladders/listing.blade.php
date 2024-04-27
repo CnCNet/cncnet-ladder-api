@@ -2,20 +2,20 @@
 @section('title', $history->ladder->name)
 @section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
+@section('page-body-class', $history->ladder->abbreviation)
 
 @section('feature')
     <div class="feature">
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}"
-                         alt="{{ $history->ladder->name }}"
-                         class="d-block img-fluid me-lg-0 ms-lg-auto"/>
+                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br/>
+                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
                         <span>Ladder Rankings</span>
                     </h1>
 
@@ -65,13 +65,11 @@
         <div class="container">
             @if ($history->ladder->qmLadderRules->tier2_rating > 0)
                 <div class="league-selection">
-                    <a href="{{ \App\Models\UrlHelper::getLadderLeague($history, 1) }}"
-                       title="{{ $history->ladder->name }}" class="league-box tier-1">
+                    <a href="{{ \App\Models\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">
                         {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(1) !!}
                         <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(1) }}</h3>
                     </a>
-                    <a href="{{ \App\Models\UrlHelper::getLadderLeague($history, 2) }}"
-                       title="{{ $history->ladder->name }}" class="league-box tier-2">
+                    <a href="{{ \App\Models\UrlHelper::getLadderLeague($history, 2) }}" title="{{ $history->ladder->name }}" class="league-box tier-2">
                         {!! \App\Helpers\LeagueHelper::getLeagueIconByTier(2) !!}
                         <h3 class="league-title">1vs1 - {{ \App\Helpers\LeagueHelper::getLeagueNameByTier(2) }}</h3>
                     </a>
@@ -100,14 +98,13 @@
             <section class="mt-4 ladder-info">
                 <div>
                     <a href="/ladder/play" class="btn btn-secondary d-flex"">
-                    <span class="material-symbols-outlined pe-3">
+                        <span class="material-symbols-outlined pe-3">
                             schedule
                         </span> Popular Times
                     </a>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-secondary d-flex" data-bs-toggle="modal"
-                            data-bs-target="#openLadderRules">
+                    <button type="button" class="btn btn-secondary d-flex" data-bs-toggle="modal" data-bs-target="#openLadderRules">
                         <span class="material-symbols-outlined pe-3">
                             gavel
                         </span>
@@ -124,8 +121,7 @@
                 @endif
 
                 <div class="dropdown d-flex">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-symbols-outlined icon me-2">
                             hotel_class
                         </span>
@@ -134,9 +130,8 @@
                     <ul class="dropdown-menu">
                         @foreach ($ladders_previous as $previous)
                             <li>
-                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/"
-                                   title="{{ $previous->ladder->name }}"
-                                   class="dropdown-item">
+                                <a href="/ladder/{{ $previous->short . '/' . $previous->ladder->abbreviation }}/" title="{{ $previous->ladder->name }}"
+                                    class="dropdown-item">
                                     {{ $previous->starts->format('Y - F') }}
                                 </a>
                             </li>
@@ -199,8 +194,7 @@
                         <form>
                             <div class="form-group" method="GET">
                                 <div class="search" style="position:relative;">
-                                    <input class="form-control border" name="search" value="{{ $search }}"
-                                           placeholder="Search by Player..."/>
+                                    <input class="form-control border" name="search" value="{{ $search }}" placeholder="Search by Player..." />
                                 </div>
                                 @if ($search)
                                     <small>
@@ -237,9 +231,9 @@
 
                 @if ($players)
                     @include('ladders.listing._ladder-table', [
-                        'players' => $players, 
+                        'players' => $players,
                         'ladderHasEnded' => $history->hasEnded(),
-                        'statsXOfTheDay' => $statsXOfTheDay
+                        'statsXOfTheDay' => $statsXOfTheDay,
                     ])
 
                     <div class="mt-5">
@@ -249,9 +243,9 @@
 
                 @if ($clans)
                     @include('ladders.listing.clan._ladder-table', [
-                        'clans' => $clans, 
+                        'clans' => $clans,
                         'ladderHasEnded' => $history->hasEnded(),
-                        'statsXOfTheDay' => $statsXOfTheDay
+                        'statsXOfTheDay' => $statsXOfTheDay,
                     ])
 
                     <div class="mt-5">

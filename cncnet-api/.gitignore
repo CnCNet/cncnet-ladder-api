@@ -5,3 +5,5 @@ bulk.json
 *Zone.Identifier*
 public/dmp/
 public/files/maps/
+**/debugbar/*
+public/css/app.css

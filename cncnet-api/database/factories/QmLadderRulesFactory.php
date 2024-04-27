@@ -33,6 +33,7 @@ class QmLadderRulesFactory extends Factory
             'show_map_preview' => 1,
             'reduce_map_repeats' => 5,
             'use_ranked_map_picker' => 0,
+            'use_elo_map_picker' => 0
         ];
     }
 }

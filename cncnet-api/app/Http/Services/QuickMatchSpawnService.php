@@ -45,7 +45,7 @@ class QuickMatchSpawnService
                 "Seed" =>           $qmMatch->seed,
                 "GameID" =>         $qmMatch->seed,
                 "WOLGameID" =>      $qmMatch->seed,
-                "Host" =>           ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
+                "Host" => ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
                 "Name" =>           $qmPlayer->player()->first()->username,
                 "Port" =>           $qmPlayer->port,
                 "Side" =>           $qmPlayer->actual_side,
@@ -114,7 +114,7 @@ class QuickMatchSpawnService
      */
     public static function appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers)
     {
-        Log::info("QuickMatchSpawnService ** appendOthersAndTeamAlliancesToSpawnIni: Is Observer: " . $qmPlayer->isObserver());
+        Log::debug("QuickMatchSpawnService ** appendOthersAndTeamAlliancesToSpawnIni: Is Observer: " . $qmPlayer->isObserver());
 
         $otherIndex = 1;
         $multiIndex = $qmPlayer->color + 1;
@@ -175,7 +175,7 @@ class QuickMatchSpawnService
 
                 if ($p1IsObserver == false && $p2IsObserver == false)
                 {
-                    Log::info("QuickMatchSpawnService 1 ** Alliances: Teaming for $clanName, Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $$p2IsObserver)");
+                    Log::debug("QuickMatchSpawnService 1 ** Alliances: Teaming for $clanName, Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $$p2IsObserver)");
 
                     $spawnStruct["spawn"]["Multi{$currentQmPlayerIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
                     $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $currentQmPlayerIndex - 1;
@@ -235,7 +235,7 @@ class QuickMatchSpawnService
                                 {
                                     if ($opn->clan_id == $opn2->clan_id)
                                     {
-                                        Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $p2IsObserver)");
+                                        Log::debug("QuickMatchSpawnService 2 ** Alliances: Teaming Player: $p1Name (OBS: $p1IsObserver) with Player: $p2Name (OBS: $p2IsObserver)");
                                         $spawnStruct["spawn"]["Multi{$otherIndex}_Alliances"]["HouseAllyOne"] = $multiIndex - 1;
                                         $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"]["HouseAllyOne"] = $otherIndex - 1;
                                         $completed = true;

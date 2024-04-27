@@ -79,6 +79,16 @@ class MapPoolController extends Controller
             return redirect()->back();
         }
 
+        if ($qmMap->team1_spawn_order == null || empty(trim($qmMap->team1_spawn_order)))
+        {
+            $qmMap->team1_spawn_order = "0,0";
+        }
+
+        if ($qmMap->team2_spawn_order == null || empty(trim($qmMap->team2_spawn_order)))
+        {
+            $qmMap->team2_spawn_order = "0,0";
+        }
+
         $qmMap->save();
 
         $request->session()->flash('success', $message);
@@ -94,6 +104,7 @@ class MapPoolController extends Controller
         ]);
 
         $mapFile = $request->file('mapFile');
+        $mapFileName = null;
         $hash = null;
 
         if ($mapFile)
@@ -507,7 +518,7 @@ class MapPoolController extends Controller
                 'mapPool' => $mapPool,
                 'ladderAbbrev' => $ladder->abbreviation,
                 'qmMaps' => $mapPool->maps()->orderBy('bit_idx')->get(),
-                'mapTiers' => $mapPool->tiers,
+                'mapTiers' => $mapPool->tiers->sortBy('tier'),
                 'ladder' => $ladder,
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
@@ -668,9 +679,9 @@ class MapPoolController extends Controller
         }
         
         //check for invalid tier
-        if (!$request->tier || $request->tier < 1)
+        if ($request->tier < 0)
         {
-            $request->session()->flash('error', "Map Tier " . $request->tier . " must be above zero.");
+            $request->session()->flash('error', "Map Tier " . $request->tier . " cannot be negative.");
             return redirect()->back();
         }
 

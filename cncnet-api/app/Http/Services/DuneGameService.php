@@ -9,17 +9,13 @@ use App\Models\Player;
 use App\Models\PlayerGameReport;
 use Exception;
 
-class GameService
+class DuneGameService
 {
-    private $maxPlayers;
-    private $playerService;
     private $idsToSkip;
 
     public function __construct()
     {
-        $this->maxPlayers = 8;
         $this->idsToSkip = [];
-        $this->playerService = new PlayerService();
     }
 
     /**
@@ -93,7 +89,7 @@ class GameService
         {
             $property = substr($key, 0, -1);
 
-            if ($property == "NAM")
+            if ($property == "PL_")
             {
                 $id = substr($key, -1);
 
@@ -107,20 +103,9 @@ class GameService
                 $playerGameReports[$id]->game_id = $game->id;
                 $playerGameReports[$id]->game_report_id = $gameReport->id;
 
-                if ($value["value"] == "Computer")
-                {
-                    $playerHere = AIPlayer::getAIPlayer($ladder->currentHistory());
-                }
-                else if ($value["value"] == "<human player>")
-                {
-                    $playerHere = $player;
-                }
-                else if ($value["value"] !== "Special" || $value["value"] !== "Neutral")
-                {
-                    $playerHere = Player::where('ladder_id', $ladder->id)->where('username', $value["value"])->first();
-                }
-
-                if ($playerHere === null)
+                $playerUsername = explode("/", $value["value"])[0];
+                $playerHere = Player::where('ladder_id', $ladder->id)->where('username', $playerUsername)->first();
+                if ($playerHere == null)
                 {
                     return [
                         'error' => 'playerHere is null for username ' . json_decode($value["value"]), 'gameReport' => null
@@ -142,8 +127,32 @@ class GameService
 
                 $playerGameReports[$id]->save();
 
+
+                # Player settings
+                $playerSettings = explode("/", $value["value"]);
+                $playerSide = $playerSettings[1];
+                $playerColor = $playerSettings[2];
+                $playerHandicap = $playerSettings[3];
+
+                switch ($playerSide)
+                {
+                    case "Atreides":
+                        $playerSide = 0;
+                        break;
+
+                    case "Harkonnen":
+                        $playerSide = 1;
+                        break;
+
+                    case "Ordos":
+                        $playerSide = 2;
+                        break;
+                }
+
                 $playerStats[$id] = new \App\Models\Stats2;
                 $playerStats[$id]->player_game_report_id = $playerGameReports[$id]->id;
+                $playerStats[$id]->sid = $playerSide;
+                $playerStats[$id]->col = $playerColor;
                 $playerStats[$id]->save();
 
                 $playerGameReports[$id]->stats_id = $playerStats[$id]->id;
@@ -274,61 +283,60 @@ class GameService
 
             switch ($key)
             {
-                case "CMPL":
-                    // Must be RA, not sure what to do though
-                    if ($value["value"] == GameResult::COMPLETION_DRAW)
-                    {
-                        foreach ($playerGameReports as $playerGR)
-                        {
-                            $playerGR->draw = true;
-                            $playerGR->won = false;
-                            $playerGR->defeated = false;
-                            $playerGR->no_completion = false;
-                        }
-                    }
-                    else
-                    {
-                        $gameWon = !$reporter->defeated && !$reporter->quit;
+                case "ENDS":
+                    $gameWon = !$reporter->defeated && !$reporter->quit;
 
-                        foreach ($playerGameReports as $playerGR)
-                        {
-                            $playerGR->won = !$gameWon;
-                            $playerGR->defeated = !$playerGR->won;
-                            $playerGR->no_completion = false;
-                        }
-
-                        $reporter->won = $gameWon;
-                        $reporter->no_completion = false;
-                        $reporter->defeated = !$reporter->won;
-                    }
-                    break;
-
-                case "OOSY":
-                    $gameReport->oos = $value["value"];
-                    if ($gameReport->oos)
+                    $gameResult = $value["value"];
+                    switch ($gameResult)
                     {
-                        // If the game recons then the reporter marks himself as winner, admin will sort it out later
-                        foreach ($playerGameReports as $playerGR)
-                        {
-                            $playerGR->won = false;
-                        }
-                        $reporter->won = true;
+                        case DuneGameResult::GES_ENDEDNORMALLY:
+                            // hmm?
+                            break;
+
+                        case DuneGameResult::GES_CONNECTIONLOST:
+                            $gameWon = false;
+                            break;
+
+                        case DuneGameResult::GES_ISURRENDERED:
+                            $gameWon = false;
+                            break;
+
+                        case DuneGameResult::GES_OPPONENTSURRENDERED:
+                            $gameWon = true;
+                            break;
+
+                        case DuneGameResult::GES_OUTOFSYNC:
+                            $gameReport->oos = true;
+                            if ($gameReport->oos)
+                            {
+                                // If the game recons then the reporter marks himself as winner, admin will sort it out later
+                                foreach ($playerGameReports as $playerGR)
+                                {
+                                    $playerGR->won = false;
+                                }
+                                $reporter->won = true;
+                            }
+                            break;
                     }
+
+                    foreach ($playerGameReports as $playerGR)
+                    {
+                        $playerGR->won = !$gameWon;
+                        $playerGR->defeated = !$playerGR->won;
+                        //$playerGR->no_completion = false;
+                    }
+
+                    $reporter->won = $gameWon;
+                    //$reporter->no_completion = false;
+                    $reporter->defeated = !$reporter->won;
                     break;
 
                 case "SDFX":
-                    foreach ($playerGameReports as $playerGR)
-                    {
-                        $playerGR->disconnected = $value["value"];
-                    }
+                    // Not sure.
                     break;
 
-                case "DURA":
+                case "TIME":
                     $gameReport->duration = $value["value"];
-                    break;
-
-                case "AFPS":
-                    $gameReport->fps = $value["value"];
                     break;
 
                 case "QUIT":
@@ -366,228 +374,45 @@ class GameService
         return ['gameReport' =>  $gameReport];
     }
 
-    public function saveRawStats($result, $gameId, $ladderId)
-    {
-        $raw = new \App\Models\GameRaw();
-        try
-        {
-            $raw->packet = json_encode($result);
-        }
-        catch (Exception $e)
-        {
-            $raw->packet = false;
-        }
-        if ($raw->packet == false)
-        {
-            switch (json_last_error())
-            {
-                case JSON_ERROR_NONE:
-                    error_log('saveRawStats - No errors');
-                    break;
-                case JSON_ERROR_DEPTH:
-                    error_log('saveRawStats - Maximum stack depth exceeded');
-                    break;
-                case JSON_ERROR_STATE_MISMATCH:
-                    error_log('saveRawStats - Underflow or the modes mismatch');
-                    break;
-                case JSON_ERROR_CTRL_CHAR:
-                    error_log('saveRawStats - Unexpected control character found');
-                    break;
-                case JSON_ERROR_SYNTAX:
-                    error_log('saveRawStats - Syntax error, malformed JSON');
-                    break;
-                case JSON_ERROR_UTF8:
-                    error_log('saveRawStats - Malformed UTF-8 characters, possibly incorrectly encoded');
-                    break;
-                default:
-                    error_log('saveRawStats - Unknown error');
-                    break;
-            }
-        }
-
-        $raw->game_id = $gameId;
-        $raw->ladder_id = $ladderId;
-        $raw->save();
-
-        return $raw;
-    }
-
-    // Credit: https://github.com/dkeetonx
-    public function processStatsDmp($file, $cncnetGame, $ladder)
-    {
-        if ($file == null)
-            return null;
-
-        $fh = fopen($file, "r");
-        $data = fread($fh, 4);
-
-        if (!$data)
-        {
-            return "Error";
-        }
-
-        $pad = 0;
-        $result = [];
-
-        while (!feof($fh))
-        {
-            $data = fread($fh, 8);
-            if (!$data)
-            {
-                break;
-            }
-
-            $ttl = unpack("A4tag/ntype/nlength", $data);
-            $pad = ($ttl["length"] % 4) ? 4 - ($ttl["length"] %  4) : 0;
-
-            if ($ttl["length"] > 0)
-            {
-                $data = fread($fh, $ttl["length"]);
-
-                if ($pad > 0)
-                {
-                    fread($fh, $pad);
-                }
-
-                $fieldValueArr = $this->getFieldValue($ttl, $data);
-                $result[$ttl["tag"]] = ["tag" => $ttl["tag"], "length" => $ttl["length"], "raw" => base64_encode($fieldValueArr["raw"]), "value" => $fieldValueArr["val"]];
-            }
-        }
-
-        $types = $ladder->countableGameObjects()->groupBy("heap_name")->get();
-        foreach ($types as $type)
-        {
-            $tag = $type->heap_name;
-
-            for ($i = 0; $i < 8; $i++)
-            {
-                if (isset($result["$tag$i"]))
-                {
-                    $raw = base64_decode($result["$tag$i"]["raw"]);
-                    $length = $result["$tag$i"]["length"];
-
-                    for ($j = 0, $t = 0; $j < $length; $j += 4, ++$t)
-                    {
-                        $count = unpack("N", substr($raw, $j, 4))[1];
-                        if ($count > 0)
-                        {
-                            $result["$tag$i"]["counts"][$t] = $count;
-                        }
-                    }
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    private function getFieldValue($ttl, $data)
-    {
-        $response = ["raw" => null, "val" => null];
-
-        switch ($ttl["type"])
-        {
-                //FIELDTYPE_BYTE
-            case 1:
-                $v = unpack("C", $data);
-                $response["val"] = $v[1];
-                break;
-
-                //FIELDTYPE_BOOLEAN
-            case 2:
-                $v = unpack("C", $data);
-                if ($v[1] == 0)
-                {
-                    $response["val"] = false;
-                    break;
-                }
-                else
-                {
-                    $response["val"] = true;
-                    break;
-                }
-
-                //FIELDTYPE_SHORT
-            case 3:
-                $v = unpack("n", $data);
-                $response["val"] = $v[1];
-                break;
-
-                //FIELDTYPE_UNSIGNED_SHORT
-            case 4:
-                $v = unpack("n", $data);
-                $response["val"] = $v[1];
-                break;
-
-                //FIELDTYPE_LONG
-            case 5:
-                $v = unpack("N", $data);
-                $response["val"] = $v[1];
-                break;
-
-                //FIELDTYPE_UNSIGNED_LONG
-            case 6:
-                $v = unpack("N", $data);
-                $response["val"] = $v[1];
-                break;
-
-                //FIELDTYPE_CHAR
-            case 7:
-                $ttl["length"] -= 1;
-                $v = unpack("a$ttl[length]", $data);
-                //Make sure we only allow visual ascii characters and replace bad chars with ?
-                $response["val"] = preg_replace('/[^\x20-\x7e]/', '?', $v[1]);
-                break;
-
-                //FIELDTYPE_CUSTOM_LENGTH
-            case 20:
-                $response["val"] = null;
-                $response["raw"] = substr($data, 0, $ttl["length"]);;
-                break;
-        }
-
-        return $response;
-    }
-
-    public function findOrCreateGame($result, $ladder)
-    {
-        $id = $this->getUniqueGameIdentifier($result);
-
-        $game = \App\Models\Game::where("wol_game_id", "=", $id)->first();
-
-        if ($game === null)
-        {
-            $game = new \App\Models\Game();
-            $game->ladder_history_id = $ladder->id;
-            //$game->save();
-        }
-        $this->fillGameCols($game, $result);
-        return $game;
-    }
-
     public function fillGameCols($game, $result)
     {
-        $game->wol_game_id = $this->getUniqueGameIdentifier($result);
-        foreach ($result as $key => $value)
-        {
-            $gameProperty = substr($key, -1);
+        $gameSettings = explode(" ", $result["GSET"]["value"]);
+        $values = [];
 
-            if (!is_numeric($gameProperty))
+        // Loop through the parts array two items at a time
+        for ($i = 0; $i < count($gameSettings); $i += 2)
+        {
+            if (isset($gameSettings[$i + 1]))
             {
-                // Save Game Details like average fps, out of sync errors etc
-                if (in_array(strtolower($key), \App\Models\Game::$gameColumns))
-                {
-                    $game->{strtolower($key)} = $value["value"];
-                }
+                $values[$gameSettings[$i]] = $gameSettings[$i + 1];
             }
         }
+        foreach ($values as $key => $value)
+        {
+            switch ($key)
+            {
+                case "Worms":
+                    break;
+                case "Crates":
+                    $game->crat = $value;
+                    break;
+                case "Credits";
+                    $game->cred = $value;
+                    break;
+                case "Techlevel":
+                    break;
+            }
+        }
+        $game->plrs = $result["NUMP"]["value"];
+        $game->scen = str_replace("MAP:", "", $result["GMAP"]["value"]);
+        $game->wol_game_id = $this->getUniqueGameIdentifier($result);
         $game->save();
     }
 
     private function getUniqueGameIdentifier($result)
     {
-        if (isset($result["IDNO"]) && $result["IDNO"])
-            return $result["IDNO"]["value"];
+        if (isset($result["GMID"]) && $result["GMID"])
+            return $result["GMID"]["value"];
         return null;
     }
 }

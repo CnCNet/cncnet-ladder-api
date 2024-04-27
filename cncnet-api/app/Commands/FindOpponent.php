@@ -50,7 +50,7 @@ class FindOpponent implements ShouldQueue
 
         if ($qmQueueEntry === null)
         {
-            Log::info('No qmqueue entry');
+            Log::debug('No qmqueue entry');
             return;
         }
 
@@ -61,7 +61,7 @@ class FindOpponent implements ShouldQueue
         # A player could cancel out of queue before this function runs
         if ($qmPlayer === null)
         {
-            Log::info('Cancelled out');
+            Log::debug('Cancelled out');
             $qmQueueEntry->delete();
             return;
         }
@@ -69,7 +69,7 @@ class FindOpponent implements ShouldQueue
         # Skip if the player has already been matched up
         if ($qmPlayer->qm_match_id !== null)
         {
-            Log::info("FindOpponent ** qmPlayer->qm_match_id is not null.");
+            Log::debug("FindOpponent ** qmPlayer->qm_match_id is not null.");
             $qmQueueEntry->delete();
             return;
         }
@@ -78,7 +78,7 @@ class FindOpponent implements ShouldQueue
 
         if ($history === null)
         {
-            Log::info("FindOpponent ** history is null.");
+            Log::debug("FindOpponent ** history is null.");
             $qmQueueEntry->delete();
             return;
         }
@@ -87,7 +87,7 @@ class FindOpponent implements ShouldQueue
 
         if ($ladder === null)
         {
-            Log::info("FindOpponent ** ladder is null.");
+            Log::debug("FindOpponent ** ladder is null.");
             $qmQueueEntry->delete();
             return;
         }
@@ -96,7 +96,7 @@ class FindOpponent implements ShouldQueue
 
         if ($player === null)
         {
-            Log::info("FindOpponent ** player is null.");
+            Log::debug("FindOpponent ** player is null.");
             $qmQueueEntry->delete();
             return;
         }
@@ -105,7 +105,7 @@ class FindOpponent implements ShouldQueue
         $qmPlayer->map_bitfield = 0xffffffff;
         $qmPlayer->save();
 
-        Log::info("FindOpponent QM Player Check: ** " . $qmPlayer);
+        Log::debug("FindOpponent QM Player Check: ** " . $qmPlayer);
 
         if ($ladder->clans_allowed)
         {

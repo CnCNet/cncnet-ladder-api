@@ -7,21 +7,22 @@ $pageTitle = 'Viewing Game - ';
 ?>
 
 @foreach ($clanGameReports as $k => $pgr)
-        <?php
-        $player = $pgr->player()->first();
-        $clan = $pgr->clan()->first();
-        if ($k == 1) {
-            $pageTitle .= ' vs ';
-        }
-        if ($clan) {
-            $pageTitle .= "$clan->short";
-        }
-        ?>
+    <?php
+    $player = $pgr->player()->first();
+    $clan = $pgr->clan()->first();
+    if ($k == 1) {
+        $pageTitle .= ' vs ';
+    }
+    if ($clan) {
+        $pageTitle .= "$clan->short";
+    }
+    ?>
 @endforeach
 
 @section('title', $pageTitle)
 @section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
+@section('page-body-class', $history->ladder->abbreviation)
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -56,20 +57,19 @@ $pageTitle = 'Viewing Game - ';
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}"
-                         alt="{{ $history->ladder->name }}"
-                         class="d-block img-fluid me-lg-0 ms-lg-auto"/>
+                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
+                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
                     <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br/>
+                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
                     </h1>
 
                     <p class="lead">
                         @foreach ($clanGameReports as $k => $pgr)
-                                <?php $gameStats = $pgr->stats; ?>
-                                <?php $player = $pgr->player()->first(); ?>
+                            <?php $gameStats = $pgr->stats; ?>
+                            <?php $player = $pgr->player()->first(); ?>
 
                             @if ($player->clanPlayer)
                                 Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
@@ -112,8 +112,7 @@ $pageTitle = 'Viewing Game - ';
 
     @if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder))
         <div class="container mb-5">
-            <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false"
-               aria-controls="adminTools">
+            <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
                 Show admin tools
             </a>
             <div class="collapse " id="adminTools">
@@ -138,7 +137,7 @@ $pageTitle = 'Viewing Game - ';
                         @if ($cgr)
                             @php $clanPointReport = $cgr->gameReport->getPointReportByClan($cgr->clan_id); @endphp
 
-                            @if ($clanPointReport)
+                            @if ($clanPointReport && $cgr->clan)
                                 @php $url = \App\Models\URLHelper::getClanProfileUrl($history, $cgr->clan->short); @endphp
                                 @include('ladders.game.clan._clan-versus-header', [
                                     'clanName' => $cgr->clan->short,
@@ -165,24 +164,24 @@ $pageTitle = 'Viewing Game - ';
             <p>
                 <strong>Date played:</strong> {{ $gameReport->created_at->diffForHumans() }} -
                 <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
-                <br/>
+                <br />
                 <strong>Game duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
-                <br/>
+                <br />
                 <strong>FPS:</strong> {{ $gameReport->fps }}
-                <br/>
+                <br />
             </p>
 
             <div style="font-size:0.8rem" class="mb-1">
                 <strong>Tunnel(s):</strong>
-                <br/>
+                <br />
                 @foreach ($tunnels as $tunnel)
                     * {{ $tunnel }}
-                    <br/>
+                    <br />
                 @endforeach
             </div>
             @if ($gameReport !== null)
                 @if ($gameReport->oos)
-                    <br/>
+                    <br />
                     <strong>Game ended in reconnection error (OOS)</strong>
                 @endif
                 @if ($gameReport->disconnected())

@@ -30,6 +30,7 @@ Route::group(['prefix' => 'v1'], function () {
 
 
     Route::get("news", [\App\Http\Controllers\ApiNewsController::class, "getNews"]);
+    Route::post('/test', [\App\Http\Controllers\ApiLadderController::class, 'saveLadderTestOnly']);
 
     Route::group(['middleware' => 'jwt.auth'], function () {
 

@@ -50,7 +50,7 @@
     <div class="ladder-index">
 
         <section class="pt-5 pb-5">
-            <div class="container">
+            <div class="container-xl">
                 <h2 class="mb-3">
                     <div class="icon-box me-2">
                         <span class="material-symbols-outlined color-green" style="font-size: 1.9rem">
@@ -79,7 +79,7 @@
         </section>
 
         <section class="pt-3 pb-3">
-            <div class="container">
+            <div class="container-xl">
                 <h2>
                     <div class="icon-box me-2">
                         <span class="material-symbols-outlined icon color-gold" style="font-size: 2rem">
@@ -89,7 +89,7 @@
                     <strong>1vs1</strong> Ladders
                 </h2>
 
-                <div class="d-flex flex-wrap mt-4">
+                <div class="d-flex flex-wrap mt-4 player-ladders">
                     @foreach ($ladders as $history)
                         @include('components.ladder-box', [
                             'history' => $history,
@@ -101,7 +101,7 @@
         </section>
 
         <section class="pt-3 pb-3">
-            <div class="container">
+            <div class="container-xl">
                 <h2>
                     <div class="icon-box me-2">
                         <i class="bi bi-flag-fill icon-clan" style="font-size: 1.5rem;"></i>
@@ -127,7 +127,7 @@
 @section('js')
     <script src="/js/swiper.js"></script>
     <script>
-        (function () {
+        (function() {
             var swiper = new Swiper(".js-news-listings", {
                 slidesPerView: 3,
                 spaceBetween: 10,

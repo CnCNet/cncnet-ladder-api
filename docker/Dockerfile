@@ -100,7 +100,10 @@ RUN pecl install memcached && docker-php-ext-enable memcached
 #####################################
 
 # Install the php opcache extension
-RUN docker-php-ext-install opcache && docker-php-ext-enable opcache
+RUN if [ "$debug" = 0 ] ; then \
+    docker-php-ext-install opcache &&  \
+    docker-php-ext-enable opcache \
+fi
 COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Install Composer

@@ -22,13 +22,13 @@
 
                 @foreach ($heaps as $heap)
                     <div>
-                        <div class="cameo-row">
+                        <div class="cameo-row cameo-type-{{ strtolower($heap->name) }}">
                             <div class="cameo-title">
                                 <h5>{{ $heap->description }}</h5>
                             </div>
                             <div class="cameo-body">
                                 @foreach ($gameStats->gameObjectCounts as $goc)
-                                    @if ($goc->countableGameObject->heap_name == $heap->name && $goc->countableGameObject->cameo != '')
+                                    @if ($goc->countableGameObject?->heap_name == $heap->name && $goc->countableGameObject->cameo != '')
                                         <div class="{{ $gameAbbreviation }}-cameo cameo-tile cameo-{{ $goc->countableGameObject->cameo }}">
                                             <span class="number">{{ $goc->count }}</span>
                                         </div>
