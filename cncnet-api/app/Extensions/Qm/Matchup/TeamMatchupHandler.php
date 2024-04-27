@@ -61,7 +61,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
             $this->matchHasObservers = true;
         }
 
-        $this->createTeamMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers, );
+        $this->createTeamMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers);
     }
 
     private function createTeamMatch(Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers) {
