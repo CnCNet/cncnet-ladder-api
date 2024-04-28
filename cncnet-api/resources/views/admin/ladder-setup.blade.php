@@ -238,14 +238,16 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-
+                                           
                                             <div class="form-group">
-                                                <label for="clansAllowed">Clans Allowed</label>
-                                                <select name="clans_allowed" id="clansAllowed" class="form-control">
-                                                    <option value="0" @if (!$ladder->clans_allowed) selected @endif>No
-                                                    </option>
-                                                    <option value="1" @if ($ladder->clans_allowed) selected @endif>Yes
-                                                    </option>
+                                                <label for="ladderType">Ladder Type</label>
+                                                <select name="ladder_type" id="ladderTypes" class="form-control">
+                                                    <option value="$ladderType"></option>
+                                                    @foreach ($ladderTypes as $ladder_type)
+                                                        <option value="{{ $ladder_type }}"
+                                                                @if ($ladder->ladder_type == $ladder_type) selected @endif>
+                                                            {{ $ladder_type }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
 

@@ -90,6 +90,7 @@ class AdminController extends Controller
         $maps = $ladder->maps;
         $user = $request->user();
         $spawnOptions = \App\Models\SpawnOption::all();
+        $ladderTypes = \App\Models\Ladder::LADDER_TYPES;
 
         return view("admin.ladder-setup", compact(
             'ladders',
@@ -100,7 +101,8 @@ class AdminController extends Controller
             'mapPools',
             'maps',
             'user',
-            'spawnOptions'
+            'spawnOptions',
+            'ladderTypes'
         ));
     }
 

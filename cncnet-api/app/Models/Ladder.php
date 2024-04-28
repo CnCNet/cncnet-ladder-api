@@ -11,6 +11,12 @@ class Ladder extends Model
     use HasFactory;
     protected $table = 'ladders';
 
+    const LADDER_TYPES = [
+        '1vs1',
+        '2vs2',
+        'clan_match'
+    ];
+
     protected $fillable = [
         'name',
         'abbreviation',
