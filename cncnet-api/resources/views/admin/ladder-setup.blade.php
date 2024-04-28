@@ -242,7 +242,6 @@
                                             <div class="form-group">
                                                 <label for="ladderType">Ladder Type</label>
                                                 <select name="ladder_type" id="ladderTypes" class="form-control">
-                                                    <option value="$ladderType"></option>
                                                     @foreach ($ladderTypes as $ladder_type)
                                                         <option value="{{ $ladder_type }}"
                                                                 @if ($ladder->ladder_type == $ladder_type) selected @endif>

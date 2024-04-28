@@ -137,7 +137,7 @@ class ApiLadderController extends Controller
         }
         else if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO) // 2vs2
         {
-            $status = $this->awardTeamPoints($gameReport, $history);
+            $status = $this->awardPlayerPoints($gameReport, $history);
         }
         else // 1vs1
         {
@@ -552,6 +552,8 @@ class ApiLadderController extends Controller
             // Duration too low, no points awarded
             return 660;
         }
+
+        $winningClanReports = $gameReport->playerGameReports()->where('won', 1)->get();
 
         
     }
