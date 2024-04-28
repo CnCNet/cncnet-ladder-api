@@ -11,10 +11,12 @@ class Ladder extends Model
     use HasFactory;
     protected $table = 'ladders';
 
+    const ONE_VS_ONE = '1vs1';
+    const TWO_VS_TWO = '2vs2';
+    const CLAN_MATCH = 'clan_match';
+
     const LADDER_TYPES = [
-        '1vs1',
-        '2vs2',
-        'clan_match'
+        Ladder::ONE_VS_ONE, Ladder::TWO_VS_TWO, Ladder::CLAN_MATCH
     ];
 
     protected $fillable = [
