@@ -538,6 +538,7 @@ class ApiLadderController extends Controller
 
     public function awardTeamPoints($gameReport, $history) {
 
+        $playerGameReports = $gameReport->playerGameReports()->get();
 
         if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
         {

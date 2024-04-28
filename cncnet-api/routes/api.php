@@ -60,7 +60,8 @@ Route::group(['prefix' => 'v1'], function () {
         Route::get('/qm/version/{platform}', [\App\Http\Controllers\ApiQuickMatchController::class, 'clientVersion']);
         Route::get('/qm/ladder/{ladderAbbrev}/maps', [\App\Http\Controllers\ApiQuickMatchController::class, 'mapListRequest']);
 
-        Route::post('/qm/{ladderAbbrev}/{playerName}', [\App\Http\Controllers\ApiQuickMatchController::class, 'matchRequest']);
+        // commented out to try the refactored version
+        //Route::post('/qm/{ladderAbbrev}/{playerName}', [\App\Http\Controllers\ApiQuickMatchController::class, 'matchRequest']);
     });
 
     Route::group(['middleware' => 'cache.short.public'], function () {
@@ -119,6 +120,10 @@ Route::group(['prefix' => 'v2'], function () {
     });
 
 
+});
+
+
+Route::group(['prefix' => 'v1'], function () {
     Route::group(['middleware' => 'jwt.auth'], function () {
         Route::post('/qm/{ladder:abbreviation}/{playerName}', \App\Http\Controllers\Api\V2\Qm\MatchUpController::class)
             ->middleware([
@@ -129,6 +134,5 @@ Route::group(['prefix' => 'v2'], function () {
             ]);
     });
 });
-
 
 
