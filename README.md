@@ -20,6 +20,7 @@ This is the main repository for the CnCNet Ladder API.
 
 > If you are setting up a prod or staging environment, you can skip this chapter and go to the [Production](#Production) section.
 
+- Build `docker-compose -f docker-dev-compose.yml build`
 - Run `docker-compose -f docker-dev-compose.yml up -d` to build and start the docker container
 - Install dependencies : `docker exec cncnet_ladder_app composer install`
 - Generate laravel key inside the container `docker exec cncnet_ladder_app php artisan key:generate`. This will output the new key, you must manually copy past it into your `cncnet-api/.env`.
