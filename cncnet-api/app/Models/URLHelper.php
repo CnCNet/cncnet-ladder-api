@@ -120,7 +120,7 @@ class URLHelper
             case "ra2-new-maps":
             case "ra2-cl":
             case "blitz":
-            case "blitz-cl":
+            case "blitz-2v2":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4";
 
             case "ts":
@@ -150,7 +150,7 @@ class URLHelper
             case "ra2-cl":
             case "ra2-new-maps":
             case "blitz":
-            case "blitz-cl":
+            case "blitz-2v2":
                 return "/images/posters/red-alert-2.jpg";
 
             case "ts":
@@ -180,7 +180,7 @@ class URLHelper
             case "ra2-new-maps":
                 return "/images/games/ra2/logo.png";
             case "blitz":
-            case "blitz-cl":
+            case "blitz-2v2":
                 return "/images/games/blitz/logo.png";
 
             case "ts":
