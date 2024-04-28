@@ -227,10 +227,10 @@ class MapPoolController extends Controller
     {
         Log::info("Beginning file upload for map " . $mapFile->getClientOriginalName());
 
-        if (filesize($mapFile) > 800000)
+        if (filesize($mapFile) > 1500000)
         {
             Log::error("Map file is too large " . $mapFile->getClientOriginalName());
-            return "Map file is too large";
+            return "Map file is too large, please keep map file under 1.5 MB";
         }
 
         if (filesize($mapFile) == 0)
