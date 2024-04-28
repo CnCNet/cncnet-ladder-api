@@ -138,7 +138,7 @@ $reports = $playerGameReports;
         @endphp
 
         <div class="game-players-container">
-            <div class="container">
+            <div class="container-xl">
                 <section class="game-players">
                     @foreach ($playerGameReports as $k => $pgr)
                         @php $gameStats = $pgr->stats; @endphp
@@ -190,7 +190,7 @@ $reports = $playerGameReports;
         </div>
 
         <section class="game {{ $gameAbbreviation }} mt-2 mb-2">
-            <div class="container">
+            <div class="container-xl">
                 @include('ladders.game._game-cameo-stats', [
                     'playerGameReports' => $playerGameReports,
                     'abbreviation' => $gameAbbreviation,
