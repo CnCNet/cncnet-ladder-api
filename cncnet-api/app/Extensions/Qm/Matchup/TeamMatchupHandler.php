@@ -25,6 +25,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         // Fetch all other players in the queue
         $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
+        Log::info("FindOpponent ** players in q : " . $opponents->count() + 1);
 
         // Find opponents that can be matched with current player.
         $matchableOpponents = $opponents;
@@ -35,7 +36,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         // Check if there is enough opponents
         if ($matchableOpponents->count() < $numberOfOpponentsNeeded) {
-            Log::info("FindOpponent ** Not enough players for match yet");
+            Log::info("FindOpponent ** Team matchup handler ** Not enough players for match yet");
             $this->qmPlayer->touch();
             return;
         }
@@ -45,6 +46,11 @@ class TeamMatchupHandler extends BaseMatchupHandler
             $matchableOpponents,
             $this->history
         );
+
+
+        Log::info("FindOpponent ** TEAMS : "
+            . json_encode($teamAPlayers) . ' VS'
+            . json_encode($teamBPlayers));
 
         $players = $teamAPlayers->merge($teamBPlayers);
 

@@ -195,6 +195,7 @@ class MatchUpController
      */
     private function onMatchMeUp(Request $request, Ladder $ladder, Player $player, ?QmMatchPlayer $qmPlayer) {
 
+        Log::debug('Username : ' . $player->username . ' on ladder ' . $ladder->name);
         Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
 
         // If we're new to the queue, create required QmMatchPlayer model

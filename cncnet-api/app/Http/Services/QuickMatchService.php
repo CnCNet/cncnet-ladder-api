@@ -146,6 +146,8 @@ class QuickMatchService
             $a->acknowledge();
         }
 
+        if(empty($alert)) return null;
+
         return $alert;
     }
 
@@ -929,6 +931,11 @@ class QuickMatchService
         $spawns = collect([$qmMap->team1_spawn_order, $qmMap->team2_spawn_order])->shuffle();
         $colors = 0;
 
+        if($spawns->count() < 2) {
+            Log::error('[QuickMatchService::createTeamQmMatch] spawns for team maps not set correctly. Columns team1_spawn_order and team2_spawn_order on qm_maps with id : ' . $qmMap->id . ' are not set.');
+            throw new Exception('spawns for team maps not set correctly. Columns team1_spawn_order and team2_spawn_order on qm_maps with id : ' . $qmMap->id . ' are not set.');
+        }
+
         $this->setTeamSpawns('A', $spawns[0], $teamAPlayers, $qmMatch, $colors);
         $this->setTeamSpawns('B', $spawns[1], $teamBPlayers, $qmMatch, $colors);
 
@@ -939,12 +946,19 @@ class QuickMatchService
 
     private function setTeamSpawns(string $team, string $spawnOrders, Collection $teamPlayers, QmMatch $qmMatch, int &$colors) {
 
+        Log::debug('[QuickMatchService::setTeamSpawns]');
         $spawnOrder = array_map(fn($i) => intval($i), explode(',', $spawnOrders));
         $qmMap = $qmMatch->map;
+
+
+        Log::debug('[QuickMatchService::setTeamSpawns] $spawnOrder ' . json_encode($spawnOrder));
 
         $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn ($s) => $s >= 0));
 
         foreach($teamPlayers->values() as $i => $player) {
+
+            Log::debug('[QuickMatchService::setTeamSpawns] trying to set spawn for player ' . $player->id . ' with i : ' . $i . ' and color ' . $colors);
+
             $qmPlayer = $player->qmPlayer;
             $player->delete();
 

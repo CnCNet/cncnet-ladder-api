@@ -60,6 +60,7 @@ class FindOpponentJob implements ShouldQueue
             $matchupHandler = new PlayerMatchupHandler($this->qmQueueEntry, $this->gameType);
         }
 
+        Log::debug('[FindOpponentJob] : matchup handler : ' . get_class($matchupHandler));
         $matchupHandler->matchup();
     }
 
