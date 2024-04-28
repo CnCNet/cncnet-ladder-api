@@ -336,7 +336,7 @@ class QuickMatchService
      * @param QmQueueEntry[]|Collection $players
      * @return array
      */
-    public function filterOutRecentsMaps(LadderHistory $history, array $maps, Collection $players): array {
+    public function filterOutRecentsMaps(LadderHistory $history, Collection $maps, Collection $players): array {
 
         $maps = collect($maps);
 

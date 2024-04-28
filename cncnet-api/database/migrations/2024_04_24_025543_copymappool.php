@@ -18,6 +18,10 @@ return new class extends Migration
     {
         $mapPool = MapPool::find('91');
 
+        if(!isset($mapPool)) {
+            return;
+        }
+
         $testLadder = Ladder::where('abbreviation', 'ra2-test')->first();
 
         $newPool = new MapPool();
