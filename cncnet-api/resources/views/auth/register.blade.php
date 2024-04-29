@@ -4,38 +4,12 @@
 @section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-    <div class="feature">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3">
-                        <strong class="fw-bold">Register</strong>
-                    </h1>
-                    <p class="lead">
-                        Register an account for the CnCNet Ladders.
-                    </p>
-                </div>
-            </div>
-
-            <div class="mini-breadcrumb d-none d-lg-flex">
-                <div class="mini-breadcrumb-item">
-                    <a href="/" class="">
-                        <span class="material-symbols-outlined">
-                            home
-                        </span>
-                    </a>
-                </div>
-                <div class="mini-breadcrumb-item">
-                    <a href="">
-                        <span class="material-symbols-outlined icon pe-3">
-                            person
-                        </span>
-                        Register
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">Register</x-slot>
+        <x-slot name="description">
+            Register an account for the CnCNet Ladders
+        </x-slot>
+    </x-hero-with-video>
 @endsection
 
 @section('breadcrumb')

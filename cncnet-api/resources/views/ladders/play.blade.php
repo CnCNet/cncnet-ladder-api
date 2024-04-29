@@ -3,10 +3,7 @@
     <script src="/js/chart.min.js"></script>
     <script src="/js/chartjs-adapter-date-fns.bundle.min.js"></script>
 @endsection
-
 @section('title', 'Ladder')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('breadcrumb')
     <nav aria-label="breadcrumb" class="breadcrumb-nav">
@@ -25,31 +22,19 @@
 @endsection
 
 @section('feature')
-    <div class="feature pt-5 pb-5">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3">
-                        <span>Popular Times To play</span>
-                    </h1>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">Popular times to play</x-slot>
+        <x-slot name="description">
+            Find the most popular hour of the day to play ranked matches.
+        </x-slot>
 
-                    <p class="lead">
-                        Find the most popular hour of the day to play ranked matches.
-                    </p>
-
-                    @if (!\Auth::user())
-                        <div class="mt-4">
-                            <a class="btn btn-outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
-                            <a class="btn btn-outline-secondary btn-size-lg" href="/auth/login">Login</a>
-                        </div>
-                    @endif
-                </div>
+        @if (!\Auth::user())
+            <div class="mt-4">
+                <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/register">Register</a>
+                <a class="btn btn-outline-secondary btn-lg" href="/auth/login">Login</a>
             </div>
-        </div>
-    </div>
-@endsection
-
-@section('breadcrumb')
+        @endif
+    </x-hero-with-video>
 @endsection
 
 @section('content')

@@ -6,43 +6,7 @@
 
 @section('title', 'Viewing - ' . $ladderPlayer->username)
 @section('body-class', 'body-player-detail')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 @section('page-body-class', $history->ladder->abbreviation)
-{{-- 
-@section('feature')
-
-    <div class="feature">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12 col-lg-6">
-                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
-                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
-                </div>
-
-                <div class="col-12 col-lg-6">
-                    <h1 class="display-4 lh-1 mb-3">
-                        <strong class="fw-bold"> {{ $ladderPlayer->username }}</strong> <br />
-                        <span>{{ $history->ladder->name }}</span>
-                    </h1>
-
-                    <p class="lead text-uppercase">
-                        <small>{{ $history->starts->format('F Y') }} -
-                            @if ($history->ladder->clans_allowed)
-                                <strong>Clan Ranked Match</strong>
-                            @else
-                                <strong>1 vs 1 Ranked Match</strong>
-                            @endif
-                        </small>
-                    </p>
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection --}}
-
 
 @section('feature')
     <x-hero-split>

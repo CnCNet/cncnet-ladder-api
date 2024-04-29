@@ -4,6 +4,37 @@
             <div class="col-12 col-sm-6 col-xl-3 mb-5 mb-xl-0">
                 <h3 class="fw-bold">C&amp;C Games</h3>
 
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/command-and-conquer">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('td') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Command &amp; Conquer</span>
+                </a>
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/red-alert">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ra') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Red Alert</span>
+                </a>
+                <a class="footer-link d-flex text-decoration-none"href="https://cncnet.org/dune-2000">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('d2k') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Dune 2000</span>
+                </a>
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/tiberian-sun">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ts') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Tiberian Sun</span>
+                </a>
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/red-alert-2">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ra2') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Red Alert 2</span>
+                </a>
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/yuris-revenge">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('yr') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Yuri's Revenge</span>
+                </a>
+
                 {{-- @foreach (\App\Helpers\SiteHelper::getCnCNetSupportedCnCGames() as $game)
                     <a class="footer-link d-flex text-decoration-none" href="{{ $game->gamePage->page->slug }}">
                         <span class="game-icon game-icon-sm {{ $game->abbreviation }} me-2"
@@ -17,13 +48,26 @@
             <div class="col-12 col-sm-6 col-xl-3 mb-5 mb-xl-0">
                 <h3>C&amp;C Mods</h3>
 
-                {{-- @foreach (\App\Helpers\SiteHelper::getCnCNetSupportedMods() as $game)
-                    <a class="footer-link d-flex text-decoration-none" href="{{ $game->gamePage->page->slug }}">
-                        <span class="game-icon game-icon-sm {{ $game->abbreviation }} me-2"
-                            style="background-image:url('{{ Storage::url($game->icon_path) }}')"></span>
-                        <span class="fw-bold me-3 game-icon-label">{{ $game->short_name }}</span>
-                    </a>
-                @endforeach --}}
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/dawn-of-the-tiberium-age">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('dta') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Dawn of the Tiberium Age</span>
+                </a>
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/mental-omega">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('mo') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Mental Omega</span>
+                </a>
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/cnc-reloaded">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('cncr') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">C&amp;C Reloaded</span>
+                </a>
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/rise-of-the-east">
+                    <span class="game-icon game-icon-sm me-2"
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('rote') }}"></span>
+                    <span class="fw-bold me-3 game-icon-label">Rise of the East</span>
+                </a>
             </div>
 
             <div class="col-12 mt-sm-5 mt-md-0 col-sm-6 col-xl-3 mb-5 mb-xl-0">

@@ -27,7 +27,16 @@
 @if (isset($private_ladders))
     @if (count($private_ladders) > 0)
         <li>
-            <h4 class="dropdown-header text-uppercase">Private Ladders</h4>
+            <div class="dropdown-label-item">
+                <div class="d-flex align-items-center">
+                    <div>
+                        Private Ladders
+                        <span class="dropdown-label-item-description">
+                            Top Secret Clearance Required
+                        </span>
+                    </div>
+                </div>
+            </div>
         </li>
     @endif
 

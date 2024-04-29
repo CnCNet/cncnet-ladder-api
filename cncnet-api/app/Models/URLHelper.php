@@ -196,4 +196,35 @@ class URLHelper
                 return Vite::asset("resources/images/games/{$abbrev}/logo.png");
         }
     }
+
+    /**
+     * 
+     * @param mixed $abbrev 
+     * @return string 
+     */
+    public static function getLadderIconByAbbrev($abbrev)
+    {
+        switch ($abbrev)
+        {
+            case "ra2":
+            case "ra2-cl":
+            case "ra2-new-maps":
+                return Vite::asset("resources/images/games/ra2/ra2-icon.png");
+
+            case "blitz":
+            case "blitz-2v2":
+                return Vite::asset("resources/images/games/blitz/blitz-icon.png");
+
+            case "ts":
+            case "ts-cl":
+                return Vite::asset("resources/images/games/ts/ts-icon.png");
+
+            case "ra":
+            case "ra-cl":
+                return Vite::asset("resources/images/games/ra/ra-icon.png");
+
+            default:
+                return Vite::asset("resources/images/games/{$abbrev}/$abbrev-icon.png");
+        }
+    }
 }

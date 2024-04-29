@@ -19,6 +19,81 @@
                                 </div>
                             </div>
                         </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/command-and-conquer">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('td') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">Command &amp; Conquer</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_td"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/red-alert">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ra') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">Red Alert</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_ra"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/dune-2000">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('d2k') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">Dune 2000</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_d2k">
+                                    < 10</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/tiberian-sun">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ts') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">Tiberian Sun</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_ts"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/yuris-revenge">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('yr') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">Yuri's Revenge</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_yr"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/dawn-of-the-tiberium-age">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('dta') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">Dawn of the Tiberium Age</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_dta"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/mental-omega">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('mo') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">Mental Omega</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_mo"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/cnc-reloaded">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('cncr') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">C&amp;C Reloaded</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_cncr">
+                                    < 10</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="https://cncnet.org/rise-of-the-east">
+                                <span class="game-icon game-icon-sm"
+                                    style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('rote') }}"></span>
+                                <span class="fw-bold me-3 game-icon-label">Rise of the East</span>
+                                <span class="badge badge-secondary ms-auto js-game-count-cncnet5_rote">
+                                    < 10 </span>
+                            </a>
+                        </li>
                         {{-- @foreach (\App\Helpers\SiteHelper::getCnCNetSupportedCnCGames() as $game)
                             @if ($game->abbreviation != 'ra2')
                                 <li>
@@ -91,13 +166,8 @@
             </ul>
         </div>
     </li>
-    {{-- <li class="nav-item d-none d-xl-flex m-xl-auto ms-1 mt-2 me-1">
+    <li class="nav-item d-none d-xl-flex m-xl-auto ms-1 mt-2 me-1">
         <div class="vr"></div>
     </li>
-    <li class="nav-item m-xl-auto">
-        <a class="nav-link disabled" href="explore-cnc" title="{{ __('Explore C&C') }}">
-            <i class="bi bi-person-circle "></i>
-            {{ __('Sign In') }}
-        </a>
-    </li> --}}
+    @include('components.navigation.account')
 </ul>

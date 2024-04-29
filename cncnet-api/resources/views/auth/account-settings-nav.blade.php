@@ -7,5 +7,6 @@
     </h2>
 </div>
 
-<a href="/account" class="btn btn-outline {{ request()->is('account') ? 'active' : '' }} me-3" }}>Manage Ladder Account</a>
-<a href="/account/settings" class="btn btn-outline {{ request()->is('account/settings') ? 'active' : '' }}">Ladder Account Settings</a>
+<a href="/account" class="btn btn-outline-primary {{ request()->is('account') ? 'btn-outline-secondary ' : '' }} me-3" }}>Manage Ladder Account</a>
+<a href="/account/settings" class="btn btn-outline-primary {{ request()->is('account/settings') ? 'btn-outline-secondary ' : '' }}">Ladder Account
+    Settings</a>

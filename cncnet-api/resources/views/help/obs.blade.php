@@ -18,8 +18,8 @@
                     </p>
                     @if (!\Auth::user())
                         <div class="mt-4">
-                            <a class="btn btn-outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
-                            <a class="btn btn-outline-secondary btn-size-lg" href="/auth/login">Login</a>
+                            <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/register">Register</a>
+                            <a class="btn btn-outline-secondary btn-lg" href="/auth/login">Login</a>
                         </div>
                     @endif
                 </div>

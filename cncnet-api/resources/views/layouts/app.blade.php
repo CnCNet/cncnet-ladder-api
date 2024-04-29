@@ -28,7 +28,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    {{-- <link rel="stylesheet" href="/css/app.css?v=2.1.14" /> --}}
     <link rel="apple-touch-icon" sizes="152x152" href="/images/meta/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/meta/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/meta/favicon-16x16.png">
@@ -54,29 +53,8 @@
     @if(isset($history))
         @include('components.countdown', ['target' => $history->ends->toISO8601String()])
     @endif
-
-    <nav class="navbar navbar-main navbar-expand-xxl fixed-top js-navbar">
-        <div class="container-fluid">
-
-            <a class="navbar-brand" href="{{ url('/') }}" title="CnCNet Home">
-                <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="CnCNet logo" loading="lazy" class="logo-full" />
-            </a>
-
-            <button class="navbar-toggler hamburger hamburger--collapse" type="button" data-bs-toggle="offcanvas" data-bs-target="#fullscreenNav"
-                aria-controls="fullscreenNav" aria-expanded="false" aria-label="Toggle navigation">
-                <div class="hamburger-box">
-                    <div class="hamburger-inner"></div>
-                </div>
-            </button>
-
-            <div class="navbar-collapse collapse" id="navbarSupportedContent">
-                @include('components.navigation.primary-links')
-                @include('components.navigation.secondary-links')
-            </div>
-        </div>
-    </nav>
-
-    {{-- @include('components.navigation.navbar') --}}
+    
+    @include('components.navigation.navbar')
 
     @yield('feature')
 

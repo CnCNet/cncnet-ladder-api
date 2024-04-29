@@ -1,19 +1,19 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-    <x-hero-with-video video="//cdn.jsdelivr.net/gh/cnc-community/files@1.7/red-alert-2.mp4#t=2">
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
         <x-slot name="title">CnCNet Ladder Rankings</x-slot>
         <x-slot name="description">
             Compete in <strong>1vs1</strong> or <strong>2vs2</strong> ranked matches with players all over the world.
         </x-slot>
 
-        <div class="hero-btn-group">
-            <a class="btn btn-outline-secondary me-3 btn-lg" href="/auth/register">Register</a>
-            <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/login">Login</a>
-        </div>
+        @if (!\Auth::user())
+            <div class="hero-btn-group">
+                <a class="btn btn-outline-secondary me-3 btn-lg" href="/auth/register">Register</a>
+                <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/login">Login</a>
+            </div>
+        @endif
     </x-hero-with-video>
 @endsection
 

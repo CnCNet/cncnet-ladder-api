@@ -1,37 +1,19 @@
 @extends('layouts.app')
-@section('title', 'Ladder Login')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
+@section('title', 'Ladder Reset')
 
 @section('feature')
-    <div class="feature pt-5 pb-5">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3">
-                        <strong>Reset your password</strong>
-                    </h1>
-                </div>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">Reset your password</x-slot>
+        <x-slot name="description">
+            Reset your password by entering your email address
+        </x-slot>
+
+        @if (!\Auth::user())
+            <div class="hero-btn-group">
+                <a class="btn btn-outline-secondary me-3 btn-lg" href="/auth/register">Or Register</a>
             </div>
-            <div class="mini-breadcrumb d-none d-lg-flex">
-                <div class="mini-breadcrumb-item">
-                    <a href="/" class="">
-                        <span class="material-symbols-outlined">
-                            home
-                        </span>
-                    </a>
-                </div>
-                <div class="mini-breadcrumb-item">
-                    <a href="">
-                        <span class="material-symbols-outlined icon pe-3">
-                            person
-                        </span>
-                        Reset your password
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+        @endif
+    </x-hero-with-video>
 @endsection
 
 @section('breadcrumb')
