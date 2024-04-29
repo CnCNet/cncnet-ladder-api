@@ -106,12 +106,12 @@ $dcColour: #b50000;
 
 .game-box .details .status.online 
 {
-    color: #00ec00;
+    color: $color-green;
 }
 
 .game-box .won .points 
 {
-    color: $primary;
+    color: $color-green;
 }
 
 .game-box .lost .points 

@@ -2,11 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class QmMatch extends Model
 {
-    //
+
+    use HasFactory;
+
+    protected $fillable = [
+        'ladder_id',
+        'qm_map_id',
+        'seed',
+        'tier',
+    ];
+
     public function players()
     {
         return $this->hasMany(QmMatchPlayer::class);

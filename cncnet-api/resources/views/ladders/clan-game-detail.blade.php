@@ -20,8 +20,6 @@ $pageTitle = 'Viewing Game - ';
 @endforeach
 
 @section('title', $pageTitle)
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 @section('page-body-class', $history->ladder->abbreviation)
 
 @section('breadcrumb')
@@ -53,66 +51,57 @@ $pageTitle = 'Viewing Game - ';
 @endsection
 
 @section('feature')
-    <div class="feature">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12 col-lg-6">
-                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
-                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
-                </div>
+    <x-hero-split>
+        <x-slot name="subpage">true</x-slot>
+        <x-slot name="video">{{ \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation) }}</x-slot>
+        <x-slot name="title">
+            <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
+        </x-slot>
 
-                <div class="col-12 col-lg-6">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
-                    </h1>
+        <x-slot name="description">
+            @foreach ($clanGameReports as $k => $pgr)
+                <?php $gameStats = $pgr->stats; ?>
+                <?php $player = $pgr->player()->first(); ?>
 
-                    <p class="lead">
-                        @foreach ($clanGameReports as $k => $pgr)
-                            <?php $gameStats = $pgr->stats; ?>
-                            <?php $player = $pgr->player()->first(); ?>
+                @if ($player->clanPlayer)
+                    Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
+                @endif
+                @if ($k == 0)
+                    <span><strong>VS</strong></span>
+                @endif
+            @endforeach
+        </x-slot>
 
-                            @if ($player->clanPlayer)
-                                Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
-                            @endif
-                            @if ($k == 0)
-                                <span><strong>VS</strong></span>
-                            @endif
-                        @endforeach
-                    </p>
+        <x-slot name="logo">
+            <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}" />
+        </x-slot>
 
-                    <p class="text-uppercase">
-                        @if ($history->ladder->clans_allowed)
-                            {{ $history->starts->format('F Y') }} - <strong>Clan Ranked Match</strong>
-                        @else
-                            {{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong>
-                        @endif
-                    </p>
 
-                    <div class="mini-breadcrumb d-none d-lg-flex">
-                        <div class="mini-breadcrumb-item">
-                            <a href="/" class="">
-                                <span class="material-symbols-outlined">
-                                    home
-                                </span>
-                            </a>
-                        </div>
-                        <div class="mini-breadcrumb-item">
-                            <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
-                                <span class="material-symbols-outlined icon">
-                                    military_tech
-                                </span>
-                                {{ $history->ladder->name }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
+        <div class="mini-breadcrumb d-none d-lg-flex">
+            <div class="mini-breadcrumb-item">
+                <a href="/" class="">
+                    <span class="material-symbols-outlined">
+                        home
+                    </span>
+                </a>
+            </div>
+            <div class="mini-breadcrumb-item">
+                <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
+                    <span class="material-symbols-outlined icon">
+                        military_tech
+                    </span>
+                    {{ $history->ladder->name }}
+                </a>
             </div>
         </div>
-    </div>
+    </x-hero-split>
+@endsection
+
+@section('content')
 
     @if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder))
-        <div class="container mb-5">
-            <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
+        <div class="container mb-5 mt-5">
+            <a class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
                 Show admin tools
             </a>
             <div class="collapse " id="adminTools">
@@ -120,9 +109,7 @@ $pageTitle = 'Viewing Game - ';
             </div>
         </div>
     @endif
-@endsection
 
-@section('content')
     <section class="game-detail clan-detail">
         @php
             $gameAbbreviation = $history->ladder()->first()->abbreviation;

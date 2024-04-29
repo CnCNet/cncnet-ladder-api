@@ -1,42 +1,19 @@
 @extends('layouts.app')
 @section('title', 'Ladder Login')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-    <div class="feature pt-5 pb-5">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">CnCNet</strong>
-                        <span>Ladder Login</span>
-                    </h1>
-                    <p class="lead">
-                        Login to manage your ladder account
-                    </p>
-                </div>
-            </div>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">Login</x-slot>
+        <x-slot name="description">
+            Login to manage your ladder account
+        </x-slot>
 
-            <div class="mini-breadcrumb d-none d-lg-flex">
-                <div class="mini-breadcrumb-item">
-                    <a href="/" class="">
-                        <span class="material-symbols-outlined">
-                            home
-                        </span>
-                    </a>
-                </div>
-                <div class="mini-breadcrumb-item">
-                    <a href="">
-                        <span class="material-symbols-outlined icon pe-3">
-                            person
-                        </span>
-                        Login
-                    </a>
-                </div>
+        @if (!\Auth::user())
+            <div class="hero-btn-group">
+                <a class="btn btn-outline-secondary me-3 btn-lg" href="/auth/register">Register</a>
             </div>
-        </div>
-    </div>
+        @endif
+    </x-hero-with-video>
 @endsection
 
 @section('breadcrumb')
@@ -89,15 +66,13 @@
                         @endif
 
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                                   name="email"
-                                   value="{{ old('email') }}">
+                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email"
+                                value="{{ old('email') }}">
                             <label for="floatingInput">Email address</label>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
-                                   name="password">
+                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
                             <label for="floatingPassword">Password</label>
                         </div>
 

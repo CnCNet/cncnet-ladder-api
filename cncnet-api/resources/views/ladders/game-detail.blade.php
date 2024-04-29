@@ -56,73 +56,70 @@ $reports = $playerGameReports;
 @endsection
 
 @section('feature')
-    <div class="feature">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12 col-lg-6">
-                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
-                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
+    <x-hero-split>
+        <x-slot name="subpage">true</x-slot>
+        <x-slot name="video">{{ \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation) }}</x-slot>
+        <x-slot name="title">
+            <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
+            <span>Ladder Rankings</span>
+        </x-slot>
+
+        <x-slot name="description">
+
+            @if ($history->ladder->clans_allowed)
+                {{ $history->starts->format('F Y') }} - <strong>Clan Ranked Match</strong>
+            @else
+                {{ $history->starts->format('F Y') }} - <strong>Ranked Match</strong>
+            @endif
+
+            <br />
+
+            <?php $reports = $playerGameReports; ?>
+            @foreach ($reports as $k => $pgr)
+                <?php $gameStats = $pgr->stats; ?>
+                <?php $player = $pgr->player()->first(); ?>
+
+                @if ($history->ladder->clans_allowed)
+                    @if ($player->clanPlayer)
+                        Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
+                    @endif
+                @else
+                    <span>{{ $player->username }}</span>
+                @endif
+                @if ($k == 0)
+                    <span><strong>VS</strong></span>
+                @endif
+            @endforeach
+
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/" class="">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
                 </div>
-
-                <div class="col-12 col-lg-6">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
-                    </h1>
-
-                    <p class="lead">
-                        <?php $reports = $playerGameReports; ?>
-                        @foreach ($reports as $k => $pgr)
-                            <?php $gameStats = $pgr->stats; ?>
-                            <?php $player = $pgr->player()->first(); ?>
-
-                            @if ($history->ladder->clans_allowed)
-                                @if ($player->clanPlayer)
-                                    Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
-                                @endif
-                            @else
-                                <span>{{ $player->username }}</span>
-                            @endif
-                            @if ($k == 0)
-                                <span><strong>VS</strong></span>
-                            @endif
-                        @endforeach
-                    </p>
-
-                    <p class="text-uppercase">
-                        @if ($history->ladder->clans_allowed)
-                            {{ $history->starts->format('F Y') }} - <strong>Clan Ranked Match</strong>
-                        @else
-                            {{ $history->starts->format('F Y') }} - <strong>1 vs 1 Ranked Match</strong>
-                        @endif
-                    </p>
-
-                    <div class="mini-breadcrumb d-none d-lg-flex">
-                        <div class="mini-breadcrumb-item">
-                            <a href="/" class="">
-                                <span class="material-symbols-outlined">
-                                    home
-                                </span>
-                            </a>
-                        </div>
-                        <div class="mini-breadcrumb-item">
-                            <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
-                                <span class="material-symbols-outlined icon">
-                                    military_tech
-                                </span>
-                                {{ $history->ladder->name }}
-                            </a>
-                        </div>
-                    </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
+                        <span class="material-symbols-outlined icon">
+                            military_tech
+                        </span>
+                        {{ $history->ladder->name }}
+                    </a>
                 </div>
             </div>
-        </div>
-    </div>
+        </x-slot>
+
+        <x-slot name="logo">
+            <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}" />
+        </x-slot>
+    </x-hero-split>
 @endsection
 
 @section('content')
     @if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder))
         <div class="container mt-5 mb-5">
-            <a class="btn btn-outline" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
+            <a class="btn btn-outline-secondary" data-bs-toggle="collapse" data-bs-target="#adminTools" aria-expanded="false" aria-controls="adminTools">
                 Show admin tools
             </a>
             <div class="collapse " id="adminTools">
@@ -138,7 +135,7 @@ $reports = $playerGameReports;
         @endphp
 
         <div class="game-players-container">
-            <div class="container">
+            <div class="container-xl">
                 <section class="game-players">
                     @foreach ($playerGameReports as $k => $pgr)
                         @php $gameStats = $pgr->stats; @endphp
@@ -190,7 +187,7 @@ $reports = $playerGameReports;
         </div>
 
         <section class="game {{ $gameAbbreviation }} mt-2 mb-2">
-            <div class="container">
+            <div class="container-xl">
                 @include('ladders.game._game-cameo-stats', [
                     'playerGameReports' => $playerGameReports,
                     'abbreviation' => $gameAbbreviation,

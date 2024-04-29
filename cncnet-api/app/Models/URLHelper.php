@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Support\Facades\Vite;
+
 class URLHelper
 {
     public static function getLadderLeague($history, $tier)
@@ -120,7 +122,7 @@ class URLHelper
             case "ra2-new-maps":
             case "ra2-cl":
             case "blitz":
-            case "blitz-cl":
+            case "blitz-2v2":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4";
 
             case "ts":
@@ -132,7 +134,7 @@ class URLHelper
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-1.mp4";
 
             case "d2k":
-                return "//cdn.jsdelivr.net/gh/cnc-community/files@1.6/dune.mp4";
+                return "//cdn.jsdelivr.net/gh/cnc-community/files@1.9/dune.mp4";
         }
     }
 
@@ -150,19 +152,17 @@ class URLHelper
             case "ra2-cl":
             case "ra2-new-maps":
             case "blitz":
-            case "blitz-cl":
-                return "/images/posters/red-alert-2.jpg";
+            case "blitz-2v2":
+                return Vite::asset("resources/images/posters/red-alert-2.jpg");
 
             case "ts":
             case "ts-cl":
-                return "/images/posters/tiberian-sun.jpg";
+                return Vite::asset("resources/images/posters/tiberian-sun.jpg");
 
             case "ra":
             case "ra-cl":
-                return "/images/posters/red-alert-1.jpg";
-
             case "d2k":
-                return "/images/posters/red-alert-1.jpg";
+                return Vite::asset("resources/images/posters/red-alert-1.jpg");
         }
     }
 
@@ -178,21 +178,53 @@ class URLHelper
             case "ra2":
             case "ra2-cl":
             case "ra2-new-maps":
-                return "/images/games/ra2/logo.png";
+                return Vite::asset("resources/images/games/ra2/logo.png");
+
             case "blitz":
-            case "blitz-cl":
-                return "/images/games/blitz/logo.png";
+            case "blitz-2v2":
+                return Vite::asset("resources/images/games/blitz/logo.png");
 
             case "ts":
             case "ts-cl":
-                return "/images/games/ts/logo.png";
+                return Vite::asset("resources/images/games/ts/logo.png");
 
             case "ra":
             case "ra-cl":
-                return "/images/games/ra/logo.png";
+                return Vite::asset("resources/images/games/ra/logo.png");
 
             default:
-                return "/images/games/{$abbrev}/logo.png";
+                return Vite::asset("resources/images/games/{$abbrev}/logo.png");
+        }
+    }
+
+    /**
+     * 
+     * @param mixed $abbrev 
+     * @return string 
+     */
+    public static function getLadderIconByAbbrev($abbrev)
+    {
+        switch ($abbrev)
+        {
+            case "ra2":
+            case "ra2-cl":
+            case "ra2-new-maps":
+                return Vite::asset("resources/images/games/ra2/ra2-icon.png");
+
+            case "blitz":
+            case "blitz-2v2":
+                return Vite::asset("resources/images/games/blitz/blitz-icon.png");
+
+            case "ts":
+            case "ts-cl":
+                return Vite::asset("resources/images/games/ts/ts-icon.png");
+
+            case "ra":
+            case "ra-cl":
+                return Vite::asset("resources/images/games/ra/ra-icon.png");
+
+            default:
+                return Vite::asset("resources/images/games/{$abbrev}/$abbrev-icon.png");
         }
     }
 }

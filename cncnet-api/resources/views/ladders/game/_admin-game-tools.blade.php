@@ -21,7 +21,8 @@
                             <?php $url = '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/player/' . $player->username; ?>
 
                             <h3 class="game-intro">
-                                <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if ($k == 0) order:0; @else order: 1; @endif">
+                                <a href="{{ $url }}" title="View {{ $player->username }}'s profile"
+                                    style="@if ($k == 0) order:0; @else order: 1; @endif">
                                     <span class="player">
                                         {{ $player->username ?? 'Unknown' }} <strong>
                                             @if ($pgr->points >= 0)
@@ -44,7 +45,8 @@
                                 </div>
 
                                 @if ($playerGameReports->count() == 1)
-                                    <a href="{{ $url }}" title="View {{ $player->username }}'s profile" style="@if ($k == 0) order:1; @endif">
+                                    <a href="{{ $url }}" title="View {{ $player->username }}'s profile"
+                                        style="@if ($k == 0) order:1; @endif">
                                         <span class="player">
                                             {{ $player->username ?? 'Unknown' }} <strong>
                                                 @if ($pgr->points >= 0)
@@ -67,7 +69,7 @@
 
                             @if ($k == 0)
                                 @if ($userIsMod && $thisGameReport->id != $gameReport->id)
-                                    <a class="btn btn-outline"
+                                    <a class="btn btn-outline-secondary"
                                         href="{{ action([\App\Http\Controllers\LadderController::class, 'getLadderGame'], ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
                                 @elseif ($userIsMod && $thisGameReport->id == $gameReport->id && !$thisGameReport->best_report)
                                     <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">

@@ -1,22 +1,21 @@
 <?php namespace App\Providers;
 
+use App\Models\Player;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Route;
 
 class RouteServiceProvider extends ServiceProvider {
 
-
 	/**
 	 * Define your route model bindings, pattern filters, etc.
 	 *
-	 * @param  \Illuminate\Routing\Router  $router
 	 * @return void
 	 */
 	public function boot()
 	{
 		parent::boot();
 
-		//
 	}
 
 	/**

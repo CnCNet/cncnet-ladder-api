@@ -4,6 +4,7 @@ namespace App\Commands;
 
 use App\Commands\Matchup\ClanMatchupHandler;
 use App\Commands\Matchup\PlayerMatchupHandler;
+use App\Commands\Matchup\TeamMatchupHandler;
 use App\Models\QmQueueEntry;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -117,12 +118,22 @@ class FindOpponent implements ShouldQueue
         }
         else
         {
-            $matchupHandler = new PlayerMatchupHandler(
-                $history,
-                $qmQueueEntry,
-                $qmPlayer,
-                $this->gameType
-            );
+            if($ladder->qmLadderRules->player_count > 2) {
+                $matchupHandler = new TeamMatchupHandler(
+                    $history,
+                    $qmQueueEntry,
+                    $qmPlayer,
+                    $this->gameType
+                );
+            }
+            else {
+                $matchupHandler = new PlayerMatchupHandler(
+                    $history,
+                    $qmQueueEntry,
+                    $qmPlayer,
+                    $this->gameType
+                );
+            }
         }
 
         return $matchupHandler->matchup();

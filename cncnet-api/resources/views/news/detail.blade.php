@@ -1,44 +1,18 @@
 @extends('layouts.app')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 @section('title', $news->title)
 
 @section('feature')
-    <div class="feature pt-3 pb-3">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-10 me-auto ms-auto">
-                    <h1 class="display-5 lh-2 mb-3">
-                        <strong>{{ $news->title }}</strong>
-                    </h1>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">{{ $news->title }}</x-slot>
+        <x-slot name="description">
+            {{ $news->description }}
+        </x-slot>
 
-                    <p class="lead">
-                        {{ $news->description }}
-                    </p>
-
-                    <div class="mini-breadcrumb d-none d-lg-flex">
-                        <div class="mini-breadcrumb-item">
-                            <a href="/" title="Home">
-                                <span class="material-symbols-outlined">
-                                    home
-                                </span>
-                            </a>
-                        </div>
-                        <div class="mini-breadcrumb-item">
-                            <a href="/news" title="News">
-                                <span class="material-symbols-outlined">
-                                    news
-                                </span>
-                            </a>
-                        </div>
-                        <div class="mini-breadcrumb-item">
-                            {{ $news->title }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="hero-btn-group">
+            <a class="btn btn-outline-secondary me-3 btn-lg" href="/auth/register">Register</a>
+            <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/login">Login</a>
         </div>
-    </div>
+    </x-hero-with-video>
 @endsection
 
 @section('breadcrumb')
@@ -74,7 +48,7 @@
                 <div class="news-detail-container">
                     @if ($news->getFeaturedImagePath())
                         <div class="news-feature">
-                            <img src="{{ $news->getFeaturedImagePath() }}" alt="Featured image"/>
+                            <img src="{{ $news->getFeaturedImagePath() }}" alt="Featured image" />
                         </div>
                     @endif
 

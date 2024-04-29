@@ -1,5 +1,5 @@
 @if ($userIsMod)
-    <div class="modal fade modal-lg" id="adminData" tabindex="-1" role="dialog">
+    <div class="modal fade modal-xl" id="adminData" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -63,7 +63,8 @@
                                     @endif
                                 </div>
                                 <div class="col-md-2 admin-data">
-                                    <h5><a href="/dmp/{{ $game->id }}.{{ $history->ladder->id }}.{{ $thisGameReport->player_id }}.dmp">dmp</a></h5>
+                                    <h5><a href="/dmp/{{ $game->id }}.{{ $history->ladder->id }}.{{ $thisGameReport->player_id }}.dmp">dmp</a>
+                                    </h5>
                                 </div>
                             </div>
                         @endforeach

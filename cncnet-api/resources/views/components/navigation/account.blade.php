@@ -1,5 +1,6 @@
 @php $user = \Auth::user(); @endphp
-<li class="nav-item">
+
+<li class="nav-item m-xl-auto">
     <a href="#" class="dropdown-toggle d-flex align-items-center nav-link me-1 ms-1 ps-2 pe-4" data-bs-toggle="dropdown" aria-expanded="false">
         @if ($user && $user->getUserAvatar())
             @include('components.avatar', ['avatar' => $user->getUserAvatar(), 'size' => 32])
@@ -9,7 +10,7 @@
             </span>
         @endif
 
-        <span class="ps-2 ms-2 me-2 text text-uppercase d-block d-md-none">
+        <span class="ps-2 ms-2 me-2 text d-block d-md-none fw-bold">
             @if ($user)
                 {{ $user->name }}
             @else
@@ -18,7 +19,7 @@
         </span>
     </a>
 
-    <ul class="dropdown-menu dropdown-menu-end" style="">
+    <ul class="dropdown-menu dropdown-menu-end">
         @if ($user)
             <li>
                 <h4 class=" dropdown-header text-uppercase">Hi {{ $user->name }}</h4>

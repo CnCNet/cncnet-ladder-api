@@ -1,0 +1,43 @@
+.footer {
+    background: linear-gradient(45deg, #000000c2, transparent);
+    padding: 4rem 1rem;
+}
+
+.footer .footer-social-link {
+    font-size: 1.5rem;
+    padding-right: 1rem;
+    color: #959595;
+
+    &:hover {
+        color: #fff;
+    }
+}
+
+.footer .footer-link {
+    color: #959595;
+    padding: 0.5rem 0rem;
+    &:hover {
+        color: #fff;
+    }
+}
+
+.footer .footer-logos {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer .footer-copyright {
+    color: #4f4f4f;
+}
+
+.footer .footer-copyright {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer .footer-copyright .footer-link {
+    font-size: 1rem;
+    text-decoration: none;
+    margin-right: 0.2rem;
+    margin-left: 0.2rem;
+}

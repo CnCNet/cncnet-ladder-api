@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Help Guides</span>
                     </h1>
@@ -18,8 +18,8 @@
                     </p>
                     @if (!\Auth::user())
                         <div class="mt-4">
-                            <a class="btn btn--outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
-                            <a class="btn btn--outline-secondary btn-size-lg" href="/auth/login">Login</a>
+                            <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/register">Register</a>
+                            <a class="btn btn-outline-secondary btn-lg" href="/auth/login">Login</a>
                         </div>
                     @endif
                 </div>
@@ -82,7 +82,7 @@
                         <h3>Step 2</h3>
                         <p class="lead">In OBS, create a browser source</p>
                         <div class="tutorial-image">
-                            <img src="/images/obs/browser-source.png" alt="Browser source OBS"/>
+                            <img src="/images/obs/browser-source.png" alt="Browser source OBS" />
                         </div>
                     </div>
 
@@ -92,7 +92,7 @@
                             roughly to 635x110
                         </p>
                         <div class="tutorial-image">
-                            <img src="/images/obs/browser-source-url.png" alt="Browser source OBS"/>
+                            <img src="/images/obs/browser-source-url.png" alt="Browser source OBS" />
                         </div>
                     </div>
 
@@ -100,7 +100,7 @@
                         <h3>Step 4</h3>
                         <p class="lead">Click OK and resize, place in your stream as required.</p>
                         <div class="tutorial-image">
-                            <img src="/images/obs/drag-resize.png" alt="Browser source OBS"/>
+                            <img src="/images/obs/drag-resize.png" alt="Browser source OBS" />
                         </div>
                     </div>
 
@@ -109,7 +109,7 @@
                         <p class="lead">Save and see the result. The stats will automatically update every 30 seconds.
                         </p>
                         <div class="tutorial-image">
-                            <img src="/images/obs/browser-source-result.png" alt="Browser source OBS result"/>
+                            <img src="/images/obs/browser-source-result.png" alt="Browser source OBS result" />
                         </div>
                     </div>
                 </div>

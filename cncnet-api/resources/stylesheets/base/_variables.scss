@@ -1,5 +1,30 @@
+// Colours
+$primary: #ffffff;
+$secondary: #00ff8a;
+$tertiary: #ffb300;
+$color-green: #00ff8a;
 
+$theme-colors: (
+  "primary": $primary,
+  "secondary": $secondary,
+  "success": $color-green,
+  "info": $tertiary
+) !default;
 
+// Typography
+$font-family-sans-serif: $font-primary;
+$font-impact: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.6;
+$headings-line-height: 1.1;
+
+// Buttons
+$btn-padding-x: 1.65rem;
+$btn-padding-y: 0.75rem;
+$btn-border-radius: 5px;
+
+// Dropdowns
+$dropdown-border-radius: 2px;
 
 //
 // Breakpoints
@@ -13,110 +38,73 @@ $lg-width: 992px;
 $xl-width: 1200px;
 $xxl-width: 1400px;
 $xxxl-width: 1600px;
+$xxxxl-width: 1920px;
+$xxxxxl-width: 3840px; // Comedy now.
 
+html,
+body {
+  --bs-body-color: #f1f1f1;
+}
 
-// 
-// Bootstrap Overrides
-$enable-cssgrid: true;
-$primary:  #00ff8a;
-$secondary: #0c0e14;
-$success: $primary;
-$warning:#ffc31b;
-$danger: #8d000d;
-$blue: #03bcd4;
-$red: #ff0000;
-$generic-bg: #0c0e14;;
-$body-bg: #07080c;
-$body-color: #ebebeb;
-$link-color: #f8f8f8;
-$link-hover-color: #fff;
-$text-light-color: #ececec;
+$container-padding-x: 3.5rem;
 
-$game-won: #00ff84;
-$game-lost: $blue;
+$headings-margin-bottom: 1.5rem;
 
-$font-family-base: $font-roboto;
-$font-family-code: $font-roboto;
-$font-impact: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-$headings-font-family: $font-oswald;
-
-// Buttons
-$btn-font-family: $font-oswald;
-$btn-padding-y: 0.85rem;
-$btn-padding-x: 1.8rem;
-$btn-font-weight: 400;
-$btn-font-size: 1rem;
-
-// Navbar
-$navbar-light-color: $body-color;
-$navbar-dark-color: $body-color;
-$navbar-dark-hover-color: lighten($body-color,15%);
-
-// Dropdowns
-$dropdown-bg: $generic-bg;
-$dropdown-color:  #898989;
-$dropdown-dark-color: $dropdown-color;
-$dropdown-dark-bg: $dropdown-bg;
-$dropdown-dark-link-hover-color: lighten($dropdown-color, 15%);
-$dropdown-dark-link-hover-bg: darken($dropdown-bg, 5%);
-$dropdown-dark-link-active-color: $dropdown-dark-link-hover-color;
-$dropdown-dark-link-active-bg: $dropdown-dark-link-hover-bg;
-
-$dropdown-link-color: $dropdown-color;
-$dropdown-link-hover-bg: darken($dropdown-bg, 5%);
-$dropdown-link-active-color: $dropdown-dark-link-hover-color;
-$dropdown-link-active-bg: $dropdown-dark-link-hover-bg;
-$dropdown-link-hover-color: lighten($dropdown-color, 5%);
-
-// Pagination
-$pagination-bg: $generic-bg;
-$pagination-color:  $body-color;
-$pagination-border-color: transparent;
-$pagination-border-radius: 0;
-$pagination-hover-color: lighten(#798199, 15%);
-$pagination-hover-bg: transparent;
-$pagination-hover-border-color:transparent;
-$pagination-focus-color: $body-color;
-$pagination-focus-bg: $generic-bg;
-
-$pagination-active-color: #fff;
-$pagination-active-bg: $generic-bg;
-$pagination-active-border-color: $generic-bg;
-
-
-// Input fields
-$input-btn-padding-y: 0.7rem;
-$input-btn-border-width: 0;
-$input-bg: $generic-bg;
-$input-color: $body-color;
-
-// Modals
-$modal-content-color: $body-color;
-$modal-content-bg: $generic-bg;
-$modal-content-border-color: transparent;
-$modal-header-border-color:transparent;
-$modal-footer-border-color:transparent;
-
-// Btn close
-$btn-close-color: $body-color;
-
-// Tooltips
-$tooltip-color: $body-color;
-$tooltip-bg: $generic-bg; 
-$tooltip-opacity: 1;
-$tooltip-font-size: 1rem;
-
-// Borders
-$border-style: solid;
-$border-color: #1c1c1c;
-
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1140px,
+  xxl: 1600px
+) !default;
 
 .color-gold 
 {
-    color: $warning;
+    color: #ffd900;
 }
 
 .color-green 
 {
     color: #00ffc6;
 }
+
+
+
+
+// Pagination
+$pagination-bg: #000;
+$pagination-color:  #fff;
+$pagination-border-color: transparent;
+$pagination-border-radius: 0;
+$pagination-hover-color: lighten(#798199, 15%);
+$pagination-hover-bg: transparent;
+$pagination-hover-border-color:transparent;
+$pagination-focus-color: #fff;
+$pagination-focus-bg: #000;
+
+$pagination-active-color: #fff;
+$pagination-active-bg: #000;
+$pagination-active-border-color: #000;
+
+
+// Input fields
+$input-btn-padding-y: 0.7rem;
+$input-btn-border-width: 0;
+// $input-bg: #000;
+// $input-color: $body-color;
+
+// Modals
+// $modal-content-color: $body-color;
+// $modal-content-bg: #000;
+$modal-content-border-color: transparent;
+$modal-header-border-color:transparent;
+$modal-footer-border-color:transparent;
+
+// Btn close
+// $btn-close-color: $body-color;
+
+// Tooltips
+// $tooltip-color: $body-color;
+// $tooltip-bg: #000;
+$tooltip-opacity: 1;
+$tooltip-font-size: 1rem;

@@ -19,7 +19,7 @@ body.body-player-detail .page-image-feature
     color: #b7b7b7;
     margin: auto;
     width: 90%;
-    background: linear-gradient(45deg, #181b26, #0e1016);
+    background: linear-gradient(45deg, #1a1a1a, #0e1016);
     margin-top: -50px;
     padding-top: 50px;
 }
@@ -65,7 +65,7 @@ body.body-player-detail .page-image-feature
 {
     width: 100%;
 
-    @extend %font-secondary;
+    @extend %font-primary-bold;
 
     @media(min-width: $sm-width)
     {
@@ -74,7 +74,7 @@ body.body-player-detail .page-image-feature
 
     & .name 
     {
-        @extend %font-secondary-bold;
+        @extend %font-primary-bold;
         padding-right: 0.5rem;
     }
 }
@@ -159,7 +159,7 @@ body.body-player-detail .page-image-feature
 
 .player-detail .player-factions-table 
 {
-    @extend %font-secondary;
+    @extend %font-primary-bold;
     th 
     {
         border: 0;
@@ -248,13 +248,13 @@ body.body-player-detail .page-image-feature
 .player-detail .count.won 
 {
     color: $primary;
-    font-weight: 500;
+    font-weight: 700;
 }
 
 .player-detail .count.lost 
 {
-    color: $game-lost;
-    font-weight: 500;
+    color: $color-green;
+    font-weight: 700;
 }
 
 .player-detail .count 

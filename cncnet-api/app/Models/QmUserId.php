@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class QmUserId extends Model
 {
@@ -10,15 +12,19 @@ class QmUserId extends Model
 
     public static function createNew($userId, $qmClientId)
     {
-        $qmUserId = QmUserId::where("user_id", $userId)->where("qm_user_id", $qmClientId)->first();
-        if ($qmUserId == null)
-        {
-            $qmUserId = new QmUserId();
-            $qmUserId->qm_user_id = $qmClientId;
-            $qmUserId->user_id = $userId;
-            $qmUserId->save();
+        try {
+            $qmUserId = QmUserId::where("user_id", $userId)->where("qm_user_id", $qmClientId)->first();
+            if ($qmUserId == null) {
+                $qmUserId = new QmUserId();
+                $qmUserId->qm_user_id = $qmClientId;
+                $qmUserId->user_id = $userId;
+                $qmUserId->save();
+            }
+            return $qmUserId;
         }
-        return $qmUserId;
+        catch (Exception $ex) {
+            Log::info("Error saving id: " . $ex->getMessage());
+        }
     }
 
     public function user()

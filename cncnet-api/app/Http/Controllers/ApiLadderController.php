@@ -131,11 +131,15 @@ class ApiLadderController extends Controller
         $gameReport->save();
 
         # Award points
-        if ($history->ladder->clans_allowed)
+        if ($history->ladder->ladder_type == \App\Models\Ladder::CLAN_MATCH) // clan match
         {
             $status = $this->awardClanPoints($gameReport, $history);
         }
-        else
+        else if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO) // 2vs2
+        {
+            $status = $this->awardPlayerPoints($gameReport, $history);
+        }
+        else // 1vs1
         {
             $status = $this->awardPlayerPoints($gameReport, $history);
         }

@@ -6,7 +6,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Account</span>
                     </h1>
@@ -14,6 +14,15 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('feature')
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">Reset your password</x-slot>
+        <x-slot name="description">
+            Enter your email address below to reset
+        </x-slot>
+    </x-hero-with-video>
 @endsection
 
 @section('content')

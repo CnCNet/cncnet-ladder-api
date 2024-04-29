@@ -39,14 +39,18 @@
 
 .countdown.js-countdown 
 {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(45deg, #4107ff, #ff0b63);
     color: white;
     height: 50px;
-    @extend %font-secondary-bold;
-    font-weight: 500;
+    @extend %font-primary-bold;
     text-transform: uppercase;
     font-size: 1.2rem;
     transition: ease all 250ms;
@@ -81,7 +85,7 @@
     a 
     {
         font-weight: 600;
-        @extend %font-secondary-bold;
+        @extend %font-primary-bold;
         color: #2e66ff; 
         background-image: -webkit-linear-gradient(0deg, #2e66ff 25%, #2ed2ff 86%); 
         background-clip: text; 
@@ -157,4 +161,10 @@
 .ck.ck-editor {
     position: relative;
     color: black;
+}
+
+.header h4 small {
+    opacity: 1;
+    text-decoration: underline;
+    margin-left: 0.5rem;
 }

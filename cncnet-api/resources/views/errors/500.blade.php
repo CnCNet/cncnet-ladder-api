@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">500</strong>
                         <span>Error. Probably mind control.</span>
                     </h1>
@@ -21,8 +21,8 @@
 
                     @if (!\Auth::user())
                         <div class="mt-4">
-                            <a class="btn btn--outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
-                            <a class="btn btn--outline-secondary btn-size-lg" href="/auth/login">Login</a>
+                            <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/register">Register</a>
+                            <a class="btn btn-outline-secondary btn-lg" href="/auth/login">Login</a>
                         </div>
                     @endif
                 </div>

@@ -1,38 +1,30 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
 
-@section('feature-image', '/images/feature/feature-index.jpg')
-
 @section('feature')
-    <div class="feature pt-5 pb-5">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">CnCNet</strong>
-                        <span>Admin</span>
-                    </h1>
-                </div>
-            </div>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">CnCNet Admin</x-slot>
+        <x-slot name="description">
+            Top Secret Clearance Required
+        </x-slot>
 
-            <div class="mini-breadcrumb d-none d-lg-flex">
-                <div class="mini-breadcrumb-item">
-                    <a href="/" class="">
-                        <span class="material-symbols-outlined">
-                            home
-                        </span>
-                    </a>
-                </div>
-                <div class="mini-breadcrumb-item">
-                    <a href="/admin" class="">
-                        <span class="material-symbols-outlined">
-                            admin_panel_settings
-                        </span>
-                    </a>
-                </div>
+        <div class="mini-breadcrumb d-none d-lg-flex">
+            <div class="mini-breadcrumb-item">
+                <a href="/" class="">
+                    <span class="material-symbols-outlined">
+                        home
+                    </span>
+                </a>
+            </div>
+            <div class="mini-breadcrumb-item">
+                <a href="/admin" class="">
+                    <span class="material-symbols-outlined">
+                        admin_panel_settings
+                    </span>
+                </a>
             </div>
         </div>
-    </div>
+    </x-hero-with-video>
 @endsection
 
 @section('breadcrumb')
@@ -60,7 +52,7 @@
 @endsection
 
 @section('content')
-    <section class="pt-4">
+    <section class="pt-4 mt-5 mb-5">
         <div class="container">
             <div>
                 <div class="row mb-5">

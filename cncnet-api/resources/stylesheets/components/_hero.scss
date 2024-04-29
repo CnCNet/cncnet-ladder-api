@@ -1,0 +1,125 @@
+.hero {
+    padding-top: 20vh;
+    padding-bottom: 20vh;
+    position: relative;
+    background: #060606;
+    overflow: hidden;
+    position: relative;
+    transition: all ease-in 350ms;
+}
+
+.hero .hero-title {
+    color: #fff;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: $xl-width) {
+        font-size: 2.85rem;
+    }
+    @media (min-width: $xxxxl-width) {
+        font-size: 3.85rem;
+    }
+}
+
+.hero .hero-description {
+    width: 100%;
+    max-width: $lg-width;
+    font-size: 1.3rem;
+
+    @media (min-width: $lg-width) {
+        font-size: 1.45rem;
+    }
+}
+
+.hero.hero-with-sub-page {
+    padding-top: 20vh;
+    padding-bottom: 10vh;
+}
+
+.hero .hero-btn-group {
+    display: flex;
+    flex-direction: column;
+
+    @media (min-width: $lg-width) {
+        display: block;
+    }
+}
+
+.hero .hero-btn-group .btn {
+    margin: 0.5rem 0.5rem 1rem;
+
+    @media (min-width: $lg-width) {
+        margin: 0.2rem;
+    }
+}
+
+.hero.hero-with-video .video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 3840px;
+    max-width: 100%;
+    margin: auto;
+    height: 100%;
+    z-index: 0;
+    opacity: 1;
+    background-size: cover;
+
+    @media (min-width: 3000px) {
+        &:before,
+        &:after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 100px; /* or any other width you prefer for the fade */
+            height: 100%;
+            z-index: 10;
+            background: linear-gradient(to right, rgb(0 0 0), transparent);
+        }
+
+        &:after {
+            right: 0;
+            transform: rotateZ(180deg);
+        }
+    }
+
+    video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+        max-width: 100%;
+        margin: auto;
+    }
+}
+
+.hero.hero-with-video .video:before {
+    content: "";
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.418), transparent);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+.hero .feature-text {
+    position: relative;
+    z-index: 1;
+
+    @media (min-width: $lg-width) {
+        padding: 3rem;
+    }
+}
+
+.hero .container {
+    width: $xxxl-width;
+    max-width: 100%;
+}

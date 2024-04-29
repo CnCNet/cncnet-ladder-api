@@ -1,16 +1,22 @@
 {
+    "type": "module",
     "devDependencies": {
-        "gulp": "^4.0.2",
-        "gulp-sass": "^5.1.0",
-        "sass": "^1.56.1"
+        "@popperjs/core": "^2.11.6",
+        "axios": "^1.6.8",
+        "bootstrap": "^5.2.3",
+        "laravel-vite-plugin": "^0.8.0",
+        "sass": "^1.56.1",
+        "typescript": "^5.2.2",
+        "vite": "^4.0.0"
     },
     "scripts": {
-        "dev": "gulp compile"
+        "dev": "vite",
+        "build": "vite build"
     },
     "dependencies": {
         "@cubejs-client/core": "^0.31.0",
-        "bootstrap": "^5.2.2",
-        "bootstrap-icons": "^1.10.2",
+        "bootstrap": "^5.2.3",
+        "bootstrap-icons": "^1.11.3",
         "chart.js": "^4.0.0"
     }
 }

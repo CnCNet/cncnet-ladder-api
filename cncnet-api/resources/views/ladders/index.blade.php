@@ -1,33 +1,20 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-    <div class="feature pt-5 pb-5">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">CnCNet</strong>
-                        <span>Ladder Rankings</span>
-                    </h1>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">CnCNet Ladder Rankings</x-slot>
+        <x-slot name="description">
+            Compete in <strong>1vs1</strong> or <strong>2vs2</strong> ranked matches with players all over the world.
+        </x-slot>
 
-                    <p class="lead">
-                        Compete in <strong>1vs1</strong> or <strong>2vs2</strong> ranked matches with players all over
-                        the world.
-                    </p>
-
-                    @if (!\Auth::user())
-                        <div class="mt-4">
-                            <a class="btn btn--outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
-                            <a class="btn btn--outline-secondary btn-size-lg" href="/auth/login">Login</a>
-                        </div>
-                    @endif
-                </div>
+        @if (!\Auth::user())
+            <div class="hero-btn-group">
+                <a class="btn btn-outline-secondary me-3 btn-lg" href="/auth/register">Register</a>
+                <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/login">Login</a>
             </div>
-        </div>
-    </div>
+        @endif
+    </x-hero-with-video>
 @endsection
 
 @section('breadcrumb')
@@ -97,7 +84,7 @@
 @section('js')
     <script src="/js/swiper.js"></script>
     <script>
-        (function () {
+        (function() {
             var swiper = new Swiper(".js-news-listings", {
                 slidesPerView: 3,
                 spaceBetween: 10,

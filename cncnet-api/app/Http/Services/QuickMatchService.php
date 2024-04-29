@@ -5,10 +5,15 @@ namespace App\Http\Services;
 use App\Commands\Matchup\ClanMatchupHandler;
 use App\Models\Game;
 use App\Models\IpAddress;
+use App\Models\Ladder;
+use App\Models\LadderHistory;
+use App\Models\PlayerGameReport;
+use App\Models\QmMap;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
 use App\Models\QmQueueEntry;
 use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class QuickMatchService
@@ -141,6 +146,8 @@ class QuickMatchService
             $a->acknowledge();
         }
 
+        if(empty($alert)) return null;
+
         return $alert;
     }
 
@@ -203,6 +210,159 @@ class QuickMatchService
         }
 
         return $qEntry;
+    }
+
+    public function fetchQmQueueEntry(LadderHistory $history, ?QmQueueEntry $qmQueueEntry = null): \Illuminate\Database\Eloquent\Collection|array
+    {
+        return QmQueueEntry::query()
+            ->when(isset($qmQueueEntry), fn($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
+            ->where('ladder_history_id', '=', $history->id)
+            ->get();
+    }
+
+    /**
+     * Find all opponents that can be matched with the current player in queue.
+     * We exclude observers
+     * @param QmQueueEntry $currentQmQueueEntry
+     * @param QmQueueEntry[]|Collection $opponents
+     * @return QmQueueEntry[]|Collection
+     */
+    public function getMatchableOpponents(QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection {
+
+        $history = $currentQmQueueEntry->ladderHistory;
+        $ladder = $history->ladder;
+        $currentTier = $currentQmQueueEntry->qmPlayer->player->user->getUserLadderTier($ladder)->tier;
+
+        $matchableOpponents = collect();
+
+        foreach($opponents as $opponent) {
+
+            // If the opponent is an observer we skip him
+            if($opponent->qmPlayer->isObserver()) {
+                continue;
+            }
+
+            $oppTier = $opponent->qmPlayer->player->user->getUserLadderTier($ladder)->tier;
+
+            // If players are not in the same league (same tier), then we don't match them together
+            if($currentTier !== $oppTier) {
+                // Except if any of them have both_tiers feature enabled.
+                // Check both as either player could be tier 1
+                if(
+                    ($oppTier === 1 && $opponent->qmPlayer->player->user->canUserPlayBothTiers($ladder))
+                    ||
+                    ($currentTier === 1 && $currentQmQueueEntry->qmPlayer->player->user->canUserPlayBothTiers($ladder))
+                ) {
+                    // Players can match so we can continue with the rest of the process
+                    Log::info("PlayerMatchupHandler ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  "
+                        . $ladder->abbreviation . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
+                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                }
+                else {
+                    // Player cannot match so we skip it
+                    Log::info("PlayerMatchupHandler ** Players in different tiers for ladder " . $ladder->abbreviation
+                        . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
+                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                    continue;
+                }
+            }
+
+
+            // Checks players point filter settings
+            if ($currentQmQueueEntry->qmPlayer->player->user->userSettings->disabledPointFilter
+                && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter)
+            {
+                // Do both players rank meet the minimum rank required for no pt filter to apply
+                if (abs($currentQmQueueEntry->qmPlayer->player->rank($history) - $opponent->qmPlayer->player->rank($history))
+                        <=
+                    $ladder->qmLadderRules->point_filter_rank_threshold)
+                {
+                    // Both players have the point filter disabled, we will ignore the point filter and match them
+                    $matchableOpponents->add($opponent);
+                    continue;
+                }
+            }
+
+
+            // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
+            $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $ladder->qmLadderRules->points_per_second;
+
+            // is the opponent within the point filter
+            if ($pointsTime + $ladder->qmLadderRules->max_points_difference > abs($currentQmQueueEntry->points - $opponent->points))
+            {
+                $matchableOpponents->add($opponent);
+            }
+        }
+
+        return $matchableOpponents;
+    }
+
+    /**
+     * Get maps in common of all the given players for the given ladder
+     * @param Ladder $ladder
+     * @param QmQueueEntry[]|Collection $players
+     * @return QmMap[]
+     */
+    public function getCommonMapsForPlayers(Ladder $ladder, Collection $players): Collection {
+
+        $qmMaps = $ladder->mapPool->maps;
+
+        $is_rejected_bit = -2;
+
+        $commonQmMaps = collect([]);
+        foreach($qmMaps as $qmMap) {
+            $rejectedMap = false;
+            foreach($players as $player) {
+                $playerMapSides = $player->qmPlayer->map_side_array();
+                if (!(
+                    array_key_exists($qmMap->bit_idx, $playerMapSides) // if the map exists in the player map side
+                    && $playerMapSides[$qmMap->bit_idx] > $is_rejected_bit // and if the map is not refjected by the player
+                    && in_array($playerMapSides[$qmMap->bit_idx], $qmMap->sides_array()) // and if the side chose by the player is allowed in the map
+                ))
+                {
+                    // this means the player reject this map
+                    $rejectedMap = true;
+                    break;
+                }
+            }
+            if(!$rejectedMap) {
+                $commonQmMaps[] = $qmMap;
+            }
+        }
+
+        return $commonQmMaps;
+    }
+
+    /**
+     * @param array $maps
+     * @param QmQueueEntry[]|Collection $players
+     * @return array
+     */
+    public function filterOutRecentsMaps(LadderHistory $history, Collection $maps, Collection $players): array {
+
+        $maps = collect($maps);
+
+        foreach($players as $player) {
+            /** @var Collection $playerGameReports */
+            $playerGameReports = $player->qmPlayer->player->playerGames()
+                ->where("ladder_history_id", "=", $history->id)
+                ->where("disconnected", "=", 0)
+                ->where("no_completion", "=", 0)
+                ->where("draw", "=", 0)
+                ->orderBy('created_at', 'DESC')
+                ->limit($history->ladder->qmLadderRules->reduce_map_repeats)
+                ->get();
+
+            $recentMapsHash = $playerGameReports
+                ->map(fn (PlayerGameReport $item) => $item->game->map)
+                ->filter()
+                ->pluck('hash')
+                ->toArray();
+
+            $maps = $maps->filter(fn(QmMap $map) => !in_array($map->map->hash, $recentMapsHash));
+        }
+
+        return $maps->all();
     }
 
     public function createQmAIMatch($qmPlayer, $userPlayerTier, $maps, $gameType)
@@ -291,7 +451,6 @@ class QuickMatchService
 
             $qmMapId = $this->rankedMapPicker($qmMaps, $rank, $points, $matchAnyMap);  //select a map dependent on player rank and map tiers
         }
-
         else if ($ladderRules->use_elo_map_picker) // consider a player's ELO when selecting a map
         {
             $myEloRating = $qmPlayer->player->user->userRating->rating;
@@ -649,7 +808,7 @@ class QuickMatchService
             $qmPlayer,
             $otherQmQueueEntries
         );
-
+         
         $currentQueuePlayerCount = count($otherQmQueueEntries) + 1; // Total player counts equals myself plus other players to be matched
         $expectedPlayerQueueCount = $matchHasObserver ? $ladder->qmLadderRules->player_count + 1 :  $ladder->qmLadderRules->player_count;
 
@@ -671,7 +830,6 @@ class QuickMatchService
         $qmMatch->save();
         $game->qm_match_id = $qmMatch->id;
         $game->save();
-
 
 
         # Set up player specific information
@@ -738,6 +896,150 @@ class QuickMatchService
         return $qmMatch;
     }
 
+    public function createTeamQmMatch(LadderHistory $history, Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers, $gameType): QmMatch {
+
+        $ladder = $history->ladder;
+        $currentQmQueueEntry = $teamAPlayers->first();
+
+        $qmMapId = $this->chooseQmMapId($teamAPlayers->merge($teamBPlayers), $ladder->qmLadderRules->use_ranked_map_picker, $history, $maps);
+
+        $matchHasObserver = $observers->count() > 0;
+
+        $currentQueuePlayerCount = $teamAPlayers->count() + $teamBPlayers->count();
+        $expectedPlayerQueueCount = $currentQueuePlayerCount + $observers->count();
+
+        Log::info("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver ? 'Yes' : 'No');
+        Log::info("ApiQuickMatchController ** createQmMatch: Player counts " . $currentQueuePlayerCount . "/" . $expectedPlayerQueueCount);
+
+        # Create the qm_matches db entry
+        $qmMatch = QmMatch::create([
+            'ladder_id' => $history->ladder_id,
+            'qm_map_id' => $qmMapId,
+            'seed' => mt_rand(-2147483647, 2147483647),
+            'tier' => $currentQmQueueEntry->qmPlayer->player->user->getUserLadderTier($history->ladder)->tier,
+        ]);
+
+        # Create the Game
+        $game = Game::genQmEntry($qmMatch, $gameType);
+        $qmMatch->game_id = $game->id;
+        $qmMatch->save();
+        $game->qm_match_id = $qmMatch->id;
+        $game->save();
+
+        $qmMap = $qmMatch->map;
+
+        $spawns = collect([$qmMap->team1_spawn_order, $qmMap->team2_spawn_order])->shuffle();
+        $colors = 0;
+
+        if($spawns->count() < 2) {
+            Log::error('[QuickMatchService::createTeamQmMatch] spawns for team maps not set correctly. Columns team1_spawn_order and team2_spawn_order on qm_maps with id : ' . $qmMap->id . ' are not set.');
+            throw new Exception('spawns for team maps not set correctly. Columns team1_spawn_order and team2_spawn_order on qm_maps with id : ' . $qmMap->id . ' are not set.');
+        }
+
+        $this->setTeamSpawns('A', $spawns[0], $teamAPlayers, $qmMatch, $colors);
+        $this->setTeamSpawns('B', $spawns[1], $teamBPlayers, $qmMatch, $colors);
+
+        $this->setObserversSpawns($observers, $qmMatch, $colors);
+
+        return $qmMatch;
+    }
+
+    private function setTeamSpawns(string $team, string $spawnOrders, Collection $teamPlayers, QmMatch $qmMatch, int &$colors) {
+
+        Log::debug('[QuickMatchService::setTeamSpawns]');
+        $spawnOrder = array_map(fn($i) => intval($i), explode(',', $spawnOrders));
+        $qmMap = $qmMatch->map;
+
+
+        Log::debug('[QuickMatchService::setTeamSpawns] $spawnOrder ' . json_encode($spawnOrder));
+
+        $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn ($s) => $s >= 0));
+
+        foreach($teamPlayers->values() as $i => $player) {
+
+            Log::debug('[QuickMatchService::setTeamSpawns] trying to set spawn for player ' . $player->id . ' with i : ' . $i . ' and color ' . $colors);
+
+            $qmPlayer = $player->qmPlayer;
+            $player->delete();
+
+            $qmPlayer->color = $colors++;
+            $qmPlayer->location = $spawnOrder[$i] - 1;
+
+            $osides = explode(',', $qmPlayer->mapSides->value);
+
+            if (count($osides) > $qmMap->bit_idx) {
+                $qmPlayer->actual_side = $osides[$qmMap->bit_idx];
+            }
+
+
+            if ($qmPlayer->actual_side  < -1) {
+                $qmPlayer->actual_side = $qmPlayer->chosen_side;
+            }
+
+            if ($qmPlayer->actual_side == -1) {
+                $qmPlayer->actual_side = $mapAllowedSides[mt_rand(0, count($mapAllowedSides) - 1)];
+            }
+
+            $qmPlayer->qm_match_id = $qmMatch->id;
+            $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
+            $qmPlayer->team = $team;
+
+            $qmPlayer->save();
+        }
+
+    }
+
+    private function setObserversSpawns(Collection $observers, QmMatch $qmMatch, int &$colors) {
+
+        foreach($observers->values() as $i => $observer) {
+            $qmObserver = $observer->qmPlayer;
+            $observer->delete();
+
+            $qmObserver->color = $colors++;
+            $qmObserver->location = -1;
+            $qmObserver->qm_match_id = $qmMatch->id;
+            $qmObserver->tunnel_id = $qmMatch->seed + $qmObserver->color;
+            $qmObserver->save();
+        }
+    }
+
+    private function chooseQmMapId(Collection $qmQueueEntries, bool $useRankedMapPicker, LadderHistory $history, Collection $qmMaps)
+    {
+        //use ranked map selection
+        if ($useRankedMapPicker) {
+
+            $rank = PHP_INT_MIN;
+            $points = PHP_INT_MAX;
+
+            $matchAnyMap = true;
+            foreach ($qmQueueEntries as $otherQMQueueEntry)
+            {
+                //choose the person who has the worst rank to base our map pick off of
+                $rank = max($rank, $otherQMQueueEntry->qmPlayer->player->rank($history));
+                $points = min($points, $otherQMQueueEntry->qmPlayer->player->points($history));
+
+                //true if both players allow any map
+                $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
+                    && $matchAnyMap;
+            }
+
+            return $this->rankedMapPicker($qmMaps, $rank, $points, $matchAnyMap);  //select a map dependent on player rank and map tiers
+        }
+
+        $qmMapsWeighted = [];
+        foreach ($qmMaps as $qmMap) {
+            $weight = $qmMap->weight; //defaults to 1
+
+            for ($i = 0; $i < $weight; $i++) {
+                $qmMapsWeighted[] = $qmMap; //add maps to the pool additional times depending on their weight
+            }
+        }
+
+        $randomMapIdx = mt_rand(0, count($qmMapsWeighted) - 1);
+        $qmMapId = $qmMapsWeighted[$randomMapIdx]->id;
+
+        return $qmMapId;
+    }
 
     /**
      * Given a player's rank, choose a map based on map ranked difficulties
@@ -935,5 +1237,149 @@ class QuickMatchService
         }
 
         return $locations;
+    }
+
+    public function findPossibleMatches($currentPlayerId, $currentPlayerRank, $opponentsRating): array
+    {
+        $possibleMatches = [];
+        for ($i = 0; $i < count($opponentsRating); $i++) {
+            $teamA = [
+                'player1' => $currentPlayerId,
+                'player2' => $opponentsRating[$i]['id'],
+                'team_elo' => $currentPlayerRank + $opponentsRating[$i]['rank'],
+                'elo_gap' => abs($currentPlayerRank - $opponentsRating[$i]['rank'])
+            ];
+
+            for ($j = 0; $j < count($opponentsRating); $j++) {
+                if($opponentsRating[$j]['id'] == $teamA['player2']) continue;
+                $player1B = $opponentsRating[$j]['id'];
+
+                for ($k = 0; $k < count($opponentsRating); $k++) {
+                    if($opponentsRating[$k]['id'] == $player1B || $opponentsRating[$k]['id'] == $teamA['player2']) continue;
+                    $player2B = $opponentsRating[$k]['id'];
+
+                    $teamB = [
+                        'player1' => $player1B,
+                        'player2' => $player2B,
+                        'team_elo' => $opponentsRating[$j]['rank'] + $opponentsRating[$k]['rank'],
+                        'elo_gap' => abs($opponentsRating[$j]['rank'] - $opponentsRating[$k]['rank'])
+                    ];
+
+                    $diff = abs($teamA['team_elo'] - $teamB['team_elo']);
+                    $gap = $teamA['elo_gap'] + $teamB['elo_gap'];
+                    $possibleMatches[] = [
+                        'teamA' => $teamA,
+                        'teamB' => $teamB,
+                        'teams_elo_diff' => $diff,
+                        'elo_gap_sum' => $gap,
+                        'match_ranking' => $diff + $gap
+                    ];
+                }
+            }
+        }
+        return $possibleMatches;
+    }
+    public function findBestMatch($possibleMatches) : array {
+
+        $minRanking = PHP_INT_MAX;
+        $bestBatch = null;
+        foreach($possibleMatches as $match) {
+            if($match['match_ranking'] < $minRanking) {
+                $minRanking = $match['match_ranking'];
+                $bestBatch = $match;
+            }
+        }
+
+        return $bestBatch;
+    }
+
+    /**
+     * @param QmQueueEntry $currentPlayer
+     * @param Collection $matchableOpponents
+     * @param LadderHistory $history
+     * @return QmQueueEntry[][]|Collection[]
+     */
+    public function getBestMatch2v2ForPlayer(QmQueueEntry $currentPlayer, Collection $matchableOpponents, LadderHistory $history): array {
+
+        $players = $matchableOpponents->concat([$currentPlayer]);
+
+        $opponentsRating = [];
+        $currentPlayerRank = $currentPlayer->qmPlayer->player->rank($history);
+        foreach($matchableOpponents as $opponent) {
+            $opponentsRating[] = [
+                'id' => $opponent->id,
+                'rank' => $opponent->qmPlayer->player->rank($history)
+            ];
+        }
+
+        // find all possible matches
+        $possibleMatches = $this->findPossibleMatches(
+            $currentPlayer->id,
+            $currentPlayerRank,
+            $opponentsRating
+        );
+
+        $best = $this->findBestMatch($possibleMatches);
+
+        $g = function($players, $match, $team) {
+            return $players
+                ->filter(fn(QmQueueEntry $qmQueueEntry) => in_array($qmQueueEntry->id, [
+                    $match[$team]['player1'], $match[$team]['player2']
+                ]));
+        };
+
+        $teamAPlayers = $g($players, $best, 'teamA');
+        $teamBPlayers = $g($players, $best, 'teamB');
+
+        return [$teamAPlayers, $teamBPlayers];
+    }
+
+    public function checkQMClientRequiresUpdate(Ladder $ladder, $version)
+    {
+        # YR Games check
+        if ($ladder->game == "yr")
+        {
+            if ($version < 1.79)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        # RA/TS Games check
+        if ($ladder->game == "ra" || $ladder->game == "ts")
+        {
+            if ($version < 1.69)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        return false;
+    }
+
+    public function onFatalError(string $error) {
+        return response()->json([
+            "type" => "fatal",
+            "message" => $error
+        ]);
+    }
+
+    public function onCheckback($alert = null)
+    {
+        $response = [
+            "type" => "please wait",
+            "checkback" => 10,
+            "no_sooner_than" => 5
+        ];
+
+        if (isset($alert)) {
+            $response['warning'] = $alert;
+        }
+
+        return response()->json($response);
     }
 }

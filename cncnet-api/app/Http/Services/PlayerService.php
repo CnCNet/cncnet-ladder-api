@@ -2,24 +2,22 @@
 
 namespace App\Http\Services;
 
+use App\Helpers\LeagueHelper;
 use App\Models\Ladder;
 use App\Models\Player;
 use App\Models\PlayerActiveHandle;
 use App\Models\PlayerRating;
+use App\Models\QmMatchPlayer;
 use App\Models\QmUserId;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class PlayerService
 {
-    public function __construct()
-    {
-    }
-
-
     /**
      * Creates Player, PlayerActiveHandle if the username is not taken.
      * Returns null if username taken.
@@ -91,9 +89,9 @@ class PlayerService
         return $userRating;
     }
 
-    public function findPlayerByUsername($name, $ladder)
+    public function findPlayerByUsername($name, $ladder) : ?Player
     {
-        return \App\Models\Player::where("username", "=", $name)
+        return Player::where("username", "=", $name)
             ->where("ladder_id", "=", $ladder->id)
             ->first();
     }
@@ -157,6 +155,13 @@ class PlayerService
         }
     }
 
+    /**
+     * @param $player
+     * @param $ip
+     * @param $qmClientId
+     * @return mixed|null
+     * @deprecated use checkUserForBans
+     */
     public function checkPlayerForBans($player, $ip, $qmClientId)
     {
         $ban = $player->user->getBan(true);
@@ -191,6 +196,51 @@ class PlayerService
         return null;
     }
 
+    /**
+     * @param $player
+     * @param $ip
+     * @param $qmClientId
+     * @return mixed|null
+     */
+    public function checkUserForBans($user, $ip, $qmClientId)
+    {
+        $ban = $user->getBan(true);
+        if ($ban !== null)
+        {
+            return $ban;
+        }
+
+        $ban = \App\Models\IpAddress::findByIP($ip)->getBan(true);
+        if ($ban !== null)
+        {
+            return $ban;
+        }
+
+        try
+        {
+            $qmUserIds = QmUserId::where("qm_user_id", $qmClientId)->get();
+            foreach ($qmUserIds as $qmUserId)
+            {
+                $ban = $qmUserId->user->getBan(true);
+                if ($ban !== null)
+                {
+                    return $ban;
+                }
+            }
+        }
+        catch (Exception $ex)
+        {
+            Log::info("Error checking player for bans: " . $ex->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * @param $player
+     * @return bool
+     * @deprecated use checkUserHasVerifiedEmail
+     */
     public function checkPlayerHasVerifiedEmail($player)
     {
         if (!$player->user->email_verified)
@@ -198,6 +248,22 @@ class PlayerService
             if (!$player->user->verificationSent())
             {
                 $player->user->sendNewVerification();
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+    public function checkUserHasVerifiedEmail($user)
+    {
+        if (!$user->email_verified)
+        {
+            if (!$user->verificationSent())
+            {
+                $user->sendNewVerification();
             }
 
             return false;
@@ -271,5 +337,40 @@ class PlayerService
         }
 
         return $playerList;
+    }
+
+
+    public function checkPlayerShouldMatchAI(Request $request, Player $player, Ladder $ladder, QmMatchPlayer $qmPlayer) {
+
+        $user = $player->user;
+        $ladderRules = $ladder->qmLadderRules;
+        $userPlayerTier = $player->user->getUserLadderTier($ladder)->tier;
+        $version = $request->version;
+
+        $qmQueueEntry = $qmPlayer->qEntry;
+
+        // Test user
+        if ($user->email == "neogrant3@gmail.com") {
+            return true;
+        }
+
+        if (
+            $userPlayerTier == LeagueHelper::CONTENDERS_LEAGUE
+            && $qmQueueEntry !== null
+            && $version >= 1.75
+            && $user->userSettings->getMatchAI() == true
+        )
+        {
+            // We're in the queue for normal player matchups
+            // If we reach a certain amount of time, switch to AI matchup
+            $now = Carbon::now();
+            $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
+            Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds QM Player: $qmPlayer , QM Client Version: $version");
+
+            // Reached max queue time without match as set by ladder rules
+            return ($timeSinceQueuedSeconds > $ladderRules->getMatchAIAfterSeconds());
+        }
+
+        return false;
     }
 }

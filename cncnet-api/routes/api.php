@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,8 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 
 # API V1 Endpoints
-Route::group(['prefix' => 'v1'], function ()
-{
+Route::group(['prefix' => 'v1'], function () {
 
     Route::group(['prefix' => 'auth', 'middleware' => 'auth.basic.once'], function ()
     {
@@ -34,8 +32,7 @@ Route::group(['prefix' => 'v1'], function ()
     Route::get("news", [\App\Http\Controllers\ApiNewsController::class, "getNews"]);
     Route::post('/test', [\App\Http\Controllers\ApiLadderController::class, 'saveLadderTestOnly']);
 
-    Route::group(['middleware' => 'jwt.auth'], function ()
-    {
+    Route::group(['middleware' => 'jwt.auth'], function () {
 
         Route::get('/user/info', [\App\Http\Controllers\ApiUserController::class, 'getUserInfo']);
         Route::get('/user/account', [\App\Http\Controllers\ApiUserController::class, 'getAccount']);
@@ -47,7 +44,6 @@ Route::group(['prefix' => 'v1'], function ()
         Route::post('/result/{game}/{username}', [\App\Http\Controllers\ApiLadderController::class, 'postLadder']);
         Route::post('/result/{game}/{username}/{pingSent}/{pingReceived}', [\App\Http\Controllers\ApiLadderController::class, 'postLadder']);
         Route::post('/result/ladder/{ladderId}/game/{gameId}/player/{playerId}/pings/{pingsSent}/{pingsReceived}', [\App\Http\Controllers\ApiLadderController::class, 'newPostLadder']);
-
 
         // General Endpoints
         Route::get('/ping', [\App\Http\Controllers\ApiLadderController::class, 'pingLadder']);
@@ -64,11 +60,11 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/qm/version/{platform}', [\App\Http\Controllers\ApiQuickMatchController::class, 'clientVersion']);
         Route::get('/qm/ladder/{ladderAbbrev}/maps', [\App\Http\Controllers\ApiQuickMatchController::class, 'mapListRequest']);
 
-        Route::post('/qm/{ladderAbbrev}/{playerName}', [\App\Http\Controllers\ApiQuickMatchController::class, 'matchRequest']);
+        // commented out to try the refactored version
+        //Route::post('/qm/{ladderAbbrev}/{playerName}', [\App\Http\Controllers\ApiQuickMatchController::class, 'matchRequest']);
     });
 
-    Route::group(['middleware' => 'cache.short.public'], function ()
-    {
+    Route::group(['middleware' => 'cache.short.public'], function () {
 
         Route::get('/qm/ladder/rankings', [\App\Http\Controllers\ApiQuickMatchController::class, 'getPlayerRankings']);
         Route::get('/qm/ladder/{ladderAbbrev}/rankings', [\App\Http\Controllers\ApiQuickMatchController::class, 'getPlayerRankingsByLadder']);
@@ -81,8 +77,7 @@ Route::group(['prefix' => 'v1'], function ()
     });
 
     // Ladder Endpoints
-    Route::group(['prefix' => 'ladder', 'middleware' => 'cache.long.public'], function ()
-    {
+    Route::group(['prefix' => 'ladder', 'middleware' => 'cache.long.public'], function () {
 
         Route::get('/', [\App\Http\Controllers\ApiLadderController::class, 'getAllLadders']);
         Route::get('/{game}/games/recent/{count}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderRecentGamesList']);
@@ -96,8 +91,7 @@ Route::group(['prefix' => 'v1'], function ()
     });
 
     // Short cache ladder endpoints
-    Route::group(['prefix' => 'ladder', 'middleware' => 'cache.public'], function ()
-    {
+    Route::group(['prefix' => 'ladder', 'middleware' => 'cache.public'], function () {
 
         Route::get('/{game}/top/{count}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderTopList']);
         Route::get('/{game}/player/{player}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderPlayerFromPublicApi']);
@@ -105,8 +99,7 @@ Route::group(['prefix' => 'v1'], function ()
     });
 
     // Ultra short cache ladder endpoints
-    Route::group(['prefix' => 'irc', 'middleware' => 'cache.ultra.public'], function ()
-    {
+    Route::group(['prefix' => 'irc', 'middleware' => 'cache.ultra.public'], function () {
 
         Route::get('/{abbreviation}/active', [\App\Http\Controllers\ApiIrcController::class, 'getActive']);
         Route::get('/{abbreviation}/players', [\App\Http\Controllers\ApiIrcController::class, 'getPlayerNames']);
@@ -115,15 +108,31 @@ Route::group(['prefix' => 'v1'], function ()
 
         Route::get('/hostmasks', [\App\Http\Controllers\ApiIrcController::class, 'getHostmasks']);
     });
+
 });
 
 
 # API V2 Endpoints
-Route::group(['prefix' => 'v2'], function ()
-{
+Route::group(['prefix' => 'v2'], function () {
 
-    Route::group(['middleware' => 'jwt.auth'], function ()
-    {
-        Route::get('/user/account', [\App\Http\Controllers\v2\ApiUserController::class, 'getAccount']);
+    Route::group(['middleware' => 'jwt.auth'], function () {
+        Route::get('/user/account', [\App\Http\Controllers\Api\V2\User\ApiUserController::class, 'getAccount']);
+    });
+
+
+});
+
+
+Route::group(['prefix' => 'v1'], function () {
+    Route::group(['middleware' => 'jwt.auth'], function () {
+        Route::post('/qm/{ladder:abbreviation}/{playerName}', \App\Http\Controllers\Api\V2\Qm\MatchUpController::class)
+            ->middleware([
+                \App\Http\Middleware\Api\ClientUpToDateMiddleware::class,
+                \App\Http\Middleware\Api\ShadowBanMiddleware::class,
+                \App\Http\Middleware\Api\BanMiddleware::class,
+                \App\Http\Middleware\Api\VerifiedEmailMiddleware::class,
+            ]);
     });
 });
+
+

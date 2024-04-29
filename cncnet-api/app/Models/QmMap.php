@@ -14,6 +14,8 @@ class QmMap extends Model {
         'valid',
         'description',
         'allowed_sides',
+        'team1_spawn_order',
+        'team2_spawn_order',
     ];
 
 	//
