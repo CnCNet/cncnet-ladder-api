@@ -1,7 +1,5 @@
 @extends('layouts.app')
 @section('title', $history->ladder->name)
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 @section('page-body-class', $history->ladder->abbreviation)
 
 @section('feature')
@@ -62,7 +60,6 @@
                     </a>
                 </div>
             @endif
-
         </div>
     </section>
 

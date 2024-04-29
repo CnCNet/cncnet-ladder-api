@@ -1,7 +1,7 @@
 <section class="hero hero-with-video {{ isset($subpage) ? 'hero-with-sub-page' : '' }}">
     <div class="feature-text">
         <div class="container">
-            @if (isset($title) && isset($description))
+            @if (isset($title) || isset($description))
                 <div class="row">
                     <div class="col-12">
                         <h1 class="display-4 hero-title">

@@ -1,30 +1,30 @@
 @extends('layouts.app')
 @section('title', 'Map Pool Setup')
 
-@section('feature-image', '/images/feature/feature-index.jpg')
 @section('feature')
-    <div class="feature pt-5 pb-5">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3">
-                        <strong class="fw-bold">CnCNet Admin</strong><br />
-                        <span>Map Pool Configuration</span>
-                    </h1>
-                </div>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev($ladder->abbreviation) }}">
+        <x-slot name="title">Edit Map Pool - {{ $ladder->name }}</x-slot>
+        <x-slot name="description">
+            View and manage map pools for {{ $ladder->name }}
+        </x-slot>
+
+        <div class="mini-breadcrumb d-none d-lg-flex">
+            <div class="mini-breadcrumb-item">
+                <a href="/" class="">
+                    <span class="material-symbols-outlined">
+                        home
+                    </span>
+                </a>
             </div>
-            <div class="mini-breadcrumb d-none d-lg-flex">
-                <div class="mini-breadcrumb-item">
-                    <a href="/admin/setup/{{ $ladder->id }}/edit">
-                        <span class="material-symbols-outlined icon pe-3">
-                            person
-                        </span>
-                        {{ $ladder->name }} Admin Page
-                    </a>
-                </div>
+            <div class="mini-breadcrumb-item">
+                <a href="/admin" class="">
+                    <span class="material-symbols-outlined">
+                        admin_panel_settings
+                    </span>
+                </a>
             </div>
         </div>
-    </div>
+    </x-hero-with-video>
 @endsection
 
 @section('content')
