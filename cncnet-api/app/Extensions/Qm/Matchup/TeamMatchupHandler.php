@@ -24,11 +24,11 @@ class TeamMatchupHandler extends BaseMatchupHandler
         }
 
         // Fetch all other players in the queue
-        $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
-        Log::info("FindOpponent ** players in q : " . $opponents->count() + 1);
+        $queueEntries = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
+        Log::info("FindOpponent ** players in q : " . $queueEntries->count() + 1);
 
-        // Find opponents that can be matched with current player.
-        $matchableOpponents = $opponents;
+        // Find opponents that can be matched with current player. Exclude observers
+        $matchableOpponents = $queueEntries->filter(fn(QmQueueEntry $qmQueueEntry) => !$qmQueueEntry->qmPlayer->isObserver());
 
         // Count the number of players we need to start a match
         // Excluding current player
@@ -47,7 +47,6 @@ class TeamMatchupHandler extends BaseMatchupHandler
             $this->history
         );
 
-
         Log::info("FindOpponent ** TEAMS : "
             . json_encode($teamAPlayers) . ' VS'
             . json_encode($teamBPlayers));
@@ -62,7 +61,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
             return;
         }
 
-        $observers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver());
+        $observers = $queueEntries->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver());
         if($observers->count() < 0) {
             $this->matchHasObservers = true;
         }
