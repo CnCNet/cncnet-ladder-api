@@ -10,7 +10,7 @@
             </span>
         @endif
 
-        <span class="ps-2 ms-2 me-2 text text-uppercase d-block d-md-none">
+        <span class="ps-2 ms-2 me-2 text d-block d-md-none fw-bold">
             @if ($user)
                 {{ $user->name }}
             @else
