@@ -27,11 +27,13 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         $ladderRules = $ladder->qmLadderRules;
 
         // Check if current player is an observer
-        $currentPlayerIsObserver = $this->qmPlayer->isObserver();
+        if($this->qmPlayer->isObserver()) {
+            // If yes, then we skip the matchup because we don't want to compare
+            // observer with other actual players to find a match.
+            // Observer will be added to the match later on.
+            return;
+        }
 
-        // If yes, then we skip the matchup because we don't want to compare
-        // observer with other actual players to find a match.
-        // Observer will be added to the match later on.
 
         // Fetch all other players in the queue
         $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
@@ -39,10 +41,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getMatchableOpponents($this->qmQueueEntry, $opponents)->shuffle();
 
-        // Count the number of players we need to start a match
-        $numberOfOpponentsNeeded = $currentPlayerIsObserver
-            ? $ladderRules->player_count // if the current player is an observer, we need to more players
-            : $ladderRules->player_count - 1; // if not, we need player count minus current player
+        $numberOfOpponentsNeeded = $ladderRules->player_count - 1;
 
         // Check if there is enough opponents
         if ($matchableOpponents->count() < $numberOfOpponentsNeeded) {
@@ -56,9 +55,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         $matchedOpponents = $matchableOpponents->take($numberOfOpponentsNeeded);
 
         // Get a collection with all actual players that will be matched together
-        if(!$currentPlayerIsObserver) {
-            $players = $matchedOpponents->concat([$this->qmQueueEntry]);
-        }
+        $players = $matchedOpponents->concat([$this->qmQueueEntry]);
 
         // Find maps common to all actual players
         $commonQmMaps = $this->quickMatchService->getCommonMapsForPlayers($ladder, $players);
@@ -74,7 +71,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
             return;
         }
 
-        // Add others observers to the match if there is any
+        // Add observers to the match if there is any
         $observers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver());
         if($observers->count() > 0) {
             $this->matchHasObservers = true;
