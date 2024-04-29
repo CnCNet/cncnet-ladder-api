@@ -1,7 +1,5 @@
 @extends('layouts.app')
 @section('title', 'Account')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
     <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">

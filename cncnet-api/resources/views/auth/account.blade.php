@@ -2,7 +2,6 @@
 @section('title', 'Account')
 @section('body-class', 'ladder-account')
 
-
 @section('feature')
     <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
         <x-slot name="title">Ladder Account</x-slot>

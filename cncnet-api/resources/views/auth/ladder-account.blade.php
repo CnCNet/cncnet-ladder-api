@@ -1,42 +1,32 @@
 @extends('layouts.app')
 @section('title', 'Ladder Account')
 @section('body-class', 'ladder-account')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($ladder->abbreviation))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($ladder->abbreviation))
 
 @section('feature')
-    <div class="feature pt-5 pb-5">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3">
-                        <strong class="fw-bold">{{ $ladder->name }}</strong>
-                    </h1>
-                    <p class="lead">
-                        Manage usernames for {{ $ladder->name }}.
-                    </p>
-                </div>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev($ladder->abbreviation) }}">
+        <x-slot name="title">{{ $ladder->name }} Usernames</x-slot>
+        <x-slot name="description">
+            Manage your usernames for {{ $ladder->name }}
+        </x-slot>
+
+        <div class="mini-breadcrumb d-none d-lg-flex">
+            <div class="mini-breadcrumb-item">
+                <a href="/">
+                    <span class="material-symbols-outlined">
+                        home
+                    </span>
+                </a>
             </div>
-            <div class="mini-breadcrumb d-none d-lg-flex">
-                <div class="mini-breadcrumb-item">
-                    <a href="/account">
-                        <span class="material-symbols-outlined icon pe-3">
-                            person
-                        </span>
-                        Manage Ladder Account
-                    </a>
-                </div>
-                <div class="mini-breadcrumb-item">
-                    <a href="">
-                        <span class="material-symbols-outlined icon">
-                            military_tech
-                        </span>
-                        Manage {{ $ladder->name }} Accounts
-                    </a>
-                </div>
+            <div class="mini-breadcrumb-item">
+                <a href="/account">
+                    <span class="material-symbols-outlined icon pe-3">
+                        person
+                    </span>
+                    Manage Ladder Account
+                </a>
             </div>
         </div>
-    </div>
+    </x-hero-with-video>
 @endsection
 
 @section('breadcrumb')

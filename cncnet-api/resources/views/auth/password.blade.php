@@ -16,6 +16,15 @@
     </div>
 @endsection
 
+@section('feature')
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">Reset your password</x-slot>
+        <x-slot name="description">
+            Enter your email address below to reset
+        </x-slot>
+    </x-hero-with-video>
+@endsection
+
 @section('content')
     <section>
         <div class="container">

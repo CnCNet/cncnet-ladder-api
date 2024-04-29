@@ -1,23 +1,15 @@
 @extends('layouts.app')
 @section('title', 'Ladder Email Verification')
 
-@section('cover')
-    /images/feature/feature-td.jpg
+@section('feature')
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">Verify your email</x-slot>
+        <x-slot name="description">
+            Click below to verify your email address
+        </x-slot>
+    </x-hero-with-video>
 @endsection
 
-@section('feature')
-    <div class="feature-background sub-feature-background">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-8 col-md-offset-2">
-                    <h1>
-                        Ladder Email Verification
-                    </h1>
-                </div>
-            </div>
-        </div>
-    </div>
-@endsection
 
 @section('content')
     <section class="light-texture game-detail supported-games" style="color: silver;">
