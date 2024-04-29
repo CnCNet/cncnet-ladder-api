@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="col-12 col-lg-6">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold"> {{ $clanCache->clan_name }}</strong> <br />
                         <span>{{ $history->ladder->name }}</span>
                     </h1>

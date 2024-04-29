@@ -6,7 +6,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Admin</span>
                     </h1>
@@ -52,7 +52,8 @@
                                                 <td>
                                                     {{ $manager->user->name }} {{ $manager->user->email }}
                                                 </td>
-                                                <td><button type="submit" name="submit" value="save" class="btn btn-sm btn-danger">Delete</button></td>
+                                                <td><button type="submit" name="submit" value="save" class="btn btn-sm btn-danger">Delete</button>
+                                                </td>
                                             </form>
                                         </tr>
                                     @endif
@@ -78,12 +79,13 @@
                         @foreach ($heapNames as $heapName)
                             <div class="heap-panel" style="margin-bottom: 0;border: 1px solid;background: black;">
                                 <div class="panel-header" id="headingFor{{ $heapName->name }}">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#accordianFor{{ $heapName->name }}" aria-expanded="true"
-                                        aria-controls="accordianFor{{ $heapName->name }}">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#accordianFor{{ $heapName->name }}"
+                                        aria-expanded="true" aria-controls="accordianFor{{ $heapName->name }}">
                                         {{ $heapName->description }} ({{ $heapName->name }})
                                     </button>
                                 </div>
-                                <table class="table collapse panel-body" id="accordianFor{{ $heapName->name }}" aria-labelledby="headingFor{{ $heapName->name }}" data-parent="#heapAccordian">
+                                <table class="table collapse panel-body" id="accordianFor{{ $heapName->name }}"
+                                    aria-labelledby="headingFor{{ $heapName->name }}" data-parent="#heapAccordian">
                                     <thead>
                                         <tr>
                                             <th>Index</th>
@@ -105,13 +107,20 @@
                                                 <input type="hidden" name="heap_name" value="{{ $heapName->name }}" />
 
                                                 <tr class="form-row heap">
-                                                    <td><input class="heap-control col-md-12" type="text" name="heap_id" value="{{ $cgo->heap_id }}" /></td>
-                                                    <td><input class="heap-control col-md-12" type="text" name="name" value="{{ $cgo->name }}" /></td>
-                                                    <td><input class="heap-control col-md-12" type="text" name="cameo" value="{{ $cgo->cameo }}" /></td>
-                                                    <td><input class="heap-control col-md-12" type="text" name="cost" value="{{ $cgo->cost }}" /></td>
-                                                    <td><input class="heap-control col-md-12" type="text" name="value" value="{{ $cgo->value }}" /></td>
-                                                    <td><input class="heap-control col-md-12" type="text" name="ui_name" value="{{ $cgo->ui_name }}" /></td>
-                                                    <td><button type="submit" name="save" class="btn btn-xs btn-primary heap" value="save">Save</button></td>
+                                                    <td><input class="heap-control col-md-12" type="text" name="heap_id"
+                                                            value="{{ $cgo->heap_id }}" /></td>
+                                                    <td><input class="heap-control col-md-12" type="text" name="name"
+                                                            value="{{ $cgo->name }}" /></td>
+                                                    <td><input class="heap-control col-md-12" type="text" name="cameo"
+                                                            value="{{ $cgo->cameo }}" /></td>
+                                                    <td><input class="heap-control col-md-12" type="text" name="cost"
+                                                            value="{{ $cgo->cost }}" /></td>
+                                                    <td><input class="heap-control col-md-12" type="text" name="value"
+                                                            value="{{ $cgo->value }}" /></td>
+                                                    <td><input class="heap-control col-md-12" type="text" name="ui_name"
+                                                            value="{{ $cgo->ui_name }}" /></td>
+                                                    <td><button type="submit" name="save" class="btn btn-xs btn-primary heap"
+                                                            value="save">Save</button></td>
                                                 </tr>
                                             </form>
                                             <?php $last_heap = $cgo->heap_id + 1; ?>
@@ -123,13 +132,16 @@
                                             <input type="hidden" name="heap_name" value="{{ $heapName->name }}" />
 
                                             <tr class="heap">
-                                                <td><input class="heap-control col-md-12" name="heap_id" type="text" value="{{ $last_heap }}" /></td>
+                                                <td><input class="heap-control col-md-12" name="heap_id" type="text"
+                                                        value="{{ $last_heap }}" /></td>
                                                 <td><input class="heap-control col-md-12" name="name" type="text" value="" /></td>
                                                 <td><input class="heap-control col-md-12" name="cameo" type="text" value="" /></td>
-                                                <td><input class="heap-control col-md-12" name="cost" name="cost" type="text" value="" /></td>
+                                                <td><input class="heap-control col-md-12" name="cost" name="cost" type="text"
+                                                        value="" /></td>
                                                 <td><input class="heap-control col-md-12" name="value" type="text" value="" /></td>
                                                 <td><input class="heap-control col-md-12" name="ui_name" type="text" value="" /></td>
-                                                <td><button type="submit" name="new" class="btn btn-xs btn-primary heap" value="save">Create</button></td>
+                                                <td><button type="submit" name="new" class="btn btn-xs btn-primary heap"
+                                                        value="save">Create</button></td>
                                             </tr>
                                         </form>
                                     </tbody>

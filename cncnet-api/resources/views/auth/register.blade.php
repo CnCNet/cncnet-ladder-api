@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">Register</strong>
                     </h1>
                     <p class="lead">
@@ -100,33 +100,29 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input id="emailAddress" type="email" class="form-control" name="email"
-                               value="{{ old('email') }}">
+                        <input id="emailAddress" type="email" class="form-control" name="email" value="{{ old('email') }}">
                         <label for="emailAddress">Email address</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input id="password" type="password" class="form-control" name="password"
-                               value="{{ old('password') }}">
+                        <input id="password" type="password" class="form-control" name="password" value="{{ old('password') }}">
                         <label for="password">Password</label>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input id="password_confirmation" type="password" class="form-control"
-                               name="password_confirmation"
-                               value="{{ old('password_confirmation') }}">
+                        <input id="password_confirmation" type="password" class="form-control" name="password_confirmation"
+                            value="{{ old('password_confirmation') }}">
                         <label for="password_confirmation">Password (confirmed)</label>
                     </div>
 
-                    <input type="hidden" name="play_nay"/>
+                    <input type="hidden" name="play_nay" />
 
                     <div class="form-group">
                         <div class="col-md-6 col-md-offset-4">
                             <p class="mb-2">
                                 <small>
                                     By registering and using the Quick Match software and related sites, you agree to
-                                    the CnCNet <a
-                                            href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp;
+                                    the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp;
                                         Conditions</a>
                                 </small>
                             </p>

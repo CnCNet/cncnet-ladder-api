@@ -29,7 +29,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <span>Popular Times To play</span>
                     </h1>
 
@@ -39,8 +39,8 @@
 
                     @if (!\Auth::user())
                         <div class="mt-4">
-                            <a class="btn btn--outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
-                            <a class="btn btn--outline-secondary btn-size-lg" href="/auth/login">Login</a>
+                            <a class="btn btn-outline-primary me-3 btn-size-lg" href="/auth/register">Register</a>
+                            <a class="btn btn-outline-secondary btn-size-lg" href="/auth/login">Login</a>
                         </div>
                     @endif
                 </div>
@@ -65,7 +65,7 @@
 
                 <p class="lead">
                     Below is a 24 hour graph showing what time of day is most popular to play ranked matches.
-                    <br/>
+                    <br />
                     Data is taken from the current and previous months ladder games.
                 </p>
 
@@ -86,8 +86,8 @@
         const data = {
             labels: labels,
             datasets: [
-                    <?php foreach ($games as $game => $data): ?>
-                        <?php $l = \App\Models\Ladder::where('abbreviation', $game)->first(); ?> {
+                <?php foreach ($games as $game => $data): ?>
+                <?php $l = \App\Models\Ladder::where('abbreviation', $game)->first(); ?> {
                     label: "{!! $l->name !!}",
                     data: {!! json_encode($data[0]) !!},
                     fill: true,

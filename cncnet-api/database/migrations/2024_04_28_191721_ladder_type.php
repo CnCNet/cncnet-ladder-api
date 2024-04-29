@@ -11,7 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('ladders', function (Blueprint $table) {
+        Schema::table('ladders', function (Blueprint $table)
+        {
             $table->enum('ladder_type', ['1vs1', '2vs2', 'clan_match'])->default('1vs1');
         });
 

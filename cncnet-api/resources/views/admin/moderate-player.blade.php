@@ -6,7 +6,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Admin</span>
                     </h1>
@@ -36,35 +36,35 @@
 
                 <div class="col-12 col-lg-5">
                     <a class="btn btn-sm btn-primary mb-2"
-                       href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::COOLDOWN1H }}">
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::COOLDOWN1H }}">
                         1 Hour Cooldown</a>
                     <a class="btn btn-sm btn-primary mb-2"
-                       href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::COOLDOWN2H }}">
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::COOLDOWN2H }}">
                         2 Hour Cooldown</a>
                     <a class="btn btn-sm btn-primary mb-2"
-                       href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::COOLDOWN4H }}">
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::COOLDOWN4H }}">
                         4 Hour
                         Cooldown</a>
                     <a class="btn btn-sm btn-primary mb-2"
-                       href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::COOLDOWN12H }}">
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::COOLDOWN12H }}">
                         12 Hour
                         Cooldown</a>
                     <a class="btn btn-sm btn-danger mb-2"
-                       href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::BAN48H }}">
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::BAN48H }}">
                         48 Hour Ban</a>
                     <a class="btn btn-sm btn-danger mb-2"
-                       href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::BAN1WEEK }}">
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::BAN1WEEK }}">
                         1 Week Ban</a>
                     <a class="btn btn-sm btn-danger mb-2"
-                       href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::BAN2WEEK }}">
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::BAN2WEEK }}">
                         2 Week Ban</a>
                     <a class="btn btn-sm btn-danger"
-                       href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::BAN_SHADOW }}">
+                        href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::BAN_SHADOW }}">
                         {{ \App\Models\Ban::typeToDescription(\App\Models\Ban::BAN_SHADOW) }}
                     </a>
                     @if (isset($mod) && $mod->isLadderAdmin($player->ladder))
                         <a class="btn btn-sm btn-danger"
-                           href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::PERMBAN }}">
+                            href="/admin/moderate/{{ $player->ladder->id }}/player/{{ $player->id }}/newban/{{ \App\Models\Ban::PERMBAN }}">
                             Indefinite Ban
                         </a>
                     @endif
@@ -79,8 +79,8 @@
                     <div class="player-achievements">
                         @if ($player->game_count >= 200)
                             <div>
-                                <img src="/images/badges/achievement-games.png" style="height:50px"/>
-                                <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br/>200+
+                                <img src="/images/badges/achievement-games.png" style="height:50px" />
+                                <h5 style="font-weight: bold; text-transform:uppercase; font-size: 10px;">Played <br />200+
                                     Games</h5>
                             </div>
                         @endif
@@ -116,64 +116,64 @@
                     <div class="table-responsive">
                         <table class="table col-md-12">
                             <thead>
-                            <tr>
-                                <th scope=" col">Admin</th>
-                                <th>Ban type</th>
-                                <th>Interal Notes</th>
-                                <th>Displayed Reason for ban</th>
-                                <th>IP</th>
-                                <th>Expiration</th>
-                                <th></th>
-                                <th></th>
-                            </tr>
+                                <tr>
+                                    <th scope=" col">Admin</th>
+                                    <th>Ban type</th>
+                                    <th>Interal Notes</th>
+                                    <th>Displayed Reason for ban</th>
+                                    <th>IP</th>
+                                    <th>Expiration</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
                             </thead>
                             <tbody class="table">
-                            @foreach ($bans as $ban)
-                                <tr>
-                                    <td>{{ $ban->admin->name }}</td>
-                                    <td>{{ $ban->typeDescription() }}</td>
-                                    <td>{{ $ban->internal_note }}</td>
-                                    <td>{{ $ban->plubic_reason }}</td>
-                                    <td>
-                                        @if ($ban->ip && $mod->isLadderAdmin($player->ladder))
-                                            {{ $ban->ip->address }}
-                                        @else
-                                            Hidden
-                                        @endif
-                                    </td>
+                                @foreach ($bans as $ban)
+                                    <tr>
+                                        <td>{{ $ban->admin->name }}</td>
+                                        <td>{{ $ban->typeDescription() }}</td>
+                                        <td>{{ $ban->internal_note }}</td>
+                                        <td>{{ $ban->plubic_reason }}</td>
+                                        <td>
+                                            @if ($ban->ip && $mod->isLadderAdmin($player->ladder))
+                                                {{ $ban->ip->address }}
+                                            @else
+                                                Hidden
+                                            @endif
+                                        </td>
 
-                                    @if ($ban->expires === null || $ban->expires->eq(\App\Models\Ban::unstartedBanTime()))
-                                        <td>Not Started</td>
+                                        @if ($ban->expires === null || $ban->expires->eq(\App\Models\Ban::unstartedBanTime()))
+                                            <td>Not Started</td>
+                                            <td>
+                                                <form method="POST"
+                                                    action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                    <input type="hidden" name="start_or_end" value="1">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Start</button>
+                                                </form>
+                                            </td>
+                                        @elseif ($ban->expires !== null && $ban->expires->gt(\Carbon\Carbon::now()))
+                                            <td>{{ $ban->expires }}</td>
+                                            <td>
+                                                <form method="POST"
+                                                    action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                    <input type="hidden" name="start_or_end" value="1">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Stop</button>
+                                                </form>
+                                            </td>
+                                        @else
+                                            <td>{{ $ban->expires }}</td>
+                                            <td></td>
+                                        @endif
                                         <td>
-                                            <form method="POST"
-                                                  action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
-                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="hidden" name="start_or_end" value="1">
-                                                <button type="submit" class="btn btn-danger btn-sm">Start</button>
-                                            </form>
+                                            <a href="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}"
+                                                class="btn btn-sm">
+                                                Edit
+                                            </a>
                                         </td>
-                                    @elseif ($ban->expires !== null && $ban->expires->gt(\Carbon\Carbon::now()))
-                                        <td>{{ $ban->expires }}</td>
-                                        <td>
-                                            <form method="POST"
-                                                  action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
-                                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                <input type="hidden" name="start_or_end" value="1">
-                                                <button type="submit" class="btn btn-danger btn-sm">Stop</button>
-                                            </form>
-                                        </td>
-                                    @else
-                                        <td>{{ $ban->expires }}</td>
-                                        <td></td>
-                                    @endif
-                                    <td>
-                                        <a href="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}"
-                                           class="btn btn-sm">
-                                            Edit
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -187,8 +187,7 @@
         <div class="modal-dialog modal-md" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h3 class="modal-title">Edit Alert</h3>
                 </div>
                 <div class="modal-body clearfix">
@@ -196,19 +195,17 @@
                         <div class="row">
                             <div class="col-md-12 player-box player-card">
                                 <form method="POST" action="{{ $player->id }}/alert">
-                                    <input type="hidden" name="_token" value="{{ csrf_token() }}"/>
-                                    <input type="hidden" id="alertId" name="id" value=""/>
-                                    <input type="hidden" name="player_id" value="{{ $player->id }}"/>
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}" />
+                                    <input type="hidden" id="alertId" name="id" value="" />
+                                    <input type="hidden" name="player_id" value="{{ $player->id }}" />
                                     <div class="form-group">
                                         <label for="alertText">Alert Text</label>
-                                        <textarea id="alertText" name="message" class="form-control" rows="4"
-                                                  cols="50"></textarea>
+                                        <textarea id="alertText" name="message" class="form-control" rows="4" cols="50"></textarea>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="alertDate">Expiration</label>
-                                        <input type="text" id="alertDate" name="expires_at"
-                                               class="form-control"></input>
+                                        <input type="text" id="alertDate" name="expires_at" class="form-control"></input>
                                     </div>
                                     <button type="submit" name="submit" value="update" class="btn btn-primary btn-md">
                                         Save
@@ -232,11 +229,11 @@
     <script type="text/javascript">
         let playerAlerts = {
             @foreach ($player->alerts as $alert)
-            "{{ $alert->id }}": {
-                "id": "{{ $alert->id }}",
-                "message": {!! json_encode($alert->message) !!},
-                "expires_at": "{{ $alert->expires_at }}"
-            },
+                "{{ $alert->id }}": {
+                    "id": "{{ $alert->id }}",
+                    "message": {!! json_encode($alert->message) !!},
+                    "expires_at": "{{ $alert->expires_at }}"
+                },
             @endforeach
             "new": {
                 "id": "new",
@@ -245,25 +242,25 @@
             }
         };
 
-        $(function () {
+        $(function() {
             $("#alertDate").datepicker({
                 format: 'yyyy-mm-dd',
                 startDate: "{{ \Carbon\Carbon::now()->addDay(1) }}"
             });
         });
 
-        document.getElementById("alertList").onchange = function () {
+        document.getElementById("alertList").onchange = function() {
             document.getElementById("alertId").value = playerAlerts[this.value]["id"];
             document.getElementById("alertText").innerHTML = playerAlerts[this.value]["message"];
             document.getElementById("alertText").value = playerAlerts[this.value]["message"];
             document.getElementById("alertDate").value = playerAlerts[this.value]["expires_at"];
         };
 
-        (function () {
+        (function() {
             if (document.getElementById("alertList").value === '')
                 document.getElementById("alertList").selectedIndex = 0;
 
-            window.addEventListener('load', function () {
+            window.addEventListener('load', function() {
                 document.getElementById("alertList").onchange();
             });
         })();

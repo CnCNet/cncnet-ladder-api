@@ -1,49 +1,13 @@
-// 
-// Fonts
-$font-roboto: 'Roboto', sans-serif;
-$font-oswald: 'Oswald', sans-serif;
+$font-primary: "Noto Sans", sans-serif;
 
-%font-primary-light
-{
-    font-family: $font-roboto;
-    font-weight: 300;
+%font-primary-regular {
+    font-family: $font-primary;
+    font-weight: normal;
+    font-style: normal;
 }
 
-%font-primary
-{
-    font-family: $font-roboto;
-}
-
-%font-primary-bold
-{
-    font-family: $font-roboto;
+%font-primary-bold {
+    font-family: $font-primary;
     font-weight: 700;
-}
-
-%font-secondary-light
-{
-    font-family: $font-oswald;
-    font-weight: 200;
-}
-
-%font-secondary 
-{
-    font-family: $font-oswald;
-    font-weight: 300;
-}
-
-.font-secondary 
-{
-    @extend %font-secondary;
-}
-
-%font-secondary-bold
-{
-    font-family: $font-oswald;
-    font-weight: 500;
-}
-
-.font-secondary-bold
-{
-    @extend %font-secondary-bold;
+    font-style: normal;
 }

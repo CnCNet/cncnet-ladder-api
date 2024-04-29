@@ -8,12 +8,11 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $gameMode }}/logo.png" alt="logo"
-                         class="d-block img-fluid me-lg-0 ms-lg-auto"/>
+                    <img src="/images/games/{{ $gameMode }}/logo.png" alt="logo" class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">Ladder</strong> <span>ELO Ratings</span>
                     </h1>
 
@@ -231,7 +230,7 @@
                 <div class="mb-5">
                     @foreach ($gameModes as $k => $gm)
                         <a href="?list={{ $index }}&mode={{ $gameModesShort[$k] }}"
-                           class="btn {{ $gameModesShort[$k] == $gameMode ? 'btn-primary' : 'btn-secondary' }}">{{ $gm }}</a>
+                            class="btn {{ $gameModesShort[$k] == $gameMode ? 'btn-primary' : 'btn-secondary' }}">{{ $gm }}</a>
                     @endforeach
                 </div>
 
@@ -239,102 +238,99 @@
                 <div class="mb-5">
                     @foreach ($links as $k => $link)
                         <a href="?list={{ $k }}&mode={{ $gameMode }}"
-                           class="btn {{ $k == $index ? 'btn-primary' : 'btn-secondary' }}">{{ $link }}</a>
+                            class="btn {{ $k == $index ? 'btn-primary' : 'btn-secondary' }}">{{ $link }}</a>
                     @endforeach
                 </div>
 
                 <div class="table-responsive">
-                    <table id="ratings"
-                           style="border-collapse: collapse; width: 100%; margin-left: auto; margin-right: auto;"
-                           class="table">
+                    <table id="ratings" style="border-collapse: collapse; width: 100%; margin-left: auto; margin-right: auto;" class="table">
                         <tbody>
-                        <tr>
-                            <td colspan="6" style="border: 0px;"></td>
-                            <td colspan="3" style="text-align:center;font-weight: normal;font-size: 14px;">
-                                <img src="/images/game-icons/iraq.png" height="24px" style="vertical-align: middle;">
-                                <span style="vertical-align: middle;">
+                            <tr>
+                                <td colspan="6" style="border: 0px;"></td>
+                                <td colspan="3" style="text-align:center;font-weight: normal;font-size: 14px;">
+                                    <img src="/images/game-icons/iraq.png" height="24px" style="vertical-align: middle;">
+                                    <span style="vertical-align: middle;">
                                         Soviet
                                     </span>
-                            </td>
-                            <td colspan="3" style="text-align:center;font-weight: normal;font-size: 14px;">
-                                <img src="/images/game-icons/america.png" height="24px" style="vertical-align: middle;">
-                                <span style="vertical-align: middle;">
+                                </td>
+                                <td colspan="3" style="text-align:center;font-weight: normal;font-size: 14px;">
+                                    <img src="/images/game-icons/america.png" height="24px" style="vertical-align: middle;">
+                                    <span style="vertical-align: middle;">
                                         Allied
                                     </span>
-                            </td>
-                            <td class="optional" colspan="3"
-                                style="text-align:center;font-weight: normal;font-size: 14px;">
-                                <img src="/images/game-icons/yuri.png" height="24px" style="vertical-align: middle;">
-                                <span style="vertical-align: middle;">
+                                </td>
+                                <td class="optional" colspan="3" style="text-align:center;font-weight: normal;font-size: 14px;">
+                                    <img src="/images/game-icons/yuri.png" height="24px" style="vertical-align: middle;">
+                                    <span style="vertical-align: middle;">
                                         Yuri
                                     </span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th style="width:100px">#</th>
-                            <th>Name</th>
-                            <th>Status</th>
-                            <th>Elo</th>
-                            <th>Deviation</th>
-                            <th>Games</th>
-                            <th>Elo</th>
-                            <th>Deviation</th>
-                            <th>Games</th>
-                            <th>Elo</th>
-                            <th>Deviation</th>
-                            <th>Games</th>
-                            <th class="optional">Elo</th>
-                            <th class="optional">Deviation</th>
-                            <th class="optional">Games</th>
-                        </tr>
-
-                        @foreach ($data as $value)
-                            <tr>
-                                <td>{{ $value['rank'] }}</td>
-                                <td>{{ $value['name'] }}</td>
-                                <td>{{ $value['status'] }}</td>
-
-                                @if ($value['elo'] < 0)
-                                    <td>{{ $value['mix_elo'] }}</td>
-                                    <td>{{ $value['mix_deviation'] }}</td>
-                                    <td>{{ $value['mix_games'] }}</td>
-                                @else
-                                    <td>{{ $value['elo'] }}</td>
-                                    <td>{{ $value['deviation'] }} </td>
-                                    <td>{{ $value['game_count'] }}</td>
-                                @endif
-
-                                @if (array_key_exists('sov_games', $value))
-                                    <td>{{ $value['sov_elo'] }}</td>
-                                    <td>{{ $value['sov_deviation'] }}</td>
-                                    <td>{{ $value['sov_games'] }}</td>
-                                @else
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                @endif
-
-                                @if (array_key_exists('all_games', $value))
-                                    <td>{{ $value['all_elo'] }}</td>
-                                    <td>{{ $value['all_deviation'] }}</td>
-                                    <td>{{ $value['all_games'] }}</td>
-                                @else
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                @endif
-
-                                @if (array_key_exists('yur_games', $value))
-                                    <td>{{ $value['yur_elo'] }}</td>
-                                    <td>{{ $value['yur_deviation'] }}</td>
-                                    <td>{{ $value['yur_games'] }}</td>
-                                @else
-                                    <td class="optional"></td>
-                                    <td class="optional"></td>
-                                    <td class="optional"></td>
-                                @endif
+                                </td>
                             </tr>
-                        @endforeach
+                            <tr>
+                                <th style="width:100px">#</th>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Elo</th>
+                                <th>Deviation</th>
+                                <th>Games</th>
+                                <th>Elo</th>
+                                <th>Deviation</th>
+                                <th>Games</th>
+                                <th>Elo</th>
+                                <th>Deviation</th>
+                                <th>Games</th>
+                                <th class="optional">Elo</th>
+                                <th class="optional">Deviation</th>
+                                <th class="optional">Games</th>
+                            </tr>
+
+                            @foreach ($data as $value)
+                                <tr>
+                                    <td>{{ $value['rank'] }}</td>
+                                    <td>{{ $value['name'] }}</td>
+                                    <td>{{ $value['status'] }}</td>
+
+                                    @if ($value['elo'] < 0)
+                                        <td>{{ $value['mix_elo'] }}</td>
+                                        <td>{{ $value['mix_deviation'] }}</td>
+                                        <td>{{ $value['mix_games'] }}</td>
+                                    @else
+                                        <td>{{ $value['elo'] }}</td>
+                                        <td>{{ $value['deviation'] }} </td>
+                                        <td>{{ $value['game_count'] }}</td>
+                                    @endif
+
+                                    @if (array_key_exists('sov_games', $value))
+                                        <td>{{ $value['sov_elo'] }}</td>
+                                        <td>{{ $value['sov_deviation'] }}</td>
+                                        <td>{{ $value['sov_games'] }}</td>
+                                    @else
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    @endif
+
+                                    @if (array_key_exists('all_games', $value))
+                                        <td>{{ $value['all_elo'] }}</td>
+                                        <td>{{ $value['all_deviation'] }}</td>
+                                        <td>{{ $value['all_games'] }}</td>
+                                    @else
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    @endif
+
+                                    @if (array_key_exists('yur_games', $value))
+                                        <td>{{ $value['yur_elo'] }}</td>
+                                        <td>{{ $value['yur_deviation'] }}</td>
+                                        <td>{{ $value['yur_games'] }}</td>
+                                    @else
+                                        <td class="optional"></td>
+                                        <td class="optional"></td>
+                                        <td class="optional"></td>
+                                    @endif
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

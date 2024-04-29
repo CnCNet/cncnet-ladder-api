@@ -1,137 +1,242 @@
-.navbar 
-{
-    position: absolute;
-    font-family: $font-oswald;
-    background: #030304;
+$navbarDropdownBackground: #181818;
+$offCanvasBreakpoint: $xl-width;
 
-    @media(max-width: $lg-width)
-    {
-        padding: 0.5rem;
-    }
+.navbar {
+    --bs-nav-link-font-size: 0.95rem;
+    --bs-navbar-color: #fff;
+    padding: 0;
+    transform: translateY(0);
+    transition-duration: 350ms;
+    transition-timing-function: ease-in-out;
 
-    @media(min-width: $lg-width)
-    {
-        background: linear-gradient(180deg, rgb(0 0 0), transparent);
-    }
-}
-
-.navbar ul.dropdown-menu li:nth-child(1) .dropdown-header 
-{
     padding-top: 0.5rem;
-}
+    padding-bottom: 0.5rem;
 
-.navbar .dropdown-toggle::after
-{
-    color: #fefeff;
-}
-
-.navbar .nav-item .nav-link 
-{
-    color: #fff;
-    text-shadow: 0px 1px #0000005e;
-    font-weight: 500;
-    transition: ease 350ms;
-
-    // Dropdown chevron
-    &:after
-    {
-        color: #ececec;
-    }
-
-    &:hover 
-    {
-        color: $primary;
-        &:after 
-        {
-            color: $primary;
-        }
+    @media (min-width: $xxxxl-width) {
+        --bs-nav-link-font-size: 1.1rem;
     }
 }
 
-.navbar .dropdown-menu a:hover
-{
-    color: $primary;
+body,
+.navbar {
+    padding-right: 0 !important;
 }
 
-
-@media(max-width: $lg-width)
-{
-    .navbar .nav-item
-    {
-        width: 100%;
-        padding: 1rem;
+.navbar.not-top {
+    background: rgb(0 0 0);
+    &:before {
+        content: none;
     }
 }
 
-@media(min-width: $lg-width)
-{
-    .navbar .nav-item 
-    {
-        font-size: 1.1rem;
-        padding: 1rem;
+.navbar:before {
+    content: "";
+    background: linear-gradient(180deg, #000000c2, transparent);
+    width: 100%;
+    height: 85px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: -1;
+}
+
+.navbar.scrolling {
+    transition-property: background, transform;
+    transform: translateY(-100%);
+}
+
+.navbar .nav-item {
+    padding: 0 0.8rem;
+    @media (min-width: $xxl-width) {
+        padding-left: 1rem;
+        padding-right: 1rem;
     }
+}
 
-    .nav-item .icon 
-    {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        background: #0e101836;
-        border-radius: 100%;
+// Top level main nav-links
+.navbar .nav-link.show {
+    color: $color-green;
+}
+
+@media (min-width: $md-width) {
+    .navbar .nav-link {
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
     }
 }
 
-// Stops js jumping
-.navbar .nav-item .online 
-{
-    min-width: 40px;
+.navbar-main .nav-link {
+    font-weight: bold;
+    --bs-nav-link-hover-color: #{$color-green};
+
+    @media (min-width: $offCanvasBreakpoint) {
+        text-transform: uppercase;
+    }
 }
 
-.nav-item .icon
-{
-    max-width: 50px;
-    overflow: hidden;
+.navbar-main .nav-link.highlight {
+    color: #{$color-green};
 }
 
-body.loaded .nav-item .icon 
-{
+.navbar-main .navbar-brand {
+    display: flex;
+    width: 220px;
+    height: 40px;
+    padding: 0;
+
+    @media (min-width: $xl-width) {
+        margin-right: 1.5rem;
+        width: 220px;
+        height: 40px;
+    }
+    @media (min-width: $xxxxl-width) {
+        margin-right: 2.5rem;
+    }
+}
+
+.navbar-main .navbar-brand img {
     max-width: 100%;
-    overflow: visible;
+    @media (min-width: $lg-width) {
+        max-width: unset;
+    }
 }
 
-.navbar .dropdown-header 
-{
-    font-family: $font-oswald;
-    color: #cbcbcb;
+.navbar-main .dropdown-menu {
+    --bs-dropdown-bg: #{$navbarDropdownBackground};
+    --bs-dropdown-min-width: 13rem;
+    --bs-dropdown-border-radius: 4px;
+    --bs-dropdown-border-color: rgb(41 40 40);
+    transition: all ease 350ms;
+    margin-top: 0;
+    border: 0;
     padding-bottom: 1rem;
-    padding-top: 1.5rem;
-    font-size: 1rem;
-    font-weight: 500;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
 }
 
-.navbar .dropdown-menu 
-{
-    background: #0e1116;
-    padding: 1rem;
-    min-width: 250px;
-    max-width: 100%;
-    transition: 250ms ease all;
+.navbar-main .dropdown-item {
+    transition: ease-in-out 150ms all;
+    --bs-link-hover-color-rgb: transparent;
+    --bs-dropdown-link-hover-color: white;
+    --bs-dropdown-link-hover-bg: transparent;
+    --bs-dropdown-link-active-bg: transparent;
+    font-size: 0.95rem;
+    padding: 0.5rem 0rem;
+    transition: ease 350ms all;
 
-    .dropdown-item 
-    {
-        padding: 0.2rem 1rem;
+    &:hover {
+        color: $color-green;
+        background-color: #00000057;
         border-radius: 4px;
-        font-size: 1rem;
-        text-transform: uppercase;
+    }
+}
+
+@media (max-width: $offCanvasBreakpoint) {
+    .navbar-main .navbar-nav .dropdown-menu {
+        position: static !important;
+    }
+}
+
+@media (min-width: $offCanvasBreakpoint) {
+    // Multi column dropdown
+    .navbar-main .dropdown-menu.columns-2 {
+        min-width: 600px;
     }
 
-    .nav-title 
-    {
-        padding: 1rem;
-        text-transform: uppercase;
-        font-weight: 600;
-        color: #7e818b;
+    .navbar-main .dropdown-menu.columns-3 {
+        min-width: 850px;
+    }
+}
+
+.navbar-main .dropdown-menu .dropdown-label-item {
+    font-weight: 600;
+    color: #ffffff;
+    border-bottom: 1px solid #2d2d2d;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    height: 80px;
+}
+
+.navbar-main .dropdown-menu .dropdown-label-item-description {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: #818181;
+}
+
+// Hover fx
+.navbar-main .navbar-nav .dropdown-menu.show {
+    animation: fadeInDown 450ms forwards;
+    opacity: 0;
+
+    @media (min-width: $offCanvasBreakpoint) {
+        top: 80px;
+    }
+}
+
+@keyframes fadeInDown {
+    from,
+    60%,
+    75%,
+    90%,
+    to {
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+
+    0% {
+        opacity: 0;
+        transform: translate3d(0, 0%, 0);
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    to {
+        transform: translate3d(0, 10px, 0);
+        opacity: 1;
+    }
+}
+
+.navbar-main .game-icon-label {
+    margin-left: 1rem;
+}
+
+.navbar .live-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.navbar .live-count-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 30px;
+    height: 20px;
+    background: #00ab1e;
+    color: white;
+    font-weight: bold;
+    border-radius: 11px;
+    font-size: 10px;
+    text-align: center;
+    font-weight: 800;
+    top: -5px;
+    right: -5px;
+}
+
+.navbar .nav-hide-xl {
+    display: flex;
+    @media (min-width: $xxl-width) {
+        display: none;
+    }
+    @media (min-width: $xxxl-width) {
+        display: flex;
     }
 }

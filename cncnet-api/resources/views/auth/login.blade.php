@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder Login</span>
                     </h1>
@@ -89,15 +89,13 @@
                         @endif
 
                         <div class="form-floating mb-3">
-                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-                                   name="email"
-                                   value="{{ old('email') }}">
+                            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" name="email"
+                                value="{{ old('email') }}">
                             <label for="floatingInput">Email address</label>
                         </div>
 
                         <div class="form-floating mb-3">
-                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
-                                   name="password">
+                            <input type="password" class="form-control" id="floatingPassword" placeholder="Password" name="password">
                             <label for="floatingPassword">Password</label>
                         </div>
 

@@ -5,35 +5,22 @@
 @section('page-body-class', $history->ladder->abbreviation)
 
 @section('feature')
-    <div class="feature">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12 col-lg-6">
-                    <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}"
-                        class="d-block img-fluid me-lg-0 ms-lg-auto" />
-                </div>
+    <x-hero-split>
+        <x-slot name="subpage">true</x-slot>
+        <x-slot name="video">{{ \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation) }}</x-slot>
+        <x-slot name="title">
+            <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
+            <span>Ladder Rankings</span>
+        </x-slot>
 
-                <div class="col-12 col-lg-6">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
-                        <strong class="fw-bold">{{ $history->ladder->name }}</strong> <br />
-                        <span>Ladder Rankings</span>
-                    </h1>
+        <x-slot name="description">
+            Compete in <strong>1vs1</strong> or <strong>2vs2</strong> ranked matches with players all over the world.
+        </x-slot>
 
-                    <p class="lead text-uppercase">
-                        <small>{{ $history->starts->format('F Y') }} -
-                            <strong>
-                                @if ($history->ladder->clans_allowed)
-                                    2 vs 2 Ranked Match
-                                @else
-                                    1 vs 1 Ranked Match
-                                @endif
-                            </strong>
-                        </small>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
+        <x-slot name="logo">
+            <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}" />
+        </x-slot>
+    </x-hero-split>
 @endsection
 
 @section('breadcrumb')
@@ -84,12 +71,12 @@
             @if ($history->ladder->abbreviation == 'blitz')
                 <section class="useful-links d-md-flex mt-4">
                     <div class="me-3">
-                        <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-primary btn-size-md" target="_blank">
+                        <a href="https://youtu.be/n_xWvNxO55c" class="btn btn-secondary btn-size-md" target="_blank">
                             <i class="bi bi-youtube pe-2"></i> How-To Play Blitz Online
                         </a>
                     </div>
                     <div>
-                        <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-primary btn-size-md" target="_blank">
+                        <a href="https://youtu.be/EPDCaucx5qA" class="btn btn-secondary btn-size-md" target="_blank">
                             <i class="bi bi-youtube pe-2"></i> Tips & Tricks - New Blitz Players
                         </a>
                     </div>

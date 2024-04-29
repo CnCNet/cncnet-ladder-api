@@ -1,0 +1,60 @@
+.nav-overlay.visible {
+    position: fixed;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: linear-gradient(118deg, rgba(63, 81, 181, 0.8784313725), #2122f3);
+    z-index: 100;
+    transition: ease 0.25s all;
+    animation: 0.25s navOverlayVisible forwards;
+}
+
+.mobile-menu-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    padding: 1rem;
+}
+
+.mobile-menu-container .mobile-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.mobile-menu-container .navbar-link {
+    font-size: 1.2rem;
+    padding: 1rem;
+    transition: ease-in-out all 0.15s;
+    color: #fff;
+}
+
+.mobile-menu-container .nav-overlay .navbar-link {
+    text-align: center;
+    width: 100%;
+    font-size: 1.6rem;
+}
+
+.mobile-menu-container .social-links {
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-menu-container .hamburger {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.offcanvas .offcanvas-logo img {
+    width: 150px;
+}

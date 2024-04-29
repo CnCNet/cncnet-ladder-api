@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold">CnCNet</strong>
                         <span>Ladder News</span>
                     </h1>
@@ -87,9 +87,8 @@
 
                         @if ($newsItem->getFeaturedImagePath())
                             <div class="image mt-2 mb-2" style="width:300px; overflow:hidden">
-                                <img src="{{ $newsItem->getFeaturedImagePath() }}"
-                                     alt="Featured news image for {{ $newsItem->title }}"
-                                     style="max-width:100%"/>
+                                <img src="{{ $newsItem->getFeaturedImagePath() }}" alt="Featured news image for {{ $newsItem->title }}"
+                                    style="max-width:100%" />
                             </div>
                         @endif
 

@@ -1,0 +1,90 @@
+.btn {
+    transition: all ease 350ms;
+}
+
+.btn-primary {
+    // --#{$prefix}btn-padding-x: #{$btn-padding-x};
+    // --#{$prefix}btn-padding-y: #{$btn-padding-y};
+    // --#{$prefix}btn-font-family: #{$btn-font-family};
+    // @include rfs($btn-font-size, --#{$prefix}btn-font-size);
+    --#{$prefix}btn-font-weight: 800;
+    --#{$prefix}btn-border-width: 2px;
+    // --#{$prefix}btn-line-height: #{$btn-line-height};
+    // --#{$prefix}btn-color: #fff;
+    // --#{$prefix}btn-hover-color: #fff;
+    // --#{$prefix}btn-bg: transparent;
+    --#{$prefix}btn-hover-bg: transparent;
+    --#{$prefix}btn-active-bg: transparent;
+    --#{$prefix}btn-active-color: $primary;
+    // --#{$prefix}btn-border-radius: #{$btn-border-radius};
+    // --#{$prefix}btn-box-shadow: #{$btn-box-shadow};
+    // --#{$prefix}btn-disabled-opacity: #{$btn-disabled-opacity};
+    // --#{$prefix}btn-focus-box-shadow: 0 0 0 #{$btn-focus-width} rgba(var(--#{$prefix}btn-focus-shadow-rgb), .5);
+
+    &:hover,
+    &:focus-visible {
+        border-color: $primary;
+        color: $primary;
+    }
+}
+
+.btn-outline-primary {
+    background: transparent;
+    --#{$prefix}btn-font-weight: 800;
+    --#{$prefix}btn-border-width: 2px;
+    --#{$prefix}btn-active-bg: $primary;
+    --#{$prefix}btn-active-color: $primary;
+
+    &:active {
+        color: $primary !important;
+    }
+}
+
+.btn-secondary {
+    @extend .btn-outline-secondary;
+}
+
+.btn-outline-secondary {
+    background: #00ffd007;
+    --#{$prefix}btn-font-weight: 800;
+    --#{$prefix}btn-border-width: 2px;
+    --#{$prefix}btn-active-bg: $secondary;
+    --#{$prefix}btn-active-color: $secondary;
+    &:active {
+        color: $secondary !important;
+    }
+    &:hover {
+        background: #00ffd025;
+        color: lighten($secondary, 10%);
+    }
+}
+
+.btn-lg {
+    --bs-btn-padding-y: 0.75rem;
+    --bs-btn-padding-x: 1rem;
+    --bs-btn-font-size: 1.05rem;
+
+    @media (min-width: $lg-width) {
+        --bs-btn-padding-y: 1.05rem;
+        --bs-btn-padding-x: 2.1rem;
+        --bs-btn-font-size: 1.25rem;
+    }
+
+    @media (min-width: $xxxxl-width) {
+        --bs-btn-padding-y: 1.1rem;
+        --bs-btn-padding-x: 2.2rem;
+        --bs-btn-font-size: 1.3rem;
+    }
+}
+
+.dropdown-menu {
+    --bs-dropdown-bg: #181818;
+    --bs-dropdown-min-width: 13rem;
+    --bs-dropdown-border-radius: 4px;
+    --bs-dropdown-border-color: rgb(41 40 40);
+    --bs-dropdown-link-active-color: #fff;
+    --bs-dropdown-link-active-bg: transparent;
+    padding: 1rem;
+    --bs-dropdown-link-hover-bg: #0000003a;
+    --bs-dropdown-link-hover-color: #{$color-green};
+}

@@ -1,109 +1,147 @@
-<footer>
+<footer class="footer">
     <div class="container">
         <div class="row">
-            <div class="col-md-4">
-                <h3><strong>{{ trans('footer.footer_games') }}</strong></h3>
-                <ul class="list-unstyled">
-                    <li><a href="//cncnet.org/command-and-conquer">Command &amp; Conquer</a></li>
-                    <li><a href="//cncnet.org/red-alert">Red Alert</a></li>
-                    <li><a href="//cncnet.org/dune-2000">Dune 2000</a></li>
-                    <li><a href="//cncnet.org/tiberian-sun">Tiberian Sun</a></li>
-                    <li><a href="//cncnet.org/red-alert-2">Red Alert 2</a></li>
-                    <li><a href="//cncnet.org/yuris-revenge">Yuri's Revenge</a></li>
-                    <li><a href="//cncnet.org/renegade">Renegade</a></li>
-                    <li><a href="//cncnet.org/dawn-of-the-tiberium-age">Dawn of the Tiberium Age</a></li>
-                    <li><a href="//cncnet.org/mental-omega">Mental Omega</a></li>
-                    <li><a href="//cncnet.org/twisted-insurrection">Twisted Insurrection</a></li>
-                </ul>
+            <div class="col-12 col-sm-6 col-xl-3 mb-5 mb-xl-0">
+                <h3 class="fw-bold">C&amp;C Games</h3>
+
+                {{-- @foreach (\App\Helpers\SiteHelper::getCnCNetSupportedCnCGames() as $game)
+                    <a class="footer-link d-flex text-decoration-none" href="{{ $game->gamePage->page->slug }}">
+                        <span class="game-icon game-icon-sm {{ $game->abbreviation }} me-2"
+                            style="background-image:url('{{ Storage::url($game->icon_path) }}')"></span>
+                        <span class="fw-bold me-3 game-icon-label">{{ $game->short_name }}</span>
+                    </a>
+                @endforeach --}}
+
             </div>
 
-            <div class="col-md-4">
-                <h3><strong>{{ trans('footer.footer_support') }}</strong></h3>
-                <ul class="list-unstyled">
-                    <li><a href="//forums.cncnet.org" title="{{ trans('footer.footer_support') }}">{{ trans('footer.footer_support') }}</a></li>
-                    <li><a href="http://ladder.cncnet.org/news/clan-ladder" title="Developers">Clan Ladder Announcement</a></li>
-                    <li><a href="https://discord.gg/aJRJFe5" title="{{ trans('footer.footer_discord') }}"
-                            target="_blank">{{ trans('footer.footer_discord') }}</a></li>
-                </ul>
+            <div class="col-12 col-sm-6 col-xl-3 mb-5 mb-xl-0">
+                <h3>C&amp;C Mods</h3>
+
+                {{-- @foreach (\App\Helpers\SiteHelper::getCnCNetSupportedMods() as $game)
+                    <a class="footer-link d-flex text-decoration-none" href="{{ $game->gamePage->page->slug }}">
+                        <span class="game-icon game-icon-sm {{ $game->abbreviation }} me-2"
+                            style="background-image:url('{{ Storage::url($game->icon_path) }}')"></span>
+                        <span class="fw-bold me-3 game-icon-label">{{ $game->short_name }}</span>
+                    </a>
+                @endforeach --}}
             </div>
 
-            <div class="col-md-4">
-                <h3><strong>{{ trans('footer.footer_support_us') }}</strong></h3>
-                <p>{{ trans('footer.footer_support_us_description') }}</p>
+            <div class="col-12 mt-sm-5 mt-md-0 col-sm-6 col-xl-3 mb-5 mb-xl-0">
+                <h3 class="fw-bold">Repair Bay</h3>
 
-                <div class="social">
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/discord" title="Discord">
+                    <span class="game-icon game-icon-sm d-flex align-items-center">
+                        <i class="bi bi-discord"></i>
+                    </span>
+                    <span class="fw-bold me-3 game-icon-label">CnCNet Discord</span>
+                </a>
+
+                <a class="footer-link d-flex text-decoration-none" href="https://forums.cncnet.org" title="Forums">
+                    <span class="game-icon game-icon-sm d-flex align-items-center">
+                        <i class="bi bi-chat-left"></i>
+                    </span>
+                    <span class="fw-bold me-3 game-icon-label">Forums</span>
+                </a>
+
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/faq" title="FAQs">
+                    <span class="game-icon game-icon-sm d-flex align-items-center">
+                        <i class="bi bi-patch-question"></i>
+                    </span>
+                    <span class="fw-bold me-3 game-icon-label">FAQs</span>
+                </a>
+
+                <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/status" title="Status">
+                    <span class="game-icon game-icon-sm d-flex align-items-center">
+                        <i class="bi bi-patch-question"></i>
+                    </span>
+                    <span class="fw-bold me-3 game-icon-label">CnCNet Status</span>
+                </a>
+            </div>
+
+            <div class="col-12 mt-sm-5 mt-md-0 col-sm-6 col-xl-3">
+                <h3 class="fw-bold">Support Us</h3>
+                <p>By following and sharing our pages, you're spreading the news that C&amp;C is still alive!</p>
+
+                <div class="d-flex flex-wrap">
                     <div>
-                        <a href="https://facebook.com/cncnet" title="Follow CnCNet on Facebook" target="_blank">
+                        <a href="http://facebook.com/cncnet" title="Follow CnCNet on Facebook" target="_blank" class="footer-social-link">
                             <i class="bi bi-facebook"></i>
                         </a>
                     </div>
-
                     <div>
-                        <a href="https://cncnet.org/discord" title="Join us on Discord" target="_blank">
-                            <i class="bi bi-discord"></i>
-                        </a>
-                    </div>
-
-                    <div>
-                        <a href="https://twitter.com/cncnetofficial" title="Follow CnCNet on Twitter" target="_blank">
-                            <i class="bi bi-twitter"></i>
+                        <a href="http://twitter.com/cncnetofficial" title="Follow CnCNet on X" target="_blank" class="footer-social-link">
+                            <i class="bi bi-x"></i>
                         </a>
                     </div>
                     <div>
                         <a href="https://www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" title="Subscribe to CnCNet on YouTube"
-                            target="_blank">
+                            target="_blank" class="footer-social-link">
                             <i class="bi bi-youtube"></i>
                         </a>
                     </div>
                     <div>
-                        <a href="https://reddit.com/r/cncnet" title="Subscribe to CnCNet on Reddit" target="_blank">
+                        <a href="https://reddit.com/r/cncnet" title="Subscribe to CnCNet on Reddit" target="_blank" class="footer-social-link">
                             <i class="bi bi-reddit"></i>
                         </a>
                     </div>
                     <div>
-                        <a href="https://www.twitch.tv/cncnetofficial" title="Subscribe to CnCNet on Twitch" target="_blank">
+                        <a href="https://www.twitch.tv/cncnetofficial" title="Subscribe to CnCNet on Twitch" target="_blank"
+                            class="footer-social-link">
                             <i class="bi bi-twitch"></i>
                         </a>
                     </div>
                     <div>
-                        <a href="https://github.com/cncnet" title="Follow and Star us on GitHub" target="_blank">
+                        <a href="https://github.com/cncnet" title="Follow and Star us on GitHub" target="_blank" class="footer-social-link">
                             <i class="bi bi-github"></i>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="https://cncnet.org/discord" title="Join our Discord" target="_blank" class="footer-social-link">
+                            <i class="bi bi-discord"></i>
                         </a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <h6 class="mt-2">Special thanks</h6>
-                <a href="https://www.youtube.com/c/NoStringsPrd" class="link">NoStringsPrd</a> for allowing the use of his videos.
-            </div>
-            <div class="col-md-6 text-end">
-                <div class="mt-5">
-                    Copyright &copy; CnCNet 2009 - {{ Date('Y') }}</div>
-                </col>
-                <div class="d-flex justify-content-end">
-                    <div class="me-2">
-                        <small>
-                            <a href="//cncnet.org/privacy-policy" title="{{ trans('footer.footer_privacy_policy') }}">
-                                {{ trans('footer.footer_privacy_policy') }}
-                            </a>
-                        </small>
-                    </div>
-                    <div>
-                        <small>
-                            <a href="//cncnet.org/terms-and-conditions" title="{{ trans('footer.footer_terms_conditions') }}">
-                                {{ trans('footer.footer_terms_conditions') }}
-                            </a>
-                        </small>
-                    </div>
+        <div class="mt-5">
+            <div class="row">
+                <div class="col-sm-6 col-xl-4">
+                    <h3 class="fw-bold">Open Collective</h3>
+                    <p>
+                        CnCNet runs on community support. All our finances are managed transparently using our Open Collective page.
+                    </p>
+
+                    <a href="https://opencollective.com/cncnet" class="btn btn-outline-primary" target="_blank" rel="nofollow">
+                        Donate
+                    </a>
                 </div>
-                <div class="sponsors text-end">
-                    <div class="sponsor">
-                        <a href="http://gamesurge.net" target="_blank" title="GameSurge">
-                            <img src="/images/gamesurge.png" alt="GameSurge Logo" width="100" />
-                        </a>
+
+                <div class="col-sm-6 mt-5 mt-xl-0 col-xl-8 text-end">
+                    <div>
+                        <div class="footer-logos">
+                            <div>
+                                <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="CnCNet Logo" width="200">
+                            </div>
+                            <div class="mt-1">
+                                <a href="http://gamesurge.net" target="_blank" title="GameSurge" rel="no-follow">
+                                    <img src="{{ Vite::asset('resources/images/gamesurge.png') }}" alt="GameSurge Logo" width="80">
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="footer-copyright">
+                            <a href="https://cncnet.org/privacy" title="Privacy policy" class="footer-link">
+                                Privacy
+                            </a>
+                            <a href="https://cncnet.org/terms-conditions" title="Terms & Conditions" class="footer-link">
+                                Terms
+                            </a>
+                            <div class="copyright-text">
+                                Keeping C&C online since 2009 <br />
+                                &copy; 2009 - {{ date('Y') }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

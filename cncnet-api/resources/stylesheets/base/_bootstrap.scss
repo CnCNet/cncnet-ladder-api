@@ -1,57 +1,61 @@
-// Required
-@import "../../node_modules/bootstrap/scss/functions"; 
-@import "../../node_modules/bootstrap/scss/variables";
-@import "../../node_modules/bootstrap/scss/maps";
-@import "../../node_modules/bootstrap/scss/mixins";
-@import "../../node_modules/bootstrap/scss/root";
+// Bootstrap
 
+// Configuration
+@import "bootstrap/scss/functions";
 
-// // 6. Optionally include any other parts as needed
-@import "../../node_modules/bootstrap/scss/utilities";
-@import "../../node_modules/bootstrap/scss/reboot";
-@import "../../node_modules/bootstrap/scss/type";
-@import "../../node_modules/bootstrap/scss/images";
-@import "../../node_modules/bootstrap/scss/containers";
-@import "../../node_modules/bootstrap/scss/grid";
-@import "../../node_modules/bootstrap/scss/helpers";
+// Default overrides
+@import "./variables";
 
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
 
 // Layout & components
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/images";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/tables";
+@import "bootstrap/scss/forms";
+@import "bootstrap/scss/buttons";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/scss/dropdown";
+@import "bootstrap/scss/button-group";
+@import "bootstrap/scss/nav";
+@import "bootstrap/scss/navbar";
+// @import "bootstrap/scss/card";
+@import "bootstrap/scss/accordion";
+@import "bootstrap/scss/breadcrumb";
+@import "bootstrap/scss/pagination";
+@import "bootstrap/scss/badge";
+// @import "bootstrap/scss/alert";
+@import "bootstrap/scss/progress";
+@import "bootstrap/scss/list-group";
+@import "bootstrap/scss/close";
+// @import "bootstrap/scss/toasts";
+@import "bootstrap/scss/modal";
+// @import "bootstrap/scss/tooltip";
+// @import "bootstrap/scss/popover";
+// @import "bootstrap/scss/carousel";
+// @import "bootstrap/scss/spinners";
+@import "bootstrap/scss/offcanvas";
+// @import "bootstrap/scss/placeholders";
 
-@import "../../node_modules/bootstrap/scss/tables";
-@import "../../node_modules/bootstrap/scss/forms";
-@import "../../node_modules/bootstrap/scss/buttons";
-@import "../../node_modules/bootstrap/scss/transitions";
-@import "../../node_modules/bootstrap/scss/dropdown";
-@import "../../node_modules/bootstrap/scss/button-group";
-@import "../../node_modules/bootstrap/scss/nav";
-@import "../../node_modules/bootstrap/scss/navbar";
-@import "../../node_modules/bootstrap/scss/card";
-@import "../../node_modules/bootstrap/scss/accordion";
-@import "../../node_modules/bootstrap/scss/breadcrumb";
-@import "../../node_modules/bootstrap/scss/pagination";
-@import "../../node_modules/bootstrap/scss/badge";
-@import "../../node_modules/bootstrap/scss/alert";
-@import "../../node_modules/bootstrap/scss/progress";
-@import "../../node_modules/bootstrap/scss/list-group";
-@import "../../node_modules/bootstrap/scss/close";
-@import "../../node_modules/bootstrap/scss/toasts";
-@import "../../node_modules/bootstrap/scss/modal";
-@import "../../node_modules/bootstrap/scss/tooltip";
-@import "../../node_modules/bootstrap/scss/popover";
-@import "../../node_modules/bootstrap/scss/carousel";
-@import "../../node_modules/bootstrap/scss/spinners";
-@import "../../node_modules/bootstrap/scss/offcanvas";
-@import "../../node_modules/bootstrap/scss/placeholders";
+// Helpers
+@import "bootstrap/scss/helpers";
 
+// Utilities
+@import "bootstrap/scss/utilities/api";
 
+.badge-secondary {
+    color: #b1b1b1;
+    background: #141414;
+}
 
-// // 7. Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
-@import "../../node_modules/bootstrap/scss/utilities/api";
-
-
-// Bootstrap icons for brands
-@import "bootstrap-icons";
 
 // 
 // Oveerrides that don't follow variables
@@ -93,7 +97,7 @@ a
 // Dropdowns
 .dropdown-toggle::after
 {
-    color: $body-color;
+    color: #fff;
 }
 
 .dropdown-divider
@@ -149,7 +153,7 @@ b, strong
     border: none;
     border-radius: 4px 4px 0 0;
     padding-bottom: 0;
-    @extend %font-secondary;
+    @extend %font-primary-bold;
 }
 
 .popover-body
@@ -159,7 +163,7 @@ b, strong
     font-weight: 300;
     font-size: 1rem;
     border: 0;
-    @extend %font-secondary;
+    @extend %font-primary-bold;
     border-radius: 0 0 4px 4px;
 }
 
@@ -186,6 +190,11 @@ h1,h2,h3,h4,h5,h6
 {
     strong 
     {
-        font-weight: 500;
+        font-weight: 700;
     }
+}
+
+.container,
+.container-fluid {
+    --bs-gutter-x: 3.5rem;
 }

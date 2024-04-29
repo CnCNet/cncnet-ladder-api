@@ -9,7 +9,7 @@
 @section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
 @section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev($history->ladder->abbreviation))
 @section('page-body-class', $history->ladder->abbreviation)
-
+{{-- 
 @section('feature')
 
     <div class="feature">
@@ -21,7 +21,7 @@
                 </div>
 
                 <div class="col-12 col-lg-6">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong class="fw-bold"> {{ $ladderPlayer->username }}</strong> <br />
                         <span>{{ $history->ladder->name }}</span>
                     </h1>
@@ -36,27 +36,56 @@
                         </small>
                     </p>
 
-                    <div class="mini-breadcrumb d-none d-lg-flex">
-                        <div class="mini-breadcrumb-item">
-                            <a href="/" class="">
-                                <span class="material-symbols-outlined">
-                                    home
-                                </span>
-                            </a>
-                        </div>
-                        <div class="mini-breadcrumb-item">
-                            <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
-                                <span class="material-symbols-outlined icon">
-                                    military_tech
-                                </span>
-                                {{ $history->ladder->name }}
-                            </a>
-                        </div>
-                    </div>
+
                 </div>
             </div>
         </div>
     </div>
+@endsection --}}
+
+
+@section('feature')
+    <x-hero-split>
+        <x-slot name="subpage">true</x-slot>
+        <x-slot name="video">{{ \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation) }}</x-slot>
+        <x-slot name="title">
+            <strong class="fw-bold"> {{ $ladderPlayer->username }}</strong> <br />
+            <span>{{ $history->ladder->name }}</span>
+        </x-slot>
+
+        <x-slot name="description">
+
+            @if ($history->ladder->clans_allowed)
+                {{ $history->starts->format('F Y') }} - <strong>Clan Ranked Match</strong>
+            @else
+                {{ $history->starts->format('F Y') }} - <strong>Ranked Match</strong>
+            @endif
+
+            <br />
+
+            <div class="mini-breadcrumb d-none d-lg-flex">
+                <div class="mini-breadcrumb-item">
+                    <a href="/" class="">
+                        <span class="material-symbols-outlined">
+                            home
+                        </span>
+                    </a>
+                </div>
+                <div class="mini-breadcrumb-item">
+                    <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}">
+                        <span class="material-symbols-outlined icon">
+                            military_tech
+                        </span>
+                        {{ $history->ladder->name }}
+                    </a>
+                </div>
+            </div>
+        </x-slot>
+
+        <x-slot name="logo">
+            <img src="{{ \App\Models\URLHelper::getLadderLogoByAbbrev($history->ladder->abbreviation) }}" alt="{{ $history->ladder->name }}" />
+        </x-slot>
+    </x-hero-split>
 @endsection
 
 @section('breadcrumb')

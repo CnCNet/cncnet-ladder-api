@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\ServiceProvider;
+
 return [
 
 	'name' => 'CnCNet Ladder',
@@ -142,7 +145,7 @@ return [
 		App\Providers\RouteServiceProvider::class,
 		App\Providers\BroadcastServiceProvider::class,
 
-        Barryvdh\Debugbar\ServiceProvider::class,
+		Barryvdh\Debugbar\ServiceProvider::class,
 
 		App\Providers\Navigation::class,
 		App\Providers\IrcCache::class,
@@ -164,6 +167,13 @@ return [
 	|
 	*/
 
+	'aliases' => Facade::defaultAliases()->merge([
+		// 'Example' => App\Facades\Example::class,
+	])->toArray(),
+
+	/*
+	// @TODO:
+	// Replaced the below with above, remove this if nothing has broken
 	'aliases' => [
 
 		'App'       => 'Illuminate\Support\Facades\App',
@@ -204,7 +214,7 @@ return [
 
 		'Notification ' => \Illuminate\Support\Facades\Notification::class,
 	],
-
+*/
 	'irc_pipe' => env('IRC_PIPE', '/tmp/pp_file'),
 
 	'allowed_observer_user_ids' => [

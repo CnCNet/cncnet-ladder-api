@@ -1,90 +1,111 @@
-a 
-{
-    transition: 250ms ease all;
-}
-
-a.link 
-{
-    color: silver;
-    text-decoration: underline;
-}
-
-main 
-{
-    background: linear-gradient(45deg, #181b26, #0e1016);
-    position: relative;
-    padding-bottom: 2rem;
-}
-
-body 
-{
+html,
+body {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
 }
 
-.highlight 
-{
-    color: #72ffbc;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
-footer 
-{
-    font-family: $font-oswald;
-    background: #0a0c10;
-    padding: 4rem 0;
-}
-
-footer a 
-{
-    color: #838383;
-    &:hover { color: #fff;}
-}
-
-footer .social 
-{
+main {
     display: flex;
-    flex-wrap: wrap;
-    
-    a 
-    {
-        padding: 0.5rem;
-        font-size: 1.2rem;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+    background: #0c0c0e;
+}
+
+p {
+    font-size: 1.1rem;
+}
+
+img {
+    max-width: 100%;
+}
+
+// Temp for now
+// section {
+//     padding-top: 2rem;
+//     padding-bottom: 2rem;
+// }
+
+.container-full-width {
+    width: $xxxxl-width;
+    max-width: 100%;
+    @media (min-width: $xxxxl-width) {
+        width: $xxxxxl-width;
     }
 }
 
-footer .sponsor .sponsor-copy 
-{
-    color: #565656;
-    font-size: 0.9rem;
-    padding: 0.2rem 0;
-    font-style: italic;
-}
-
-footer .sponsor img 
-{
-    transition: 250ms ease all;
-    opacity: 0.5;
-    &:hover { opacity: 1;}
-}
-
-
-// Icon font jump
-.material-symbols-outlined
-{
-    max-width: 40px;
-    overflow: hidden;
-}
-
-body.loaded .material-symbols-outlined
-{
-    max-width: 100%;
-    overflow: visible;
-}
-
-.page-feature 
-{
+.tuc-feature {
     position: relative;
+}
+
+.tuc-text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 2rem;
+}
+
+.section-stats {
+    background-color: #000000;
+    padding-top: 4rem;
+    padding-bottom: 4rem;
+    p {
+        color: #474747;
+    }
+}
+
+.section-bg-primary {
+    --base-bg-color: #000;
+    background: linear-gradient(45deg, #0c0c18, var(--base-bg-color));
+}
+
+.section-bg-secondary {
+    --base-bg-color: #161616;
+    background: linear-gradient(45deg, #0c0c18, var(--base-bg-color));
+}
+
+.section-bg-alt {
+    background: #000;
+}
+
+.highlight {
+    --color: #{$color-green};
+    color: var(--color);
+    font-weight: 700;
+}
+
+.tuc-feature {
+    height: 771px;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 10px;
+    overflow: hidden;
+    background-size: cover;
+
+    @media (min-width: $lg-width) {
+        background-size: 100%;
+    }
+
+    &:before {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 300px;
+        background: linear-gradient(0deg, black, transparent);
+    }
 }
 
 .container-xl 

@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3 text-uppercase">
+                    <h1 class="display-4 lh-1 mb-3">
                         <strong>Reset your password</strong>
                     </h1>
                 </div>
@@ -78,8 +78,7 @@
                                     <label for="email" class="col-md-4 control-label">Email Address</label>
 
                                     <div class="col-md-6">
-                                        <input id="email" type="email" class="form-control border mb-2" name="email"
-                                               value="{{ old('email') }}">
+                                        <input id="email" type="email" class="form-control border mb-2" name="email" value="{{ old('email') }}">
 
                                         @if ($errors->has('email'))
                                             <span class="help-block">
