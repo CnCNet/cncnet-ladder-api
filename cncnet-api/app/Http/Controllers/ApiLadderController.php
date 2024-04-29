@@ -537,27 +537,6 @@ class ApiLadderController extends Controller
         return 200;
     }
 
-    public function awardTeamPoints($gameReport, $history) {
-
-        $playerGameReports = $gameReport->playerGameReports()->get();
-
-        if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
-        {
-            // FPS too low, no points awarded
-            return 630;
-        }
-
-        if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
-        {
-            // Duration too low, no points awarded
-            return 660;
-        }
-
-        $winningClanReports = $gameReport->playerGameReports()->where('won', 1)->get();
-
-        
-    }
-
     public function getAllLadders(Request $request)
     {
         return $this->ladderService->getAllLadders();
