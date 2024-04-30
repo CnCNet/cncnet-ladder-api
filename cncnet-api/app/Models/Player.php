@@ -299,6 +299,11 @@ class Player extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function qmPlayer()
+    {
+        return $this->hasOne(QmMatchPlayer::class, 'player_id');
+    }
+
     public function playerGameReports()
     {
         return $this->hasMany(PlayerGameReport::class);

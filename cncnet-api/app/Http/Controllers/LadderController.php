@@ -278,6 +278,14 @@ class LadderController extends Controller
         $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
 
         $playerGameReports = $gameReport->playerGameReports()->get() ?? [];
+        $groupedByTeamPlayerGameReports = [];
+        if ($history->ladder->ladder_type == Ladder::TWO_VS_TWO)
+        {
+            foreach ($playerGameReports as $pgr)
+            {
+                $groupedByTeamPlayerGameReports[$pgr->player->qmPlayer->team][] = $pgr;
+            }
+        }
 
         $heaps = CountableObjectHeap::all();
 
@@ -373,6 +381,7 @@ class LadderController extends Controller
                     "gameReport" => $gameReport,
                     "allGameReports" => $allGameReports,
                     "playerGameReports" => $playerGameReports,
+                    "groupedByTeamPlayerGameReports" => $groupedByTeamPlayerGameReports,
                     "history" => $history,
                     "heaps" => $heaps,
                     "user" => $user,

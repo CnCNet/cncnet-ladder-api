@@ -3,6 +3,7 @@ $primary: #ffffff;
 $secondary: #00ff8a;
 $tertiary: #ffb300;
 $color-green: #00ff8a;
+$color-lost: #ff0068;
 
 $theme-colors: (
   "primary": $primary,
@@ -72,7 +73,7 @@ $container-max-widths: (
 
 
 // Pagination
-$pagination-bg: #000;
+$pagination-bg: transparent;
 $pagination-color:  #fff;
 $pagination-border-color: transparent;
 $pagination-border-radius: 0;
@@ -80,11 +81,11 @@ $pagination-hover-color: lighten(#798199, 15%);
 $pagination-hover-bg: transparent;
 $pagination-hover-border-color:transparent;
 $pagination-focus-color: #fff;
-$pagination-focus-bg: #000;
+$pagination-focus-bg: transparent;
 
-$pagination-active-color: #fff;
-$pagination-active-bg: #000;
-$pagination-active-border-color: #000;
+$pagination-active-color: #000;
+$pagination-active-bg: #fff;
+$pagination-active-border-color: transparent;
 
 
 // Input fields
@@ -108,3 +109,8 @@ $modal-footer-border-color:transparent;
 // $tooltip-bg: #000;
 $tooltip-opacity: 1;
 $tooltip-font-size: 1rem;
+
+
+.font-impact {
+  font-family: $font-impact;
+}

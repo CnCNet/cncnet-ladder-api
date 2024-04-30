@@ -138,24 +138,24 @@
 
 .games-table .game-status.status-lost .points
 {
-    color: $color-green;
+    color: $color-lost;
 }
 
 .games-table .game-status.status-lost .status-text
 {
-    color: $color-green;
+    color: $color-lost;
     font-weight: 700;
 }
 
 .games-table .game-status.status-won .status-text
 {
-    color: $primary;
+    color: $color-green;
     font-weight: 700;
 }
 
 .games-table .game-status.status-won .points
 {
-    color: $primary;
+    color: $color-green;
 }
 
 .games-table .game-details p {

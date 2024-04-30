@@ -8,7 +8,7 @@
             datasets: [{
                     label: "Lost",
                     data: {!! json_encode($graphGamesPlayedByMonth['data_games_lost']) !!},
-                    backgroundColor: "rgba(0, 0, 255, 0.9)",
+                    backgroundColor: "#ff0068",
                 },
                 {
                     label: "Won",

@@ -107,10 +107,10 @@ a
 
 .page-link.disabled, .disabled > .page-link 
 {
-    color: #232628;
+    color: #8f8f8f;
     pointer-events: none;
-    background-color: #000;
-    border-color: #000000;
+    background-color: transparent;
+    border-color: transparent;
 }
 
 // Override

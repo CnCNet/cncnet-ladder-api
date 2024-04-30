@@ -46,12 +46,12 @@
 
 .tippy-box[data-theme~='player-card'] .badge.badge-won
 {
-    background: $wonColour;
+    background: $color-green;
 }
 
 .tippy-box[data-theme~='player-card'] .badge.badge-lost
 {
-    background: $lostColour;
+    background: $color-lost;
 }
 
 .tippy-box[data-theme~='player-card'] .title 

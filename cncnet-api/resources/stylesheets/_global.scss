@@ -20,7 +20,8 @@ main {
     flex-direction: column;
     flex-grow: 1;
     width: 100%;
-    background: #0c0c0e;
+    // background: #0c0c0e;
+    background: linear-gradient(45deg, black, transparent);
 }
 
 p {

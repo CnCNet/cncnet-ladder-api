@@ -135,7 +135,7 @@ $reports = $playerGameReports;
         @endphp
 
         <div class="game-players-container">
-            <div class="container-xl">
+            <div class="@if ($history->ladder->qmLadderRules->player_count > 2) container-xl  @else container @endif">
                 <section class="game-players">
                     @foreach ($playerGameReports as $k => $pgr)
                         @php $gameStats = $pgr->stats; @endphp
@@ -147,28 +147,7 @@ $reports = $playerGameReports;
                         @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
                             <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">
                                 <div class="player-vs d-flex align-items-center">
-                                    <h1>Vs</h1>
-                                </div>
-                                <div class="match-details text-center mt-2">
-                                    <h6>{{ $game->qmMatch?->map?->description }}</h4>
-                                        <p>
-                                            {{ $gameReport->created_at->diffForHumans() }} -
-                                            <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
-                                            <br />
-                                            <strong>Duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
-                                            <br />
-                                            <strong>FPS:</strong> {{ $gameReport->fps }}
-
-                                            @if ($gameReport !== null)
-                                                @if ($gameReport->oos)
-                                                    <br />
-                                                    <strong>Game ended in reconnection error (OOS)</strong>
-                                                @endif
-                                                @if ($gameReport->disconnected())
-                                                    <strong>Game disconnected</strong>
-                                                @endif
-                                            @endif
-                                        </p>
+                                    <em class="h1 font-impact">Vs</em>
                                 </div>
                             </div>
                         @endif
@@ -180,6 +159,28 @@ $reports = $playerGameReports;
         </div>
 
         <div class="mt-2">
+            <div class="match-details text-center mt-2">
+                <h4>{{ $game->qmMatch?->map?->description }}</h4>
+                <p>
+                    {{ $gameReport->created_at->diffForHumans() }} -
+                    <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
+                    <br />
+                    <strong>Duration:</strong> {{ gmdate('H:i:s', $gameReport->duration) }}
+                    <br />
+                    <strong>FPS:</strong> {{ $gameReport->fps }}
+
+                    @if ($gameReport !== null)
+                        @if ($gameReport->oos)
+                            <br />
+                            <strong>Game ended in reconnection error (OOS)</strong>
+                        @endif
+                        @if ($gameReport->disconnected())
+                            <strong>Game disconnected</strong>
+                        @endif
+                    @endif
+                </p>
+            </div>
+
             @include('ladders.game._map-preview-with-players', [
                 'map' => $map,
                 'playerGameReports' => $playerGameReports,
@@ -187,13 +188,12 @@ $reports = $playerGameReports;
         </div>
 
         <section class="game {{ $gameAbbreviation }} mt-2 mb-2">
-            <div class="container-xl">
+            <div class="@if ($history->ladder->qmLadderRules->player_count > 2) container-xl  @else container @endif">
                 @include('ladders.game._game-cameo-stats', [
                     'playerGameReports' => $playerGameReports,
                     'abbreviation' => $gameAbbreviation,
                 ])
             </div>
         </section>
-
     </section>
 @endsection

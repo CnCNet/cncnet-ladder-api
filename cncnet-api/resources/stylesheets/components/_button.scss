@@ -88,3 +88,10 @@
     --bs-dropdown-link-hover-bg: #0000003a;
     --bs-dropdown-link-hover-color: #{$color-green};
 }
+
+
+.btn-danger {
+    background: rgb(180, 0, 24);
+    color: #fff;
+    font-weight: 700;
+}

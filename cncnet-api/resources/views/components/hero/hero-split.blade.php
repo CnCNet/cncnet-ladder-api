@@ -3,7 +3,7 @@
         <div class="container">
 
             <div class="row">
-                <div class="col-12 col-xl-7 order-2 order-xl-1">
+                <div class="col-12 col-xl-7 order-2 order-xl-1 text-center text-xl-start">
                     <h1 class="hero-title">
                         <strong class="fw-bold">
                             {{ $title }}
@@ -23,7 +23,8 @@
                     @endif
                 </div>
 
-                <div class="col-12 col-xl-5 text-xl-left text-xxl-right text-xl-end order-1 order-xl-2 mb-4 mg-xl-0 game-logo">
+                <div
+                    class="col-12 col-xl-5 text-xl-left text-xxl-right text-xl-end order-1 order-xl-2 mb-4 mg-xl-0 game-logo text-center text-xl-start">
                     @if (isset($logo))
                         {{ $logo }}
                     @endif

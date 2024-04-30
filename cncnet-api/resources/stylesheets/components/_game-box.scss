@@ -1,107 +1,59 @@
-﻿$lostColour: #03bcd4;
-$wonColour: #00ec00;
-$drawColour: #e96b1e;
-$dcColour: #b50000;
-
-.game-box-link:hover 
-{
-    text-decoration: none;
-}
+﻿$dcColour: #b50000;
 
 .game-box 
 {
     border-radius: 5px;
-    border: 2px solid transparent;
     margin-bottom: 1rem;
+    background: linear-gradient(45deg, rgb(0 0 0 / 21%), transparent);
+    display: block;
+    padding: 1rem 1rem 2rem;
+    border: 0;
 }
 
-.game-box .preview
-{
+.game-box .map-preview {
+    width: 100%;
     position: relative;
-    height: 180px;
-    background-repeat: no-repeat;
-    background-color: #000;
-    border-radius: 5px 5px 0 0;
-    transition: all 4s;
-    transition-delay: 0.1s;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    height: 190px;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 }
 
-.game-box .preview:hover 
-{
-    background-position: 50% 100%;
-}
-
-.game-box .preview .status 
-{
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 50px;
-    height: 50px;
+.game-box .player-name-faction {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #050505;
-    border-radius: 100%;
-    font-size: 20px;
+
+    .player-faction {
+        width: 50px;
+    }
 }
 
-.game-box .preview .status-lost
+.game-box .details 
 {
-    color: $lostColour;
+    color: #969696;
 }
 
-.game-box .preview .status-won
+.game-box .details .title 
 {
-    color: $wonColour;
-}
-
-.game-box .preview .status-draw
-{
-    color: $wonColour;
-}
-
-.game-box .preview .status-dc
-{
-    color: $dcColour;
-}
-
-.game-box .preview .status-live
-{
-    color: $wonColour;
-}
-
-.game-box .preview .status-progress
-{
-    color: #636363;
-}
-
-.game-box .details
-{
-    padding: 15px;
-    background: #0b0d14  url(/images/textures/pattern-repeat.png);
-}
-
-.game-box .footer 
-{
-    padding: 15px;
-    background: #0b0d14 ;
+    color: #fff;
 }
 
 .game-box .details .title,
 .game-box .details .status
 {
-    margin-bottom: 0;
-    line-height: 1.5;
-    font-size: 1rem;
-    color: silver;
-    font-weight: normal;
+    font-size: 1.1rem;
 }
 
 .game-box .details .status
 {
-    font-size: 12px;
-    color: #797979;
+    font-size: 0.9rem;
 }
 
 .game-box .details .status.online 
@@ -116,16 +68,19 @@ $dcColour: #b50000;
 
 .game-box .lost .points 
 {
-    color: $lostColour;
+    color: $color-lost;
 }
 
 .game-box .vs 
 {
-    font-size: 21px;
-    color: #ededed;
-    font-weight: 400;
-    font-style: italic;
     font-family: $font-impact;
+    color: #e7e7e7;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-style: italic;
+    font-size: 1.4rem;
 }
 
 .game-box .player 
@@ -140,20 +95,4 @@ $dcColour: #b50000;
     font-size: 1rem;
     color: silver;
     font-weight: normal;
-}
-
-.game-box .player .player-faction
-{
-    width: 24%;
-}
-
-.game-box .player.player-order-0 .player-faction
-{
-    margin-right: auto;
-}
-
-.game-box .player.player-order-1 .player-faction
-{
-    margin-left: auto;
-    order: 1;
 }

@@ -247,13 +247,13 @@ body.body-player-detail .page-image-feature
 
 .player-detail .count.won 
 {
-    color: $primary;
+    color: $color-green;
     font-weight: 700;
 }
 
 .player-detail .count.lost 
 {
-    color: $color-green;
+    color: $color-lost;
     font-weight: 700;
 }
 
