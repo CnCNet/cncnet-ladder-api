@@ -135,25 +135,61 @@ $reports = $playerGameReports;
         @endphp
 
         <div class="game-players-container">
-            <div class="@if ($history->ladder->qmLadderRules->player_count > 2) container-xl  @else container @endif">
+            <div class="{{ $history->ladder->qmLadderRules->player_count > 2 ? 'container-xl' : 'container' }}">
                 <section class="game-players">
-                    @foreach ($playerGameReports as $k => $pgr)
-                        @php $gameStats = $pgr->stats; @endphp
-                        @php $player = $pgr->player()->first(); @endphp
-                        @php $playerCache = $player->playerCache($history->id);@endphp
-                        @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
-                        @php $points = $playerCache ? $playerCache->points : 0;@endphp
 
-                        @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
-                            <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">
-                                <div class="player-vs d-flex align-items-center">
-                                    <em class="h1 font-impact">Vs</em>
+                    @if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO)
+                        {{-- 
+                        // @TODO: Should be in the controller.
+                        // Teams 2vs2, grouped 
+                        --}}
+                        @php
+                            $groupedPlayerGameReports = [];
+                            foreach ($playerGameReports as $playerGameReport) {
+                                $groupedPlayerGameReports[$playerGameReport->player->qmPlayer->team][] = $playerGameReport;
+                            }
+                        @endphp
+
+                        @foreach ($groupedPlayerGameReports as $team => $teamPlayerGameReportArr)
+                            @foreach ($teamPlayerGameReportArr as $k => $pgr)
+                                @php $gameStats = $pgr->stats; @endphp
+                                @php $player = $pgr->player()->first(); @endphp
+                                @php $playerCache = $player->playerCache($history->id);@endphp
+                                @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
+                                @php $points = $playerCache ? $playerCache->points : 0;@endphp
+
+                                @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
+                                    <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">
+                                        <div class="player-vs d-flex align-items-center">
+                                            <em class="h1 font-impact">Vs</em>
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <h6 style="color:red;">Debug Team: {{ $team }}</h6>
+                                @include('ladders.game._player-card')
+                            @endforeach
+                        @endforeach
+                    @else
+                        {{-- 1vs1 --}}
+                        @foreach ($playerGameReports as $k => $pgr)
+                            @php $gameStats = $pgr->stats; @endphp
+                            @php $player = $pgr->player()->first(); @endphp
+                            @php $playerCache = $player->playerCache($history->id);@endphp
+                            @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
+                            @php $points = $playerCache ? $playerCache->points : 0;@endphp
+
+                            @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
+                                <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">
+                                    <div class="player-vs d-flex align-items-center">
+                                        <em class="h1 font-impact">Vs</em>
+                                    </div>
                                 </div>
-                            </div>
-                        @endif
+                            @endif
+                            @include('ladders.game._player-card')
+                        @endforeach
+                    @endif
 
-                        @include('ladders.game._player-card')
-                    @endforeach
                 </section>
             </div>
         </div>
@@ -188,7 +224,7 @@ $reports = $playerGameReports;
         </div>
 
         <section class="game {{ $gameAbbreviation }} mt-2 mb-2">
-            <div class="@if ($history->ladder->qmLadderRules->player_count > 2) container-xl  @else container @endif">
+            <div class="{{ $history->ladder->qmLadderRules->player_count > 2 ? 'container-xl' : 'container' }}">
                 @include('ladders.game._game-cameo-stats', [
                     'playerGameReports' => $playerGameReports,
                     'abbreviation' => $gameAbbreviation,

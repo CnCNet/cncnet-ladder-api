@@ -393,7 +393,7 @@
     justify-content: space-around;
     flex-direction: column;
 
-    @media(min-width: $lg-width)
+    @media(min-width: $xxl-width)
     {
         flex-direction: row;
     }
@@ -422,7 +422,8 @@
     flex-direction: column;
     background: #14141440;
     padding: 1rem;
-    min-width: 45%;
+    width: 45%;
+    max-width: 100%;
     
     @media(min-width: $lg-width)
     {

@@ -78,13 +78,12 @@
                     </td>
 
                     <td>
-                        test5
                         <div class="d-flex align-items-center">
                             @php
                                 $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->map, $game->hash);
                             @endphp
 
-                            <div class="map-preview" style="background-image:url({{ $mapPreview }})">test5
+                            <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                             </div>
                         </div>
                     </td>
