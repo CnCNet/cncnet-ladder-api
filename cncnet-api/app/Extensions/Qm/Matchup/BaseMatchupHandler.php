@@ -6,6 +6,7 @@ use App\Http\Services\QuickMatchService;
 use App\Models\LadderHistory;
 use App\Models\QmMatchPlayer;
 use App\Models\QmQueueEntry;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 abstract class BaseMatchupHandler
@@ -29,10 +30,10 @@ abstract class BaseMatchupHandler
         $this->matchHasObservers = $this->qmPlayer->isObserver();
     }
 
-    public function createMatch($maps, $otherQMQueueEntries)
+    public function createMatch(Collection $maps, Collection $otherQMQueueEntries)
     {
-        $filteredMaps = array_filter($maps, function ($map)
-        {
+        // filter out placeholder maps
+        $filteredMaps = $maps->filter(function ($map) {
             return
                 !strpos($map->description, 'Map Info')
                 && !strpos($map->description, 'Map Guide')

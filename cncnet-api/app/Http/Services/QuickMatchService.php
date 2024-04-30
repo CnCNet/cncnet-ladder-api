@@ -336,9 +336,9 @@ class QuickMatchService
     /**
      * @param array $maps
      * @param QmQueueEntry[]|Collection $players
-     * @return array
+     * @return Collection
      */
-    public function filterOutRecentsMaps(LadderHistory $history, Collection $maps, Collection $players): array {
+    public function filterOutRecentsMaps(LadderHistory $history, Collection $maps, Collection $players): Collection {
 
         $maps = collect($maps);
 
@@ -362,7 +362,7 @@ class QuickMatchService
             $maps = $maps->filter(fn(QmMap $map) => !in_array($map->map->hash, $recentMapsHash));
         }
 
-        return $maps->all();
+        return $maps;
     }
 
     public function createQmAIMatch($qmPlayer, $userPlayerTier, $maps, $gameType)
