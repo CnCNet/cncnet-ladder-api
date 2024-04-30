@@ -258,6 +258,21 @@
     }
 }
 
+.game-detail .player-avatar .avatar-with-faction 
+{
+    position: relative;
+
+    & .faction {
+        padding-left: 0;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+
+        .player-faction { 
+            width: 40px;
+        }
+    }
+}
 
 // Game players
 .game-detail .game-players 
@@ -299,7 +314,6 @@
     position: relative;
     padding-top: 1rem;
     padding-bottom: 1rem;
-    background: linear-gradient(118deg, #0e0e0e, transparent);
 }
 
 .game-detail .player-card 
@@ -401,7 +415,6 @@
     @media(min-width: $md-width)
     {
         order: 1;
-        margin-top: 1rem;
         margin-left: 1rem;
     }
 }
