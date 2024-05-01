@@ -8,6 +8,7 @@ use App\Models\IpAddress;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\PlayerGameReport;
+use App\Models\QmLadderRules;
 use App\Models\QmMap;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
@@ -429,7 +430,7 @@ class QuickMatchService
         $qmPlayer->save();
     }
 
-    private function pickQmMapId($otherQMQueueEntries, $ladderRules, $qmPlayer, $history, $qmMaps)
+    private function pickQmMapId(Collection $otherQMQueueEntries, QmLadderRules $ladderRules, QmMatchPlayer $qmPlayer, LadderHistory $history, Collection $qmMaps)
     {
         $qmMapId = -1;
         if ($ladderRules->use_ranked_map_picker) // consider a player's ladder rank when selecting a map
@@ -785,15 +786,15 @@ class QuickMatchService
     }
 
     public function createQmMatch(
-        $qmPlayer,
-        $currentUserTier,
-        $maps,
-        $otherQmQueueEntries,
-        $qEntry,
-        $gameType
+        QmMatchPlayer $qmPlayer,
+        int $currentUserTier,
+        Collection $maps,
+        Collection $otherQmQueueEntries,
+        QmQueueEntry $qEntry,
+        int $gameType
     )
     {
-        $ladder = \App\Models\Ladder::where('id', $qmPlayer->ladder_id)->first();
+        $ladder = Ladder::where('id', $qmPlayer->ladder_id)->first();
         $history = $ladder->currentHistory();
 
         $qmMapId = $this->pickQmMapId(
@@ -1049,17 +1050,14 @@ class QuickMatchService
      * @param mixed $matchAnyMap 
      * @return mixed 
      */
-    private function rankedMapPicker($mapsArr, $rank, $points, $matchAnyMap)
+    private function rankedMapPicker(Collection $maps, int $rank, int $points, bool $matchAnyMap)
     {
-        $mapsArr = array_filter($mapsArr, function ($map)
-        {
-            return $map->map_tier && $map->map_tier > 0;
-        });
+        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0);
 
-        Log::debug("Selecting map for rank $rank, points $points, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
+        Log::debug("Selecting map for rank $rank, points $points, anyMap=" . $matchAnyMap . ", " . $maps->count() . " maps");
 
         $mapsRanked = [];
-        foreach ($mapsArr as $map)
+        foreach ($maps as $map)
         {
             //difficulties: 1 = beginner, 2 = intermediate, 3 = advanced, 4 = expert
             $mapsRanked[$map->map_tier][] = $map;
@@ -1071,8 +1069,8 @@ class QuickMatchService
         {
             if ($matchAnyMap)
             {
-                $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
-                $map = $mapsArr[$randIdx];
+                $randIdx = mt_rand(0, $maps->count() - 1); //any map
+                $map = $maps[$randIdx];
             }
             else if ($rank >= 90 || $points < 150) //90-999 or points less than 150 points
             {
@@ -1115,8 +1113,8 @@ class QuickMatchService
             }
             else
             {
-                $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
-                $map = $mapsArr[$randIdx];
+                $randIdx = mt_rand(0, $maps->count() - 1); //any map
+                $map = $maps[$randIdx];
             }
         }
         catch (Exception $ex)
@@ -1124,8 +1122,8 @@ class QuickMatchService
             // Safety until its fixed
 
             Log::debug("Error in rankedMapPicker: " . $ex->getMessage());
-            $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
-            $map = $mapsArr[$randIdx];
+            $randIdx = mt_rand(0, $maps->count() - 1); //any map
+            $map = $maps[$randIdx];
         }
 
         if ($map == null)
@@ -1147,18 +1145,15 @@ class QuickMatchService
      * @param mixed $matchAnyMap if true, match on a random map
      * @return mixed qmMapId of the map to be played
      */
-    private function eloMapPicker($mapsArr, $elo, $matchAnyMap)
+    private function eloMapPicker(Collection $maps, int $elo, bool $matchAnyMap)
     {
-        $mapsArr = array_filter($mapsArr, function ($map)
-        {
-            return $map->map_tier && $map->map_tier > 0;
-        });
+        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0);
 
-        Log::debug("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
+        Log::debug("Selecting map for elo $elo, anyMap=" . $matchAnyMap . ", " . $maps->count() . " maps");
 
         // group maps by tier
         $mapsRanked = [];
-        foreach ($mapsArr as $map)
+        foreach ($maps as $map)
         {
             $mapsRanked[$map->map_tier][] = $map;
         }
@@ -1175,15 +1170,15 @@ class QuickMatchService
             }
             else
             {
-                $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
-                $map = $mapsArr[$randIdx];
+                $randIdx = mt_rand(0, $maps->count() - 1); //any map
+                $map = $maps[$randIdx];
             }
         }
         catch (Exception $ex)
         {
             Log::error("Error in eloMapPicker: " . $ex->getMessage());
-            $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
-            $map = $mapsArr[$randIdx];
+            $randIdx = mt_rand(0, $maps->count() - 1); //any map
+            $map = $maps[$randIdx];
         }
 
         if ($map == null)

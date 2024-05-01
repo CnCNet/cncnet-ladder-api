@@ -4,6 +4,9 @@ namespace App\Commands\Matchup;
 
 use App\Models\QmQueueEntry;
 
+/**
+ * @deprecated
+ */
 class TeamMatchupHandler extends BaseMatchupHandler
 {
 

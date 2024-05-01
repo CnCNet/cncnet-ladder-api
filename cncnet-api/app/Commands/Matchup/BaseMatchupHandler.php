@@ -5,6 +5,9 @@ namespace App\Commands\Matchup;
 use App\Http\Services\QuickMatchService;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @deprecated
+ */
 class BaseMatchupHandler
 {
     public $quickMatchService;
