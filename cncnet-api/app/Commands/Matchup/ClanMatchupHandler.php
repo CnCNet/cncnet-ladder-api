@@ -5,6 +5,9 @@ namespace App\Commands\Matchup;
 use App\Models\QmQueueEntry;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @deprecated
+ */
 class ClanMatchupHandler extends BaseMatchupHandler
 {
     public function matchup()

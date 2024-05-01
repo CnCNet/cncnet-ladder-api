@@ -62,7 +62,9 @@ return [
 	*/
 
 	'failed' => [
-		'database' => 'mysql', 'table' => 'failed_jobs',
+        'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
+		'database' => 'mysql',
+        'table' => 'failed_jobs',
 	],
 
 ];
