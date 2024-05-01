@@ -1149,11 +1149,11 @@ class QuickMatchService
     {
         $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0);
 
-        Log::info("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
+        Log::debug("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval($maps->count()) . " maps");
 
         // group maps by tier
         $tier1Maps = [];
-        foreach ($mapsArr as $map)
+        foreach ($maps as $map)
         {
             if ($map->map_tier == 1)
                 $tier1Maps[] = $map;
@@ -1189,7 +1189,7 @@ class QuickMatchService
             Log::error("null map chosen, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
         }
 
-        Log::info("Elo map chosen=$map->description, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
+        Log::debug("Elo map chosen=$map->description, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
 
         return $map->id;
     }
