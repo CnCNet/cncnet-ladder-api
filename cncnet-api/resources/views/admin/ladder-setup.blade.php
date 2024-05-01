@@ -511,7 +511,7 @@
 
                                                 <div class="form-group col-md-4">
                                                     <input type="checkbox" id="{{ $rule->ladder_id }}_use_elo_map_picker" name="use_elo_map_picker"
-                                                        @if ($rule->use_ranked_map_picker) checked @endif />
+                                                        @if ($rule->use_elo_map_picker) checked @endif />
                                                     <label for="{{ $rule->ladder_id }}_use_elo_map_picker">Use Elo Based
                                                         Map Picker</label>
                                                 </div>
