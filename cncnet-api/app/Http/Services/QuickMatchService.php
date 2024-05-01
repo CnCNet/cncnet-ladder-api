@@ -1154,13 +1154,14 @@ class QuickMatchService
             return $map->map_tier && $map->map_tier > 0;
         });
 
-        Log::debug("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
+        Log::info("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval(count($mapsArr)) . " maps");
 
         // group maps by tier
-        $mapsRanked = [];
+        $tier1Maps = [];
         foreach ($mapsArr as $map)
         {
-            $mapsRanked[$map->map_tier][] = $map;
+            if ($map->map_tier == 1)
+                $tier1Maps[] = $map;
         }
 
         try
@@ -1170,8 +1171,8 @@ class QuickMatchService
 
             if (!$matchAnyMap && $elo < $eloThreshold) // use a tier 1 map, if ELO < 1200
             {
-                $randIdx = mt_rand(0, count($mapsRanked[1]) - 1);  // pick a tier 1 map
-                $map = $mapsRanked[1][$randIdx];
+                $randIdx = mt_rand(0, count($tier1Maps) - 1);  // pick a tier 1 map
+                $map = $tier1Maps[$randIdx];
             }
             else
             {
@@ -1182,6 +1183,7 @@ class QuickMatchService
         catch (Exception $ex)
         {
             Log::error("Error in eloMapPicker: " . $ex->getMessage());
+            Log::error($ex);
             $randIdx = mt_rand(0, count($mapsArr) - 1); //any map
             $map = $mapsArr[$randIdx];
         }
@@ -1192,7 +1194,7 @@ class QuickMatchService
             Log::error("null map chosen, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
         }
 
-        Log::debug("Elo map chosen=$map->description, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
+        Log::info("Elo map chosen=$map->description, map_tier=$map->map_tier, from elo=$elo, used randIdx=$randIdx");
 
         return $map->id;
     }
