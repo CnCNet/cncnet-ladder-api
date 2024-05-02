@@ -1052,7 +1052,7 @@ class QuickMatchService
      */
     private function rankedMapPicker(Collection $maps, int $rank, int $points, bool $matchAnyMap)
     {
-        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0);
+        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0)->values();
 
         Log::debug("Selecting map for rank $rank, points $points, anyMap=" . $matchAnyMap . ", " . $maps->count() . " maps");
 
@@ -1147,7 +1147,7 @@ class QuickMatchService
      */
     private function eloMapPicker(Collection $maps, int $elo, bool $matchAnyMap)
     {
-        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0);
+        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0)->values();
 
         Log::debug("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval($maps->count()) . " maps");
 
