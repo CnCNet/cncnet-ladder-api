@@ -28,12 +28,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="apple-touch-icon" sizes="152x152" href="/images/meta/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/images/meta/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/images/meta/favicon-16x16.png">
-    <link rel="mask-icon" href="/images/meta/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#da532c">
-    <meta name="theme-color" content="#ffffff">
+    
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#2b2b2b">
+    <meta name="msapplication-TileColor" content="#2b2b2b">
+    <meta name="theme-color" content="#2b2b2b">
     <meta name="color-scheme" content="dark">
    
     @vite(['resources/stylesheets/app.scss','resources/typescript/App.ts'])
