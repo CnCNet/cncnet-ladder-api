@@ -1,27 +1,13 @@
 @extends('layouts.app')
 @section('title', 'Ladder')
-@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
-@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-    <div class="feature pt-5 pb-5">
-        <div class="container px-4 py-5 text-light">
-            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-12">
-                    <h1 class="display-4 lh-1 mb-3">
-                        <strong class="fw-bold">404</strong>
-                        <span>Kane Not Found</span>
-                    </h1>
-
-                    <ul class="list-inline">
-                        <li>
-                            <a class="btn btn-primary" href="/" role="button" title="Play Now">Back to Home</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
+        <x-slot name="title">404 Kane not found</x-slot>
+        <x-slot name="description">
+            The page could not be found. <a href="/" class="text-underline"><u>Go back home?</u></a>
+        </x-slot>
+    </x-hero-with-video>
 @endsection
 
 @section('breadcrumb')
