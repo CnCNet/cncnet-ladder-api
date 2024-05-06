@@ -84,10 +84,10 @@ class ApiLadderController extends Controller
 
     public function saveLadderTestOnly(Request $request)
     {
-        $ladderId = 14; // d2k
-        // $ladderId = 1; // yr
+        // $ladderId = 14; // d2k
+        $ladderId = 15; // yr
         $gameId = $request->gameId;
-        $playerId = 201156; // kipp
+        $playerId = $request->playerId; // kipp
         $pingSent = $request->pingSent;
         $pingReceived = $request->pingReceived;
 
@@ -440,13 +440,10 @@ class ApiLadderController extends Controller
 
         foreach ($playerGameReports as $playerGR)
         {
-            foreach ($playerGameReports as $pgr)
+            if ($playerGR->won)
             {
-                if ($pgr->won)
-                {
-                    $winningTeam = $pgr->player->qmPlayer->team;
-                    break;
-                }
+                $winningTeam = $playerGR->player->qmPlayer->team;
+                break;
             }
         }
 
