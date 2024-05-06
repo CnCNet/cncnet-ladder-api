@@ -84,7 +84,7 @@
             </div>
 
             <div>
-                <h4>Ladder Elo: {{ $user->userRating?->rating }}</h4>
+                <h4>Ladder Elo: {{ $user->getOrCreateLiveUserRating()->rating }}</h4>
             </div>
 
             <div class="row">
