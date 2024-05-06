@@ -47,6 +47,7 @@
     <script src="/js/lottie.js"></script>
     <script src="/js/popper.js"></script>
     <script src="/js/tippy.js"></script>
+    <script src="/js/vendor/jquery.js"></script>
     
 </head>
 

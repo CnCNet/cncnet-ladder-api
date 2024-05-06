@@ -35,7 +35,7 @@ class MapPoolController extends Controller
         $qmMap->map_id = $request->map_id;
         $qmMap->description = trim($request->description);
         $qmMap->admin_description = trim($request->admin_description);
-        $qmMap->bit_idx = $request->bit_idx;
+        $qmMap->bit_idx = $request->bit_idx ?? 1;
         $qmMap->valid = $request->valid;
         $qmMap->rejectable = $request->rejectable == "on" ? true : false;
         $qmMap->default_reject = $request->default_reject == "on" ? true : false;
