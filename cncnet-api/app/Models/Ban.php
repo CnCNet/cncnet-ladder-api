@@ -199,7 +199,7 @@ class Ban extends Model
 
         if ($cooldown && $this->expires)
         {
-            return "You are on a cool down for the next {$this->expires->diffForHumans()}";
+            return "You are on a cool down for the next {$this->expires->diffForHumans()} \n{$this->plubic_reason}";
         }
 
         return null;
