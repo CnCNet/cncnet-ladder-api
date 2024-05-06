@@ -54,7 +54,7 @@ class Ban extends Model
 
     public static function unstartedBanTime()
     {
-        return Carbon::create(0, 0, 0, 0, 0, 0);
+        return Carbon::now();
     }
 
     public function banHasExpired()
@@ -71,23 +71,6 @@ class Ban extends Model
             return true;
         }
         return false;
-    }
-
-    public function timeTill()
-    {
-        if ($this->started())
-        {
-            $days = $this->expires->diffInDays(Carbon::now());
-            $hours = $this->expires->subDays($days)->diffInHours();
-            if ($days > 0)
-                return "{$days} days {$hours} hours from now";
-            else if ($hours > 0)
-                return "{$hours} hours from now";
-            else
-                return $this->expires->diffForHumans();
-        }
-        else
-            return "(Ban has not started)\n";
     }
 
     public function started()
@@ -209,14 +192,14 @@ class Ban extends Model
             }
         }
 
-        if ($banned)
+        if ($banned && $this->expires)
         {
-            return "You are BANNED!\n{$this->plubic_reason}\nYour ban will expire in {$this->timeTill()}";
+            return "You are BANNED!\n{$this->plubic_reason}\nYour ban will expire in {$this->expires->diffForHumans()}";
         }
 
-        if ($cooldown)
+        if ($cooldown && $this->expires)
         {
-            return "You are on a cool down for the next {$this->timeTill()}";
+            return "You are on a cool down for the next {$this->expires->diffForHumans()}";
         }
 
         return null;
