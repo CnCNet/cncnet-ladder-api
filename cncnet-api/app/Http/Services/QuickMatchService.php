@@ -454,14 +454,14 @@ class QuickMatchService
         }
         else if ($ladderRules->use_elo_map_picker) // consider a player's ELO when selecting a map
         {
-            $myEloRating = $qmPlayer->player->user->userRating->rating;
-
             $matchAnyMap = false;
+            $myEloRating = $qmPlayer->player->user->getOrCreateLiveUserRating()->rating;
+                       
             foreach ($otherQMQueueEntries as $otherQMQueueEntry)
             {
                 // choose the person who has the lowest elo rating to base our map pick off of
-                $minEloRating = min($myEloRating, $otherQMQueueEntry->qmPlayer->player->user->userRating->rating);
-
+                $minEloRating = min($myEloRating, $otherQMQueueEntry->qmPlayer->player->user->getOrCreateLiveUserRating()->rating);
+                
                 // true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
                     && $qmPlayer->player->user->userSettings->match_any_map;
