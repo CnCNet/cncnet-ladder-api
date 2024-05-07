@@ -74,23 +74,6 @@ $reports = $playerGameReports;
 
             <br />
 
-            <?php $reports = $playerGameReports; ?>
-            @foreach ($reports as $k => $pgr)
-                <?php $gameStats = $pgr->stats; ?>
-                <?php $player = $pgr->player()->first(); ?>
-
-                @if ($history->ladder->clans_allowed)
-                    @if ($player->clanPlayer)
-                        Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
-                    @endif
-                @else
-                    <span>{{ $player->username }}</span>
-                @endif
-                @if ($k == 0)
-                    <span><strong>VS</strong></span>
-                @endif
-            @endforeach
-
             <div class="mini-breadcrumb d-none d-lg-flex">
                 <div class="mini-breadcrumb-item">
                     <a href="/" class="">
@@ -139,17 +122,8 @@ $reports = $playerGameReports;
                 <section class="game-players">
 
                     @if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO)
-                        {{-- 
-                        // @TODO: Should be in the controller.
-                        // Teams 2vs2, grouped 
-                        --}}
-                        @php
-                            $groupedPlayerGameReports = [];
-                            foreach ($playerGameReports as $playerGameReport) {
-                                $groupedPlayerGameReports[$playerGameReport->player->qmPlayer->team][] = $playerGameReport;
-                            }
-                        @endphp
 
+                        @php $i = 0; @endphp
                         @foreach ($groupedPlayerGameReports as $team => $teamPlayerGameReportArr)
                             @foreach ($teamPlayerGameReportArr as $k => $pgr)
                                 @php $gameStats = $pgr->stats; @endphp
@@ -158,7 +132,7 @@ $reports = $playerGameReports;
                                 @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
                                 @php $points = $playerCache ? $playerCache->points : 0;@endphp
 
-                                @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
+                                @if ($i == 2)
                                     <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">
                                         <div class="player-vs d-flex align-items-center">
                                             <em class="h1 font-impact">Vs</em>
@@ -166,8 +140,12 @@ $reports = $playerGameReports;
                                     </div>
                                 @endif
 
-                                <h6 style="color:red;">Debug Team: {{ $team }}</h6>
+                                @if (request()->debug)
+                                    <h6 style="color:red;">Debug Team: {{ $team }}</h6>
+                                @endif
+
                                 @include('ladders.game._player-card')
+                                @php $i++; @endphp
                             @endforeach
                         @endforeach
                     @else

@@ -6,18 +6,15 @@
         <div class="swiper-wrapper">
             @foreach ($games as $game)
                 <div class="swiper-slide" data-swiper-autoplay="8000">
-                    <?php $pp = $game->playerGameReports()->first(); ?>
 
                     @if ($history->ladder->clans_allowed)
                         @include('ladders.listing.clan._game-box', [
                             'url' => '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id,
                             'game' => $history->ladder->game,
-                            'isClanGame' => $history->ladder->clans_allowed,
-                            'gamePlayers' => $game->playerGameReports(),
                             'gameReport' => $game->report()->first(),
-                            'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
-                            'points' => $pp,
-                            'title' => $game->qmMatch?->map?->description,
+                            'clanGameReports' => $game->playerGameReports()->groupBy('clan_id')->get(),
+                            'isClanGame' => true,
+                            'mapName' => $game->qmMatch?->map?->description,
                             'date' => $game->updated_at,
                             'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl(
                                 $history,
@@ -28,13 +25,11 @@
                         @include('ladders.listing._game-box', [
                             'url' => '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id,
                             'game' => $history->ladder->game,
-                            'isClanGame' => $history->ladder->clans_allowed,
                             'ladderType' => $history->ladder->ladder_type,
-                            'playerGameReports' => $game->playerGameReports(),
+                            'playerGameReports' => $game->playerGameReports,
+                            'isClanGame' => false,
                             'gameReport' => $game->report()->first(),
-                            'status' => isset($pp) ? ($pp->won ? 'won' : 'lost') : '',
-                            'points' => $pp,
-                            'title' => $game->qmMatch?->map?->description,
+                            'mapName' => $game->qmMatch?->map?->description,
                             'date' => $game->updated_at,
                             'mapPreview' => \App\Helpers\SiteHelper::getMapPreviewUrl(
                                 $history,
@@ -67,8 +62,8 @@
                     spaceBetween: 20,
                 },
                 "@1.00": {
-                    slidesPerView: 4,
-                    spaceBetween: 40,
+                    slidesPerView: 5,
+                    spaceBetween: 30,
                 },
             },
             // Navigation arrows

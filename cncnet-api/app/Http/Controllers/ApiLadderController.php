@@ -23,9 +23,12 @@ use App\Http\Services\GameService;
 use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
 use App\Http\Services\PointService;
+use App\Models\LadderHistory;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\InvalidCastException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 
 class ApiLadderController extends Controller
 {
@@ -81,10 +84,10 @@ class ApiLadderController extends Controller
 
     public function saveLadderTestOnly(Request $request)
     {
-        $ladderId = 14; // d2k
-        // $ladderId = 1; // yr
+        // $ladderId = 14; // d2k
+        $ladderId = 15; // yr
         $gameId = $request->gameId;
-        $playerId = 201156; // kipp
+        $playerId = $request->playerId; // kipp
         $pingSent = $request->pingSent;
         $pingReceived = $request->pingReceived;
 
@@ -137,7 +140,7 @@ class ApiLadderController extends Controller
         }
         else if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO) // 2vs2
         {
-            $status = $this->awardPlayerPoints($gameReport, $history);
+            $status = $this->awardTeamPoints($gameReport, $history);
         }
         else // 1vs1
         {
@@ -400,7 +403,170 @@ class ApiLadderController extends Controller
         return 200;
     }
 
-    public function awardPlayerPoints($gameReport, $history)
+    /**
+     * 
+     * @param GameReport $gameReport 
+     * @param LadderHistory $history 
+     * @return int Error code
+     */
+    public function awardTeamPoints(GameReport $gameReport, LadderHistory $history)
+    {
+        $players = [];
+
+        $playerGameReports = $gameReport->playerGameReports()->get();
+
+        // Oops we don't have any players
+        if ($playerGameReports->count() < 1)
+        {
+            return 604;
+        }
+
+        if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
+        {
+            // FPS too low, no points awarded
+            return 630;
+        }
+
+        if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
+        {
+            // Duration too low, no points awarded
+            return 660;
+        }
+
+        $disconnected = 0;
+
+        // String a or b.
+        $winningTeam = null;
+
+        foreach ($playerGameReports as $pgr)
+        {
+            if ($pgr->won)
+            {
+                // $winningTeam = $pgr->player->qmPlayer->team;
+
+                // grab the qm players that belong to this qm match, return the team of the current player
+                $winningTeam = $pgr->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)->team;
+            }
+        }
+
+        foreach ($playerGameReports as $playerGR)
+        {
+            $ally_average = 0;
+            $ally_points = 0;
+            $ally_count = 0;
+            $enemy_average = 0;
+            $enemy_points = 0;
+            $enemy_count = 0;
+            $enemy_games = 0;
+
+            // grab the qm players that belong to this qm match, return the team of the current player
+            $myTeam = $playerGR->game->qmMatch->findQmPlayerByPlayerId($playerGR->player_id)->team;
+
+            // $playerGRTeamWonTheGame = $playerGR->player->qmPlayer->team == $winningTeam;
+            $playerGRTeamWonTheGame = $myTeam == $winningTeam;
+
+            foreach ($playerGameReports as $pgr)
+            {
+                $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
+                $players[] = $other;
+
+                if ($pgr->player->qmPlayer->team == $playerGR->player->qmPlayer->team)
+                {
+                    $ally_average += $other->rating;
+                    $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $ally_count++;
+                }
+                else
+                {
+                    $enemy_average += $other->rating;
+                    $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $enemy_count++;
+                    $enemy_games += $pgr->player->totalGames($history);
+                }
+            }
+
+            $ally_average /= $ally_count;
+            $enemy_average /= $enemy_count;
+            $elo_k = $this->playerService->getEloKvalue($players);
+            $points = null;
+            $base_rating = $enemy_average > $ally_average ? $enemy_average : $ally_average;
+
+            $gvc = 8;
+            if ($history->ladder->qmLadderRules->use_elo_points)
+            {
+                $gvc = ceil(($base_rating * $enemy_average) / 230000);
+            }
+
+            $wol_k = $history->ladder->qmLadderRules->wol_k;
+            $diff = $enemy_points - $ally_points;
+            $we = 1 / (pow(10, abs($diff) / 600) + 1);
+            $we = $diff > 0 && $playerGRTeamWonTheGame ? 1 - $we : ($diff < 0 && !$playerGRTeamWonTheGame ? 1 - $we : $we);
+            $wol = (int)($wol_k * $we);
+
+            $eloAdjust = 0;
+
+            if ($playerGR->draw)
+            {
+                $playerGR->points = 0;
+            }
+            else if ($playerGRTeamWonTheGame)
+            {
+                $points = (new EloService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
+                $diff = (int)($points - $ally_average);
+                if (!$history->ladder->qmLadderRules->use_elo_points)
+                {
+                    $diff = 0;
+                }
+
+                $playerGR->points = $gvc + $diff + $wol;
+
+                $eloAdjust = new EloService($elo_k, $ally_average, $enemy_average, 1, 0);
+
+                if ($gameReport->best_report)
+                {
+                    $this->playerService->updateUserRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
+                }
+            }
+            else
+            {
+                if ($enemy_games < 10)
+                {
+                    $wol = (int)($wol * ($enemy_games / 10));
+                }
+                if ($ally_points  < ($wol + $gvc) * 10)
+                {
+                    $playerGR->points = -1 * (int)($ally_points / 10);
+                }
+                else
+                {
+                    $playerGR->points = -1 * ($wol + $gvc);
+                }
+
+                $eloAdjust = new EloService($elo_k, $ally_average, $enemy_average, 0, 1);
+                if ($gameReport->best_report)
+                {
+                    $this->playerService->updateUserRating(
+                        $playerGR->player_id,
+                        $eloAdjust->getNewRatings()["a"]
+                    );
+                }
+            }
+
+            // Get correct cache type
+            $cache = $playerGR->player->playerCache($history->id);
+
+            if ($playerGR->points < 0 && ($cache === null || $cache->points < 0))
+            {
+                $playerGR->points = 0;
+            }
+
+            $playerGR->save();
+        }
+
+        return 200;
+    }
+
+    public function awardPlayerPoints(GameReport $gameReport, LadderHistory $history)
     {
         $players = [];
 
