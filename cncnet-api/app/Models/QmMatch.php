@@ -44,7 +44,7 @@ class QmMatch extends Model
 
     public function findQmPlayerByPlayerId(int $playerId)
     {
-        return $this->players()->filter(function ($qmPlayerTemp) use (&$playerId) {
+        return $this->players->get()->filter(function ($qmPlayerTemp) use (&$playerId) {
             return $qmPlayerTemp['player_id'] == $playerId;
         })->first();
     }
