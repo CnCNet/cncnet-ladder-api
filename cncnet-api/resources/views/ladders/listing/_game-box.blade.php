@@ -1,10 +1,20 @@
+@php
+    $groupedPlayerGameReports = [];
+    if ($ladderType == \App\Models\Ladder::TWO_VS_TWO) {
+        foreach ($playerGameReports as $playerGameReport) {
+            $team = $playerGameReport->game->qmMatch->findQmPlayerByPlayerId($playerGameReport->player_id)->team;
+            $groupedPlayerGameReports[$team][] = $playerGameReport;
+        }
+    }
+@endphp
+
 <a href="{{ $url ?? '' }}" class="game-box" data-timestamp="{{ $date->timestamp }}">
     <div class="map-preview">
         <img src="{{ $mapPreview }}" alt="" />
     </div>
 
     <div class="details text-center">
-        <h4 class="title mb-2">{{ $title }}</h4>
+        <h4 class="title mb-2">{{ $mapName }}</h4>
         <small>Played {{ $date->diffForHumans() }}</small>
 
         @if ($gameReport !== null)
@@ -20,38 +30,22 @@
         @endif
     </div>
 
-    <div class="mt-5">
-
-        @php
-            if ($ladderType === \App\Models\Ladder::CLAN_MATCH) {
-                $gamePlayerResults = $playerGameReports->groupBy('clan_id')->get();
-            } else {
-                $gamePlayerResults = $playerGameReports->get();
-
-                $groupedGamePlayerResults = [];
-
-                if ($ladderType === \App\Models\Ladder::TWO_VS_TWO) {
-                    foreach ($gamePlayerResults as $pgr) {
-                        $groupedGamePlayerResults[$pgr->player->qmPlayer->team][] = $pgr;
-                    }
-                }
-            }
-        @endphp
-
+    <div class="mt-5 text-center">
         @if ($ladderType === \App\Models\Ladder::TWO_VS_TWO)
             @php $vs = 0; @endphp
-            @foreach ($groupedGamePlayerResults as $team => $gamePlayerArr)
-                @foreach ($gamePlayerArr as $k => $gamePlayer)
+            @foreach ($groupedPlayerGameReports as $team => $teamPlayerGameReportArr)
+                @foreach ($teamPlayerGameReportArr as $k => $pgr)
                     @if ($vs == 2)
-                        <p class="vs">vs</p>
+                        <em class=" font-impact text-center">Vs</em>
                     @endif
-                    @include('ladders.listing._game-box-partial')
+
+                    @include('ladders.listing._game-box-partial', ['pgr' => $pgr])
                     @php $vs++; @endphp
                 @endforeach
             @endforeach
         @else
-            @foreach ($gamePlayerResults as $k => $gamePlayer)
-                @include('ladders.listing._game-box-partial')
+            @foreach ($playerGameReports as $k => $pgr)
+                @include('ladders.listing._game-box-partial', ['pgr' => $pgr])
                 @if ($k == 0)
                     <p class="vs">vs</p>
                 @endif

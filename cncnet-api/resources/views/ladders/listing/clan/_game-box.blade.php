@@ -1,11 +1,11 @@
 <a href="{{ $url ?? '' }}" class="game-box" data-timestamp="{{ $date->timestamp }}">
 
     <div class="map-preview">
-        <img src="{{ $mapPreview }}" alt="" />
+        <img src="{{ $mapPreview }}" alt="{{ $mapName }}" />
     </div>
 
     <div class="details text-center">
-        <h4 class="title mb-2">{{ $title }}</h4>
+        <h4 class="title mb-2">{{ $mapName }}</h4>
         <small>Played {{ $date->diffForHumans() }}</small>
 
         @if ($gameReport !== null)
@@ -22,10 +22,8 @@
     </div>
 
     <div class="mt-5">
-        <?php $clanGameReports = $gamePlayers->groupBy('clan_id')->get(); ?>
-
-        @foreach ($clanGameReports as $k => $gamePlayer)
-            @include('ladders.listing._game-box-partial')
+        @foreach ($clanGameReports as $k => $pgr)
+            @include('ladders.listing._game-box-partial', ['pgr' => $pgr])
             @if ($k == 0)
                 <p class="vs">vs</p>
             @endif
