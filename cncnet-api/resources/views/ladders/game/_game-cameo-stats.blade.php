@@ -15,7 +15,7 @@
         @if ($gameStats !== null && $pointReport)
             @php $last_heap = 'Z'; @endphp
 
-            <div class="stats {{ $pgr->won ? 'won' : 'lost' }}">
+            <div class="stats {{ $pgr->points > 0 ? 'won' : 'lost' }}">
                 <div class="mb-5">
                     @include('ladders.game._player-card', ['extraStats' => true])
                 </div>
