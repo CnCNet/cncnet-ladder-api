@@ -122,16 +122,6 @@ $reports = $playerGameReports;
                 <section class="game-players">
 
                     @if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO)
-                        {{-- 
-                        // @TODO: Should be in the controller.
-                        // Teams 2vs2, grouped 
-                        --}}
-                        @php
-                            $groupedPlayerGameReports = [];
-                            foreach ($playerGameReports as $playerGameReport) {
-                                $groupedPlayerGameReports[$playerGameReport->player->qmPlayer->team][] = $playerGameReport;
-                            }
-                        @endphp
 
                         @foreach ($groupedPlayerGameReports as $team => $teamPlayerGameReportArr)
                             @foreach ($teamPlayerGameReportArr as $k => $pgr)
