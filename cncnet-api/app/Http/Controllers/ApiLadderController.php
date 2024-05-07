@@ -445,7 +445,7 @@ class ApiLadderController extends Controller
                 // $winningTeam = $pgr->player->qmPlayer->team;
 
                 // grab the qm players that belong to this qm match, return the team of the current player
-                $winningTeam = $pgr->game->qmMatch->findQmPlayerByPlayerId($pgr->playerId)->team;
+                $winningTeam = $pgr->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)->team;
             }
         }
 
@@ -460,7 +460,7 @@ class ApiLadderController extends Controller
             $enemy_games = 0;
 
             // grab the qm players that belong to this qm match, return the team of the current player
-            $myTeam = $playerGR->game->qmMatch->findQmPlayerByPlayerId($playerGR->playerId)->team;
+            $myTeam = $playerGR->game->qmMatch->findQmPlayerByPlayerId($playerGR->player_id)->team;
 
             // $playerGRTeamWonTheGame = $playerGR->player->qmPlayer->team == $winningTeam;
             $playerGRTeamWonTheGame = $myTeam == $winningTeam;
