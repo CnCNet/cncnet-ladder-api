@@ -449,7 +449,7 @@ class ApiLadderController extends Controller
                     return $qmPlayerTemp['player_id'] == $pgrTemp->playerId;
                 })->map(function ($qmPlayerTemp) {
                     return $qmPlayerTemp->team;
-                });
+                })->first();
                 break;
             }
         }
@@ -470,7 +470,7 @@ class ApiLadderController extends Controller
                 return $qmPlayerTemp['player_id'] == $playerGRTemp->playerId;
             })->map(function ($qmPlayerTemp) {
                 return $qmPlayerTemp->team;
-            });
+            })->first();
 
             // $playerGRTeamWonTheGame = $playerGR->player->qmPlayer->team == $winningTeam;
             $playerGRTeamWonTheGame = $myTeam == $winningTeam;
