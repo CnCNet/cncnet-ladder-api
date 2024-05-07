@@ -46,7 +46,6 @@
                         <p class="vs">vs</p>
                     @endif
                     @include('ladders.listing._game-box-partial')
-                    Debug: Team {{ $team }}
                     @php $vs++; @endphp
                 @endforeach
             @endforeach
