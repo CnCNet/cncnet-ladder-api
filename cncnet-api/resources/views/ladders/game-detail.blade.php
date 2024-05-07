@@ -74,23 +74,6 @@ $reports = $playerGameReports;
 
             <br />
 
-            <?php $reports = $playerGameReports; ?>
-            @foreach ($reports as $k => $pgr)
-                <?php $gameStats = $pgr->stats; ?>
-                <?php $player = $pgr->player()->first(); ?>
-
-                @if ($history->ladder->clans_allowed)
-                    @if ($player->clanPlayer)
-                        Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
-                    @endif
-                @else
-                    <span>{{ $player->username }}</span>
-                @endif
-                @if ($k == 0)
-                    <span><strong>VS</strong></span>
-                @endif
-            @endforeach
-
             <div class="mini-breadcrumb d-none d-lg-flex">
                 <div class="mini-breadcrumb-item">
                     <a href="/" class="">
@@ -166,7 +149,10 @@ $reports = $playerGameReports;
                                     </div>
                                 @endif
 
-                                <h6 style="color:red;">Debug Team: {{ $team }}</h6>
+                                @if (request()->debug)
+                                    <h6 style="color:red;">Debug Team: {{ $team }}</h6>
+                                @endif
+
                                 @include('ladders.game._player-card')
                             @endforeach
                         @endforeach

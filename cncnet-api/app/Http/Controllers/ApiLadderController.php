@@ -438,12 +438,14 @@ class ApiLadderController extends Controller
         // String a or b.
         $winningTeam = null;
 
-        foreach ($playerGameReports as $playerGR)
+        foreach ($playerGameReports as $pgr)
         {
-            if ($playerGR->won)
+            if ($pgr->won)
             {
-                $winningTeam = $playerGR->player->qmPlayer->team;
-                break;
+                // $winningTeam = $pgr->player->qmPlayer->team;
+
+                // grab the qm players that belong to this qm match, return the team of the current player
+                $winningTeam = $pgr->game->qmMatch->qmPlayers->findQmPlayerByPlayerId($pgr->playerId)->team;
             }
         }
 
@@ -457,7 +459,11 @@ class ApiLadderController extends Controller
             $enemy_count = 0;
             $enemy_games = 0;
 
-            $playerGRTeamWonTheGame = $playerGR->player->qmPlayer->team == $winningTeam;
+            // grab the qm players that belong to this qm match, return the team of the current player
+            $myTeam = $playerGR->game->qmMatch->qmPlayers->findQmPlayerByPlayerId($playerGR->playerId)->team;
+
+            // $playerGRTeamWonTheGame = $playerGR->player->qmPlayer->team == $winningTeam;
+            $playerGRTeamWonTheGame = $myTeam == $winningTeam;
 
             foreach ($playerGameReports as $pgr)
             {
