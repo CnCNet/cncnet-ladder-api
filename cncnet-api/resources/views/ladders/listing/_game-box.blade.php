@@ -39,7 +39,7 @@
         @endphp
 
         @if ($ladderType === \App\Models\Ladder::TWO_VS_TWO)
-            @php $vs = 0; @endphp;
+            @php $vs = 0; @endphp
             @foreach ($groupedGamePlayerResults as $team => $gamePlayerArr)
                 @foreach ($gamePlayerArr as $k => $gamePlayer)
                     @if ($vs == 2)
