@@ -1,4 +1,4 @@
-<div class="player {{ $pgr->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
+<div class="player {{ $pgr->points > 0 ? 'won' : 'lost' }} player-order-{{ $k }}">
 
     <div class="player-name-faction">
         @if ($pgr->stats)

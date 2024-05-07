@@ -123,6 +123,7 @@ $reports = $playerGameReports;
 
                     @if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO)
 
+                        @php $i = 0; @endphp
                         @foreach ($groupedPlayerGameReports as $team => $teamPlayerGameReportArr)
                             @foreach ($teamPlayerGameReportArr as $k => $pgr)
                                 @php $gameStats = $pgr->stats; @endphp
@@ -131,7 +132,7 @@ $reports = $playerGameReports;
                                 @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
                                 @php $points = $playerCache ? $playerCache->points : 0;@endphp
 
-                                @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
+                                @if ($i == 2)
                                     <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">
                                         <div class="player-vs d-flex align-items-center">
                                             <em class="h1 font-impact">Vs</em>
@@ -144,6 +145,7 @@ $reports = $playerGameReports;
                                 @endif
 
                                 @include('ladders.game._player-card')
+                                @php $i++; @endphp
                             @endforeach
                         @endforeach
                     @else
