@@ -85,14 +85,15 @@ class LadderController extends Controller
     public function getLadderIndex(Request $request)
     {
         $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
+
+        if (!isset($history)) abort(404);
+
         $history->load([
             'ladder',
             'ladder.qmLadderRules',
             'ladder.sides',
         ]);
 
-        if ($history === null)
-            abort(404);
 
         $tier = isset($request->tier) && !empty($request->tier) ? $request->tier : 1; // Default to tier 1
 
