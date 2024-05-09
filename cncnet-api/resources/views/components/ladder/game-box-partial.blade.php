@@ -1,14 +1,17 @@
-<div class="player {{ $gamePlayer->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
+@props([
+    'index',
+    'gamePlayer',
+    'history'
+])
+<div class="player {{ $gamePlayer->won == true ? 'won' : 'lost' }} player-order-{{ $index }}">
 
     <div class="player-name-faction">
         @if ($gamePlayer->stats)
-            @php $playerStats2 = \App\Models\Stats2::where("id", $gamePlayer->stats->id)->first(); @endphp
-            @php $playerCountry = $playerStats2->faction($history->ladder, $gamePlayer->stats->cty); @endphp
-
+            @php $playerCountry = $gamePlayer->stats->faction($history->ladder); @endphp
             <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
         @endif
 
-        @if ($isClanGame)
+        @if ($history->ladder->clans_allowed)
             <span class="ps-3 pe-1">
                 <i class="bi bi-flag-fill icon-clan"></i>
                 @if ($gamePlayer->clan)

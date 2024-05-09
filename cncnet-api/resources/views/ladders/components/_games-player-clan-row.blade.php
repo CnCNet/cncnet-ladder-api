@@ -16,7 +16,7 @@
     @if ($playerGameReport->stats)
         <div class="player-points d-flex">
             @php $playerStats2 = \App\Models\Stats2::where("id", $playerGameReport->stats->id)->first(); @endphp
-            @php $playerCountry = $playerStats2->faction($history->ladder->game, $playerGameReport->stats->cty); @endphp
+            @php $playerCountry = $playerStats2->faction($history->ladder, $playerGameReport->stats->cty); @endphp
 
             <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
 

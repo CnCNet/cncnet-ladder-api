@@ -164,7 +164,7 @@
 
 .game-detail .status-lost 
 {
-    color: $color-lost;
+    color: $color-green;
     font-weight: 700;
     font-size: 0.8rem;
     
@@ -422,7 +422,7 @@
     flex-direction: column;
     background: #14141440;
     padding: 1rem;
-    width: 100%;
+    width: 45%;
     max-width: 100%;
     
     @media(min-width: $lg-width)

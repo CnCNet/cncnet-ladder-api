@@ -1,13 +1,34 @@
 @extends('layouts.app')
 @section('title', '500')
+@section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2'))
+@section('feature-video-poster', \App\Models\URLHelper::getVideoPosterUrlByAbbrev('ra2'))
 
 @section('feature')
-    <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
-        <x-slot name="title">Kaboom 500</x-slot>
-        <x-slot name="description">
-            Please tell the devs in our <a href="https://cncnet.org/discord"><u>Discord</u></a>
-        </x-slot>
-    </x-hero-with-video>
+    <div class="feature pt-5 pb-5">
+        <div class="container px-4 py-5 text-light">
+            <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class="col-12">
+                    <h1 class="display-4 lh-1 mb-3">
+                        <strong class="fw-bold">500</strong>
+                        <span>Error. Probably mind control.</span>
+                    </h1>
+
+                    <ul class="list-inline">
+                        <li>
+                            <a class="btn btn-primary" href="/" role="button" title="Play Now">Back to Home</a>
+                        </li>
+                    </ul>
+
+                    @if (!\Auth::user())
+                        <div class="mt-4">
+                            <a class="btn btn-outline-primary me-3 btn-lg" href="/auth/register">Register</a>
+                            <a class="btn btn-outline-secondary btn-lg" href="/auth/login">Login</a>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('breadcrumb')

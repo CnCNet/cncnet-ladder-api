@@ -8,7 +8,7 @@
                 <div class="faction mt-2" style="padding-left:0;">
                     @if ($pgr->stats)
                         @php $playerStats2 = \App\Models\Stats2::where("id", $pgr->stats->id)->first(); @endphp
-                        @php $playerCountry = $playerStats2->faction($history->ladder->game, $pgr->stats->cty); @endphp
+                        @php $playerCountry = $playerStats2->faction($history->ladder, $pgr->stats->cty); @endphp
                         <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                     @endif
                 </div>
@@ -21,7 +21,7 @@
             {{ $player->username }}
         </h4>
 
-        <div class="pt-2 pb-2 points font-secondary-bold {{ $pgr->points > 0 ? 'won' : 'lost' }}">
+        <div class="pt-2 pb-2 points font-secondary-bold {{ $pgr->won ? 'won' : 'lost' }}">
             @if ($pgr->points > 0)
                 <strong class="me-1">Won {{ '+' }}</strong>
             @else

@@ -114,7 +114,7 @@
                     </div>
                     <div>
                         <a href="http://twitter.com/cncnetofficial" title="Follow CnCNet on X" target="_blank" class="footer-social-link">
-                            <i class="bi bi-twitter-x"></i>
+                            <i class="bi bi-x"></i>
                         </a>
                     </div>
                     <div>

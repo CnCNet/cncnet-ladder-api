@@ -94,8 +94,8 @@
                                     @endif
                                 </div>
 
-                                <div class="status text-uppercase status-{{ $pointReport->points > 0 ? 'won' : 'lost' }}">
-                                    @if ($pointReport->points > 0)
+                                <div class="status text-uppercase status-{{ $pointReport->won ? 'won' : 'lost' }}">
+                                    @if ($pointReport->won)
                                         Won
                                     @elseif($pointReport->draw)
                                         Draw
@@ -109,7 +109,7 @@
                                 <div class="faction">
                                     @if ($pgr->stats)
                                         @php $playerStats2 = \App\Models\Stats2::where("id", $pgr->stats->id)->first(); @endphp
-                                        @php $playerCountry = $playerStats2->faction($history->ladder->game, $pgr->stats->cty); @endphp
+                                        @php $playerCountry = $playerStats2->faction($history->ladder, $pgr->stats->cty); @endphp
                                         <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                                     @endif
                                 </div>
