@@ -209,6 +209,8 @@ class ApiQuickMatchController extends Controller
 
     /**
      * returns a 'pretty' message describing the players on each team
+     * 
+     * should probably return a json array with the data but we are where we are
      */
     private function getTeamActivePlayerMatchesData($players, $created_at) // TODO will this logic work for clan ladder?
     {
