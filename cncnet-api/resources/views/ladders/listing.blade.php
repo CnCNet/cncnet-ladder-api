@@ -49,7 +49,7 @@
 
 @section('content')
     <section class="pt-3 pb-3">
-        <div class="container">
+        <div class="container-xl">
             @if ($history->ladder->qmLadderRules->tier2_rating > 0)
                 <div class="league-selection">
                     <a href="{{ \App\Models\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">
@@ -67,7 +67,7 @@
 
 
     <section class="ladder-listing game-{{ $history->ladder->abbreviation }}">
-        <div class="container">
+        <div class="container-xl">
 
             @if ($history->ladder->abbreviation == 'blitz')
                 <section class="useful-links d-md-flex mt-4">

@@ -47,8 +47,8 @@
                     spaceBetween: 20,
                 },
                 "@1.00": {
-                    slidesPerView: 4,
-                    spaceBetween: 40,
+                    slidesPerView: 5,
+                    spaceBetween: 30,
                 },
             },
             // Navigation arrows

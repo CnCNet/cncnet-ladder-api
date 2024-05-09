@@ -5,6 +5,7 @@
 @php
     $url = '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id;
     $status = $game->player_game_reports->first()->won ? 'won' : 'lost';
+    $mapName = $game->qmMatch?->map?->description;
 @endphp
 <div class="game-box">
 
@@ -21,7 +22,7 @@
        data-timestamp="{{ $game->updated_at->timestamp }}"
        title="View game">
         <div class="details text-center">
-            <h4 class="title">{{ $game->qmMatch?->map?->description }}</h4>
+            <h4 class="title">{{ $mapName }}</h4>
             <small class="status text-capitalize">{{ $status . ' ' . $game->updated_at->diffForHumans() }}</small>
 
             @if ($game->report !== null)
@@ -67,7 +68,7 @@
                 @endif
 
                 @if ($k == 0)
-                    <p class="vs">vs</p>
+                    <em class="font-impact text-center">Vs</em>
                 @endif
             @endforeach
         </div>

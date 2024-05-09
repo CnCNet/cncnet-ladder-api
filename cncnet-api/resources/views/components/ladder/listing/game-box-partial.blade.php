@@ -3,7 +3,7 @@
     'gamePlayer',
     'history'
 ])
-<div class="player {{ $gamePlayer->won == true ? 'won' : 'lost' }} player-order-{{ $index }}">
+<div class="player {{ $gamePlayer->points > 0 ? 'won' : 'lost' }} player-order-{{ $index }}">
 
     <div class="player-name-faction">
         @if ($gamePlayer->stats)
