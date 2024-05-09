@@ -85,89 +85,63 @@ class LadderController extends Controller
     public function getLadderIndex(Request $request)
     {
         $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
+        $history->load([
+            'ladder',
+            'ladder.qmLadderRules',
+            'ladder.sides',
+        ]);
 
         if ($history === null)
             abort(404);
 
-        $players = null;
-        $clans = null;
-        $tier = isset($request->tier) && !empty($request->tier) ? $request->tier : 1; // Default to tier 1
-
-
-        # Filter & Ordering
-        if ($request->filterBy && $request->orderBy)
-        {
-            $orderBy = $request->orderBy == "desc" ? "desc" : "asc";
-
-            if ($history->ladder->clans_allowed)
-            {
-                $clans = ClanCache::where("ladder_history_id", "=", $history->id)
-                    ->where("clan_name", "like", "%" . $request->search . "%")
-                    ->orderBy("points", "desc")
-                    ->orderBy("games", $orderBy)
-                    ->paginate(45);
-            }
-            else
-            {
-                $players = \App\Models\PlayerCache::where("ladder_history_id", "=", $history->id)
-                    ->where("tier", "=", $tier)
-                    ->where("player_name", "like", "%" . $request->search . "%")
-                    ->orderBy("games", $orderBy)
-                    ->paginate(45);
-            }
-        }
-        else
-        {
-            if ($history->ladder->clans_allowed)
-            {
-                $clans = ClanCache::where("ladder_history_id", "=", $history->id)
-                    ->where("clan_name", "like", "%" . $request->search . "%")
-                    ->orderBy("points", "desc")
-                    ->paginate(45);
-            }
-            else
-            {
-                $players = \App\Models\PlayerCache::where("ladder_history_id", "=", $history->id)
-                    ->where("tier", "=", $tier)
-                    ->where("player_name", "like", "%" . $request->search . "%")
-                    ->orderBy("points", "desc")
-                    ->paginate(45);
-            }
-        }
-
-        # Stats
-        if ($history->ladder->clans_allowed)
-        {
-            $statsXOfTheDay = $this->statsService->getClanOfTheDay($history);
-        }
-        else
-        {
-            $statsXOfTheDay = $this->statsService->getPlayerOfTheDay($history);
-        }
-
-        $sides = \App\Models\Side::where('ladder_id', '=', $history->ladder_id)
+        /*$sides = \App\Models\Side::where('ladder_id', '=', $history->ladder_id)
             ->where('local_id', '>=', 0)
             ->orderBy('local_id', 'asc')
             ->pluck('name');
+*/
+        $tier = isset($request->tier) && !empty($request->tier) ? $request->tier : 1; // Default to tier 1
 
+        if (!$history->ladder->clans_allowed) {
+            $players = $this->ladderService->getPlayersFromCacheForLadderHistory(
+                $history,
+                $request->filterBy,
+                $request->orderBy,
+                $tier,
+                $request->search
+            );
+        }
+        else {
+            $clans = $this->ladderService->getClansFromCacheForLadderHistory(
+                $history,
+                $request->filterBy,
+                $request->orderBy,
+                $request->search
+            );
+        }
+
+        $games = $this->ladderService->getRecentLadderGames($history, 16);
+        $ladderHistoriesPrevious = $this->ladderService->getPreviousLadderHistoryForLadder($history->ladder);
 
         $data = [
-            "isClanLadder" => $history->ladder->clans_allowed,
+            'history' => $history,
+            'ladderHistoriesPrevious' => $ladderHistoriesPrevious,
+            'stats' => $this->statsService->getQmStats($history),
+            'statsXOfTheDay' => $this->statsService->getWinnerOfTheDay($history),
+            'players' => $players ?? null,
+            'clans' => $clans ?? null,
+            'games' => $games,
+            /*"ladders" => $this->ladderService->getLatestLadders(),
+            "clan_ladders" => $this->ladderService->getLatestClanLadders(),*/
+            /*"isClanLadder" => $history->ladder->clans_allowed,
             "players" => $players,
-            "clans" => $clans,
-            "history" => $history,
             "tier" => $request->tier,
             "search" => $request->search,
             "sides" => $sides,
-            "stats" => $this->statsService->getQmStats($request->game),
             "statsXOfTheDay" => $statsXOfTheDay,
-            "ladders" => $this->ladderService->getLatestLadders(),
-            "ladders_previous" => $this->ladderService->getPreviousLaddersByGame($request->game),
-            "clan_ladders" => $this->ladderService->getLatestClanLadders(),
-            "games" => $this->ladderService->getRecentLadderGames($request->date, $request->game, 16),
+            "ladders_previous" => $laddersPrevious,*/
         ];
 
-        return view("ladders.listing", $data);
+        return view("ladders.listing2", $data);
     }
 
     public function getLadderGames(Request $request)
@@ -277,16 +251,13 @@ class LadderController extends Controller
         }
         $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
 
-        $playerGameReports = $gameReport->playerGameReports ?? [];
-        $groupedPlayerGameReports = [];
-
+        $playerGameReports = $gameReport->playerGameReports()->get() ?? [];
+        $groupedByTeamPlayerGameReports = [];
         if ($history->ladder->ladder_type == Ladder::TWO_VS_TWO)
         {
-            $groupedPlayerGameReports = [];
-            foreach ($playerGameReports as $playerGameReport)
+            foreach ($playerGameReports as $pgr)
             {
-                $team = $playerGameReport->game->qmMatch->findQmPlayerByPlayerId($playerGameReport->player_id)->team;
-                $groupedPlayerGameReports[$team][] = $playerGameReport;
+                $groupedByTeamPlayerGameReports[$pgr->player->qmPlayer->team][] = $pgr;
             }
         }
 
@@ -373,6 +344,7 @@ class LadderController extends Controller
         }
         else
         {
+
             if (!$userIsMod)
                 $qmConnectionStats = [];
 
@@ -383,7 +355,7 @@ class LadderController extends Controller
                     "gameReport" => $gameReport,
                     "allGameReports" => $allGameReports,
                     "playerGameReports" => $playerGameReports,
-                    "groupedPlayerGameReports" => $groupedPlayerGameReports,
+                    "groupedByTeamPlayerGameReports" => $groupedByTeamPlayerGameReports,
                     "history" => $history,
                     "heaps" => $heaps,
                     "user" => $user,

@@ -26,7 +26,7 @@ class LeagueChampionsController extends Controller
         {
             abort(404);
         }
-        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($game, 10)->splice(0, 9);
+        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($ladder, 10)->splice(0, 9);
 
         foreach ($prevLadders as $h)
         {

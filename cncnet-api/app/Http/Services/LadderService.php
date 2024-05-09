@@ -4,10 +4,14 @@ namespace App\Http\Services;
 
 use App\Http\Controllers\RankingController;
 use App\Models\ClanCache;
+use App\Models\Game;
 use App\Models\Ladder;
+use App\Models\LadderHistory;
+use App\Models\PlayerCache;
 use App\Models\PlayerRating;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -81,6 +85,7 @@ class LadderService
                 ->where('ladder.clans_allowed', '=', false)
                 ->where('ladder.private', '=', false)
                 ->orderBy('ladder.order', 'ASC')
+                ->with('ladder')
                 ->get();
         });
     }
@@ -134,6 +139,7 @@ class LadderService
                 ->where("ladder_history.ends", "=", $end)
                 ->whereNotNull("ladder.id")
                 ->where('ladder.clans_allowed', '=', true)
+                ->with('ladder')
                 ->get();
         });
     }
@@ -148,22 +154,75 @@ class LadderService
         return collect(Ladder::getAllowedQMLaddersByUser($user, true));
     }
 
-    public function getPreviousLaddersByGame($cncnetGame, $limit = 5)
+    public function getPreviousLadderHistoryForLadder(Ladder $ladder, $limit = 5) {
+        $histories = LadderHistory::where("ladder_history.starts", "<=", now()->startOfMonth()->subMonth())
+            ->where("ladder_history.ladder_id", "=", $ladder->id)
+            ->limit($limit)
+            ->select(['short', 'starts'])
+            ->orderBy('ladder_history.starts', 'DESC')
+            ->get();
+        $histories->each(fn($h) => $h->setRelation('ladder', $ladder));
+        return $histories;
+    }
+
+    public function getPlayersFromCacheForLadderHistory(
+        LadderHistory $ladderHistory,
+        ?string $filterBy = null,
+        ?string $orderBy = 'desc',
+        int $tier = 1,
+        ?string $search = null
+    ) {
+
+       return PlayerCache::query()
+            ->where("ladder_history_id", "=", $ladderHistory->id)
+            ->where("tier", "=", $tier)
+            ->when(isset($search) && !empty($search),
+                function($q) use ($search) { return $q->where("player_name", "like", "%" . $search . "%"); },
+            )
+            ->when($filterBy == 'games',
+                function($q) use ($orderBy) { return $q->orderBy("games", $orderBy ?? 'desc'); },
+                function($q) { return $q->orderBy("points", "desc"); }
+            )
+            ->paginate(45);
+    }
+
+    public function getClansFromCacheForLadderHistory(
+        LadderHistory $ladderHistory,
+        ?string $filterBy = null,
+        ?string $orderBy = 'desc',
+        ?string $search = null
+    ) {
+
+        return ClanCache::query()
+            ->where("ladder_history_id", "=", $ladderHistory->id)
+            ->when(isset($search) && !empty($search),
+                function($q) use ($search) { return $q->where("clan_name", "like", "%" . $search . "%"); },
+            )
+            ->when($filterBy == 'games',
+                function($q) use ($orderBy) { return $q->orderBy("games", $orderBy ?? 'desc'); },
+                function($q) { return $q->orderBy("points", "desc"); }
+            )
+            ->paginate(45);
+    }
+
+    public function getPreviousLaddersByGame(Ladder $ladder, $limit = 5)
     {
         $date = Carbon::now();
 
         $start = $date->startOfMonth()->subMonth($limit)->toDateTimeString();
         $end = $date->endOfMonth()->toDateTimeString();
 
-        $ladder = \App\Models\Ladder::where("abbreviation", "=", $cncnetGame)->first();
-
         if ($ladder === null) return collect();
 
-        return \App\Models\LadderHistory::where("ladder_history.starts", ">=", $start)
+        $histories = LadderHistory::where("ladder_history.starts", ">=", $start)
             ->where("ladder_history.ladder_id", "=", $ladder->id)
             ->limit($limit)
             ->get()
             ->reverse();
+
+        $histories->each(fn($h) => $h->setRelation('ladder', $ladder));
+
+        return $histories;
     }
 
     public function getActiveLadderByDate($date, $cncnetGame = null)
@@ -194,13 +253,10 @@ class LadderService
         }
         else
         {
-            $ladder = \App\Models\Ladder::where("abbreviation", "=", $cncnetGame)->first();
-            if ($ladder === null)
-                return null;
-
-            return \App\Models\LadderHistory::where("starts", "=", $start)
+            return LadderHistory::query()
+                ->where("starts", "=", $start)
                 ->where("ends", "=", $end)
-                ->where("ladder_id", "=", $ladder->id)
+                ->whereHas('ladder', fn($q) => $q->where('abbreviation', $cncnetGame))
                 ->first();
         }
     }
@@ -231,18 +287,20 @@ class LadderService
         return $players;
     }
 
-    public function getRecentLadderGames($date, $cncnetGame, $limit = 4)
+    public function getRecentLadderGames(LadderHistory $history, $limit = 4)
     {
-        $history = $this->getActiveLadderByDate($date, $cncnetGame);
-        if ($history == null)
-        {
-            return [];
-        }
-
-        return \App\Models\Game::where("ladder_history_id", "=", $history->id)
+        return Game::where("ladder_history_id", "=", $history->id)
             ->whereNotNull('game_report_id')
             ->orderBy("games.id", "DESC")
             ->limit($limit)
+            ->with([
+                'report',
+                'player_game_reports',
+                'player_game_reports.player',
+                'player_game_reports.clan',
+                'player_game_reports.stats',
+                'qmMatch.map.map',
+            ])
             ->get();
     }
 

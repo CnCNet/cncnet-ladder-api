@@ -51,7 +51,9 @@ class ApiQuickMatchController extends Controller
 
     public function statsRequest(Request $request, $ladderAbbrev = null, $tierId = 1)
     {
-        $qmStats = $this->statsService->getQmStats($ladderAbbrev, $tierId);
+        $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
+        $history = $ladder->currentHistory();
+        $qmStats = $this->statsService->getQmStats($history, $tierId);
 
         return [
             'recentMatchedPlayers' => $qmStats['recentMatchedPlayers'],
