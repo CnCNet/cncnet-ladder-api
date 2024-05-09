@@ -156,8 +156,11 @@ class ApiLadderController extends Controller
         if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
             $this->updateAchievements($playerId, $history->ladder, $stats);
 
-        if ($gameReport->best_report == true && $gameReport->duration == 3 && $gameReport->fps == 33)
-            $this->adminService->doWashGame($gameReport->game_id, "ladder-auto-wash");
+        // Toggling off auto-wash, TODO only wash games where both players submitted a game report. 
+        // If only one player submitted a game report, don't wash
+
+        // if ($gameReport->best_report == true && $gameReport->duration == 3 && $gameReport->fps == 33)
+            // $this->adminService->doWashGame($gameReport->game_id, "ladder-auto-wash");
 
         return response()->json(['success' => $status], 200);
     }
