@@ -132,7 +132,7 @@ class LadderController extends Controller
             'ranks' => $ranks,
             'mostUsedFactions' => $mostUsedFactions ?? [],
         ];
-        return view("ladders.listing2", $data);
+        return view("ladders.listing", $data);
     }
 
     public function getLadderGames(Request $request)
