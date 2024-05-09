@@ -21,10 +21,10 @@ class PlayerService
     /**
      * Creates Player, PlayerActiveHandle if the username is not taken.
      * Returns null if username taken.
-     * @param mixed $username 
-     * @param mixed $user 
-     * @param mixed $ladderId 
-     * @return Player|null 
+     * @param mixed $username
+     * @param mixed $user
+     * @param mixed $ladderId
+     * @return Player|null
      */
     public function addPlayerToUser($username, $user, $ladderId)
     {
@@ -89,7 +89,7 @@ class PlayerService
         return $userRating;
     }
 
-    public function findPlayerByUsername($name, $ladder) : ?Player
+    public function findPlayerByUsername($name, $ladder): ?Player
     {
         return Player::where("username", "=", $name)
             ->where("ladder_id", "=", $ladder->id)
@@ -202,7 +202,7 @@ class PlayerService
      * @param $qmClientId
      * @return mixed|null
      */
-    public function checkUserForBans($user, $ip, $qmClientId)
+    public function checkUserForBans(\App\Models\User $user, $ip, $qmClientId)
     {
         $ban = $user->getBan(true);
         if ($ban !== null)
@@ -340,7 +340,8 @@ class PlayerService
     }
 
 
-    public function checkPlayerShouldMatchAI(Request $request, Player $player, Ladder $ladder, QmMatchPlayer $qmPlayer) {
+    public function checkPlayerShouldMatchAI(Request $request, Player $player, Ladder $ladder, QmMatchPlayer $qmPlayer)
+    {
 
         $user = $player->user;
         $ladderRules = $ladder->qmLadderRules;
@@ -350,7 +351,8 @@ class PlayerService
         $qmQueueEntry = $qmPlayer->qEntry;
 
         // Test user
-        if ($user->email == "neogrant3@gmail.com") {
+        if ($user->email == "neogrant3@gmail.com")
+        {
             return true;
         }
 

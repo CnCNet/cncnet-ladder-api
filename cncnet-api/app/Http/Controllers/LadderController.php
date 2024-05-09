@@ -242,13 +242,16 @@ class LadderController extends Controller
         }
         $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
 
-        $playerGameReports = $gameReport->playerGameReports()->get() ?? [];
-        $groupedByTeamPlayerGameReports = [];
+        $playerGameReports = $gameReport->playerGameReports ?? [];
+        $groupedPlayerGameReports = [];
+
         if ($history->ladder->ladder_type == Ladder::TWO_VS_TWO)
         {
-            foreach ($playerGameReports as $pgr)
+            $groupedPlayerGameReports = [];
+            foreach ($playerGameReports as $playerGameReport)
             {
-                $groupedByTeamPlayerGameReports[$pgr->player->qmPlayer->team][] = $pgr;
+                $team = $playerGameReport->game->qmMatch->findQmPlayerByPlayerId($playerGameReport->player_id)->team;
+                $groupedPlayerGameReports[$team][] = $playerGameReport;
             }
         }
 
