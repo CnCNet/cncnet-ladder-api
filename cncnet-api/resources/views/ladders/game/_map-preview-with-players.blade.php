@@ -94,8 +94,8 @@
                                     @endif
                                 </div>
 
-                                <div class="status text-uppercase status-{{ $pointReport->won ? 'won' : 'lost' }}">
-                                    @if ($pointReport->won)
+                                <div class="status text-uppercase status-{{ $pointReport->points > 0 ? 'won' : 'lost' }}">
+                                    @if ($pointReport->points > 0)
                                         Won
                                     @elseif($pointReport->draw)
                                         Draw

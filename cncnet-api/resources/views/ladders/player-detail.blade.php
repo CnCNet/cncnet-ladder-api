@@ -113,7 +113,7 @@
                         </h1>
 
                         @if ($history->ladder->clans_allowed)
-                            <h2 class="rank text-uppercase mt-0">Clan {{ $player->clanPlayer->clan->short }}</h2>
+                            <h2 class="rank text-uppercase mt-0">Clan {{ $player->clanPlayer?->clan->short }}</h2>
                         @endif
 
                         <h3 class="rank highlight text-uppercase mt-0">Rank #{{ $ladderPlayer->rank }}</h3>

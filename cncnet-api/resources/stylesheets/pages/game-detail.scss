@@ -1,4 +1,4 @@
-.game-detail .map-preview 
+.game-detail .map-preview
 {
     position: relative;
     background-repeat: no-repeat;
@@ -6,7 +6,7 @@
     background-size: 100%;
 }
 
-.game-detail .player 
+.game-detail .player
 {
     font-family: $font-primary;
     position: absolute;
@@ -27,20 +27,20 @@
 }
 
 // Player
-.game-detail .player-marker 
+.game-detail .player-marker
 {
     position: absolute;
-    width: 30px; 
-    height: 30px; 
+    width: 30px;
+    height: 30px;
 }
 
 @media(max-width: $md-width)
 {
-    .game-detail.clan-detail .player-marker 
+    .game-detail.clan-detail .player-marker
     {
-        width: 20px; 
+        width: 20px;
         height: 20px;
-        
+
         .player-start-position
         {
             font-size: 0.6rem;
@@ -48,12 +48,12 @@
     }
 }
 
-.game-detail .player-marker .player-start-position 
+.game-detail .player-marker .player-start-position
 {
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     width: 100%;
     height: 100%;
     font-size: 1rem;
@@ -66,117 +66,105 @@
 
 
 // Game colours
-.game-detail .player-marker .player-start-position.red 
+.game-detail .player-marker .player-start-position.red
 {
     border: 2px solid #c30000;
 }
 
-.game-detail .player-red 
+.game-detail .player-red
 {
     border: 2px solid #c30000;
     box-shadow: 0px -2px #ff2222;
     border-top: 0;
 }
 
-.game-detail .player-marker .player-start-position.yellow 
+.game-detail .player-marker .player-start-position.yellow
 {
     border: 2px solid #fffb00;
 }
 
-.game-detail .player-yellow 
+.game-detail .player-yellow
 {
     border: 2px solid #fffb00;
     box-shadow: 0px -2px #fffb00;
     border-top: 0;
 }
 
-.game-detail .player-marker .player-start-position.green 
+.game-detail .player-marker .player-start-position.green
 {
     border: 2px solid #2bff00;
 }
 
-.game-detail .player-green 
+.game-detail .player-green
 {
     border: 2px solid #2bff00;
     box-shadow: 0px -2px #2bff00;
     border-top: 0;
 }
 
-.game-detail .player-marker .player-start-position.blue 
+.game-detail .player-marker .player-start-position.blue
 {
     border: 2px solid #001aff;
 }
 
-.game-detail .player-blue 
+.game-detail .player-blue
 {
     border: 2px solid #001aff;
     box-shadow: 0px -2px #001aff;
     border-top: 0;
 }
 
-.game-detail .player-marker .player-start-position.orange 
+.game-detail .player-marker .player-start-position.orange
 {
     border: 2px solid #ffa600;
 }
 
-.game-detail .player-orange 
+.game-detail .player-orange
 {
     border: 2px solid #ffa600;
     box-shadow: 0px -2px #ffa600;
     border-top: 0;
 }
 
-.game-detail .player-marker .player-start-position.teal 
+.game-detail .player-marker .player-start-position.teal
 {
     border: 2px solid #00f7ff;
 }
 
-.game-detail .player-teal 
+.game-detail .player-teal
 {
     border: 2px solid #00f7ff;
     box-shadow: 0px -2px #00f7ff;
     border-top: 0;
 }
 
-.game-detail .player-marker .player-start-position.purple 
+.game-detail .player-marker .player-start-position.purple
 {
     border: 2px solid #c300ff;
 }
 
-.game-detail .player-purple 
+.game-detail .player-purple
 {
     border: 2px solid #c300ff;
     box-shadow: 0px -2px #c300ff;
     border-top: 0;
 }
 
-.game-detail .player-marker .player-start-position.pink 
+.game-detail .player-marker .player-start-position.pink
 {
     border: 2px solid #ff009d;
 }
 
-.game-detail .player-pink 
+.game-detail .player-pink
 {
     border: 2px solid #ff009d;
     box-shadow: 0px -2px #ff009d;
     border-top: 0;
 }
 
-.game-detail .status-lost 
+.game-detail .status-lost
 {
-    color: $color-green;
-    font-weight: 700;
-    font-size: 0.8rem;
-    
-    @media(min-width:$md-width)
-    {
-        font-size: 1rem;
-    }
-}
-
-.game-detail .status-won 
-{
-    color: $color-green;
+    color: $color-lost;
     font-weight: 700;
     font-size: 0.8rem;
 
@@ -186,7 +174,19 @@
     }
 }
 
-.game-detail .player .username 
+.game-detail .status-won
+{
+    color: $color-green;
+    font-weight: 700;
+    font-size: 0.8rem;
+
+    @media(min-width:$md-width)
+    {
+        font-size: 1rem;
+    }
+}
+
+.game-detail .player .username
 {
     font-size: 0.95rem;
     font-weight: 400;
@@ -195,19 +195,19 @@
 @media(max-width: $lg-width)
 {
     .game-detail.clan-detail .status-won,
-    .game-detail.clan-detail .status-lost 
+    .game-detail.clan-detail .status-lost
     {
         font-size: .6rem;
     }
-    
-    .game-detail.clan-detail .username 
+
+    .game-detail.clan-detail .username
     {
         font-size: .65rem;
     }
 }
 
 
-.game-detail .player .player-details 
+.game-detail .player .player-details
 {
     padding-left: 0.5rem;
     padding-right: 22px;
@@ -218,7 +218,7 @@
     }
 }
 
-.game-detail .player .player-details .faction 
+.game-detail .player .player-details .faction
 {
     position: absolute;
     right: 0;
@@ -226,7 +226,7 @@
     padding-right: 0.2rem;
     padding-bottom: 0.2rem;
 
-    .player-faction 
+    .player-faction
     {
         width: 25px;
         height: 16px;
@@ -234,7 +234,7 @@
 
     @media(min-width: $md-width)
     {
-        .player-faction 
+        .player-faction
         {
             width: 40px;
             height: 19px;
@@ -242,7 +242,7 @@
     }
 }
 
-.game-detail .player .player-avatar 
+.game-detail .player .player-avatar
 {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
@@ -253,7 +253,7 @@
     }
 }
 
-.game-detail .player-avatar .avatar-with-faction 
+.game-detail .player-avatar .avatar-with-faction
 {
     position: relative;
 
@@ -263,14 +263,14 @@
         bottom: 0;
         right: 0;
 
-        .player-faction { 
+        .player-faction {
             width: 40px;
         }
     }
 }
 
 // Game players
-.game-detail .game-players 
+.game-detail .game-players
 {
     display: flex;
     justify-content: space-around;
@@ -283,12 +283,12 @@
     }
 }
 
-.game-detail .game-players .player-vs 
+.game-detail .game-players .player-vs
 {
     justify-content: center;
     max-width: 100%;
-    
-    h1 
+
+    h1
     {
         color: #ededed;
         font-weight: 400;
@@ -304,14 +304,14 @@
 
 
 // Player cards
-.game-detail .game-players-container 
+.game-detail .game-players-container
 {
     position: relative;
     padding-top: 1rem;
     padding-bottom: 1rem;
 }
 
-.game-detail .player-card 
+.game-detail .player-card
 {
     display: flex;
     position: relative;
@@ -335,31 +335,31 @@
 .game-detail .player-card .points.won { color: $color-green; }
 .game-detail .player-card .points.lost { color: $color-lost; }
 
-.game-detail .player-card .faction 
+.game-detail .player-card .faction
 {
     padding-left: 0.4rem;
     padding-right: 0.4rem;
 }
 
-.game-detail .player-card-right .player-details 
+.game-detail .player-card-right .player-details
 {
     order: -1;
 }
 
-.game-detail .player-card-right .faction 
+.game-detail .player-card-right .faction
 {
     order: 1;
     margin-left: 0.5rem;
 }
 
-.game-detail .player-card .player-avatar 
+.game-detail .player-card .player-avatar
 {
     background: #08090e;
     border-radius: 100%;
     margin-top: 0;
     margin-bottom: auto;
 
-    .icon 
+    .icon
     {
         color: silver;
         font-size: 2rem;
@@ -399,7 +399,7 @@
     }
 }
 
-.game-detail .stats-breakdown .player-card 
+.game-detail .stats-breakdown .player-card
 {
     margin: auto;
     flex-direction: column;
@@ -416,15 +416,15 @@
     }
 }
 
-.game-detail .stats 
+.game-detail .stats
 {
     display: flex;
     flex-direction: column;
     background: #14141440;
     padding: 1rem;
-    width: 45%;
+    width: 100%;
     max-width: 100%;
-    
+
     @media(min-width: $lg-width)
     {
         padding: 2rem 1rem;
@@ -438,24 +438,24 @@
     max-width: 100%;
 }
 
-.game-detail .stats.lost 
+.game-detail .stats.lost
 {
     border-top: 2px solid #ff005b;
     background: linear-gradient(45deg, #551934, transparent);
 }
 
-.game-detail .stats.won 
+.game-detail .stats.won
 {
     border-top: 2px solid #00ff66;
     background: linear-gradient(45deg, #19554a, transparent);
 }
 
-.game-detail .stats .cameo-row 
+.game-detail .stats .cameo-row
 {
     min-height: 150px;
 }
 
-.game-detail .stats .cameo-title 
+.game-detail .stats .cameo-title
 {
     margin-bottom: 1rem;
     color: #646464;
@@ -465,7 +465,7 @@
 
 
 // Admin styles
-.game-admin .player-vs 
+.game-admin .player-vs
 {
     padding: 1rem;
     display: flex;
