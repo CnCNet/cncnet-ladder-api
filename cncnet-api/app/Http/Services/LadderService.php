@@ -9,6 +9,7 @@ use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\PlayerCache;
 use App\Models\PlayerRating;
+use App\Models\Side;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Collection;
@@ -165,6 +166,71 @@ class LadderService
         return $histories;
     }
 
+    public function getPlayerRanksForLadderHistory(LadderHistory $ladderHistory, int $tier = 1): array {
+        $players = PlayerCache::where('ladder_history_id', '=', $ladderHistory->id)
+            ->where("tier", $tier)
+            ->orderBy('points', 'desc')
+            ->select('id')
+            ->get();
+
+        $count = 1;
+        $ranks = [];
+        foreach ($players as $player)
+        {
+            $ranks[$player->id] = $count++;
+        }
+        return $ranks;
+    }
+
+    public function getClanRanksForLadderHistory(LadderHistory $ladderHistory): array {
+        $clans = ClanCache::where('ladder_history_id', '=', $ladderHistory->id)
+            ->orderBy('points', 'desc')
+            ->select('id')
+            ->get();
+
+        $count = 1;
+        $ranks = [];
+        foreach ($clans as $clan)
+        {
+            $ranks[$clan->id] = $count++;
+        }
+        return $ranks;
+    }
+
+    public function getMostUsedFactionForPlayerCachesInLadderHistory(LadderHistory $ladderHistory, Collection $players): array {
+        $playerSides = $players->pluck($ladderHistory->ladder->game == 'yr' ? 'country' : 'side', 'id')->toArray();
+        $neededSides = array_unique(array_values($playerSides));
+
+        $sides = Side::query()
+            ->where('ladder_id', $ladderHistory->ladder->id)
+            ->whereIn('local_id', $neededSides)
+            ->pluck('name', 'local_id')
+            ->toArray();
+
+        $out = [];
+        foreach($playerSides as $playerId => $playerSide) {
+            $out[$playerId] = $sides[$playerSide];
+        }
+        return $out;
+    }
+
+    public function getMostUsedFactionForClanCachesInLadderHistory(LadderHistory $ladderHistory, Collection $clans): array {
+        $clanSides = $clans->pluck($ladderHistory->ladder->game == 'yr' ? 'country' : 'side', 'id')->toArray();
+        $neededSides = array_unique(array_values($clanSides));
+
+        $sides = Side::query()
+            ->where('ladder_id', $ladderHistory->ladder->id)
+            ->whereIn('local_id', $neededSides)
+            ->pluck('name', 'local_id')
+            ->toArray();
+
+        $out = [];
+        foreach($clanSides as $clanId => $clanSide) {
+            $out[$clanId] = $sides[$clanSide];
+        }
+        return $out;
+    }
+
     public function getPlayersFromCacheForLadderHistory(
         LadderHistory $ladderHistory,
         ?string $filterBy = null,
@@ -183,6 +249,10 @@ class LadderService
                 function($q) use ($orderBy) { return $q->orderBy("games", $orderBy ?? 'desc'); },
                 function($q) { return $q->orderBy("points", "desc"); }
             )
+           ->with([
+               'player',
+               'player.user'
+           ])
             ->paginate(45);
     }
 
@@ -202,6 +272,7 @@ class LadderService
                 function($q) use ($orderBy) { return $q->orderBy("games", $orderBy ?? 'desc'); },
                 function($q) { return $q->orderBy("points", "desc"); }
             )
+            ->with(['clan'])
             ->paginate(45);
     }
 
@@ -301,6 +372,14 @@ class LadderService
                 'player_game_reports.stats',
                 'qmMatch.map.map',
             ])
+            ->when(
+                $history->ladder->clans_allowed,
+                fn($q) => $q->with([
+                ]),
+                fn($q) => $q->with([
+
+                ]),
+            )
             ->get();
     }
 

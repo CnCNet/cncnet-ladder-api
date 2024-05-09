@@ -94,11 +94,6 @@ class LadderController extends Controller
         if ($history === null)
             abort(404);
 
-        /*$sides = \App\Models\Side::where('ladder_id', '=', $history->ladder_id)
-            ->where('local_id', '>=', 0)
-            ->orderBy('local_id', 'asc')
-            ->pluck('name');
-*/
         $tier = isset($request->tier) && !empty($request->tier) ? $request->tier : 1; // Default to tier 1
 
         if (!$history->ladder->clans_allowed) {
@@ -109,6 +104,8 @@ class LadderController extends Controller
                 $tier,
                 $request->search
             );
+            $mostUsedFactions = $this->ladderService->getMostUsedFactionForPlayerCachesInLadderHistory($history, $players->getCollection());
+            $ranks = $this->ladderService->getPlayerRanksForLadderHistory($history, request()->tier ?? 1);
         }
         else {
             $clans = $this->ladderService->getClansFromCacheForLadderHistory(
@@ -117,6 +114,8 @@ class LadderController extends Controller
                 $request->orderBy,
                 $request->search
             );
+            $mostUsedFactions = $this->ladderService->getMostUsedFactionForClanCachesInLadderHistory($history, $clans->getCollection());
+            $ranks = $this->ladderService->getClanRanksForLadderHistory($history);
         }
 
         $games = $this->ladderService->getRecentLadderGames($history, 16);
@@ -130,17 +129,9 @@ class LadderController extends Controller
             'players' => $players ?? null,
             'clans' => $clans ?? null,
             'games' => $games,
-            /*"ladders" => $this->ladderService->getLatestLadders(),
-            "clan_ladders" => $this->ladderService->getLatestClanLadders(),*/
-            /*"isClanLadder" => $history->ladder->clans_allowed,
-            "players" => $players,
-            "tier" => $request->tier,
-            "search" => $request->search,
-            "sides" => $sides,
-            "statsXOfTheDay" => $statsXOfTheDay,
-            "ladders_previous" => $laddersPrevious,*/
+            'ranks' => $ranks,
+            'mostUsedFactions' => $mostUsedFactions ?? [],
         ];
-
         return view("ladders.listing2", $data);
     }
 

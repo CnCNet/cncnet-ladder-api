@@ -12,12 +12,12 @@
                 <div class="swiper-slide" data-swiper-autoplay="8000">
 
                     @if ($history->ladder->clans_allowed)
-                        <x-ladder.clan.game-box
+                        <x-ladder.listing.clan.game-box
                             :history="$history"
                             :game="$game"
                         />
                     @else
-                        <x-ladder.game-box
+                        <x-ladder.listing.game-box
                             :history="$history"
                             :game="$game"
                         />

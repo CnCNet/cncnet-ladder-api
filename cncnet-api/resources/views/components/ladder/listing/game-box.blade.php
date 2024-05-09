@@ -43,7 +43,7 @@
                     @if ($vs == 2)
                         <p class="vs">vs</p>
                     @endif
-                    <x-ladder.game-box-partial
+                    <x-ladder.listing.game-box-partial
                             :history="$history"
                             :game-player="$gamePlayer"
                             :index="$k"
@@ -53,7 +53,7 @@
             @endforeach
         @else
             @foreach ($game->player_game_reports as $k => $gamePlayer)
-                <x-ladder.game-box-partial
+                <x-ladder.listing.game-box-partial
                     :history="$history"
                     :game-player="$gamePlayer"
                     :index="$k"

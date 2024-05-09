@@ -40,15 +40,14 @@
         <div class="footer text-center {{ $history->ladder->abbreviation }}">
             @foreach ($game->player_game_reports->groupBy('clan_id') as $k => $clanReport)
                 @php
-                    $clanPointReport = $clanReport->gameReport->getPointReportByClan($clanReport->clan_id);
+                    $clanReport = $clanReport->first();
                 @endphp
 
-                @if ($clanPointReport)
-                    <div class="player {{ $clanPointReport->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
+                @if ($clanReport)
+                    <div class="player {{ $clanReport->won == true ? 'won' : 'lost' }} player-order-{{ $k }}">
 
                         @if ($clanReport->stats)
-                            @php $playerStats2 = \App\Models\Stats2::where("id", $clanReport->stats->id)->first(); @endphp
-                            @php $playerCountry = $playerStats2->faction($history->ladder, $clanReport->stats->cty); @endphp
+                            @php $playerCountry = $clanReport->stats->faction($history->ladder); @endphp
                             <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                         @endif
 
@@ -61,7 +60,7 @@
                             </span>
 
                             <span class="points">
-                                {{ $clanPointReport->points >= 0 ? "+$clanPointReport->points" : $clanPointReport->points }}
+                                {{ $clanReport->points >= 0 ? "+$clanReport->points" : $clanReport->points }}
                             </span>
                         </h5>
                     </div>

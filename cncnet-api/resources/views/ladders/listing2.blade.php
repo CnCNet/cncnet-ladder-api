@@ -164,10 +164,92 @@
                                 </div>
                             </div>
                         </div>
-                        <x-ladder.recent-games :history="$history" :games="$games" />
+                        <x-ladder.listing.recent-games :history="$history" :games="$games" />
                     </section>
                 @endif
 
+                <section>
+                    @if (request()->input('filterBy') == 'games')
+                        <p>
+                            You are ordering by game count, <a href="?#listing">reset by rank?</a>
+                        </p>
+                    @endif
+
+                    <div class="d-flex flex-column d-sm-flex flex-sm-row">
+                        @if ($players)
+                            @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                        @endif
+                        @if ($clans)
+                            @include('components.pagination.paginate', ['paginator' => $clans->appends(request()->query())])
+                        @endif
+
+
+                        <div class="ms-auto">
+                            <form>
+                                <div class="form-group" method="GET">
+                                    <div class="search" style="position:relative;">
+                                        <input class="form-control border" name="search" value="{{ request()->search }}" placeholder="Search by Player..." />
+                                    </div>
+                                    @if (request()->search)
+                                        <small>
+                                            Searching for <strong>{{ request()->search }}</strong> returned {{ count($players) }}
+                                            results
+                                            <a href="?search=">Clear?</a>
+                                        </small>
+                                    @endif
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    @if (request()->tier == null || request()->tier == 1)
+                        <h3 class="mt-2 mb-4">
+                            @if ($history->ladder->clans_allowed)
+                                <i class="bi bi-flag-fill icon-clan pe-3"></i>
+                                Champions Clan League
+                            @else
+                                <i class="bi bi-trophy pe-3"></i>
+                                1vs1 - Champions Players League
+                            @endif
+                        </h3>
+                    @else
+                        <h3 class="mt-2 mb-4">
+                            <i class="bi bi-shield-slash-fill pe-3"></i>
+                            @if ($history->ladder->clans_allowed)
+                                Contenders Clan League
+                            @else
+                                1vs1 - Contenders Players League
+                            @endif
+                        </h3>
+                    @endif
+
+                        @if ($players)
+                            <x-ladder.listing.table
+                                :history="$history"
+                                :players="$players"
+                                :ranks="$ranks"
+                                :most-used-factions="$mostUsedFactions"
+                                :stats-x-of-the-day="$statsXOfTheDay"
+                            />
+                            <div class="mt-5">
+                                @include('components.pagination.paginate', ['paginator' => $players->appends(request()->query())])
+                            </div>
+                        @endif
+
+                        @if ($clans)
+                            <x-ladder.listing.clan.table
+                                :history="$history"
+                                :clans="$clans"
+                                :ranks="$ranks"
+                                :most-used-factions="$mostUsedFactions"
+                                :stats-x-of-the-day="$statsXOfTheDay"
+                            />
+
+                            <div class="mt-5">
+                                @include('components.pagination.paginate', ['paginator' => $clans->appends(request()->query())])
+                            </div>
+                        @endif
+                </section>
         </div>
 
 
