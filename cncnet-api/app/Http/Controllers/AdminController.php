@@ -1086,7 +1086,26 @@ class AdminController extends Controller
         $request->session()->flash('success', "Player name has been updated to " . $player->username);
         return redirect()->to($url);
     }
+
+    /**
+     * TODO this method currently unused, create a possible view to see this data
+     */
+    public function fetchBails(Request $request)
+    {
+        $ladder = \App\Models\Ladder::where('abbreviation', $request->abbreviation)->first();
+
+        if ($ladder == null)
+            abort(404);
+
+        $ladderHistory = $ladder->currentHistory();
+
+        $bailedGames = $this->adminService->fetchBailedGames($ladderHistory)->get();
+        
+    }
 }
+
+
+
 
 function ini_to_b($string)
 {
