@@ -349,7 +349,7 @@ class LadderController extends Controller
                     "gameReport" => $gameReport,
                     "allGameReports" => $allGameReports,
                     "playerGameReports" => $playerGameReports,
-                    "groupedByTeamPlayerGameReports" => $groupedByTeamPlayerGameReports,
+                    "groupedByTeamPlayerGameReports" => $groupedPlayerGameReports,
                     "history" => $history,
                     "heaps" => $heaps,
                     "user" => $user,
