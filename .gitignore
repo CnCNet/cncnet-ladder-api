@@ -260,3 +260,5 @@ cncnet-api/database/migrations/2022_05_14_214858_createDummyTestAccounts.php
 *.Zone.Identifier*
 
 **/*CreateLocalUser.php
+*.sql
+*.gz
