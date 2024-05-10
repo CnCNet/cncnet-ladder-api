@@ -15,6 +15,10 @@ return new class extends Migration
     {
         //
         $gameObjectSchema = GameObjectSchema::find(4); // d2k
+        if ($gameObjectSchema == null)
+        {
+            return;
+        }
         $gameObjects = CountableGameObject::where("game_object_schema_id", 4)->delete();
 
         $d2k_units = [
