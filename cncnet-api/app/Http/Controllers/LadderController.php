@@ -638,8 +638,8 @@ class LadderController extends Controller
         if ($request->id === "new")
         {
             $ladder = new \App\Models\Ladder;
+            $ladder->ladder_type = Ladder::ONE_VS_ONE;
         }
-
         else if ($ladderId === null || $ladder === null)
         {
             $request->session()->flash('error', 'Unabled to find ladder');
@@ -650,9 +650,12 @@ class LadderController extends Controller
         $ladder->abbreviation = $request->abbreviation;
         $ladder->game = $request->game;
         $ladder->clans_allowed = $request->clans_allowed;
-        $ladder->ladder_type = $request->ladder_type;
         $ladder->game_object_schema_id = $request->game_object_schema_id;
         $ladder->private = $request->private;
+        if ($request->ladder_type)
+        {
+            $ladder->ladder_type = $request->ladder_type;
+        }
         $ladder->save();
 
         if ($request->id === "new")
