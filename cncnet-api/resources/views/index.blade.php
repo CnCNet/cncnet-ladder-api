@@ -73,7 +73,7 @@
                             military_tech
                         </span>
                     </div>
-                    <strong>1vs1</strong> Ladders
+                    <strong>Ranked</strong> Ladders
                 </h2>
 
                 <div class="d-flex flex-wrap mt-4 player-ladders">
@@ -93,7 +93,7 @@
                     <div class="icon-box me-2">
                         <i class="bi bi-flag-fill icon-clan" style="font-size: 1.5rem;"></i>
                     </div>
-                    <strong>2vs2 Clan</strong> Ladders
+                    <strong>Clan</strong> Ladders
                 </h2>
 
                 <div class="d-flex flex-wrap mt-4 clan-ladders">
