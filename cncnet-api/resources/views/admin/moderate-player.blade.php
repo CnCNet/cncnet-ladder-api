@@ -127,7 +127,7 @@
                                 <tr>
                                     <th scope=" col">Admin</th>
                                     <th>Ban type</th>
-                                    <th>Interal Notes</th>
+                                    <th>Internal Notes</th>
                                     <th>Displayed Reason for ban</th>
                                     <th>IP</th>
                                     <th>Expiration</th>
@@ -156,29 +156,28 @@
                                                 <form method="POST"
                                                     action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    <input type="hidden" name="start_or_end" value="1">
+                                                    <input type="hidden" name="start_ban" value="true">
                                                     <button type="submit" class="btn btn-danger btn-sm">Start</button>
                                                 </form>
                                             </td>
                                         @elseif ($ban->expires !== null && $ban->expires->gt(\Carbon\Carbon::now()))
-                                            <td>{{ $ban->expires }}</td>
+                                            <td>{{ $ban->expires->format('F j, Y, g:i a T') }}</td>
                                             <td>
                                                 <form method="POST"
                                                     action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    <input type="hidden" name="start_or_end" value="1">
+                                                    <input type="hidden" name="end_ban" value="true">
                                                     <button type="submit" class="btn btn-danger btn-sm">Stop</button>
                                                 </form>
                                             </td>
                                         @else
-                                            <td>{{ $ban->expires }}</td>
+                                            <td>{{ $ban->expires->format('F j, Y, g:i a T') }}</td>
                                             <td></td>
                                         @endif
                                         <td>
-                                            <a href="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}"
-                                                class="btn btn-sm">
-                                                Edit
-                                            </a>
+                                            <form method="GET" action="/admin/moderate/{{ $ladder->id }}/player/{{ $player->id }}/editban/{{ $ban->id }}">
+                                                <button type="submit" class="btn btn-sm">Edit</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 @endforeach

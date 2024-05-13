@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Ban extends Model
 {
@@ -66,11 +67,7 @@ class Ban extends Model
         $currentDateTime = Carbon::now();
 
         // Compare the current date and time with the expiry time
-        if ($currentDateTime->gt($expiryTime))
-        {
-            return true;
-        }
-        return false;
+        return $currentDateTime->gt($expiryTime);
     }
 
     public function started()
@@ -84,6 +81,8 @@ class Ban extends Model
 
     public function checkStartBan($startBanStraightAway = false)
     {
+        Log::info("checkStartBan: ban_id=" . $this->id . ", startBanStraightAway=" . $startBanStraightAway . ", ban_type=" . $this->ban_type . ", desc=" . Ban::typeToDescription($this->ban_type) . ", expires=" . $this->expires);
+        
         $banned = false;
         $cooldown = false;
         if (!$startBanStraightAway && !($this->ban_type >= Ban::START_NOW_BEGIN && $this->ban_type <= Ban::START_NOW_END))
