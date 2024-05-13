@@ -216,7 +216,7 @@ class ApiQuickMatchController extends Controller
     {
         $playersString = "";
         $dt = new DateTime($created_at);
-        $teams[] = [];
+        $teams = [];
 
         foreach ($players as $player)
         {
@@ -226,10 +226,6 @@ class ApiQuickMatchController extends Controller
         $teamCount = 0;
         foreach ($teams as $teamId => $players)
         {
-
-            if (count($players) == 0)
-                continue;
-
             $playerCount = 0;
             foreach ($players as $player)
             {

@@ -14,6 +14,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
@@ -631,13 +632,15 @@ class AdminController extends Controller
         $ladderService = new LadderService;
         $history = $ladderService->getActiveLadderByDate(Carbon::now()->format('m-Y'), $player->ladder->abbreviation);
 
+        $bans = $user->bans()->orderBy('created_at', 'DESC')->get();
+
         return view(
             "admin.moderate-player",
             [
                 "mod"    => $mod,
                 "player" => $player,
                 "user"   => $user,
-                "bans"   => $user->bans()->orderBy('created_at', 'DESC')->get(),
+                "bans"   => $bans,
                 "ladder" => $player->ladder,
                 "history" => $history
             ]
@@ -668,11 +671,12 @@ class AdminController extends Controller
                 "expires" => null,
                 "admin_id" => $mod->id,
                 "user_id" => $user->id,
+                "start_ban" => true, // new ban,
+                "end_ban" => false,
                 "ban_type" => $banType,
                 "internal_note" => "",
                 "plubic_reason" => "",
                 "ip_address_id" => $user->ip->id,
-                "start_or_end" => false,
                 "banDesc" => \App\Models\Ban::typeToDescription($banType) . " - " . \App\Models\Ban::banStyle($banType)
             ]
         );
@@ -695,6 +699,8 @@ class AdminController extends Controller
 
         $user = $player->user;
 
+        $expires = $ban->expires->eq(\App\Models\Ban::unstartedBanTime()) ? null : $ban->expires;
+
         return view(
             "admin.edit-ban",
             [
@@ -703,14 +709,14 @@ class AdminController extends Controller
                 "user"   => $user,
                 "ladder" => $player->ladder,
                 "id" => $ban->id,
-                "expires" => $ban->expires->eq(\App\Models\Ban::unstartedBanTime()) ? null : $ban->expires,
+                "expires" => $expires,
                 "admin_id" => $mod->id,
                 "user_id" => $user->id,
                 "ban_type" => $ban->ban_type,
                 "internal_note" => $ban->internal_note,
                 "plubic_reason" => $ban->plubic_reason,
                 "ip_address_id" => $ban->ip_address_id,
-                "start_or_end" => false,
+                "start_ban" => $request->start_ban,
                 "banDesc" => \App\Models\Ban::typeToDescription($ban->ban_type) . " - " . \App\Models\Ban::banStyle($ban->ban_type)
             ]
         );
@@ -728,11 +734,6 @@ class AdminController extends Controller
         if ($player === null || !$mod->isLadderMod($player->ladder))
             return;
 
-        if ($player === null)
-            return;
-
-        $user = $player->user;
-
         $ban = \App\Models\Ban::find($banId);
         if ($ban === null)
         {
@@ -749,33 +750,21 @@ class AdminController extends Controller
 
         $ban->save();
 
-        if (!$request->start_or_end && $ban->ban_type == \App\Models\Ban::BAN_SHADOW)
-        {
-            // Start ban straight away
-            $ban->checkStartBan(true);
-        }
-
         $banFlash = \App\Models\Ban::banStyle($request->ban_type);
-
-        if ($request->start_or_end)
+        
+        if ($request->end_ban && $request->boolean('end_ban') === true) // end the ban
         {
-            if ($ban->expires !== null && $ban->expires->gt(Carbon::now()))
-            {
-                $ban->expires = Carbon::now();
-                $banFlash = "has ended.";
-            }
-            else if ($ban->expires === null || $ban->expires->eq(\App\Models\Ban::unstartedBanTime()))
-            {
-                $ban->checkStartBan(true);
-                $banFlash = "has started.";
-            }
-            else
-            {
-                $ban->checkStartBan(false);
-            }
+            $ban->expires = Carbon::now();
+            $banFlash = "has ended.";
+        }
+        else if ($request->start_ban && $request->boolean('start_ban') === true)
+        {
+            $ban->checkStartBan(true); // start new ban
         }
         else
-            $ban->checkStartBan(false);
+        {
+            $banFlash = "reason updated"; // ban wasn't started or ended, the reason got updated
+        }
 
         $ban->save();
 
@@ -1100,7 +1089,6 @@ class AdminController extends Controller
         $ladderHistory = $ladder->currentHistory();
 
         $bailedGames = $this->adminService->fetchBailedGames($ladderHistory)->get();
-        
     }
 }
 
