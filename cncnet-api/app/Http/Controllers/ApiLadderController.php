@@ -445,8 +445,6 @@ class ApiLadderController extends Controller
         {
             if ($pgr->won)
             {
-                // $winningTeam = $pgr->player->qmPlayer->team;
-
                 // grab the qm players that belong to this qm match, return the team of the current player
                 $winningTeam = $pgr->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)->team;
             }
@@ -465,15 +463,16 @@ class ApiLadderController extends Controller
             // grab the qm players that belong to this qm match, return the team of the current player
             $myTeam = $playerGR->game->qmMatch->findQmPlayerByPlayerId($playerGR->player_id)->team;
 
-            // $playerGRTeamWonTheGame = $playerGR->player->qmPlayer->team == $winningTeam;
             $playerGRTeamWonTheGame = $myTeam == $winningTeam;
 
+            // gather points from teammates and enemies, strength of team vs enemy will factor in points awarded/lost
             foreach ($playerGameReports as $pgr)
             {
                 $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
                 $players[] = $other;
 
-                if ($pgr->player->qmPlayer->team == $playerGR->player->qmPlayer->team)
+                $otherTeam = $pgr->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)->team;
+                if ($otherTeam == $myTeam)
                 {
                     $ally_average += $other->rating;
                     $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
