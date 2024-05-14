@@ -31,12 +31,6 @@
 {
     display: flex;
     flex-direction: column;
-
-    @media(min-width: $md-width)
-    {
-        flex-direction: row;
-        align-items: center;
-    }
 }
 
 .games-table .td-player-opponent .player-points 
@@ -44,8 +38,6 @@
 
     @media(min-width: $md-width)
     {
-        order: -1;
-        padding-left: 1rem;
     }
 }
 
@@ -63,9 +55,6 @@
 .games-table .player-points 
 {
     display: flex;
-    align-items: center;
-    text-align: center;
-    margin-left: 25px; // half of avatar
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
 

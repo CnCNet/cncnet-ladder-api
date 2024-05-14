@@ -55,7 +55,7 @@
 
 @section('content')
     <section>
-        <div class="container">
+        <div class="container-xl">
             @if ($userIsMod && ($errorGames === null || $errorGames === false))
                 <div class="mb-4 mt-4">
                     <a href="{{ \App\Models\URLHelper::getLadderUrl($history) . '/games?errorGames=true' }}" class="btn btn-danger btn-md">
