@@ -82,6 +82,15 @@ class ApiLadderController extends Controller
         return response()->json(['success' => 'Queued for processing.'], 200);
     }
 
+    public function reprocessTeamPointsByGameId(Request $request)
+    {
+        $game = Game::find($request->gameId);
+        $history = $game->ladderHistory;
+        // dd($game->report);
+        // dd($game->allReports);
+        return $this->awardTeamPoints($game->report, $history);
+    }
+
     public function saveLadderTestOnly(Request $request)
     {
         // $ladderId = 14; // d2k
@@ -160,7 +169,7 @@ class ApiLadderController extends Controller
         // If only one player submitted a game report, don't wash
 
         // if ($gameReport->best_report == true && $gameReport->duration == 3 && $gameReport->fps == 33)
-            // $this->adminService->doWashGame($gameReport->game_id, "ladder-auto-wash");
+        // $this->adminService->doWashGame($gameReport->game_id, "ladder-auto-wash");
 
         return response()->json(['success' => $status], 200);
     }
