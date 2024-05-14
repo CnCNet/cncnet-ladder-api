@@ -466,24 +466,24 @@ class ApiLadderController extends Controller
             $playerGRTeamWonTheGame = $myTeam == $winningTeam;
 
             // gather points from teammates and enemies, strength of team vs enemy will factor in points awarded/lost
-            foreach ($playerGameReports as $pgr)
+            foreach ($playerGameReports as $otherPlayerGameReport)
             {
-                $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
+                $other = $this->playerService->findUserRatingByPlayerId($otherPlayerGameReport->player_id);
                 $players[] = $other;
 
-                $otherTeam = $pgr->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)->team;
+                $otherTeam = $otherPlayerGameReport->game->qmMatch->findQmPlayerByPlayerId($otherPlayerGameReport->player_id)->team;
                 if ($otherTeam == $myTeam)
                 {
                     $ally_average += $other->rating;
-                    $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $ally_points += $otherPlayerGameReport->player->pointsBefore($history, $otherPlayerGameReport->game_id);
                     $ally_count++;
                 }
                 else
                 {
                     $enemy_average += $other->rating;
-                    $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $enemy_points += $otherPlayerGameReport->player->pointsBefore($history, $otherPlayerGameReport->game_id);
                     $enemy_count++;
-                    $enemy_games += $pgr->player->totalGames($history);
+                    $enemy_games += $otherPlayerGameReport->player->totalGames($history);
                 }
             }
 
