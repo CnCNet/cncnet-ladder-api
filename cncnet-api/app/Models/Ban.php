@@ -81,8 +81,8 @@ class Ban extends Model
 
     public function checkStartBan($startBanStraightAway = false)
     {
-        Log::info("checkStartBan: ban_id=" . $this->id . ", startBanStraightAway=" . $startBanStraightAway . ", ban_type=" . $this->ban_type . ", desc=" . Ban::typeToDescription($this->ban_type) . ", expires=" . $this->expires);
-        
+        Log::debug("checkStartBan: ban_id=" . $this->id . ", startBanStraightAway=" . $startBanStraightAway . ", ban_type=" . $this->ban_type . ", desc=" . Ban::typeToDescription($this->ban_type) . ", expires=" . $this->expires);
+
         $banned = false;
         $cooldown = false;
         if (!$startBanStraightAway && !($this->ban_type >= Ban::START_NOW_BEGIN && $this->ban_type <= Ban::START_NOW_END))
