@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Commands;
+namespace App\Jobs\Qm;
 
-use App\Commands\Command;
 use Illuminate\Bus\Queueable;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-class SaveLadderResult implements ShouldQueue
+class SaveLadderResultJob implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels, Dispatchable, Queueable;
 

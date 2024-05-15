@@ -2,19 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Commands\SaveLadderResult;
-use App\Models\Achievement;
-use App\Models\AchievementProgress;
-use App\Models\Game;
-use App\Models\GameObjectCounts;
-use App\Models\GameRaw;
-use App\Models\GameReport;
-use App\Models\Ladder;
-use App\Models\Player;
-use App\Models\PlayerCache;
-use App\Models\PlayerGameReport;
-use App\Models\QmMap;
-use App\Models\QmMatchPlayer;
 use App\Http\Services\AdminService;
 use App\Http\Services\ClanService;
 use App\Http\Services\DuneGameService;
@@ -23,12 +10,23 @@ use App\Http\Services\GameService;
 use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
 use App\Http\Services\PointService;
+use App\Jobs\Qm\SaveLadderResultJob;
+use App\Models\Achievement;
+use App\Models\AchievementProgress;
+use App\Models\Game;
+use App\Models\GameObjectCounts;
+use App\Models\GameRaw;
+use App\Models\GameReport;
+use App\Models\Ladder;
 use App\Models\LadderHistory;
+use App\Models\Player;
+use App\Models\PlayerCache;
+use App\Models\PlayerGameReport;
+use App\Models\QmMap;
+use App\Models\QmMatchPlayer;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\InvalidCastException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use InvalidArgumentException;
 
 class ApiLadderController extends Controller
 {
@@ -77,7 +75,7 @@ class ApiLadderController extends Controller
         $fileName = $gameId . '.' . $ladderId . '.' . $playerId . '.dmp';
         $file = $request->file('file')->move($filePath, $fileName);
 
-        $this->dispatch(new SaveLadderResult($filePath . '/' . $fileName, $ladderId, $gameId, $playerId, $pingSent, $pingReceived));
+        $this->dispatch(new SaveLadderResultJob($filePath . '/' . $fileName, $ladderId, $gameId, $playerId, $pingSent, $pingReceived));
 
         return response()->json(['success' => 'Queued for processing.'], 200);
     }
