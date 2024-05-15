@@ -366,11 +366,12 @@ class LadderService
             ->limit($limit)
             ->with([
                 'report',
-                'player_game_reports',
-                'player_game_reports.player',
-                'player_game_reports.clan',
-                'player_game_reports.stats',
+                'report.playerGameReports.player',
+                'report.playerGameReports.player.qmPlayer',
+                'report.playerGameReports.clan',
+                'report.playerGameReports.stats',
                 'qmMatch.map.map',
+                'qmMatch.players'
             ])
             ->when(
                 $history->ladder->clans_allowed,

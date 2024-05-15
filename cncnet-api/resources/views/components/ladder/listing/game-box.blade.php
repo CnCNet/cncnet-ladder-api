@@ -31,11 +31,13 @@
     </div>
 
     <div class="mt-5 text-center">
+
         @if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO)
             @php
                 $groupedGamePlayerResults = [];
-                foreach ($game->player_game_reports as $pgr) {
-                    $groupedGamePlayerResults[$pgr->player->qmPlayer->team][] = $pgr;
+                foreach ($game->report->playerGameReports as $pgr) {
+                    $t = $game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)->team;
+                    $groupedGamePlayerResults[$t][] = $pgr;
                 }
             @endphp
             @php $vs = 0; @endphp
@@ -53,7 +55,7 @@
                 @endforeach
             @endforeach
         @else
-            @foreach ($game->player_game_reports as $k => $gamePlayer)
+            @foreach ($game->report->playerGameReports as $k => $gamePlayer)
                 <x-ladder.listing.game-box-partial
                     :history="$history"
                     :game-player="$gamePlayer"

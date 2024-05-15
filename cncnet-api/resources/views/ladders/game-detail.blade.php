@@ -124,7 +124,7 @@ $reports = $playerGameReports;
                     @if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO)
 
                         @php $i = 0; @endphp
-                        @foreach ($groupedPlayerGameReports as $team => $teamPlayerGameReportArr)
+                        @foreach ($groupedByTeamPlayerGameReports as $team => $teamPlayerGameReportArr)
                             @foreach ($teamPlayerGameReportArr as $k => $pgr)
                                 @php $gameStats = $pgr->stats; @endphp
                                 @php $player = $pgr->player()->first(); @endphp
