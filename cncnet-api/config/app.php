@@ -227,6 +227,7 @@ return [
 		332, // Burg
 		1, 	// Grant
 		48373, // Root
-		2152 // Edd
+		2152, // Edd
+        68318 // Wu
 	]
 ];
