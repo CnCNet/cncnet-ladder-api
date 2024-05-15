@@ -31,6 +31,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $matchableOpponents = $this->quickMatchService
             ->getMatchableOpponents($this->qmQueueEntry, $queueEntries)
             ->filter(fn(QmQueueEntry $qmQueueEntry) => !$qmQueueEntry->qmPlayer->isObserver());
+        Log::info("FindOpponent ** amount of matchable opponent after point filter : " . $matchableOpponents->count());
 
         // Count the number of players we need to start a match
         // Excluding current player
