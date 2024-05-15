@@ -2,7 +2,7 @@
 
 namespace App\Http\Services;
 
-use App\Commands\Matchup\ClanMatchupHandler;
+use App\Extensions\Qm\Matchup\ClanMatchupHandler;
 use App\Models\Game;
 use App\Models\IpAddress;
 use App\Models\Ladder;
