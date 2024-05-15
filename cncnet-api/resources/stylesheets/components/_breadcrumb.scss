@@ -16,7 +16,7 @@
 }
 
 
-.breadcrumb-nav .breadcrumb 
+.breadcrumb-nav .breadcrumb
 {
     margin-bottom: 0;
 }
@@ -43,10 +43,10 @@
     color: #6c6f76;
     transition: 350ms all ease;
     background: #0e1116;
-    
+
     padding: 0.5rem;
 
-    &:hover 
+    &:hover
     {
         color: #fff;
     }
@@ -62,7 +62,7 @@
     padding-left: 0;
 }
 
-.breadcrumb-item.active a 
+.breadcrumb-item.active a
 {
     color: #f4f4f5;
 }
@@ -75,7 +75,7 @@
     }
 
     .breadcrumb-item span,
-    .breadcrumb-item i 
+    .breadcrumb-item i
     {
         width: 20px;
         height: 20px;

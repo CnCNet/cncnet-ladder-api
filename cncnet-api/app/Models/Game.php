@@ -65,6 +65,10 @@ class Game extends Model
         return $this->hasMany(PlayerGameReport::class)->where('game_report_id', $this->game_report_id, 'game_report_id');
     }
 
+    public function player_game_reports() {
+        return $this->hasManyThrough(PlayerGameReport::class, GameReport::class);
+    }
+
     public function ladderHistory()
     {
         return $this->belongsTo(LadderHistory::class);

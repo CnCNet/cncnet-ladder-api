@@ -165,7 +165,7 @@ class ApiLadderController extends Controller
         if ($ladderId == 8 || $ladderId == 1) //toggle achievements on for Blitz and YR
             $this->updateAchievements($playerId, $history->ladder, $stats);
 
-        // Toggling off auto-wash, TODO only wash games where both players submitted a game report. 
+        // Toggling off auto-wash, TODO only wash games where both players submitted a game report.
         // If only one player submitted a game report, don't wash
 
         // if ($gameReport->best_report == true && $gameReport->duration == 3 && $gameReport->fps == 33)
@@ -416,9 +416,9 @@ class ApiLadderController extends Controller
     }
 
     /**
-     * 
-     * @param GameReport $gameReport 
-     * @param LadderHistory $history 
+     *
+     * @param GameReport $gameReport
+     * @param LadderHistory $history
      * @return int Error code
      */
     public function awardTeamPoints(GameReport $gameReport, LadderHistory $history)
@@ -821,7 +821,8 @@ class ApiLadderController extends Controller
         $prevWinners = [];
         $prevLadders = [];
 
-        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($cncnetGame, 5)->splice(0, 1);
+        $ladder = Ladder::where("abbreviation", "=", $cncnetGame)->first();
+        $prevLadders[] = $this->ladderService->getPreviousLaddersByGame($ladder, 5)->splice(0, 1);
 
         foreach ($prevLadders as $h)
         {

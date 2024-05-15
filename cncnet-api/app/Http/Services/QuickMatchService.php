@@ -275,7 +275,7 @@ class QuickMatchService
             {
                 // Do both players rank meet the minimum rank required for no pt filter to apply
                 if (abs($currentQmQueueEntry->qmPlayer->player->rank($history) - $opponent->qmPlayer->player->rank($history))
-                        <=
+                    <=
                     $ladder->qmLadderRules->point_filter_rank_threshold)
                 {
                     // Both players have the point filter disabled, we will ignore the point filter and match them
@@ -456,12 +456,12 @@ class QuickMatchService
         {
             $matchAnyMap = false;
             $myEloRating = $qmPlayer->player->user->getOrCreateLiveUserRating()->rating;
-                       
+
             foreach ($otherQMQueueEntries as $otherQMQueueEntry)
             {
                 // choose the person who has the lowest elo rating to base our map pick off of
                 $minEloRating = min($myEloRating, $otherQMQueueEntry->qmPlayer->player->user->getOrCreateLiveUserRating()->rating);
-                
+
                 // true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
                     && $qmPlayer->player->user->userSettings->match_any_map;
@@ -809,7 +809,7 @@ class QuickMatchService
             $qmPlayer,
             $otherQmQueueEntries
         );
-         
+
         $currentQueuePlayerCount = count($otherQmQueueEntries) + 1; // Total player counts equals myself plus other players to be matched
         $expectedPlayerQueueCount = $matchHasObserver ? $ladder->qmLadderRules->player_count + 1 :  $ladder->qmLadderRules->player_count;
 
@@ -1044,11 +1044,11 @@ class QuickMatchService
 
     /**
      * Given a player's rank, choose a map based on map ranked difficulties
-     * @param mixed $mapsArr 
-     * @param mixed $rank 
-     * @param mixed $points 
-     * @param mixed $matchAnyMap 
-     * @return mixed 
+     * @param mixed $mapsArr
+     * @param mixed $rank
+     * @param mixed $points
+     * @param mixed $matchAnyMap
+     * @return mixed
      */
     private function rankedMapPicker(Collection $maps, int $rank, int $points, bool $matchAnyMap)
     {
@@ -1197,9 +1197,9 @@ class QuickMatchService
     /**
      * Given $numPlayers, return an array of numbers, length of array = $numPlayers.
      * Clan ladder matches should randomize the colors. 1v1 should use red vs yellow.
-     * @param mixed $numPlayers 
-     * @param mixed $randomize 
-     * @return int[] 
+     * @param mixed $numPlayers
+     * @param mixed $randomize
+     * @return int[]
      */
     private function getColorsArr($numPlayers, $randomize)
     {
@@ -1215,10 +1215,10 @@ class QuickMatchService
 
 
     /**
-     * 
-     * @param mixed $numPlayers 
-     * @param mixed $randomize 
-     * @return array 
+     *
+     * @param mixed $numPlayers
+     * @param mixed $randomize
+     * @return array
      */
     private function getLocationsArr($numPlayers, $randomize)
     {

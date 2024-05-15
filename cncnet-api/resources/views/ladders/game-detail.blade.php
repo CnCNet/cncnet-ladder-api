@@ -8,14 +8,14 @@ $reports = $playerGameReports;
 ?>
 
 @foreach ($reports as $k => $pgr)
-    <?php
-    $player = $pgr->player()->first();
-    $clan = $pgr->clan()->first();
-    if ($k == 1) {
-        $pageTitle .= ' vs ';
-    }
-    $pageTitle .= "$player->username";
-    ?>
+        <?php
+        $player = $pgr->player()->first();
+        $clan = $pgr->clan()->first();
+        if ($k == 1) {
+            $pageTitle .= ' vs ';
+        }
+        $pageTitle .= "$player->username";
+        ?>
 @endforeach
 
 @section('title', $pageTitle)

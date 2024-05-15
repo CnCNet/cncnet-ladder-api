@@ -1,4 +1,4 @@
-.league-selection 
+.league-selection
 {
     display: flex;
     flex-direction: column;
@@ -9,7 +9,7 @@
     }
 }
 
-.league-box 
+.league-box
 {
     display: flex;
     align-items: center;
@@ -31,7 +31,7 @@
     }
 }
 
-.league-box .league-icon 
+.league-box .league-icon
 {
     position: relative;
     font-size: 2rem;
@@ -42,16 +42,16 @@
     padding: 1rem;
 }
 
-.league-box .league-title 
+.league-box .league-title
 {
     position: relative;
     margin: 0;
     z-index: 1;
 }
 
-.league-box.tier-1 
+.league-box.tier-1
 {
-    background-image: url(../images/feature/blitz-champions.png);
+    background-image: url("../images/feature/blitz-champions.png");
     background-color: #ffae00;
     background-position: 100% 20%;
     background-size: cover;
@@ -59,7 +59,7 @@
 
 .league-box.tier-2
 {
-    background-image: url(../images/feature/blitz-contenders.png);
+    background-image: url("../images/feature/blitz-contenders.png");
     background-color: #002b76;
     background-position: 90% 30%;
     background-size: cover;

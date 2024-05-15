@@ -3,6 +3,8 @@
 namespace App\Http\Services;
 
 use App\Models\Clan;
+use App\Models\Ladder;
+use App\Models\LadderHistory;
 use App\Models\Player;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
@@ -20,16 +22,16 @@ class StatsService
         $this->ladderService = new LadderService();
     }
 
-    public function getQmStats($ladderAbbrev, $tierId = 1)
+    public function getQmStats(LadderHistory $history, $tierId = 1)
     {
-        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1 * 60, function () use ($ladderAbbrev, $tierId)
+        $ladder = $history->ladder;
+        $ladderAbbrev = $ladder->abbreviation;
+        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1 * 60, function () use ($history, $ladder, $ladderAbbrev, $tierId)
         {
             $carbonDateSubHour = Carbon::now()->subHour();
             $carbonDateSub24Hours = Carbon::now()->subHours(24);
 
-            $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
             $ladderId = $ladder->id;
-            $history = $ladder->currentHistory();
             $startOfMonth = Carbon::now()->startOfMonth();
             $endOfMonth = Carbon::now()->endOfMonth();
 
@@ -252,6 +254,19 @@ class StatsService
         }
         return $mapResults;
         // });
+    }
+
+    public function getWinnerOfTheDay(LadderHistory $history) {
+        if ($history->ladder->clans_allowed)
+        {
+            $statsXOfTheDay = $this->getClanOfTheDay($history);
+        }
+        else
+        {
+            $statsXOfTheDay = $this->getPlayerOfTheDay($history);
+        }
+
+        return $statsXOfTheDay;
     }
 
     public function getPlayerOfTheDay($history)

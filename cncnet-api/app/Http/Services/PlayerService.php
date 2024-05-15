@@ -21,10 +21,10 @@ class PlayerService
     /**
      * Creates Player, PlayerActiveHandle if the username is not taken.
      * Returns null if username taken.
-     * @param mixed $username 
-     * @param mixed $user 
-     * @param mixed $ladderId 
-     * @return Player|null 
+     * @param mixed $username
+     * @param mixed $user
+     * @param mixed $ladderId
+     * @return Player|null
      */
     public function addPlayerToUser($username, $user, $ladderId)
     {

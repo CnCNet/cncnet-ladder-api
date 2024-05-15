@@ -14,7 +14,7 @@
             <div class="faction">
                 @if ($pgr->stats)
                     @php $playerStats2 = \App\Models\Stats2::where("id", $pgr->stats->id)->first(); @endphp
-                    @php $playerCountry = $playerStats2->faction($history->ladder->game, $pgr->stats->cty); @endphp
+                    @php $playerCountry = $playerStats2->faction($history->ladder, $pgr->stats->cty); @endphp
                     <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
                 @endif
             </div>

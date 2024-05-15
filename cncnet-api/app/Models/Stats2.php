@@ -21,9 +21,9 @@ class Stats2 extends Model
         return $this->hasMany(GameObjectCounts::Class, 'stats_id');
     }
 
-    public function faction($game)
+    public function faction(Ladder $ladder)
     {
-        $ladder = Ladder::where("abbreviation", "=", $game)->first();
+        $game = $ladder->game;
 
         $local_id = null;
         if ($game == 'yr')
@@ -43,7 +43,7 @@ class Stats2 extends Model
             return strtolower($local_id);
         }
 
-        $side = $ladder->sides()->where('local_id', $local_id)->first();
+        $side = $ladder->sides->where('local_id', $local_id)->first();
 
         return $side !== null ? strtolower($side->name) : "";
     }

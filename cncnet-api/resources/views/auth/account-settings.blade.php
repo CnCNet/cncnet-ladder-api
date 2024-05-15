@@ -186,14 +186,14 @@
                                     <p>
                                         <label>
                                             <input id="disablePointFilter" type="checkbox" name="disabledPointFilter"
-                                                @if ($userSettings->disabledPointFilter) checked @endif />
+                                                   @if ($userSettings->disabledPointFilter) checked @endif />
                                             Disable Point Filter &amp; Match with anyone
                                         </label>
                                     </p>
                                     <p>
                                         <label>
                                             <input id="match_any_map" type="checkbox" name="match_any_map"
-                                                @if ($userSettings->match_any_map) checked @endif />
+                                                   @if ($userSettings->match_any_map) checked @endif />
                                             Allow matching on any map regardless of your rank. Is used when both matched
                                             players have this option
                                             selected.
@@ -238,19 +238,19 @@
                             mt-2">
                             <label for="twitch">Twitch username <strong>E.g. myTwitchUsername</strong></label>
                             <input id="twitch" type="text" class="form-control" name="twitch_profile" value="{{ $user->twitch_profile }}"
-                                placeholder="Enter your Twitch username only" style="max-width:300px;" />
+                                   placeholder="Enter your Twitch username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2">
                             <label for="discord">Discord username, <strong>E.g. user#9999</strong></label>
                             <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}"
-                                placeholder="Enter your Discord username only" style="max-width:300px;" />
+                                   placeholder="Enter your Discord username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2">
                             <label for="youtube">YouTube channel name <strong>E.g. myYouTubeChannel</strong></label>
                             <input id="youtube" type="text" class="form-control" name="youtube_profile" value="{{ $user->youtube_profile }}"
-                                placeholder="Enter your YouTube username only" style="max-width:300px;" />
+                                   placeholder="Enter your YouTube username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2 mb-2">
