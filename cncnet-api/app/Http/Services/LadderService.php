@@ -209,7 +209,7 @@ class LadderService
 
         $out = [];
         foreach($playerSides as $playerId => $playerSide) {
-            $out[$playerId] = $sides[$playerSide];
+            $out[$playerId] = $sides[$playerSide] ?? 0;
         }
         return $out;
     }
@@ -226,7 +226,7 @@ class LadderService
 
         $out = [];
         foreach($clanSides as $clanId => $clanSide) {
-            $out[$clanId] = $sides[$clanSide];
+            $out[$clanId] = $sides[$clanSide] ?? 0;
         }
         return $out;
     }
