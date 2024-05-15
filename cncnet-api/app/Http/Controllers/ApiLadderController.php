@@ -82,6 +82,15 @@ class ApiLadderController extends Controller
         return response()->json(['success' => 'Queued for processing.'], 200);
     }
 
+    public function reprocessTeamPointsByGameId(Request $request)
+    {
+        $game = Game::find($request->gameId);
+        $history = $game->ladderHistory;
+        // dd($game->report);
+        // dd($game->allReports);
+        return $this->awardTeamPoints($game->report, $history);
+    }
+
     public function saveLadderTestOnly(Request $request)
     {
         // $ladderId = 14; // d2k
@@ -445,8 +454,6 @@ class ApiLadderController extends Controller
         {
             if ($pgr->won)
             {
-                // $winningTeam = $pgr->player->qmPlayer->team;
-
                 // grab the qm players that belong to this qm match, return the team of the current player
                 $winningTeam = $pgr->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)->team;
             }
@@ -465,26 +472,27 @@ class ApiLadderController extends Controller
             // grab the qm players that belong to this qm match, return the team of the current player
             $myTeam = $playerGR->game->qmMatch->findQmPlayerByPlayerId($playerGR->player_id)->team;
 
-            // $playerGRTeamWonTheGame = $playerGR->player->qmPlayer->team == $winningTeam;
             $playerGRTeamWonTheGame = $myTeam == $winningTeam;
 
-            foreach ($playerGameReports as $pgr)
+            // gather points from teammates and enemies, strength of team vs enemy will factor in points awarded/lost
+            foreach ($playerGameReports as $otherPlayerGameReport)
             {
-                $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
+                $other = $this->playerService->findUserRatingByPlayerId($otherPlayerGameReport->player_id);
                 $players[] = $other;
 
-                if ($pgr->player->qmPlayer->team == $playerGR->player->qmPlayer->team)
+                $otherTeam = $otherPlayerGameReport->game->qmMatch->findQmPlayerByPlayerId($otherPlayerGameReport->player_id)->team;
+                if ($otherTeam == $myTeam)
                 {
                     $ally_average += $other->rating;
-                    $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $ally_points += $otherPlayerGameReport->player->pointsBefore($history, $otherPlayerGameReport->game_id);
                     $ally_count++;
                 }
                 else
                 {
                     $enemy_average += $other->rating;
-                    $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $enemy_points += $otherPlayerGameReport->player->pointsBefore($history, $otherPlayerGameReport->game_id);
                     $enemy_count++;
-                    $enemy_games += $pgr->player->totalGames($history);
+                    $enemy_games += $otherPlayerGameReport->player->totalGames($history);
                 }
             }
 

@@ -131,6 +131,7 @@ class URLHelper
 
             case "ra":
             case "ra-cl":
+            case "ra-2v2":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-1.mp4";
 
             case "d2k":
@@ -161,6 +162,7 @@ class URLHelper
 
             case "ra":
             case "ra-cl":
+            case "ra-2v2":
             case "d2k":
                 return Vite::asset("resources/images/posters/red-alert-1.jpg");
         }
@@ -190,6 +192,7 @@ class URLHelper
 
             case "ra":
             case "ra-cl":
+            case "ra-2v2":
                 return Vite::asset("resources/images/games/ra/logo.png");
 
             default:

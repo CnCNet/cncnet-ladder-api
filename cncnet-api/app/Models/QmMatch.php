@@ -22,6 +22,11 @@ class QmMatch extends Model
         return $this->hasMany(QmMatchPlayer::class);
     }
 
+    public function game()
+    {
+        return $this->hasOne(Game::class);
+    }
+
     public function map()
     {
         return $this->belongsTo(QmMap::class, 'qm_map_id');

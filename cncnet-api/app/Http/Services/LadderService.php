@@ -728,7 +728,7 @@ class LadderService
             })
             ->where('qm_matches.id', $qmMatchId)
             ->groupBy('qm_match_players.id')
-            ->select("qm_matches.id", "p.username as name", "qm_matches.created_at as qm_match_created_at", "sides.name as faction", "p.id as player_id", "qm_match_players.clan_id as clan_id")
+            ->select("qm_matches.id", "p.username as name", "qm_matches.created_at as qm_match_created_at", "qm_match_players.team as team", "sides.name as faction", "p.id as player_id", "qm_match_players.clan_id as clan_id")
             ->get();
     }
 

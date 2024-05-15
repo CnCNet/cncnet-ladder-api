@@ -1164,7 +1164,7 @@ class QuickMatchService
             // TODO set the ELO threshold as a qm ladder rules configurable value
             $eloThreshold = 1200;
 
-            if (!$matchAnyMap && $elo < $eloThreshold) // use a tier 1 map, if ELO < 1200
+            if (!$matchAnyMap && $elo < $eloThreshold && count($tier1Maps) > 0) // use a tier 1 map, if ELO < 1200
             {
                 $randIdx = mt_rand(0, count($tier1Maps) - 1);  // pick a tier 1 map
                 $map = $tier1Maps[$randIdx];

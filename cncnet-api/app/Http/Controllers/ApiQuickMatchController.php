@@ -122,6 +122,10 @@ class ApiQuickMatchController extends Controller
             {
                 $playersString = $this->getActiveClanMatchesData($players);
             }
+            else if ($ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO) // 2v2
+            {
+                $playersString = $this->getTeamActivePlayerMatchesData($players, $qm->qm_match_created_at);
+            }
             else
             {
                 $playersString = $this->getActivePlayerMatchesData($players, $qm->qm_match_created_at);
@@ -202,6 +206,50 @@ class ApiQuickMatchController extends Controller
             if ($i < count($players) - 1)
                 $playersString .= " vs ";
         }
+        return $playersString;
+    }
+
+    /**
+     * returns a 'pretty' message describing the players on each team
+     * 
+     * should probably return a json array with the data but we are where we are
+     */
+    private function getTeamActivePlayerMatchesData($players, $created_at) // TODO will this logic work for clan ladder?
+    {
+        $playersString = "";
+        $dt = new DateTime($created_at);
+        $teams = [];
+
+        foreach ($players as $player)
+        {
+            $teams[$player->team][] = $player;
+        }
+
+        $teamCount = 0;
+        foreach ($teams as $teamId => $players)
+        {
+            $playerCount = 0;
+            foreach ($players as $player)
+            {
+                $playerName = "Player" . ($playerCount + 1);
+                if (abs(Carbon::now()->diffInSeconds($dt)) > 60) //only show real player name if 1 min has passed
+                { 
+                    $playerName = $player->name;                
+                }
+                $playersString .= $playerName . " (" . $player->faction . ")";
+
+                if ($playerCount < count($players) - 1) // if not last player on the team append ' and '
+                    $playersString .= " and ";
+
+                $playerCount++;
+            }
+
+            if ($teamCount < count($teams) - 1) // if not last team append ' vs '
+                $playersString .= " vs ";
+
+            $teamCount++;
+        }
+
         return $playersString;
     }
 

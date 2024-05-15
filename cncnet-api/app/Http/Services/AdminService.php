@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 
+use App\Models\LadderHistory;
+use Illuminate\Support\Facades\DB;
 use App\Models\QmLadderRules;
 
 class AdminService
@@ -100,5 +102,33 @@ class AdminService
         $gameAudit->username = $userName;
         $gameAudit->ladder_history_id = $game->ladderHistory->id;
         $gameAudit->save();
+    }
+
+    /**
+     * Identify games where only one player submitted a game_report.
+     * Return the player who did not submit a gamereport, also return the game_id and map
+     * TODO return who the opponent was too
+     */
+    public function fetchBailedGames(LadderHistory $ladderHistory)
+    {
+        // get games where one of the players did not submit a game report
+
+        // TODO identify games where one player force closed the QM client prior to game launching, might be covered but need to confirm
+
+        return DB::table('qm_match_players')
+            ->where('qm_match_players.ladder_id', $ladderHistory->ladder->id)
+            ->where('games.created_at', '>', $ladderHistory->starts)
+            ->where('games.created_at', '<', $ladderHistory->ends)
+            ->join('players', 'players.id', '=', 'qm_match_players.player_id')
+            ->join('games', 'games.qm_match_id', '=', 'qm_match_players.qm_match_id')
+            ->leftJoin('game_reports', function ($join)
+            {
+                $join->on('games.id', '=', 'game_reports.game_id')
+                    ->on('game_reports.player_id', '=', 'qm_match_players.player_id');
+            })
+            ->whereNull('game_reports.id')
+            ->whereNotNull('games.hash')
+            ->select('players.id as player_id', 'players.username', 'game.scen', 'qm_match_players.id as qm_match_player_id', 'games.id as game_id', 'game_reports.id as game_report_id')
+            ->orderBy('game_id');
     }
 }

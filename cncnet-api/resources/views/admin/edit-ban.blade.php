@@ -52,18 +52,23 @@
     <?php $card = \App\Models\Card::find($player->card_id); ?>
 
     <div class="player mt-4">
+
         <div class="feature-background player-card {{ $card->short ?? 'no-card' }}">
             <div class="container">
                 <div class="player-header">
                     <div class="player-stats">
                         <h1 class="username">
-                            {{ $player->username }}
+                            Player: {{ $player->username }}
                         </h1>
+                        <h3>
+                            User: <a style="text-decoration: underline;" href="/admin/users?userId={{ $player->user->id }}">{{ $user->name }}</a>
+                        </h3>
                         {{ $user->getBan() }}
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="feature-footer-background">
             <div class="container">
                 <div class="player-footer">
@@ -97,7 +102,8 @@
                             <input type="hidden" name="admin_id" value="{{ $admin_id }}">
                             <input type="hidden" name="user_id" value="{{ $user_id }}">
                             <input type="hidden" name="expires" value="{{ $expires }}">
-                            <input type="hidden" name="start_or_end" value="{{ $start_or_end }}">
+                            <input type="hidden" name="start_ban" value="{{ $start_ban }}">
+                            <input type="hidden" name="end_ban" value="false">
                             <input type="hidden" name="ip_address_id" value="{{ $ip_address_id }}">
 
                             <div class="form-group">

@@ -9,8 +9,10 @@
         <div class="text-center mt-2">
             <h4 class="fs-6">
                 {{ $history->ladder->name }}
-                @if (!$history->ladder->clans_allowed)
+                @if ($history->ladder->ladder_type == \App\Models\Ladder::ONE_VS_ONE)
                     1vs1 Ladder
+                @else
+                    Ladder
                 @endif
             </h4>
             <p class="text-uppercase fw-bold fs-6">
