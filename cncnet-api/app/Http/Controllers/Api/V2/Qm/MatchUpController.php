@@ -263,7 +263,7 @@ class MatchUpController
             $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $ladder->current_history, $gameType);
 
             // Push a job to find an opponent
-            Log::info('Queued FindOpponent job');
+            Log::debug('Queued FindOpponent job');
             dispatch(new FindOpponentJob($qmQueueEntry?->id, $gameType));
 
             $qmPlayer->touch();

@@ -69,7 +69,7 @@ class ApiQuickMatchController extends Controller
         }
     }
 
-    private function getStats(string $ladderAbbrev, int $tierId)
+    private function getStats(string $ladderAbbrev, int $tierId = 1)
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
         $history = $ladder->currentHistory();

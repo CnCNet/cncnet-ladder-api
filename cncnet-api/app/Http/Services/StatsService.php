@@ -26,7 +26,7 @@ class StatsService
     {
         $ladder = $history->ladder;
         $ladderAbbrev = $ladder->abbreviation;
-        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1 * 60, function () use ($history, $ladder, $ladderAbbrev, $tierId)
+        return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1 * 60, function () use (&$history, &$ladder)
         {
             $carbonDateSubHour = Carbon::now()->subHour();
             $carbonDateSub24Hours = Carbon::now()->subHours(24);

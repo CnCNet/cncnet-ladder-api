@@ -37,7 +37,6 @@ class FindOpponentJob implements ShouldQueue
     public function handle(): void
     {
         $this->qmQueueEntry = QmQueueEntry::find($this->qmQueueEntry);
-        Log::info('FIND OPPONENT v2');
 
         if(!$this->readyToFindOpponent()) {
             Log::info('Not ready to find opponents');
