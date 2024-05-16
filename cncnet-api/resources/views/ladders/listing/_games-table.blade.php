@@ -7,7 +7,7 @@
                     $playerGameReports = \App\Models\PlayerGameReport::where('game_report_id', $game->game_report_id)->get();
                     $groupedPlayerGameReports = [];
                     foreach ($playerGameReports as $playerGameReport) {
-                        $team = $playerGameReport->game->qmMatch->findQmPlayerByPlayerId($playerGameReport->player_id)->team;
+                        $team = $playerGameReport->game->qmMatch?->findQmPlayerByPlayerId($playerGameReport->player_id)->team;
                         $groupedPlayerGameReports[$team][] = $playerGameReport;
                     }
                     $gameUrl = \App\Models\URLHelper::getGameUrl($history, $game->id);
