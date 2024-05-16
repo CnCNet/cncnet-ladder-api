@@ -326,8 +326,9 @@ class MatchUpController
         {
             $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
 
-            if ($ladder->abbreviation == GameHelper::$GAME_RA)
+            if ($ladder->game == GameHelper::$GAME_RA)
             {
+                Log::info("RA1 alliances");
                 $spawnStruct = QuickMatchSpawnService::appendRA1AlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
             }
             else
