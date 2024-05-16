@@ -130,7 +130,11 @@ $reports = $playerGameReports;
                                 @php $player = $pgr->player()->first(); @endphp
                                 @php $playerCache = $player->playerCache($history->id);@endphp
                                 @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
-                                @php $points = $playerCache ? $playerCache->points : 0;@endphp
+                                @php $points = $playerCache ? $playerCache->points : 0; @endphp
+                                @php 
+                                    if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder)) 
+                                        $disablePointFilter = $player->user->userSettings->disabledPointFilter == 1 ? 'yes' : 'no';
+                                @endphp
 
                                 @if ($i == 2)
                                     <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">

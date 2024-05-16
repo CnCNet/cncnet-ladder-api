@@ -25,14 +25,20 @@
             @if ($pgr->points > 0)
                 <strong class="me-1">Won {{ '+' }}</strong>
             @else
-                <strong class="me-1">Lost</strong>
+                <strong class="me-1">Lost </strong>
             @endif
-            {{ $pgr->points }} points
+            {{ $pgr->points }}points
         </div>
 
         @if (isset($playerRank))
             <h6 class="rank">
                 Rank #{{ $playerRank }}
+            </h6>
+        @endif
+
+        @if (isset($disablePointFilter) && $disablePointFilter != null)
+            <h6 class="rank">
+                disabledPointFilter: {{ $disablePointFilter }}
             </h6>
         @endif
     </a>
