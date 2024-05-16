@@ -282,7 +282,8 @@ class MatchUpController
             ->where('id', '<>', $qmPlayer->id)
             ->orderBy('color', 'ASC')
             ->get();
-        if (count($otherQmMatchPlayers) == 0) {
+        Log::debug('MatchUpController ** count otherQmMatchPlayers : ' . $otherQmMatchPlayers->count());
+        if ($otherQmMatchPlayers->count() < $ladder->qmLadderRules->player_count - 1) {
             $qmPlayer->waiting = false;
             $qmPlayer->save();
             Log::info("MatchUpController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
