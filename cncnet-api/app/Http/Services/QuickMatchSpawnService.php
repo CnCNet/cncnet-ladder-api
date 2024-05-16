@@ -335,20 +335,57 @@ class QuickMatchSpawnService
      * @param Collection $otherQmMatchPlayers
      * @return mixed
      */
-    public static function appendAlliancesToSpawnIni($spawnStruct, QmMatchPlayer $qmPlayer, Collection $otherQmMatchPlayers) {
+    public static function appendAlliancesToSpawnIni($spawnStruct, QmMatchPlayer $qmPlayer, Collection $otherQmMatchPlayers)
+    {
 
         // group all players by team
-        $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn($p) => $p->team);
-        foreach($playersByTeam as $team => $players) {
-            for($i = 0; $i < $players->count(); $i++) {
-                for($j = 0; $j < $players->count(); $j++) {
-                    if($players[$i] == $players[$j]) break;
+        $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn ($p) => $p->team);
+        foreach ($playersByTeam as $team => $players)
+        {
+            for ($i = 0; $i < $players->count(); $i++)
+            {
+                for ($j = 0; $j < $players->count(); $j++)
+                {
+                    if ($players[$i] == $players[$j]) break;
                     $p1Index = $players[$i]->color + 1;
                     $p2Index = $players[$j]->color + 1;
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$i]->player->username} with Player: {$players[$j]->player->username}");
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$j]->player->username} with Player: {$players[$i]->player->username}");
                     $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p2Index - 1;
                     $spawnStruct["spawn"]["Multi{$p2Index}_Alliances"]["HouseAllyOne"] = $p1Index - 1;
+                }
+            }
+        }
+
+        return $spawnStruct;
+    }
+
+    public static function appendRA1AlliancesToSpawnIni($spawnStruct, QmMatchPlayer $qmPlayer, Collection $otherQmMatchPlayers)
+    {
+
+        // Constants for RA1 houses starting index
+        $RA1_HOUSE_MULTI_INDEX_OFFSET = 12;
+
+        // Group all players by team
+        $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn ($p) => $p->team);
+        foreach ($playersByTeam as $team => $players)
+        {
+            for ($i = 0; $i < $players->count(); $i++)
+            {
+                for ($j = 0; $j < $players->count(); $j++)
+                {
+                    if ($players[$i] == $players[$j]) break;
+
+                    // Calculate the house index for RA1
+                    $p1Index = $players[$i]->color + $RA1_HOUSE_MULTI_INDEX_OFFSET;
+                    $p2Index = $players[$j]->color + $RA1_HOUSE_MULTI_INDEX_OFFSET;
+
+                    Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$i]->player->username} with Player: {$players[$j]->player->username}");
+                    Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$j]->player->username} with Player: {$players[$i]->player->username}");
+
+                    // Set the alliances in the spawn structure
+                    $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p2Index - $RA1_HOUSE_MULTI_INDEX_OFFSET;
+                    $spawnStruct["spawn"]["Multi{$p2Index}_Alliances"]["HouseAllyOne"] = $p1Index - $RA1_HOUSE_MULTI_INDEX_OFFSET;
                 }
             }
         }

@@ -33,7 +33,8 @@ class MatchUpController
     public function __construct(
         PlayerService $playerService,
         QuickMatchService $quickMatchService
-    ) {
+    )
+    {
         $this->playerService = $playerService;
         $this->quickMatchService = $quickMatchService;
     }
@@ -42,7 +43,8 @@ class MatchUpController
     {
         // check that the player is registered in the ladder
         $player = $this->playerService->findPlayerByUsername($playerName, $ladder);
-        if (!isset($player)) {
+        if (!isset($player))
+        {
             return $this->quickMatchService->onFatalError(
                 $playerName . ' is not registered in ' . $ladder->abbreviation
             );
@@ -50,13 +52,15 @@ class MatchUpController
 
         // check that the player is related to the authenticated user
         $user = $request->user();
-        if ($user->id !== $player->user->id) {
+        if ($user->id !== $player->user->id)
+        {
             return $this->quickMatchService->onFatalError(
                 'Failed'
             );
         }
 
-        if ($request->hwid)  {
+        if ($request->hwid)
+        {
             QmUserId::createNew($user->id, $request->hwid);
         }
 
@@ -96,13 +100,16 @@ class MatchUpController
      */
     private function onQuit(?QmMatchPlayer $qmPlayer)
     {
-        if (isset($qmPlayer)) {
+        if (isset($qmPlayer))
+        {
 
-            if (isset($qmPlayer->qm_match_id)) {
+            if (isset($qmPlayer->qm_match_id))
+            {
                 $qmPlayer->qmMatch->save();
             }
 
-            if (isset($qmPlayer->qEntry)) {
+            if (isset($qmPlayer->qEntry))
+            {
                 $qmPlayer->qEntry->delete();
             }
 
@@ -135,11 +142,14 @@ class MatchUpController
                 ->select('qm_matches.*')
                 ->first();
 
-            if (isset($qmMatch)) {
-                if($status === 'touch') {
+            if (isset($qmMatch))
+            {
+                if ($status === 'touch')
+                {
                     $qmMatch->touch();
                 }
-                else {
+                else
+                {
 
                     $qmState = new QmMatchState();
                     $qmState->player_id = $player->id;
@@ -148,7 +158,8 @@ class MatchUpController
                     $qmState->save();
 
                     //match not ready
-                    if ($qmState->state_type_id === 7) {
+                    if ($qmState->state_type_id === 7)
+                    {
                         $canceledMatch = new QmCanceledMatch();
                         $canceledMatch->qm_match_id = $qmMatch->id;
                         $canceledMatch->player_id = $player->id;
@@ -156,8 +167,10 @@ class MatchUpController
                         $canceledMatch->save();
                     }
 
-                    if (isset($peers)) {
-                        foreach ($peers as $peer) {
+                    if (isset($peers))
+                    {
+                        foreach ($peers as $peer)
+                        {
                             $con = new QmConnectionStats();
                             $con->qm_match_id = $qmMatch->id;
                             $con->player_id = $player->id;
@@ -172,8 +185,10 @@ class MatchUpController
 
                 $qmMatch->save();
 
-                return response()->json([
-                    "message"  => "update qm match: " . $status]
+                return response()->json(
+                    [
+                        "message"  => "update qm match: " . $status
+                    ]
                 );
             }
         }
@@ -193,26 +208,30 @@ class MatchUpController
      * @param Player $player
      * @param ?QmMatchPlayer $qmPlayer
      */
-    private function onMatchMeUp(Request $request, Ladder $ladder, Player $player, ?QmMatchPlayer $qmPlayer) {
+    private function onMatchMeUp(Request $request, Ladder $ladder, Player $player, ?QmMatchPlayer $qmPlayer)
+    {
 
         Log::debug('Username : ' . $player->username . ' on ladder ' . $ladder->name);
         Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
 
         // If we're new to the queue, create required QmMatchPlayer model
-        if (!isset($qmPlayer)) {
+        if (!isset($qmPlayer))
+        {
             $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $ladder->current_history);
             $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladder->qmLadderRules);
             $qmPlayer->save();
 
-            if (!$validSides) {
+            if (!$validSides)
+            {
                 return $this->quickMatchService->onFatalError(
-                    'Side ('.$request->side.') is not allowed'
+                    'Side (' . $request->side . ') is not allowed'
                 );
             }
         }
 
         // Important check, sent from qm client
-        if ($request->ai_dat) {
+        if ($request->ai_dat)
+        {
             $qmPlayer->ai_dat = $request->ai_dat;
             $qmPlayer->save();
             return $this->quickMatchService->onFatalError(
@@ -226,15 +245,18 @@ class MatchUpController
         if ($this->playerService->checkPlayerShouldMatchAI($request, $player, $ladder, $qmPlayer))
         {
             // Delete player from queue if they were in one.
-            if (isset($qmPlayer->qEntry)) {
+            if (isset($qmPlayer->qEntry))
+            {
                 $qmPlayer->qEntry->delete();
             }
 
             // Exclude certain maps that do not work with AI well for Blitz
-            if ($ladder->abbreviation === GameHelper::$GAME_BLITZ) {
+            if ($ladder->abbreviation === GameHelper::$GAME_BLITZ)
+            {
                 $maps = MapPool::find(63)->maps;
             }
-            else {
+            else
+            {
                 $maps = $ladder->mapPool->maps;
             }
 
@@ -247,12 +269,15 @@ class MatchUpController
         }
 
 
-        if (isset($qmPlayer->qEntry)) {
+        if (isset($qmPlayer->qEntry))
+        {
             $gameType = $qmPlayer->qEntry->game_type;
         }
-        else {
+        else
+        {
             $gameType = Game::GAME_TYPE_1VS1;
-            if ($ladder->clans_allowed || $ladder->qmLadderRules->player_count == 4) {
+            if ($ladder->clans_allowed || $ladder->qmLadderRules->player_count == 4)
+            {
                 $gameType = Game::GAME_TYPE_2VS2;
             }
         }
@@ -282,24 +307,36 @@ class MatchUpController
             ->where('id', '<>', $qmPlayer->id)
             ->orderBy('color', 'ASC')
             ->get();
-        if (count($otherQmMatchPlayers) == 0) {
+        if (count($otherQmMatchPlayers) == 0)
+        {
             $qmPlayer->waiting = false;
             $qmPlayer->save();
             Log::info("MatchUpController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
             return $this->quickMatchService->onCheckback($alert);
         }
 
-        if ($gameType == Game::GAME_TYPE_2VS2_AI) {
+        if ($gameType == Game::GAME_TYPE_2VS2_AI)
+        {
             // Prepend quick-coop AI ini file
             $spawnStruct = QuickMatchSpawnService::addQuickMatchCoopAISpawnIni($spawnStruct, AIHelper::BRUTAL_AI);
         }
 
         // if its a 2v2 match but not clan
-        if (!$ladder->clans_allowed && $ladder->qmLadderRules->player_count > 2) {
+        if (!$ladder->clans_allowed && $ladder->qmLadderRules->player_count > 2)
+        {
             $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
-            $spawnStruct = QuickMatchSpawnService::appendAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
+
+            if ($ladder->abbreviation == GameHelper::$GAME_RA)
+            {
+                $spawnStruct = QuickMatchSpawnService::appendRA1AlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
+            }
+            else
+            {
+                $spawnStruct = QuickMatchSpawnService::appendAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
+            }
         }
-        else {
+        else
+        {
             // Write the spawn.ini "Others" sections
             $spawnStruct = QuickMatchSpawnService::appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers);
         }
