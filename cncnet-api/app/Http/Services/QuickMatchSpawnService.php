@@ -366,7 +366,7 @@ class QuickMatchSpawnService
         // Constants for RA1 houses starting index
         $RA1_HOUSE_MULTI_INDEX_OFFSET = 12;
 
-        // group all players by team
+        // Group all players by team
         $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn ($p) => $p->team);
         foreach ($playersByTeam as $team => $players)
         {
@@ -374,21 +374,23 @@ class QuickMatchSpawnService
             {
                 for ($j = 0; $j < $players->count(); $j++)
                 {
-                    if ($players[$i] == $players[$j]) break;
+                    if ($players[$i] == $players[$j]) continue;
 
                     $p1Index = $players[$i]->color + 1;
                     $p2Index = $players[$j]->color + 1;
 
-                    $p1IndexV = $p1Index + $RA1_HOUSE_MULTI_INDEX_OFFSET;
-                    $p2IndexV  = $p2Index + $RA1_HOUSE_MULTI_INDEX_OFFSET;
+                    $p1IndexV = $players[$i]->color + $RA1_HOUSE_MULTI_INDEX_OFFSET;
+                    $p2IndexV = $players[$j]->color + $RA1_HOUSE_MULTI_INDEX_OFFSET;
 
                     Log::info("p1Index: $p1Index -- p1IndexV: $p1IndexV");
-                    Log::info("p2Index: $$p2Index -- p1IndexV: $p2IndexV");
+                    Log::info("p2Index: $p2Index -- p2IndexV: $p2IndexV");
 
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$i]->player->username} with Player: {$players[$j]->player->username}");
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$j]->player->username} with Player: {$players[$i]->player->username}");
-                    $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p1IndexV - 1;
-                    $spawnStruct["spawn"]["Multi{$p2Index}_Alliances"]["HouseAllyOne"] = $p2IndexV - 1;
+
+                    // Set the alliances directly using RA1 house indices
+                    $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p2IndexV;
+                    $spawnStruct["spawn"]["Multi{$p2Index}_Alliances"]["HouseAllyOne"] = $p1IndexV;
                 }
             }
         }
