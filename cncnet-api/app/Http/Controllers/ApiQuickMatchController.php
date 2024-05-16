@@ -49,7 +49,27 @@ class ApiQuickMatchController extends Controller
         return json_encode(DB::table("client_version")->where("platform", $platform)->first());
     }
 
-    public function statsRequest(Request $request, $ladderAbbrev = null, $tierId = 1)
+    public function statsRequest(Request $request, string $ladderAbbrev = null, int $tierId = 1)
+    {
+        if ($ladderAbbrev == 'all')
+        {
+            $allStats = [];
+
+            foreach ($this->ladderService->getLadders() as $ladder)
+            {
+                $results = $this->getStats($ladder->abbreviation, $tierId);
+                $allStats[$ladder->abbreviation] = $results;
+            }
+
+            return $allStats;
+        } 
+        else 
+        {
+            return $this->getStats($ladderAbbrev, $tierId);
+        }
+    }
+
+    private function getStats(string $ladderAbbrev, int $tierId)
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
         $history = $ladder->currentHistory();
