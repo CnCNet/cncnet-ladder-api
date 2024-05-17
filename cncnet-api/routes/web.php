@@ -180,6 +180,10 @@ Route::group(['prefix' => 'admin'], function() {
 
 Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
 {
+    Route::post('/sendPlayerInvitation', [\App\Http\Controllers\AccountController::class, 'sendPlayerInvitation']);
+    Route::post('/processPlayerInvitation', [\App\Http\Controllers\AccountController::class, 'processInvitation']);
+    Route::post('/removeTeammate', [\App\Http\Controllers\AccountController::class, 'removeTeammate']);
+
     Route::get('/', [\App\Http\Controllers\AccountController::class, 'getAccountIndex']);
     Route::get('/{ladderAbbrev}/list', [\App\Http\Controllers\AccountController::class, 'getLadderAccountIndex']);
     Route::post('/{ladderAbbrev}/username-status', [\App\Http\Controllers\AccountController::class, 'toggleUsernameStatus']);

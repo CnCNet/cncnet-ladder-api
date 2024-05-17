@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::table('players', function (Blueprint $table)
         {
-            $table->unsignedInteger('preferred_teammate_id');
+            if (!Schema::hasColumn('players', 'preferred_teammate_id'))
+            {
+                $table->unsignedInteger('preferred_teammate_id');
+            }
         });
     }
 

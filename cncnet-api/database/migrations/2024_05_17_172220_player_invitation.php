@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('player_invitations');
         Schema::create('player_invitations', function (Blueprint $table)
         {
             $table->id();
             $table->unsignedInteger('author_player_id');
             $table->unsignedInteger('invited_player_id');
-            $table->enum('type', ['accepted', 'pending', 'declined']);
+            $table->enum('status', ['accepted', 'pending', 'declined', 'canceled']);
             $table->timestamps();
 
             $table->foreign('author_player_id')->references('id')->on('players')->onDelete('cascade');
