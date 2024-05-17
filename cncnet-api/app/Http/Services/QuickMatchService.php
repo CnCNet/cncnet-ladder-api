@@ -1406,8 +1406,8 @@ class QuickMatchService
     {
         $response = [
             "type" => "please wait",
-            "checkback" => 10,
-            "no_sooner_than" => 5
+            "checkback" => 5,
+            "no_sooner_than" => 3
         ];
 
         if (isset($alert))
