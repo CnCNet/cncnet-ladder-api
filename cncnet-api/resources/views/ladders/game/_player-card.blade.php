@@ -19,13 +19,17 @@
     <a href="{{ \App\Models\URLHelper::getPlayerProfileUrl($history, $player->username) }}" title="View {{ $player->username }}'s profile">
         <h4 class="mt-2 mb-0 username">
             {{ $player->username }}
+
+            @if ($player->user->getEmoji())
+                @include('components.emoji', ['emoji' => $player->user->getEmoji()])
+            @endif
         </h4>
 
         <div class="pt-2 pb-2 points font-secondary-bold {{ $pgr->points > 0 ? 'won' : 'lost' }}">
             @if ($pgr->points > 0)
-                Won +{{$pgr->points}} points
+                Won +{{ $pgr->points }} points
             @else
-                <strong class="me-1">Lost {{$pgr->points}} points</strong>
+                <strong class="me-1">Lost {{ $pgr->points }} points</strong>
             @endif
         </div>
 
