@@ -102,7 +102,7 @@
                             <label for="enableAnonymous">Enable Anonymity</label>
                         </div>
 
-                        @if ($user->getIsAllowedToUploadAvatar() == false)
+                        @if ($user->getIsAllowedToUploadAvatarOrEmoji() == false)
                             <h4>Ladder Avatar Disabled</h4>
                         @else
                             <div class="form-group mb-5">
@@ -134,7 +134,35 @@
                             </div>
                         @endif
 
+                        <h3>Pick an emoji</h3>
+                        <p>Emojis will show up alongside your username on the ladder.</p>
+                        @if ($user->getIsAllowedToUploadAvatarOrEmoji())
+                            <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+                            <input type="hidden" name="user_emoji" id="emojiInput" />
+                            <span id="emojiPreview" class="emoji-container" style="font-size:2.3rem">{{ $user->getEmoji() }}</span>
+                            <emoji-picker id="emojiPicker"></emoji-picker>
 
+                            <label>
+                                <input type="checkbox" name="remove_emoji" />
+                                Remove emoji
+                            </label>
+                        @else
+                            <span id="emojiPreview" class="emoji-container" style="font-size:2.3rem">💩 </span>
+                            You are not allowed to upload emojis.
+                        @endif
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                const emojiPicker = document.getElementById('emojiPicker');
+                                const emojiInput = document.getElementById('emojiInput');
+                                const emojiPreview = document.getElementById('emojiPreview');
+                                emojiPicker.addEventListener('emoji-click', event => {
+                                    emojiInput.value = event.detail.unicode;
+                                    console.log(event.detail);
+                                    emojiPreview.innerHTML = event.detail.unicode;
+                                });
+                            });
+                        </script>
 
                         @if (in_array($user->id, config('app.allowed_observer_user_ids')))
                             <div class="form-group mt-5 mb-5">
@@ -186,14 +214,14 @@
                                     <p>
                                         <label>
                                             <input id="disablePointFilter" type="checkbox" name="disabledPointFilter"
-                                                   @if ($userSettings->disabledPointFilter) checked @endif />
+                                                @if ($userSettings->disabledPointFilter) checked @endif />
                                             Disable Point Filter &amp; Match with anyone
                                         </label>
                                     </p>
                                     <p>
                                         <label>
                                             <input id="match_any_map" type="checkbox" name="match_any_map"
-                                                   @if ($userSettings->match_any_map) checked @endif />
+                                                @if ($userSettings->match_any_map) checked @endif />
                                             Allow matching on any map regardless of your rank. Is used when both matched
                                             players have this option
                                             selected.
@@ -208,7 +236,8 @@
                         <div class="form-group mt-5 mb-5">
                             <h3>Skip Score Screen</h3>
                             <label>
-                                <input id="skip_score_screen" type="checkbox" name="skip_score_screen" @if ($userSettings->skip_score_screen) checked @endif />
+                                <input id="skip_score_screen" type="checkbox" name="skip_score_screen"
+                                    @if ($userSettings->skip_score_screen) checked @endif />
                                 Skip the score screen after a match ends
                             </label>
                         </div>
@@ -238,19 +267,19 @@
                             mt-2">
                             <label for="twitch">Twitch username <strong>E.g. myTwitchUsername</strong></label>
                             <input id="twitch" type="text" class="form-control" name="twitch_profile" value="{{ $user->twitch_profile }}"
-                                   placeholder="Enter your Twitch username only" style="max-width:300px;" />
+                                placeholder="Enter your Twitch username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2">
                             <label for="discord">Discord username, <strong>E.g. user#9999</strong></label>
                             <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}"
-                                   placeholder="Enter your Discord username only" style="max-width:300px;" />
+                                placeholder="Enter your Discord username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2">
                             <label for="youtube">YouTube channel name <strong>E.g. myYouTubeChannel</strong></label>
                             <input id="youtube" type="text" class="form-control" name="youtube_profile" value="{{ $user->youtube_profile }}"
-                                   placeholder="Enter your YouTube username only" style="max-width:300px;" />
+                                placeholder="Enter your YouTube username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2 mb-2">

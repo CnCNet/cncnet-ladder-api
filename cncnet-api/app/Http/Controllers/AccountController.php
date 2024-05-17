@@ -380,7 +380,16 @@ class AccountController extends Controller
         $user->youtube_profile = $request->youtube_profile;
         $user->twitch_profile = $request->twitch_profile;
 
+        # User emoji
+        if ($request->user_emoji)
+        {
+            $user->emoji = json_encode($request->user_emoji);
+        }
 
+        if ($request->remove_emoji)
+        {
+            $user->emoji = null;
+        }
 
         # User Avatar
         if ($request->hasFile("avatar"))

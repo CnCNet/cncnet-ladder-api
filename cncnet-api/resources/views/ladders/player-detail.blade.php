@@ -107,8 +107,9 @@
                     <div class="player-rank pt-3 me-md-5">
                         <h1 class="username">
                             {{ $ladderPlayer->username }}
-                            @if ($playerOfTheDayAward)
-                                {{ \App\Helpers\SiteHelper::getEmojiByMonth() }}
+
+                            @if ($userPlayer->getEmoji())
+                                @include('components.emoji', ['emoji' => $userPlayer->getEmoji()])
                             @endif
                         </h1>
 
@@ -132,15 +133,6 @@
                             </div>
                         @endif
                     </div>
-
-                    @if ($userIsMod)
-                        <div class="mt-2 mb-2">
-                            @include('ladders._modal-edit-player-name')
-                            <button type="button" class="btn btn-secondary btn-sm" id="editPlayerName" data-bs-toggle="modal"
-                                data-bs-target="#editPlayerName"> Edit Player Name
-                            </button>
-                        </div>
-                    @endif
 
                     <div class="player-social pt-4 me-5">
                         @if ($userPlayer->getTwitchProfile())

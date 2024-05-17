@@ -2,6 +2,15 @@
     <div class="container">
         <div class="d-flex">
             @if ($userIsMod)
+                @include('ladders._modal-edit-player-name')
+                <button type="button" class="btn btn-secondary btn-size-md me-3" id="editPlayerName" data-bs-toggle="modal"
+                    data-bs-target="#editPlayerName">
+                    Edit
+                    Player Name
+                </button>
+            @endif
+
+            @if ($userIsMod)
                 <div>
                     <a href="/admin/moderate/{{ $ladderId }}/player/{{ $ladderPlayer->id }}" class="btn btn-secondary btn-size-md me-3">
                         Moderation Actions
@@ -43,7 +52,8 @@
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input name="player_id" type="hidden" value="{{ $player->id }}" />
                                             <input name="ladderHistory_id" type="hidden" value="{{ $history->id }}" />
-                                            <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Undo Launder</button>
+                                            <button type="submit" name="submit" value="update" class="btn btn-primary btn-sm">Undo
+                                                Launder</button>
                                         </form>
                                     </div>
                                 @endif
