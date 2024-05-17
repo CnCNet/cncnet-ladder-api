@@ -479,22 +479,22 @@ class AccountController extends Controller
         }
 
         // accept the invitation
-        if ($request->action == 'accept')
+        if ($request->action == 'accept') # this code is processed by the 'invited' player clicking 'accept'.
         {
 
             // invited player already has a teammate
             if ($playerInvitation->invitedPlayer->preferredTeamMate() != null)
             {
                 $invitedUsername = $playerInvitation->invitedPlayer->username;
-                $request->session()->flash("error", "$invitedUsername already has a teammate!");
+                $request->session()->flash("error", "Your user $invitedUsername already has a teammate!");
                 return redirect()->back();
             }
 
             // author already has a teammate
             if ($playerInvitation->author->preferredTeamMate() != null)
             {
-                $invitedUsername = $playerInvitation->author->username;
-                $request->session()->flash("error", "$invitedUsername already has a teammate!");
+                $authorUsername = $playerInvitation->author->username;
+                $request->session()->flash("error", "$authorUsername already has a teammate!");
                 return redirect()->back();
             }
 
