@@ -195,6 +195,9 @@ class URLHelper
             case "ra-2v2":
                 return Vite::asset("resources/images/games/ra/logo.png");
 
+            case "sfj":
+                return null;
+
             default:
                 return Vite::asset("resources/images/games/{$abbrev}/logo.png");
         }
