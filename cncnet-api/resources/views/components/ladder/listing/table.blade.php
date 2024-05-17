@@ -1,16 +1,10 @@
-@props([
-    'players',
-    'history',
-    'statsXOfTheDay',
-    'ranks'
-])
+@props(['players', 'history', 'statsXOfTheDay', 'ranks'])
 <div class="ladder-player-listing" id="listing">
     <div class="player-row-header">
         <div class="player-rank">
             Rank
         </div>
         <div class="player-avatar">
-            Name
         </div>
         <div class="player-social">
             Social
@@ -37,12 +31,6 @@
     </div>
 
     @foreach ($players as $k => $playerCache)
-        <x-ladder.listing.player-row
-            :history="$history"
-            :player-cache="$playerCache"
-            :stats-x-of-the-day="$statsXOfTheDay"
-            :ranks="$ranks"
-            :most-used-factions="$mostUsedFactions"
-        />
+        <x-ladder.listing.player-row :history="$history" :player-cache="$playerCache" :stats-x-of-the-day="$statsXOfTheDay" :ranks="$ranks" :most-used-factions="$mostUsedFactions" />
     @endforeach
 </div>

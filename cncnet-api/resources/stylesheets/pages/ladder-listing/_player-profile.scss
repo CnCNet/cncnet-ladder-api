@@ -11,7 +11,12 @@
     position: relative;
     padding-left: 1rem;
     padding-right: 1rem;
-} 
+}
+
+.ladder-listing .player-profile .player-stat.rank 
+{
+    font-size: 1.3rem;
+}
 
 .ladder-listing .player-profile .most-used-country
 {
@@ -44,7 +49,7 @@
 
     @media(min-width: $lg-width)
     {
-        width: 60px;
+        width: 80px;
     }
 }
 
@@ -114,11 +119,6 @@
 
 @media(min-width: $lg-width)
 {
-    .player-profile .player-faction 
-    {
-        width: 64px;
-    }
-
     .ladder-listing  .player-profile .player-country 
     {
         padding-right: 0;
@@ -127,7 +127,6 @@
 
     .ladder-listing .player-profile .player-username 
     {
-        width: 200px;
         word-break: break-word;
     }
 

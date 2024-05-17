@@ -155,18 +155,20 @@ class LadderService
         return collect(Ladder::getAllowedQMLaddersByUser($user, true));
     }
 
-    public function getPreviousLadderHistoryForLadder(Ladder $ladder, $limit = 5) {
+    public function getPreviousLadderHistoryForLadder(Ladder $ladder, $limit = 5)
+    {
         $histories = LadderHistory::where("ladder_history.starts", "<=", now()->startOfMonth()->subMonth())
             ->where("ladder_history.ladder_id", "=", $ladder->id)
             ->limit($limit)
             ->select(['short', 'starts'])
             ->orderBy('ladder_history.starts', 'DESC')
             ->get();
-        $histories->each(fn($h) => $h->setRelation('ladder', $ladder));
+        $histories->each(fn ($h) => $h->setRelation('ladder', $ladder));
         return $histories;
     }
 
-    public function getPlayerRanksForLadderHistory(LadderHistory $ladderHistory, int $tier = 1): array {
+    public function getPlayerRanksForLadderHistory(LadderHistory $ladderHistory, int $tier = 1): array
+    {
         $players = PlayerCache::where('ladder_history_id', '=', $ladderHistory->id)
             ->where("tier", $tier)
             ->orderBy('points', 'desc')
@@ -182,7 +184,8 @@ class LadderService
         return $ranks;
     }
 
-    public function getClanRanksForLadderHistory(LadderHistory $ladderHistory): array {
+    public function getClanRanksForLadderHistory(LadderHistory $ladderHistory): array
+    {
         $clans = ClanCache::where('ladder_history_id', '=', $ladderHistory->id)
             ->orderBy('points', 'desc')
             ->select('id')
@@ -197,7 +200,8 @@ class LadderService
         return $ranks;
     }
 
-    public function getMostUsedFactionForPlayerCachesInLadderHistory(LadderHistory $ladderHistory, Collection $players): array {
+    public function getMostUsedFactionForPlayerCachesInLadderHistory(LadderHistory $ladderHistory, Collection $players): array
+    {
         $playerSides = $players->pluck($ladderHistory->ladder->game == 'yr' ? 'country' : 'side', 'id')->toArray();
         $neededSides = array_unique(array_values($playerSides));
 
@@ -208,13 +212,15 @@ class LadderService
             ->toArray();
 
         $out = [];
-        foreach($playerSides as $playerId => $playerSide) {
+        foreach ($playerSides as $playerId => $playerSide)
+        {
             $out[$playerId] = $sides[$playerSide] ?? 0;
         }
         return $out;
     }
 
-    public function getMostUsedFactionForClanCachesInLadderHistory(LadderHistory $ladderHistory, Collection $clans): array {
+    public function getMostUsedFactionForClanCachesInLadderHistory(LadderHistory $ladderHistory, Collection $clans): array
+    {
         $clanSides = $clans->pluck($ladderHistory->ladder->game == 'yr' ? 'country' : 'side', 'id')->toArray();
         $neededSides = array_unique(array_values($clanSides));
 
@@ -225,7 +231,8 @@ class LadderService
             ->toArray();
 
         $out = [];
-        foreach($clanSides as $clanId => $clanSide) {
+        foreach ($clanSides as $clanId => $clanSide)
+        {
             $out[$clanId] = $sides[$clanSide] ?? 0;
         }
         return $out;
@@ -237,22 +244,34 @@ class LadderService
         ?string $orderBy = 'desc',
         int $tier = 1,
         ?string $search = null
-    ) {
+    )
+    {
 
-       return PlayerCache::query()
+        return PlayerCache::query()
             ->where("ladder_history_id", "=", $ladderHistory->id)
             ->where("tier", "=", $tier)
-            ->when(isset($search) && !empty($search),
-                function($q) use ($search) { return $q->where("player_name", "like", "%" . $search . "%"); },
+            ->when(
+                isset($search) && !empty($search),
+                function ($q) use ($search)
+                {
+                    return $q->where("player_name", "like", "%" . $search . "%");
+                },
             )
-            ->when($filterBy == 'games',
-                function($q) use ($orderBy) { return $q->orderBy("games", $orderBy ?? 'desc'); },
-                function($q) { return $q->orderBy("points", "desc"); }
+            ->when(
+                $filterBy == 'games',
+                function ($q) use ($orderBy)
+                {
+                    return $q->orderBy("games", $orderBy ?? 'desc');
+                },
+                function ($q)
+                {
+                    return $q->orderBy("points", "desc");
+                }
             )
-           ->with([
-               'player',
-               'player.user'
-           ])
+            ->with([
+                'player',
+                'player.user',
+            ])
             ->paginate(45);
     }
 
@@ -261,16 +280,28 @@ class LadderService
         ?string $filterBy = null,
         ?string $orderBy = 'desc',
         ?string $search = null
-    ) {
+    )
+    {
 
         return ClanCache::query()
             ->where("ladder_history_id", "=", $ladderHistory->id)
-            ->when(isset($search) && !empty($search),
-                function($q) use ($search) { return $q->where("clan_name", "like", "%" . $search . "%"); },
+            ->when(
+                isset($search) && !empty($search),
+                function ($q) use ($search)
+                {
+                    return $q->where("clan_name", "like", "%" . $search . "%");
+                },
             )
-            ->when($filterBy == 'games',
-                function($q) use ($orderBy) { return $q->orderBy("games", $orderBy ?? 'desc'); },
-                function($q) { return $q->orderBy("points", "desc"); }
+            ->when(
+                $filterBy == 'games',
+                function ($q) use ($orderBy)
+                {
+                    return $q->orderBy("games", $orderBy ?? 'desc');
+                },
+                function ($q)
+                {
+                    return $q->orderBy("points", "desc");
+                }
             )
             ->with(['clan'])
             ->paginate(45);
@@ -291,7 +322,7 @@ class LadderService
             ->get()
             ->reverse();
 
-        $histories->each(fn($h) => $h->setRelation('ladder', $ladder));
+        $histories->each(fn ($h) => $h->setRelation('ladder', $ladder));
 
         return $histories;
     }
@@ -327,7 +358,7 @@ class LadderService
             return LadderHistory::query()
                 ->where("starts", "=", $start)
                 ->where("ends", "=", $end)
-                ->whereHas('ladder', fn($q) => $q->where('abbreviation', $cncnetGame))
+                ->whereHas('ladder', fn ($q) => $q->where('abbreviation', $cncnetGame))
                 ->first();
         }
     }
@@ -375,11 +406,8 @@ class LadderService
             ])
             ->when(
                 $history->ladder->clans_allowed,
-                fn($q) => $q->with([
-                ]),
-                fn($q) => $q->with([
-
-                ]),
+                fn ($q) => $q->with([]),
+                fn ($q) => $q->with([]),
             )
             ->get();
     }

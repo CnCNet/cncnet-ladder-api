@@ -102,7 +102,7 @@
                             <label for="enableAnonymous">Enable Anonymity</label>
                         </div>
 
-                        @if ($user->getIsAllowedToUploadAvatar() == false)
+                        @if ($user->getIsAllowedToUploadAvatarOrEmoji() == false)
                             <h4>Ladder Avatar Disabled</h4>
                         @else
                             <div class="form-group mb-5">
@@ -134,6 +134,89 @@
                             </div>
                         @endif
 
+                        <h3>Pick an emoji</h3>
+                        <p>Emojis will show up alongside your username on the ladder.</p>
+                        @if ($user->getIsAllowedToUploadAvatarOrEmoji())
+                            <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+                            <input type="hidden" name="user_emoji" id="emojiInput" />
+
+                            <div>
+                                <strong>Current emojis</strong>
+                            </div>
+                            <div class="emoji-container" style="font-size:2.3rem;">
+                                {{ $user->getEmoji() }}
+                            </div>
+
+                            <label>
+                                <input type="checkbox" name="remove_emoji" />
+                                Remove emoji
+                            </label>
+                            <br />
+
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emojiModal">
+                                Change Emoji
+                            </button>
+
+                            <div class="modal" tabindex="-1" id="emojiModal">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Pick your emoji</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+
+                                            <small>Note: Click an emoji to remove</small>
+
+                                            <div id="emojiPreview" class="emoji-container" style="font-size:2.3rem; background:#000; border-radius:4px;">
+                                            </div>
+
+                                            <emoji-picker id="emojiPicker"
+                                                style="margin: auto; width: 100%; --background: transparent; --border-color: transparent;"></emoji-picker>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const emojiPicker = document.getElementById('emojiPicker');
+                                    const emojiInput = document.getElementById('emojiInput');
+                                    const emojiPreview = document.getElementById('emojiPreview');
+                                    let selectedEmojis = [];
+
+                                    emojiPicker.addEventListener('emoji-click', event => {
+                                        if (selectedEmojis.length < 3) {
+                                            selectedEmojis.push(event.detail.unicode);
+                                            updateEmojiPreview();
+                                        } else {
+                                            alert('You can select up to 3 emojis. Click to remove one if you want to change any.');
+                                        }
+                                    });
+
+                                    function updateEmojiPreview() {
+                                        emojiPreview.innerHTML = '';
+                                        selectedEmojis.forEach((emoji, index) => {
+                                            const emojiSpan = document.createElement('span');
+                                            emojiSpan.classList.add('emoji-item');
+                                            emojiSpan.textContent = emoji;
+                                            emojiSpan.addEventListener('click', () => {
+                                                selectedEmojis.splice(index, 1);
+                                                updateEmojiPreview();
+                                            });
+                                            emojiPreview.appendChild(emojiSpan);
+                                        });
+                                        emojiInput.value = selectedEmojis.join('');
+                                    }
+                                });
+                            </script>
+                        @else
+                            <span id="emojiPreview" class="emoji-container" style="font-size:2.3rem">💩 </span>
+                            You are not allowed to upload emojis.
+                        @endif
 
 
                         @if (in_array($user->id, config('app.allowed_observer_user_ids')))
@@ -186,14 +269,14 @@
                                     <p>
                                         <label>
                                             <input id="disablePointFilter" type="checkbox" name="disabledPointFilter"
-                                                   @if ($userSettings->disabledPointFilter) checked @endif />
+                                                @if ($userSettings->disabledPointFilter) checked @endif />
                                             Disable Point Filter &amp; Match with anyone
                                         </label>
                                     </p>
                                     <p>
                                         <label>
                                             <input id="match_any_map" type="checkbox" name="match_any_map"
-                                                   @if ($userSettings->match_any_map) checked @endif />
+                                                @if ($userSettings->match_any_map) checked @endif />
                                             Allow matching on any map regardless of your rank. Is used when both matched
                                             players have this option
                                             selected.
@@ -208,7 +291,8 @@
                         <div class="form-group mt-5 mb-5">
                             <h3>Skip Score Screen</h3>
                             <label>
-                                <input id="skip_score_screen" type="checkbox" name="skip_score_screen" @if ($userSettings->skip_score_screen) checked @endif />
+                                <input id="skip_score_screen" type="checkbox" name="skip_score_screen"
+                                    @if ($userSettings->skip_score_screen) checked @endif />
                                 Skip the score screen after a match ends
                             </label>
                         </div>
@@ -238,19 +322,19 @@
                             mt-2">
                             <label for="twitch">Twitch username <strong>E.g. myTwitchUsername</strong></label>
                             <input id="twitch" type="text" class="form-control" name="twitch_profile" value="{{ $user->twitch_profile }}"
-                                   placeholder="Enter your Twitch username only" style="max-width:300px;" />
+                                placeholder="Enter your Twitch username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2">
                             <label for="discord">Discord username, <strong>E.g. user#9999</strong></label>
                             <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}"
-                                   placeholder="Enter your Discord username only" style="max-width:300px;" />
+                                placeholder="Enter your Discord username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2">
                             <label for="youtube">YouTube channel name <strong>E.g. myYouTubeChannel</strong></label>
                             <input id="youtube" type="text" class="form-control" name="youtube_profile" value="{{ $user->youtube_profile }}"
-                                   placeholder="Enter your YouTube username only" style="max-width:300px;" />
+                                placeholder="Enter your YouTube username only" style="max-width:300px;" />
                         </div>
 
                         <div class="form-group mt-2 mb-2">

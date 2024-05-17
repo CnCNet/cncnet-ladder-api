@@ -1,10 +1,4 @@
-@props([
-    'history',
-    'playerCache',
-    'statsXOfTheDay',
-    'ranks',
-    'mostUsedFactions'
-])
+@props(['history', 'playerCache', 'statsXOfTheDay', 'ranks', 'mostUsedFactions'])
 @php
     $playerOfTheDay = false;
     if (isset($statsXOfTheDay)) {
@@ -12,9 +6,9 @@
     }
     $username = $playerCache->player_name . ($playerOfTheDay ? ' ' . \App\Helpers\SiteHelper::getEmojiByMonth() : '');
     $url = \App\Models\URLHelper::getPlayerProfileUrl($history, $playerCache->player_name);
-    $avatar = $playerCache->player->user->getUserAvatar();
     $mostPlayedFaction = $mostUsedFactions[$playerCache->id] ?? '';
     $avatar = $playerCache->player->user->getUserAvatar();
+    $emoji = $playerCache->player->user->getEmoji();
     $twitch = $playerCache->player->user->getTwitchProfile();
     $youtube = $playerCache->player->user->getYouTubeProfile();
     $discord = $playerCache->player->user->getDiscordProfile();
@@ -25,12 +19,6 @@
     $wins = $playerCache->wins;
     $losses = $playerCache->games - $playerCache->wins;
     $totalGames = $playerCache->games;
-
-    $emoji = '';
-    if ($history->ladder->abbreviation == 'yr' && str_contains(strtolower($username ?? ''), 'baguette')) {
-        #for zedd
-        $emoji = '🥖';
-    }
 @endphp
 <div id="js_profile_{{ $username }}" class="player-row rank-{{ $rank }}">
     <div class="player-profile d-flex d-lg-none">
@@ -49,12 +37,13 @@
     </div>
 
     <div class="player-profile d-none d-lg-flex">
-        <div class="player-rank player-stat">
+        <div class="player-rank player-stat rank">
             #{{ $rank ?? 'Unranked' }}
         </div>
 
+
         <a class="player-avatar player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
-            @include('components.avatar', ['avatar' => $avatar, 'size' => 50])
+            @include('components.avatar', ['avatar' => $avatar, 'size' => 65])
         </a>
 
         <a class="player-country player-stat" href="{{ $url }}" title="Go to {{ $username }}'s profile">
@@ -63,12 +52,12 @@
             @endif
         </a>
         <a class="player-username player-stat d-none d-lg-flex" href="{{ $url }}" title="Go to {{ $username }}'s profile">
-
-            @if ($rank == 1)
-                {{ $username }} <span style="color:gold;padding-left:0.5rem;"> {{ $emoji }}</span>
-            @else
-                {{ $username }} <span style="color:red;padding-left:0.5rem;"> {{ $emoji }}</span>
-            @endif
+            <span>
+                {{ $username }}
+                @if ($emoji)
+                    @include('components.emoji', ['emoji' => $emoji])
+                @endif
+            </span>
         </a>
     </div>
 

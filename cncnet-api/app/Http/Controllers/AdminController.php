@@ -316,6 +316,12 @@ class AdminController extends Controller
             $user->removeAvatar();
         }
 
+        if ($request->removeUserEmoji == "on")
+        {
+            $user->emoji = null;
+            $user->save();
+        }
+
         if ($request->restrictAvatarUpload == "on")
         {
             $user->restrictAvatarUpload(true);
@@ -751,7 +757,7 @@ class AdminController extends Controller
         $ban->save();
 
         $banFlash = \App\Models\Ban::banStyle($request->ban_type);
-        
+
         if ($request->end_ban && $request->boolean('end_ban') === true) // end the ban
         {
             $ban->expires = Carbon::now();

@@ -249,7 +249,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $this->save();
     }
 
-    public function getIsAllowedToUploadAvatar()
+    public function getIsAllowedToUploadAvatarOrEmoji()
     {
         return $this->avatar_upload_allowed;
     }
@@ -371,6 +371,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         $userTier = $this->getUserLadderTier($ladder);
         return $userTier->both_tiers;
+    }
+
+    public function getEmoji(): ?string
+    {
+        if ($this->emoji)
+        {
+            return json_decode($this->emoji);
+        }
+        return null;
     }
 
     # Relationships

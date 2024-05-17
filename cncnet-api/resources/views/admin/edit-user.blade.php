@@ -48,9 +48,16 @@
 
                     <p class="mt-2 mb-2">
                         <label>
+                            <input id="removeUserEmoji" type="checkbox" name="removeUserEmoji" />
+                            Remove user emoji
+                        </label>
+                    </p>
+
+                    <p class="mt-2 mb-2">
+                        <label>
                             <input id="restrictAvatarUpload" type="checkbox" name="restrictAvatarUpload"
-                                {{ $user->getIsAllowedToUploadAvatar() ? 'checked' : '' }} />
-                            User allowed to upload Avatar?
+                                {{ $user->getIsAllowedToUploadAvatarOrEmoji() ? 'checked' : '' }} />
+                            User is allowed to upload an Avatar or add an Emoji?
                         </label>
                     </p>
 

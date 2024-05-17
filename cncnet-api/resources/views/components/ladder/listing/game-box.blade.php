@@ -1,16 +1,13 @@
-@props([
-    'history',
-    'game'
-])
+@props(['history', 'game'])
 @php
     $mapName = $game->qmMatch?->map?->description;
 @endphp
-<a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id }}"
-   class="game-box"
-   data-timestamp="{{ $game->updated_at->timestamp }}">
+<a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id }}" class="game-box"
+    data-timestamp="{{ $game->updated_at->timestamp }}">
 
     <div class="map-preview">
-        <img src="{{ \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->qmMatch?->map?->map, $game->qmMatch?->map?->map->hash) }}" alt="" />
+        <img src="{{ \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->qmMatch?->map?->map, $game->qmMatch?->map?->map->hash) }}"
+            alt="" />
     </div>
 
     <div class="details text-center">
@@ -32,7 +29,7 @@
 
     <div class="mt-5 text-center">
 
-        @if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO)
+        @if ($history->ladder->ladder_type !== \App\Models\Ladder::ONE_VS_ONE)
             @php
                 $groupedGamePlayerResults = [];
                 foreach ($game->report->playerGameReports as $pgr) {
@@ -46,21 +43,13 @@
                     @if ($vs == 2)
                         <em class="font-impact text-center">Vs</em>
                     @endif
-                    <x-ladder.listing.game-box-partial
-                            :history="$history"
-                            :game-player="$gamePlayer"
-                            :index="$k"
-                    />
+                    <x-ladder.listing.game-box-partial :history="$history" :game-player="$gamePlayer" :index="$k" />
                     @php $vs++; @endphp
                 @endforeach
             @endforeach
         @else
             @foreach ($game->report->playerGameReports as $k => $gamePlayer)
-                <x-ladder.listing.game-box-partial
-                    :history="$history"
-                    :game-player="$gamePlayer"
-                    :index="$k"
-                />
+                <x-ladder.listing.game-box-partial :history="$history" :game-player="$gamePlayer" :index="$k" />
                 @if ($k == 0)
                     <em class="font-impact text-center">Vs</em>
                 @endif
