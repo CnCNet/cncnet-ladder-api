@@ -66,7 +66,7 @@ $container-max-widths: (
 
 .color-green 
 {
-    color: #00ffc6;
+    color: $color-green;
 }
 
 
@@ -74,7 +74,7 @@ $container-max-widths: (
 
 // Pagination
 $pagination-bg: transparent;
-$pagination-color:  #fff;
+$pagination-color:  $color-green;
 $pagination-border-color: transparent;
 $pagination-border-radius: 0;
 $pagination-hover-color: lighten(#798199, 15%);
@@ -84,8 +84,9 @@ $pagination-focus-color: #fff;
 $pagination-focus-bg: transparent;
 
 $pagination-active-color: #000;
-$pagination-active-bg: #fff;
+$pagination-active-bg: $color-green;
 $pagination-active-border-color: transparent;
+$pagination-active-border-radius: 4px;
 
 
 // Input fields

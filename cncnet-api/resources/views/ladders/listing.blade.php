@@ -176,7 +176,6 @@
                         @include('components.pagination.paginate', ['paginator' => $clans->appends(request()->query())])
                     @endif
 
-
                     <div class="ms-auto">
                         <form>
                             <div class="form-group" method="GET">
