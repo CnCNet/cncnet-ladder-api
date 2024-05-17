@@ -232,6 +232,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
+                                                            </div>
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -377,13 +378,16 @@
                             </a>
                         </p>
 
+                        @if ($ladder->ladder_type != \App\Models\Ladder::TWO_VS_TWO)
                         <div class="table-responsive">
                             <table class="table">
                                 <thead>
                                     <tr>
                                         <th scope="col">Username</th>
                                         <th scope="col">Username Active on Ladder</th>
-                                        <th scope="col">Clan</th>
+                                        @if ($ladder->ladder_type == \App\Models\Ladder::CLAN_MATCH)
+                                            <th scope="col">Clan</th>
+                                        @endif
                                         <th scope="col"></th>
                                     </tr>
                                 </thead>
@@ -407,17 +411,19 @@
                                                     <span>Inactive</span>
                                                 @endif
                                             </td>
-                                            <td>
-                                                @if ($player->clanPlayer && $player->clanPlayer->clan)
-                                                    <strong class="fw-bold">
-                                                        {{ $player->clanPlayer->clan->name }}
-                                                    </strong>
-                                                @else
-                                                    <p>
-                                                        None
-                                                    </p>
-                                                @endif
-                                            </td>
+                                            @if ($ladder->ladder_type == \App\Models\Ladder::CLAN_MATCH)
+                                                <td>
+                                                    @if ($player->clanPlayer && $player->clanPlayer->clan)
+                                                        <strong class="fw-bold">
+                                                            {{ $player->clanPlayer->clan->name }}
+                                                        </strong>
+                                                    @else
+                                                        <p>
+                                                            None
+                                                        </p>
+                                                    @endif
+                                                </td>
+                                            @endif
                                             <td>
                                                 <form id="username-status" class="form-inline" method="POST" action="username-status">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
@@ -439,6 +445,7 @@
                                 </tbody>
                             </table>
                         </div>
+                        @endif
 
                         <h4>About Usernames</h4>
                         <ul class="mt-4">
@@ -459,6 +466,12 @@
                     </div>
                 </div>
             </div>
+
+            @if ($ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+            <div class="row">
+                @include('auth.preferred-team-mate')
+            </div>
+            @endif
         </div>
     </section>
 

@@ -291,6 +291,22 @@ class Player extends Model
         return $this->hasMany(PlayerAlert::class)->where('expires_at', '>', Carbon::now());
     }
 
+    public function preferredTeamMate()
+    {
+        return Player::where('id', $this->preferred_teammate_id)->first();
+    }
+
+    # Invites received from other players
+    public function invitesReceived()
+    {
+        return $this->hasMany(PlayerInvitation::class, 'invited_player_id');
+    }
+
+    # Invites sent to other players
+    public function invitesSent()
+    {
+        return $this->hasMany(PlayerInvitation::class, 'author_player_id');
+    }
 
     # Relationships
 

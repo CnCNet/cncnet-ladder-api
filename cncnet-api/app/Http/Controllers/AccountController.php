@@ -108,6 +108,17 @@ class AccountController extends Controller
             }
         }
 
+        $playerInvitations = $players->filter(function ($player)
+        {
+            return $player->invitesReceived->count() > 0;
+        })
+            ->map(function ($player)
+            {
+                return $player->invitesReceived;
+            })
+            ->collapse();
+
+
         return view("auth.ladder-account", compact(
             'ladders',
             'clan_ladders',
@@ -118,7 +129,8 @@ class AccountController extends Controller
             'activePlayersNotInAClan',
             'myOldClans',
             'clanPlayers',
-            'invitations'
+            'invitations',
+            'playerInvitations'
         ));
     }
 
@@ -410,5 +422,77 @@ class AccountController extends Controller
 
         $request->session()->flash("success", 'User settings updated!');
         return redirect()->back();
+    }
+
+    public function sendPlayerInvitation(Request $request)
+    {
+        $invitedPlayer = \App\Models\Player::where('ladder_id', $request->ladder_id)->where('username', $request->invite_player_name)->first();
+
+        if ($invitedPlayer == null)
+        {
+            $request->session()->flash("error", "Player $request->invite_player_name not found!");
+            return redirect()->back();
+        }
+
+        if ($invitedPlayer->player->preferredTeamMate != null)
+        {
+            $invitedUsername = $invitedPlayer->player->username;
+            $request->session()->flash("error", "$invitedUsername already has a teammate!");
+            return redirect()->back();
+        }
+
+        $playerInvitation = new \App\Models\PlayerInvitation();
+        $playerInvitation->invited_player_id = $invitedPlayer->id;
+        $playerInvitation->author_player_id = $request->author_player_id;
+        $playerInvitation->type = 'pending';
+        $playerInvitation->save();
+
+        $request->session()->flash("success", "Player $request->invite_player_name invited!");
+        return redirect()->back();
+    }
+
+    public function processInvitation(Request $request)
+    {
+        $playerInvitation = \App\Models\PlayerInvitation::where('id', $request->id)->first();
+
+        if ($playerInvitation == null)
+        {
+            $request->session()->flash("error", "Invite not found!");
+            return redirect()->back();
+        }
+
+        if ($request->action == 'accept')
+        {
+            if ($playerInvitation->invitedPlayer->player->preferredTeamMate != null)
+            {
+                $invitedUsername = $playerInvitation->invitedPlayer->player->username;
+                $request->session()->flash("error", "$invitedUsername already has a teammate!");
+                return redirect()->back();
+            }
+
+            if ($playerInvitation->author->player->preferredTeamMate != null)
+            {
+                $invitedUsername = $playerInvitation->author->player->username;
+                $request->session()->flash("error", "$invitedUsername already has a teammate!");
+                return redirect()->back();
+            }
+
+            $invitedPlayer = $playerInvitation->invitedPlayer->player;
+            $invitedPlayer->preferred_teammate_id = $playerInvitation->author->playerid;
+            $invitedPlayer->save();
+
+            $authorPlayer = $playerInvitation->author->player;
+            $authorPlayer->preferred_teammate_id = $playerInvitation->invitedPlayer->player->id;
+            $authorPlayer->save();
+
+            $request->session()->flash("success", "$authorPlayer->username is now your teammate!");
+            return redirect()->back();
+        }
+        else if ($request->action == 'reject')
+        {
+            $playerInvitation->delete();
+            $request->session()->flash("success", "Invitation rejected!");
+            return redirect()->back();
+        }
     }
 }
