@@ -153,7 +153,7 @@ class ApiQuickMatchController extends Controller
 
             $duration = Carbon::now()->diff($dt);
             $duration_formatted = $duration->format('%i mins %s sec');
-            $games[] = $playersString . " on " . $map . ". (" . $duration_formatted . ")";
+            $games[] = $playersString . " on " . $map . " (" . $duration_formatted . ")";
         }
 
         return $games;
