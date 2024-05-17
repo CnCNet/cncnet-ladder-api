@@ -2,12 +2,35 @@
 
 namespace App\Helpers;
 
+use App\Models\LadderHistory;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
 
 class SiteHelper
 {
+
+    /**
+     * 
+     * @param mixed $history 
+     * @return string 
+     */
+    public static function getLadderTypeFromHistory(LadderHistory $history)
+    {
+        if ($history->ladder->ladder_type == \App\Models\Ladder::ONE_VS_ONE)
+        {
+            return "1vs1";
+        }
+        elseif ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+        {
+            return "2vs2";
+        }
+        else
+        {
+            return "Clan";
+        }
+    }
+
     /**
      * 
      * @param mixed $history - App\LadderHistory

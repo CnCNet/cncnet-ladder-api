@@ -97,7 +97,8 @@ class LadderController extends Controller
 
         $tier = isset($request->tier) && !empty($request->tier) ? $request->tier : 1; // Default to tier 1
 
-        if (!$history->ladder->clans_allowed) {
+        if (!$history->ladder->clans_allowed)
+        {
             $players = $this->ladderService->getPlayersFromCacheForLadderHistory(
                 $history,
                 $request->filterBy,
@@ -108,7 +109,8 @@ class LadderController extends Controller
             $mostUsedFactions = $this->ladderService->getMostUsedFactionForPlayerCachesInLadderHistory($history, $players->getCollection());
             $ranks = $this->ladderService->getPlayerRanksForLadderHistory($history, request()->tier ?? 1);
         }
-        else {
+        else
+        {
             $clans = $this->ladderService->getClansFromCacheForLadderHistory(
                 $history,
                 $request->filterBy,
