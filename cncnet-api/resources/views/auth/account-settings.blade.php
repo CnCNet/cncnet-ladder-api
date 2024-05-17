@@ -139,7 +139,13 @@
                         @if ($user->getIsAllowedToUploadAvatarOrEmoji())
                             <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
                             <input type="hidden" name="user_emoji" id="emojiInput" />
-                            <span id="emojiPreview" class="emoji-container" style="font-size:2.3rem">{{ $user->getEmoji() }}</span>
+
+                            <div>
+                                <strong>Current emojis</strong>
+                            </div>
+                            <div class="emoji-container" style="font-size:2.3rem;">
+                                {{ $user->getEmoji() }}
+                            </div>
 
                             <label>
                                 <input type="checkbox" name="remove_emoji" />
@@ -159,6 +165,12 @@
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
+
+                                            <small>Note: Click an emoji to remove</small>
+
+                                            <div id="emojiPreview" class="emoji-container" style="font-size:2.3rem; background:#000; border-radius:4px;">
+                                            </div>
+
                                             <emoji-picker id="emojiPicker"
                                                 style="margin: auto; width: 100%; --background: transparent; --border-color: transparent;"></emoji-picker>
                                         </div>
@@ -174,11 +186,31 @@
                                     const emojiPicker = document.getElementById('emojiPicker');
                                     const emojiInput = document.getElementById('emojiInput');
                                     const emojiPreview = document.getElementById('emojiPreview');
+                                    let selectedEmojis = [];
+
                                     emojiPicker.addEventListener('emoji-click', event => {
-                                        emojiInput.value = event.detail.unicode;
-                                        console.log(event.detail);
-                                        emojiPreview.innerHTML = event.detail.unicode;
+                                        if (selectedEmojis.length < 3) {
+                                            selectedEmojis.push(event.detail.unicode);
+                                            updateEmojiPreview();
+                                        } else {
+                                            alert('You can select up to 3 emojis. Click to remove one if you want to change any.');
+                                        }
                                     });
+
+                                    function updateEmojiPreview() {
+                                        emojiPreview.innerHTML = '';
+                                        selectedEmojis.forEach((emoji, index) => {
+                                            const emojiSpan = document.createElement('span');
+                                            emojiSpan.classList.add('emoji-item');
+                                            emojiSpan.textContent = emoji;
+                                            emojiSpan.addEventListener('click', () => {
+                                                selectedEmojis.splice(index, 1);
+                                                updateEmojiPreview();
+                                            });
+                                            emojiPreview.appendChild(emojiSpan);
+                                        });
+                                        emojiInput.value = selectedEmojis.join('');
+                                    }
                                 });
                             </script>
                         @else
