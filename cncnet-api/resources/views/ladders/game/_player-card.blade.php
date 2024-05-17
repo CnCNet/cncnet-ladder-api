@@ -23,11 +23,10 @@
 
         <div class="pt-2 pb-2 points font-secondary-bold {{ $pgr->points > 0 ? 'won' : 'lost' }}">
             @if ($pgr->points > 0)
-                <strong class="me-1">Won {{ '+' }}</strong>
+                Won +{{$pgr->points}} points
             @else
-                <strong class="me-1">Lost </strong>
+                <strong class="me-1">Lost {{$pgr->points}} points</strong>
             @endif
-            {{ $pgr->points }}points
         </div>
 
         @if (isset($playerRank))
