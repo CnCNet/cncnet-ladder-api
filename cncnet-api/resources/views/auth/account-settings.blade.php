@@ -140,29 +140,51 @@
                             <script type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
                             <input type="hidden" name="user_emoji" id="emojiInput" />
                             <span id="emojiPreview" class="emoji-container" style="font-size:2.3rem">{{ $user->getEmoji() }}</span>
-                            <emoji-picker id="emojiPicker"></emoji-picker>
 
                             <label>
                                 <input type="checkbox" name="remove_emoji" />
                                 Remove emoji
                             </label>
+                            <br />
+
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emojiModal">
+                                Change Emoji
+                            </button>
+
+                            <div class="modal" tabindex="-1" id="emojiModal">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Pick your emoji</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <emoji-picker id="emojiPicker"></emoji-picker>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Save</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const emojiPicker = document.getElementById('emojiPicker');
+                                    const emojiInput = document.getElementById('emojiInput');
+                                    const emojiPreview = document.getElementById('emojiPreview');
+                                    emojiPicker.addEventListener('emoji-click', event => {
+                                        emojiInput.value = event.detail.unicode;
+                                        console.log(event.detail);
+                                        emojiPreview.innerHTML = event.detail.unicode;
+                                    });
+                                });
+                            </script>
                         @else
                             <span id="emojiPreview" class="emoji-container" style="font-size:2.3rem">💩 </span>
                             You are not allowed to upload emojis.
                         @endif
 
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                const emojiPicker = document.getElementById('emojiPicker');
-                                const emojiInput = document.getElementById('emojiInput');
-                                const emojiPreview = document.getElementById('emojiPreview');
-                                emojiPicker.addEventListener('emoji-click', event => {
-                                    emojiInput.value = event.detail.unicode;
-                                    console.log(event.detail);
-                                    emojiPreview.innerHTML = event.detail.unicode;
-                                });
-                            });
-                        </script>
 
                         @if (in_array($user->id, config('app.allowed_observer_user_ids')))
                             <div class="form-group mt-5 mb-5">
