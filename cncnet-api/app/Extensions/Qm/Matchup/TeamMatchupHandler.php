@@ -30,6 +30,8 @@ class TeamMatchupHandler extends BaseMatchupHandler
         // Find opponents that can be matched with current player. Exclude observers
         $matchableOpponents = $queueEntries->filter(fn(QmQueueEntry $qmQueueEntry) => !$qmQueueEntry->qmPlayer->isObserver());
 
+        $matchableOpponents = $this->quickMatchService->getMatchableOpponents($this->qmQueueEntry, $matchableOpponents)->shuffle();
+
         // Count the number of players we need to start a match
         // Excluding current player
         $numberOfOpponentsNeeded = $ladderRules->player_count - 1;
