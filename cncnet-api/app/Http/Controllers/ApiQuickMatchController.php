@@ -54,10 +54,45 @@ class ApiQuickMatchController extends Controller
         if ($ladderAbbrev == 'all')
         {
             $allStats = [];
+            $ladders = \App\Models\Ladder::query()
+                ->where('private', '=', false)
+                ->with([
+                    'current_history' => function($q) {
+                        $q->with([
+                            'queued_players'
+                        ]);
+                    },
+                ])
+                ->withCount([
+                    'recent_matched_players',
+                    'recent_matches',
+                    'active_matches',
+                    'past_24_hours_matches',
+                ])
+                ->get();
 
-            foreach ($this->ladderService->getLadders() as $ladder)
+            foreach ($ladders as $ladder)
             {
-                $results = $this->getStats($ladder->abbreviation, $tierId);
+                $clans = [];
+                if ($ladder->clans_allowed)
+                {
+                    $groupedByClans = $ladder->current_history->queued_players->groupBy('clan_id');
+                    $queuedPlayersOrClans = $groupedByClans->count();
+                    $clans = $groupedByClans->map->count();
+                }
+                else
+                {
+                    $queuedPlayersOrClans = $ladder->current_history->queued_players->count();
+                }
+                $results = [
+                    'recentMatchedPlayers' => $ladder->recent_matched_players_count,
+                    'past24hMatches' => $ladder->past_24_hours_matches_count,
+                    'recentMatches' => $ladder->recent_matches_count,
+                    'activeMatches' => $ladder->active_matches_count,
+                    'queuedPlayers' => $queuedPlayersOrClans,
+                    'clans' => $clans,
+                    'time' => now(),
+                ];
                 $allStats[$ladder->abbreviation] = $results;
             }
 
@@ -69,10 +104,9 @@ class ApiQuickMatchController extends Controller
         }
     }
 
-    private function getStats(string $ladderAbbrev, int $tierId = 1)
-    {
-        $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
-        $history = $ladder->currentHistory();
+    private function getStats(Ladder|string $ladder, int $tierId = 1) {
+        $ladder = is_string($ladder) ? $this->ladderService->getLadderByGame($ladder) : $ladder;
+        $history = $ladder->current_history;
         $qmStats = $this->statsService->getQmStats($history, $tierId);
 
         return [
