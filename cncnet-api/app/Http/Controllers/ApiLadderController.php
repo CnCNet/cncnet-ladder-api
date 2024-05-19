@@ -121,8 +121,12 @@ class ApiLadderController extends Controller
                 $userPlayerIds = $user->usernames->pluck("id");
                 $game = Game::where("wol_game_id", $wolGameId)->first();
                 $playerFromGame = PlayerGameReport::where("game_id", $game->id)->whereIn("player_id", $userPlayerIds)->first();
-
-                $gameClip = $this->gameService->saveGameClip($game->id, $playerFromGame->id, $user->id, $clipFilename);
+                $gameClip = $this->gameService->saveGameClip(
+                    $game->id,
+                    $playerFromGame->player_id,
+                    $user->id,
+                    $clipFilename
+                );
 
                 return response()->json([
                     'message' => 'File uploaded successfully',
