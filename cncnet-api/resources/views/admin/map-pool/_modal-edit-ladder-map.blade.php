@@ -23,7 +23,7 @@
                 <form method="POST" action="../../editmap" class="map" id="ladderMapEdit" enctype="multipart/form-data">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                     <input type="hidden" name="ladder_id" value="{{ $ladder->id }}" />
-                    <input type="hidden" id="ladderMapId" name="map_id" value="new" />
+                    <input id="ladderMapId" name="map_id" value="new" />
                     <input type="hidden" id="mapSelected" name="map_selected" value="" />
 
                     <div class="form-group">

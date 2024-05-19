@@ -99,7 +99,7 @@ class MapPoolController extends Controller
     {
         $this->validate($request, [
             'map_id' => 'required',
-            'name'   => 'string',
+            'name'   => 'nullable|string',
             'mapImage' => 'image'
         ]);
 

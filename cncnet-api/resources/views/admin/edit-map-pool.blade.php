@@ -396,7 +396,7 @@
                     continue;
 
                 const option = document.createElement('option');
-                option.value = ladderMaps[map_id].id;
+                option.value = map_id;
                 option.text = `${ladderMaps[map_id].name} - ${ladderMaps[map_id].hash}`;
                 select.add(option);
             }
@@ -411,9 +411,6 @@
         (function() {
             document.getElementById("ladderMapSelector").onchange = function() {
                 let ladderMap = ladderMaps[this.value];
-
-                if (ladderMap == null)
-                    return;
 
                 document.getElementById("ladderMapId").value = this.value;
                 document.getElementById("ladderMapName").value = ladderMap.name;
