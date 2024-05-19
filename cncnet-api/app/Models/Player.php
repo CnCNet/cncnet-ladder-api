@@ -280,6 +280,10 @@ class Player extends Model
         return $sum > 0;
     }
 
+    public function gameClip($gameId)
+    {
+        return GameClip::where("player_id", $this->id)->where("game_id", $gameId)->first();
+    }
 
     public function unSeenAlerts()
     {
