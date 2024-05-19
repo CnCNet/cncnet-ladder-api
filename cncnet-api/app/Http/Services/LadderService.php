@@ -51,11 +51,13 @@ class LadderService
 
     public function getLadders($private = false)
     {
-        $ladders = \App\Models\Ladder::where('private', '=', $private)->get();
+        $ladders = \App\Models\Ladder::where('private', '=', $private)
+            ->with(['sides'])
+            ->get();
 
         foreach ($ladders as $ladder)
         {
-            $ladder["sides"] = $ladder->sides()->get();
+            $ladder["sides"] = $ladder->sides;
             $rules = $ladder->qmLadderRules;
 
             if ($rules !== null)
