@@ -62,7 +62,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
             return;
         }
 
-        $observers = $queueEntries->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver());
+        $observers = $queueEntries->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
         if($observers->count() < 0) {
             $this->matchHasObservers = true;
         }
