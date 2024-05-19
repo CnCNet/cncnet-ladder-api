@@ -17,6 +17,8 @@ class FindOpponentJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $tries = 1;
+
     private $qmQueueEntry;
     private int $gameType;
 
