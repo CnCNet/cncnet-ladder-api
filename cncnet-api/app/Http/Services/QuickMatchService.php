@@ -239,9 +239,10 @@ class QuickMatchService
 
         foreach ($opponents as $opponent)
         {
+            if(!isset($opponent->qmPlayer)) continue;
 
             // If the opponent is an observer we skip him
-            if ($opponent->qmPlayer->isObserver())
+            if ($opponent->qmPlayer?->isObserver())
             {
                 continue;
             }
