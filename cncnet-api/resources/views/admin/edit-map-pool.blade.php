@@ -381,18 +381,14 @@
             updateLadderMapSelector(false);
         })();
 
-        // is_active check box
-        (function(){
-
-        })();
-
+        // update the options shown in the edit maps modal
         function updateLadderMapSelector(showDisabled) {
             const select = document.getElementById('ladderMapSelector');
             select.innerHTML = '';
 
             for (map_id in ladderMaps) {
 
-                if (showDisabled != ladderMaps[map_id].is_active)
+                if (showDisabled != ladderMaps[map_id].is_active) // only show maps that are active/inactive
                     continue;
 
                 const option = document.createElement('option');
@@ -646,7 +642,5 @@
                 });
             }
         })();
-
-    
     </script>
 @endsection

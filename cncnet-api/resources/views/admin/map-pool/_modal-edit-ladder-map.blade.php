@@ -7,6 +7,7 @@
             </div>
             <div class="modal-body">
 
+                <!-- Show enabled/disabled maps-->
                 <label>Show disabled maps</label>
                 <input name="show_disabled" type="checkbox" />
 
@@ -41,6 +42,7 @@
                         <input type="file" name="mapFile" id="ladderMapFile" />
                     </div>
 
+                    <!-- Enable or disable the map -->
                     <div class="form-group">
                         <label>Active map</label>
                         <input name="is_active" id="is_active" type="checkbox" class="is_active" checked />
@@ -58,4 +60,3 @@
         </div>
     </div>
 </div>
-
