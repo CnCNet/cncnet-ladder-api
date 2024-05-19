@@ -24,6 +24,8 @@ return new class extends Migration
         $yrLadder2v2Ladder = $yrLadder->replicate()->fill([
             'name' => 'YR 2v2 Ladder',
             'abbreviation' => 'yr-2v2',
+            'ladder_type' => Ladder::TWO_VS_TWO,
+            'private' => true
         ]);
         $yrLadder2v2Ladder->save();
 
