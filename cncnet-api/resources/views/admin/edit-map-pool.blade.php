@@ -377,7 +377,7 @@
                 updateLadderMapSelector($(this).is(':checked'));
             }
 
-            // Initial load of the selector with all maps
+            // Initial load of the selector with active maps
             updateLadderMapSelector(false);
         })();
 
@@ -392,7 +392,7 @@
 
             for (map_id in ladderMaps) {
 
-                if (!showDisabled && !ladderMaps[map_id].is_active)
+                if (showDisabled != ladderMaps[map_id].is_active)
                     continue;
 
                 const option = document.createElement('option');
