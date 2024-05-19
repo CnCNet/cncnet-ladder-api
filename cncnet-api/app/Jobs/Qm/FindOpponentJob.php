@@ -7,13 +7,14 @@ use App\Extensions\Qm\Matchup\PlayerMatchupHandler;
 use App\Extensions\Qm\Matchup\TeamMatchupHandler;
 use App\Models\QmQueueEntry;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class FindOpponentJob implements ShouldQueue
+class FindOpponentJob implements ShouldQueue, ShouldBeUnique
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -31,6 +32,13 @@ class FindOpponentJob implements ShouldQueue
 
         $this->qmQueueEntry = $qmQueueEntry;
         $this->gameType = $gameType;
+    }
+
+
+    public function uniqueId(): string
+    {
+        // this variable hold the id of the qm_queue_entry of the related player
+        return 'findmatch-' . $this->qmQueueEntry;
     }
 
     /**
