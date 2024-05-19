@@ -32,7 +32,6 @@ Route::group(['prefix' => 'v1'], function ()
 
     Route::get("news", [\App\Http\Controllers\ApiNewsController::class, "getNews"]);
     // Route::get('/test-reward-points', [\App\Http\Controllers\ApiLadderController::class, 'reprocessTeamPointsByGameId']);
-    // Route::post('/test', [\App\Http\Controllers\ApiLadderController::class, 'saveLadderTestOnly']);
 
     Route::group(['middleware' => 'jwt.auth'], function ()
     {
@@ -47,6 +46,7 @@ Route::group(['prefix' => 'v1'], function ()
         Route::post('/result/{game}/{username}', [\App\Http\Controllers\ApiLadderController::class, 'postLadder']);
         Route::post('/result/{game}/{username}/{pingSent}/{pingReceived}', [\App\Http\Controllers\ApiLadderController::class, 'postLadder']);
         Route::post('/result/ladder/{ladderId}/game/{gameId}/player/{playerId}/pings/{pingsSent}/{pingsReceived}', [\App\Http\Controllers\ApiLadderController::class, 'newPostLadder']);
+        Route::post('/result/video-clip', [\App\Http\Controllers\ApiLadderController::class, 'saveVideoClip']);
 
         // General Endpoints
         Route::get('/ping', [\App\Http\Controllers\ApiLadderController::class, 'pingLadder']);

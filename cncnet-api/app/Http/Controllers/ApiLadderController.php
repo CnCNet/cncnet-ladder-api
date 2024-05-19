@@ -14,6 +14,7 @@ use App\Jobs\Qm\SaveLadderResultJob;
 use App\Models\Achievement;
 use App\Models\AchievementProgress;
 use App\Models\Game;
+use App\Models\GameClip;
 use App\Models\GameObjectCounts;
 use App\Models\GameRaw;
 use App\Models\GameReport;
@@ -25,8 +26,10 @@ use App\Models\PlayerGameReport;
 use App\Models\QmMap;
 use App\Models\QmMatchPlayer;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class ApiLadderController extends Controller
 {
@@ -89,8 +92,54 @@ class ApiLadderController extends Controller
         return $this->awardTeamPoints($game->report, $history);
     }
 
+    public function saveVideoClip(Request $request)
+    {
+        $user = $request->user();
+
+        try
+        {
+            $request->validate([
+                'file' => 'required|mimes:mp4,webm|max:20480', // max 20MB
+                'wol_game_id' => 'required|string',
+                'access_token' => 'required|string',
+            ]);
+
+            // Get the uploaded file
+            if ($request->hasFile('file'))
+            {
+                $clipFilename = $this->gameService->uploadGameClip($request);
+
+                $wolGameId = $request->input('wol_game_id');
+                $userPlayerIds = $user->usernames->pluck("id");
+                $game = Game::where("wol_game_id", $request->wol_game_id)->first();
+                $playerFromGame = PlayerGameReport::where("game_id", $game->id)->whereIn("player_id", $userPlayerIds)->first();
+
+                $gameClip = $this->gameService->saveGameClip($game->id, $playerFromGame->id, $user->id, $clipFilename);
+
+                return response()->json([
+                    'message' => 'File uploaded successfully',
+                    'game_id' => $game->id,
+                ], 200);
+            }
+        }
+        catch (Exception $ex)
+        {
+            Log::info("Error uploading game clip: " . $ex->getMessage());
+        }
+
+        return response()->json(['message' => 'File not uploaded'], 400);
+    }
+
     public function saveLadderTestOnly(Request $request)
     {
+        Log::info($request->game_id);
+        Log::info($request->access_token);
+        Log::info(json_encode($request));
+        die();
+
+        $ladder = Ladder::find(15);
+        $result = $this->gameService->processStatsDmp($request->file, $ladder->game, $ladder);
+        dd($result["IDNO"]["value"]);
         // $ladderId = 14; // d2k
         $ladderId = 15; // yr
         $gameId = $request->gameId;

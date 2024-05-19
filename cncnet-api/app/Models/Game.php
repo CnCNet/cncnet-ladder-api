@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Game extends Model
 {
@@ -65,7 +66,8 @@ class Game extends Model
         return $this->hasMany(PlayerGameReport::class)->where('game_report_id', $this->game_report_id, 'game_report_id');
     }
 
-    public function player_game_reports() {
+    public function player_game_reports()
+    {
         return $this->hasManyThrough(PlayerGameReport::class, GameReport::class);
     }
 
@@ -97,5 +99,10 @@ class Game extends Model
     public function qmMatch()
     {
         return $this->belongsTo(QmMatch::class);
+    }
+
+    public function gameClips()
+    {
+        return $this->hasMany(GameClip::class, 'game_id');
     }
 }
