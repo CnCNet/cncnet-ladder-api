@@ -92,6 +92,14 @@ class ApiLadderController extends Controller
         return $this->awardTeamPoints($game->report, $history);
     }
 
+    public function testStatsDump(Request $request)
+    {
+        $ladder = Ladder::find(15);
+
+        $result = $this->gameService->processStatsDmp($request->file, $ladder->game, $ladder);
+        dd($result);
+    }
+
     public function saveVideoClip(Request $request)
     {
         $user = $request->user();
@@ -101,7 +109,6 @@ class ApiLadderController extends Controller
             $request->validate([
                 'file' => 'required|mimes:mp4,webm|max:20480', // max 20MB
                 'wol_game_id' => 'required|string',
-                'access_token' => 'required|string',
             ]);
 
             // Get the uploaded file
@@ -110,8 +117,9 @@ class ApiLadderController extends Controller
                 $clipFilename = $this->gameService->uploadGameClip($request);
 
                 $wolGameId = $request->input('wol_game_id');
+                Log::info("WolGameId:$wolGameId");
                 $userPlayerIds = $user->usernames->pluck("id");
-                $game = Game::where("wol_game_id", $request->wol_game_id)->first();
+                $game = Game::where("wol_game_id", $wolGameId)->first();
                 $playerFromGame = PlayerGameReport::where("game_id", $game->id)->whereIn("player_id", $userPlayerIds)->first();
 
                 $gameClip = $this->gameService->saveGameClip($game->id, $playerFromGame->id, $user->id, $clipFilename);
@@ -124,7 +132,7 @@ class ApiLadderController extends Controller
         }
         catch (Exception $ex)
         {
-            Log::info("Error uploading game clip: " . $ex->getMessage());
+            Log::info("Error uploading game clip: " . $ex->getMessage() . " : " . $ex->getTraceAsString());
         }
 
         return response()->json(['message' => 'File not uploaded'], 400);
