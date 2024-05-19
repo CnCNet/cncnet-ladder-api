@@ -181,6 +181,7 @@ class MapPoolController extends Controller
             return redirect()->back();
         }
 
+        $map->is_active = $request->is_active == "on" ? true : false;
         $map->save();
         $request->session()->flash('success', "Map '$mapFileName' Saved");
 
