@@ -313,6 +313,50 @@ class QuickMatchService
         return $matchableOpponents;
     }
 
+
+    /**
+     * Find all opponents within point range.
+     * Does not take into account 'disable point filter'
+     * We exclude observers
+     * @param QmQueueEntry $currentQmQueueEntry
+     * @param QmQueueEntry[]|Collection $opponents
+     * @return QmQueueEntry[]|Collection
+     */
+    public function getEntriesInPointRange(QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
+    {
+        $history = $currentQmQueueEntry->ladderHistory;
+        $ladder = $history->ladder;
+        $pointsPerSecond = $ladder->qmLadderRules->points_per_second;
+        $maxPointsDifference = $ladder->qmLadderRules->max_points_difference;
+
+        $matchableOpponents = collect();
+
+        foreach ($opponents as $opponent)
+        {
+            if (!isset($opponent->qmPlayer)) 
+            {
+                continue;
+            }
+
+            // If the opponent is an observer we skip him
+            if ($opponent->qmPlayer?->isObserver())
+            {
+                continue;
+            }
+
+            // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
+            $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $pointsPerSecond;
+
+            // is the opponent within the point filter
+            if ($pointsTime + $maxPointsDifference > abs($currentQmQueueEntry->points - $opponent->points))
+            {
+                $matchableOpponents->add($opponent);
+            }
+        }
+
+        return $matchableOpponents;
+    }
+
     /**
      * Get maps in common of all the given players for the given ladder
      * @param Ladder $ladder
