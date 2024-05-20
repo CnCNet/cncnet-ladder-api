@@ -225,4 +225,15 @@ class Ladder extends Model
             ->where("updated_at", ">", Carbon::now()->startOfMonth())
             ->where("updated_at", "<", Carbon::now()->endOfMonth());
     }
+
+    public function recent_spawned_matches() {
+        return $this->hasMany(QmMatch::class)
+            ->where('created_at', '>', Carbon::now()->subMinutes(30))
+            ->whereHas('states', function($q) {
+                $q->where('state_type_id', 5); // game spawned
+            })
+            ->whereDoesntHave('states', function ($q) {
+                $q->whereIn('state_type_id', [1, 6, 7]); // Finished, GameCrashed, NotReady
+            });
+    }
 }
