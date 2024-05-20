@@ -239,9 +239,10 @@ class QuickMatchService
 
         foreach ($opponents as $opponent)
         {
+            if (!isset($opponent->qmPlayer)) continue;
 
             // If the opponent is an observer we skip him
-            if ($opponent->qmPlayer->isObserver())
+            if ($opponent->qmPlayer?->isObserver())
             {
                 continue;
             }
@@ -249,28 +250,32 @@ class QuickMatchService
             $oppTier = $opponent->qmPlayer->player->user->getUserLadderTier($ladder)->tier;
 
             // If players are not in the same league (same tier), then we don't match them together
-            if ($currentTier !== $oppTier)
+            // Check the ladder is meant to be using tiers.
+            if ($ladder->qmLadderRules->tier2_rating > 0)
             {
-                // Except if any of them have both_tiers feature enabled.
-                // Check both as either player could be tier 1
-                if (
-                    ($oppTier === 1 && $opponent->qmPlayer->player->user->canUserPlayBothTiers($ladder))
-                    ||
-                    ($currentTier === 1 && $currentQmQueueEntry->qmPlayer->player->user->canUserPlayBothTiers($ladder))
-                )
+                if ($currentTier !== $oppTier)
                 {
-                    // Players can match so we can continue with the rest of the process
-                    Log::info("PlayerMatchupHandler ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  "
-                        . $ladder->abbreviation . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
-                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
-                }
-                else
-                {
-                    // Player cannot match so we skip it
-                    Log::info("PlayerMatchupHandler ** Players in different tiers for ladder " . $ladder->abbreviation
-                        . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
-                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
-                    continue;
+                    // Except if any of them have both_tiers feature enabled.
+                    // Check both as either player could be tier 1
+                    if (
+                        ($oppTier === 1 && $opponent->qmPlayer->player->user->canUserPlayBothTiers($ladder))
+                        ||
+                        ($currentTier === 1 && $currentQmQueueEntry->qmPlayer->player->user->canUserPlayBothTiers($ladder))
+                    )
+                    {
+                        // Players can match so we can continue with the rest of the process
+                        Log::info("PlayerMatchupHandler ** Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  "
+                            . $ladder->abbreviation . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
+                            . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                    }
+                    else
+                    {
+                        // Player cannot match so we skip it
+                        Log::info("PlayerMatchupHandler ** Players in different tiers for ladder " . $ladder->abbreviation
+                            . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
+                            . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                        continue;
+                    }
                 }
             }
 
@@ -300,6 +305,50 @@ class QuickMatchService
 
             // is the opponent within the point filter
             if ($pointsTime + $ladder->qmLadderRules->max_points_difference > abs($currentQmQueueEntry->points - $opponent->points))
+            {
+                $matchableOpponents->add($opponent);
+            }
+        }
+
+        return $matchableOpponents;
+    }
+
+
+    /**
+     * Find all opponents within point range.
+     * Does not take into account 'disable point filter'
+     * We exclude observers
+     * @param QmQueueEntry $currentQmQueueEntry
+     * @param QmQueueEntry[]|Collection $opponents
+     * @return QmQueueEntry[]|Collection
+     */
+    public function getEntriesInPointRange(QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
+    {
+        $history = $currentQmQueueEntry->ladderHistory;
+        $ladder = $history->ladder;
+        $pointsPerSecond = $ladder->qmLadderRules->points_per_second;
+        $maxPointsDifference = $ladder->qmLadderRules->max_points_difference;
+
+        $matchableOpponents = collect();
+
+        foreach ($opponents as $opponent)
+        {
+            if (!isset($opponent->qmPlayer)) 
+            {
+                continue;
+            }
+
+            // If the opponent is an observer we skip him
+            if ($opponent->qmPlayer?->isObserver())
+            {
+                continue;
+            }
+
+            // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
+            $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $pointsPerSecond;
+
+            // is the opponent within the point filter
+            if ($pointsTime + $maxPointsDifference > abs($currentQmQueueEntry->points - $opponent->points))
             {
                 $matchableOpponents->add($opponent);
             }
@@ -1406,8 +1455,8 @@ class QuickMatchService
     {
         $response = [
             "type" => "please wait",
-            "checkback" => 5,
-            "no_sooner_than" => 3
+            "checkback" => 10,
+            "no_sooner_than" => 5
         ];
 
         if (isset($alert))

@@ -39,4 +39,11 @@ class LadderHistory extends Model
     {
         return $this->ends < Carbon::now();
     }
+
+    public function queued_players() {
+        return $this->hasMany(QmQueueEntry::class)
+            ->whereHas('qmPlayer', function($q) {
+                $q->whereNull('qm_match_id');
+            });
+    }
 }

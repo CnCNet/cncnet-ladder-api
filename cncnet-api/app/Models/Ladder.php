@@ -193,4 +193,47 @@ class Ladder extends Model
     {
         return $this->hasMany(Achievement::class, 'ladder_id');
     }
+
+    public function recent_matched_players()
+    {
+        return $this->hasMany(QmMatchPlayer::class)
+            ->where('qm_match_players.created_at', '>', Carbon::now()->subHour());
+    }
+
+    public function recent_matches()
+    {
+        return $this->hasMany(QmMatch::class)
+            ->where('qm_matches.created_at', '>', Carbon::now()->subHour());
+    }
+
+    public function active_matches()
+    {
+        return $this->hasMany(QmMatch::class)
+            ->where('qm_matches.created_at', '>', Carbon::now()->subHour())
+            ->where('qm_matches.updated_at', '>', Carbon::now()->subMinutes(2));
+    }
+
+    public function past_24_hours_matches()
+    {
+        return $this->hasMany(QmMatch::class)
+            ->where('qm_matches.created_at', '>', Carbon::now()->subHours(24));
+    }
+
+    public function current_month_matches()
+    {
+        return $this->hasMany(QmMatch::class)
+            ->where("updated_at", ">", Carbon::now()->startOfMonth())
+            ->where("updated_at", "<", Carbon::now()->endOfMonth());
+    }
+
+    public function recent_spawned_matches() {
+        return $this->hasMany(QmMatch::class)
+            ->where('created_at', '>', Carbon::now()->subMinutes(30))
+            ->whereHas('states', function($q) {
+                $q->where('state_type_id', 5); // game spawned
+            })
+            ->whereDoesntHave('states', function ($q) {
+                $q->whereIn('state_type_id', [1, 6, 7]); // Finished, GameCrashed, NotReady
+            });
+    }
 }
