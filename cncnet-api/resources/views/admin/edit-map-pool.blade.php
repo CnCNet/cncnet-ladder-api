@@ -388,7 +388,10 @@
 
             for (map_id in ladderMaps) {
 
-                if (showDisabled != ladderMaps[map_id].is_active) // only show maps that are active/inactive
+                if (showDisabled && ladderMaps[map_id].is_active) // if 'showDisabled' is clicked, don't show active maps
+                    continue;
+
+                if (!showDisabled && !ladderMaps[map_id].is_active) //  if 'showDisabled' is not clicked, don't show inactive maps
                     continue;
 
                 const option = document.createElement('option');
