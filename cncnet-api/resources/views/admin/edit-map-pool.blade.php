@@ -388,10 +388,9 @@
 
             for (map_id in ladderMaps) {
 
-                if (showDisabled && ladderMaps[map_id].is_active) // if 'showDisabled' is clicked, don't show active maps
-                    continue;
-
-                if (!showDisabled && !ladderMaps[map_id].is_active) //  if 'showDisabled' is not clicked, don't show inactive maps
+                // if 'showDisabled' is clicked, don't show active maps
+                //  if 'showDisabled' is not clicked, don't show inactive maps
+                if (showDisabled == ladderMaps[map_id].is_active)
                     continue;
 
                 const option = document.createElement('option');
@@ -425,6 +424,10 @@
             let mps = document.getElementById("mapPoolSelector");
             mps.onchange = function() {
 
+                console.log(maps)
+                console.log(ladderMaps)
+                console.log(this.value)
+                console.log(maps[this.value].map_id)
                 let ladderMap = ladderMaps[maps[this.value].map_id]
                 let hash = ladderMap.image_hash ? ladderMap.image_hash : ladderMap.hash;
                 document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + hash + ".png";
