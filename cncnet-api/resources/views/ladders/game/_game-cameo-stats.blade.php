@@ -4,13 +4,14 @@
         @php $player = $pgr->player()->first(); @endphp
         @php $playerCache = $player->playerCache($history->id);@endphp
         @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
+        @php $playerGameClip = $player->gameClip($pgr->game_id); @endphp
+
         @php
             $pointReport = $pgr;
             if ($history->ladder->clans_allowed) {
                 $pointReport = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
             }
         @endphp
-
 
         @if ($gameStats !== null && $pointReport)
             @php $last_heap = 'Z'; @endphp
@@ -19,6 +20,13 @@
                 <div class="mb-5">
                     @include('ladders.game._player-card', ['extraStats' => true])
                 </div>
+
+                @if ($playerGameClip)
+                    <div class="mt-4 mb-4">
+                        <h5>Game Recap</h5>
+                        <video src="{{ Storage::url($playerGameClip->clip_filename) }}" style="height:360px; max-width:100%" autoplay muted controls>
+                    </div>
+                @endif
 
                 @foreach ($heaps as $heap)
                     <div>

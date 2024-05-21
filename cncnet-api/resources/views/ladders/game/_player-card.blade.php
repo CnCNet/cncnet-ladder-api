@@ -47,7 +47,6 @@
     </a>
 </div>
 
-
 @if (isset($extraStats) && $extraStats)
     <div class="m-auto text-center mt-4">
         @if (!$history->ladder->clans_allowed)
