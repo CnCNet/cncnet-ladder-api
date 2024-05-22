@@ -99,7 +99,7 @@ class MapPoolController extends Controller
     {
         $this->validate($request, [
             'map_id' => 'required',
-            'name'   => 'string',
+            'name'   => 'nullable|string',
             'mapImage' => 'image'
         ]);
 
@@ -181,6 +181,7 @@ class MapPoolController extends Controller
             return redirect()->back();
         }
 
+        $map->is_active = $request->is_active == "on" ? true : false;
         $map->save();
         $request->session()->flash('success', "Map '$mapFileName' Saved");
 

@@ -4,10 +4,14 @@ namespace App\Http\Services;
 
 use App\Models\AIPlayer;
 use App\Models\Game;
+use App\Models\GameClip;
 use App\Models\GameReport;
 use App\Models\Player;
 use App\Models\PlayerGameReport;
 use Exception;
+use Illuminate\Database\Eloquent\InvalidCastException;
+use Illuminate\Http\Request;
+use InvalidArgumentException;
 
 class GameService
 {
@@ -589,5 +593,39 @@ class GameService
         if (isset($result["IDNO"]) && $result["IDNO"])
             return $result["IDNO"]["value"];
         return null;
+    }
+
+    /**
+     * 
+     * @param Request $request 
+     * @return mixed 
+     */
+    public function uploadGameClip(Request $request)
+    {
+        $file = $request->file('file');
+        $fileName = time() . '_' . $file->getClientOriginalName();
+
+        // Store the file in the 'videos' directory
+        $filePath = $file->storeAs('videos', $fileName, 'public');
+        return $filePath;
+    }
+
+    /**
+     * 
+     * @param string $gameId 
+     * @param string $playerId 
+     * @param string $userId 
+     * @param string $clipFilename 
+     * @return GameClip 
+     */
+    public function saveGameClip(string $gameId, string $playerId, string $userId, string $clipFilename)
+    {
+        $gameClip = new GameClip();
+        $gameClip->game_id = $gameId;
+        $gameClip->player_id = $playerId;
+        $gameClip->user_id = $userId;
+        $gameClip->clip_filename = $clipFilename;
+        $gameClip->save();
+        return $gameClip;
     }
 }

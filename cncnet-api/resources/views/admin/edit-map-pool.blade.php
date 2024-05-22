@@ -348,6 +348,7 @@
                     "ladder_id": "{{ $mph->ladder_id }}",
                     "name": {!! json_encode($mph->name) !!},
                     "image_hash": {!! json_encode($mph->image_hash) !!},
+                    "is_active": {!! json_encode($mph->is_active) !!},
                     "hash": {!! json_encode($mph->hash) !!}
                 },
             @endforeach
@@ -370,21 +371,63 @@
         })();
 
         (function() {
+            let show_disabled_maps = document.getElementsByName("show_disabled")[0]
+
+            show_disabled_maps.onchange = function() {
+                updateLadderMapSelector($(this).is(':checked'));
+            }
+
+            // Initial load of the selector with active maps
+            updateLadderMapSelector(false);
+        })();
+
+        // update the options shown in the edit maps modal
+        function updateLadderMapSelector(showDisabled) {
+            const select = document.getElementById('ladderMapSelector');
+            select.innerHTML = '';
+
+            for (map_id in ladderMaps) {
+
+                // if 'showDisabled' is clicked, don't show active maps
+                //  if 'showDisabled' is not clicked, don't show inactive maps
+                if (showDisabled == ladderMaps[map_id].is_active)
+                    continue;
+
+                const option = document.createElement('option');
+                option.value = map_id;
+                option.text = `${ladderMaps[map_id].name} - ${ladderMaps[map_id].hash}`;
+                select.add(option);
+            }
+
+            const option = document.createElement('option');
+            option.value ='new'
+            option.text = `new`;
+            select.add(option);
+        }
+
+        // update map shown in edit modal
+        (function() {
             document.getElementById("ladderMapSelector").onchange = function() {
                 let ladderMap = ladderMaps[this.value];
 
                 document.getElementById("ladderMapId").value = this.value;
                 document.getElementById("ladderMapName").value = ladderMap.name;
+                document.getElementById("is_active").style = ladderMap.is_active ? "checked" : "";
 
                 let hash = ladderMap.image_hash ? ladderMap.image_hash : ladderMap.hash;
                 document.getElementById("ladderMapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + hash + ".png"
             };
         })();
 
+        // map dropdown at bottom of page
         (function() {
             let mps = document.getElementById("mapPoolSelector");
             mps.onchange = function() {
 
+                console.log(maps)
+                console.log(ladderMaps)
+                console.log(this.value)
+                console.log(maps[this.value].map_id)
                 let ladderMap = ladderMaps[maps[this.value].map_id]
                 let hash = ladderMap.image_hash ? ladderMap.image_hash : ladderMap.hash;
                 document.getElementById("mapThumbnail").src = "/images/maps/{{ $ladder->game }}/" + hash + ".png";
@@ -404,6 +447,10 @@
                 let mapSel = document.getElementById(id + "_map");
                 if (mapSel.length == 0) {
                     for (map_id in ladderMaps) {
+
+                        if (ladderMaps[map_id].is_active == false)
+                            continue;
+
                         let option = document.createElement("option");
                         option.value = map_id;
                         option.text = (ladderMaps[map_id].name == null || ladderMaps[map_id].name.trim() == "") ? "" : (ladderMaps[map_id].name +

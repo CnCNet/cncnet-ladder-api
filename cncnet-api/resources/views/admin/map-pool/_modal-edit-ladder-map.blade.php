@@ -7,16 +7,17 @@
             </div>
             <div class="modal-body">
 
+                <!-- Show enabled/disabled maps-->
+                <label>Show disabled maps</label>
+                <input name="show_disabled" type="checkbox" />
+
                 <form method="POST" action="remmap">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}" />
                     <input type="hidden" name="ladder_id" value="{{ $ladder->id }}" />
                     <p style="color: #fff">Map Hashes</p>
 
                     <select id="ladderMapSelector" name="map_id" size="6" class="form-control map_pool">
-                        @foreach ($ladderMaps as $map)
-                            <option value="{{ $map->id }}"> {{ $map->name }} - {{ $map->hash}}</option>
-                        @endforeach
-                        <option value="new">&lt;new></option>
+                       
                     </select>
                 </form>
 
@@ -39,6 +40,12 @@
                     <div class="form-group">
                         <label for="ladderMapFile"> Upload Map File (.map / .mpr) </label>
                         <input type="file" name="mapFile" id="ladderMapFile" />
+                    </div>
+
+                    <!-- Enable or disable the map -->
+                    <div class="form-group">
+                        <label>Active map</label>
+                        <input name="is_active" id="is_active" type="checkbox" class="is_active" checked />
                     </div>
 
                     <button type="submit" class="btn btn-primary">Update</button>

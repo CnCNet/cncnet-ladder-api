@@ -25,26 +25,13 @@
 @section('js')
     <script src="/js/swiper.js"></script>
     <script>
-        const progressCircle = document.querySelector(".autoplay-progress svg");
-        const progressContent = document.querySelector(".autoplay-progress span");
         const swiper = new Swiper(".js-game-listings", {
             scrollbar: {
                 el: ".swiper-scrollbar",
             },
             slidesPerView: 3,
-            freeMode: true,
             spaceBetween: 30,
             loop: false,
-            autoplay: {
-                delay: 6500,
-                disableOnInteraction: false
-            },
-            on: {
-                autoplayTimeLeft(s, time, progress) {
-                    progressCircle.style.setProperty("--progress", 1 - progress);
-                    progressContent.textContent = `${Math.ceil(time / 1000)}s`;
-                }
-            },
             breakpoints: {
                 "@0.00": {
                     slidesPerView: 1,

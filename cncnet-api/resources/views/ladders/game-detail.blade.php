@@ -8,14 +8,14 @@ $reports = $playerGameReports;
 ?>
 
 @foreach ($reports as $k => $pgr)
-        <?php
-        $player = $pgr->player()->first();
-        $clan = $pgr->clan()->first();
-        if ($k == 1) {
-            $pageTitle .= ' vs ';
-        }
-        $pageTitle .= "$player->username";
-        ?>
+    <?php
+    $player = $pgr->player()->first();
+    $clan = $pgr->clan()->first();
+    if ($k == 1) {
+        $pageTitle .= ' vs ';
+    }
+    $pageTitle .= "$player->username";
+    ?>
 @endforeach
 
 @section('title', $pageTitle)
@@ -131,9 +131,10 @@ $reports = $playerGameReports;
                                 @php $playerCache = $player->playerCache($history->id);@endphp
                                 @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
                                 @php $points = $playerCache ? $playerCache->points : 0; @endphp
-                                @php 
-                                    if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder)) 
+                                @php
+                                    if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder)) {
                                         $disablePointFilter = $player->user->userSettings->disabledPointFilter == 1 ? 'yes' : 'no';
+                                    }
                                 @endphp
 
                                 @if ($i == 2)
@@ -149,6 +150,7 @@ $reports = $playerGameReports;
                                 @endif
 
                                 @include('ladders.game._player-card')
+
                                 @php $i++; @endphp
                             @endforeach
                         @endforeach

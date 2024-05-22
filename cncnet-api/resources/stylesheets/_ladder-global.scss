@@ -114,11 +114,15 @@
 
 .support-cncnet 
 {
-    background: black;
+    color: black;
+    font-weight: bold;
+    background: linear-gradient(163deg, #00fff2, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 1rem;
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
     flex-direction: column;
     z-index: 1;
 
@@ -131,6 +135,12 @@
 .support-cncnet .lead 
 { 
     margin: 0;
+    font-weight: 600;
+
+    @media(min-width: $lg-width)
+    {
+        font-size: 1.4rem;
+    }
 }
 
 .support-cncnet .support-cta 

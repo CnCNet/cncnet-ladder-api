@@ -56,5 +56,4 @@ class PlayerGameReport extends Model
     {
         return $this->won || ($this->disconnected && $this->player_id == $this->gameReport->player_id);
     }
-
 }
