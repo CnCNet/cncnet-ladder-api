@@ -1001,9 +1001,7 @@ class QuickMatchService
         if ($qmMap->random_spawns) // random spawns could be LvR, TvB, or corners - random spots given for every player
         {
             // populate array with values 1 to n, n = number of players in the match
-            $spawnArr = array_map(function($num) {
-                return $num;
-            }, range(1, $ladder->qmLadderRules->player_count));
+            $spawnArr = array_map(fn($num) => $num, range(1, $ladder->qmLadderRules->player_count));
 
             // shuffle the spawns
             shuffle($spawnArr);
