@@ -1010,7 +1010,7 @@ class QuickMatchService
 
             // divide the spawns among both teams
             $half = count($spawnArr) / 2;
-            $spawns = collect([array_slice($spawnArr, 0, $half), array_slice($spawnArr, 0, $half)]);
+            $spawns = collect([array_slice($spawnArr, 0, $half), array_slice($spawnArr, $half)]);
         }
         else // use set spawn order. If 0,0 is set for each team, corners spawns will be applied
         {
