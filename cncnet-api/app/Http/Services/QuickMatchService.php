@@ -333,7 +333,7 @@ class QuickMatchService
 
         foreach ($opponents as $opponent)
         {
-            if (!isset($opponent->qmPlayer)) 
+            if (!isset($opponent->qmPlayer))
             {
                 continue;
             }
@@ -995,7 +995,28 @@ class QuickMatchService
 
         $qmMap = $qmMatch->map;
 
-        $spawns = collect([$qmMap->team1_spawn_order, $qmMap->team2_spawn_order])->shuffle();
+        // team1_spawn_order is a string with format of "0,0" or "1,2", etc - represents starting spawns of that team
+
+        $spawns = new Collection;
+        if ($qmMap->random_spawns) // random spawns could be LvR, TvB, or corners - random spots given for every player
+        {
+            // populate array with values 1 to n, n = number of players in the match
+            $spawnArr = array_map(function($num) {
+                return $num;
+            }, range(1, $ladder->qmLadderRules->player_count));
+
+            // shuffle the spawns
+            shuffle($spawnArr);
+
+            // divide the spawns among both teams
+            $half = count($spawnArr) / 2;
+            $spawns = collect([array_slice($spawnArr, 0, $half), array_slice($spawnArr, 0, $half)]);
+        }
+        else // use set spawn order. If 0,0 is set for each team, corners spawns will be applied
+        {
+            $spawns = collect([$qmMap->team1_spawn_order, $qmMap->team2_spawn_order])->shuffle();
+        }
+
         $colors = 0;
 
         if ($spawns->count() < 2)
