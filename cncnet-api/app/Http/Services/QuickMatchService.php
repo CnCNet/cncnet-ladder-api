@@ -1000,6 +1000,7 @@ class QuickMatchService
         $spawns = new Collection;
         if ($qmMap->random_spawns) // random spawns could be LvR, TvB, or corners - random spots given for every player
         {
+            Log::info("Creating random spawns for map: " . $qmMap->description);
             // populate array with values 1 to n, n = number of players in the match
             $spawnArr = array_map(fn($num) => $num, range(1, $ladder->qmLadderRules->player_count));
 
@@ -1009,6 +1010,7 @@ class QuickMatchService
             // divide the spawns among both teams
             $half = count($spawnArr) / 2;
             $spawns = collect([array_slice($spawnArr, 0, $half), array_slice($spawnArr, $half)]);
+            Log::info("Random spawns for map: " . $qmMap->description . ", " . $spawns);
         }
         else // use set spawn order. If 0,0 is set for each team, corners spawns will be applied
         {
