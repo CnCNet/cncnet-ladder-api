@@ -33,6 +33,15 @@
     height: 48px;
 }
 
+.ra2-2v2
+{
+    background-image: url(../images/cameos/ra2-cameo.png);
+    background-repeat: no-repeat;
+    background-position: top left;
+    width: 60px;
+    height: 48px;
+}
+
 .yr-2v2-cameo
 {
     background-image: url(../images/cameos/yr-cameo.png);
@@ -1057,6 +1066,11 @@
 .ts-cl-cameo 
 {
     @extend .ts-cameo;
+}
+
+.ra2-2v2-cameo 
+{
+    @extend .ra2-cameo;
 }
 
 .ra2-cl-cameo 

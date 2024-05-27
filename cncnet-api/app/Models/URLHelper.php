@@ -122,6 +122,7 @@ class URLHelper
             case "ra2-new-maps":
             case "ra2-cl":
             case "yr-2v2":
+            case "ra2-2v2":
             case "blitz":
             case "blitz-2v2":
                 return "//cdn.jsdelivr.net/gh/cnc-community/files@1.4/red-alert-2.mp4";
@@ -151,6 +152,7 @@ class URLHelper
         {
             case "yr":
             case "yr-2v2":
+            case "ra2-2v2":
             case "ra2":
             case "ra2-cl":
             case "ra2-new-maps":
@@ -182,6 +184,7 @@ class URLHelper
             case "ra2":
             case "ra2-cl":
             case "ra2-new-maps":
+            case "ra2-2v2":
             case "yr-2v2":
                 return Vite::asset("resources/images/games/ra2/logo.png");
 
@@ -218,6 +221,7 @@ class URLHelper
             case "ra2":
             case "ra2-cl":
             case "ra2-new-maps":
+            case "ra2-2v2":
             case "yr-2v2":
                 return Vite::asset("resources/images/games/ra2/ra2-icon.png");
 
