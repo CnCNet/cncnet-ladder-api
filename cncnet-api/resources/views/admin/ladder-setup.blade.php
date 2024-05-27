@@ -80,10 +80,7 @@
                                                                 Remove
                                                             </button>
                                                         @endif
-                                                        <span style="overflow: hidden;"
-                                                            @if ($user->isGod()) data-toggle="tooltip"
-                                                              data-placement="bottom"
-                                                              title="{{ $admin->user->email }}" @endif>{{ $admin->user->name }}</span>
+                                                        <span>{{ $admin->user->name }} @if ($user->isGod()) {{ $admin->user->email }} @endif></span>
                                                     </form>
                                                 </div>
                                             @endforeach
@@ -114,10 +111,7 @@
                                                                 Remove
                                                             </button>
                                                         @endif
-                                                        <span style="overflow: hidden;"
-                                                            @if ($user->isGod() || $user->isLadderAdmin($ladder)) data-toggle="tooltip"
-                                                              data-placement="bottom"
-                                                              title="{{ $mod->user->email }}" @endif>{{ $mod->user->name }}</span>
+                                                        <span>{{ $mod->user->name }} @if ($user->isGod()) {{ $mod->user->email }} @endif></span>
                                                     </form>
                                                 </div>
                                             @endforeach
