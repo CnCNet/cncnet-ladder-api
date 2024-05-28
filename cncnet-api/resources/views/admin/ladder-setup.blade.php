@@ -80,7 +80,7 @@
                                                                 Remove
                                                             </button>
                                                         @endif
-                                                        <span>{{ $admin->user->name }} @if ($user->isGod()) {{ $admin->user->email }} @endif></span>
+                                                        <span>{{ $admin->user->name }} @if ($user->isGod()) ({{ $admin->user->email }}) @endif</span>
                                                     </form>
                                                 </div>
                                             @endforeach
@@ -111,7 +111,7 @@
                                                                 Remove
                                                             </button>
                                                         @endif
-                                                        <span>{{ $mod->user->name }} @if ($user->isGod()) {{ $mod->user->email }} @endif></span>
+                                                        <span>{{ $mod->user->name }} @if ($user->isGod()) ({{ $mod->user->email }}) @endif</span>
                                                     </form>
                                                 </div>
                                             @endforeach
