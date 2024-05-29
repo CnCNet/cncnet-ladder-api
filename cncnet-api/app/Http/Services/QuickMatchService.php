@@ -975,8 +975,8 @@ class QuickMatchService
         $currentQueuePlayerCount = $teamAPlayers->count() + $teamBPlayers->count();
         $expectedPlayerQueueCount = $currentQueuePlayerCount + $observers->count();
 
-        Log::info("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver ? 'Yes' : 'No');
-        Log::info("ApiQuickMatchController ** createQmMatch: Player counts " . $currentQueuePlayerCount . "/" . $expectedPlayerQueueCount);
+        Log::debug("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver ? 'Yes' : 'No');
+        Log::debug("ApiQuickMatchController ** createQmMatch: Player counts " . $currentQueuePlayerCount . "/" . $expectedPlayerQueueCount);
 
         # Create the qm_matches db entry
         $qmMatch = QmMatch::create([
@@ -1000,7 +1000,7 @@ class QuickMatchService
         $spawns = new Collection;
         if ($qmMap->random_spawns) // random spawns could be LvR, TvB, or corners - random spots given for every player
         {
-            Log::info("Creating random spawns for map: " . $qmMap->description);
+            Log::debug("Creating random spawns for map: " . $qmMap->description);
             // populate array with values 1 to n, n = number of players in the match
             $spawnArr = array_map(fn($num) => (string) $num, range(1, $ladder->qmLadderRules->player_count));
 
@@ -1012,7 +1012,7 @@ class QuickMatchService
             $spawnsTeam1 = implode(",", array_slice($spawnArr, 0, $half));
             $spawnsTeam2 = implode(",", array_slice($spawnArr, $half));
             $spawns = collect([$spawnsTeam1, $spawnsTeam2]); // collection should be two strings, e.g. ["1,3", "2,4"]
-            Log::info("Random spawns for map: " . $qmMap->description . ", " . $spawns);
+            Log::debug("Random spawns for map: " . $qmMap->description . ", " . $spawns);
         }
         else // use set spawn order. If 0,0 is set for each team, corners spawns will be applied
         {
@@ -1378,6 +1378,7 @@ class QuickMatchService
         }
         return $possibleMatches;
     }
+
     public function findBestMatch($possibleMatches): array
     {
 
@@ -1393,6 +1394,13 @@ class QuickMatchService
         }
 
         return $bestBatch;
+    }
+
+    public function getRandomTeams($possibleMatches): array
+    {
+        shuffle($possibleMatches);
+
+        return $possibleMatches[0];
     }
 
     /**
@@ -1423,7 +1431,8 @@ class QuickMatchService
             $opponentsRating
         );
 
-        $best = $this->findBestMatch($possibleMatches);
+        // $best = $this->findBestMatch($possibleMatches);
+        $matchup = $this->getRandomTeams($possibleMatches);
 
         $g = function ($players, $match, $team)
         {
@@ -1433,8 +1442,8 @@ class QuickMatchService
                 ]));
         };
 
-        $teamAPlayers = $g($players, $best, 'teamA');
-        $teamBPlayers = $g($players, $best, 'teamB');
+        $teamAPlayers = $g($players, $matchup, 'teamA');
+        $teamBPlayers = $g($players, $matchup, 'teamB');
 
         return [$teamAPlayers, $teamBPlayers];
     }
