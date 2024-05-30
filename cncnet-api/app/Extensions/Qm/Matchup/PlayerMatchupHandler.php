@@ -45,7 +45,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
 
         // Check if there is enough opponents
         if ($matchableOpponents->count() < $numberOfOpponentsNeeded) {
-            Log::info("FindOpponent ** Not enough players for match yet");
+            Log::debug("FindOpponent ** Not enough players for match yet");
             $this->qmPlayer->touch();
             return;
         }

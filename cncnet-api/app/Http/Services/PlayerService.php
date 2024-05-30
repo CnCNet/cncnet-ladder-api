@@ -367,7 +367,7 @@ class PlayerService
             // If we reach a certain amount of time, switch to AI matchup
             $now = Carbon::now();
             $timeSinceQueuedSeconds = $now->diffInRealSeconds($qmQueueEntry->created_at);
-            Log::info("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds QM Player: $qmPlayer , QM Client Version: $version");
+            Log::debug("ApiQuickMatchController ** Time Since Queued $timeSinceQueuedSeconds QM Player: $qmPlayer , QM Client Version: $version");
 
             // Reached max queue time without match as set by ladder rules
             return ($timeSinceQueuedSeconds > $ladderRules->getMatchAIAfterSeconds());

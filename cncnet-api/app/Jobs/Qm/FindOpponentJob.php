@@ -49,7 +49,7 @@ class FindOpponentJob implements ShouldQueue/*, ShouldBeUnique*/
         $this->qmQueueEntry = QmQueueEntry::find($this->qmQueueEntry);
 
         if(!$this->readyToFindOpponent()) {
-            Log::info('Not ready to find opponents');
+            Log::debug('Not ready to find opponents');
             return;
         }
 
@@ -76,41 +76,41 @@ class FindOpponentJob implements ShouldQueue/*, ShouldBeUnique*/
     private function readyToFindOpponent() {
 
         if (!isset($this->qmQueueEntry)) {
-            Log::info('No qmqueue entry');
+            Log::debug('No qmqueue entry');
             return false;
         }
 
         // A player could cancel out of queue before this function runs
         if ($this->qmQueueEntry->qmPlayer === null) {
-            Log::info('Cancelled out');
+            Log::debug('Cancelled out');
             $this->qmQueueEntry->delete();
             return false;
         }
 
         // Skip if the player has already been matched up
         if ($this->qmQueueEntry->qmPlayer->qm_match_id !== null) {
-            Log::info("FindOpponent ** qmPlayer->qm_match_id is not null.");
+            Log::debug("FindOpponent ** qmPlayer->qm_match_id is not null.");
             $this->qmQueueEntry->delete();
             return false;
         }
 
         if ($this->qmQueueEntry->ladderHistory === null)
         {
-            Log::info("FindOpponent ** history is null.");
+            Log::debug("FindOpponent ** history is null.");
             $this->qmQueueEntry->delete();
             return false;
         }
 
         if ($this->qmQueueEntry->ladderHistory->ladder === null)
         {
-            Log::info("FindOpponent ** ladder is null.");
+            Log::debug("FindOpponent ** ladder is null.");
             $this->qmQueueEntry->delete();
             return false;
         }
 
         if ($this->qmQueueEntry->qmPlayer->player === null)
         {
-            Log::info("FindOpponent ** player is null.");
+            Log::debug("FindOpponent ** player is null.");
             $this->qmQueueEntry->delete();
             return false;
         }
