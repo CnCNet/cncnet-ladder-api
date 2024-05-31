@@ -29,7 +29,7 @@ class Player extends Model
         }
         else
         {
-            // use points > 0, not won=true, because if a game DC'd won might still be false
+            // use points > 0, not won=true, because if a game DC'd 'won' might still be false
             $result = $this->playerGames()->where('points', '>', 0)->where('ladder_history_id', $history->id)->count();
         }
         return $result;
