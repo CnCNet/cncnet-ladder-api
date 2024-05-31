@@ -1,6 +1,7 @@
 <?php
 
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\RotatingFileHandler;
 
 return [
 
@@ -35,7 +36,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['daily'],
+            'channels' => ['debug', 'info'],
         ],
 
         'single' => [
@@ -59,9 +60,29 @@ return [
             'level' => env('LOG_LEVEL', 'critical'),
         ],
 
+        'debug' => [
+            'driver' => 'monolog',
+            'handler' => RotatingFileHandler::class,
+            'with' => [
+                'filename' => storage_path('logs/debug.log'),
+                'maxFiles' => 7,
+            ],
+            'level' => 'debug',
+        ],
+
+        'info' => [
+            'driver' => 'monolog',
+            'handler' => RotatingFileHandler::class,
+            'with' => [
+                'filename' => storage_path('logs/info.log'),
+                'maxFiles' => 7,
+            ],
+            'level' => 'info',
+        ],
+
         'stderr' => [
             'driver' => 'monolog',
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => env('LOG_LEVEL', 'error'),
             'handler' => StreamHandler::class,
             'with' => [
                 'stream' => 'php://stderr',
@@ -75,7 +96,7 @@ return [
 
         'errorlog' => [
             'driver' => 'errorlog',
-            'level' => env('LOG_LEVEL', 'debug'),
+            'level' => env('LOG_LEVEL', 'error'),
         ],
     ],
 
