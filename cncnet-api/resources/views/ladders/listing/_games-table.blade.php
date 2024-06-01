@@ -16,7 +16,9 @@
                         @php
                             $groupedPlayerGameReports = [];
                             foreach ($playerGameReports as $playerGameReport) {
-                                $team = $playerGameReport->game->qmMatch?->findQmPlayerByPlayerId($playerGameReport->player_id)->team;
+                                $team = $playerGameReport->game->qmMatch?->findQmPlayerByPlayerId($playerGameReport->player_id)?->team;
+                                if ($team == null)
+                                    continue;
                                 $groupedPlayerGameReports[$team][] = $playerGameReport;
                             }
                         @endphp
