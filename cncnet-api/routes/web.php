@@ -66,7 +66,13 @@ Route::group(['prefix' => 'admin'], function() {
 
     Route::group(['middleware' => 'auth'], function() {
 
+        Route::get('podium', [\App\Http\Controllers\Admin\PodiumController::class, 'getPodiumForm'])->name('admin.podium');
+        Route::get('podium/compute', [\App\Http\Controllers\Admin\PodiumController::class, 'computePodium'])->name('admin.podium.compute');
+
         Route::group(['middleware' => 'restrict:canEditAnyLadders'], function () {
+
+            Route::get('podium', [\App\Http\Controllers\Admin\PodiumController::class, 'getPodiumForm'])->name('admin.podium');
+            Route::get('podium/compute', [\App\Http\Controllers\Admin\PodiumController::class, 'computePodium'])->name('admin.podium.compute');
 
             Route::get('players/ratings', [\App\Http\Controllers\AdminController::class, 'getPlayerRatings']);
             Route::get('players/ratings/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getPlayerRatings']);

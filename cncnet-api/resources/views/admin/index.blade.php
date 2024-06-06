@@ -79,6 +79,13 @@
                                 <li><a href="/admin/clans" class="btn btn-md btn-secondary mt-2">Clan List</a></li>
                             </ul>
                         </div>
+                        <div class="player-box player-card">
+                            <h3>Data</h3>
+                            <p>Get some data</p>
+                            <ul class="list-unstyled">
+                                <li><a href="/admin/podium" class="btn btn-md btn-secondary mt-2">Most-win Podium</a></li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="col-md-4">
