@@ -8,6 +8,7 @@ use App\Models\Ladder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * This class provider a form to
@@ -26,6 +27,13 @@ class PodiumController extends Controller
     }
 
     public function computePodium(ComputePodiumRequest $request) {
+
+        if (RateLimiter::tooManyAttempts($this->getRateLimiterKey(), 1)) {
+            $seconds = RateLimiter::availableIn($this->getRateLimiterKey());
+            $message = 'Don\'t submit this form this too often... You may try again in '.$seconds.' seconds.';
+            return view('admin.podium.result-too-many-attempts', compact('message'));
+        }
+
         $inputs = $request->validated();
 
         $ladderId = $inputs['ladder_id'];
@@ -49,6 +57,13 @@ class PodiumController extends Controller
             ->limit(3)
             ->get();
 
+
+        RateLimiter::increment($this->getRateLimiterKey(), 120);
+
         return view('admin.podium.result', compact('players', 'from', 'to', 'ladder'));
+    }
+
+    private function getRateLimiterKey() {
+        return 'compute-podium-win-count:'.auth()->id();
     }
 }
