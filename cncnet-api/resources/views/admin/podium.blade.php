@@ -62,7 +62,6 @@
                 <p>This form will get you the top 3 players with the most wins for the choosen ladder in the selected period.</p>
 
                 <form action="{{ route('admin.podium.compute') }}" method="get">
-                    @csrf
 
                     <div class="form-group">
                         <label for="ladder_id">Ladder<span class="text-danger">*</span></label>
