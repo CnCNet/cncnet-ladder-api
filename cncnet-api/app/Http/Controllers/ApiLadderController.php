@@ -844,6 +844,77 @@ class ApiLadderController extends Controller
         );
     }
 
+    public function getLadderRecentGames(Request $request, $cncnetGame = null)
+    {
+        if ($cncnetGame == null)
+        {
+            return "supply game";
+        }
+
+        $date = $request->date ?? Carbon::now()->format("m-Y");
+        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+        $games = \App\Models\Game::where("ladder_history_id", "=", $history->id)
+            ->whereNotNull('game_report_id')
+            ->orderBy("games.id", "DESC")
+            ->paginate(200)
+            ->appends(
+                $request->query()
+            );
+
+        $results = [];
+        foreach ($games as $game)
+        {
+            $playerGameReports = \App\Models\PlayerGameReport::where('game_report_id', $game->game_report_id)->get();
+            $gameUrl = \App\Models\URLHelper::getGameUrl($history, $game->id);
+            $timestamp = $game->updated_at->timestamp;
+
+            foreach ($playerGameReports as $playerGameReport)
+            {
+                if ($playerGameReport->stats)
+                {
+                    $playerStats2 = \App\Models\Stats2::where("id", $playerGameReport->stats->id)->first();
+                    $playerCountry = $playerStats2->faction($history->ladder, $playerGameReport->stats->cty);
+
+                    $won = $playerGameReport->won == true;
+                    $points = $playerGameReport->points;
+
+                    $results[$game->id][] = [
+                        "points" => $points,
+                        "playerCountry" => $playerCountry,
+                        "playerWon" => $won,
+                        "playerUsername" => $playerGameReport->player->username,
+                        "gameId" => $game->id,
+                        "timestamp" => $timestamp,
+                        "map" => $game->qmMatch?->map?->map,
+                        "duration" => $game->report->duration,
+                        "durationFormatted" => gmdate('H:i:s', $game->report->duration),
+                        "played" => $game->updated_at,
+                        "playedFormatted" => $game->updated_at->diffForHumans(),
+                        "fps" => $game->report->fps,
+                        "gameUrl" => $gameUrl
+                    ];
+                }
+            }
+        }
+
+        $response = [
+            'current_page' => $games->currentPage(),
+            'data' => $results,
+            'first_page_url' => $games->url(1),
+            'from' => $games->firstItem(),
+            'last_page' => $games->lastPage(),
+            'last_page_url' => $games->url($games->lastPage()),
+            'next_page_url' => $games->nextPageUrl(),
+            'path' => $games->path(),
+            'per_page' => $games->perPage(),
+            'prev_page_url' => $games->previousPageUrl(),
+            'to' => $games->lastItem(),
+            'total' => $games->total(),
+        ];
+
+        return $response;
+    }
+
     public function getLadderRecentGamesList(Request $request, $cncnetGame = null, $count = 10)
     {
         if ($count > 100) $count = 100;
