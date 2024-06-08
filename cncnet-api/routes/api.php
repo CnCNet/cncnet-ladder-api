@@ -84,7 +84,7 @@ Route::group(['prefix' => 'v1'], function ()
     // Ladder Endpoints
     Route::group([
         'prefix' => 'ladder',
-        //'middleware' => 'cache.long.public'
+        'middleware' => 'cache.long.public'
     ], function ()
     {
 
