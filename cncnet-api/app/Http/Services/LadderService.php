@@ -11,10 +11,14 @@ use App\Models\PlayerCache;
 use App\Models\PlayerRating;
 use App\Models\Side;
 use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
+use Carbon\Exceptions\UnitException;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
+use RuntimeException;
 
 class LadderService
 {
@@ -484,6 +488,80 @@ class LadderService
             ->paginate(45);
     }
 
+    /**
+     * Returns formatted results for Sneers Elo app
+     * @param string $date 
+     * @param string $cncnetGame 
+     * @param string|array|null $requestQuery 
+     * @return array 
+     * @throws InvalidFormatException 
+     * @throws UnitException 
+     * @throws InvalidArgumentException 
+     * @throws RuntimeException 
+     */
+    public function getGamesFormattedForEloService(string $date, string $cncnetGame, int $paginateCount = 200, string|array|null $requestQuery)
+    {
+        $history = $this->getActiveLadderByDate($date, $cncnetGame);
+        $games = \App\Models\Game::where("ladder_history_id", "=", $history->id)
+            ->whereNotNull('game_report_id')
+            ->orderBy("games.id", "DESC")
+            ->paginate($paginateCount)
+            ->appends($requestQuery);
+
+        $results = [];
+        foreach ($games as $game)
+        {
+            $playerGameReports = \App\Models\PlayerGameReport::where('game_report_id', $game->game_report_id)->get();
+            $gameUrl = \App\Models\URLHelper::getGameUrl($history, $game->id);
+            $timestamp = $game->updated_at->timestamp;
+
+            foreach ($playerGameReports as $playerGameReport)
+            {
+                if ($playerGameReport->stats)
+                {
+                    $playerStats2 = \App\Models\Stats2::where("id", $playerGameReport->stats->id)->first();
+                    $playerCountry = $playerStats2->faction($history->ladder, $playerGameReport->stats->cty);
+
+                    $won = $playerGameReport->won == true;
+                    $points = $playerGameReport->points;
+
+                    $results[$game->id][] = [
+                        "points" => $points,
+                        "playerCountry" => $playerCountry,
+                        "playerWon" => $won,
+                        "playerUsername" => $playerGameReport->player->username,
+                        "gameId" => $game->id,
+                        "timestamp" => $timestamp,
+                        "map" => $game->qmMatch?->map?->map,
+                        "duration" => $game->report->duration,
+                        "durationFormatted" => gmdate('H:i:s', $game->report->duration),
+                        "played" => $game->updated_at,
+                        "playedFormatted" => $game->updated_at->diffForHumans(),
+                        "fps" => $game->report->fps,
+                        "gameUrl" => $gameUrl
+                    ];
+                }
+            }
+        }
+
+        $response = [
+            'current_page' => $games->currentPage(),
+            'data' => $results,
+            'first_page_url' => $games->url(1),
+            'from' => $games->firstItem(),
+            'last_page' => $games->lastPage(),
+            'last_page_url' => $games->url($games->lastPage()),
+            'next_page_url' => $games->nextPageUrl(),
+            'path' => $games->path(),
+            'per_page' => $games->perPage(),
+            'prev_page_url' => $games->previousPageUrl(),
+            'to' => $games->lastItem(),
+            'total' => $games->total(),
+        ];
+
+        return $response;
+    }
+
     public function getLadderGameById($history, $gameId)
     {
         if ($history == null || $gameId == null)
@@ -759,7 +837,8 @@ class LadderService
             })
             ->where('qm_matches.id', $qmMatchId)
             ->groupBy('qm_match_players.id')
-            ->select("qm_matches.id",
+            ->select(
+                "qm_matches.id",
                 "p.username as name",
                 "qm_matches.created_at as qm_match_created_at",
                 "qm_match_players.team as team",
