@@ -1423,10 +1423,10 @@ class QuickMatchService
         $possibleMatches = collect($possibleMatches);
 
         // TODO : move this hard-coded value to the qmLadderRules
-        $similarLevelMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 400);
+        $similarEloMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 400);
 
-        if($similarLevelMatches->count() > 0) {
-            return $similarLevelMatches->random();
+        if($similarEloMatches->count() > 0) {
+            return $similarEloMatches->random();
         }
         else {
             return $this->findBestMatch($possibleMatches->all());
