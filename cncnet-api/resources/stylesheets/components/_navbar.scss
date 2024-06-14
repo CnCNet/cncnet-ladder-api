@@ -23,7 +23,10 @@ body,
 }
 
 .navbar.not-top {
-    background: rgb(0 0 0);
+    background: linear-gradient(180deg, rgb(0 0 0 / 80%), transparent);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
     &:before {
         content: none;
     }
