@@ -87,7 +87,6 @@ Route::group(['prefix' => 'v1'], function ()
         'middleware' => 'cache.long.public'
     ], function ()
     {
-
         Route::get('/', [\App\Http\Controllers\ApiLadderController::class, 'getAllLadders']);
         Route::get('/{game}/games/recent', [\App\Http\Controllers\ApiLadderController::class, 'getLadderRecentGames']);
         Route::get('/{game}/games/recent/{count}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderRecentGamesList']);

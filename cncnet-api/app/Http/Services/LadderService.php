@@ -532,7 +532,7 @@ class LadderService
                         "playerUsername" => $playerGameReport->player->username,
                         "gameId" => $game->id,
                         "timestamp" => $timestamp,
-                        "map" => $game->qmMatch?->map?->map,
+                        "map" => $game->qmMatch?->map?->map->name ?? $game->scen,
                         "duration" => $game->report->duration,
                         "durationFormatted" => gmdate('H:i:s', $game->report->duration),
                         "played" => $game->updated_at,
