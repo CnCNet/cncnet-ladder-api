@@ -1335,6 +1335,16 @@ class QuickMatchService
         return $locations;
     }
 
+    /**
+     * Made an array of all possible combination of match and compute the match_ranking value.
+     * The lower the match_ranking is the more the match is even.
+     * Team elo is the value representing how strong a team is.
+     * Elo gap is a value representing the skill difference between players in the team
+     * @param $currentPlayerId
+     * @param $currentPlayerRank
+     * @param $opponentsRating
+     * @return array
+     */
     public function findPossibleMatches($currentPlayerId, $currentPlayerRank, $opponentsRating): array
     {
         $possibleMatches = [];
@@ -1379,6 +1389,11 @@ class QuickMatchService
         return $possibleMatches;
     }
 
+    /**
+     * Find a match with the lowest match_ranking value / the most balanced match
+     * @param $possibleMatches
+     * @return array|null
+     */
     public function findBestMatch($possibleMatches): array
     {
 
@@ -1396,6 +1411,33 @@ class QuickMatchService
         return $bestBatch;
     }
 
+    /**
+     * The goal of this method is to improved matching of teams.
+     * If players are of a similar level, it will randomize the matchup.
+     * Else if there is a big skill gap, the best possible match up will be made
+     * @param $possibleMatches
+     * @return array
+     */
+    public function findBestMatchRandomized($possibleMatches): array
+    {
+        $possibleMatches = collect($possibleMatches);
+
+        // TODO : move this hard-coded value to the qmLadderRules
+        $similarEloMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 400);
+
+        if($similarEloMatches->count() > 0) {
+            return $similarEloMatches->random();
+        }
+        else {
+            return $this->findBestMatch($possibleMatches->all());
+        }
+    }
+
+    /**
+     * Simply get a random match
+     * @param $possibleMatches
+     * @return array
+     */
     public function getRandomTeams($possibleMatches): array
     {
         shuffle($possibleMatches);
@@ -1431,8 +1473,9 @@ class QuickMatchService
             $opponentsRating
         );
 
-        // $best = $this->findBestMatch($possibleMatches);
-        $matchup = $this->getRandomTeams($possibleMatches);
+        // $matchup = $this->findBestMatch($possibleMatches);
+        // $matchup = $this->getRandomTeams($possibleMatches);
+        $matchup = $this->findBestMatchRandomized($possibleMatches);
 
         $g = function ($players, $match, $team)
         {
