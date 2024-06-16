@@ -10,13 +10,14 @@ use Illuminate\Support\Facades\Log;
 class TeamMatchupHandler extends BaseMatchupHandler
 {
 
-    public function matchup() : void
+    public function matchup(): void
     {
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
 
         // Check if current player is an observer
-        if ($this->qmPlayer->isObserver()) {
+        if ($this->qmPlayer->isObserver())
+        {
             // If yes, then we skip the matchup because we don't want to compare
             // observer with other actual players to find a match.
             // Observer will be added to the match later on.
@@ -27,6 +28,9 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $queueEntries = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
         Log::debug("FindOpponent ** players in q : " . $queueEntries->count() + 1);
 
+        // Find opponents in same tier with current player.
+        $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($this->qmQueueEntry, $queueEntries);
+
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInPointRange($this->qmQueueEntry, $queueEntries);
         Log::debug("FindOpponent ** amount of matchable opponent after point filter : " . $matchableOpponents->count());
@@ -36,7 +40,8 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $numberOfOpponentsNeeded = $ladderRules->player_count - 1;
 
         // Check if there is enough opponents
-        if ($matchableOpponents->count() < $numberOfOpponentsNeeded) {
+        if ($matchableOpponents->count() < $numberOfOpponentsNeeded)
+        {
             Log::debug("FindOpponent ** Team matchup handler ** Not enough players for match yet");
             $this->qmPlayer->touch();
             return;
@@ -56,24 +61,28 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         $commonQmMaps = $this->quickMatchService->getCommonMapsForPlayers($ladder, $players);
 
-        if (count($commonQmMaps) < 1) {
+        if (count($commonQmMaps) < 1)
+        {
             Log::info("FindOpponent ** No common maps available");
             $this->qmPlayer->touch();
             return;
         }
 
-        $observers = $queueEntries->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
-        if($observers->count() < 0) {
+        $observers = $queueEntries->filter(fn (QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
+        if ($observers->count() < 0)
+        {
             $this->matchHasObservers = true;
         }
 
         $this->createTeamMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers);
     }
 
-    private function createTeamMatch(Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers) {
+    private function createTeamMatch(Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers)
+    {
 
         // filter out placeholder maps
-        $filteredMaps = $maps->filter(function ($map) {
+        $filteredMaps = $maps->filter(function ($map)
+        {
             return
                 !strpos($map->description, 'Map Info')
                 && !strpos($map->description, 'Map Guide')

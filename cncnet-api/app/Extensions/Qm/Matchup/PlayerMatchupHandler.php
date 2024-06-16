@@ -27,16 +27,19 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         $ladderRules = $ladder->qmLadderRules;
 
         // Check if current player is an observer
-        if($this->qmPlayer->isObserver()) {
+        if ($this->qmPlayer->isObserver())
+        {
             // If yes, then we skip the matchup because we don't want to compare
             // observer with other actual players to find a match.
             // Observer will be added to the match later on.
             return;
         }
 
-
         // Fetch all other players in the queue
         $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
+
+        // Find opponents in same tier with current player.
+        $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($this->qmQueueEntry, $opponents);
 
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getMatchableOpponents($this->qmQueueEntry, $opponents)->shuffle();
@@ -44,7 +47,8 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         $numberOfOpponentsNeeded = $ladderRules->player_count - 1;
 
         // Check if there is enough opponents
-        if ($matchableOpponents->count() < $numberOfOpponentsNeeded) {
+        if ($matchableOpponents->count() < $numberOfOpponentsNeeded)
+        {
             Log::debug("FindOpponent ** Not enough players for match yet");
             $this->qmPlayer->touch();
             return;
@@ -60,20 +64,23 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         // Find maps common to all actual players
         $commonQmMaps = $this->quickMatchService->getCommonMapsForPlayers($ladder, $players);
 
-         // Remove the recent maps from $commonQmMaps if reduce_map_repeats is active
-        if ($ladder->qmLadderRules->reduce_map_repeats > 0) {
+        // Remove the recent maps from $commonQmMaps if reduce_map_repeats is active
+        if ($ladder->qmLadderRules->reduce_map_repeats > 0)
+        {
             $commonQmMaps = $this->quickMatchService->filterOutRecentsMaps($this->history, $commonQmMaps, $players);
         }
 
-        if (count($commonQmMaps) < 1) {
+        if (count($commonQmMaps) < 1)
+        {
             Log::info("FindOpponent ** No common maps available");
             $this->qmPlayer->touch();
             return;
         }
 
         // Add observers to the match if there is any
-        $observers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver());
-        if($observers->count() > 0) {
+        $observers = $opponents->filter(fn (QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver());
+        if ($observers->count() > 0)
+        {
             $this->matchHasObservers = true;
             $matchedOpponents = $matchedOpponents->merge($observers);
         }
