@@ -353,6 +353,8 @@ class QuickMatchService
                         Log::info("QuickMatchService ** getEntriesInSameTier: Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  "
                             . $ladder->abbreviation . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
                             . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+
+                        $matchableOpponents->add($opponent);
                     }
                     else
                     {
