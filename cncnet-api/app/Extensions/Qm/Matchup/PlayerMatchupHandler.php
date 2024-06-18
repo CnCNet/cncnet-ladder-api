@@ -39,7 +39,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
 
         // Find opponents in same tier with current player.
-        $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($this->qmQueueEntry, $opponents);
+        $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
 
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getMatchableOpponents($this->qmQueueEntry, $opponents)->shuffle();

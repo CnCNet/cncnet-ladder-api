@@ -323,10 +323,14 @@ class QuickMatchService
         return $matchableOpponents;
     }
 
-    public function getEntriesInSameTier(QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
+    public function getEntriesInSameTier(Ladder $ladder, QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
     {
-        $history = $currentQmQueueEntry->ladderHistory;
-        $ladder = $history->ladder;
+        if ($ladder->qmLadderRules->tier2_rating <= 0) // no tier rules in place, all can match
+        {
+            return $opponents;
+        }
+
+        // get current user's tier
         $currentTier = $currentQmQueueEntry->qmPlayer->player->user->getUserLadderTier($ladder)->tier;
 
         $matchableOpponents = collect();
@@ -336,35 +340,35 @@ class QuickMatchService
             $oppTier = $opponent->qmPlayer->player->user->getUserLadderTier($ladder)->tier;
 
             // If players are not in the same league (same tier), then we don't match them together
-            // Check the ladder is meant to be using tiers.
-            if ($ladder->qmLadderRules->tier2_rating > 0)
+            if ($currentTier !== $oppTier)
             {
-                if ($currentTier !== $oppTier)
+                // Except if any of them have both_tiers feature enabled.
+                // Check both as either player could be tier 1
+                if (
+                    ($oppTier === 1 && $opponent->qmPlayer->player->user->canUserPlayBothTiers($ladder))
+                    ||
+                    ($currentTier === 1 && $currentQmQueueEntry->qmPlayer->player->user->canUserPlayBothTiers($ladder))
+                )
                 {
-                    // Except if any of them have both_tiers feature enabled.
-                    // Check both as either player could be tier 1
-                    if (
-                        ($oppTier === 1 && $opponent->qmPlayer->player->user->canUserPlayBothTiers($ladder))
-                        ||
-                        ($currentTier === 1 && $currentQmQueueEntry->qmPlayer->player->user->canUserPlayBothTiers($ladder))
-                    )
-                    {
-                        // Players can match so we can continue with the rest of the process
-                        Log::info("QuickMatchService ** getEntriesInSameTier: Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  "
-                            . $ladder->abbreviation . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
-                            . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                    // Players can match so we can continue with the rest of the process
+                    Log::info("QuickMatchService ** getEntriesInSameTier: Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  "
+                        . $ladder->abbreviation . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
+                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
 
-                        $matchableOpponents->add($opponent);
-                    }
-                    else
-                    {
-                        // Player cannot match so we skip it
-                        Log::info("QuickMatchService ** getEntriesInSameTier: Players in different tiers for ladder " . $ladder->abbreviation
-                            . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
-                            . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
-                        continue;
-                    }
+                    $matchableOpponents->add($opponent);
                 }
+                else
+                {
+                    // Player cannot match so we skip it
+                    Log::info("QuickMatchService ** getEntriesInSameTier: Players in different tiers for ladder " . $ladder->abbreviation
+                        . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
+                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                    continue;
+                }
+            }
+            else // same tier, can match
+            {
+                $matchableOpponents->add($opponent);
             }
         }
 
