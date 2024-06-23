@@ -3,6 +3,9 @@
 
         <a class="navbar-brand" href="{{ url('/') }}" title="CnCNet Home">
             <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="CnCNet logo" loading="lazy" class="logo-full" />
+            <span class="logo-tagline">
+                Keeping C&amp;C Alive Since 2009
+            </span>
         </a>
 
         <button class="navbar-toggler hamburger hamburger--collapse" type="button" data-bs-toggle="offcanvas" data-bs-target="#fullscreenNav"

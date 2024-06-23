@@ -87,6 +87,7 @@ body,
     width: 220px;
     height: 40px;
     padding: 0;
+    position: relative;
 
     @media (min-width: $xl-width) {
         margin-right: 1.5rem;
@@ -96,6 +97,28 @@ body,
     @media (min-width: $xxxxl-width) {
         margin-right: 2.5rem;
     }
+}
+
+.navbar-main .navbar-brand .logo-tagline {
+    position: absolute;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    right: 0;
+    top: 33px;
+    left: 67px;
+    color: #f9f9f98c;
+    transition: ease 350ms all;
+    pointer-events: none;
+    user-select: none;
+}
+
+.navbar-main:hover .logo-tagline {
+    color: #ffffff;
+}
+
+.not-top .logo-tagline {
+    opacity: 0;
 }
 
 .navbar-main .navbar-brand img {
