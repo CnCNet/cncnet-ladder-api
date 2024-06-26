@@ -86,28 +86,6 @@
                 </div>
             </div>
         </section>
-
-        <section class="pt-3 pb-3">
-            <div class="container-xl">
-                <h2>
-                    <div class="icon-box me-2">
-                        <i class="bi bi-flag-fill icon-clan" style="font-size: 1.5rem;"></i>
-                    </div>
-                    <strong>Clan</strong> Ladders
-                </h2>
-
-                <div class="d-flex flex-wrap mt-4 clan-ladders">
-                    @foreach ($clan_ladders as $history)
-                        @if (!$history->ladder->private)
-                            @include('components.ladder-box', [
-                                'history' => $history,
-                                'url' => \App\Models\URLHelper::getLadderUrl($history),
-                            ])
-                        @endif
-                    @endforeach
-                </div>
-            </div>
-        </section>
     </div>
 @endsection
 

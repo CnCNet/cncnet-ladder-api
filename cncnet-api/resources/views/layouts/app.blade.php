@@ -65,7 +65,7 @@
         <div class="support-cncnet">
             <p class="lead">Love playing C&C online? CnCNet relies on donations to keep running.</p>
             <div class="support-cta">
-                <a href="https://opencollective.com/cncnet" class="btn btn-primary" target="_blank" rel="nofollow">Donate via Open Collective</a>
+                <a href="https://opencollective.com/cncnet" class="btn btn-outline-primary" target="_blank" rel="nofollow">Donate via Open Collective</a>
             </div>
         </div>
 

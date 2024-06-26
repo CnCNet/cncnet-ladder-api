@@ -1,5 +1,7 @@
 .btn {
     transition: all ease 350ms;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 
 .btn-primary {
@@ -37,6 +39,10 @@
 
     &:active {
         color: $primary !important;
+    }
+    &:hover {
+        background: #ffffff25;
+        color: $primary;
     }
 }
 
@@ -78,7 +84,7 @@
 }
 
 .dropdown-menu {
-    --bs-dropdown-bg: #181818;
+    --bs-dropdown-bg: #151616;
     --bs-dropdown-min-width: 13rem;
     --bs-dropdown-border-radius: 4px;
     --bs-dropdown-border-color: rgb(41 40 40);
@@ -87,11 +93,9 @@
     padding: 1rem;
     --bs-dropdown-link-hover-bg: #0000003a;
     --bs-dropdown-link-hover-color: #{$color-green};
+    border-color: #0c0c0c;
 }
 
-
-.btn-danger {
-    background: rgb(180, 0, 24);
-    color: #fff;
-    font-weight: 700;
+.btn-icon .icon {
+    margin-left: 0.25rem;
 }
