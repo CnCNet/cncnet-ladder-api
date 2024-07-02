@@ -385,7 +385,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     # Relationships
     public function userTier()
     {
-        return $this->hasOne(UserTier::class, 'user_id');
+        return $this->hasMany(UserTier::class, 'user_id');
     }
 
     public function userSettings()
