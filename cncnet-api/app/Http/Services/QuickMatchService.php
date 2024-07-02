@@ -918,31 +918,37 @@ class QuickMatchService
 
         # Set up player specific information
         # Color will be used for spawn location
-        $qmPlayer = \App\Models\QmMatchPlayer::where('id', $qmPlayer->id)->first();
-        $qmPlayer->qm_match_id = $qmMatch->id;
-        $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
+        $qmPlayerFresh = \App\Models\QmMatchPlayer::where('id', $qmPlayer->id)->first(); // TODO why are we doing this? Whoever remembers let's put a comment
+
+        if ($qmPlayer == null)
+        {
+            Log::error("NULL QM_PLAYER for qmPlayer=" . $qmPlayer); 
+        }
+
+        $qmPlayerFresh->qm_match_id = $qmMatch->id;  // TODO NULL POINTERS HERE SOMETIMES !!!
+        $qmPlayerFresh->tunnel_id = $qmMatch->seed + $qmPlayerFresh->color;
         $qmMap = $qmMatch->map;
 
-        $psides = explode(',', $qmPlayer->mapSides->value);
+        $psides = explode(',', $qmPlayerFresh->mapSides->value);
         if (count($psides) > $qmMap->bit_idx)
         {
-            $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
+            $qmPlayerFresh->actual_side = $psides[$qmMap->bit_idx];
         }
 
-        if ($qmPlayer->actual_side < -1)
+        if ($qmPlayerFresh->actual_side < -1)
         {
-            $qmPlayer->actual_side = $qmPlayer->chosen_side;
+            $qmPlayerFresh->actual_side = $qmPlayerFresh->chosen_side;
         }
-        $qmPlayer->save();
+        $qmPlayerFresh->save();
 
         $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
         {
             return $s >= 0;
         }));
 
-        if ($qmPlayer->isObserver() == true)
+        if ($qmPlayerFresh->isObserver() == true)
         {
-            $this->setQmPlayerObserverColorLocation($qmPlayer);
+            $this->setQmPlayerObserverColorLocation($qmPlayerFresh);
         }
 
         # These both really really really need refactoring 
@@ -953,7 +959,7 @@ class QuickMatchService
                 $ladder,
                 $qmMap,
                 $qmMatch,
-                $qmPlayer,
+                $qmPlayerFresh,
                 $perMS,
                 $qEntry
             );
@@ -963,7 +969,7 @@ class QuickMatchService
             $this->set1v1QmSpawns(
                 $otherQmQueueEntries,
                 $qmMatch,
-                $qmPlayer,
+                $qmPlayerFresh,
                 $expectedPlayerQueueCount,
                 $matchHasObserver,
                 $qmMap,
