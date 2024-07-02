@@ -920,7 +920,7 @@ class QuickMatchService
         # Color will be used for spawn location
         $qmPlayerFresh = \App\Models\QmMatchPlayer::where('id', $qmPlayer->id)->first(); // TODO why are we doing this? Whoever remembers let's put a comment
 
-        if ($qmPlayer == null)
+        if ($qmPlayerFresh == null)
         {
             Log::error("NULL QM_PLAYER for qmPlayer=" . $qmPlayer); 
         }
