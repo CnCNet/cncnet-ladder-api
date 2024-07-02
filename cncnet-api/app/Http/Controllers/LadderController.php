@@ -234,6 +234,11 @@ class LadderController extends Controller
             $gameReport = $game->report;
         }
 
+        if ($gameReport == null)
+        {
+            abort(404, "Game Report not found");
+        }
+
         $qmMatchStates = [];
         $qmConnectionStats = [];
         $qmMatchPlayers = [];
