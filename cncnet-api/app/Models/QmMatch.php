@@ -15,6 +15,9 @@ class QmMatch extends Model
         'qm_map_id',
         'seed',
         'tier',
+        'stats_teams_elo_diff',
+        'stats_elo_gap_sum',
+        'stats_match_ranking',
     ];
 
     public function players()

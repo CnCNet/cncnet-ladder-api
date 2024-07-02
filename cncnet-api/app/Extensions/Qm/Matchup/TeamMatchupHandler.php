@@ -47,7 +47,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
             return;
         }
 
-        [$teamAPlayers, $teamBPlayers] = $this->quickMatchService->getBestMatch2v2ForPlayer(
+        [$teamAPlayers, $teamBPlayers, $stats] = $this->quickMatchService->getBestMatch2v2ForPlayer(
             $this->qmQueueEntry,
             $matchableOpponents,
             $this->history
@@ -74,11 +74,10 @@ class TeamMatchupHandler extends BaseMatchupHandler
             $this->matchHasObservers = true;
         }
 
-        $this->createTeamMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers);
+        $this->createTeamMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers, $stats);
     }
 
-    private function createTeamMatch(Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers)
-    {
+    private function createTeamMatch(Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers, array $stats) {
 
         // filter out placeholder maps
         $filteredMaps = $maps->filter(function ($map)
@@ -96,7 +95,8 @@ class TeamMatchupHandler extends BaseMatchupHandler
             $teamAPlayers,
             $teamBPlayers,
             $observers,
-            Game::GAME_TYPE_2VS2
+            Game::GAME_TYPE_2VS2,
+            $stats
         );
     }
 }

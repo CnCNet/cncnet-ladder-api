@@ -253,8 +253,12 @@ class LadderController extends Controller
             $groupedPlayerGameReports = [];
             foreach ($playerGameReports as $playerGameReport)
             {
-                $team = $playerGameReport->game->qmMatch->findQmPlayerByPlayerId($playerGameReport->player_id)->team;
-                $groupedPlayerGameReports[$team][] = $playerGameReport;
+                $team = $playerGameReport?->game?->qmMatch?->findQmPlayerByPlayerId($playerGameReport->player_id)?->team;
+
+                if ($team != null) 
+                {
+                    $groupedPlayerGameReports[$team][] = $playerGameReport;
+                }
             }
         }
 

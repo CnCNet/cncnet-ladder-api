@@ -980,9 +980,8 @@ class QuickMatchService
         return $qmMatch;
     }
 
-    public function createTeamQmMatch(LadderHistory $history, Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers, $gameType): QmMatch
+    public function createTeamQmMatch(LadderHistory $history, Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers, $gameType, array $stats = null): QmMatch
     {
-
         $ladder = $history->ladder;
         $currentQmQueueEntry = $teamAPlayers->first();
 
@@ -1007,6 +1006,9 @@ class QuickMatchService
         # Create the Game
         $game = Game::genQmEntry($qmMatch, $gameType);
         $qmMatch->game_id = $game->id;
+        if(isset($stats)) {
+            $qmMatch->fill($stats);
+        }
         $qmMatch->save();
         $game->qm_match_id = $qmMatch->id;
         $game->save();
@@ -1507,8 +1509,13 @@ class QuickMatchService
 
         $teamAPlayers = $g($players, $matchup, 'teamA');
         $teamBPlayers = $g($players, $matchup, 'teamB');
+        $stats = [
+            'stats_teams_elo_diff' => $matchup['teams_elo_diff'],
+            'stats_elo_gap_sum' => $matchup['elo_gap_sum'],
+            'stats_match_ranking' => $matchup['match_ranking'],
+        ];
 
-        return [$teamAPlayers, $teamBPlayers];
+        return [$teamAPlayers, $teamBPlayers, $stats];
     }
 
     public function checkQMClientRequiresUpdate(Ladder $ladder, $version)
