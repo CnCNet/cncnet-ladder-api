@@ -33,8 +33,11 @@
             @php
                 $groupedGamePlayerResults = [];
                 foreach ($game->report->playerGameReports as $pgr) {
-                    $t = $game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)?->team;
-                    $groupedGamePlayerResults[$t][] = $pgr;
+                    $t = $game?->qmMatch?->findQmPlayerByPlayerId($pgr->player_id)?->team;
+                    if ($t != null)
+                    {
+                        $groupedGamePlayerResults[$t][] = $pgr;
+                    }
                 }
             @endphp
             @php $vs = 0; @endphp
