@@ -84,7 +84,8 @@ class PlayerMatchupHandler extends BaseMatchupHandler
             $this->matchHasObservers = true;
             $matchedOpponents = $matchedOpponents->merge($observers);
         }
-        // start the match with all other players and other observers if there is any
+
+        // Start the match with all other players and other observers if there is any
         $this->createMatch($commonQmMaps, $matchedOpponents);
     }
 }

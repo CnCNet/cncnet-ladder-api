@@ -25,14 +25,14 @@ class TeamMatchupHandler extends BaseMatchupHandler
         }
 
         // Fetch all other players in the queue
-        $queueEntries = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
-        Log::debug("FindOpponent ** players in q : " . $queueEntries->count() + 1);
+        $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
+        Log::debug("FindOpponent ** players in q : " . $opponents->count() + 1);
 
         // Find opponents in same tier with current player.
-        $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $queueEntries);
+        $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
 
         // Find opponents that can be matched with current player.
-        $matchableOpponents = $this->quickMatchService->getEntriesInPointRange($this->qmQueueEntry, $queueEntries);
+        $matchableOpponents = $this->quickMatchService->getEntriesInPointRange($this->qmQueueEntry, $matchableOpponents);
         Log::debug("FindOpponent ** amount of matchable opponent after point filter : " . $matchableOpponents->count());
 
         // Count the number of players we need to start a match
@@ -68,16 +68,19 @@ class TeamMatchupHandler extends BaseMatchupHandler
             return;
         }
 
-        $observers = $queueEntries->filter(fn (QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
+        // Add observers to the match if there is any
+        $observers = $opponents->filter(fn (QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
         if ($observers->count() < 0)
         {
             $this->matchHasObservers = true;
         }
 
+        // Start the match with all other players and other observers if there is any
         $this->createTeamMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers, $stats);
     }
 
-    private function createTeamMatch(Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers, array $stats) {
+    private function createTeamMatch(Collection $maps, Collection $teamAPlayers, Collection $teamBPlayers, Collection $observers, array $stats)
+    {
 
         // filter out placeholder maps
         $filteredMaps = $maps->filter(function ($map)
