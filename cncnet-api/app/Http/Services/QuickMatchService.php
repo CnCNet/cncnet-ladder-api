@@ -368,7 +368,7 @@ class QuickMatchService
             }
             else // same tier, can match
             {
-                Log::info("QuickMatchService ** getEntriesInSameTier: Players in same tier for ladder "
+                Log::debug("QuickMatchService ** getEntriesInSameTier: Players in same tier for ladder "
                     . $ladder->abbreviation . " - P1: '$myName' (Tier: $currentTier) VS P2: '$oppName' (Tier: $oppTier)");
                 $matchableOpponents->add($opponent);
             }

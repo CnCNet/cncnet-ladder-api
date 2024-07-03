@@ -57,7 +57,7 @@ abstract class BaseMatchupHandler
     {
         $username = $this->qmPlayer?->player?->username;
         $ladderName = $this->history?->ladder?->name;
-        Log::info("Removing queue entry for " . $username . "' from ladder: " . $ladderName);
+        Log::info("BaseMatchupHandler ** removeQueueEntry: Removing queue entry for '" . $username . "' from ladder: " . $ladderName);
         $this->qmQueueEntry->delete();
     }
 
