@@ -54,7 +54,7 @@ class UpdateStatsCache extends Command
             echo "\n Setting setPlayersTodayCache for ladder history id: $history->id";
             StatsCache::setPlayersTodayCache($history);
 
-            if ($history->ladder->ladder_type == \App\Models\Ladder::CLAN_MATCH)
+            if ($history->ladder?->ladder_type == \App\Models\Ladder::CLAN_MATCH) // NULL pointer on ladder, how?
             {
                 echo "\n Setting setClansTodayCache for ladder history id: $history->id";
                 StatsCache::setClansTodayCache($history);
