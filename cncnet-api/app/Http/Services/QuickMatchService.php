@@ -338,6 +338,8 @@ class QuickMatchService
         foreach ($opponents as $opponent)
         {
             $oppTier = $opponent->qmPlayer->player->user->getUserLadderTier($ladder)->tier;
+            $myName = $currentQmQueueEntry->qmPlayer->player->username;
+            $oppName = $opponent->qmPlayer->player->username;
 
             // If players are not in the same league (same tier), then we don't match them together
             if ($currentTier !== $oppTier)
@@ -352,22 +354,22 @@ class QuickMatchService
                 {
                     // Players can match so we can continue with the rest of the process
                     Log::info("QuickMatchService ** getEntriesInSameTier: Players in different tiers for ladder BUT LeaguePlayer Settings have ruled them to play  "
-                        . $ladder->abbreviation . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
-                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
+                        . $ladder->abbreviation . " - P1: '$myName' (Tier: $currentTier) VS P2: '$oppName' (Tier: $oppTier)");
 
                     $matchableOpponents->add($opponent);
                 }
                 else
                 {
                     // Player cannot match so we skip it
-                    Log::info("QuickMatchService ** getEntriesInSameTier: Players in different tiers for ladder " . $ladder->abbreviation
-                        . "- P1:" . $opponent->qmPlayer->player->username . " (Tier: " . $oppTier . ") VS  P2:"
-                        . $currentQmQueueEntry->qmPlayer->player->username . " (Tier: " . $currentTier . ")");
-                    continue;
+                    Log::info("QuickMatchService ** getEntriesInSameTier: Players in different tiers for ladder " .  $ladder->abbreviation
+                        . " - P1: '$myName' (Tier: $currentTier) VS P2:"
+                        . $oppName . " (Tier: $oppTier)");
                 }
             }
             else // same tier, can match
             {
+                Log::info("QuickMatchService ** getEntriesInSameTier: Players in same tier for ladder "
+                    . $ladder->abbreviation . " - P1: '$myName' (Tier: $currentTier) VS P2: '$oppName' (Tier: $oppTier)");
                 $matchableOpponents->add($opponent);
             }
         }
@@ -922,7 +924,7 @@ class QuickMatchService
 
         if ($qmPlayerFresh == null)
         {
-            Log::error("NULL QM_PLAYER for qmPlayer=" . $qmPlayer); 
+            Log::error("NULL QM_PLAYER for qmPlayer=" . $qmPlayer);
         }
 
         $qmPlayerFresh->qm_match_id = $qmMatch->id;  // TODO NULL POINTERS HERE SOMETIMES !!!
@@ -1012,7 +1014,8 @@ class QuickMatchService
         # Create the Game
         $game = Game::genQmEntry($qmMatch, $gameType);
         $qmMatch->game_id = $game->id;
-        if(isset($stats)) {
+        if (isset($stats))
+        {
             $qmMatch->fill($stats);
         }
         $qmMatch->save();
