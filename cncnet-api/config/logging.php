@@ -38,6 +38,11 @@ return [
             'channels' => ['daily'],
         ],
 
+        'stack_with_debug' => [
+            'driver' => 'stack',
+            'channels' => ['daily', 'daily_debug'],
+        ],
+
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
@@ -48,6 +53,13 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 7,
+        ],
+
+        'daily_debug' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel_DEBUG.log'),
+            'level' => 'debug',
             'days' => 7,
         ],
 
