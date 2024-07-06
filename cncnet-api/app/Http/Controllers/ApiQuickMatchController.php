@@ -296,9 +296,9 @@ class ApiQuickMatchController extends Controller
         }
 
         $teamCount = 0;
+        $playerCount = 0;
         foreach ($teams as $teamId => $players)
         {
-            $playerCount = 0;
             foreach ($players as $player)
             {
                 $playerName = "Player" . ($playerCount + 1);
