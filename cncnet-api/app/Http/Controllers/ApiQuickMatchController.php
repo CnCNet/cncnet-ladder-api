@@ -296,22 +296,24 @@ class ApiQuickMatchController extends Controller
         }
 
         $teamCount = 0;
-        $playerCount = 0;
-        foreach ($teams as $teamId => $players)
+        $playerNum = 1;
+        foreach ($teams as $teamId => $teammates)
         {
-            foreach ($players as $player)
+            $teammateNum = 0;
+            foreach ($teammates as $player)
             {
-                $playerName = "Player" . ($playerCount + 1);
+                $playerName = "Player" . ($playerNum + 1);
                 if (abs(Carbon::now()->diffInSeconds($dt)) > 60) //only show real player name if 1 min has passed
                 { 
                     $playerName = $player->player->username;
                 }
                 $playersString .= $playerName . " (" . ($sides[$player->actual_side] ?? '') . ")";
 
-                if ($playerCount < count($players) - 1) // if not last player on the team append ' and '
+                if ($teammateNum < count($teammates) - 1) // if not last player on the team append ' and '
                     $playersString .= " and ";
 
-                $playerCount++;
+                $teammateNum++;
+                $playerNum++;
             }
 
             if ($teamCount < count($teams) - 1) // if not last team append ' vs '
