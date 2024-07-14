@@ -114,3 +114,27 @@ img {
     width: 1920px;
     max-width: 100%;
 }
+
+.live-event {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(109deg, #7f00cf, #c50000);
+    color: #fff;
+    height: 50px;
+    text-transform: uppercase;
+    font-size: 1.2rem;
+    transition: ease all 0.25s;
+    font-weight: 600;
+}
+
+.live-event.hidden
+{
+    opacity: 0;
+    height: 0;
+}

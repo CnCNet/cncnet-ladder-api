@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Route;
 # API V1 Endpoints
 Route::group(['prefix' => 'v1'], function ()
 {
-
     Route::group(['prefix' => 'auth', 'middleware' => 'auth.basic.once'], function ()
     {
         Route::get('token', [\App\Http\Controllers\ApiAuthController::class, 'getAuth']);
@@ -125,6 +124,8 @@ Route::group(['prefix' => 'v1'], function ()
 # API V2 Endpoints
 Route::group(['prefix' => 'v2'], function ()
 {
+    Route::get("/bans", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'getBans']);
+    Route::get("/events", [\App\Http\Controllers\Api\V2\Events\ApiEventController::class, 'getEvents']);
 
     Route::group(['middleware' => 'jwt.auth'], function ()
     {
