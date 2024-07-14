@@ -15,8 +15,32 @@ class ApiEventController extends Controller
     {
         // @TODO: Hook up to an events admin page for super admins for future events
         // Temp hack for now until we work this out properly
-        $mj = User::where("email", "mj24140@gmail.com")->first();
+        $mj = User::find(9466);
+        $matt = User::find(30045);
+        $doof = User::find(38417);
 
-        return ["live" => $mj->userSettings->is_observer == true];
+        if ($mj->userSettings->is_observer == true)
+        {
+            return [
+                "live" => true,
+                "url" => "https://www.twitch.tv/mj_vst"
+            ];
+        }
+
+        if ($matt->userSettings->is_observer == true)
+        {
+            return [
+                "live" => true,
+                "url" => "https://www.twitch.tv/fortuneschaos"
+            ];
+        }
+
+        if ($doof->userSettings->is_observer == true)
+        {
+            return [
+                "live" => true,
+                "url" => "https://www.twitch.tv/doof88"
+            ];
+        }
     }
 }

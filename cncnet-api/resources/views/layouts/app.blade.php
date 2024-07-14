@@ -60,40 +60,6 @@
     <div class="live-event js-live-event hidden">
         <a href="https://www.twitch.tv/mj_vst" target="_blank">RED ALERT 2 &amp; YURI'S REVENGE CNCNET WORLD CHAMPIONSHIPS - LIVE NOW</a>
     </div>
-
-    <script>
-        // Function to fetch data from the API and check if the "live" response is true or false
-        async function checkIfEventIsLive() {
-            const apiUrl = '/api/v2/events'; // Replace with your actual API URL
-
-            try {
-                const response = await fetch(apiUrl);
-                
-                // Check if the response is OK (status code 200-299)
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                // Parse the response as JSON
-                const data = await response.json();
-                let liveBanner = document.querySelector(".js-live-event");
-                
-                // Check if the "live" field is true or false
-                if (data.live === true) {
-                    console.log("The event is live.");
-                    liveBanner.classList.remove("hidden");
-                } else {
-                    console.log("The event is not live.");
-                    liveBanner.classList.add("hidden");
-                }
-            } catch (error) {
-                console.error("There was an error fetching the data:", error);
-            }
-        }
-
-        // Call the function
-        checkIfEventIsLive();
-    </script>
     
     @include('components.navigation.navbar')
 
@@ -128,6 +94,37 @@
         window.addEventListener("load", (event) => {
             document.body.classList.add("loaded");
         });
+    </script>
+    <script>
+        // Function to fetch data from the API and check if the "live" response is true or false
+        async function checkIfEventIsLive() {
+            const apiUrl = '/api/v2/events'; // Replace with your actual API URL
+
+            try {
+                const response = await fetch(apiUrl);
+                
+                // Check if the response is OK (status code 200-299)
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Parse the response as JSON
+                const data = await response.json();
+                let liveBanner = document.querySelector(".js-live-event");
+                
+                // Check if the "live" field is true or false
+                if (data.live === true) {
+                    liveBanner.classList.remove("hidden");
+                } else {
+                    liveBanner.classList.add("hidden");
+                }
+            } catch (error) {
+                console.error("There was an error fetching the data:", error);
+            }
+        }
+
+        // Call the function
+        checkIfEventIsLive();
     </script>
 </body>
 
