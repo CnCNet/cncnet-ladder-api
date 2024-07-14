@@ -57,9 +57,9 @@
         @include('components.countdown', ['target' => $history->ends->toISO8601String()])
     @endif
 
-    <div class="live-event js-live-event hidden">
-        <a href="https://www.twitch.tv/mj_vst" target="_blank">RED ALERT 2 &amp; YURI'S REVENGE CNCNET WORLD CHAMPIONSHIPS - LIVE NOW</a>
-    </div>
+    <a href="#" class="live-event js-live-event hidden" target="_blank" title="WATCH LIVE - RED ALERT 2 &amp; YURI'S REVENGE WORLD CHAMPIONSHIPS">
+        WATCH LIVE - RED ALERT 2 &amp; YURI'S REVENGE WORLD CHAMPIONSHIPS
+    </a>
     
     @include('components.navigation.navbar')
 
@@ -115,6 +115,7 @@
                 // Check if the "live" field is true or false
                 if (data.live === true) {
                     liveBanner.classList.remove("hidden");
+                    liveBanner.href = data.url;
                 } else {
                     liveBanner.classList.add("hidden");
                 }
