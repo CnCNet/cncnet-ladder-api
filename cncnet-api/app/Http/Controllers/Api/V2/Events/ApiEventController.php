@@ -42,5 +42,10 @@ class ApiEventController extends Controller
                 "url" => "https://www.twitch.tv/doof88"
             ];
         }
+
+        return [
+            "live" => false,
+            "url" => null
+        ];
     }
 }
