@@ -66,13 +66,14 @@
     @yield('feature')
 
     <main class="main">
-        <div class="support-cncnet">
-            <p class="lead">Love playing C&C online? CnCNet relies on donations to keep running.</p>
-            <div class="support-cta">
-                <a href="https://opencollective.com/cncnet" class="btn btn-outline-primary" target="_blank" rel="nofollow">Donate via Open Collective</a>
+        @if(!Auth::user()?->isAdmin())
+            <div class="support-cncnet">
+                <p class="lead">Love playing C&C online? CnCNet relies on donations to keep running.</p>
+                <div class="support-cta">
+                    <a href="https://opencollective.com/cncnet" class="btn btn-outline-primary" target="_blank" rel="nofollow">Donate via Open Collective</a>
+                </div>
             </div>
-        </div>
-
+        @endif
         @yield('content')
         @yield('breadcrumb')
     </main>

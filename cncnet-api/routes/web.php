@@ -74,7 +74,6 @@ Route::group(['prefix' => 'admin'], function ()
 
         Route::group(['middleware' => 'restrict:canEditAnyLadders'], function ()
         {
-
             Route::get('podium', [\App\Http\Controllers\Admin\PodiumController::class, 'getPodiumForm'])->name('admin.podium');
             Route::get('podium/compute', [\App\Http\Controllers\Admin\PodiumController::class, 'computePodium'])->name('admin.podium.compute');
 
@@ -84,7 +83,6 @@ Route::group(['prefix' => 'admin'], function ()
 
         Route::group(['middleware' => 'restrict:adminRequired'], function ()
         {
-
             Route::get('users/', [\App\Http\Controllers\AdminController::class, 'getManageUsersIndex']);
             Route::get('users/chatbans', [\App\Http\Controllers\AdminController::class, 'getChatBannedUsers']);
             Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser']);
@@ -95,9 +93,19 @@ Route::group(['prefix' => 'admin'], function ()
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
         });
 
+        Route::group(['prefix' => 'irc', 'middleware' => ['restrict:adminRequired']], function ()
+        {
+            Route::get('/', [\App\Http\Controllers\Admin\IrcBanController::class, 'getBanIndex'])->name("admin.irc");
+            Route::get('/bans', [\App\Http\Controllers\Admin\IrcBanController::class, 'getAllBans'])->name("admin.irc.bans");
+            Route::get('/bans/create', [\App\Http\Controllers\Admin\IrcBanController::class, 'getCreateBan'])->name("admin.irc.bans.create");
+            Route::get('/bans/edit/{id}', [\App\Http\Controllers\Admin\IrcBanController::class, 'getEditBan'])->name("admin.irc.bans.edit");
+            Route::post('/bans/update', [\App\Http\Controllers\Admin\IrcBanController::class, 'updateBan'])->name("admin.irc.bans.update");
+            Route::post('/bans/expire', [\App\Http\Controllers\Admin\IrcBanController::class, 'expireBan'])->name("admin.irc.bans.expire");
+            Route::post('/bans/create', [\App\Http\Controllers\Admin\IrcBanController::class, 'createBan'])->name("admin.irc.bans.create");
+        });
+
         Route::group(['prefix' => 'news', 'middleware' => ['restrict:adminRequired', 'restrict:isNewsAdmin']], function ()
         {
-
             Route::get('/', [\App\Http\Controllers\AdminNewsController::class, 'getIndex']);
             Route::get('/create', [\App\Http\Controllers\AdminNewsController::class, 'getCreate']);
             Route::get('/edit/{id}', [\App\Http\Controllers\AdminNewsController::class, 'getEdit']);
