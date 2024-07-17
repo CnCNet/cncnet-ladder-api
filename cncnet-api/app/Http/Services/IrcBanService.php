@@ -95,12 +95,12 @@ class IrcBanService
     public function getActiveBans()
     {
         $now = Carbon::now();
-        $activeBans = IrcBan::select(["ident", "username", "channel", "expires_at"])->get();
+        $activeBans = IrcBan::select(["ident", "host", "username", "channel", "expires_at"])->get();
 
-        $activeBans->each(function ($ban) use ($now)
+        foreach ($activeBans as $ban)
         {
-            $ban->has_expired = $ban->expires_at ? $ban->expires_at <= $now : false;
-        });
+            $ban->has_expired = $ban->expires_at ? $ban->expires_at->isBefore($now) : false;
+        }
 
         return response()->json($activeBans);
     }
