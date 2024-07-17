@@ -72,6 +72,7 @@
 
             <div class="row">
                 <div class="text-end mt-2 mb-5">
+                    <a href="{{ route('admin.irc') }}" class="btn">Back</a>
                     <a href="{{ route('admin.irc.bans.create') }}" class="btn btn-primary">Create new ban</a>
                 </div>
 

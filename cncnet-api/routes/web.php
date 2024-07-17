@@ -102,6 +102,10 @@ Route::group(['prefix' => 'admin'], function ()
             Route::post('/bans/update', [\App\Http\Controllers\Admin\IrcBanController::class, 'updateBan'])->name("admin.irc.bans.update");
             Route::post('/bans/expire', [\App\Http\Controllers\Admin\IrcBanController::class, 'expireBan'])->name("admin.irc.bans.expire");
             Route::post('/bans/create', [\App\Http\Controllers\Admin\IrcBanController::class, 'createBan'])->name("admin.irc.bans.create");
+
+            Route::get('/warnings', [\App\Http\Controllers\Admin\IrcBanController::class, 'getAllWarnings'])->name("admin.irc.warnings");
+            Route::get('/warnings/create', [\App\Http\Controllers\Admin\IrcBanController::class, 'getCreateWarning'])->name("admin.irc.warnings.create");
+            Route::post('/warnings/create', [\App\Http\Controllers\Admin\IrcBanController::class, 'createWarning'])->name("admin.irc.warnings.create");
         });
 
         Route::group(['prefix' => 'news', 'middleware' => ['restrict:adminRequired', 'restrict:isNewsAdmin']], function ()

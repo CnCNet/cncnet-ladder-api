@@ -5,7 +5,6 @@
                 <th>Username</th>
                 <th>Ident</th>
                 <th>Host</th>
-                <th>Reason</th>
                 <th>Admin</th>
                 <th>Channel </th>
                 <th>Global Ban</th>
@@ -21,7 +20,6 @@
                     <td> {{ $ban->username }}</td>
                     <td> {{ $ban->ident }}</td>
                     <td> {{ $ban->host }}</td>
-                    <td> {{ $ban->reason }}</td>
                     <td> {{ \App\Models\User::find($ban->admin_id)->name }}</td>
                     <td>{{ $ban->channel }}</td>
                     <td>{{ $ban->global_ban ? 'Yes' : 'No' }}</td>

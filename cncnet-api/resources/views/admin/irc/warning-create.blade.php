@@ -56,20 +56,17 @@
         <div class="container">
 
             <div class="row mb-5">
-                <div class="col-12">
-                    <a href="{{ route('admin.irc.bans') }}" class="btn btn-secondary">View all bans</a>
+                <div class="col-12 text-end">
+                    <a href="{{ route('admin.irc') }}" class="btn">Back</a>
+                    <a href="{{ route('admin.irc.warnings') }}" class="btn btn-secondary">View all warnings</a>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-12">
-                    <h3>Create new ban</h3>
+                    <h3>Create new warning</h3>
 
-                    <div class="text-end mt-2 mb-5">
-                        <a href="{{ route('admin.irc.bans.create') }}" class="btn btn-primary">Create new ban</a>
-                    </div>
-
-                    @include('admin.irc.components.ban-form', ['ban' => null])
+                    @include('admin.irc.components.warning-form', ['warning' => null])
                 </div>
             </div>
         </div>

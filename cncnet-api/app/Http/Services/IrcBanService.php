@@ -6,6 +6,7 @@ use App\Models\IrcBan;
 use App\Models\IrcBanLog;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class IrcBanService
 {
@@ -22,7 +23,7 @@ class IrcBanService
         string|null $ident,
         string|null $host,
         string|null $expiresAt
-    )
+    ): IrcBan
     {
         $ircBan = new IrcBan();
 
@@ -51,7 +52,7 @@ class IrcBanService
         string|null $channel,
         bool|null $globalBan,
         string|null $expiresAt
-    )
+    ): void
     {
         $ircBan = IrcBan::find($banId);
 
@@ -65,7 +66,7 @@ class IrcBanService
         $this->saveLog($ircBan->id, $adminId, IrcBanLog::ACTION_UPDATED);
     }
 
-    public function expireBan(IrcBan $ban, string $adminId)
+    public function expireBan(IrcBan $ban, string $adminId): void
     {
         $this->saveLog(
             banId: $ban->id,
@@ -89,5 +90,18 @@ class IrcBanService
         $ircLog->action = $action;
         $ircLog->save();
         return $ircLog;
+    }
+
+    public function getActiveBans()
+    {
+        $now = Carbon::now();
+        $activeBans = IrcBan::select(["ident", "username", "channel", "expires_at"])->get();
+
+        $activeBans->each(function ($ban) use ($now)
+        {
+            $ban->has_expired = $ban->expires_at ? $ban->expires_at <= $now : false;
+        });
+
+        return response()->json($activeBans);
     }
 }

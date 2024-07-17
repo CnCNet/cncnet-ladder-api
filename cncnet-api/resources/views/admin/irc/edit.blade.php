@@ -55,17 +55,18 @@
     <section class="pt-4 mt-5 mb-5">
         <div class="container">
 
-            <div class="row mb-5">
-                <div class="col-12">
-                    <a href="{{ route('admin.irc.bans') }}" class="btn btn-secondary">View all bans</a>
-                </div>
-            </div>
-
             @if (session('status'))
                 <div class="alert alert-success">
                     {{ session('status') }}
                 </div>
             @endif
+
+            <div class="row mb-5">
+                <div class="col-12 text-end">
+                    <a href="{{ route('admin.irc') }}" class="btn">Back</a>
+                    <a href="{{ route('admin.irc.bans') }}" class="btn btn-secondary">View all bans</a>
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-12">

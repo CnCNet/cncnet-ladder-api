@@ -60,20 +60,39 @@
 
             <div class="row mb-5">
                 <div class="col-12">
-                    <a href="{{ route('admin.irc.bans') }}" class="btn btn-secondary">View all bans</a>
+                    <a href="{{ route('admin.irc.bans') }}" class="btn btn-secondary">Irc Bans</a>
+                    <a href="{{ route('admin.irc.warnings') }}" class="btn btn-secondary ms-2">Irc warnings</a>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-12">
-                    <h3>Recent IRC bans</h3>
-                    <p>Showing the latest bans.</p>
 
-                    <div class="text-end mt-2 mb-5">
-                        <a href="{{ route('admin.irc.bans.create') }}" class="btn btn-primary">Create new ban</a>
+            <div class="mt-5">
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Recent IRC warnings</h3>
+                        <p>Showing the latest warnings.</p>
+
+                        <div class="text-end mt-2 mb-5">
+                            <a href="{{ route('admin.irc.warnings.create') }}" class="btn btn-primary">Create new warning</a>
+                        </div>
+
+                        @include('admin.irc.components.warnings-table')
                     </div>
+                </div>
+            </div>
 
-                    @include('admin.irc.components.bans-table')
+            <div class="mt-5">
+                <div class="row">
+                    <div class="col-12">
+                        <h3>Recent IRC bans</h3>
+                        <p>Showing the latest bans.</p>
+
+                        <div class="text-end mt-2 mb-5">
+                            <a href="{{ route('admin.irc.bans.create') }}" class="btn btn-primary">Create new ban</a>
+                        </div>
+
+                        @include('admin.irc.components.bans-table')
+                    </div>
                 </div>
             </div>
         </div>

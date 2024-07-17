@@ -7,14 +7,14 @@
 
     @csrf
     <p>
-        You must enter at least one value for User, Ident or Host. If one type is left blank, the ban will assume an *.
+        You must enter at least one value for User, Ident or Host. If one type is left blank, the bot will not ban by this field.
     </p>
 
     <div class="input-group mb-3">
         <span class="input-group-text">Username</span>
 
-        <input type="text" class="form-control" placeholder="e.g Ken" aria-label="Username" name="user" value="{{ old('user', $ban?->username) }}"
-            @if ($ban?->username) readonly @endif>
+        <input type="text" class="form-control" placeholder="e.g Ken" aria-label="Username" name="username"
+            value="{{ old('username', $ban?->username) }}" @if ($ban?->username) readonly @endif>
 
         <span class="input-group-text">Ident</span>
 
