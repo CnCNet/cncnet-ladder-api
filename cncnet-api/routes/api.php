@@ -125,6 +125,7 @@ Route::group(['prefix' => 'v1'], function ()
 Route::group(['prefix' => 'v2'], function ()
 {
     Route::get("/bans", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'getBans']);
+    Route::get("/warnings", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'getWarnings']);
     Route::get("/events", [\App\Http\Controllers\Api\V2\Events\ApiEventController::class, 'getEvents']);
 
     Route::group(['middleware' => 'jwt.auth'], function ()

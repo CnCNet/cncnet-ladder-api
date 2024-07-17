@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admi\Podium\ComputePodiumRequest;
+use App\Http\Requests\Admin\Podium\ComputePodiumRequest;
 use App\Models\Ladder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -26,11 +26,13 @@ class PodiumController extends Controller
         return view('admin.podium', compact('ladders', 'fromDate', 'toDate'));
     }
 
-    public function computePodium(ComputePodiumRequest $request) {
+    public function computePodium(ComputePodiumRequest $request)
+    {
 
-        if (RateLimiter::tooManyAttempts($this->getRateLimiterKey(), 1)) {
+        if (RateLimiter::tooManyAttempts($this->getRateLimiterKey(), 1))
+        {
             $seconds = RateLimiter::availableIn($this->getRateLimiterKey());
-            $message = 'Don\'t submit this form this too often... You may try again in '.$seconds.' seconds.';
+            $message = 'Don\'t submit this form this too often... You may try again in ' . $seconds . ' seconds.';
             return view('admin.podium.result-too-many-attempts', compact('message'));
         }
 
@@ -63,7 +65,8 @@ class PodiumController extends Controller
         return view('admin.podium.result', compact('players', 'from', 'to', 'ladder'));
     }
 
-    private function getRateLimiterKey() {
-        return 'compute-podium-win-count:'.auth()->id();
+    private function getRateLimiterKey()
+    {
+        return 'compute-podium-win-count:' . auth()->id();
     }
 }
