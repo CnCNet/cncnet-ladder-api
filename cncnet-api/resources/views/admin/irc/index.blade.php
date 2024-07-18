@@ -61,7 +61,7 @@
             <div class="row mb-5">
                 <div class="col-12">
                     <a href="{{ route('admin.irc.bans') }}" class="btn btn-secondary">Irc Bans</a>
-                    <a href="{{ route('admin.irc.warnings') }}" class="btn btn-secondary ms-2">Irc warnings</a>
+                    <a href="{{ route('admin.irc.warnings') }}" class="btn btn-secondary ms-2">Irc Warnings</a>
                 </div>
             </div>
 

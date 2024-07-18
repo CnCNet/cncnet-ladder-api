@@ -20,7 +20,13 @@
                     <td> {{ \App\Models\User::find($warning->admin_id)->name }}</td>
                     <td>{{ $warning->channel }}</td>
                     <td>{{ $warning->created_at?->format('F j, Y, g:i a T') }}</td>
-                    <td>{{ $warning->aknowledged ? 'Yes' : 'No' }} </td>
+                    <td>
+                        @if ($warning->acknowledged)
+                            <div class="badge rounded-pill text-bg-primary">Yes</div>
+                        @else
+                            <div class="badge rounded-pill text-bg-info">No</div>
+                        @endif
+                    </td>
                     <td>
                         @if ($warning->expired)
                             <div class="badge rounded-pill text-bg-info">Expired</div>

@@ -56,10 +56,6 @@
             value="{{ $ban?->expires_at?->format('Y-m-d\TH:i') }}">
     </div>
 
-    @if ($ban?->expires_at?->isPast())
-        <div class="badge rounded-pill text-bg-info fs-6 mb-4 mt-4">Note: This ban has now expired</div> <br />
-    @endif
-
     @if (count($errors) > 0)
         <div class="alert alert-danger">
             <ul>

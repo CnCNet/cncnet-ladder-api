@@ -69,7 +69,7 @@
                         <a href="{{ route('admin.irc.bans.create') }}" class="btn btn-primary">Create new ban</a>
                     </div>
 
-                    @include('admin.irc.components.ban-form', ['ban' => null])
+                    @include('admin.irc.components.bans.ban-form', ['ban' => null])
                 </div>
             </div>
         </div>

@@ -53,4 +53,11 @@ class IrcWarningService
             ->select(["ident", "username", "channel", "warning_message"])
             ->get();
     }
+
+    public function acknowledgeWarningsByUser(array $usernames)
+    {
+        return IrcWarning::where("acknowledged", false)->whereIn("username", $usernames)->update([
+            "acknowledged" => true
+        ]);
+    }
 }

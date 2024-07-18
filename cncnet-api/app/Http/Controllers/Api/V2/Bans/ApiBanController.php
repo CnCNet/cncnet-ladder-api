@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V2\Bans;
 use App\Http\Controllers\Controller;
 use App\Http\Services\IrcBanService;
 use App\Http\Services\IrcWarningService;
+use Illuminate\Http\Request;
 
 class ApiBanController extends Controller
 {
@@ -25,5 +26,10 @@ class ApiBanController extends Controller
     public function getWarnings()
     {
         return $this->ircWarningService->getActiveWarnings();
+    }
+
+    public function receiveWarningAcknowledgments(Request $request)
+    {
+        return $this->ircWarningService->acknowledgeWarningsByUser($request->usernames);
     }
 }

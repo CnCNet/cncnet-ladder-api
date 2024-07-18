@@ -92,11 +92,11 @@
                     @endif
 
                     <div class="mb-5">
-                        @include('admin.irc.components.ban-expire-form', ['ban' => $ban])
+                        @include('admin.irc.components.bans.ban-expire-form', ['ban' => $ban])
                     </div>
 
                     <h3>Edit ban</h3>
-                    @include('admin.irc.components.ban-form', ['ban' => $ban])
+                    @include('admin.irc.components.bans.ban-form', ['ban' => $ban])
 
                     <div class="mt-5">
                         <h4>Ban Change History</h4>
