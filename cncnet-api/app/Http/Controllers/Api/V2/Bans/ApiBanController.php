@@ -30,6 +30,7 @@ class ApiBanController extends Controller
 
     public function receiveWarningAcknowledgments(Request $request)
     {
-        return $this->ircWarningService->acknowledgeWarningsByUser($request->usernames);
+        $this->ircWarningService->acknowledgeWarningsByUser($request->usernames);
+        return response()->json(["success" => true], 200);
     }
 }
