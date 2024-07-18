@@ -76,7 +76,7 @@
                             <a href="{{ route('admin.irc.warnings.create') }}" class="btn btn-primary">Create new warning</a>
                         </div>
 
-                        @include('admin.irc.components.warnings-table')
+                        @include('admin.irc.components.warnings.warnings-table')
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@
                             <a href="{{ route('admin.irc.bans.create') }}" class="btn btn-primary">Create new ban</a>
                         </div>
 
-                        @include('admin.irc.components.bans-table')
+                        @include('admin.irc.components.bans.bans-table')
                     </div>
                 </div>
             </div>

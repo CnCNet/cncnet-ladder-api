@@ -103,9 +103,12 @@ Route::group(['prefix' => 'admin'], function ()
             Route::post('/bans/expire', [\App\Http\Controllers\Admin\IrcBanController::class, 'expireBan'])->name("admin.irc.bans.expire");
             Route::post('/bans/create', [\App\Http\Controllers\Admin\IrcBanController::class, 'createBan'])->name("admin.irc.bans.create");
 
-            Route::get('/warnings', [\App\Http\Controllers\Admin\IrcBanController::class, 'getAllWarnings'])->name("admin.irc.warnings");
-            Route::get('/warnings/create', [\App\Http\Controllers\Admin\IrcBanController::class, 'getCreateWarning'])->name("admin.irc.warnings.create");
-            Route::post('/warnings/create', [\App\Http\Controllers\Admin\IrcBanController::class, 'createWarning'])->name("admin.irc.warnings.create");
+            Route::get('/warnings', [\App\Http\Controllers\Admin\IrcWarningController::class, 'getAllWarnings'])->name("admin.irc.warnings");
+            Route::get('/warnings/create', [\App\Http\Controllers\Admin\IrcWarningController::class, 'getCreateWarning'])->name("admin.irc.warnings.create");
+            Route::get('/warnings/edit/{id}', [\App\Http\Controllers\Admin\IrcWarningController::class, 'getEditWarning'])->name("admin.irc.warnings.edit");
+            Route::post('/warnings/create', [\App\Http\Controllers\Admin\IrcWarningController::class, 'createWarning'])->name("admin.irc.warnings.create");
+            Route::post('/warnings/{id}/expire', [\App\Http\Controllers\Admin\IrcWarningController::class, 'expireWarning'])->name("admin.irc.warnings.expire");
+            Route::post('/warnings/update', [\App\Http\Controllers\Admin\IrcWarningController::class, 'updateWarning'])->name("admin.irc.warnings.update");
         });
 
         Route::group(['prefix' => 'news', 'middleware' => ['restrict:adminRequired', 'restrict:isNewsAdmin']], function ()

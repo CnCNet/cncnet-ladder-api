@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string("warning_message");
             $table->unsignedInteger("admin_id");
             $table->boolean("acknowledged")->default(false);
+            $table->boolean("expired")->default(false);
             $table->timestamps();
         });
     }

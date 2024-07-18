@@ -55,25 +55,31 @@
     <section class="pt-4 mt-5 mb-5">
         <div class="container">
 
-            <h3>IRC Manager</h3>
-            <p>Manage user IRC bans.</p>
+            @if (session('status'))
+                <div class="alert alert-success">
+                    {{ session('status') }}
+                </div>
+            @endif
 
             <div class="row mb-5">
-                <div class="col-12">
-                    <a href="{{ route('admin.irc.bans') }}" class="btn btn-secondary">View all bans</a>
+                <div class="col-12 text-end">
+                    <a href="{{ route('admin.irc') }}" class="btn">Back</a>
+                    <a href="{{ route('admin.irc.warnings') }}" class="btn btn-secondary">View all warnings</a>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col-12">
-                    <h3>Recent IRC bans</h3>
-                    <p>Showing the latest bans.</p>
 
-                    <div class="text-end mt-2 mb-5">
-                        <a href="{{ route('admin.irc.bans.create') }}" class="btn btn-primary">Create new ban</a>
+                    <h3>Warning Details</h3>
+
+                    <div class="mb-5">
+                        @include('admin.irc.components.warnings.warning-expire-form', ['warning' => $warning])
                     </div>
 
-                    @include('admin.irc.components.bans-table')
+                    <h3>View warning</h3>
+                    @include('admin.irc.components.warnings.warning-form', ['warning' => $warning])
+
                 </div>
             </div>
         </div>

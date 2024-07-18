@@ -66,7 +66,7 @@
                 <div class="col-12">
                     <h3>Create new warning</h3>
 
-                    @include('admin.irc.components.warning-form', ['warning' => null])
+                    @include('admin.irc.components.warnings.warning-form', ['warning' => null])
                 </div>
             </div>
         </div>

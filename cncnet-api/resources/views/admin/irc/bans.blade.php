@@ -79,7 +79,7 @@
                 <div class="col-12">
                     {{ $bans->links() }}
 
-                    @include('admin.irc.components.bans-table')
+                    @include('admin.irc.components.bans.bans-table')
 
                     {{ $bans->links() }}
                 </div>

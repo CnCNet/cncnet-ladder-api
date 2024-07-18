@@ -32,7 +32,7 @@
                             <div class="badge rounded-pill text-bg-primary">Active</div>
                         @endif
                     </td>
-                    <td><a href="{{ route('admin.irc.bans.edit', ['id' => $ban->id]) }}">View Ban</td>
+                    <td><a href="{{ route('admin.irc.bans.edit', ['id' => $ban->id]) }}" class="btn btn-primary btn-sm">View Ban</td>
                 </tr>
             @endforeach
         </tbody>

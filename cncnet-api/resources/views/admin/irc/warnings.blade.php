@@ -79,7 +79,7 @@
                 <div class="col-12">
                     {{ $warnings->links() }}
 
-                    @include('admin.irc.components.warnings-table')
+                    @include('admin.irc.components.warnings.warnings-table')
 
                     {{ $warnings->links() }}
                 </div>
