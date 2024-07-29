@@ -101,6 +101,8 @@ class QuickMatchSpawnService
                     break;
             }
         }
+        
+        $spawnStruct["merge"] = "merge";
 
         return $spawnStruct;
     }
