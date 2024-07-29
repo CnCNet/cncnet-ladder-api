@@ -101,8 +101,8 @@ class QuickMatchSpawnService
                     break;
             }
         }
-        
-        $spawnStruct["merge"] = "merge";
+
+        $spawnStruct["ini_strategy"] = "merge";
 
         return $spawnStruct;
     }

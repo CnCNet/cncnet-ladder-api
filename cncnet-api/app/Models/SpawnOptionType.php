@@ -10,6 +10,8 @@ class SpawnOptionType extends Model {
     const COPY_FILE = 3;
     const PREPEND_FILE = 4;
 
+    // TODO missing types 'MERGE_FILE' and 'APPEND_FILE'
+
     public static function findOrCreate($name)
     {
         $t = SpawnOptionType::where('name', '=', $name)->first();
