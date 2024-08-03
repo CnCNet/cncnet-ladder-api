@@ -19,7 +19,7 @@ class QuickMatchSpawnService
      * @param mixed $ladderRules 
      * @return array 
      */
-    public static function createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules)
+    public static function createSpawnStruct($qmMatch, QmMatchPlayer $qmPlayer, $ladder, $ladderRules)
     {
         $qmMap = $qmMatch->map;
         $map = $qmMap->map;
@@ -51,7 +51,8 @@ class QuickMatchSpawnService
                 "Side" =>           $qmPlayer->actual_side,
                 "Color" =>          $qmPlayer->color,
                 "MyIndex" =>        $qmPlayer->color,
-                "IsSpectator" =>    "False"
+                "IsSpectator" =>    "False",
+                "DisableChat" =>    $qmPlayer->player->user->getIsAllowedToChat() ? "False" : "True",
                 // Filter null values
             ],
             function ($var)
