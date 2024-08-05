@@ -54,7 +54,7 @@ class PodiumController extends Controller
             ->where('player_game_reports.won', 1)
             ->groupBy('players.username', 'player_game_reports.player_id')
             ->orderByDesc('win_count')
-            ->limit(3)
+            ->limit(5)
             ->get();
 
 
