@@ -43,7 +43,7 @@
                     <strong>Hostname: {{ gethostbyaddr($ipHistory->ipaddress->address) }}</strong>
                 @endif
             </div>
-            <a href="https://www.whoismyisp.org/ip/{{ $ipHistory->ipaddress->address }}" target="_blank">
+            <a href="https://www.whatismyisp.org/ip/{{ $ipHistory->ipaddress->address }}" target="_blank">
                 {{ $ipHistory->ipaddress->address }}
             </a>
             <label>{{ $ipHistory->created_at->toDateString() }}</label>

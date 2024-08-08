@@ -14,6 +14,7 @@
                     <span class="material-symbols-outlined">
                         home
                     </span>
+                    Ladder Home
                 </a>
             </div>
             <div class="mini-breadcrumb-item">
@@ -21,6 +22,15 @@
                     <span class="material-symbols-outlined">
                         admin_panel_settings
                     </span>
+                    Admin Home
+                </a>
+            </div>
+            <div class="mini-breadcrumb-item">
+                <a href="/admin/setup/{{ $ladder->id }}/edit" class="">
+                    <span class="material-symbols-outlined">
+                        
+                    </span>
+                    {{ $ladder->name }} Ladder Admin
                 </a>
             </div>
         </div>
