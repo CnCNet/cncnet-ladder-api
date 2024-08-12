@@ -302,6 +302,9 @@ class PlayerService
             $player = $activeHandle->player;
             $player["user"] = $player->user;
 
+            // @TODO - Remove QM client from preventing chat.
+            $player["user"]["chat_allowed"] = 1; // Stand down QM client from preventing in game chat.
+
             if ($activeHandle->player->ladder)
             {
                 $activeHandle->player["rank"] = null;
