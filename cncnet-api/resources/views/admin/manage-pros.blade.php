@@ -58,7 +58,7 @@
                 <div class="col-md-12">
                     <h3>Pro users</h3>
 
-                    <form action="{{ route('getProList') }}">
+                    <form action="/admin/users/pros">
                         <select name="ladderId" class="form-control mb-2" onchange="this.form.submit()">
                             @foreach ($ladders as $ladder)
                                 <option value="{{ $ladder->id }}" @if ($ladderId == $ladder->id) selected @endif>{{ $ladder->name }}</option>
@@ -66,7 +66,7 @@
                         </select>
                     </form>
 
-                    <form action="{{ route('saveProList') }}" method="POST">
+                    <form action="/admin/users/pros" method="POST">
                         @csrf
                         <input type="hidden" name="ladderId" value="{{ $ladderId }}" />
                         <div class="mb-5">
