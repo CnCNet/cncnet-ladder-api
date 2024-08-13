@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_pros', function (Blueprint $table)
+        Schema::table('user_settings', function (Blueprint $table)
         {
             $table->boolean('pro_only_matchups');
         });
