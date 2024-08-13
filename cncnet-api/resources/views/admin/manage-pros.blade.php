@@ -80,6 +80,14 @@
                                 @endforeach
                             </select>
                         </div>
+
+                        <p>
+                            <small style="color:red">Warning: If checked, it will force the selected users' preference to "Play with pros only". (They can
+                                change this)</small>
+                            <br />
+                            <input id="forcePreferencesOn" type="checkbox" name="forceProPreferencesOn" />
+                            <label for="forcePreferencesOn">Reset User Preferences To "Play Only With Pros"</label>
+                        </p>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </form>
                 </div>

@@ -14,6 +14,7 @@ use App\Models\Player;
 use App\Models\SpawnOptionString;
 use App\Models\User;
 use App\Models\UserPro;
+use App\Models\UserSettings;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -325,7 +326,20 @@ class AdminController extends Controller
                     $userPro->ladder_id = $ladder->id;
                     $userPro->save();
                 }
+
+                if ($request->forceProPreferencesOn == "on")
+                {
+                    // Force the user settings to on for user pro preferences
+                    $userIds = $request->userProIds;
+                    foreach ($userIds as $userId)
+                    {
+                        $userSetting = UserSettings::where("user_id", "=", $userId)->first();
+                        $userSetting->pro_only_matchups = true;
+                        $userSetting->save();
+                    }
+                }
             }
+
             return redirect()->back();
         }
         catch (Exception $ex)
