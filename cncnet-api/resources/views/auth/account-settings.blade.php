@@ -98,8 +98,8 @@
                                 <p>
                                     Only match pros in the ladder. Disabling this will allow you to team up with a non pro player.
                                 </p>
-                                <input id="enableAnonymous" type="checkbox" name="enableAnonymous" @if ($userSettings->enableAnonymous) checked @endif />
-                                <label for="enableAnonymous">Pro 2vs2 Matchups Only</label>
+                                <input id="pro_only_matchups" type="checkbox" name="pro_only_matchups" @if ($userSettings->pro_only_matchups) checked @endif />
+                                <label for="pro_only_matchups">Pro 2vs2 Matchups Only</label>
                             </div>
                         @endif
 

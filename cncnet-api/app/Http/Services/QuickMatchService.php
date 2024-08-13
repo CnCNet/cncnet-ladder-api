@@ -332,7 +332,7 @@ class QuickMatchService
         }
 
         // I'm a pro: do I want pro players only?
-        if (!$currentQmQueueEntry->qmPlayer->player->user->getUserProFilterPreference($ladder))
+        if (!$currentQmQueueEntry->qmPlayer->player->user->getProOnlyMatchupsPreference($ladder))
         {
             return $opponents;
         }
