@@ -73,7 +73,7 @@ class MatchUpController
         {
             Log::info("Exe hash mismatch detected, notification sent to $user->name : $exeHash : Should be: $exeHashToCheck");
             return $this->quickMatchService->onFatalError(
-                'Please update to the latest version of CnCNet.'
+                'Please update to the latest version of CnCNet. If already updated, launch the Ranked Match client from the main CnCNet client.'
             );
         }
 
