@@ -8,10 +8,14 @@ use App\Http\Services\LadderService;
 use App\Models\Clan;
 use App\Models\GameObjectSchema;
 use App\Models\Ladder;
+use App\Models\LadderHistory;
+use App\Models\LadderType;
 use App\Models\Player;
 use App\Models\SpawnOptionString;
 use App\Models\User;
+use App\Models\UserPro;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -258,6 +262,76 @@ class AdminController extends Controller
             "userId" => $userId,
             "hostname" => $hostname
         ]);
+    }
+
+    public function getUserProList(Request $request)
+    {
+        try
+        {
+            if ($request->user() == null || !$request->user()->isAdmin())
+                return response('Unauthorized.', 401);
+
+            $proUserIds = UserPro::orderBy("created_at", "desc")->pluck("user_id")->toArray();
+
+            $ladderId = $request->ladderId ?? 15; // Blitz 2v2 by default 
+            $ladder = Ladder::find($ladderId);
+
+            $now = Carbon::now();
+            $start = $now->startOfMonth()->toDateTimeString();
+            $end = $now->endOfMonth()->toDateTimeString();
+
+            $history = LadderHistory::whereBetween("starts", [$start, $start])
+                ->whereBetween("ends", [$end, $end])
+                ->where("ladder_id", $ladder->id)
+                ->first();
+
+            $players = $this->ladderService->getPlayersFromCacheForLadderHistory(
+                ladderHistory: $history,
+                filterBy: $request->filterBy,
+                orderBy: $request->orderBy,
+                tier: 1,
+                search: $request->search,
+                paginateCount: 100
+            );
+
+            $ladders = Ladder::where("private", false)->where("ladder_type", Ladder::TWO_VS_TWO)->get();
+
+            return view("admin.manage-pros", [
+                "ladders" => $ladders,
+                "proUsersIds" => $proUserIds,
+                "players" => $players,
+                "ladderId" => $ladder->id
+            ]);
+        }
+        catch (Exception $ex)
+        {
+            report($ex);
+        }
+    }
+
+    public function saveProList(Request $request)
+    {
+        try
+        {
+            $ladder = Ladder::findOrFail($request->ladderId);
+            UserPro::where("ladder_id", $ladder->id)->delete();
+
+            if ($request->userProIds)
+            {
+                foreach ($request->userProIds as $userId)
+                {
+                    $userPro = new UserPro();
+                    $userPro->user_id = $userId;
+                    $userPro->ladder_id = $ladder->id;
+                    $userPro->save();
+                }
+            }
+            return redirect()->back();
+        }
+        catch (Exception $ex)
+        {
+            report($ex);
+        }
     }
 
     public function getManageClansIndex(Request $request)

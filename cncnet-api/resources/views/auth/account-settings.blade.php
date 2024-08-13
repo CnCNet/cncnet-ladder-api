@@ -92,6 +92,17 @@
                     <form method="POST" action="/account/settings" enctype="multipart/form-data">
                         {{ csrf_field() }}
 
+                        @if ($user->isProPlayer())
+                            <div class="form-group mb-5">
+                                <h3>Pro 2vs2 Matchups Only?</h3>
+                                <p>
+                                    Only match pros in the ladder. Disabling this will allow you to team up with a non pro player.
+                                </p>
+                                <input id="enableAnonymous" type="checkbox" name="enableAnonymous" @if ($userSettings->enableAnonymous) checked @endif />
+                                <label for="enableAnonymous">Pro 2vs2 Matchups Only</label>
+                            </div>
+                        @endif
+
                         <div class="form-group mb-5">
                             <h3>Ladder Anonymity</h3>
                             <p>
@@ -143,6 +154,7 @@
                             <div>
                                 <strong>Current emojis</strong>
                             </div>
+
                             <div class="emoji-container" style="font-size:2.3rem;">
                                 {{ $user->getEmoji() }}
                             </div>
@@ -151,6 +163,7 @@
                                 <input type="checkbox" name="remove_emoji" />
                                 Remove emoji
                             </label>
+
                             <br />
 
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#emojiModal">

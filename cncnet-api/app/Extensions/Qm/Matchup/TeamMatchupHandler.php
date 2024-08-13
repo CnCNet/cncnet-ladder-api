@@ -31,6 +31,9 @@ class TeamMatchupHandler extends BaseMatchupHandler
         // Find opponents in same tier with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
 
+        // Ensure pros are only matching pros, unless they're allowing to be in non-pro matches
+        $matchableOpponents = $this->quickMatchService->getEntriesFromProFilterPreferences($ladder, $this->qmQueueEntry, $opponents);
+
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInPointRange($this->qmQueueEntry, $matchableOpponents);
         Log::debug("FindOpponent ** amount of matchable opponent after point filter : " . $matchableOpponents->count());
@@ -69,7 +72,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         }
 
         // Add observers to the match if there is any
-        $observers = $opponents->filter(fn (QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
+        $observers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
         if ($observers->count() < 0)
         {
             $this->matchHasObservers = true;

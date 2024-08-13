@@ -216,7 +216,7 @@ class QuickMatchService
     public function fetchQmQueueEntry(LadderHistory $history, ?QmQueueEntry $qmQueueEntry = null): \Illuminate\Database\Eloquent\Collection|array
     {
         return QmQueueEntry::query()
-            ->when(isset($qmQueueEntry), fn ($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
+            ->when(isset($qmQueueEntry), fn($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
             ->where('ladder_history_id', '=', $history->id)
             ->get();
     }
@@ -318,6 +318,39 @@ class QuickMatchService
             {
                 $matchableOpponents->add($opponent);
             }
+        }
+
+        return $matchableOpponents;
+    }
+
+    public function getEntriesFromProFilterPreferences(Ladder $ladder, QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
+    {
+        // If I'm not a pro: Return everyone.
+        if (!$currentQmQueueEntry->qmPlayer->player->user->isProPlayer($ladder))
+        {
+            return $opponents;
+        }
+
+        // I'm a pro: do I want pro players only?
+        if (!$currentQmQueueEntry->qmPlayer->player->user->getUserProFilterPreference($ladder))
+        {
+            return $opponents;
+        }
+
+        // Fine have it your way Pro. Heres other pros:
+        $matchableOpponents = collect();
+        foreach ($opponents as $opponent)
+        {
+            $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
+            if ($oppIsPro === false)
+            {
+                continue;
+            }
+
+            $oppName = $opponent->qmPlayer->player->username;
+
+            Log::info("QuickMatchService ** getEntriesFromProFilterPreferences: $oppName added to Pro Collection of players to match only");
+            $matchableOpponents->add($opponent);
         }
 
         return $matchableOpponents;
@@ -440,12 +473,12 @@ class QuickMatchService
                 ->get();
 
             $recentMapsHash = $playerGameReports
-                ->map(fn (PlayerGameReport $item) => $item->game->map)
+                ->map(fn(PlayerGameReport $item) => $item->game->map)
                 ->filter()
                 ->pluck('hash')
                 ->toArray();
 
-            $maps = $maps->filter(fn (QmMap $map) => !in_array($map->map->hash, $recentMapsHash));
+            $maps = $maps->filter(fn(QmMap $map) => !in_array($map->map->hash, $recentMapsHash));
         }
 
         return $maps;
@@ -1031,7 +1064,7 @@ class QuickMatchService
         {
             Log::debug("Creating random spawns for map: " . $qmMap->description);
             // populate array with values 1 to n, n = number of players in the match
-            $spawnArr = array_map(fn ($num) => (string) $num, range(1, $ladder->qmLadderRules->player_count));
+            $spawnArr = array_map(fn($num) => (string) $num, range(1, $ladder->qmLadderRules->player_count));
 
             // shuffle the spawns
             shuffle($spawnArr);
@@ -1068,13 +1101,13 @@ class QuickMatchService
     {
 
         Log::debug('[QuickMatchService::setTeamSpawns]');
-        $spawnOrder = array_map(fn ($i) => intval($i), explode(',', $spawnOrders));
+        $spawnOrder = array_map(fn($i) => intval($i), explode(',', $spawnOrders));
         $qmMap = $qmMatch->map;
 
 
         Log::debug('[QuickMatchService::setTeamSpawns] $spawnOrder ' . json_encode($spawnOrder));
 
-        $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn ($s) => $s >= 0));
+        $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn($s) => $s >= 0));
 
         foreach ($teamPlayers->values() as $i => $player)
         {
@@ -1180,7 +1213,7 @@ class QuickMatchService
      */
     private function rankedMapPicker(Collection $maps, int $rank, int $points, bool $matchAnyMap)
     {
-        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0)->values();
+        $maps = $maps->filter(fn($map) => $map->map_tier && $map->map_tier > 0)->values();
 
         Log::debug("Selecting map for rank $rank, points $points, anyMap=" . $matchAnyMap . ", " . $maps->count() . " maps");
 
@@ -1275,7 +1308,7 @@ class QuickMatchService
      */
     private function eloMapPicker(Collection $maps, int $elo, bool $matchAnyMap)
     {
-        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0)->values();
+        $maps = $maps->filter(fn($map) => $map->map_tier && $map->map_tier > 0)->values();
 
         Log::debug("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval($maps->count()) . " maps");
 
@@ -1452,7 +1485,7 @@ class QuickMatchService
         $possibleMatches = collect($possibleMatches);
 
         // TODO : move this hard-coded value to the qmLadderRules
-        $similarEloMatches = $possibleMatches->filter(fn ($match) => $match['teams_elo_diff'] < 400);
+        $similarEloMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 400);
 
         if ($similarEloMatches->count() > 0)
         {
@@ -1511,8 +1544,9 @@ class QuickMatchService
         $g = function ($players, $match, $team)
         {
             return $players
-                ->filter(fn (QmQueueEntry $qmQueueEntry) => in_array($qmQueueEntry->id, [
-                    $match[$team]['player1'], $match[$team]['player2']
+                ->filter(fn(QmQueueEntry $qmQueueEntry) => in_array($qmQueueEntry->id, [
+                    $match[$team]['player1'],
+                    $match[$team]['player2']
                 ]));
         };
 
