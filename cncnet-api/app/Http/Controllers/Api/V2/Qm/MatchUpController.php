@@ -64,6 +64,12 @@ class MatchUpController
             QmUserId::createNew($user->id, $request->hwid);
         }
 
+        if ($request->exe_hash)
+        {
+            $exeHash = $request->exe_hash;
+            Log::info("Exe hash of $user->email : $exeHash");
+        }
+
         # Check player has an active nick to play with, set one if not
         $this->playerService->setActiveUsername($player, $ladder);
 
