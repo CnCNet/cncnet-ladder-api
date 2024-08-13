@@ -64,10 +64,17 @@ class MatchUpController
             QmUserId::createNew($user->id, $request->hwid);
         }
 
-        if ($request->exe_hash)
+        // @TODO: Add into admin settings for latest hash to check for
+        $exeHash = $request->exe_hash;
+        $exeHashToCheck = "1d91ff31eb11384bbd3a8d0292dd4fef61837d26";
+        Log::info("Exe hash of $user->name : $exeHash");
+
+        if ($ladder->game == "yr" && $exeHash != $exeHashToCheck)
         {
-            $exeHash = $request->exe_hash;
-            Log::info("Exe hash of $user->email : $exeHash");
+            Log::info("Exe hash mismatch detected, notification sent to $user->name : $exeHash : Should be: $exeHashToCheck");
+            return $this->quickMatchService->onFatalError(
+                'Please update to the latest version of CnCNet.'
+            );
         }
 
         # Check player has an active nick to play with, set one if not
