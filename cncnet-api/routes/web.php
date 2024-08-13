@@ -86,6 +86,8 @@ Route::group(['prefix' => 'admin'], function ()
         {
 
             Route::get('users/', [\App\Http\Controllers\AdminController::class, 'getManageUsersIndex']);
+            Route::get('users/pros', [\App\Http\Controllers\AdminController::class, 'getUserProList'])->name('getProList');
+            Route::post('users/pros', [\App\Http\Controllers\AdminController::class, 'saveProList'])->name('saveProList');
             Route::get('users/chatbans', [\App\Http\Controllers\AdminController::class, 'getChatBannedUsers']);
             Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser']);
             Route::post('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'updateUser']);

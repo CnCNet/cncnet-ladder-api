@@ -100,12 +100,13 @@ class LadderController extends Controller
         if (!$history->ladder->clans_allowed)
         {
             $players = $this->ladderService->getPlayersFromCacheForLadderHistory(
-                $history,
-                $request->filterBy,
-                $request->orderBy,
-                $tier,
-                $request->search
+                ladderHistory: $history,
+                filterBy: $request->filterBy,
+                orderBy: $request->orderBy,
+                tier: $tier,
+                search: $request->search
             );
+
             $mostUsedFactions = $this->ladderService->getMostUsedFactionForPlayerCachesInLadderHistory($history, $players->getCollection());
             $ranks = $this->ladderService->getPlayerRanksForLadderHistory($history, request()->tier ?? 1);
         }
@@ -260,7 +261,7 @@ class LadderController extends Controller
             {
                 $team = $playerGameReport?->game?->qmMatch?->findQmPlayerByPlayerId($playerGameReport->player_id)?->team;
 
-                if ($team != null) 
+                if ($team != null)
                 {
                     $groupedPlayerGameReports[$team][] = $playerGameReport;
                 }
