@@ -332,10 +332,14 @@ class QuickMatchService
             foreach ($opponents as $opponent)
             {
                 $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
-                if ($oppIsPro === true)
+                $oppProMatchupsOnly = $opponent->qmPlayer->player->user->getProOnlyMatchupsPreference($ladder);
+
+                // My opponent is a pro and has preference to match only pros
+                if ($oppIsPro === true && $oppProMatchupsOnly === true)
                 {
                     continue;
                 }
+
                 $oppName = $opponent->qmPlayer->player->username;
                 Log::info("QuickMatchService ** getEntriesFromProFilterPreferences: Adding non pro: $oppName to matchu up only");
                 $matchableOpponents->add($opponent);
