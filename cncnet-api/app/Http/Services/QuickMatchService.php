@@ -325,20 +325,31 @@ class QuickMatchService
 
     public function getEntriesFromProFilterPreferences(Ladder $ladder, QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
     {
-        // If I'm not a pro: Return everyone.
+        // I'm not a pro: Return non pros only.
+        $matchableOpponents = collect();
         if (!$currentQmQueueEntry->qmPlayer->player->user->isProPlayer($ladder))
         {
-            return $opponents;
+            foreach ($opponents as $opponent)
+            {
+                $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
+                if ($oppIsPro === true)
+                {
+                    continue;
+                }
+                $oppName = $opponent->qmPlayer->player->username;
+                Log::info("QuickMatchService ** getEntriesFromProFilterPreferences: Adding non pro: $oppName added to Pro Collection of players to match only");
+                $matchableOpponents->add($opponent);
+            }
+            return $matchableOpponents;
         }
 
-        // I'm a pro: do I want pro players only?
+        // I'm a pro: My preference is all players.
         if (!$currentQmQueueEntry->qmPlayer->player->user->getProOnlyMatchupsPreference($ladder))
         {
             return $opponents;
         }
 
-        // Fine have it your way Pro. Heres other pros:
-        $matchableOpponents = collect();
+        // I'm a pro: I only want other pros:
         foreach ($opponents as $opponent)
         {
             $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
