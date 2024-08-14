@@ -337,7 +337,7 @@ class QuickMatchService
                     continue;
                 }
                 $oppName = $opponent->qmPlayer->player->username;
-                Log::info("QuickMatchService ** getEntriesFromProFilterPreferences: Adding non pro: $oppName added to Pro Collection of players to match only");
+                Log::info("QuickMatchService ** getEntriesFromProFilterPreferences: Adding non pro: $oppName to matchu up only");
                 $matchableOpponents->add($opponent);
             }
             return $matchableOpponents;
