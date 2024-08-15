@@ -77,6 +77,7 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/qm/ladder/{ladderAbbrev}/stats/{tierId}', [\App\Http\Controllers\ApiQuickMatchController::class, 'statsRequest']);
         Route::get('/qm/ladder/{ladderAbbrev}/current_matches', [\App\Http\Controllers\ApiQuickMatchController::class, 'getActiveMatches']);
         Route::get('/qm/ladder/{ladderAbbrev}/erroredGames', [\App\Http\Controllers\ApiQuickMatchController::class, 'getErroredGames']);
+        Route::get('/qm/ladder/{ladderAbbrev}/pros', [\App\Http\Controllers\ApiQuickMatchController::class, 'getPros']);
         Route::get('/qm/ladder/{ladderAbbrev}/{hours}/recentlyWashedGames', [\App\Http\Controllers\ApiQuickMatchController::class, 'getRecentLadderWashedGamesCount']);
     });
 

@@ -332,6 +332,26 @@ class ApiQuickMatchController extends Controller
         return \App\Models\QmMap::findMapsByLadder($this->ladderService->getLadderByGame($ladderAbbrev)->id);
     }
 
+    public function getPros(Request $request, $ladderAbbrev = null)
+    {
+        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbrev)->first();
+
+        if ($ladder == null)
+        {
+            abort(404);
+        }
+
+        $history = $ladder->current_history;
+        return \App\Models\UserPro::join('users', 'users.id', '=','user_pros.user_id')
+            ->join('players', 'players.user_id', '=', 'users.id')
+            ->where('user_pros.ladder_id', $ladder->id)
+            ->where('players.created_at', '>', $history->starts)
+            ->pluck('players.username')
+            ->sort()
+            ->values()
+            ->toArray();
+    }
+
     public function sidesListRequest(Request $request, $ladderAbbrev = null)
     {
         $ladder = $this->ladderService->getLadderByGame($ladderAbbrev);
