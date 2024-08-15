@@ -67,7 +67,6 @@ class ApiQuickMatchController extends Controller
                     'recent_matched_players',
                     'recent_matches',
                     'active_matches',
-                    'queued_players_pros',
                     'past_24_hours_matches',
                 ])
                 ->get();
