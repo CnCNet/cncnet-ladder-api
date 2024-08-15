@@ -59,7 +59,11 @@
 
                 <h2>Podium</h2>
 
-                <p>This form will get you the top 3 players with the most wins for the choosen ladder in the selected period.</p>
+                <p>This form will get you the top 3 players with the most wins for the choosen ladder in the selected period. You can select a period of maximum 1 month.</p>
+
+                @if($errors->has('period'))
+                    <div style="color: red;">{{ $errors->first('period') }}</div>
+                @endif
 
                 <form action="/admin/podium/compute" method="get">
 

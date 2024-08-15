@@ -41,6 +41,12 @@ class PodiumController extends Controller
         $from = Carbon::createFromFormat('Y-m-d H:i', $inputs['date_from'] . ' ' . $inputs['time_from']);
         $to = Carbon::createFromFormat('Y-m-d H:i', $inputs['date_to'] . ' ' . $inputs['time_to']);
 
+        if ($from->diffInDays($to, true) > 31) {
+            return redirect()->back()->withErrors([
+                'period' => 'Please select a period of 1 month or less.'
+            ]);
+        }
+
         $players = DB::table('player_game_reports')
             ->select('players.username', 'player_game_reports.player_id', DB::raw('count(*) AS win_count'))
             ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')

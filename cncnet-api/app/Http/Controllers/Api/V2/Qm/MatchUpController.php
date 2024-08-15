@@ -68,7 +68,7 @@ class MatchUpController
         $exeHash = $request->exe_hash;
         if ($exeHash != null && strlen($exeHash) > 1)
         {
-            $exeHashToCheck = "1d91ff31eb11384bbd3a8d0292dd4fef61837d26";
+            $exeHashToCheck = "4c106cc0fafae2ba58b2891e50f807a145f63792";
             Log::info("Exe hash of $user->name : $exeHash");
 
             if ($ladder->game == "yr" && $exeHash != $exeHashToCheck)
