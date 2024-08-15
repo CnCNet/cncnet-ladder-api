@@ -46,4 +46,13 @@ class LadderHistory extends Model
                 $q->whereNull('qm_match_id');
             });
     }
+
+    public function queued_players_pros() {
+        return QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+        ->join('players', 'players.id', '=', 'qm_match_players.player_id')
+        ->join('users', 'users.id', '=', 'players.user_id')
+        ->join('user_pros', 'user_pros.user_id', '=', 'users.id')
+        ->where('ladder_history_id', $this->id)
+        ->whereNull('qm_match_id');
+    }
 }
