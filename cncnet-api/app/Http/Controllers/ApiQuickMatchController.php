@@ -90,7 +90,7 @@ class ApiQuickMatchController extends Controller
                     'recentMatches' => $ladder->recent_matches_count,
                     'activeMatches' => $ladder->active_matches_count,
                     'queuedPlayers' => $queuedPlayersOrClans,
-                    'queuedPros' => $ladder->current_history->queued_players_pros,
+                    'queuedPros' => $ladder->current_history->queued_players_pros->count(),
                     'clans' => $clans,
                     'time' => now(),
                 ];
