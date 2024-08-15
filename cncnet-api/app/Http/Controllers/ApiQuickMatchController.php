@@ -349,6 +349,9 @@ class ApiQuickMatchController extends Controller
             ->where('player_active_handles.created_at', '>', $history->starts)
             ->where('players.ladder_id', $ladder->id)
             ->pluck('players.username')
+            ->map(function ($username) {
+                return strtolower($username);
+            })
             ->sort()
             ->values()
             ->toArray();
