@@ -344,8 +344,10 @@ class ApiQuickMatchController extends Controller
         $history = $ladder->current_history;
         return \App\Models\UserPro::join('users', 'users.id', '=','user_pros.user_id')
             ->join('players', 'players.user_id', '=', 'users.id')
+            ->join('player_active_handles', 'players.id', '=', 'player_active_handles.player_id')
             ->where('user_pros.ladder_id', $ladder->id)
-            ->where('players.created_at', '>', $history->starts)
+            ->where('player_active_handles.created_at', '>', $history->starts)
+            ->where('players.ladder_id', $ladder->id)
             ->pluck('players.username')
             ->sort()
             ->values()
