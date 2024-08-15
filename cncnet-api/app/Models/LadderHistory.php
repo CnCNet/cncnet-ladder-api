@@ -53,7 +53,6 @@ class LadderHistory extends Model
         ->join('users', 'users.id', '=', 'players.user_id')
         ->join('user_pros', 'user_pros.user_id', '=', 'users.id')
         ->where('ladder_history_id', $this->id)
-        ->whereNull('qm_match_id')
-        ->count();
+        ->whereNull('qm_match_id');
     }
 }
