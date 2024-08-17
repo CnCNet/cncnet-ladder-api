@@ -378,12 +378,13 @@ class QuickMatchService
     }
 
     /**
-     * As a 'pro' with 'match_pro_only = false', I can match two groups of players
+     * As a 'pro' with 'match_pro_only = false', I can match two groups of players:
      * 1. Pros with 'pro-only=true'
      * 2. Pros with 'pro-only=false' and non-pro
      */
     private function iAmProMatchAny(Ladder $ladder, Collection $opponents): Collection
     {
+        // two collections to hold the two possible groups I can match
         $proOnlyOpponents = collect();
         $anyOpponents = collect();
 
