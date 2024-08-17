@@ -323,53 +323,121 @@ class QuickMatchService
         return $matchableOpponents;
     }
 
+    /**
+     * 'Pros' with (match_pros_only = false) can match anyone, but ensure that the other players matched want to match each other.
+     * 'Pros' with (match_pros_only = true) will match only pros. 'match_pros_only' value is not relevant when pros match pros.
+     * 'Non-pros' will only match other 'non-pros' or 'pros' with (match_pros_only = false)
+     */
     public function getEntriesFromProFilterPreferences(Ladder $ladder, QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
     {
-        // I'm not a pro: Return non pros only.
+        $isCurrentPro = $currentQmQueueEntry->qmPlayer->player->user->isProPlayer($ladder);
+        $currentProOnlyMatchups = $currentQmQueueEntry->qmPlayer->player->user->getProOnlyMatchupsPreference($ladder);
+
         $matchableOpponents = collect();
-        if (!$currentQmQueueEntry->qmPlayer->player->user->isProPlayer($ladder))
+
+        // 3 possible scenarios, helper function for each
+
+        // 1. I am a pro and only want to match pros
+        if ($isCurrentPro && $currentProOnlyMatchups)
         {
-            foreach ($opponents as $opponent)
-            {
-                $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
-                $oppProMatchupsOnly = $opponent->qmPlayer->player->user->getProOnlyMatchupsPreference($ladder);
-
-                // My opponent is a pro and has preference to match only pros
-                if ($oppIsPro === true && $oppProMatchupsOnly === true)
-                {
-                    continue;
-                }
-
-                $oppName = $opponent->qmPlayer->player->username;
-                Log::info("QuickMatchService ** getEntriesFromProFilterPreferences: Adding non pro: $oppName to matchu up only");
-                $matchableOpponents->add($opponent);
-            }
-            return $matchableOpponents;
+            $matchableOpponents = $this->iAmPrMatchOnlyPros($ladder, $opponents);
         }
 
-        // I'm a pro: My preference is all players.
-        if (!$currentQmQueueEntry->qmPlayer->player->user->getProOnlyMatchupsPreference($ladder))
+        // 2. I am a pro and want to match pros or non-pros, I can match non-pros if no other pros have 'match-only' pros
+        else if ($isCurrentPro && !$currentProOnlyMatchups)
         {
-            return $opponents;
+            $matchableOpponents = $this->iAmProMatchAny($ladder, $opponents);
         }
 
-        // I'm a pro: I only want other pros:
-        foreach ($opponents as $opponent)
+        // 3. I am a non-pro and can match non-pros or pros with match-any
+        else
         {
-            $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
-            if ($oppIsPro === false)
-            {
-                continue;
-            }
-
-            $oppName = $opponent->qmPlayer->player->username;
-
-            Log::info("QuickMatchService ** getEntriesFromProFilterPreferences: $oppName added to Pro Collection of players to match only");
-            $matchableOpponents->add($opponent);
+            $matchableOpponents = $this->iAmNonPro($ladder, $opponents);
         }
 
         return $matchableOpponents;
     }
+
+    /**
+     * Return only 'pro' opponents
+     */
+    private function iAmPrMatchOnlyPros(Ladder $ladder, Collection $opponents): Collection
+    {
+        $prosOnlyOpponents = collect();
+
+        foreach ($opponents as $opponent)
+        {
+            $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
+            if ($oppIsPro)
+            {
+                $prosOnlyOpponents->add($opponent);
+            }
+        }
+
+        return $prosOnlyOpponents;
+    }
+
+    /**
+     * As a 'pro' with 'match_pro_only = false', I can match two groups of players
+     * 1. Pros with 'pro-only=true'
+     * 2. Pros with 'pro-only=false' and non-pro
+     */
+    private function iAmProMatchAny(Ladder $ladder, Collection $opponents): Collection
+    {
+        $proOnlyOpponents = collect();
+        $anyOpponents = collect();
+
+        foreach ($opponents as $opponent)
+        {
+            $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
+            $oppProOnlyMatchups = $opponent->qmPlayer->player->user->getProOnlyMatchupsPreference($ladder);
+    
+            // this opponent only wants to match 'pros'
+            if ($oppIsPro && $oppProOnlyMatchups)
+            {
+                $proOnlyOpponents->add($opponent);
+            }
+
+            // this opponent is 'non-pro' or is a 'pro' match-any
+            else 
+            {
+                $anyOpponents->add($opponent);
+            }
+        }
+
+        // return larger matchable opponents 
+        return count($proOnlyOpponents) > count($anyOpponents) ? $proOnlyOpponents : $anyOpponents;
+    }
+
+    /**
+     * As a 'non-pro' I can only match 'non-pros' or 'pros' with 'match-only-pros=false'
+     */
+    private function iAmNonPro(Ladder $ladder, Collection $opponents): Collection
+    {
+        $validOpponents = collect();
+
+        // Nested loop to ensure that all opponents match with each other
+        foreach ($opponents as $opponent)
+        {
+            $oppIsPro = $opponent->qmPlayer->player->user->isProPlayer($ladder);
+            $oppProOnlyMatchups = $opponent->qmPlayer->player->user->getProOnlyMatchupsPreference($ladder);
+    
+            // 'non-pro'
+            if (!$oppIsPro)
+            {
+                $validOpponents->add($opponent);
+            }
+    
+            // 'pro' with 'match-only-pro=false'
+            else if ($oppIsPro && !$oppProOnlyMatchups)
+            {
+                $validOpponents->add($opponent);
+            }
+        }
+
+        return $validOpponents;
+    }
+
 
     public function getEntriesInSameTier(Ladder $ladder, QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
     {
