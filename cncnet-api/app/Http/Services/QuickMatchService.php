@@ -340,7 +340,7 @@ class QuickMatchService
         // 1. I am a pro and only want to match pros
         if ($isCurrentPro && $currentProOnlyMatchups)
         {
-            $matchableOpponents = $this->iAmPrMatchOnlyPros($ladder, $opponents);
+            $matchableOpponents = $this->iAmProMatchOnlyPros($ladder, $opponents);
         }
 
         // 2. I am a pro and want to match pros or non-pros, I can match non-pros if no other pros have 'match-only' pros
@@ -361,7 +361,7 @@ class QuickMatchService
     /**
      * Return only 'pro' opponents
      */
-    private function iAmPrMatchOnlyPros(Ladder $ladder, Collection $opponents): Collection
+    private function iAmProMatchOnlyPros(Ladder $ladder, Collection $opponents): Collection
     {
         $prosOnlyOpponents = collect();
 
