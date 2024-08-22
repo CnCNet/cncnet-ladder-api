@@ -91,8 +91,8 @@ class StatsService
             return [
                 "recentMatchedPlayers" => $recentMatchedPlayers,
                 "queuedPlayers" => $queuedPlayersOrClans,
-                'queuedProsOnly' => $history->queued_players_pros->where('pro_only_matchups', true)->count(),
-                'queuedProsAny' => $history->queued_players_pros->where('pro_only_matchups', false)->count(),
+                'queuedProsOnly' => $history->queued_players_pros()->where('pro_only_matchups', true)->count(),
+                'queuedProsAny' => $history->queued_players_pros()->where('pro_only_matchups', false)->count(),
                 "past24hMatches" => $past24hMatches,
                 "recentMatches" => $recentMatches,
                 "matchesByMonth" => $matchesByMonth,

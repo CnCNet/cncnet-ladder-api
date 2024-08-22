@@ -59,6 +59,7 @@ class LadderHistory extends Model
             ->where('ladder_history_id', $this->id)
             ->whereNull('qm_match_id')
             ->distinct('qm_match_players.id')
-            ->select("username", "user_settings.pro_only_matchups as pro_only_matchups");
+            ->select("username", "user_settings.pro_only_matchups as pro_only_matchups")
+            ->get();
     }
 }
