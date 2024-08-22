@@ -109,13 +109,6 @@ class QuickMatchSpawnService
             }
         }
 
-        // $spawnStruct["ini_strategy"] = "merge";
-
-        if ($ladder->id == 10)
-        {
-            Log::info($spawnStruct);
-        }
-
         return $spawnStruct;
     }
 
