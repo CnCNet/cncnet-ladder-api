@@ -40,21 +40,25 @@ class LadderHistory extends Model
         return $this->ends < Carbon::now();
     }
 
-    public function queued_players() {
+    public function queued_players()
+    {
         return $this->hasMany(QmQueueEntry::class)
-            ->whereHas('qmPlayer', function($q) {
+            ->whereHas('qmPlayer', function ($q)
+            {
                 $q->whereNull('qm_match_id');
             });
     }
 
-    public function queued_players_pros() {
-        return QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
-        ->join('players', 'players.id', '=', 'qm_match_players.player_id')
-        ->join('users', 'users.id', '=', 'players.user_id')
-        ->join('user_pros', 'user_pros.user_id', '=', 'users.id')
-        ->where('ladder_history_id', $this->id)
-        ->whereNull('qm_match_id')
-        ->distinct('players.id')
-        ->count();
+    public function queued_players_pros()
+    {
+        return \App\Models\QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+            ->join('players', 'players.id', '=', 'qm_match_players.player_id')
+            ->join('users', 'users.id', '=', 'players.user_id')
+            ->join('user_pros', 'user_pros.user_id', '=', 'users.id')
+            ->join("user_settings", "user_settings.user_id", "=", "users.id")
+            ->where('ladder_history_id', $this->id)
+            ->whereNull('qm_match_id')
+            ->distinct('qm_match_players.id')
+            ->select("username", "user_settings.pro_only_matchups as pro_only_matchups");
     }
 }
