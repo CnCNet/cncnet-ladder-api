@@ -32,7 +32,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
 
         // Ensure pros are only matching pros, unless they're allowing to be in non-pro matches
-        $matchableOpponents = $this->quickMatchService->getEntriesFromProFilterPreferences($ladder, $this->qmQueueEntry, $opponents);
+        // $matchableOpponents = $this->quickMatchService->getEntriesFromProFilterPreferences($ladder, $this->qmQueueEntry, $opponents);
 
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInPointRange($this->qmQueueEntry, $matchableOpponents);
