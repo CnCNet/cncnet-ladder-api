@@ -76,9 +76,9 @@ class LadderService
         return $ladders;
     }
 
-    public function getLatestLadders()
+    public function getLatestLadders($ladderType = null)
     {
-        return Cache::remember("ladderService::getLatestLadders", 1 * 60, function ()
+        return Cache::remember("ladderService::getLatestLadders" . (isset($ladderType) ? $ladderType : ''), 1 * 60, function () use ($ladderType)
         {
             $date = Carbon::now();
 
@@ -89,6 +89,7 @@ class LadderService
                 ->where("ladder_history.starts", "=", $start)
                 ->where("ladder_history.ends", "=", $end)
                 ->whereNotNull("ladder.id")
+                ->when(isset($ladderType), function ($query) use ($ladderType) { $query->where("ladder_type", "=", $ladderType); })
                 ->where('ladder.clans_allowed', '=', false)
                 ->where('ladder.private', '=', false)
                 ->orderBy('ladder.order', 'ASC')

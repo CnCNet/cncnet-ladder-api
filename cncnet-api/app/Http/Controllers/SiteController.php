@@ -20,7 +20,8 @@ class SiteController extends Controller
 
         return view("index", [
             "news" => $news,
-            "ladders" => $ladderService->getLatestLadders(),
+            "ladders" => $ladderService->getLatestLadders(Ladder::ONE_VS_ONE),
+            "ladders_2v2" => $ladderService->getLatestLadders(Ladder::TWO_VS_TWO),
             "clan_ladders" => $ladderService->getLatestClanLadders(),
         ]);
     }

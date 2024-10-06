@@ -73,7 +73,7 @@
                             military_tech
                         </span>
                     </div>
-                    <strong>Ranked</strong> Ladders
+                    <strong>Ranked</strong> Ladders | 1v1
                 </h2>
 
                 <div class="d-flex flex-wrap mt-4 player-ladders">
@@ -81,6 +81,28 @@
                         @include('components.ladder-box', [
                             'history' => $history,
                             'url' => \App\Models\URLHelper::getLadderUrl($history),
+                        ])
+                    @endforeach
+                </div>
+            </div>
+        </section>
+
+        <section class="pt-3 pb-3">
+            <div class="container-xl">
+                <h2>
+                    <div class="icon-box me-2">
+                        <span class="material-symbols-outlined icon color-gold" style="font-size: 2rem">
+                            military_tech
+                        </span>
+                    </div>
+                    <strong>Ranked</strong> Ladders | 2v2
+                </h2>
+
+                <div class="d-flex flex-wrap mt-4 player-ladders">
+                    @foreach ($ladders_2v2 as $history2)
+                        @include('components.ladder-box', [
+                            'history' => $history2,
+                            'url' => \App\Models\URLHelper::getLadderUrl($history2),
                         ])
                     @endforeach
                 </div>
