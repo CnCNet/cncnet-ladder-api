@@ -125,7 +125,7 @@
         }
 
         // Call the function
-        checkIfEventIsLive();
+        // checkIfEventIsLive();
     </script>
 </body>
 
