@@ -373,22 +373,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $userTier->both_tiers;
     }
 
-    /**
-     * Check a player is pro
-     * @param Ladder $ladder 
-     * @return bool 
-     */
-    public function isProPlayer(Ladder $ladder = null): bool
-    {
-        if ($ladder == null)
-        {
-            $userIsPro = UserPro::where("user_id", $this->id)->first();
-            return $userIsPro != null;
-        }
-        $userIsPro = UserPro::where("ladder_id", $ladder->id)->where("user_id", $this->id)->first();
-        return $userIsPro !== null;
-    }
-
 
     /**
      * Returns true when the user only wants pro only matchups
