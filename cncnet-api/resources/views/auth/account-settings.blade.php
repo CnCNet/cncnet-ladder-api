@@ -92,17 +92,6 @@
                     <form method="POST" action="/account/settings" enctype="multipart/form-data">
                         {{ csrf_field() }}
 
-                        @if ($user->isProPlayer())
-                            <div class="form-group mb-5">
-                                <h3>Pro 2vs2 Matchups Only?</h3>
-                                <p>
-                                    Only match pros in the ladder. Disabling this will allow you to team up with a non pro player.
-                                </p>
-                                <input id="pro_only_matchups" type="checkbox" name="pro_only_matchups" @if ($userSettings->pro_only_matchups) checked @endif />
-                                <label for="pro_only_matchups">Pro 2vs2 Matchups Only</label>
-                            </div>
-                        @endif
-
                         <div class="form-group mb-5">
                             <h3>Ladder Anonymity</h3>
                             <p>

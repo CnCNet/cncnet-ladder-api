@@ -44,13 +44,4 @@ class UserSettings extends Model
     {
         return $this->enableAnonymous == true;
     }
-
-    /**
-     * If true, the user wants only pro matchups
-     * @return mixed 
-     */
-    public function getProOnlyMatchups()
-    {
-        return $this->pro_only_matchups;
-    }
 }

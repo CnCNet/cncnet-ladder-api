@@ -90,7 +90,6 @@ class ApiQuickMatchController extends Controller
                     'recentMatches' => $ladder->recent_matches_count,
                     'activeMatches' => $ladder->active_matches_count,
                     'queuedPlayers' => $queuedPlayersOrClans,
-                    'queuedPros' => $ladder->current_history->queued_players_pros(),
                     'clans' => $clans,
                     'time' => now(),
                 ];
@@ -115,7 +114,6 @@ class ApiQuickMatchController extends Controller
             'queuedPlayers' => $qmStats['queuedPlayers'],
             'past24hMatches' => $qmStats['past24hMatches'],
             'recentMatches' => $qmStats['recentMatches'],
-            'queuedPros' => $qmStats['queuedPros'],
             'activeMatches'   => $qmStats['activeMatches'],
             'clans' => $qmStats['clans'],
             'time' => $qmStats['time']
@@ -330,31 +328,6 @@ class ApiQuickMatchController extends Controller
     public function mapListRequest(Request $request, $ladderAbbrev = null)
     {
         return \App\Models\QmMap::findMapsByLadder($this->ladderService->getLadderByGame($ladderAbbrev)->id);
-    }
-
-    public function getPros(Request $request, $ladderAbbrev = null)
-    {
-        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbrev)->first();
-
-        if ($ladder == null)
-        {
-            abort(404);
-        }
-
-        $history = $ladder->current_history;
-        return \App\Models\UserPro::join('users', 'users.id', '=','user_pros.user_id')
-            ->join('players', 'players.user_id', '=', 'users.id')
-            ->join('player_active_handles', 'players.id', '=', 'player_active_handles.player_id')
-            ->where('user_pros.ladder_id', $ladder->id)
-            ->where('player_active_handles.created_at', '>', $history->starts)
-            ->where('players.ladder_id', $ladder->id)
-            ->pluck('players.username')
-            ->map(function ($username) {
-                return strtolower($username);
-            })
-            ->sort()
-            ->values()
-            ->toArray();
     }
 
     public function sidesListRequest(Request $request, $ladderAbbrev = null)
