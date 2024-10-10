@@ -17,7 +17,7 @@ class Navigation extends ServiceProvider
     public function boot()
     {
         //
-        view()->composer('components.navigation.navbar', function ($view)
+        view()->composer(['components.navigation.navbar', 'components.navigation.fullscreen-menu'], function ($view)
         {
             $playerService = new PlayerService();
             $ladderService = new LadderService();

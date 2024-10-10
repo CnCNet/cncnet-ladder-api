@@ -10,6 +10,24 @@
         <div class="fs-menu-container container">
             <div class="fs-menu-category">
                 <div class="fs-menu-category-links">
+                    <ul class="list-unstyled">
+                        <li>
+                            <div class="dropdown-label-item">
+                                <div class="d-flex align-items-center font-bold">
+                                    <div>
+                                        Ranked Ladders
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        @if (isset($ladders))
+                            @include('components.navigation.ladders', ['class' => 'fs-menu-link'])
+                        @endif
+                    </ul>
+                </div>
+            </div>
+            <div class="fs-menu-category">
+                <div class="fs-menu-category-links">
                     <a class="fs-menu-link" href="https://cncnet.org/discord">
                         <span class="game-icon game-icon-sm d-flex align-items-center">
                             <i class="bi bi-discord"></i>
