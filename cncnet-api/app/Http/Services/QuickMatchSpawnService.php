@@ -41,7 +41,7 @@ class QuickMatchSpawnService
                 "UIGameMode" =>     $qmMap->game_mode,
                 "UIMapName" =>      $qmMap->description,
                 "MapHash" =>        $map->hash,
-                "Scenario" =>       $map->filename !== null ? $map->filename : "spawnmap.ini",
+                "Scenario" =>       $map->filename ? $map->filename : "spawnmap.ini",
                 "Seed" =>           $qmMatch->seed,
                 "GameID" =>         $qmMatch->seed,
                 "WOLGameID" =>      $qmMatch->seed,
