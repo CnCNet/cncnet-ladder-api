@@ -41,11 +41,11 @@ class QuickMatchSpawnService
                 "UIGameMode" =>     $qmMap->game_mode,
                 "UIMapName" =>      $qmMap->description,
                 "MapHash" =>        $map->hash,
-                "Scenario" =>       $map->filename ? $map->filename : "spawnmap.ini",
+                "Scenario" =>       ($map->filename && $ladder->game == 'd2k') ? $map->filename : "spawnmap.ini",
                 "Seed" =>           $qmMatch->seed,
                 "GameID" =>         $qmMatch->seed,
                 "WOLGameID" =>      $qmMatch->seed,
-                "Host" => ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
+                "Host" =>           ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
                 "Name" =>           $qmPlayer->player()->first()->username,
                 "Port" =>           $qmPlayer->port,
                 "Side" =>           $qmPlayer->actual_side,
