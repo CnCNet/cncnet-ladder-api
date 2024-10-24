@@ -50,77 +50,76 @@
             padding: 8px;
         }
 
-        /* Bold text for combined elo. */
         #ratings tr th {
             text-align: left;
             font-size: 18px;
-            color: #ffffff;
+            color: #b5c9e0;
+            height: 40px;
+            vertical-align: middle;
+            /* top right bottom left */
+            padding: 8px 8px 8px 8px;
             font-family: Helvetica, Arial, sans-serif;
+            line-height: 40px;
         }
 
-        /* Align rank symbol right. */
-        #ratings tr th:nth-child(1) {
-            text-align: right;
-        }
-
-        /* Smaller font for faction specific elo. */
-        #ratings tr th:nth-child(n+7) {
-            text-align: left;
-            font-size: 14px;
-            color: #ffffff;
-            font-family: Helvetica, Arial, sans-serif;
-            font-weight: normal;
-        }
-
-        /* General text. */
         #ratings tr td {
-            text-align: right;
+            text-align: left;
+            font-size: 18px;
+            color: #eeeeff;
+            vertical-align: middle;
+            /* top right bottom left */
+            padding: 12px 8px 8px 8px;
+            font-family: Helvetica, Arial, sans-serif;
+        }
+
+        #ratings tr td.mini {
+            text-align: left;
             font-size: 12px;
-            color: #eeeeee;
-            font-family: Verdana, Arial, sans-serif;
+            color: #ccccee;
+            vertical-align: middle;
+            /* top right bottom left */
+            padding: 10px 8px 8px 8px;
+            font-family: Helvetica, Arial, sans-serif;
         }
 
-        /* Name and status are aligned left. */
-        #ratings tr td:nth-child(2),
-        td:nth-child(3) {
-            text-align: left;
-        }
-
-        /* Make ranks, names and elo bold and bigger sized. */
-        #ratings tr td:nth-child(1),
-        #ratings td:nth-child(2),
-        #ratings td:nth-child(4) {
-            font-weight: normal;
-            font-size: 20px;
-        }
-
-        /* Make combined deviation and games bold. */
-        #ratings tr td:nth-child(5),
-        #ratings td:nth-child(6) {
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        /* Make factions specific values a little darker. */
-        #ratings tr td:nth-child(n+7) {
-            color: #dddddd
-        }
-
-        /* Status new in red. */
-        #ratings tr:nth-child(n+2) td:nth-child(3) {
-            color: #ff8040;
-            font-size: 11px;
+        #ratings tr td.inactive {
+            color: #ff6060;
+            font-size: 12px;
             font-weight: bold;
             text-align: left;
+            vertical-align: middle;
+        }
+
+        #ratings tr td.active {
+            color: #40E040;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        #ratings tr td.loser {
+            color: #ff6060;
+            text-align: left;
+            vertical-align: middle;
+            padding-right: 64px;
+        }
+
+        #ratings tr td.winner {
+            color: #40E040;
+            font-weight: bold;
+            text-align: left;
+            vertical-align: middle;
+            padding-right: 64px;
         }
 
         /* Alternating background color for rows. */
         #ratings tr:nth-child(even) {
-            background-color: #505050;
+            background-color: #1f2331;
         }
 
         #ratings tr:nth-child(odd) {
-            background-color: #202530;
+            background-color: #13161f;
         }
 
         /* Background colors for the two header rows. */
@@ -128,22 +127,11 @@
             background-color: #000000;
         }
 
-        #ratings tr:nth-child(2) {
-            background-color: #608040;
-        }
-
         #ratings thead tr td:first-child,
         #ratings tbody tr th:first-child {
             width: 32px;
             min-width: 32px;
             max-width: 32px;
-        }
-
-        #ratings thead tr td:nth-child(4),
-        #ratings tbody tr th:nth-child(4) {
-            width: 64px;
-            min-width: 64px;
-            max-width: 64px;
         }
 
         /* No for no faction header. */
@@ -156,7 +144,6 @@
         #ratings tr:hover td:nth-child(n+2) {
             background-color: #408040;
             color: #ffffff;
-            /*font-weight:bold;*/
         }
 
         #links table {
@@ -218,6 +205,64 @@
         .linknormal a:hover {
             color: #ffffff;
         }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 256px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            border-width: 2px;
+            border-style: solid;
+            border-color: #00ff8a;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: transparent transparent black transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .circle {
+            margin-left: 5px;
+            font-size: 18px;
+            color: #80A080;
+        }
+
+        /* Prevent tooltip from being cut at table border. */
+        table {
+            overflow: visible;
+        }
+
+        td {
+            position: relative;
+            overflow: visible;
+        }
     </style>
 @endsection
 
@@ -226,109 +271,105 @@
         <section class="pt-5 pb-5">
             <div class="container">
 
-                <h5>Game mode</h5>
-                <div class="mb-5">
-                    @foreach ($gameModes as $k => $gm)
-                        <a href="?list={{ $index }}&mode={{ $gameModesShort[$k] }}"
-                            class="btn {{ $gameModesShort[$k] == $gameMode ? 'btn-primary' : 'btn-secondary' }}">{{ $gm }}</a>
-                    @endforeach
-                </div>
+                <div class="row" style="min-height: 1px; display: flex;">
+                    <!-- Original Game Mode and Players Section -->
+                    <div class="col-lg-6 d-flex flex-column justify-content-start">
+                        <h5>Game mode</h5>
+                        <div class="mb-5">
+                            @foreach ($gameModes as $k => $gm)
+                                <a href="?list={{ $index }}&mode={{ $gameModesShort[$k] }}"
+                                   class="btn {{ $gameModesShort[$k] == $gameMode ? 'btn-primary' : 'btn-secondary' }}">{{ $gm }}</a>
+                            @endforeach
+                        </div>
 
-                <h5>Players</h5>
-                <div class="mb-5">
-                    @foreach ($links as $k => $link)
-                        <a href="?list={{ $k }}&mode={{ $gameMode }}"
-                            class="btn {{ $k == $index ? 'btn-primary' : 'btn-secondary' }}">{{ $link }}</a>
-                    @endforeach
-                </div>
+                        <h5>Players</h5>
+                        <div class="mb-5">
+                            @foreach ($players as $k => $player)
+                                <a href="?list={{ $k }}&mode={{ $gameMode }}"
+                                   class="btn {{ $k == $index ? 'btn-primary' : 'btn-secondary' }}">{{ $player }}</a>
+                            @endforeach
+                        </div>
 
+                        <h5>More stats</h5>
+                        <div class="mb-5">
+                            @foreach ($stats as $k => $stat)
+                                <a href="?list={{ ($k + sizeof($players) + sizeof($upsets)) }}&mode={{ $gameMode }}"
+                                   class="btn {{ ($k + sizeof($players) + sizeof($upsets)) == $index ? 'btn-primary' : 'btn-secondary' }}">{{ $stat }}</a>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Duplicated Players Section -->
+                    <div class="col-lg-6 d-flex flex-column justify-content-end">
+                        <!-- Just Players section without the game mode -->
+                        <h5>Upsets</h5>
+                        <div class="mb-5">
+                            @foreach ($upsets as $k => $upset)
+                                <a href="?list={{ ($k + sizeof($players)) }}&mode={{ $gameMode }}"
+                                   class="btn {{ ($k + sizeof($players)) == $index ? 'btn-primary' : 'btn-secondary' }}">{{ $upset }}</a>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align:center;font-size:24px;font-weight: bold;padding:10px 10px 10px 10px">{{ $description }}</div>
                 <div class="table-responsive">
-                    <table id="ratings" style="border-collapse: collapse; width: 100%; margin-left: auto; margin-right: auto;" class="table">
+                    <table id="ratings" style="border-collapse: collapse; width: auto; margin-left: auto; margin-right: auto;" class="table">
                         <tbody>
                             <tr>
-                                <td colspan="6" style="border: 0px;"></td>
-                                <td colspan="3" style="text-align:center;font-weight: normal;font-size: 14px;">
-                                    <img src="/images/game-icons/iraq.png" height="24px" style="vertical-align: middle;">
-                                    <span style="vertical-align: middle;">
-                                        Soviet
-                                    </span>
-                                </td>
-                                <td colspan="3" style="text-align:center;font-weight: normal;font-size: 14px;">
-                                    <img src="/images/game-icons/america.png" height="24px" style="vertical-align: middle;">
-                                    <span style="vertical-align: middle;">
-                                        Allied
-                                    </span>
-                                </td>
-                                <td class="optional" colspan="3" style="text-align:center;font-weight: normal;font-size: 14px;">
-                                    <img src="/images/game-icons/yuri.png" height="24px" style="vertical-align: middle;">
-                                    <span style="vertical-align: middle;">
-                                        Yuri
-                                    </span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th style="width:100px">#</th>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Elo</th>
-                                <th>Deviation</th>
-                                <th>Games</th>
-                                <th>Elo</th>
-                                <th>Deviation</th>
-                                <th>Games</th>
-                                <th>Elo</th>
-                                <th>Deviation</th>
-                                <th>Games</th>
-                                <th class="optional">Elo</th>
-                                <th class="optional">Deviation</th>
-                                <th class="optional">Games</th>
+                                @foreach ($columns as $value)
+                                    @if (isset($value['info']))
+                                        <th>{!! $value['header'] !!}
+                                            <span class="tooltip">
+                                                <span class="circle">&#x24D8;</span>
+                                                <span class="tooltiptext">{{ $value['info'] }}</span>
+                                            </span>
+                                        </th>
+                                    @elseif (str_ends_with($value['name'], '_elo') || str_ends_with($value['name'], '_deviation') || str_ends_with($value['name'], '_games'))
+                                        <th style="horiz-align: right;">{{ $value['header'] }}
+                                            <span>
+                                                <img src=" {{ Vite::asset($factionImages[substr($value['name'], 0, 3)]) }}" height="32px" style="horiz-align: right;vertical-align: middle;">
+                                            </span>
+                                        </th>
+                                    @else
+                                        <th>{{ $value['header'] }}</th>
+                                    @endif
+                                @endforeach
                             </tr>
 
                             @foreach ($data as $value)
                                 <tr>
-                                    <td>{{ $value['rank'] }}</td>
-                                    <td>{{ $value['name'] }}</td>
-                                    <td>{{ $value['status'] }}</td>
-
-                                    @if ($value['elo'] < 0)
-                                        <td>{{ $value['mix_elo'] }}</td>
-                                        <td>{{ $value['mix_deviation'] }}</td>
-                                        <td>{{ $value['mix_games'] }}</td>
-                                    @else
-                                        <td>{{ $value['elo'] }}</td>
-                                        <td>{{ $value['deviation'] }} </td>
-                                        <td>{{ $value['game_count'] }}</td>
-                                    @endif
-
-                                    @if (array_key_exists('sov_games', $value))
-                                        <td>{{ $value['sov_elo'] }}</td>
-                                        <td>{{ $value['sov_deviation'] }}</td>
-                                        <td>{{ $value['sov_games'] }}</td>
-                                    @else
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    @endif
-
-                                    @if (array_key_exists('all_games', $value))
-                                        <td>{{ $value['all_elo'] }}</td>
-                                        <td>{{ $value['all_deviation'] }}</td>
-                                        <td>{{ $value['all_games'] }}</td>
-                                    @else
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                    @endif
-
-                                    @if (array_key_exists('yur_games', $value))
-                                        <td>{{ $value['yur_elo'] }}</td>
-                                        <td>{{ $value['yur_deviation'] }}</td>
-                                        <td>{{ $value['yur_games'] }}</td>
-                                    @else
-                                        <td class="optional"></td>
-                                        <td class="optional"></td>
-                                        <td class="optional"></td>
-                                    @endif
+                                    @foreach ($columns as $column)
+                                        @if (!isset($value[$column['name']]))
+                                            <td></td>
+                                        @elseif (str_starts_with($column['name'], 'faction'))
+                                            <td style="width:64px;padding:4px 1px 1px 12px;"><img src=" {{ Vite::asset($factionImages[$value[$column['name']]]) }}" height="32px"></td>
+                                        @elseif ($column['name'] == 'loser')
+                                            <td class="loser">{{ $value[$column['name']] }}</td>
+                                        @elseif ($column['name'] == 'winner')
+                                            <td class="winner">{{ $value[$column['name']] }}</td>
+                                        @elseif ($column['name'] == 'status' && strtolower(str($value[$column['name']])) == 'inactive')
+                                            <td class="inactive">{{ $value[$column['name']] }}</td>
+                                        @elseif ($column['name'] == 'status' && strtolower(str($value[$column['name']])) == 'active')
+                                            <td class="active">{{ $value[$column['name']] }}</td>
+                                        @elseif (isset($value['elo']) && is_numeric($value[$column['name']]) && (str_starts_with($column['name'], 'all_') || str_starts_with($column['name'], 'sov_') || str_starts_with($column['name'], 'yur_')))
+                                            <td class="mini" style="text-align: right;">{{ $value[$column['name']] }}</td>
+                                        @elseif ((is_numeric($value[$column['name']]) || str_ends_with($column['name'], 'rate') || str_ends_with($column['name'], 'duration')) && $column['name'] != 'name')
+                                            <td style="text-align:right;">{{ $value[$column['name']] }}</td>
+                                        @elseif ($column['name'] == 'date')
+                                            <td style="width:80px;">{{ $value[$column['name']] }}</td>
+                                        @elseif ($column['name'] == 'name' && isset($value['on_fire']))
+                                            <td style="width:256px;">{{ $value[$column['name']] }}
+                                                <span class="tooltip">
+                                                <span class="circle"><img style="margin-top:-8px" src=" {{ Vite::asset("resources/images/badges/on-fire.png") }}" height="20px"></span>
+                                                <span class="tooltiptext">This player has reached his peak rating within the last 30 days.</span>
+                                            </span></td>
+                                        @elseif ($column['name'] == 'name')
+                                            <td style="width:256px;">{{ $value[$column['name']] }}</td>
+                                        @else
+                                            <td>{{ $value[$column['name']] }}
+                                            </td>
+                                        @endif
+                                    @endforeach
                                 </tr>
                             @endforeach
                         </tbody>
@@ -337,13 +378,4 @@
             </div>
         </section>
     </div>
-
-
-    @if ($gameMode != 'yr')
-        <style>
-            .optional {
-                display: none;
-            }
-        </style>
-    @endif
 @endsection
