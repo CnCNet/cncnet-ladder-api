@@ -1,6 +1,6 @@
 @foreach ($ladders as $history)
     <li>
-        <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item">
+        <a href="{{ \App\Models\URLHelper::getLadderUrl($history) }}" title="{{ $history->ladder->name }}" class="dropdown-item {{ isset($class) ? $class : '' }}">
             <span class="d-flex align-items-center">
                 <span class="me-3 icon-game icon-{{ $history->ladder->abbreviation }}"></span>
                 {{ $history->ladder->name }}
