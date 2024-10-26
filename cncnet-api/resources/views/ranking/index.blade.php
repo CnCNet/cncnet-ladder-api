@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="/images/games/{{ $gameMode }}/logo.png" alt="logo" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="{{ Vite::asset("resources/images/games/$gameMode/logo.png") }}" alt="logo" class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
