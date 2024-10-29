@@ -299,18 +299,6 @@
                             </label>
                         </div>
 
-                        <div class="form-group mt-5 mb-5">
-                            <h3>Observers</h3>
-                            <label>
-                                <input id="allow_observers" type="checkbox" name="allowObservers" @if ($userSettings->allow_observers) checked @endif />
-                                Allow CnCNet vetted streamers to stream your matches? <br />
-                                (Note: While we maximise testing of this feature, your preference will not work yet and
-                                there may be 1 streamer in
-                                your
-                                match)
-                            </label>
-                        </div>
-
                         <div class="form-group mt-5">
                             <h3>Social profiles</h3>
                             <p>
