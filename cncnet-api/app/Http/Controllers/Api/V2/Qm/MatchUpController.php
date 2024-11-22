@@ -65,20 +65,20 @@ class MatchUpController
         }
 
         // @TODO: Add into admin settings for latest hash to check for
-        $exeHash = $request->exe_hash;
-        if ($exeHash != null && strlen($exeHash) > 1)
-        {
-            $exeHashToCheck = "e3787d6780ef512758fb8da2d825626945b3243d";
-            Log::info("Exe hash of $user->name : $exeHash");
+        // $exeHash = $request->exe_hash;
+        // if ($exeHash != null && strlen($exeHash) > 1)
+        // {
+        //     $exeHashToCheck = "e3787d6780ef512758fb8da2d825626945b3243d";
+        //     Log::info("Exe hash of $user->name : $exeHash");
 
-            if ($ladder->game == "yr" && $exeHash != $exeHashToCheck)
-            {
-                Log::info("Exe hash mismatch detected, notification sent to $user->name : $exeHash : Should be: $exeHashToCheck");
-                return $this->quickMatchService->onFatalError(
-                    'Please update to the latest version of CnCNet. If already updated, launch the Ranked Match client from the main CnCNet client.'
-                );
-            }
-        }
+        //     if ($ladder->game == "yr" && $exeHash != $exeHashToCheck)
+        //     {
+        //         Log::info("Exe hash mismatch detected, notification sent to $user->name : $exeHash : Should be: $exeHashToCheck");
+        //         return $this->quickMatchService->onFatalError(
+        //             'Please update to the latest version of CnCNet. If already updated, launch the Ranked Match client from the main CnCNet client.'
+        //         );
+        //     }
+        // }
 
         # Check player has an active nick to play with, set one if not
         $this->playerService->setActiveUsername($player, $ladder);
