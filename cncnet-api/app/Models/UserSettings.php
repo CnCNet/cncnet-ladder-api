@@ -17,7 +17,6 @@ class UserSettings extends Model
         'match_ai',
         'is_observer',
         'allow_observers',
-        'pro_only_matchups'
     ];
 
 
@@ -27,7 +26,6 @@ class UserSettings extends Model
         $this->enableAnonymous = false;     //by default users will not be anonymous
         $this->disabledPointFilter = false;    //by default point filter will be enabled
         $this->match_ai = true;
-        $this->pro_only_matchups = false;
     }
 
     public function user()

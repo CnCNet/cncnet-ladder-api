@@ -297,6 +297,8 @@ class QuickMatchService
 
         $matchableOpponents = collect();
 
+        Log::debug("queueEntry=$currentQmQueueEntry->id: Opponents in queue $opponents");
+
         foreach ($opponents as $opponent)
         {
             if (!isset($opponent->qmPlayer))
@@ -319,6 +321,8 @@ class QuickMatchService
                 $matchableOpponents->add($opponent);
             }
         }
+
+        Log::debug("queueEntry=$currentQmQueueEntry->id: Opponents in point range $matchableOpponents");
 
         return $matchableOpponents;
     }

@@ -14,6 +14,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
     {
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
+        $playerInQueue = $this->qmPlayer?->player?->username; // Null-safe evaluation
 
         // Check if current player is an observer
         if ($this->qmPlayer->isObserver())
@@ -26,14 +27,17 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         // Fetch all other players in the queue
         $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
-        Log::debug("FindOpponent ** players in q : " . $opponents->count() + 1);
+        $count = $opponents->count() + 1;
+        Log::debug("FindOpponent ** players in q: {$count}, for ladder={$history->ladder->abbreviation}");
 
         // Find opponents in same tier with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
 
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInPointRange($this->qmQueueEntry, $matchableOpponents);
-        Log::debug("FindOpponent ** amount of matchable opponent after point filter : " . $matchableOpponents->count());
+      
+        $opponentCount = $matchableOpponents->count();
+        Log::debug("FindOpponent ** inQueue={$playerInQueue}, amount of matchable opponent after point filter: {$opponentCount}");
 
         // Count the number of players we need to start a match
         // Excluding current player
@@ -42,7 +46,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         // Check if there is enough opponents
         if ($matchableOpponents->count() < $numberOfOpponentsNeeded)
         {
-            Log::debug("FindOpponent ** Team matchup handler ** Not enough players for match yet");
+            Log::debug("FindOpponent ** inQueue={$playerInQueue}, Team matchup handler ** Not enough players for match yet");
             $this->qmPlayer->touch();
             return;
         }

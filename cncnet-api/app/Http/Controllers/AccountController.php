@@ -352,7 +352,6 @@ class AccountController extends Controller
         $userSettings->match_ai = $request->matchAI == "on" ? true : false;
         $userSettings->is_observer = $request->isObserver == "on" ? true : false;
         $userSettings->allow_observers = $request->allowObservers == "on" ? true : false;
-        $userSettings->pro_only_matchups = $request->pro_only_matchups == "on" ? true : false;
         $userSettings->save();
 
         # Remove avatar?
