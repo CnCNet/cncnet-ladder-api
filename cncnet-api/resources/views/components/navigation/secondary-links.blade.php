@@ -163,6 +163,31 @@
                         <span class="fw-bold me-3 game-icon-label">FAQs</span>
                     </a>
                 </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="http://cncnet.org/status" title="Status">
+                        <span class="game-icon game-icon-sm d-flex align-items-center">
+                            <i class="bi bi-graph-up"></i>
+                        </span>
+                        <span class="fw-bold me-3 game-icon-label">Status &amp; Tunnels</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="/community-guidelines-and-rules"
+                        title="Community Guidelines &amp; Rules">
+                        <span class="game-icon game-icon-sm d-flex align-items-center">
+                            <i class="bi bi-journal-check"></i>
+                        </span>
+                        <span class="fw-bold me-3 game-icon-label">Community Guidelines &amp; Rules</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" href="https://discord.gg/grHVS7DZsJ" title="Report Private Concern">
+                        <span class="game-icon game-icon-sm d-flex align-items-center">
+                            <i class="bi bi-life-preserver"></i>
+                        </span>
+                        <span class="fw-bold me-3 game-icon-label">Report Private Concern</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </li>
