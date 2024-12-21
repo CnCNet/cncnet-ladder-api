@@ -294,10 +294,11 @@ class QuickMatchService
         $ladder = $history->ladder;
         $pointsPerSecond = $ladder->qmLadderRules->points_per_second;
         $maxPointsDifference = $ladder->qmLadderRules->max_points_difference;
+        $playerName = $currentQmQueueEntry->qmPlayer?->player?->username;
 
         $matchableOpponents = collect();
 
-        Log::debug("queueEntry=$currentQmQueueEntry->id: Opponents in queue $opponents");
+        Log::debug("queueEntry=$currentQmQueueEntry->id, name=$playerName: Opponents in queue $opponents");
 
         foreach ($opponents as $opponent)
         {
@@ -322,7 +323,7 @@ class QuickMatchService
             }
         }
 
-        Log::debug("queueEntry=$currentQmQueueEntry->id: Opponents in point range $matchableOpponents");
+        Log::debug("queueEntry=$currentQmQueueEntry->id, name=$playerName: Opponents in point range $matchableOpponents");
 
         return $matchableOpponents;
     }
