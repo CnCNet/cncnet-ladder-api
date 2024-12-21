@@ -28,7 +28,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         // Fetch all other players in the queue
         $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
         $count = $opponents->count() + 1;
-        Log::debug("FindOpponent ** players in q: {$count}, for ladder={$history->ladder->abbreviation}");
+        Log::debug("FindOpponent ** players in q: {$count}, for ladder={$ladder->abbreviation}");
 
         // Find opponents in same tier with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
