@@ -135,6 +135,11 @@
                     'history' => $history,
                     'statsXOfTheDay' => $statsXOfTheDay,
                 ])
+
+                <div>
+                    <a id="canceledMatchesLink" href="/admin/canceledMatches/{{ $history->ladder->abbreviation }}"
+                                    class="btn btn-md btn-secondary mt-2">Canceled Matches</a>
+                </div>
             </section>
 
             @include('ladders.listing._past-ladders', [

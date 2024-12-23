@@ -551,6 +551,28 @@ class LadderController extends Controller
         );
     }
 
+    public function getCanceledMatches($ladderAbbreviation = null)
+    {
+        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbreviation)->first();
+
+        if ($ladder == null)
+        {
+            abort(404);
+        }
+
+        $matches = \App\Models\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
+            ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')
+            ->join('games as g', 'qm_canceled_matches.qm_match_id', '=', 'g.qm_match_id')
+            ->orderBy('qm_canceled_matches.created_at', 'DESC')
+            ->select("qm_canceled_matches.*", "p.username", "g.scen as map")
+            ->paginate(20);
+
+        return view("admin.canceled-matches", [
+            "canceled_matches" => $matches,
+            "ladder" => $ladder
+        ]);
+    }
+
     public function getPlayerAchievementsPage(Request $request, $date = null, $cncnetGame = null, $username = null)
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);

@@ -61,6 +61,7 @@
                     <tr>
                         <th>Created At</th>
                         <th>Player Name</th>
+                        <th>Map</th>
                         <th>Quick Match Id</th>
                     </tr>
                 </thead>
@@ -77,6 +78,7 @@
                                 @endif
                                 {{ $canceled_match->username }}
                             </td>
+                            <td>{{ $canceled_match->map }}</td>
                             <td>{{ $canceled_match->qm_match_id }}</td>
                         </tr>
                     @endforeach
