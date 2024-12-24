@@ -109,6 +109,12 @@
                     </div>
                 @endif
 
+                <div>
+                    <a id="canceledMatchesLink" href="/canceledMatches/{{ $history->ladder->abbreviation }}" class="btn btn-secondary"> 
+                        <i class="bi bi-discord pe-2"></i>Canceled Matches
+                    </a>
+                </div>
+
                 <div class="dropdown d-flex">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-symbols-outlined icon me-2">
@@ -135,11 +141,6 @@
                     'history' => $history,
                     'statsXOfTheDay' => $statsXOfTheDay,
                 ])
-
-                <div>
-                    <a id="canceledMatchesLink" href="/canceledMatches/{{ $history->ladder->abbreviation }}"
-                                    class="btn btn-md btn-secondary mt-2">Canceled Matches</a>
-                </div>
             </section>
 
             @include('ladders.listing._past-ladders', [
