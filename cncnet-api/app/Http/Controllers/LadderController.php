@@ -86,7 +86,8 @@ class LadderController extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
 
-        if (!isset($history)) {
+        if (!isset($history))
+        {
             abort(404, "No ladder history found");
         }
 
@@ -562,11 +563,25 @@ class LadderController extends Controller
             abort(404, "Ladder not found");
         }
 
+
         $matches = \App\Models\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
-            ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')
-            ->join('games as g', 'qm_canceled_matches.qm_match_id', '=', 'g.qm_match_id')
+            ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id') // The player who canceled the match
+            ->join('qm_matches', 'qm_canceled_matches.qm_match_id', '=', 'qm_matches.id')
+            ->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
+            ->join('qm_match_players as qmp', 'qm_matches.id', '=', 'qmp.qm_match_id') // Join qm_match_players for all players in the match
+            ->join('players as qmp_players', 'qmp.player_id', '=', 'qmp_players.id') // Get player details
             ->orderBy('qm_canceled_matches.created_at', 'DESC')
-            ->select("qm_canceled_matches.*", "p.username", "g.scen as map")
+            ->selectRaw("
+        qm_canceled_matches.created_at,
+        p.username as canceled_by,
+        qm_maps.description as map,
+        qm_matches.id as qm_match_id,
+        GROUP_CONCAT(qmp_players.username 
+            ORDER BY qmp_players.username ASC 
+            SEPARATOR ',') as affected_players
+    ")
+            ->whereColumn('qmp.player_id', '!=', 'qm_canceled_matches.player_id') // Exclude canceled_by from affected_players
+            ->groupBy('qm_canceled_matches.id', 'p.username', 'qm_maps.description', 'qm_matches.id')
             ->paginate(20);
 
         return view("admin.canceled-matches", [

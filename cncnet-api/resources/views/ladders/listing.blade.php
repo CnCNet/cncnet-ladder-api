@@ -137,7 +137,7 @@
                 ])
 
                 <div>
-                    <a id="canceledMatchesLink" href="/ladder/canceledMatches/{{ $history->ladder->abbreviation }}"
+                    <a id="canceledMatchesLink" href="/canceledMatches/{{ $history->ladder->abbreviation }}"
                                     class="btn btn-md btn-secondary mt-2">Canceled Matches</a>
                 </div>
             </section>

@@ -13,6 +13,7 @@ Route::get('/ranking', [\App\Http\Controllers\RankingController::class, 'getInde
 Route::get('/news', [\App\Http\Controllers\NewsController::class, 'getNews']);
 Route::get('/news/{slug}', [\App\Http\Controllers\NewsController::class, 'getNewsBySlug']);
 // Route::get("/stats", "SiteController@getStats");
+Route::get('/canceledMatches/{ladderAbbreviation}', [\App\Http\Controllers\LadderController::class, 'getCanceledMatches']);
 
 # 1vs1 Player Ladders
 Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function ()
@@ -33,8 +34,6 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function
 
     Route::get('{date}/{game}/games/{gameId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame']);
     Route::get('{date}/{game}/games/{gameId}/{reportId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame']);
-
-    Route::get('/canceledMatches/{ladderAbbreviation}', [\App\Http\Controllers\LadderController::class, 'getCanceledMatches']);
 });
 
 # Clan Ladders

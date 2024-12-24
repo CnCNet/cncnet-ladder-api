@@ -74,7 +74,6 @@
                             <p>Manage everything to do with Users</p>
                             <ul class="list-unstyled">
                                 <li><a href="/admin/users" class="btn btn-md btn-secondary">User List</a></li>
-                                <li><a href="{{ route('getProList') }}" class="btn btn-md btn-secondary mt-2">User Pro List</a></li>
                                 <li><a href="/admin/users/chatbans" class="btn btn-md btn-secondary mt-2">Chat Ban User List</a></li>
                                 <li><a href="/admin/players/ratings" class="btn btn-md btn-secondary mt-2">User Ratings</a></li>
                                 <li><a href="/admin/clans" class="btn btn-md btn-secondary mt-2">Clan List</a></li>
@@ -138,7 +137,7 @@
                                     @endforeach
                                 </select>
 
-                                <a id="canceledMatchesLink" href="/ladder/canceledMatches/{{ $ladders[0]->abbreviation }}"
+                                <a id="canceledMatchesLink" href="/canceledMatches/{{ $ladders[0]->abbreviation }}"
                                     class="btn btn-md btn-secondary mt-2">View</a>
                             </div>
                         </div>
