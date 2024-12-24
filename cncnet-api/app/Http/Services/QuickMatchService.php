@@ -321,6 +321,16 @@ class QuickMatchService
             {
                 $matchableOpponents->add($opponent);
             }
+
+            // did both players diable point filter and are within 1,000 pts
+            else if (
+                $currentQmQueueEntry->qmPlayer->player->user->userSettings->disabledPointFilter
+                && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter
+                && abs($currentQmQueueEntry->points - $opponent->points) < 1000
+            )
+            {
+                $matchableOpponents->add($opponent);
+            }
         }
 
         Log::debug("queueEntry=$currentQmQueueEntry->id, name=$playerName: Opponents in point range $matchableOpponents");
