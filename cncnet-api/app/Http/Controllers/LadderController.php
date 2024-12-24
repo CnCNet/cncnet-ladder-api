@@ -86,7 +86,9 @@ class LadderController extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
 
-        if (!isset($history)) abort(404);
+        if (!isset($history)) {
+            abort(404, "No ladder history found");
+        }
 
         $history->load([
             'ladder',
@@ -557,7 +559,7 @@ class LadderController extends Controller
 
         if ($ladder == null)
         {
-            abort(404);
+            abort(404, "Ladder not found");
         }
 
         $matches = \App\Models\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
