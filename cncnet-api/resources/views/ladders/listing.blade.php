@@ -109,6 +109,12 @@
                     </div>
                 @endif
 
+                <div>
+                    <a id="canceledMatchesLink" href="/canceledMatches/{{ $history->ladder->abbreviation }}" class="btn btn-secondary"> 
+                        Canceled Matches
+                    </a>
+                </div>
+
                 <div class="dropdown d-flex">
                     <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-symbols-outlined icon me-2">

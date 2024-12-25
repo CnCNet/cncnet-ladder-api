@@ -294,10 +294,12 @@ class QuickMatchService
         $ladder = $history->ladder;
         $pointsPerSecond = $ladder->qmLadderRules->points_per_second;
         $maxPointsDifference = $ladder->qmLadderRules->max_points_difference;
+        $playerName = $currentQmQueueEntry->qmPlayer?->player?->username;
+        $currentPointFilter = $currentQmQueueEntry->qmPlayer->player->user->userSettings->disabledPointFilter;
 
         $matchableOpponents = collect();
 
-        Log::debug("queueEntry=$currentQmQueueEntry->id: Opponents in queue $opponents");
+        Log::debug("queueEntry=$currentQmQueueEntry->id, name=$playerName:, pointFilter=$currentPointFilter, Opponents in queue $opponents");
 
         foreach ($opponents as $opponent)
         {
@@ -320,9 +322,20 @@ class QuickMatchService
             {
                 $matchableOpponents->add($opponent);
             }
-        }
 
-        Log::debug("queueEntry=$currentQmQueueEntry->id: Opponents in point range $matchableOpponents");
+            // did both players diable point filter and are within 1,000 pts
+            else if (
+                $currentPointFilter
+                && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter
+                && abs($currentQmQueueEntry->points - $opponent->points) < 1000
+            )
+            {
+                $matchableOpponents->add($opponent);
+            }
+        }
+        
+        $numMatchableOpponents = count($matchableOpponents);
+        Log::debug("queueEntry=$currentQmQueueEntry->id, name=$playerName: matchableOpponents=$numMatchableOpponents");
 
         return $matchableOpponents;
     }

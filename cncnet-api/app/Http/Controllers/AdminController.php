@@ -43,25 +43,6 @@ class AdminController extends Controller
         ]);
     }
 
-    public function getCanceledMatches($ladderAbbreviation = null)
-    {
-        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbreviation)->first();
-
-        if ($ladder == null)
-            abort(404);
-
-        $matches = \App\Models\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
-            ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')
-            ->orderBy('qm_canceled_matches.created_at', 'DESC')
-            ->select("qm_canceled_matches.*", "p.username")
-            ->paginate(50);
-
-        return view("admin.canceled-matches", [
-            "canceled_matches" => $matches,
-            "ladder" => $ladder
-        ]);
-    }
-
     public function getWashedGames($ladderAbbreviation = null)
     {
         $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbreviation)->first();

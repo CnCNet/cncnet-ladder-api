@@ -86,7 +86,10 @@ class LadderController extends Controller
     {
         $history = $this->ladderService->getActiveLadderByDate($request->date, $request->game);
 
-        if (!isset($history)) abort(404);
+        if (!isset($history))
+        {
+            abort(404, "No ladder history found");
+        }
 
         $history->load([
             'ladder',
@@ -549,6 +552,70 @@ class LadderController extends Controller
                 "clanPlayerWinLossByMonth" => $clanPlayerWinLossByMonth
             ]
         );
+    }
+
+    public function getCanceledMatches($ladderAbbreviation = null)
+    {
+        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbreviation)->first();
+
+        if ($ladder == null)
+        {
+            abort(404, "Ladder not found");
+        }
+
+        /**
+         * Example output:
+         * {
+         * "created_at":"2024-12-22T21:37:34.000000Z",
+         * "qm_match_id":993628,
+         * "canceled_by":"Larsson7,Palacio",
+         * "map":"Strategic Compass",
+         * "affected_players":"HasSickTear,Sawalha"
+         * }
+         * ...
+         */
+        $matches = \App\Models\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
+            ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id') // The player who canceled the match
+            ->join('qm_matches', 'qm_canceled_matches.qm_match_id', '=', 'qm_matches.id')
+            ->join('qm_maps', 'qm_matches.qm_map_id', '=', 'qm_maps.id')
+            ->join('qm_match_players as qmp', 'qm_matches.id', '=', 'qmp.qm_match_id') // Join qm_match_players for all players in the match
+            ->join('players as qmp_players', 'qmp.player_id', '=', 'qmp_players.id') // Get player details
+            ->orderBy('qm_canceled_matches.created_at', 'DESC')
+            ->selectRaw("
+                qm_canceled_matches.created_at,
+                qm_matches.id as qm_match_id,
+                GROUP_CONCAT(DISTINCT p.username ORDER BY p.username ASC SEPARATOR ',') as canceled_by,
+                qm_maps.description as map,
+                GROUP_CONCAT(
+                    DISTINCT CASE
+                        WHEN qmp_players.username != p.username 
+                        AND qmp_players.username NOT IN (
+                            SELECT username FROM players WHERE id = qm_canceled_matches.player_id
+                        )
+                        AND qmp_players.username NOT IN (
+                            SELECT DISTINCT username
+                            FROM players
+                            INNER JOIN qm_match_players as qmp ON qmp.player_id = players.id
+                            WHERE qmp.qm_match_id = qm_matches.id
+                            AND players.id IN (
+                                SELECT player_id FROM qm_canceled_matches WHERE qm_match_id = qm_matches.id
+                            )
+                        )  -- Exclude players in canceled_by
+                        THEN qmp_players.username
+                        ELSE NULL
+                    END
+                    ORDER BY qmp_players.username ASC SEPARATOR ','
+                ) as affected_players
+            ")
+            ->whereColumn('qmp.player_id', '!=', 'qm_canceled_matches.player_id') // Exclude canceled_by from affected_players
+            ->where('qm_canceled_matches.created_at', '>=', Carbon::now()->subDay(1))
+            ->groupBy('qm_matches.id', 'qm_maps.description') // Group by qm_match_id to get one row per match
+            ->paginate(20);
+
+        return view("admin.canceled-matches", [
+            "canceled_matches" => $matches,
+            "ladder" => $ladder
+        ]);
     }
 
     public function getPlayerAchievementsPage(Request $request, $date = null, $cncnetGame = null, $username = null)

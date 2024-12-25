@@ -69,7 +69,6 @@ class FindOpponentJob implements ShouldQueue/*, ShouldBeUnique*/
             $matchupHandler = new PlayerMatchupHandler($this->qmQueueEntry, $this->gameType);
         }
 
-        Log::debug('[FindOpponentJob] : matchup handler : ' . get_class($matchupHandler));
         $matchupHandler->matchup();
     }
 
