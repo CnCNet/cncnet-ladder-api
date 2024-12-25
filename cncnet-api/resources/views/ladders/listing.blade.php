@@ -111,7 +111,7 @@
 
                 <div>
                     <a id="canceledMatchesLink" href="/canceledMatches/{{ $history->ladder->abbreviation }}" class="btn btn-secondary"> 
-                        <i class="bi bi-discord pe-2"></i>Canceled Matches
+                        Canceled Matches
                     </a>
                 </div>
 
