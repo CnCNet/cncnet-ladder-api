@@ -177,7 +177,7 @@
                         <div class="mt-3 mb-3">
                             <a href="https://grant-bartlett.com" target="_blank" title="Website Designed &amp; Developed by Grant Bartlett"
                                 style="text-decoration: underline;">
-                                Website & Ladder Designed &amp; Developed <br>by Grant Bartlett
+                                Ladder Designed &amp; Developed by <br /> Grant Bartlett
                             </a>,
                             <a href="https://github.com/alexp8" style="text-decoration: underline;">Burg</a>,
                             <a href="https://github.com/dkeetonx"style="text-decoration: underline;">dkeetonx</a>,
