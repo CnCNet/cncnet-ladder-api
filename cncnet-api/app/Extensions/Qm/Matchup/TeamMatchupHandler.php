@@ -47,7 +47,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $matchableOpponentsCount = $matchableOpponents->count();
         if ($matchableOpponentsCount < $numberOfOpponentsNeeded)
         {
-            Log::debug("FindOpponent ** inQueue={$playerInQueue}, Team matchup handler ** Not enough players for match yet ($$matchableOpponentsCount of $numberOfOpponentsNeeded)");
+            Log::debug("FindOpponent ** inQueue={$playerInQueue}, Team matchup handler ** Not enough players for match yet ($matchableOpponentsCount of $numberOfOpponentsNeeded)");
             $this->qmPlayer->touch();
             return;
         }
