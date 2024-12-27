@@ -346,6 +346,7 @@ class AccountController extends Controller
             $userSettings->user_id = $user->id;
         }
         $userSettings->disabledPointFilter = $request->disabledPointFilter == "on" ? true : false;
+        $userSettings->do_not_match_yuri = $request->do_not_match_yuri == "on" ? true : false;
         $userSettings->skip_score_screen = $request->skip_score_screen == "on" ? true : false;
         $userSettings->match_any_map = $request->match_any_map == "on" ? true : false;
         $userSettings->enableAnonymous = $request->enableAnonymous == "on" ? true : false;
