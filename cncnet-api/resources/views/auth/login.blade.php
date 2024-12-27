@@ -5,7 +5,7 @@
     <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
         <x-slot name="title">Login</x-slot>
         <x-slot name="description">
-            Login to manage your ladder account
+            Login to manage your ladder account below.
         </x-slot>
 
         @if (!\Auth::user())
@@ -47,8 +47,8 @@
                 <div class="col-md-6 m-auto">
                     <p class="lead mb-5 mt-5">
                         Login with your email and password below.
-                        If you have trouble logging in <a href="https://cncnet.org/discord">please contact us on our
-                            Discord for help.</a>
+                        If you have trouble logging in please contact us on our <a href="https://cncnet.org/discord" class="text-underline">Discord </a>
+                        for help.
                     </p>
 
                     <form class="" method="POST" action="/auth/login">
@@ -82,7 +82,7 @@
                             </label>
                         </div>
 
-                        <button class="w-100 btn btn-lg btn-primary" type="submit">Login</button>
+                        <button class="w-100 btn btn-primary" type="submit">Login</button>
 
                         <hr class="my-4">
 
