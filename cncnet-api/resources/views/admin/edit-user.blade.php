@@ -32,6 +32,7 @@
         <div class="row">
             <div class="col-md-12 mt-5 mb-5">
                 <h2 class="mb-2">Edit {{ $user->name }}'s profile</h2>
+                <p>Email: {{ $user->email }}</p>
 
                 <form method="POST" action="/admin/users/edit/{{ $user->id }}">
                     {{ csrf_field() }}
@@ -65,6 +66,27 @@
                         <label>
                             <input id="userAllowedToChat" type="checkbox" name="userAllowedToChat" {{ $user->getIsAllowedToChat() ? 'checked' : '' }} />
                             User allowed to chat in game?
+                        </label>
+                    </p>
+
+                    <p class="mt-2 mb-2">
+                        <label>
+                            <input id="disabledPointFilter" type="checkbox" name="disabledPointFilter" {{ $user->userSettings->disabledPointFilter ? 'checked' : '' }} />
+                            disabledPointFilter
+                        </label>
+                    </p>
+
+                    <p class="mt-2 mb-2">
+                        <label>
+                            <input id="do_not_match_yuri" type="checkbox" name="do_not_match_yuri" {{ $user->userSettings->do_not_match_yuri ? 'checked' : '' }} />
+                            do_not_match_yuri
+                        </label>
+                    </p>
+
+                    <p class="mt-2 mb-2">
+                        <label>
+                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous" {{ $user->userSettings->enableAnonymous ? 'checked' : '' }} />
+                            enableAnonymous
                         </label>
                     </p>
 

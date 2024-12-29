@@ -1,7 +1,7 @@
 <div class="container">
     <div class="d-flex">
 
-        <button type="button" class="btn btn-secondary btn-size-md" data-bs-toggle="modal" data-bs-target="#viewLadderNicks">
+        <button type="button" class="btn btn-secondary btn-size-md me-3" data-bs-toggle="modal" data-bs-target="#viewLadderNicks">
             Previous {{ $history->ladder->abbreviation }} Nicknames
         </button>
         <div class="modal fade" id="viewLadderNicks" tabIndex="-1" role="dialog">
@@ -12,15 +12,20 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-
-                        @foreach ($ladderNicks as $ladderNick)
-                        <li>{{ $ladderNick }}</li>
-                        @endforeach
+                        @if($isAnonymous)
+                        <p>User is anonymous</p>
+                        @else
+                        <ul>
+                            @foreach ($ladderNicks as $ladderNick)
+                            <li>{{ $ladderNick }}</li>
+                            @endforeach
+                        </ul>
+                        @endif
                     </div>
                 </div>
             </div>
         </div>
-        
+
         @if ($userIsMod)
         @include('ladders._modal-edit-player-name')
         <button type="button" class="btn btn-secondary btn-size-md me-3" id="editPlayerName" data-bs-toggle="modal"
