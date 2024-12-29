@@ -273,6 +273,35 @@ class AccountController extends Controller
         return view('auth.verify');
     }
 
+    public function deleteAccount(Request $request)
+    {
+
+        $user = $request->user();
+
+        if (!$request->has('confirm_delete'))
+        {
+            return redirect()->back()->with('error', 'Please confirm account deletion.');
+        }
+
+        DB::transaction(function () use ($user)
+        {
+            $user->userSettings()->delete();
+
+            // Anonymize the user
+            $user->name = 'Deleted User';
+            $user->email = uniqid('deleted_user_') . '@example.com'; // Replace email with a unique placeholder
+            $user->password = null; // Remove password
+            $user->email_verified = false;
+            $user->save();
+
+            // Delete the user record
+            $user->delete();
+        });
+
+        auth()->logout();
+        return redirect('/goodbye')->with('status', 'Your account has been deleted.');
+    }
+
     public function createNewVerification(Request $request)
     {
         $user = $request->user();

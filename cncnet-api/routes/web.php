@@ -206,4 +206,5 @@ Route::group(['prefix' => 'account', 'middleware' => 'auth'], function ()
     Route::get('/verify/{verify_token}', [\App\Http\Controllers\AccountController::class, 'verifyEmail']);
     Route::get('/settings', [\App\Http\Controllers\AccountController::class, 'getUserSettings']);
     Route::post('/settings', [\App\Http\Controllers\AccountController::class, 'updateUserSettings']);
+    Route::post('/delete', [\App\Http\Controllers\AccountController::class, 'deleteAccount']);
 });
