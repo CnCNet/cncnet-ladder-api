@@ -440,7 +440,7 @@ class LadderController extends Controller
         $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
         $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);
 
-        $isAnonymous = $player->user->userSettings->enableAnonymous;
+        $isAnonymous = $player?->user?->userSettings?->enableAnonymous;
 
         $ladderNicks = [];
         if (!$isAnonymous)
