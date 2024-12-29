@@ -439,10 +439,16 @@ class LadderController extends Controller
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
         $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
         $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);
+        $ladderNicks = $user->usernames
+            ->where('id', '!=', $player->id)
+            ->where('ladder_id', $history->ladder->id)
+            ->pluck('username')
+            ->toArray();
 
         return view(
             "ladders.player-detail",
             [
+                "ladderNicks" => $ladderNicks,
                 "mod" => $mod,
                 "history" => $history,
                 "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
