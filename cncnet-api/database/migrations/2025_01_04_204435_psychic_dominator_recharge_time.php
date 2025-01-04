@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        SpawnOption::makeOn(
+        SpawnOption::makeOne(
             SpawnOptionType::SPAWNMAP_INI, 'PsychicDominatorSpecial.RechargeTime', 'RechargeTime', '0PsychicDominatorSpecial'
         )->save();
     }
