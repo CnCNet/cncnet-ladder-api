@@ -14,11 +14,11 @@ return new class extends Migration
     public function up(): void
     {
         SpawnOption::makeOne(
-            SpawnOptionType::SPAWNMAP_INI, 'LightningStormSpecial.RechargeTime', 'RechargeTime', 'LightningStormSpecial'
+            SpawnOptionType::SPAWNMAP_INI, 'LightningStormSpecial.RechargeTime', 'LightningStormSpecial', 'RechargeTime'
         )->save();
 
         SpawnOption::makeOne(
-            SpawnOptionType::SPAWNMAP_INI, 'NukeSpecial.RechargeTime', 'RechargeTime', 'NukeSpecial'
+            SpawnOptionType::SPAWNMAP_INI, 'NukeSpecial.RechargeTime', 'NukeSpecial', 'RechargeTime'
         )->save();
     }
 
