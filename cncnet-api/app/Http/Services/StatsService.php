@@ -361,8 +361,6 @@ class StatsService
 
     public function getPlayerMatchups($player, $history)
     {
-        // $player = \App\Models\Player::where('username', 'Gatorspader')->where('ladder_id', 15)->first();
-        // $history = \App\Models\LadderHistory::where('starts', '2024-12-01')->where('ladder_id',15)->first()
         return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
@@ -434,9 +432,94 @@ class StatsService
                 }
             }
 
-            uksort($matchupResults, function($a, $b) {
+            uksort($matchupResults, function ($a, $b)
+            {
                 return strcasecmp($a, $b); // Case-insensitive alphabetical sort
-            });            
+            });
+
+            return $matchupResults;
+        });
+    }
+
+    public function getTeamMatchups($player, $history)
+    {
+        return Cache::remember("getTeamMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history)
+        {
+            $now = $history->starts;
+            $from = $now->copy()->startOfMonth()->toDateTimeString();
+            $to = $now->copy()->endOfMonth()->toDateTimeString();
+
+            $playerGameReports = $player->playerGames()
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->get();
+
+            $matchupResults = [];
+            foreach ($playerGameReports as $pgr)
+            {
+                if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
+                {
+                    continue;
+                }
+
+                $team = $pgr->team;
+                if ($team == null)
+                {
+                    $team = $pgr->gameReport->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)?->team;
+                }
+
+                // get the opponents from this game
+                $otherReports = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                    ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
+                    ->where('p.id', '!=', $player->id)
+                    ->where('gr.valid', true)
+                    ->where('gr.best_report', true)
+                    ->select('p.username', 'player_game_reports.team', 'player_game_reports.player_id', 'player_game_reports.game_id', 'player_game_reports.game_report_id')
+                    ->get();
+
+                foreach ($otherReports as $otherReport)
+                {
+                    if ($otherReport == null)
+                    {
+                        continue;
+                    }
+
+                    $opponentTeam = $otherReport->team;
+                    if ($opponentTeam == null)
+                    {
+                        $opponentTeam = $otherReport->gameReport->game->qmMatch->findQmPlayerByPlayerId($otherReport->player_id)?->team;
+                    }
+
+                    if ($team != null && $opponentTeam != null && $opponentTeam != $team) // players on same team
+                    {
+                        continue;
+                    }
+
+                    $opponentName = $otherReport->username;
+
+                    if (!array_key_exists($opponentName, $matchupResults))
+                    {
+                        $matchupResults[$opponentName] = [];
+                        $matchupResults[$opponentName]["won"] = 0;
+                        $matchupResults[$opponentName]["lost"] = 0;
+                        $matchupResults[$opponentName]["total"] = 0;
+                    }
+
+                    if ($pgr->won)
+                    {
+                        $matchupResults[$opponentName]["won"] = $matchupResults[$opponentName]["won"] + 1;
+                    }
+                    else
+                    {
+                        $matchupResults[$opponentName]["lost"] = $matchupResults[$opponentName]["lost"] + 1;
+                    }
+                    $matchupResults[$opponentName]["total"] = $matchupResults[$opponentName]["total"] + 1;
+                }
+            }
+
+            uksort($matchupResults, function ($a, $b)
+            {
+                return strcasecmp($a, $b); // Case-insensitive alphabetical sort
+            });
 
             return $matchupResults;
         });

@@ -438,7 +438,13 @@ class LadderController extends Controller
 
         // incorrect data for 2v2
         $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
-        
+
+        $teamMatchups = [];
+        if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+        {
+            $teamMatchups = $this->statsService->getTeamMatchups($player, $history);
+        }
+
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
         $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
         $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);
@@ -478,6 +484,7 @@ class LadderController extends Controller
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $user,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
+                "teamMatchups" => $teamMatchups,
                 "playerMatchups" => $playerMatchups,
                 "achievements" => $recentAchievements,
                 "achievementsCount" => $achievementProgressCounts

@@ -281,6 +281,15 @@
                 </div>
             </div>
         </section>
+        @if($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+        <section class="player-vs-player pt-5 pb-5">
+            <div class="container">
+                <div class="row">
+                    @include('ladders.player._team-matchups-stats')
+                </div>
+            </div>
+        </section>
+        @endif
         <section class="player-maps pt-5 pb-5">
             <div class="container">
                 <div class="row">
