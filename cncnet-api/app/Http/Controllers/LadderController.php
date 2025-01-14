@@ -435,7 +435,10 @@ class LadderController extends Controller
         $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
         $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
+
+        // incorrect data for 2v2
         $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
+        
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
         $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
         $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);

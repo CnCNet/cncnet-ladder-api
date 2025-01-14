@@ -361,6 +361,8 @@ class StatsService
 
     public function getPlayerMatchups($player, $history)
     {
+        // $player = \App\Models\Player::where('username', 'Gatorspader')->where('ladder_id', 15)->first();
+        // $history = \App\Models\LadderHistory::where('starts', '2024-12-01')->where('ladder_id',15)->first()
         return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
@@ -377,32 +379,59 @@ class StatsService
                 if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
                     continue;
 
-                $opponent = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                $team = $pgr->team;
+                if ($team == null)
+                {
+                    $team = $pgr->gameReport->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)?->team;
+                }
+
+                // get the opponents from this game
+                $opponentReports = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
                     ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
                     ->where('p.id', '!=', $player->id)
                     ->where('gr.valid', true)
                     ->where('gr.best_report', true)
-                    ->select('p.username')
-                    ->first();
+                    ->select('p.username', 'player_game_reports.team', 'player_game_reports.player_id', 'player_game_reports.game_id', 'player_game_reports.game_report_id')
+                    ->get();
 
-                if ($opponent == null)
-                    continue;
-
-                $opponentName = $opponent->username;
-
-                if (!array_key_exists($opponentName, $matchupResults))
+                foreach ($opponentReports as $opponentReport)
                 {
-                    $matchupResults[$opponentName] = [];
-                    $matchupResults[$opponentName]["won"] = 0;
-                    $matchupResults[$opponentName]["lost"] = 0;
-                    $matchupResults[$opponentName]["total"] = 0;
-                }
+                    if ($opponentReport == null)
+                    {
+                        continue;
+                    }
 
-                if ($pgr->won)
-                    $matchupResults[$opponentName]["won"] = $matchupResults[$opponentName]["won"] + 1;
-                else
-                    $matchupResults[$opponentName]["lost"] = $matchupResults[$opponentName]["lost"] + 1;
-                $matchupResults[$opponentName]["total"] = $matchupResults[$opponentName]["total"] + 1;
+                    $opponentTeam = $opponentReport->team;
+                    if ($opponentTeam == null)
+                    {
+                        $opponentTeam = $opponentReport->gameReport->game->qmMatch->findQmPlayerByPlayerId($opponentReport->player_id)?->team;
+                    }
+
+                    if ($team != null && $opponentTeam != null && $opponentTeam == $team) // players on same team
+                    {
+                        continue;
+                    }
+
+                    $opponentName = $opponentReport->username;
+
+                    if (!array_key_exists($opponentName, $matchupResults))
+                    {
+                        $matchupResults[$opponentName] = [];
+                        $matchupResults[$opponentName]["won"] = 0;
+                        $matchupResults[$opponentName]["lost"] = 0;
+                        $matchupResults[$opponentName]["total"] = 0;
+                    }
+
+                    if ($pgr->won)
+                    {
+                        $matchupResults[$opponentName]["won"] = $matchupResults[$opponentName]["won"] + 1;
+                    }
+                    else
+                    {
+                        $matchupResults[$opponentName]["lost"] = $matchupResults[$opponentName]["lost"] + 1;
+                    }
+                    $matchupResults[$opponentName]["total"] = $matchupResults[$opponentName]["total"] + 1;
+                }
             }
 
             return $matchupResults;
