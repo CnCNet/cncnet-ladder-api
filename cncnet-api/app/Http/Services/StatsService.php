@@ -434,6 +434,10 @@ class StatsService
                 }
             }
 
+            uksort($matchupResults, function($a, $b) {
+                return strcmp($a, $b); // Sort keys alphabetically
+            });
+
             return $matchupResults;
         });
     }
