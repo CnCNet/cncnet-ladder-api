@@ -435,8 +435,8 @@ class StatsService
             }
 
             uksort($matchupResults, function($a, $b) {
-                return strcmp($a, $b); // Sort keys alphabetically
-            });
+                return strcasecmp($a, $b); // Case-insensitive alphabetical sort
+            });            
 
             return $matchupResults;
         });
