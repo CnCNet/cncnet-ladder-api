@@ -85,8 +85,8 @@
 
                     <p class="mt-2 mb-2">
                         <label>
-                            <input id="enableAnonymous" type="checkbox" name="enableAnonymous" {{ $user->userSettings->enableAnonymous ? 'checked' : '' }} />
-                            enableAnonymous
+                            <input id="is_anonymous" type="checkbox" name="is_anonymous" {{ $user->userSettings->is_anonymous ? 'checked' : '' }} />
+                            is_anonymous
                         </label>
                     </p>
 

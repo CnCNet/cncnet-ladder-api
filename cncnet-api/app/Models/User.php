@@ -209,7 +209,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function getUserAvatar()
     {
-        if ($this->avatar_path)
+        if ($this->avatar_path && !$this->userSettings?->is_anonymous)
         {
             if (config("app.env") !== "production")
             {

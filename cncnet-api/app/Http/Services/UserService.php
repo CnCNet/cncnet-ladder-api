@@ -44,7 +44,7 @@ class UserService
             'skip_score_screen',
             'match_any_map',
             'disabledPointFilter', // As column in database 
-            'enableAnonymous', // As column in database 
+            'is_anonymous', // As column in database 
             'match_ai',
             'is_observer',
             'allow_observers',

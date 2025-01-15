@@ -98,8 +98,8 @@
                             Keeps ladder usernames anonymous. This will hide certain features or stats from your
                             profiles.
                         </p>
-                        <input id="enableAnonymous" type="checkbox" name="enableAnonymous" @if ($userSettings->enableAnonymous) checked @endif />
-                        <label for="enableAnonymous">Enable Anonymity</label>
+                        <input id="is_anonymous" type="checkbox" name="is_anonymous" @if ($userSettings->is_anonymous) checked @endif />
+                        <label for="is_anonymous">Enable Anonymity</label>
                     </div>
 
                     @if ($user->getIsAllowedToUploadAvatarOrEmoji() == false)
