@@ -380,7 +380,7 @@ class StatsService
                 $team = $pgr->team;
                 if ($team == null)
                 {
-                    $team = $pgr->gameReport->game->qmMatch->findQmPlayerByPlayerId($pgr->player_id)?->team;
+                    $team = $pgr?->gameReport?->game?->qmMatch?->findQmPlayerByPlayerId($pgr->player_id)?->team;
                 }
 
                 // get the opponents from this game
@@ -402,7 +402,7 @@ class StatsService
                     $opponentTeam = $opponentReport->team;
                     if ($opponentTeam == null)
                     {
-                        $opponentTeam = $opponentReport->gameReport->game->qmMatch->findQmPlayerByPlayerId($opponentReport->player_id)?->team;
+                        $opponentTeam = $opponentReport?->gameReport?->game?->qmMatch?->findQmPlayerByPlayerId($opponentReport->player_id)?->team;
                     }
 
                     if ($team != null && $opponentTeam != null && $opponentTeam == $team) // players on same team
