@@ -59,6 +59,13 @@ class MatchUpController
             );
         }
 
+        // failsafe, is user allowed to match on 2v2 ladder
+        if ($ladder->ladder_type == Ladder::TWO_VS_TWO && !$user->userSettings->allow_2v2_ladders) {
+            return $this->quickMatchService->onFatalError(
+                $playerName . ' is not allowed to play on 2v2 ladders, speak with admins for assistance ' . $ladder->abbreviation
+            );
+        }
+
         if ($request->hwid)
         {
             QmUserId::createNew($user->id, $request->hwid);

@@ -356,6 +356,9 @@ class AdminController extends Controller
 
         $user->updateAlias($request->alias);
 
+        $user->userSettings->is_anonymous = $request->is_anonymous;
+        $user->userSettings->allow_2v2_ladders = $request->allow_2v2_ladders;
+
         return view("admin.edit-user", [
             "user" => $user
         ]);
