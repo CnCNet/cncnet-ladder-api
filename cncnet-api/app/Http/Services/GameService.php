@@ -138,7 +138,7 @@ class GameService
 
                 $playerGameReports[$id]->player_id = $playerHere->id;
 
-                $playerGameReports[$id]->team = $game->qmMatch->findQmPlayerByPlayerId($playerId)?->team;
+                $playerGameReports[$id]->team = $game->qmMatch->findQmPlayerByPlayerId($playerHere->id)?->team;
 
                 if ($isClanLadderGame)
                 {
