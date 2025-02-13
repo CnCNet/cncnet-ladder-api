@@ -77,18 +77,9 @@ class UpdatePlayerGameReportsSeeder extends Seeder
                             {
                                 $query->whereBetween('points', [$playerGameReport->points - 2, $playerGameReport->points + 2])
                                     ->orWhereBetween('points', [$playerGameReport->backupPts - 2, $playerGameReport->backupPts + 2])
-                                    ->orWhereBetween('backupPts', [$playerGameReport->backupPts - 2, $playerGameReport->backupPts + 2])
                                     ->orWhereBetween('backupPts', [$playerGameReport->points - 2, $playerGameReport->points + 2]);
                             })
                             ->first();
-
-                        // if (!$won && $teammate == null)
-                        // {
-                        //     $teammate = $game->playerGameReports()
-                        //         ->where('player_game_reports.player_id', '!=', $playerGameReport->player_id)
-                        //         ->where('player_game_reports.points', '=', 0)
-                        //         ->first();
-                        // }
 
                         if ($teammate == null)
                         {
@@ -101,14 +92,14 @@ class UpdatePlayerGameReportsSeeder extends Seeder
                         if ($won)
                         {
                             $winners++;
-                            echo "A: playerGameReport (" . $p1 . ", " . $p2 . ") won, pts: " . $playerGameReport->points . ', report_id: ' . $playerGameReport->id . ', game_id: ' . $gameId . ', short: ' . $short . "\n";
+                            $this->printMsg("A: playerGameReport (" . $p1 . ", " . $p2 . ") won, pts: " . $playerGameReport->points . ', report_id: ' . $playerGameReport->id . ', game_id: ' . $gameId . ', short: ' . $short);
                             $playerGameReport->update(['team' => 'A']);
                             $teammate->update(['team' => 'A']);
                         }
                         else
                         {
                             $losers++;
-                            echo "B: playerGameReport (" . $p1 . ", " . $p2 . ") lost, pts: " . $playerGameReport->points . ', report_id: ' . $playerGameReport->id . ', game_id: ' . $gameId . ', short: ' . $short . "\n";
+                            $this->printMsg("B: playerGameReport (" . $p1 . ", " . $p2 . ") lost, pts: " . $playerGameReport->points . ', report_id: ' . $playerGameReport->id . ', game_id: ' . $gameId . ', short: ' . $short);
                             $playerGameReport->update(['team' => 'B']);
                             $teammate->update(['team' => 'B']);
                         }
@@ -120,7 +111,7 @@ class UpdatePlayerGameReportsSeeder extends Seeder
                         $this->printMsg($msg);
                     }
 
-                    echo "\n";
+                    $this->printMsg("");
                 }
             });
     }
