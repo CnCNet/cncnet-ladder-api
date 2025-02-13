@@ -366,7 +366,8 @@ class StatsService
 
     public function getPlayerMatchups($player, $history)
     {
-        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history)
+        $ladderType = $history->ladder->ladder_type;
+        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history, $ladderType)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
@@ -383,9 +384,10 @@ class StatsService
                     continue;
 
                 $team = $pgr->team;
-                if ($team == null)
+
+                if ($team == null && $ladderType == Ladder::TWO_VS_TWO)
                 {
-                    $team = $pgr?->gameReport?->game?->qmMatch?->findQmPlayerByPlayerId($pgr->player_id)?->team;
+                    continue;
                 }
 
                 // get the opponents from this game
@@ -405,12 +407,13 @@ class StatsService
                     }
 
                     $opponentTeam = $opponentReport->team;
-                    if ($opponentTeam == null)
+ 
+                    if ($opponentTeam == null && $ladderType == Ladder::TWO_VS_TWO)
                     {
-                        $opponentTeam = $opponentReport?->gameReport?->game?->qmMatch?->findQmPlayerByPlayerId($opponentReport->player_id)?->team;
+                        continue;
                     }
 
-                    if ($team != null && $opponentTeam != null && $opponentTeam == $team) // players on same team
+                    if ($ladderType == Ladder::TWO_VS_TWO && $opponentTeam == $team) // players on same team
                     {
                         continue;
                     }
@@ -445,88 +448,6 @@ class StatsService
             return $matchupResults;
         });
     }
-
-    // public function getTeamMatchups($player, $history)
-    // {
-    //     $cacheKey = "getTeamMatchups/" . Str::slug($history->short) . "/$player->id";
-    //     return Cache::remember($cacheKey, 5 * 60, function () use ($player, $history)
-    //     {
-    //         $gameReports = GameReport::whereHas('game', function ($query) use ($history)
-    //         {
-    //             $query->where('ladder_history_id', $history->id);
-    //         })
-    //             ->where('game_reports.valid', true)
-    //             ->where('manual_report', false) // remove washed games
-    //             ->where('game_reports.best_report', true)
-    //             ->get();
-
-    //         $matchupResults = [];
-    //         foreach ($gameReports as $gameReport)
-    //         {
-    //             $myReport = $gameReport->playerGameReports()
-    //                 ->where('draw', false)
-    //                 ->where('player_id', '!=', $player->id)
-    //                 ->first();
-
-    //             if (!$myReport || ($myReport->draw ?? false) || ($myReport->no_completion ?? false))
-    //             {
-    //                 continue;
-    //             }
-
-    //             $team = $myReport->team;
-
-    //             // get the opponents from this game
-    //             $teamMateReports = $gameReport->playerGameReports()
-    //                 ->join('players as p', 'player_game_reports.player_id', '=', 'p.id')
-    //                 ->where('player_game_reports.draw', false)
-    //                 ->where('player_game_reports.team', '=', $team)
-    //                 ->where('player_game_reports.player_id', '!=', $player->id)
-    //                 ->select('p.username', 'player_game_reports.team', 'player_game_reports.player_id', 'player_game_reports.game_id', 'player_game_reports.game_report_id')
-    //                 ->get();
-
-    //             if (count($teamMateReports) == 0)
-    //             {
-    //                 continue;
-    //             }
-
-    //             // get win/loss for each teammate
-    //             foreach ($teamMateReports as $teamMateReport)
-    //             {
-    //                 $teammateName = $teamMateReport->username;
-
-    //                 if (!array_key_exists($teammateName, $matchupResults))
-    //                 {
-    //                     $matchupResults[$teammateName] = [];
-    //                     $matchupResults[$teammateName]["won"] = 0;
-    //                     $matchupResults[$teammateName]["lost"] = 0;
-    //                     $matchupResults[$teammateName]["total"] = 0;
-    //                 }
-
-    //                 Log::info("me: " . $player->username . ", team: " . $team);
-    //                 Log::info("teammate: " . $teammateName . ", team: " . $teamMateReport->team . ", " . json_encode($teamMateReport));
-
-    //                 if ($myReport->won || $teamMateReport->won)
-    //                 {
-    //                     $matchupResults[$teammateName]["won"] = $matchupResults[$teammateName]["won"] + 1;
-    //                 }
-    //                 else
-    //                 {
-    //                     $matchupResults[$teammateName]["lost"] = $matchupResults[$teammateName]["lost"] + 1;
-    //                 }
-    //                 $matchupResults[$teammateName]["total"] = $matchupResults[$teammateName]["total"] + 1;
-    //             }
-    //         }
-
-    //         uksort($matchupResults, function ($a, $b)
-    //         {
-    //             return strcasecmp($a, $b); // Case-insensitive alphabetical sort
-    //         });
-
-    //         Log::info($matchupResults);
-
-    //         return $matchupResults;
-    //     });
-    // }
 
     public function getTeamMatchups($player, $history)
     {
@@ -565,6 +486,11 @@ class StatsService
 
                 $team = $myReport->team;
 
+                if ($team == null)
+                {
+                    continue;
+                }
+
                 // Get teammates
                 $teamMateReports = $gameReport->playerGameReports()
                     ->join('players as p', 'player_game_reports.player_id', '=', 'p.id')
@@ -583,6 +509,11 @@ class StatsService
 
                 foreach ($teamMateReports as $teamMateReport)
                 {
+                    if ($teamMateReport->team == null)
+                    {
+                        continue;
+                    }
+
                     $teammateName = $teamMateReport->username;
 
                     // Initialize matchup stats if not already set
