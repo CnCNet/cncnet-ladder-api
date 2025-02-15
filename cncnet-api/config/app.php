@@ -229,6 +229,7 @@ return [
 		48373, // Root
 		2152, // Edd
 		68318, // Wu
-		17221 // Lloyd
+		17221, // Lloyd
+		60350 // shamou
 	]
 ];
