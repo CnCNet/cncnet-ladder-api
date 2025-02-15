@@ -375,13 +375,22 @@ class StatsService
 
             $playerGameReports = $player->playerGames()
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where('draw', false)
+                ->where('no_completion', false)
                 ->get();
 
             $matchupResults = [];
             foreach ($playerGameReports as $pgr)
             {
-                if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
+
+                // are all player game reports for this game 0pts, skip
+                $allZeroPoints = !$pgr->gameReport->playerGameReports()
+                    ->where('points', '!=', 0)
+                    ->exists();
+                if ($allZeroPoints)
+                {
                     continue;
+                }
 
                 $team = $pgr->team;
 
@@ -392,7 +401,8 @@ class StatsService
 
                 // get the opponents from this game
                 $opponentReports = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
-                    ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
+                    ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')
+                    ->where('gr.game_id', $pgr->game_id)
                     ->where('p.id', '!=', $player->id)
                     ->where('gr.valid', true)
                     ->where('gr.best_report', true)
@@ -401,19 +411,9 @@ class StatsService
 
                 foreach ($opponentReports as $opponentReport)
                 {
-                    if ($opponentReport == null)
-                    {
-                        continue;
-                    }
-
                     $opponentTeam = $opponentReport->team;
 
-                    if ($opponentTeam == null && $ladderType == Ladder::TWO_VS_TWO)
-                    {
-                        continue;
-                    }
-
-                    if ($ladderType == Ladder::TWO_VS_TWO && $opponentTeam == $team) // players on same team
+                    if (($opponentTeam == null || $opponentTeam == $team) && $ladderType == Ladder::TWO_VS_TWO)
                     {
                         continue;
                     }
