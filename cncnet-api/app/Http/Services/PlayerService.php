@@ -60,11 +60,7 @@ class PlayerService
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
-        $player = \App\Models\Player::where("username", "=", $username)
-            ->where("ladder_id", "=", $ladderId)
-            ->first();
-
-        $ladder = Ladder::find($ladderId);
+        $player = \App\Models\Player::where("username", "=", $username)->first();
 
         if ($player == null)
         {
