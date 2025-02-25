@@ -259,7 +259,7 @@
                             <label>
                                 <input id="do_not_match_yuri" type="checkbox" name="do_not_match_yuri"
                                     @if ($userSettings->do_not_match_yuri) checked @endif />
-                                Do not match yuri (YR ladder and when rank is 30 or higher)
+                                    You can disable matching with Yuri only if your rank is worse than 30 (rank 31 or lower). If your rank is 1-30, you cannot disable matching with Yuri
                             </label>
                         </p>
                     </div>
