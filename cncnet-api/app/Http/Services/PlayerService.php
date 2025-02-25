@@ -62,7 +62,7 @@ class PlayerService
 
         $player = \App\Models\Player::where("username", "=", $username)->first();
 
-        if ($player == null)
+        if ($player == null || $player->user->id == $user->id)
         {
             $player = new \App\Models\Player();
             $player->username = $username;
