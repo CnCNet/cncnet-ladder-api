@@ -44,6 +44,9 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getMatchableOpponents($this->qmQueueEntry, $matchableOpponents)->shuffle();
 
+        // filter out yuri players
+        $matchableOpponents = $this->quickMatchService->removeYuriPlayers($this->qmQueueEntry, $matchableOpponents);
+
         $numberOfOpponentsNeeded = $ladderRules->player_count - 1;
 
         // Check if there is enough opponents

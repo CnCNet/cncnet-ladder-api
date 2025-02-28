@@ -59,6 +59,13 @@ class MatchUpController
             );
         }
 
+        // failsafe, is user allowed to match on 2v2 ladder
+        if ($ladder->ladder_type == Ladder::TWO_VS_TWO && !$user->userSettings->allow_2v2_ladders) {
+            return $this->quickMatchService->onFatalError(
+                $playerName . ' is not allowed to play on 2v2 ladders, speak with admins for assistance ' . $ladder->abbreviation
+            );
+        }
+
         if ($request->hwid)
         {
             QmUserId::createNew($user->id, $request->hwid);
@@ -227,8 +234,8 @@ class MatchUpController
     private function onMatchMeUp(Request $request, Ladder $ladder, Player $player, ?QmMatchPlayer $qmPlayer)
     {
 
-        Log::debug('Username : ' . $player->username . ' on ladder ' . $ladder->name);
-        Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
+        // Log::debug('Username : ' . $player->username . ' on ladder ' . $ladder->name);
+        // Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
 
         // If we're new to the queue, create required QmMatchPlayer model
         if (!isset($qmPlayer))

@@ -262,7 +262,7 @@ class LadderController extends Controller
             $groupedPlayerGameReports = [];
             foreach ($playerGameReports as $playerGameReport)
             {
-                $team = $playerGameReport?->game?->qmMatch?->findQmPlayerByPlayerId($playerGameReport->player_id)?->team;
+                $team = $playerGameReport->team;
 
                 if ($team != null)
                 {
@@ -435,15 +435,38 @@ class LadderController extends Controller
         $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
         $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
         $playerGamesLast24Hours = $player->totalGames24Hours($history);
+
+        // incorrect data for 2v2
         $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
+
+        $teamMatchups = [];
+        if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+        {
+            $teamMatchups = $this->statsService->getTeamMatchups($player, $history);
+        }
+
         $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
         $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
         $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);
 
+        $isAnonymous = $player->user->userSettings->is_anonymous;
+
+        $ladderNicks = [];
+        if (!$isAnonymous)
+        {
+            $ladderNicks = $user->usernames
+                ->where('id', '!=', $player->id)
+                ->where('ladder_id', $history->ladder->id)
+                ->pluck('username')
+                ->toArray();
+        }
+
         return view(
             "ladders.player-detail",
             [
+                "ladderNicks" => $ladderNicks,
                 "mod" => $mod,
+                "isAnonymous" => $isAnonymous,
                 "history" => $history,
                 "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
                 "player" => $ladderPlayer['player'],
@@ -461,6 +484,7 @@ class LadderController extends Controller
                 "playerOfTheDayAward" => $playerOfTheDayAward,
                 "userPlayer" => $user,
                 "playerGamesLast24Hours" => $playerGamesLast24Hours,
+                "teamMatchups" => $teamMatchups,
                 "playerMatchups" => $playerMatchups,
                 "achievements" => $recentAchievements,
                 "achievementsCount" => $achievementProgressCounts

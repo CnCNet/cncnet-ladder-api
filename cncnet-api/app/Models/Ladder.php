@@ -93,6 +93,10 @@ class Ladder extends Model
                 }
             }
 
+            if ($ladder->ladder_type == Ladder::TWO_VS_TWO && !$user->userSettings->allow_2v2_ladders) { // user is not allowed to queue on 2v2 ladders
+                continue;
+            }
+
             $userAllowedLadders[] = $ladder;
         }
 

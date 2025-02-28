@@ -58,6 +58,7 @@ class Player extends Model
                 'games.ladder_history_id as ladder_history_id',
                 'game_reports.game_id as game_id',
                 'duration',
+                'team',
                 'fps',
                 'oos',
                 'sid',

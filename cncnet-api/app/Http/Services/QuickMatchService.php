@@ -279,6 +279,72 @@ class QuickMatchService
         return $matchableOpponents;
     }
 
+    /**
+     * Filters out opponents who have Yuri or random map sides selected if the user's settings 
+     * and rank qualify for the restriction.
+     *
+     * @param QmQueueEntry $currentQmQueueEntry The current player's queue entry, containing ladder and user settings.
+     * @param Collection $opponents A collection of opponents to evaluate and potentially filter.
+     * 
+     * @return Collection Filtered collection of matchable opponents.
+     */
+    public function removeYuriPlayers(QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
+    {
+        $history = $currentQmQueueEntry->ladderHistory;
+        $ladder = $history->ladder;
+
+        // If not in Yuri mode, return opponents as is
+        if ($ladder->abbreviation !== 'yr')
+        {
+            return $opponents;
+        }
+
+        $disableYuri = $currentQmQueueEntry->qmPlayer->player->user->userSettings->do_not_match_yuri;
+        $rank = $currentQmQueueEntry->qmPlayer->player->rank($history);
+
+        // If user does not disable Yuri matching or rank is better than the threshold, return opponents
+        if (!$disableYuri || $rank <= 30)
+        {
+            return $opponents;
+        }
+
+        $playerName = $currentQmQueueEntry->qmPlayer->player->username;
+        $matchableOpponents = collect();
+        $filteredOpponents = [];
+
+        Log::debug("Filtering out Yuri players for $playerName");
+
+        foreach ($opponents as $opponent)
+        {
+            $playerMapSides = $opponent->qmPlayer->map_side_array();
+
+            // Validate map sides
+            if (!is_array($playerMapSides))
+            {
+                Log::warning("Invalid map sides for opponent: " . json_encode($opponent));
+                continue;
+            }
+
+            if (in_array(9, $playerMapSides) || in_array(-1, $playerMapSides))
+            { // Yuri or random
+                $opponentName = $opponent->qmPlayer->player->username;
+                $filteredOpponents[] = $opponentName;
+            }
+            else
+            {
+                $matchableOpponents->add($opponent);
+            }
+        }
+
+        // Log summary of filtered opponents
+        if (!empty($filteredOpponents))
+        {
+            Log::debug("$playerName: Filtered out yuri opponents: " . implode(', ', $filteredOpponents));
+        }
+
+        return $matchableOpponents;
+    }
+
 
     /**
      * Find all opponents within point range.
@@ -323,17 +389,19 @@ class QuickMatchService
                 $matchableOpponents->add($opponent);
             }
 
-            // did both players diable point filter and are within 1,000 pts
+            // did both players diable point filter and are within 1,000 pts, and both players have at least 400 pts
             else if (
                 $currentPointFilter
                 && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter
                 && abs($currentQmQueueEntry->points - $opponent->points) < 1000
+                && $currentQmQueueEntry->points > 400
+                && $opponent->points > 400
             )
             {
                 $matchableOpponents->add($opponent);
             }
         }
-        
+
         $numMatchableOpponents = count($matchableOpponents);
         Log::debug("queueEntry=$currentQmQueueEntry->id, name=$playerName: matchableOpponents=$numMatchableOpponents");
 
