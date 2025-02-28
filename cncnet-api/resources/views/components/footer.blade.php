@@ -164,12 +164,19 @@
                 <div class="col-sm-6 mt-5 mt-xl-0 col-xl-8 text-end">
                     <div>
                         <div class="footer-logos">
-                            <div>
+                            <div class="mb-3">
                                 <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="CnCNet Logo" width="200">
                             </div>
-                            <div class="mt-1">
+                            <div class="mt-3 mb-3">
+                                <a href="https://www.digitalocean.com/?refcode=337544e2ec7b&utm_campaign=Referral_Invite&utm_medium=opensource&utm_source=CnCNet"
+                                    title="Powered by Digital Ocean" target="_blank">
+                                    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+                                        width="201px" alt="Powered By Digital Ocean" />
+                                </a>
+                            </div>
+                            <div class="mt-3 mb-3">
                                 <a href="http://gamesurge.net" target="_blank" title="GameSurge" rel="no-follow">
-                                    <img src="{{ Vite::asset('resources/images/gamesurge.png') }}" alt="GameSurge Logo" width="80">
+                                    <img src="{{ Vite::asset('resources/images/gamesurge.png') }}" alt="GameSurge Logo" width="150">
                                 </a>
                             </div>
                         </div>
