@@ -1,6 +1,11 @@
 ## CnCNet Ladder API
 This is the main repository for the CnCNet Ladder API.
 
+### Sponsored by
+<a href="https://www.digitalocean.com/?refcode=337544e2ec7b&utm_campaign=Referral_Invite&utm_medium=opensource&utm_source=CnCNet" title="Powered by Digital Ocean" target="_blank">
+    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg" width="201px" alt="Powered By Digital Ocean" />
+</a>
+
 ### Getting started
 - Set up docker on your computer (either docker desktop or docker engine with docker-compose)
 - Copy `.env-example` to `.env` and configure docker related env.  
