@@ -86,14 +86,17 @@ RUN docker-php-ext-install gd && \
 RUN if [ "$debug" = 1 ] ; then \
     pecl install xdebug-3.3.0 && \
     docker-php-ext-enable xdebug; \
-fi
+    fi
 
 #####################################
 # PHP Memcached:
 #####################################
 
-# Install the php memcached extension
-RUN pecl install memcached && docker-php-ext-enable memcached
+# Install the php memcached extension for prod only
+RUN if [ "$debug" = 0 ] ; then \
+    pecl install memcached && \
+    docker-php-ext-enable memcached; \
+    fi
 
 #####################################
 # PHP OPCache:
@@ -103,7 +106,7 @@ RUN pecl install memcached && docker-php-ext-enable memcached
 RUN if [ "$debug" = 0 ] ; then \
     docker-php-ext-install opcache &&  \
     docker-php-ext-enable opcache; \
-fi
+    fi
 COPY docker/php/conf.d/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
 
 # Install Composer
