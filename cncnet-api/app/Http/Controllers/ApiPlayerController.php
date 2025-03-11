@@ -10,6 +10,8 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
+use \App\Models\Ladder;
 
 class ApiPlayerController extends Controller
 {
@@ -43,7 +45,7 @@ class ApiPlayerController extends Controller
             }
 
             # Check ladder exists
-            $ladder = \App\Models\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
+            $ladder = Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
             if ($ladder === null)
             {
                 return response()->json(["message" => "Ladder does not exist"], 400);
@@ -86,10 +88,7 @@ class ApiPlayerController extends Controller
     {
         try
         {
-            $this->validate($request, [
-                'username' => 'required|string|min:3|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe,
-                'ladderAbbrev' => 'required|string'
-            ]);
+            $this->validateUsername($request);
 
             # Check we're auth'd
             $user = $this->authService->getUser($request)["user"];
@@ -99,27 +98,23 @@ class ApiPlayerController extends Controller
             }
 
             # Check ladder exists
-            $ladder = \App\Models\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
-            $ladderHistory = $ladder->currentHistory;
+            $ladder = Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
+            $ladderHistory = $ladder->currentHistory();
             if ($ladder === null || $ladderHistory === null)
             {
                 return response()->json(["message" => "Ladder does not exist"], 400);
             }
 
-            // check if they already created a new nick this month
-            $recentPlayer = \App\Models\Player::where("user_id", $user->id)
-                ->where('ladder_id', $ladder->id)
-                ->whereBetween('created_at', [$ladderHistory->start, $ladderHistory->end])
-                ->count();
-            if ($recentPlayer > 0)
+            # check if user has already created a new nick this month
+            if ($this->playerService->userHasCreatedNickThisMonth($user, $ladder))
             {
-                return response()->json(["message" => "You have already created a new nickname this month."], 400);
+                return response()->json(["message" => "You have already created a user this month."], 400);
             }
 
             $player = $this->playerService->addPlayerToUserAccount($request->username, $user, $ladder->id);
             if ($player == null)
             {
-                return response()->json(["message" => "Username has been taken"], 400);
+                return response()->json(["message" => "Username has been taken."], 400);
             }
 
             return response()->json(["message" => "Successfully created"], 200);
@@ -130,6 +125,7 @@ class ApiPlayerController extends Controller
         }
         catch (Exception $ex)
         {
+            Log::info("Error creating user: " . $request->username . ": " . $ex->getMessage() . "\n" . $ex->getTraceAsString());
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }

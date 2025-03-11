@@ -474,6 +474,7 @@
                     <form method="POST" action="username">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="ladder" value="{{ $ladder->id }}">
+                        <input type="hidden" name="ladderAbbrev" value="{{ $ladder->abbreviation }}">
                         <p>
                             Usernames will be shown in the Ranked Match client and in-game.
                         </p>

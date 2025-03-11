@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Ladder;
 
 class AccountController extends Controller
 {
@@ -27,7 +28,7 @@ class AccountController extends Controller
 
     public function getAccountIndex(Request $request)
     {
-        $user = \Auth::user();
+        $user = Auth::user();
         $user->ip_address_id = \App\Models\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
             ? $_SERVER["HTTP_CF_CONNECTING_IP"]
             : $request->getClientIp());
@@ -142,13 +143,11 @@ class AccountController extends Controller
         }
     }
 
-    public function createUsername(Request $request, $ladderAbbrev)
+    public function createUsername(Request $request, String $ladderAbbrev)
     {
-        $this->validate($request, [
-            'username' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
-        ]);
+        $this->validateUsername($request);
 
-        $ladder = \App\Models\Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
+        $ladder = Ladder::where('abbreviation', '=', $ladderAbbrev)->first();
 
         if ($ladder === null)
         {
@@ -157,6 +156,14 @@ class AccountController extends Controller
         }
 
         $user = \Auth::user();
+
+        # check if user has already created a new nick this month
+        if ($this->playerService->userHasCreatedNickThisMonth($user, $ladder))
+        {
+            $request->session()->flash('error', 'You have already created a user this month.');
+            return redirect()->back();
+        }
+
         $player = $this->playerService->addPlayerToUserAccount($request->username, $user, $ladder->id);
 
         if ($player == null)
@@ -165,23 +172,13 @@ class AccountController extends Controller
             return redirect()->back();
         }
 
-        // If we're creating a username for the first time for this ladder type
-        $isNewUser = \App\Models\Player::where("user_id", $user->id)
-            ->where("ladder_id", $ladder->id)
-            ->count();
-
-        if ($isNewUser == 1)
-        {
-            PlayerActiveHandle::setPlayerActiveHandle($ladder->id, $player->id, $user->id);
-        }
-
         if ($player == null)
         {
             $request->session()->flash('error', 'This username has been taken');
             return redirect()->back();
         }
 
-        $request->session()->flash('success', 'Username created!');
+        $request->session()->flash('success', "Username $player->username created!");
         return redirect()->back();
     }
 
@@ -191,7 +188,7 @@ class AccountController extends Controller
             'username' => 'required|string',
         ]);
 
-        $user = \Auth::user();
+        $user = Auth::user();
         $ladder = \App\Models\Ladder::where("abbreviation", $ladderAbbrev)->first();
         $maxActivePlayersAllowed = $ladder->qmLadderRules->max_active_players;
 

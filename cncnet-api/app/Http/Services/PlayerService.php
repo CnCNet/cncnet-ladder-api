@@ -56,19 +56,47 @@ class PlayerService
         return null;
     }
 
+    public function userHasCreatedNickThisMonth(User  $user, Ladder $ladder)
+    {
+        $ladderHistory = $ladder->currentHistory();
+
+        // check if they already created a new nick this month
+        $recentPlayer = Player::where("user_id", $user->id)
+            ->where('ladder_id', $ladder->id)
+            ->whereBetween('created_at', [$ladderHistory->starts, $ladderHistory->ends])
+            ->count();
+        if ($recentPlayer > 0)
+        {
+            Log::info("User $user->name has already created a username on $ladder->abbreviation.");
+            return true;
+        }
+
+        return false;
+    }
+
     public function addPlayerToUserAccount($username, $user, $ladderId)
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
-        $player = \App\Models\Player::where("username", "=", $username)->first();
+        $player = Player::where("username", "=", $username)->first();
 
         if ($player == null || $player->user->id == $user->id)
         {
-            $player = new \App\Models\Player();
+            $player = new Player();
             $player->username = $username;
             $player->user_id = $user->id;
             $player->ladder_id = $ladderId;
             $player->save();
+
+            // If we're creating a username for the first time for this ladder type
+            $usernameCount = Player::where("user_id", $user->id)
+                ->where("ladder_id", $ladderId)
+                ->count();
+
+            if ($usernameCount == 1)
+            {
+                PlayerActiveHandle::setPlayerActiveHandle($ladderId, $player->id, $user->id);
+            }
 
             return $player;
         }
