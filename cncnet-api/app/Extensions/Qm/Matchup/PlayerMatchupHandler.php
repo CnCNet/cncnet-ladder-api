@@ -25,6 +25,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
     {
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
+        $playerName = $this->qmPlayer?->player?->username;
 
         // Check if current player is an observer
         if ($this->qmPlayer->isObserver())
@@ -52,7 +53,7 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         // Check if there is enough opponents
         if ($matchableOpponents->count() < $numberOfOpponentsNeeded)
         {
-            Log::debug("FindOpponent ** Not enough players for match yet");
+            Log::debug("FindOpponent ** Not enough players for match yet, ladder: $ladder->abbreviation, player: $playerName");
             $this->qmPlayer->touch();
             return;
         }
@@ -68,14 +69,15 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         $commonQmMaps = $this->quickMatchService->getCommonMapsForPlayers($ladder, $players);
 
         // Remove the recent maps from $commonQmMaps if reduce_map_repeats is active
-        if ($ladder->qmLadderRules->reduce_map_repeats > 0)
+        $mapRepeats = $ladder->qmLadderRules->reduce_map_repeats;
+        if ($mapRepeats > 0 && $mapRepeats < $ladder->mapPool->maps->count()) // TODO may need to consider total map veto count
         {
             $commonQmMaps = $this->quickMatchService->filterOutRecentsMaps($this->history, $commonQmMaps, $players);
         }
 
         if (count($commonQmMaps) < 1)
         {
-            Log::info("FindOpponent ** No common maps available");
+            Log::info("FindOpponent ** No common maps available for ladder: $ladder->abbreviation, player: $playerName");
             $this->qmPlayer->touch();
             return;
         }
