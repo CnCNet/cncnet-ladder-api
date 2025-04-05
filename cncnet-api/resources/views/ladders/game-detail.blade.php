@@ -1,22 +1,32 @@
 @extends('layouts.app')
 
-<?php
-
+@php
 $pageTitle = 'Viewing Game - ';
 $reports = $playerGameReports;
 
-?>
-
-@foreach ($reports as $k => $pgr)
-    <?php
-    $player = $pgr->player()->first();
-    $clan = $pgr->clan()->first();
-    if ($k == 1) {
-        $pageTitle .= ' vs ';
+if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO) {
+    $teams = [];
+    foreach ($groupedByTeamPlayerGameReports as $team => $teamPlayerGameReportArr) {
+        $playersName = [];
+        foreach ($teamPlayerGameReportArr as $k => $pgr) {
+            $player = $pgr->player()->first();
+            $playersName[] = $player->username;
+        }
+        $teams[] = join(' & ', $playersName);
     }
-    $pageTitle .= "$player->username";
-    ?>
-@endforeach
+    $pageTitle .= join(' vs ', $teams);
+}
+else {
+    foreach ($reports as $k => $pgr) {
+        $player = $pgr->player()->first();
+        $clan = $pgr->clan()->first();
+        if ($k == 1) {
+            $pageTitle .= ' vs ';
+        }
+        $pageTitle .= "$player->username";
+    }
+}
+@endphp
 
 @section('title', $pageTitle)
 @section('feature-video', \App\Models\URLHelper::getVideoUrlbyAbbrev($history->ladder->abbreviation))
