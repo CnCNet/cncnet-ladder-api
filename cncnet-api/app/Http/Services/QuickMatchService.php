@@ -216,7 +216,7 @@ class QuickMatchService
     public function fetchQmQueueEntry(LadderHistory $history, ?QmQueueEntry $qmQueueEntry = null): \Illuminate\Database\Eloquent\Collection|array
     {
         return QmQueueEntry::query()
-            ->when(isset($qmQueueEntry), fn ($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
+            ->when(isset($qmQueueEntry), fn($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
             ->where('ladder_history_id', '=', $history->id)
             ->get();
     }
@@ -279,6 +279,72 @@ class QuickMatchService
         return $matchableOpponents;
     }
 
+    /**
+     * Filters out opponents who have Yuri or random map sides selected if the user's settings 
+     * and rank qualify for the restriction.
+     *
+     * @param QmQueueEntry $currentQmQueueEntry The current player's queue entry, containing ladder and user settings.
+     * @param Collection $opponents A collection of opponents to evaluate and potentially filter.
+     * 
+     * @return Collection Filtered collection of matchable opponents.
+     */
+    public function removeYuriPlayers(QmQueueEntry $currentQmQueueEntry, Collection $opponents): Collection
+    {
+        $history = $currentQmQueueEntry->ladderHistory;
+        $ladder = $history->ladder;
+
+        // If not in Yuri mode, return opponents as is
+        if ($ladder->abbreviation !== 'yr')
+        {
+            return $opponents;
+        }
+
+        $disableYuri = $currentQmQueueEntry->qmPlayer->player->user->userSettings->do_not_match_yuri;
+        $rank = $currentQmQueueEntry->qmPlayer->player->rank($history);
+
+        // If user does not disable Yuri matching or rank is better than the threshold, return opponents
+        if (!$disableYuri || $rank <= 30)
+        {
+            return $opponents;
+        }
+
+        $playerName = $currentQmQueueEntry->qmPlayer->player->username;
+        $matchableOpponents = collect();
+        $filteredOpponents = [];
+
+        Log::debug("Filtering out Yuri players for $playerName");
+
+        foreach ($opponents as $opponent)
+        {
+            $playerMapSides = $opponent->qmPlayer->map_side_array();
+
+            // Validate map sides
+            if (!is_array($playerMapSides))
+            {
+                Log::warning("Invalid map sides for opponent: " . json_encode($opponent));
+                continue;
+            }
+
+            if (in_array(9, $playerMapSides) || in_array(-1, $playerMapSides))
+            { // Yuri or random
+                $opponentName = $opponent->qmPlayer->player->username;
+                $filteredOpponents[] = $opponentName;
+            }
+            else
+            {
+                $matchableOpponents->add($opponent);
+            }
+        }
+
+        // Log summary of filtered opponents
+        if (!empty($filteredOpponents))
+        {
+            Log::debug("$playerName: Filtered out yuri opponents: " . implode(', ', $filteredOpponents));
+        }
+
+        return $matchableOpponents;
+    }
+
 
     /**
      * Find all opponents within point range.
@@ -294,8 +360,12 @@ class QuickMatchService
         $ladder = $history->ladder;
         $pointsPerSecond = $ladder->qmLadderRules->points_per_second;
         $maxPointsDifference = $ladder->qmLadderRules->max_points_difference;
+        $playerName = $currentQmQueueEntry->qmPlayer?->player?->username;
+        $currentPointFilter = $currentQmQueueEntry->qmPlayer->player->user->userSettings->disabledPointFilter;
 
         $matchableOpponents = collect();
+
+        Log::debug("queueEntry=$currentQmQueueEntry->id, name=$playerName:, pointFilter=$currentPointFilter, Opponents in queue $opponents");
 
         foreach ($opponents as $opponent)
         {
@@ -318,7 +388,22 @@ class QuickMatchService
             {
                 $matchableOpponents->add($opponent);
             }
+
+            // did both players diable point filter and are within 1,000 pts, and both players have at least 400 pts
+            else if (
+                $currentPointFilter
+                && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter
+                && abs($currentQmQueueEntry->points - $opponent->points) < 1000
+                && $currentQmQueueEntry->points > 400
+                && $opponent->points > 400
+            )
+            {
+                $matchableOpponents->add($opponent);
+            }
         }
+
+        $numMatchableOpponents = count($matchableOpponents);
+        Log::debug("queueEntry=$currentQmQueueEntry->id, name=$playerName: matchableOpponents=$numMatchableOpponents");
 
         return $matchableOpponents;
     }
@@ -440,12 +525,12 @@ class QuickMatchService
                 ->get();
 
             $recentMapsHash = $playerGameReports
-                ->map(fn (PlayerGameReport $item) => $item->game->map)
+                ->map(fn(PlayerGameReport $item) => $item->game->map)
                 ->filter()
                 ->pluck('hash')
                 ->toArray();
 
-            $maps = $maps->filter(fn (QmMap $map) => !in_array($map->map->hash, $recentMapsHash));
+            $maps = $maps->filter(fn(QmMap $map) => !in_array($map->map->hash, $recentMapsHash));
         }
 
         return $maps;
@@ -1031,7 +1116,7 @@ class QuickMatchService
         {
             Log::debug("Creating random spawns for map: " . $qmMap->description);
             // populate array with values 1 to n, n = number of players in the match
-            $spawnArr = array_map(fn ($num) => (string) $num, range(1, $ladder->qmLadderRules->player_count));
+            $spawnArr = array_map(fn($num) => (string) $num, range(1, $ladder->qmLadderRules->player_count));
 
             // shuffle the spawns
             shuffle($spawnArr);
@@ -1068,13 +1153,13 @@ class QuickMatchService
     {
 
         Log::debug('[QuickMatchService::setTeamSpawns]');
-        $spawnOrder = array_map(fn ($i) => intval($i), explode(',', $spawnOrders));
+        $spawnOrder = array_map(fn($i) => intval($i), explode(',', $spawnOrders));
         $qmMap = $qmMatch->map;
 
 
         Log::debug('[QuickMatchService::setTeamSpawns] $spawnOrder ' . json_encode($spawnOrder));
 
-        $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn ($s) => $s >= 0));
+        $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn($s) => $s >= 0));
 
         foreach ($teamPlayers->values() as $i => $player)
         {
@@ -1180,7 +1265,7 @@ class QuickMatchService
      */
     private function rankedMapPicker(Collection $maps, int $rank, int $points, bool $matchAnyMap)
     {
-        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0)->values();
+        $maps = $maps->filter(fn($map) => $map->map_tier && $map->map_tier > 0)->values();
 
         Log::debug("Selecting map for rank $rank, points $points, anyMap=" . $matchAnyMap . ", " . $maps->count() . " maps");
 
@@ -1275,7 +1360,7 @@ class QuickMatchService
      */
     private function eloMapPicker(Collection $maps, int $elo, bool $matchAnyMap)
     {
-        $maps = $maps->filter(fn ($map) => $map->map_tier && $map->map_tier > 0)->values();
+        $maps = $maps->filter(fn($map) => $map->map_tier && $map->map_tier > 0)->values();
 
         Log::debug("Selecting map for elo $elo, anyMap=" . strval($matchAnyMap) . ", " . strval($maps->count()) . " maps");
 
@@ -1452,7 +1537,7 @@ class QuickMatchService
         $possibleMatches = collect($possibleMatches);
 
         // TODO : move this hard-coded value to the qmLadderRules
-        $similarEloMatches = $possibleMatches->filter(fn ($match) => $match['teams_elo_diff'] < 400);
+        $similarEloMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 400);
 
         if ($similarEloMatches->count() > 0)
         {
@@ -1511,8 +1596,9 @@ class QuickMatchService
         $g = function ($players, $match, $team)
         {
             return $players
-                ->filter(fn (QmQueueEntry $qmQueueEntry) => in_array($qmQueueEntry->id, [
-                    $match[$team]['player1'], $match[$team]['player2']
+                ->filter(fn(QmQueueEntry $qmQueueEntry) => in_array($qmQueueEntry->id, [
+                    $match[$team]['player1'],
+                    $match[$team]['player2']
                 ]));
         };
 

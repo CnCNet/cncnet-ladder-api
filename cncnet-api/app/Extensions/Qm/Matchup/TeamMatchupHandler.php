@@ -14,6 +14,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
     {
         $ladder = $this->history->ladder;
         $ladderRules = $ladder->qmLadderRules;
+        $playerInQueue = $this->qmPlayer?->player?->username; // Null-safe evaluation
 
         // Check if current player is an observer
         if ($this->qmPlayer->isObserver())
@@ -26,23 +27,28 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         // Fetch all other players in the queue
         $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
-        Log::debug("FindOpponent ** players in q : " . $opponents->count() + 1);
+        $count = $opponents->count() + 1;
+        $timeInQueue = $this->qmQueueEntry->secondsinQueue();
+        Log::debug("FindOpponent ** inQueue={$playerInQueue}, players in q: {$count}, for ladder={$ladder->abbreviation}, seconds in Queue: {$timeInQueue}");
 
         // Find opponents in same tier with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
 
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getEntriesInPointRange($this->qmQueueEntry, $matchableOpponents);
-        Log::debug("FindOpponent ** amount of matchable opponent after point filter : " . $matchableOpponents->count());
+      
+        $opponentCount = $matchableOpponents->count();
+        Log::debug("FindOpponent ** inQueue={$playerInQueue}, amount of matchable opponent after point filter: {$opponentCount} of {$count}");
 
         // Count the number of players we need to start a match
         // Excluding current player
         $numberOfOpponentsNeeded = $ladderRules->player_count - 1;
 
         // Check if there is enough opponents
-        if ($matchableOpponents->count() < $numberOfOpponentsNeeded)
+        $matchableOpponentsCount = $matchableOpponents->count();
+        if ($matchableOpponentsCount < $numberOfOpponentsNeeded)
         {
-            Log::debug("FindOpponent ** Team matchup handler ** Not enough players for match yet");
+            Log::debug("FindOpponent ** inQueue={$playerInQueue}, Team matchup handler ** Not enough players for match yet ($matchableOpponentsCount of $numberOfOpponentsNeeded)");
             $this->qmPlayer->touch();
             return;
         }
@@ -69,7 +75,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         }
 
         // Add observers to the match if there is any
-        $observers = $opponents->filter(fn (QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
+        $observers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
         if ($observers->count() < 0)
         {
             $this->matchHasObservers = true;

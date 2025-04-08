@@ -59,10 +59,33 @@ class MatchUpController
             );
         }
 
+        // failsafe, is user allowed to match on 2v2 ladder
+        if ($ladder->ladder_type == Ladder::TWO_VS_TWO && !$user->userSettings->allow_2v2_ladders) {
+            return $this->quickMatchService->onFatalError(
+                $playerName . ' is not allowed to play on 2v2 ladders, speak with admins for assistance ' . $ladder->abbreviation
+            );
+        }
+
         if ($request->hwid)
         {
             QmUserId::createNew($user->id, $request->hwid);
         }
+
+        // @TODO: Add into admin settings for latest hash to check for
+        // $exeHash = $request->exe_hash;
+        // if ($exeHash != null && strlen($exeHash) > 1)
+        // {
+        //     $exeHashToCheck = "e3787d6780ef512758fb8da2d825626945b3243d";
+        //     Log::info("Exe hash of $user->name : $exeHash");
+
+        //     if ($ladder->game == "yr" && $exeHash != $exeHashToCheck)
+        //     {
+        //         Log::info("Exe hash mismatch detected, notification sent to $user->name : $exeHash : Should be: $exeHashToCheck");
+        //         return $this->quickMatchService->onFatalError(
+        //             'Please update to the latest version of CnCNet. If already updated, launch the Ranked Match client from the main CnCNet client.'
+        //         );
+        //     }
+        // }
 
         # Check player has an active nick to play with, set one if not
         $this->playerService->setActiveUsername($player, $ladder);
@@ -211,8 +234,8 @@ class MatchUpController
     private function onMatchMeUp(Request $request, Ladder $ladder, Player $player, ?QmMatchPlayer $qmPlayer)
     {
 
-        Log::debug('Username : ' . $player->username . ' on ladder ' . $ladder->name);
-        Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
+        // Log::debug('Username : ' . $player->username . ' on ladder ' . $ladder->name);
+        // Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
 
         // If we're new to the queue, create required QmMatchPlayer model
         if (!isset($qmPlayer))
@@ -288,7 +311,8 @@ class MatchUpController
             $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $ladder->current_history, $gameType);
 
             // Push a job to find an opponent
-            Log::debug('Queued FindOpponent job');
+            Log::debug("Queued FindOpponent job for {$qmQueueEntry->id}, name={$player?->username}, ladder={$ladder->abbreviation}");
+
             dispatch(new FindOpponentJob($qmQueueEntry?->id, $gameType));
 
             $qmPlayer->touch();

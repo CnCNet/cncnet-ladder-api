@@ -9,6 +9,11 @@
         <x-slot name="description">
             Register an account for the CnCNet Ladders
         </x-slot>
+        @if (!\Auth::user())
+            <div class="hero-btn-group">
+                <a class="btn btn-outline-secondary me-3 btn-lg" href="/auth/login">Login</a>
+            </div>
+        @endif
     </x-hero-with-video>
 @endsection
 
@@ -42,16 +47,23 @@
             <div class="col-8 m-auto">
                 <h3>How to play</h3>
 
-                <ol>
-                    <li>Create your Ladder Account below.</li>
-                    <li>Once complete, create a Username to play online with.</li>
-                    <li>Login to the CnCNet Ranked Match client with your Ladder Account.</li>
-                    <li>Click "Quick Match" and wait to play ladder games!</li>
+                <ol class="list-styled">
+                    <li>
+                        <p>Create your Ladder Account below.</p>
+                    </li>
+                    <li>
+                        <p>Once complete, create a Username to play online with.</p>
+                    </li>
+                    <li>
+                        <p>Login to the CnCNet Ranked Match client with your Ladder Account.</p>
+                    </li>
+                    <li>
+                        <p>Click "Ranked Match" and wait to play ladder games!</p>
+                    </li>
                 </ol>
 
                 <p>
-                    If you have trouble registering <a href="https://cncnet.org/discord">please contact us on our
-                        Discord.</a>
+                    If you have trouble registering please contact us on our <a href="https://cncnet.org/discord" class="text-underline">Discord.</a>
                 </p>
 
                 @if (count($errors) > 0)
@@ -92,19 +104,16 @@
                     <input type="hidden" name="play_nay" />
 
                     <div class="form-group">
-                        <div class="col-md-6 col-md-offset-4">
-                            <p class="mb-2">
-                                <small>
-                                    By registering and using the Quick Match software and related sites, you agree to
-                                    the CnCNet <a href="https://cncnet.org/terms-and-conditions" target="_blank">Terms &amp;
-                                        Conditions</a>
-                                </small>
-                            </p>
+                        <p>
+                            By registering and using the Ranked Match software and related CnCNet services, you agree to the CnCNet <a
+                                href="https://cncnet.org/terms-and-conditions" target="_blank" class="text-underline">Terms &amp; Conditions</a>
+                            and to our <a href="https://cncnet.org/community-guidelines-and-rules" class="text-underline">CnCNet Community Guidelines
+                                and Rules</a>.
+                        </p>
 
-                            <button type="submit" class="btn btn-primary mt-2">
-                                Register
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">
+                            Register
+                        </button>
                     </div>
                 </form>
             </div>

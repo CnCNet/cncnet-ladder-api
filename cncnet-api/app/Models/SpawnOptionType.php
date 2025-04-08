@@ -9,6 +9,10 @@ class SpawnOptionType extends Model {
     const SPAWNMAP_INI = 2;
     const COPY_FILE = 3;
     const PREPEND_FILE = 4;
+    const APPEND_FILE = 5;
+    const MERGE_FILE = 6;
+
+    // TODO missing types 'MERGE_FILE' and 'APPEND_FILE'
 
     public static function findOrCreate($name)
     {

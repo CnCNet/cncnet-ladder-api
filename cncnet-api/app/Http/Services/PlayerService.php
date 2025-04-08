@@ -60,13 +60,9 @@ class PlayerService
     {
         $username = str_replace([",", ";", "="], "-", $username); // Dissallowed by qm client
 
-        $player = \App\Models\Player::where("username", "=", $username)
-            ->where("ladder_id", "=", $ladderId)
-            ->first();
+        $player = \App\Models\Player::where("username", "=", $username)->first();
 
-        $ladder = Ladder::find($ladderId);
-
-        if ($player == null)
+        if ($player == null || $player->user->id == $user->id)
         {
             $player = new \App\Models\Player();
             $player->username = $username;
@@ -301,6 +297,9 @@ class PlayerService
             $ladder = $activeHandle->player->ladder;
             $player = $activeHandle->player;
             $player["user"] = $player->user;
+
+            // @TODO - Remove QM client from preventing chat.
+            $player["user"]["chat_allowed"] = 1; // Stand down QM client from preventing in game chat.
 
             if ($activeHandle->player->ladder)
             {

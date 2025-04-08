@@ -138,7 +138,7 @@
                                     @endforeach
                                 </select>
 
-                                <a id="canceledMatchesLink" href="/admin/canceledMatches/{{ $ladders[0]->abbreviation }}"
+                                <a id="canceledMatchesLink" href="/canceledMatches/{{ $ladders[0]->abbreviation }}"
                                     class="btn btn-md btn-secondary mt-2">View</a>
                             </div>
                         </div>

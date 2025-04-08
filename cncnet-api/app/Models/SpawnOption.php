@@ -4,7 +4,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class SpawnOption extends Model {
 
-	//
+	/**
+     * type_id: the spawn option type, see SpawnOptionType.php
+     * name_str: the name of this option, you can pass anything - better to pass a name so you know what the option does
+     * string1: this is the spawn option key, e.g. [Basic]
+     * strin2: this is the spawn option attribute, e.g. Author
+     */
     public static function makeOne($type_id, $name_str, $string1, $string2)
     {
         $inst = new self();

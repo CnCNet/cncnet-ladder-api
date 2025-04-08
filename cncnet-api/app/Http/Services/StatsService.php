@@ -10,8 +10,13 @@ use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
 use App\Models\QmQueueEntry;
 use App\Models\StatsCache;
+use App\Models\Games;
+use App\Models\GameReport;
+use App\Models\PlayerGameReport;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class StatsService
 {
@@ -256,7 +261,8 @@ class StatsService
         // });
     }
 
-    public function getWinnerOfTheDay(LadderHistory $history) {
+    public function getWinnerOfTheDay(LadderHistory $history)
+    {
         if ($history->ladder->clans_allowed)
         {
             $statsXOfTheDay = $this->getClanOfTheDay($history);
@@ -360,7 +366,8 @@ class StatsService
 
     public function getPlayerMatchups($player, $history)
     {
-        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history)
+        $ladderType = $history->ladder->ladder_type;
+        return Cache::remember("getPlayerMatchups/$history->short/$player->id", 5 * 60, function () use ($player, $history, $ladderType)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
@@ -368,45 +375,176 @@ class StatsService
 
             $playerGameReports = $player->playerGames()
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->where('draw', false)
+                ->where('no_completion', false)
                 ->get();
 
             $matchupResults = [];
             foreach ($playerGameReports as $pgr)
             {
-                if ($pgr->disconnected || $pgr->draw || $pgr->no_completion)
-                    continue;
 
-                $opponent = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
-                    ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')->where('gr.game_id', $pgr->game_id)
+                // are all player game reports for this game 0pts, skip
+                $allZeroPoints = !$pgr->gameReport->playerGameReports()
+                    ->where('points', '!=', 0)
+                    ->exists();
+                if ($allZeroPoints)
+                {
+                    continue;
+                }
+
+                $team = $pgr->team;
+
+                if ($team == null && $ladderType == Ladder::TWO_VS_TWO)
+                {
+                    continue;
+                }
+
+                // get the opponents from this game
+                $opponentReports = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                    ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')
+                    ->where('gr.game_id', $pgr->game_id)
                     ->where('p.id', '!=', $player->id)
                     ->where('gr.valid', true)
                     ->where('gr.best_report', true)
-                    ->select('p.username')
-                    ->first();
+                    ->select('p.username', 'player_game_reports.team', 'player_game_reports.player_id', 'player_game_reports.game_id', 'player_game_reports.game_report_id')
+                    ->get();
 
-                if ($opponent == null)
-                    continue;
-
-                $opponentName = $opponent->username;
-
-                if (!array_key_exists($opponentName, $matchupResults))
+                foreach ($opponentReports as $opponentReport)
                 {
-                    $matchupResults[$opponentName] = [];
-                    $matchupResults[$opponentName]["won"] = 0;
-                    $matchupResults[$opponentName]["lost"] = 0;
-                    $matchupResults[$opponentName]["total"] = 0;
-                }
+                    $opponentTeam = $opponentReport->team;
 
-                if ($pgr->won)
-                    $matchupResults[$opponentName]["won"] = $matchupResults[$opponentName]["won"] + 1;
-                else
-                    $matchupResults[$opponentName]["lost"] = $matchupResults[$opponentName]["lost"] + 1;
-                $matchupResults[$opponentName]["total"] = $matchupResults[$opponentName]["total"] + 1;
+                    if (($opponentTeam == null || $opponentTeam == $team) && $ladderType == Ladder::TWO_VS_TWO)
+                    {
+                        continue;
+                    }
+
+                    $opponentName = $opponentReport->username;
+
+                    if (!array_key_exists($opponentName, $matchupResults))
+                    {
+                        $matchupResults[$opponentName] = [];
+                        $matchupResults[$opponentName]["won"] = 0;
+                        $matchupResults[$opponentName]["lost"] = 0;
+                        $matchupResults[$opponentName]["total"] = 0;
+                    }
+
+                    if ($pgr->won)
+                    {
+                        $matchupResults[$opponentName]["won"] = $matchupResults[$opponentName]["won"] + 1;
+                    }
+                    else
+                    {
+                        $matchupResults[$opponentName]["lost"] = $matchupResults[$opponentName]["lost"] + 1;
+                    }
+                    $matchupResults[$opponentName]["total"] = $matchupResults[$opponentName]["total"] + 1;
+                }
             }
+
+            uksort($matchupResults, function ($a, $b)
+            {
+                return strcasecmp($a, $b); // Case-insensitive alphabetical sort
+            });
 
             return $matchupResults;
         });
     }
+
+    public function getTeamMatchups($player, $history)
+    {
+        $cacheKey = "getTeamMatchups/" . Str::slug($history->short) . "/$player->id";
+
+        return Cache::remember($cacheKey, 5 * 60, function () use ($player, $history)
+        {
+
+            $gameReports = GameReport
+                ::whereHas('game', function ($query) use ($history)
+                {
+                    $query->where('ladder_history_id', $history->id);
+                })
+                ->whereHas('playerGameReports', function ($query) use ($player)
+                {
+                    $query->where('player_id', $player->id);
+                })
+                ->where('valid', true)
+                ->where('manual_report', false)
+                ->where('best_report', true)
+                ->get();
+
+            $matchupResults = [];
+
+            foreach ($gameReports as $gameReport)
+            {
+                $allZeroPoints = !$gameReport->playerGameReports()
+                    ->where('points', '!=', 0)
+                    ->exists();
+                if ($allZeroPoints)
+                {
+                    continue;
+                }
+
+                $myPlayerGameReport = $gameReport->playerGameReports()
+                    ->where('draw', false)
+                    ->where('player_game_reports.player_id', '=', $player->id) // get my player report
+                    ->first();
+
+                if (!$myPlayerGameReport)
+                {
+                    continue;
+                }
+
+                $team = $myPlayerGameReport->team;
+                if ($team == null)
+                {
+                    $playerGameReportId = $myPlayerGameReport->id;
+                    $gameId = $myPlayerGameReport->game->id;
+                    continue;
+                }
+
+                // Get teammates
+                $teamMatePlayerGameReports = $gameReport->playerGameReports()
+                    ->join('players as p', 'player_game_reports.player_id', '=', 'p.id')
+                    ->where('player_game_reports.team', '=', $team) // my teammate(s)
+                    ->where('player_game_reports.id', '!=', $myPlayerGameReport->id) // ignore my report
+                    ->select('p.username', 'player_game_reports.won', 'player_game_reports.team', 'player_game_reports.id', 'player_game_reports.game_id')
+                    ->get();
+
+                if ($teamMatePlayerGameReports->isEmpty())
+                {
+                    continue;
+                }
+
+                foreach ($teamMatePlayerGameReports as $teamMatePlayerGameReport)
+                {
+                    if ($teamMatePlayerGameReport->team == null)
+                    {
+                        $gameId = $teamMatePlayerGameReport->game->id;
+                        continue;
+                    }
+
+                    $teammateName = $teamMatePlayerGameReport->username;
+
+                    // Initialize matchup stats if not already set
+                    $matchupResults[$teammateName] ??= ["won" => 0, "lost" => 0, "total" => 0];
+
+                    // Update win/loss count
+                    if ($myPlayerGameReport->won || $teamMatePlayerGameReport->won)
+                    {
+                        $matchupResults[$teammateName]["won"]++;
+                    }
+                    else
+                    {
+                        $matchupResults[$teammateName]["lost"]++;
+                    }
+                    $matchupResults[$teammateName]["total"]++;
+                }
+            }
+
+            uksort($matchupResults, fn($a, $b) => strcasecmp($a, $b)); // Case-insensitive alphabetical sort
+
+            return $matchupResults;
+        });
+    }
+
 
     public function getClanPlayerWinLosses($clan, $history)
     {

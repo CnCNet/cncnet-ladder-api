@@ -8,13 +8,22 @@ use App\Http\Services\LadderService;
 use App\Models\Clan;
 use App\Models\GameObjectSchema;
 use App\Models\Ladder;
+use App\Models\LadderHistory;
+use App\Models\LadderType;
+use App\Models\PlayerCache;
 use App\Models\Player;
 use App\Models\SpawnOptionString;
+use App\Models\URLHelper;
 use App\Models\User;
+use App\Models\Game;
+use App\Models\UserPro;
+use App\Models\UserSettings;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class AdminController extends Controller
 {
@@ -35,25 +44,6 @@ class AdminController extends Controller
             "all_ladders" => \App\Models\Ladder::all(),
             "schemas" => \App\Models\GameObjectSchema::managedBy($request->user()),
             "user" => $request->user(),
-        ]);
-    }
-
-    public function getCanceledMatches($ladderAbbreviation = null)
-    {
-        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbreviation)->first();
-
-        if ($ladder == null)
-            abort(404);
-
-        $matches = \App\Models\QmCanceledMatch::where('qm_canceled_matches.ladder_id', $ladder->id)
-            ->join('players as p', 'qm_canceled_matches.player_id', '=', 'p.id')
-            ->orderBy('qm_canceled_matches.created_at', 'DESC')
-            ->select("qm_canceled_matches.*", "p.username")
-            ->paginate(50);
-
-        return view("admin.canceled-matches", [
-            "canceled_matches" => $matches,
-            "ladder" => $ladder
         ]);
     }
 
@@ -109,7 +99,7 @@ class AdminController extends Controller
 
     public function getGameSchemaSetup(Request $request, $gameSchemaId)
     {
-        $gameSchema = \App\Models\GameObjectSchema::find($gameSchemaId);
+        $gameSchema = GameObjectSchema::find($gameSchemaId);
         if ($gameSchema === null)
             abort(404);
 
@@ -123,11 +113,11 @@ class AdminController extends Controller
 
     public function saveSchemaManager(Request $request, $gameSchemaId)
     {
-        $gameSchema = \App\Models\GameObjectSchema::find($gameSchemaId);
+        $gameSchema = GameObjectSchema::find($gameSchemaId);
         if ($gameSchema === null)
             abort(404);
 
-        $user = \App\Models\User::where('email', '=', $request->email)->first();
+        $user = User::where('email', '=', $request->email)->first();
 
         if ($user === null)
         {
@@ -143,7 +133,7 @@ class AdminController extends Controller
 
     public function saveGameSchema(Request $request, $gameSchemaId)
     {
-        $gameSchema = \App\Models\GameObjectSchema::find($gameSchemaId);
+        $gameSchema = GameObjectSchema::find($gameSchemaId);
         if ($gameSchema === null)
             abort(404);
 
@@ -157,7 +147,7 @@ class AdminController extends Controller
 
     public function saveGameObject(Request $request, $gameSchemaId, $objectId)
     {
-        $gameSchema = \App\Models\GameObjectSchema::find($gameSchemaId);
+        $gameSchema = GameObjectSchema::find($gameSchemaId);
         if ($gameSchema === null)
             abort(404);
 
@@ -210,6 +200,7 @@ class AdminController extends Controller
             $request->session()->flash('success', "Option has been updated.");
         }
 
+        $request->session()->flash('success', "No action applied");
         return redirect()->back();
     }
 
@@ -258,6 +249,33 @@ class AdminController extends Controller
             "userId" => $userId,
             "hostname" => $hostname
         ]);
+    }
+
+    public function saveProList(Request $request)
+    {
+        try
+        {
+            $ladder = Ladder::findOrFail($request->ladderId);
+            UserPro::where("ladder_id", $ladder->id)->delete();
+
+            if ($request->userProIds)
+            {
+                foreach ($request->userProIds as $userId)
+                {
+                    $userPro = new UserPro();
+                    $userPro->user_id = $userId;
+                    $userPro->ladder_id = $ladder->id;
+                    $userPro->save();
+                }
+            }
+
+            $request->session()->flash('success', "List saved");
+            return redirect()->back();
+        }
+        catch (Exception $ex)
+        {
+            report($ex);
+        }
     }
 
     public function getManageClansIndex(Request $request)
@@ -344,6 +362,10 @@ class AdminController extends Controller
 
         $user->updateAlias($request->alias);
 
+        $user->userSettings->is_anonymous = $request->is_anonymous == "on" ? true : false;
+        $user->userSettings->allow_2v2_ladders = $request->allow_2v2_ladders == "on" ? true : false;
+        $user->userSettings->save();
+        
         return view("admin.edit-user", [
             "user" => $user
         ]);
@@ -365,19 +387,20 @@ class AdminController extends Controller
             ->where("ladder_id", "=", $ladder->id)
             ->first();
 
-        $games = \App\Models\Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC")->limit(100);
+        $games = Game::where("ladder_history_id", "=", $history->id)->orderBy("id", "DESC")->limit(100);
         return view("admin.manage-games", ["games" => $games, "ladder" => $ladder, "history" => $history]);
     }
 
     public function deleteGame(Request $request)
     {
-        $game = \App\Models\Game::find($request->game_id);
+        $game = Game::find($request->game_id);
         if ($game == null) return "Game not found";
 
         // Just remove the game_report_id linkage rather than actually delete anything
         $game->game_report_id = null;
         $game->save;
 
+        $request->session()->flash('success', "Game has been deleted");
         return redirect()->back();
     }
 
@@ -1027,29 +1050,42 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    public function editPlayerName(Request $request)
+    public function editPlayerName(Request $request, $ladderId, $playerId)
     {
-        $this->validate($request, [
-            'player_name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
-        ]);
+        try {
+            $this->validate($request, [
+                'player_name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
+            ]);
+        } catch (ValidationException $e) {
+            Log::error('Validation failed', [
+                'url' => $request->fullUrl(),
+                'errors' => $e->errors(),
+                'input' => $request->all(),
+            ]);
+    
+            throw $e;
+        }
+  
+        $history = LadderHistory::where('id', $request->history_id)->first();
 
-        $history = \App\Models\LadderHistory::where('id', $request->history_id)->first();
-
-        $player = \App\Models\Player::where('id', $request->player_id)
-            ->where('ladder_id', $history->ladder->id)
+        $player = Player::where('id', $playerId)
+            ->where('ladder_id', $ladderId)
             ->first();
+        $oldName = $player->username;
 
         if ($player == null)
         {
+            Log::error("No existing player found with this player id: $player->id");
             $request->session()->flash('error', "No existing player found with this player id");
             return redirect()->back();
         }
 
-        $playerCaches = \App\Models\PlayerCache::where('player_id', $player->id)->get();
+        $playerCaches = PlayerCache::where('player_id', $player->id)->get();
 
         if ($playerCaches == null || $playerCaches->count() == 0)
         {
-            $request->session()->flash('error', "No player caches found with this player id");
+            Log::error("No player caches found with this player id: $player->id");
+            $request->session()->flash('error', "Error updating player");
             return redirect()->back();
         }
 
@@ -1057,12 +1093,13 @@ class AdminController extends Controller
         $newName = trim($newName);
 
         //check if this name already belongs to another player in this ladder
-        $existing_players_count = \App\Models\Player::where('username', $newName)
+        $existing_players_count = Player::where('username', $newName)
             ->where('ladder_id', $history->ladder->id)
             ->count();
         if ($existing_players_count > 0)
         {
-            $request->session()->flash('error', "This username is already taken for this ladder.");
+            Log::error("Username $newName is already taken for this ladder.");
+            $request->session()->flash('error', "Username $newName is already taken for this ladder.");
             return redirect()->back();
         }
 
@@ -1077,8 +1114,9 @@ class AdminController extends Controller
             $playerCache->save();
         }
 
-        $url = \App\Models\URLHelper::getPlayerProfileUrl($history, $player->username);
+        $url = URLHelper::getPlayerProfileUrl($history, $player->username);
         $request->session()->flash('success', "Player name has been updated to " . $player->username);
+        Log::info("Successfully updated player '$oldName' to '$newName'");
         return redirect()->to($url);
     }
 

@@ -46,4 +46,5 @@ class LadderHistory extends Model
                 $q->whereNull('qm_match_id');
             });
     }
+
 }

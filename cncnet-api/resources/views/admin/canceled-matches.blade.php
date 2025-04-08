@@ -55,29 +55,23 @@
     <section class="mt-4">
         <div class="container">
             @include('components.pagination.paginate', ['paginator' => $canceled_matches->appends(request()->query())])
-
+            
             <table class="table col-md-12">
                 <thead>
                     <tr>
                         <th>Created At</th>
-                        <th>Player Name</th>
-                        <th>Quick Match Id</th>
+                        <th>Canceled By</th>
+                        <th>Affected Players</th>
+                        <th>Map</th>
                     </tr>
                 </thead>
                 <tbody class="table">
                     @foreach ($canceled_matches as $canceled_match)
-                        <tr>
+                        <tr title="QM Match ID: {{ $canceled_match->qm_match_id }}">
                             <td>{{ $canceled_match->created_at->format('F j, Y, g:i a T') }}</td>
-                            <td>
-                                @if ($canceled_match->player->clanPlayer)
-                                    <i class="bi bi-flag-fill icon-clan ps-1 pe-1"></i>
-                                    <span class="pe-3">
-                                        [{{ $canceled_match->player->clanPlayer->clan->short }}]
-                                    </span>
-                                @endif
-                                {{ $canceled_match->username }}
-                            </td>
-                            <td>{{ $canceled_match->qm_match_id }}</td>
+                            <td>{{ $canceled_match->canceled_by }}</td>
+                            <td>{{ $canceled_match->affected_players }}</td>
+                            <td>{{ $canceled_match->map }}</td>
                         </tr>
                     @endforeach
                 </tbody>

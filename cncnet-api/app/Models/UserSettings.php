@@ -13,7 +13,7 @@ class UserSettings extends Model
         'disabledPointFilter',
         'skip_score_screen',
         'match_any_map',
-        'enableAnonymous',
+        'is_anonymous',
         'match_ai',
         'is_observer',
         'allow_observers',
@@ -23,7 +23,7 @@ class UserSettings extends Model
     public function __construct()
     {
         $this->timestamps = false;
-        $this->enableAnonymous = false;     //by default users will not be anonymous
+        $this->is_anonymous = false;     //by default users will not be anonymous
         $this->disabledPointFilter = false;    //by default point filter will be enabled
         $this->match_ai = true;
     }
@@ -40,6 +40,6 @@ class UserSettings extends Model
 
     public function getIsAnonymous()
     {
-        return $this->enableAnonymous == true;
+        return $this->is_anonymous == true;
     }
 }

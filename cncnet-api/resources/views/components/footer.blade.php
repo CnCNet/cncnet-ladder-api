@@ -6,32 +6,32 @@
 
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/command-and-conquer">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('td') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('td') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Command &amp; Conquer</span>
                 </a>
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/red-alert">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ra') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ra') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Red Alert</span>
                 </a>
                 <a class="footer-link d-flex text-decoration-none"href="https://cncnet.org/dune-2000">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('d2k') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('d2k') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Dune 2000</span>
                 </a>
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/tiberian-sun">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ts') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ts') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Tiberian Sun</span>
                 </a>
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/red-alert-2">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ra2') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('ra2') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Red Alert 2</span>
                 </a>
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/yuris-revenge">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('yr') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('yr') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Yuri's Revenge</span>
                 </a>
 
@@ -50,22 +50,22 @@
 
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/dawn-of-the-tiberium-age">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('dta') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('dta') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Dawn of the Tiberium Age</span>
                 </a>
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/mental-omega">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('mo') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('mo') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Mental Omega</span>
                 </a>
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/cnc-reloaded">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('cncr') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('cncr') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">C&amp;C Reloaded</span>
                 </a>
                 <a class="footer-link d-flex text-decoration-none" href="https://cncnet.org/rise-of-the-east">
                     <span class="game-icon game-icon-sm me-2"
-                          style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('rote') }}"></span>
+                        style="background-image:url({{ \App\Models\URLHelper::getLadderIconByAbbrev('rote') }}"></span>
                     <span class="fw-bold me-3 game-icon-label">Rise of the East</span>
                 </a>
             </div>
@@ -119,7 +119,7 @@
                     </div>
                     <div>
                         <a href="https://www.youtube.com/user/CnCNetOfficial?sub_confirmation=1" title="Subscribe to CnCNet on YouTube"
-                           target="_blank" class="footer-social-link">
+                            target="_blank" class="footer-social-link">
                             <i class="bi bi-youtube"></i>
                         </a>
                     </div>
@@ -130,7 +130,7 @@
                     </div>
                     <div>
                         <a href="https://www.twitch.tv/cncnetofficial" title="Subscribe to CnCNet on Twitch" target="_blank"
-                           class="footer-social-link">
+                            class="footer-social-link">
                             <i class="bi bi-twitch"></i>
                         </a>
                     </div>
@@ -164,14 +164,32 @@
                 <div class="col-sm-6 mt-5 mt-xl-0 col-xl-8 text-end">
                     <div>
                         <div class="footer-logos">
-                            <div>
+                            <div class="mb-3">
                                 <img src="{{ Vite::asset('resources/images/logo.svg') }}" alt="CnCNet Logo" width="200">
                             </div>
-                            <div class="mt-1">
-                                <a href="http://gamesurge.net" target="_blank" title="GameSurge" rel="no-follow">
-                                    <img src="{{ Vite::asset('resources/images/gamesurge.png') }}" alt="GameSurge Logo" width="80">
+                            <div class="mt-3 mb-3">
+                                <a href="https://www.digitalocean.com/?refcode=337544e2ec7b&utm_campaign=Referral_Invite&utm_medium=opensource&utm_source=CnCNet"
+                                    title="Powered by Digital Ocean" target="_blank">
+                                    <img src="https://opensource.nyc3.cdn.digitaloceanspaces.com/attribution/assets/PoweredByDO/DO_Powered_by_Badge_blue.svg"
+                                        width="201px" alt="Powered By Digital Ocean" />
                                 </a>
                             </div>
+                            <div class="mt-3 mb-3">
+                                <a href="http://gamesurge.net" target="_blank" title="GameSurge" rel="no-follow">
+                                    <img src="{{ Vite::asset('resources/images/gamesurge.png') }}" alt="GameSurge Logo" width="150">
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 mb-3">
+                            <a href="https://grant-bartlett.com" target="_blank" title="Website Designed &amp; Developed by Grant Bartlett"
+                                style="text-decoration: underline;">
+                                Ladder Designed &amp; Developed by <br /> Grant Bartlett
+                            </a>,
+                            <a href="https://github.com/alexp8" style="text-decoration: underline;">Burg</a>,
+                            <a href="https://github.com/dkeetonx"style="text-decoration: underline;">dkeetonx</a>,
+                            <a href="https://github.com/Sneer-ra2"style="text-decoration: underline;">Sneer</a>,
+                            <a href="https://github.com/rohsyl"style="text-decoration: underline;">Wu</a>
                         </div>
 
                         <div class="footer-copyright">

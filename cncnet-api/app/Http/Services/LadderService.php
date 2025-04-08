@@ -76,9 +76,9 @@ class LadderService
         return $ladders;
     }
 
-    public function getLatestLadders()
+    public function getLatestLadders($ladderType = null)
     {
-        return Cache::remember("ladderService::getLatestLadders", 1 * 60, function ()
+        return Cache::remember("ladderService::getLatestLadders" . (isset($ladderType) ? $ladderType : ''), 1 * 60, function () use ($ladderType)
         {
             $date = Carbon::now();
 
@@ -89,6 +89,7 @@ class LadderService
                 ->where("ladder_history.starts", "=", $start)
                 ->where("ladder_history.ends", "=", $end)
                 ->whereNotNull("ladder.id")
+                ->when(isset($ladderType), function ($query) use ($ladderType) { $query->where("ladder_type", "=", $ladderType); })
                 ->where('ladder.clans_allowed', '=', false)
                 ->where('ladder.private', '=', false)
                 ->orderBy('ladder.order', 'ASC')
@@ -169,7 +170,7 @@ class LadderService
             ->select(['short', 'starts'])
             ->orderBy('ladder_history.starts', 'DESC')
             ->get();
-        $histories->each(fn ($h) => $h->setRelation('ladder', $ladder));
+        $histories->each(fn($h) => $h->setRelation('ladder', $ladder));
         return $histories;
     }
 
@@ -249,6 +250,7 @@ class LadderService
         ?string $filterBy = null,
         ?string $orderBy = 'desc',
         int $tier = 1,
+        int $paginateCount = 45,
         ?string $search = null
     )
     {
@@ -278,7 +280,7 @@ class LadderService
                 'player',
                 'player.user',
             ])
-            ->paginate(45);
+            ->paginate($paginateCount);
     }
 
     public function getClansFromCacheForLadderHistory(
@@ -328,7 +330,7 @@ class LadderService
             ->get()
             ->reverse();
 
-        $histories->each(fn ($h) => $h->setRelation('ladder', $ladder));
+        $histories->each(fn($h) => $h->setRelation('ladder', $ladder));
 
         return $histories;
     }
@@ -364,7 +366,7 @@ class LadderService
             return LadderHistory::query()
                 ->where("starts", "=", $start)
                 ->where("ends", "=", $end)
-                ->whereHas('ladder', fn ($q) => $q->where('abbreviation', $cncnetGame))
+                ->whereHas('ladder', fn($q) => $q->where('abbreviation', $cncnetGame))
                 ->first();
         }
     }
@@ -412,8 +414,8 @@ class LadderService
             ])
             ->when(
                 $history->ladder->clans_allowed,
-                fn ($q) => $q->with([]),
-                fn ($q) => $q->with([]),
+                fn($q) => $q->with([]),
+                fn($q) => $q->with([]),
             )
             ->get();
     }

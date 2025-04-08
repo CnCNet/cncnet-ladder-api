@@ -19,7 +19,7 @@ class QuickMatchSpawnService
      * @param mixed $ladderRules 
      * @return array 
      */
-    public static function createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladderRules)
+    public static function createSpawnStruct($qmMatch, QmMatchPlayer $qmPlayer, $ladder, $ladderRules)
     {
         $qmMap = $qmMatch->map;
         $map = $qmMap->map;
@@ -41,17 +41,18 @@ class QuickMatchSpawnService
                 "UIGameMode" =>     $qmMap->game_mode,
                 "UIMapName" =>      $qmMap->description,
                 "MapHash" =>        $map->hash,
-                "Scenario" =>       $map->filename !== null ? $map->filename : "spawnmap.ini",
+                "Scenario" =>       ($map->filename && $ladder->game == 'd2k') ? $map->filename : "spawnmap.ini",
                 "Seed" =>           $qmMatch->seed,
                 "GameID" =>         $qmMatch->seed,
                 "WOLGameID" =>      $qmMatch->seed,
-                "Host" => ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
+                "Host" =>           ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
                 "Name" =>           $qmPlayer->player()->first()->username,
                 "Port" =>           $qmPlayer->port,
                 "Side" =>           $qmPlayer->actual_side,
                 "Color" =>          $qmPlayer->color,
                 "MyIndex" =>        $qmPlayer->color,
-                "IsSpectator" =>    "False"
+                "IsSpectator" =>    "False",
+                "DisableChat" =>    $qmPlayer->player->user->getIsAllowedToChat() ? "False" : "True",
                 // Filter null values
             ],
             function ($var)
@@ -71,7 +72,10 @@ class QuickMatchSpawnService
                     $spawnStruct["spawnmap"][$sov->spawnOption->string1->string][$sov->spawnOption->string2->string] = $sov->value->string;
                     break;
                 case SpawnOptionType::PREPEND_FILE:
-                    $spawnStruct["prepends"][] = ["to" => $sov->spawnOption->string1->string, "from" => $sov->value->string];
+                    // $spawnStruct["prepends"][] = ["to" => $sov->spawnOption->string1->string, "from" => $sov->value->string];
+                    // break;
+                case SpawnOptionType::MERGE_FILE;
+                    $spawnStruct["merge"][] = ["to" => $sov->spawnOption->string1->string, "from" => $sov->value->string];
                     break;
                 case SpawnOptionType::COPY_FILE:
                     $spawnStruct["copies"][] = ["to" => $sov->spawnOption->string1->string, "from" => $sov->value->string];
@@ -92,7 +96,10 @@ class QuickMatchSpawnService
                     $spawnStruct["spawnmap"][$sov->spawnOption->string1->string][$sov->spawnOption->string2->string] = $sov->value->string;
                     break;
                 case SpawnOptionType::PREPEND_FILE:
-                    $spawnStruct["prepends"][] = ["to" => $sov->spawnOption->string1->string, "from" => $sov->value->string];
+                    //$spawnStruct["prepends"][] = ["to" => $sov->spawnOption->string1->string, "from" => $sov->value->string];
+                    //break;
+                case SpawnOptionType::MERGE_FILE;
+                    $spawnStruct["merge"][] = ["to" => $sov->spawnOption->string1->string, "from" => $sov->value->string];
                     break;
                 case SpawnOptionType::COPY_FILE:
                     $spawnStruct["copies"][] = ["to" => $sov->spawnOption->string1->string, "from" => $sov->value->string];
