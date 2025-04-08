@@ -4,7 +4,7 @@ namespace App\Http\Services;
 
 use App\Extensions\Qm\Matchup\ClanMatchupHandler;
 use App\Models\Game;
-use App\Models\IpAddress;
+use App\Models\IrcIpAddress;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\PlayerGameReport;
@@ -37,15 +37,15 @@ class QuickMatchService
         $qmPlayer->qm_match_id = null;
         $qmPlayer->tunnel_id = null;
 
-        $addr = IpAddress::findByIP($request->ip_address);
+        $addr = IrcIpAddress::findByIP($request->ip_address);
         $qmPlayer->ip_address_id = $addr ? $addr->id : null;
         $qmPlayer->port = $request->ip_port;
 
-        $addr = IpAddress::findByIP($request->lan_ip);
+        $addr = IrcIpAddress::findByIP($request->lan_ip);
         $qmPlayer->lan_address_id = $addr ? $addr->id : null;
         $qmPlayer->lan_port = $request->lan_port;
 
-        $addr = IpAddress::findByIP($request->ipv6_address);
+        $addr = IrcIpAddress::findByIP($request->ipv6_address);
         $qmPlayer->ipv6_address_id = $addr ? $addr->id : null;
         $qmPlayer->ipv6_port = $request->ipv6_port;
 
@@ -68,7 +68,7 @@ class QuickMatchService
         }
 
         // Save user IP Address
-        $player->user->ip_address_id = \App\Models\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+        $player->user->ip_address_id = \App\Models\IrcIpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
             ? $_SERVER["HTTP_CF_CONNECTING_IP"]
             : $request->getClientIp());
 
