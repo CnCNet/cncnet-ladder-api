@@ -11,7 +11,13 @@ class Ban extends Model
 
 
     public $fillable = [
-        'admin_id', 'user_id', 'ban_type', 'internal_note', 'plubic_reason', 'expires', 'ip_address_id'
+        'admin_id',
+        'user_id',
+        'ban_type',
+        'internal_note',
+        'plubic_reason',
+        'expires',
+        'ip_address_id'
     ];
 
     protected $casts = [
@@ -50,7 +56,7 @@ class Ban extends Model
 
     public function ip()
     {
-        return $this->belongsTo(IpAddress::class, 'ip_address_id');
+        return $this->belongsTo(IrcIpAddress::class, 'ip_address_id');
     }
 
     public static function unstartedBanTime()
