@@ -383,6 +383,7 @@ class LadderController extends Controller
     public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $username = null)
     {
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+        $currentHistory = $history->ladder->currentHistory();
 
         if ($history == null)
         {
@@ -452,7 +453,7 @@ class LadderController extends Controller
         $isAnonymous = $player->user->userSettings->is_anonymous;
 
         $ladderNicks = [];
-        if (!$isAnonymous)
+        if (!$isAnonymous && $history->id != $currentHistory->id) // only hide if anonymous and is the current month
         {
             $ladderNicks = $user->usernames
                 ->where('id', '!=', $player->id)
