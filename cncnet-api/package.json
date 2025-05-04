@@ -7,7 +7,7 @@
         "laravel-vite-plugin": "^0.8.0",
         "sass": "^1.56.1",
         "typescript": "^5.2.2",
-        "vite": "^4.0.0"
+        "vite": "^4.5.5"
     },
     "scripts": {
         "dev": "vite",
