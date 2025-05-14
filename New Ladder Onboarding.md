@@ -8,7 +8,7 @@ Metadata:
 - ladder name: e.g. 'Red Alert'
 - ladder type: 1v1, 2v2
 
-![ladder setup](./support_files/ladder%20setup.png)
+<img src="./support_files/ladder%20setup.png" alt="ladder setup" style="width:40%;" />
 
 Admins:
 - ladder emails of individuals who will maintain the ladder configuration, ladder rules and map pool
