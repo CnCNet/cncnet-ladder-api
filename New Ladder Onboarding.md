@@ -3,10 +3,12 @@ Steps to onboard a new CnCNet supported game to the ladder.
 Submit to the ladder devs the below information to create the ladder.
 
 Metadata:
-- ladder abbreviation, e.g. 'yr', 'ra', 'ra-2v2', 'ts'
-- ladder game, e.g. 'yr', 'ra', 'ts'
-- ladder name
+- ladder abbreviation: e.g. 'yr', 'ra', 'ra-2v2', 'ts'
+- ladder game: e.g. 'yr', 'ra', 'ts'
+- ladder name: e.g. 'Red Alert'
 - ladder type: 1v1, 2v2
+
+![ladder setup](./support_files/ladder%20setup.png)
 
 Admins:
 - ladder emails of individuals who will maintain the ladder configuration, ladder rules and map pool
