@@ -1,8 +1,8 @@
-Steps to onboard a new CnCNet supported game to the ladder.
+# Steps to onboard a new CnCNet supported game to the ladder.
 
-Submit to the ladder devs the below information to create the ladder.
+#### Submit to the ladder devs the below information to create the ladder.
 
-Metadata:
+## Metadata:
 - ladder abbreviation: e.g. 'yr', 'ra', 'ra-2v2', 'ts'
 - ladder game: e.g. 'yr', 'ra', 'ts'
 - ladder name: e.g. 'Red Alert'
@@ -10,12 +10,12 @@ Metadata:
 
 <img src="./support_files/ladder%20setup.png" alt="ladder setup" style="width:40%;" />
 
-Admins:
+## Admins:
 - ladder emails of individuals who will maintain the ladder configuration, ladder rules and map pool
 - optional: Moderators: Can put users on cooldown or wash games
 - optional: testers, have access to the ladder if it is set to private
 
-Image Assets:
+## Image Assets:
 - logo [sample](./cncnet-api/resources/images/games/ra/logo.png)
 - feature [sample](./cncnet-api/resources/images/feature/d2k.jpg)
 - icon [sample](./cncnet-api/resources/images/games/ra/ra-icon.png)
