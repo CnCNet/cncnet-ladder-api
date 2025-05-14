@@ -1,6 +1,8 @@
 ## CnCNet Ladder API
 This is the main repository for the CnCNet Ladder API.
 
+[Onboarding new ladders](New%20Ladder%20Onboarding.md)
+
 ### Getting started
 - Set up docker on your computer (either docker desktop or docker engine with docker-compose)
 - Copy `.env-example` to `.env` and configure docker related env.  
