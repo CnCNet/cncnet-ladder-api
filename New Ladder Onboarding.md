@@ -1,4 +1,4 @@
-# Steps to onboard a new CnCNet supported game to the ladder.
+# Steps to Onboard a new CnCNet supported game to the ladder
 
 #### Submit to the ladder devs the below information to create the ladder.
 
