@@ -15,6 +15,11 @@ return new class extends Migration
     {
         $yrLadder = \App\Models\Ladder::where('abbreviation', 'yr')->first();
 
+	if (!$yrLadder) {
+        	echo "No ladder found with abbreviation 'yr'. Skipping trim.\n";
+        	return;
+    	}
+
         $yrMapPools = MapPool::where('ladder_id', $yrLadder->id)
             ->where('updated_at', '>', '2023-01-01')
             ->get();
