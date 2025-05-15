@@ -95,7 +95,7 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/{game}/games/recent/{count}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderRecentGamesList']);
 
         Route::get('/{abbreviation}/players', [\App\Http\Controllers\ApiIrcController::class, 'getPlayerNames']);
-        Route::get('/{abbreviation}/active', [\App\Http\Controllers\ApiIrcController::class, 'getActive']);
+        Route::get('/{abbreviation}/active', [\App\Http\Controllers\ApiIrcController::class, 'getActivePlayers']);
     });
 
     // Short cache ladder endpoints
