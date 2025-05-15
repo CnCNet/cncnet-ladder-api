@@ -230,6 +230,7 @@ return [
 		2152, // Edd
 		68318, // Wu
 		17221, // Lloyd
-		60350 // shamou
+		60350, // shamou
+		38610 // Poppa
 	]
 ];
