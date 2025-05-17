@@ -6,6 +6,7 @@ use App\Commands\FindOpponent;
 use App\Helpers\AIHelper;
 use App\Helpers\GameHelper;
 use App\Helpers\LeagueHelper;
+use App\Helpers\SiteHelper;
 use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
 use App\Http\Services\QuickMatchService;
@@ -57,7 +58,8 @@ class ApiQuickMatchController extends Controller
             $ladders = \App\Models\Ladder::query()
                 ->where('private', '=', false)
                 ->with([
-                    'current_history' => function($q) {
+                    'current_history' => function ($q)
+                    {
                         $q->with([
                             'queued_players'
                         ]);
@@ -97,14 +99,15 @@ class ApiQuickMatchController extends Controller
             }
 
             return $allStats;
-        } 
-        else 
+        }
+        else
         {
             return $this->getStats($ladderAbbrev, $tierId);
         }
     }
 
-    private function getStats(Ladder|string $ladder, int $tierId = 1) {
+    private function getStats(Ladder|string $ladder, int $tierId = 1)
+    {
         $ladder = is_string($ladder) ? $this->ladderService->getLadderByGame($ladder) : $ladder;
         $history = $ladder->current_history;
         $qmStats = $this->statsService->getQmStats($history, $tierId);
@@ -131,7 +134,8 @@ class ApiQuickMatchController extends Controller
             $ladders = \App\Models\Ladder::query()
                 ->where('private', '=', false)
                 ->with([
-                    'current_history' => function($q) {
+                    'current_history' => function ($q)
+                    {
                     },
                 ])
                 ->with([
@@ -162,6 +166,58 @@ class ApiQuickMatchController extends Controller
             {
                 $games[$ladderAbbrev][$key] = $val;
             }
+        }
+
+        return $games;
+    }
+
+    /**
+     * This V2 function will return the data as json array, where each object in the array is an object.
+     * V1 returns array of strings.
+     */
+    public function getActiveMatchesV2(Request $request, string $ladderAbbrev)
+    {
+        $games = [];
+        if ($ladderAbbrev == "all")
+        {
+            $ladders = Ladder::query()
+                ->where('private', '=', false)
+                ->with([
+                    'current_history' => function ()
+                    {
+                    },
+                    'sides',
+                    'recent_spawned_matches',
+                    'recent_spawned_matches.players',
+                    'recent_spawned_matches.players.clan:id,short',
+                    'recent_spawned_matches.players.player:id,username',
+                    'recent_spawned_matches.map',
+                ])
+                ->get();
+
+            $ladders->each(function (Ladder $ladder) use (&$games)
+            {
+                $games[$ladder->abbreviation] = $this->getActiveMatchesByLadderV2($ladder);
+            });
+        }
+        else
+        {
+            $ladder = Ladder::query()
+                ->where('abbreviation', '=', $ladderAbbrev)
+                ->with([
+                    'current_history' => function ($q)
+                    {
+                    },
+                    'sides',
+                    'recent_spawned_matches',
+                    'recent_spawned_matches.players',
+                    'recent_spawned_matches.players.clan:id,short',
+                    'recent_spawned_matches.players.player:id,username',
+                    'recent_spawned_matches.map',
+                ])
+                ->first();
+
+            $games[$ladder->abbreviation] = $this->getActiveMatchesByLadderV2($ladder);
         }
 
         return $games;
@@ -210,6 +266,58 @@ class ApiQuickMatchController extends Controller
         return $games;
     }
 
+    private function getActiveMatchesByLadderV2(Ladder $ladder)
+    {
+        $sides = $ladder->sides->pluck('name', 'local_id')->toArray();
+
+        if ($ladder == null)
+        {
+            abort(400, "Invalid ladder provided");
+        }
+
+        //get all recent QMs that whose games have spawned. (state_type_id == 5)
+        $qms = $ladder->recent_spawned_matches;
+
+        $games = [];
+
+        foreach ($qms as $qm) //iterate over every active quick match
+        {
+            $dt = $qm->created_at;
+
+            //get the player data pertaining to this quick match
+            $qmPlayers = $qm->players;
+
+            $playersData = [];
+            if ($ladder->clans_allowed)
+            {
+                $playersData = $this->getActiveClanMatchesData($sides, $qmPlayers);
+            }
+            else if ($ladder->ladder_type == Ladder::TWO_VS_TWO) // 2v2
+            {
+                $playersData = $this->getTeamActivePlayerMatchesDataV2($sides, $qmPlayers, $qm->created_at);
+            }
+            else
+            {
+                $playersData = $this->getActivePlayerMatchesDataV2($sides, $qmPlayers, $qm->created_at);
+            }
+
+            $duration = Carbon::now()->diff($dt);
+            $duration_formatted = $duration->format('%i mins %s sec');
+
+            $games[] = [
+                "ladderName" => $ladder->name,
+                "ladderType" => $ladder->ladder_type,
+                "players" => $playersData,
+                "gameDuration" => $duration_formatted,
+                "mapName" => trim($qm->map->description),
+                "mapHash" => $qm->map->map->hash,
+                "mapUrl" => SiteHelper::getMapPreviewUrlV2($ladder->game, $qm->map->map)
+            ];
+        }
+
+        return $games;
+    }
+
     private function getActiveClanMatchesData($sides, $players)
     {
         $clans = [];
@@ -243,7 +351,7 @@ class ApiQuickMatchController extends Controller
             $i = 0;
             foreach ($players as $player)
             {
-                $playersString .= '['. $player->clan->short .']' . $player->name . " (" . ($sides[$player->actual_side] ?? '') . ")";
+                $playersString .= '[' . $player->clan->short . ']' . $player->name . " (" . ($sides[$player->actual_side] ?? '') . ")";
 
                 if ($i < count($players) - 1)
                     $playersString .= " and ";
@@ -280,11 +388,32 @@ class ApiQuickMatchController extends Controller
     }
 
     /**
+     * @return an array containing every player's name and their faction
+     */
+    private function getActivePlayerMatchesDataV2(array $sides, $qmPlayers, $created_at)
+    {
+        $dt = new DateTime($created_at);
+        $showRealNames = abs(Carbon::now()->diffInSeconds($dt)) > 120;
+
+        return collect($qmPlayers)
+            ->values()
+            ->map(function ($qmPlayer, $index) use ($sides, $showRealNames)
+            {
+                return [
+                    "playerName" => $showRealNames ? $qmPlayer->player->username : "Player" . ($index + 1),
+                    "playerFaction" => $sides[$qmPlayer->actual_side] ?? '',
+                    "playerColor" => $qmPlayer->color
+                ];
+            })
+            ->all();
+    }
+
+    /**
      * returns a 'pretty' message describing the players on each team
      * 
      * should probably return a json array with the data but we are where we are
      */
-    private function getTeamActivePlayerMatchesData($sides, $players, $created_at) // TODO will this logic work for clan ladder?
+    private function getTeamActivePlayerMatchesData($sides, $players, $created_at)
     {
         $playersString = "";
         $dt = new DateTime($created_at);
@@ -304,7 +433,7 @@ class ApiQuickMatchController extends Controller
             {
                 $playerName = "Player" . ($playerNum + 1);
                 if (abs(Carbon::now()->diffInSeconds($dt)) > 60) //only show real player name if 1 min has passed
-                { 
+                {
                     $playerName = $player->player->username;
                 }
                 $playersString .= $playerName . " (" . ($sides[$player->actual_side] ?? '') . ")";
@@ -323,6 +452,27 @@ class ApiQuickMatchController extends Controller
         }
 
         return $playersString;
+    }
+
+    private function getTeamActivePlayerMatchesDataV2(array $sides, $qmPlayers, $created_at)
+    {
+        $dt = new DateTime($created_at);
+        $showRealNames = abs(Carbon::now()->diffInSeconds($dt)) > 120;
+
+        return collect($qmPlayers)
+            ->groupBy('team')
+            ->flatten()
+            ->values()
+            ->map(function ($qmPlayer, $index) use ($sides, $showRealNames)
+            {
+                return [
+                    "teamId" => $qmPlayer->team,
+                    "playerName" => $showRealNames ? $qmPlayer->player->username : "Player" . ($index + 1),
+                    "playerFaction" => $sides[$qmPlayer->actual_side] ?? '',
+                    "playerColor" => $qmPlayer->color
+                ];
+            })
+            ->all();
     }
 
     public function mapListRequest(Request $request, $ladderAbbrev = null)
