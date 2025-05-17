@@ -36,8 +36,16 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        @if($isAnonymous && $history->id == $history->ladder->$currentHistory()->id)
+                        @if($isAnonymous && $history->id == $history->ladder->currentHistory()->id)
                             <p>User is anonymous</p>
+
+                            @if($userIsMod)
+                                <ul>
+                                    @foreach ($ladderNicks as $ladderNick)
+                                    <li>{{ $ladderNick }}</li>
+                                </ul>
+                            @endforeach
+                        @endif
                         @else
                         <ul>
                             @foreach ($ladderNicks as $ladderNick)
