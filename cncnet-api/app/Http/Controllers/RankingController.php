@@ -63,6 +63,22 @@ class RankingController extends Controller
         $dateLastUpdated = Carbon::createFromTimestamp(Storage::disk("rating")->lastModified($jsonPath));
 
         $mixedFactionImage = ($gameMode == GameHelper::$GAME_YR) ? "resources/images/games/yr/allfactions.png" : "resources/images/games/ra2/ra2-icon.png";
+
+        # Make sure to have a fallback for specialized game modes (e.g, blitz-2v2 or ra2-new-maps).
+        # Prefer custom logo, but use standard logo if it does not exists.
+        $primaryLogoPath = "resources/images/games/{$gameMode}/logo.png";
+        $fallbackGameMode = explode('-', $gameMode)[0];
+        $logoToUse = "resources/images/games/{$fallbackGameMode}/logo.png";
+
+        $manifestPath = public_path('build/manifest.json');
+
+        if (file_exists($manifestPath)) {
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+            if (isset($manifest[$primaryLogoPath])) {
+                $logoToUse = $primaryLogoPath;
+            }
+        }
+
         return view(
             "ranking.index",
             [
@@ -80,7 +96,8 @@ class RankingController extends Controller
                                          "sov" => "resources/images/game-icons/ra2.png",
                                          "mix" => $mixedFactionImage,
                                          "yur" => "resources/images/games/yr/yr-icon.png"),
-                "dateLastUpdated" => $dateLastUpdated
+                "dateLastUpdated" => $dateLastUpdated,
+                "logoToUse" => $logoToUse
             ]
         );
     }
