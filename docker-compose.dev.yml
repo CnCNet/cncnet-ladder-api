@@ -1,0 +1,109 @@
+services:
+  app:
+    image: cncnet-ladder
+    build:
+      context: .
+      dockerfile: docker/frankenphp/Dockerfile
+      target: development
+      args:
+        USER: ${HOST_USER}
+        UID: ${HOST_UID}
+    restart: unless-stopped
+    container_name: dev_cncnet_ladder_app
+    env_file: ./cncnet-api/.env
+    command: --watch
+    environment:
+      XDG_CONFIG_HOME: /app/.config
+      XDG_DATA_HOME: /app/.data
+    ports:
+      - 3000:8000
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./cncnet-api/:/app
+    depends_on:
+      - redis
+
+#  queue-findmatch:
+#    image: cncnet-ladder-queue
+#    build:
+#      context: .
+#      dockerfile: docker/frankenphp/Dockerfile
+#      target: queue
+#      args:
+#        USER: ${HOST_USER}
+#        UID: ${HOST_UID}
+#    restart: unless-stopped
+#    container_name: dev_cncnet_ladder_queue_findmatch
+#    depends_on:
+#      - app
+#    env_file: ./cncnet-api/.env
+#    environment:
+#      QUEUE_NAME: 'findmatch'
+#
+#  queue-saveladderresult:
+#    image: cncnet-ladder-queue
+#    build:
+#      context: .
+#      dockerfile: docker/frankenphp/Dockerfile
+#      target: queue
+#      args:
+#        USER: ${HOST_USER}
+#        UID: ${HOST_UID}
+#    restart: unless-stopped
+#    container_name: dev_cncnet_ladder_queue_saveladderresult
+#    depends_on:
+#      - app
+#    env_file: ./cncnet-api/.env
+#    environment:
+#      QUEUE_NAME: 'saveladderresult'
+#
+#  scheduler:
+#    image: cncnet-ladder-scheduler
+#    build:
+#      context: .
+#      dockerfile: docker/frankenphp/Dockerfile
+#      target: scheduler
+#      args:
+#        USER: ${HOST_USER}
+#        UID: ${HOST_UID}
+#    restart: unless-stopped
+#    container_name: dev_cncnet_ladder_scheduler
+#    depends_on:
+#      - app
+#    env_file: ./cncnet-api/.env
+
+  redis:
+    image: 'redis:alpine'
+    container_name: dev_cncnet_ladder_redis
+    volumes:
+      - 'redis:/data'
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      retries: 3
+      timeout: 5s
+
+  mysql:
+    image: mariadb:latest
+    container_name: dev_cncnet_ladder_mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ALLOW_EMPTY_PASSWORD: ${MYSQL_ALLOW_EMPTY_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - cncnet-ladder-db:/var/lib/mysql
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init
+
+volumes:
+  caddy_data:
+  caddy_config:
+  redis:
+  cncnet-ladder-db:

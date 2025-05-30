@@ -9,3 +9,6 @@ public/files/maps/
 public/css/app.css
 public/hot
 storage/framework/
+/caddy
+frankenphp
+frankenphp-worker.php
