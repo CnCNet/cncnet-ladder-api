@@ -2,8 +2,9 @@
 # Install php extensions and composer dependencies
 FROM dunglas/frankenphp:php8.3 AS base
 LABEL authors="rohsyl"
-ARG USER=www-data
+ARG USER=cncnet
 ARG UID=1001
+ARG GID=1001
 ENV SERVER_NAME="http://"
 RUN install-php-extensions \
  pcntl pdo_mysql curl yaml \
@@ -50,6 +51,7 @@ USER ${USER}
 RUN composer dump-autoload -o && \
     php artisan optimize
 ENTRYPOINT ["/usr/local/bin/queue"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD pgrep -f "artisan queue:work" > /dev/null || exit 1
 
 
 # Stage scheduler
@@ -63,6 +65,7 @@ USER ${USER}
 RUN composer dump-autoload -o && \
     php artisan optimize
 ENTRYPOINT ["/usr/local/bin/scheduler"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD pgrep -f 'php artisan schedule:run' || exit 1
 
 
 # Stage : app

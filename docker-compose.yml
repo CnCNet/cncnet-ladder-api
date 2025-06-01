@@ -9,13 +9,14 @@ services:
       XDG_CONFIG_HOME: /app/.config
       XDG_DATA_HOME: /app/.data
     volumes:
-      - ./caddy/data:/data
-      - ./caddy/config:/config
+      - ./caddy/data:/app/.data
+      - ./caddy/config:/app/.config
       - ./storage:/app/storage
     ports:
       - '${APP_PORT:-3000}:8000'
     depends_on:
       - redis
+      - mysql
     networks:
       - cncnet
 
@@ -45,7 +46,7 @@ services:
 
   scheduler:
     image: ghcr.io/cncnet/cncnet-ladder-scheduler:${APP_TAG}
-    restart: always
+    restart: unless-stopped
     container_name: cncnet_ladder_scheduler${ENV_SUFFIX}
     depends_on:
       - app
@@ -85,7 +86,6 @@ services:
         hard: 40000
     volumes:
       - cncnet-ladder-db:/var/lib/mysql
-      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init
     networks:
       - cncnet
 

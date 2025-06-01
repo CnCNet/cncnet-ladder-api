@@ -18,8 +18,8 @@ services:
     ports:
       - 3000:8000
     volumes:
-      - caddy_data:/data
-      - caddy_config:/config
+      - caddy_data:/app/.config
+      - caddy_config:/app/.data
       - ./cncnet-api/:/app
     depends_on:
       - redis
