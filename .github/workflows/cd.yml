@@ -6,6 +6,7 @@ on:
     branches:
       - 'main'
       - 'staging'
+      - 'feature/continuous' # temporary while testing
     tags:
       - 'v*'
   pull_request:
@@ -38,6 +39,7 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=staging,enable=${{ github.ref == 'refs/heads/staging' }}
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
