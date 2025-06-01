@@ -24,6 +24,7 @@ services:
     image: ghcr.io/cncnet/cncnet-ladder-queue:${APP_TAG}
     restart: unless-stopped
     container_name: cncnet_ladder_queue_findmatch${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     depends_on:
       - app
     env_file: ".app.env"
@@ -36,6 +37,7 @@ services:
     image: ghcr.io/cncnet/cncnet-ladder-queue:${APP_TAG}
     restart: unless-stopped
     container_name: cncnet_ladder_queue_saveladderresult${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     depends_on:
       - app
     env_file: ".app.env"
@@ -48,6 +50,7 @@ services:
     image: ghcr.io/cncnet/cncnet-ladder-scheduler:${APP_TAG}
     restart: unless-stopped
     container_name: cncnet_ladder_scheduler${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     depends_on:
       - app
     env_file: ".app.env"
@@ -98,6 +101,24 @@ services:
       - ./backups:/backup
     restart: always
     links:
+      - mysql
+    networks:
+      - cncnet
+
+  elogen:
+    image: ghcr.io/cncnet/cncnet-ladder-elo-computation-cron:latest
+    restart: unless-stopped
+    container_name: cncnet_ladder_elogen${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_PORT: 3306
+    volumes:
+      - ./docker/elogen/crontab:/etc/cron.d/elogen-cron:ro
+      - ./storage/app/rating:/data
+    depends_on:
       - mysql
     networks:
       - cncnet

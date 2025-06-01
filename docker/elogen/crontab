@@ -1,0 +1,1 @@
+0 19 * * * cncnet /app/elogen --output-dir /data -l info
