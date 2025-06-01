@@ -9,9 +9,9 @@ services:
       XDG_CONFIG_HOME: /app/.config
       XDG_DATA_HOME: /app/.data
     volumes:
-      - caddy_data:/data
-      - caddy_config:/config
-      - ./cncnet-api/storage:/app/storage
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+      - ./storage:/app/storage
     ports:
       - '${APP_PORT:-3000}:8000'
     depends_on:

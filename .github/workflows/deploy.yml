@@ -1,0 +1,53 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["build.yml"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set deployment variables
+        id: vars
+        # set to feature/continuous for now, must be staging
+        run: |
+          if [[ "${{ github.event.workflow_run.head_branch }}" == "feature/continuous" ]]; then
+            echo "target_dir=~/ladder-staging-new" >> "$GITHUB_OUTPUT"
+            echo "compose_file=docker-compose.yml" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
+            echo "target_dir=~/ladder" >> "$GITHUB_OUTPUT"
+            echo "compose_file=docker-compose.yml" >> "$GITHUB_OUTPUT"
+          else
+            echo "Unsupported branch"
+            exit 1
+          fi
+
+      - name: Copy compose file to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ${{ steps.vars.outputs.compose_file }}
+          target: ${{ steps.vars.outputs.target_dir }}
+
+      - name: Stop and start app on server
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ steps.vars.outputs.target_dir }}
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker compose -f ${{ steps.vars.outputs.compose_file }} down
+            docker compose -f ${{ steps.vars.outputs.compose_file }} pull
+            docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
