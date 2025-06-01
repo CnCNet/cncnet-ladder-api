@@ -111,3 +111,4 @@ jobs:
             docker compose -f ${{ steps.vars.outputs.compose_file }} down
             docker compose -f ${{ steps.vars.outputs.compose_file }} pull
             docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
+            docker compose exec app php artisan config:cache
