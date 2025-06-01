@@ -2,7 +2,7 @@ services:
   app:
     image: ghcr.io/cncnet/cncnet-ladder-app:${APP_TAG}
     restart: unless-stopped
-    container_name: cncnet_ladder_app
+    container_name: cncnet_ladder_app${ENV_SUFFIX}
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     env_file: ".app.env"
     environment:
@@ -22,7 +22,7 @@ services:
   queue-findmatch:
     image: ghcr.io/cncnet/cncnet-ladder-queue:${APP_TAG}
     restart: unless-stopped
-    container_name: cncnet_ladder_queue_findmatch
+    container_name: cncnet_ladder_queue_findmatch${ENV_SUFFIX}
     depends_on:
       - app
     env_file: ".app.env"
@@ -34,7 +34,7 @@ services:
   queue-saveladderresult:
     image: ghcr.io/cncnet/cncnet-ladder-queue:${APP_TAG}
     restart: unless-stopped
-    container_name: cncnet_ladder_queue_saveladderresult
+    container_name: cncnet_ladder_queue_saveladderresult${ENV_SUFFIX}
     depends_on:
       - app
     env_file: ".app.env"
@@ -46,7 +46,7 @@ services:
   scheduler:
     image: ghcr.io/cncnet/cncnet-ladder-scheduler:${APP_TAG}
     restart: always
-    container_name: cncnet_ladder_scheduler
+    container_name: cncnet_ladder_scheduler${ENV_SUFFIX}
     depends_on:
       - app
     env_file: ".app.env"
@@ -55,7 +55,7 @@ services:
 
   redis:
     image: 'redis:alpine'
-    container_name: cncnet_ladder_redis
+    container_name: cncnet_ladder_redis${ENV_SUFFIX}
     volumes:
       - redis:/data
     healthcheck:
@@ -70,7 +70,7 @@ services:
 
   mysql:
     image: mariadb:latest
-    container_name: cncnet_ladder_mysql
+    container_name: cncnet_ladder_mysql${ENV_SUFFIX}
     restart: unless-stopped
     command: --max_connections=1000 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=31536000 --slow-query-log --interactive_timeout=31536000
     environment:
@@ -90,7 +90,7 @@ services:
       - cncnet
 
   db-backup:
-    container_name: cncnet_ladder_backup
+    container_name: cncnet_ladder_backup${ENV_SUFFIX}
     env_file:
       - '.backup.env'
     image: tiredofit/db-backup
