@@ -232,6 +232,6 @@ return [
 		17221, // Lloyd
 		60350, // shamou
 		38610, // Poppa
-		19083, // Brian
+		19083 // Brian
 	]
 ];
