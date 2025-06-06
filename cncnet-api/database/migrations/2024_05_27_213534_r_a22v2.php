@@ -20,6 +20,11 @@ return new class extends Migration
     {
         $ra2Ladder = Ladder::where('abbreviation', 'ra2-cl')->first();
 
+	if (!$ra2Ladder) {
+        	echo "No ladder found with abbreviation 'ra2-cl'. Skipping trim.\n";
+        	return;
+    	}
+
         #create test ladder
         $ra2Ladder2v2Ladder = $ra2Ladder->replicate()->fill([
             'name' => 'RA2 2v2 Ladder',
