@@ -63,17 +63,17 @@ class QmMatchPlayer extends Model
 
     public function ipAddress()
     {
-        return $this->belongsTo(IpAddress::class);
+        return $this->belongsTo(IrcIpAddress::class);
     }
 
     public function ipv6Address()
     {
-        return $this->belongsTo(IpAddress::class, 'ipv6_address');
+        return $this->belongsTo(IrcIpAddress::class, 'ipv6_address');
     }
 
     public function lanAddress()
     {
-        return $this->belongsTo(IpAddress::class, 'lan_ip');
+        return $this->belongsTo(IrcIpAddress::class, 'lan_ip');
     }
 
     public function version()

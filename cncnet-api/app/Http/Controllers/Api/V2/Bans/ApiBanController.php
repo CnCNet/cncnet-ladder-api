@@ -6,50 +6,40 @@ use App\Http\Controllers\Controller;
 use App\Http\Services\AuthService;
 use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
-use App\Models\PlayerActiveHandle;
-use Carbon\Carbon;
+use App\Models\IrcIpAddress;
+use App\Models\IrcIpAddressHistory;
+use App\Models\IrcUser;
+use Exception;
 use Illuminate\Http\Request;
 
 class ApiBanController extends Controller
 {
-    private $authService;
-    private $ladderService;
-    private $playerService;
-
-    public function __construct()
+    public function checkIn(Request $request)
     {
-        $this->authService = new AuthService();
-        $this->playerService = new PlayerService;
-        $this->ladderService = new LadderService;
-    }
+        try
+        {
+            $ircUser = IrcUser::where("ident", $request->username)->where("ident", $request->ident)->first();
+            if ($ircUser == null)
+            {
+                $ircUser = new IrcUser();
+                $ircUser->ident = $request->ident;
+                $ircUser->username = $request->username;
+                $ircUser->host = $request->host;
+                $ircUser->save();
+            }
 
-    public function getBans()
-    {
-        return [
-            [
-                "user" => "cncnet",
-                "ident" => "a964ad",
-                "host" => "gamesurge-d3a0cd5b.res.spectrum.com",
-                "kickBan" => true
-            ],
-            [
-                "user" => null,
-                "ident" => "t364ad",
-                "host" => null,
-                "kickBan" => false
-            ],
-            [
-                "user" => null,
-                "ident" => "",
-                "host" => "*.res.spectrum.com",
-                "kickBan" => false
-            ],
-            [
-                "user" => "cncnet-moderator",
-                "ident" => null,
-                "host" => null,
-                "kickBan" => true
-            ],
-        ];
+            $ip = isset($_SERVER["HTTP_CF_CONNECTING_IP"]) ? $_SERVER["HTTP_CF_CONNECTING_IP"] : $request->getClientIp();
+
+            $ircIpAddressId = IrcIpAddress::getID($ip);
+            IrcIpAddressHistory::addHistory($ircUser->id, $ircIpAddressId);
+
+            // Check for bans, return code
+
+            return $ircUser->bans;
+        }
+        catch (Exception $ex)
+        {
+            dd($ex);
+        }
     }
 }

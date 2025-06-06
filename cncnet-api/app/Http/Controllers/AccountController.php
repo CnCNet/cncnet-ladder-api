@@ -28,7 +28,7 @@ class AccountController extends Controller
     public function getAccountIndex(Request $request)
     {
         $user = \Auth::user();
-        $user->ip_address_id = \App\Models\IpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
+        $user->ip_address_id = \App\Models\IrcIpAddress::getID(isset($_SERVER["HTTP_CF_CONNECTING_IP"])
             ? $_SERVER["HTTP_CF_CONNECTING_IP"]
             : $request->getClientIp());
 
