@@ -45,16 +45,16 @@ class Kernel extends ConsoleKernel
             ->daily();
         $schedule->command('update_player_cache')
             ->hourly();
-        $schedule->command('update_clan_cache')
-            ->hourly();
+        // $schedule->command('update_clan_cache')
+        //     ->hourly();
         $schedule->command('QmMatchPlayers:prune')
             ->monthly();
         $schedule->command('QmMatches:prune')
             ->monthly();
         $schedule->command('GameReports:prune')
             ->monthly();
-        $schedule->command('update_stats_cache')
-            ->hourly();
+        // $schedule->command('update_stats_cache')
+        //     ->hourly();
         $schedule->command('QmCanceledMatches:prune')
             ->monthly();
         $schedule->command('update_player_ratings')
