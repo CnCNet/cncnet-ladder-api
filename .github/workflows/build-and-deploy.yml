@@ -76,14 +76,11 @@ jobs:
       - name: Set deployment variables
         id: vars
         run: |
-          if [[ "${{ github.ref_name }}" == "feature/continuous" ]]; then
+          if [[ "${{ github.ref_name }}" == "staging" ]]; then
             echo "target_dir=~/ladder-staging-new" >> "$GITHUB_OUTPUT"
             echo "compose_file=docker-compose.yml" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.ref_name }}" == "staging" ]]; then
-            echo "target_dir=~/ladder-staging" >> "$GITHUB_OUTPUT"
-            echo "compose_file=docker-compose.yml" >> "$GITHUB_OUTPUT"
           elif [[ "${{ github.ref_name }}" == "main" ]]; then
-            echo "target_dir=~/ladder" >> "$GITHUB_OUTPUT"
+            echo "target_dir=~/ladder-new" >> "$GITHUB_OUTPUT"
             echo "compose_file=docker-compose.yml" >> "$GITHUB_OUTPUT"
           else
             echo "Unsupported branch"
@@ -112,3 +109,6 @@ jobs:
             docker compose -f ${{ steps.vars.outputs.compose_file }} pull
             docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
             docker compose exec app php artisan config:cache
+            docker compose exec queue-findmatch php artisan config:cache
+            docker compose exec queue-saveladderresult php artisan config:cache
+            docker compose exec scheduler php artisan config:cache
