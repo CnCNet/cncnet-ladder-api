@@ -65,7 +65,7 @@ jobs:
     needs: build-and-push
     if: >
       github.event_name != 'pull_request' &&
-      (github.ref_name == 'main' || github.ref_name == 'staging' || github.ref_name == 'feature/continuous')
+      (github.ref_name == 'main' || github.ref_name == 'staging')
     runs-on: ubuntu-latest
 
     steps:
