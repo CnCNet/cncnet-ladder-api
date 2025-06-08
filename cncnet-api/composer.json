@@ -18,7 +18,7 @@
 		"maxmind-db/reader": "1.4.1",
 		"namshi/jose": "7.0.*",
 		"symfony/lock": "^6.0",
-		"tymon/jwt-auth": "^2.0"
+		"tymon/jwt-auth": "^2.1"
 	},
 	"require-dev": {
 		"barryvdh/laravel-debugbar": "^3.12",
