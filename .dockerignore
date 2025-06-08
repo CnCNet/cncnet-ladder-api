@@ -1,0 +1,6 @@
+/cncnet-api/node_modules
+/cncnet-api/vendor
+/cncnet-api/storage/app/*
+/cncnet-api/storage/debugbar
+/cncnet-api/storage/logs
+.env

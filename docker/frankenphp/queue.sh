@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd /app
+
+# Default to 'default' if QUEUE_NAME is not set
+QUEUE_NAME="${QUEUE_NAME:-default}"
+
+php artisan queue:work \
+  --queue="$QUEUE_NAME" \
+  --memory=2048 \
+  --timeout=360 \
+  --tries=2 \
+  --backoff=120

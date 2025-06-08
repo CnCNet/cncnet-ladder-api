@@ -1,6 +1,0 @@
-@reboot /bin/bash /home/cncnet/ladder/scripts/laravel_cron.sh >/dev/null 2>&1
-* * * * * /bin/bash /home/cncnet/ladder/scripts/laravel_cron.sh >/dev/null 2>&1
-@reboot /bin/bash /home/cncnet/ladder/cncnet-api/queue_rm_pid.sh findmatch >/dev/null 2>&1
-* * * * * /bin/bash /home/cncnet/ladder/cncnet-api/queue_watcher.sh findmatch >/dev/null 2>&1
-@reboot /bin/bash /home/cncnet/ladder/cncnet-api/queue_rm_pid.sh saveladderresult >/dev/null 2>&1
-* * * * * /bin/bash /home/cncnet/ladder/cncnet-api/queue_watcher.sh saveladderresult >/dev/null 2>&1

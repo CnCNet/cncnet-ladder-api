@@ -12,12 +12,13 @@
 		"guzzlehttp/guzzle": "^7.0.1",
 		"intervention/image": "^2.7",
 		"laravel/framework": "^11.0",
+		"laravel/octane": "^2.4",
 		"laravel/tinker": "^2.0",
+		"laravel/ui": "^4.0",
 		"maxmind-db/reader": "1.4.1",
 		"namshi/jose": "7.0.*",
 		"symfony/lock": "^6.0",
-		"tymon/jwt-auth": "^2.0",
-		"laravel/ui": "^4.0"
+		"tymon/jwt-auth": "^2.0"
 	},
 	"require-dev": {
 		"barryvdh/laravel-debugbar": "^3.12",

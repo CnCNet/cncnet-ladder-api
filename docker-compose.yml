@@ -1,72 +1,135 @@
 services:
-    app:
-        container_name: cncnet_ladder_app
-        restart: always
-        build:
-            args:
-                user: ${HOST_USER}
-                uid: ${HOST_UID}
-                debug: 0
-            context: .
-            dockerfile: ./docker/Dockerfile
+  app:
+    image: ghcr.io/cncnet/cncnet-ladder-app:${APP_TAG}
+    restart: unless-stopped
+    container_name: cncnet_ladder_app${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    env_file: ".app.env"
+    environment:
+      XDG_CONFIG_HOME: /app/.config
+      XDG_DATA_HOME: /app/.data
+    volumes:
+      - ./caddy/data:/app/.data
+      - ./caddy/config:/app/.config
+      - ./storage:/app/storage
+    ports:
+      - '${APP_PORT:-3000}:8000'
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - cncnet
 
-        env_file: ./cncnet-api/.env
-        volumes:
-            - ./cncnet-api:/home/${HOST_USER}/site
-        networks:
-            - cncnet
+  queue-findmatch:
+    image: ghcr.io/cncnet/cncnet-ladder-queue:${APP_TAG}
+    restart: unless-stopped
+    container_name: cncnet_ladder_queue_findmatch${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    depends_on:
+      - app
+    env_file: ".app.env"
+    environment:
+      QUEUE_NAME: 'findmatch'
+    networks:
+      - cncnet
 
-    nginx:
-        image: nginx:stable-alpine
-        container_name: cncnet_ladder_nginx
-        restart: always
-        ports:
-            - "3000:80"
-            - "443:443"
-        volumes:
-            - ./cncnet-api:/home/${HOST_USER}/site
-            - ./docker/nginx/templates:/etc/nginx/templates/
-        environment:
-            NGINX_ENVSUBST_TEMPLATE_SUFFIX: ".conf"
-            HOST_USER: ${HOST_USER}
-        networks:
-            - cncnet
+  queue-saveladderresult:
+    image: ghcr.io/cncnet/cncnet-ladder-queue:${APP_TAG}
+    restart: unless-stopped
+    container_name: cncnet_ladder_queue_saveladderresult${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    depends_on:
+      - app
+    env_file: ".app.env"
+    environment:
+      QUEUE_NAME: 'saveladderresult'
+    networks:
+      - cncnet
 
-    mysql:
-        image: mariadb:latest
-        container_name: cncnet_ladder_mysql
-        restart: always
-        env_file: ./cncnet-api/.env
-        # https://dev.mysql.com/doc/refman/8.0/en/packet-too-large.html
-        command: --max_connections=1000 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=31536000 --slow-query-log --interactive_timeout=31536000
-        volumes:
-            - cncnet-ladder-db:/var/lib/mysql
-            - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init 
-        # https://medium.com/@kauminikg/how-to-increase-max-connections-in-mysql-docker-container-772ae17e3526
-        ulimits:
-            nofile:
-                soft: 20000
-                hard: 40000
-        networks:
-            - cncnet
+  scheduler:
+    image: ghcr.io/cncnet/cncnet-ladder-scheduler:${APP_TAG}
+    restart: unless-stopped
+    container_name: cncnet_ladder_scheduler${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    depends_on:
+      - app
+    env_file: ".app.env"
+    networks:
+      - cncnet
 
-    db-backup:
-        container_name: cncnet_ladder_backup
-        env_file:
-            - './cncnet-api/.env'
-        image: tiredofit/db-backup
-        volumes:
-            - ./backups:/backup
-        restart: always
-        links:
-            - mysql
-        networks:
-            - cncnet
+  redis:
+    image: 'redis:alpine'
+    container_name: cncnet_ladder_redis${ENV_SUFFIX}
+    volumes:
+      - redis:/data
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      retries: 3
+      timeout: 5s
+    networks:
+      - cncnet
 
-networks:
-    cncnet:
-        driver: bridge
+  mysql:
+    image: mariadb:latest
+    container_name: cncnet_ladder_mysql${ENV_SUFFIX}
+    restart: unless-stopped
+    command: --max_connections=1000 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=31536000 --slow-query-log --interactive_timeout=31536000
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ALLOW_EMPTY_PASSWORD: ${MYSQL_ALLOW_EMPTY_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ulimits:
+      nofile:
+        soft: 20000
+        hard: 40000
+    volumes:
+      - cncnet-ladder-db:/var/lib/mysql
+    networks:
+      - cncnet
+
+  db-backup:
+    container_name: cncnet_ladder_backup${ENV_SUFFIX}
+    env_file:
+      - '.backup.env'
+    image: tiredofit/db-backup
+    volumes:
+      - ./backups:/backup
+    restart: always
+    links:
+      - mysql
+    networks:
+      - cncnet
+
+  elogen:
+    image: ghcr.io/cncnet/cncnet-ladder-elo-computation-cron:latest
+    restart: unless-stopped
+    container_name: cncnet_ladder_elogen${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_PORT: 3306
+    volumes:
+      - ./docker/elogen/crontab:/etc/cron.d/elogen-cron:ro
+      - ./storage/app/rating:/data
+    depends_on:
+      - mysql
+    networks:
+      - cncnet
 
 volumes:
-    cncnet-ladder-db:
-        driver: local
+  caddy_data:
+  caddy_config:
+  redis:
+  cncnet-ladder-db:
+    driver: local
+
+networks:
+  cncnet:
+    driver: bridge
