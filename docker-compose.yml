@@ -105,23 +105,23 @@ services:
     networks:
       - cncnet
 
-  elogen:
-    image: ghcr.io/cncnet/cncnet-ladder-elo-computation-cron:latest
-    restart: unless-stopped
-    container_name: cncnet_ladder_elogen${ENV_SUFFIX}
-    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
-    environment:
-      MYSQL_HOST: mysql
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_PORT: 3306
-    volumes:
-      - ./docker/elogen/crontab:/etc/cron.d/elogen-cron:ro
-      - ./storage/app/rating:/data
-    depends_on:
-      - mysql
-    networks:
-      - cncnet
+#  elogen:
+#    image: ghcr.io/cncnet/cncnet-ladder-elo-computation-cron:latest
+#    restart: unless-stopped
+#    container_name: cncnet_ladder_elogen${ENV_SUFFIX}
+#    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+#    environment:
+#      MYSQL_HOST: mysql
+#      MYSQL_USER: ${MYSQL_USER}
+#      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+#      MYSQL_PORT: 3306
+#    volumes:
+#      - ./docker/elogen/crontab:/etc/cron.d/elogen-cron:ro
+#      - ./storage/app/rating:/data
+#    depends_on:
+#      - mysql
+#    networks:
+#      - cncnet
 
 volumes:
   caddy_data:
