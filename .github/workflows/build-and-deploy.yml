@@ -107,7 +107,7 @@ jobs:
             docker compose -f ${{ steps.vars.outputs.compose_file }} down
             docker compose -f ${{ steps.vars.outputs.compose_file }} pull
             docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
-            docker compose exec app php artisan config:cache
-            docker compose exec queue-findmatch php artisan config:cache
-            docker compose exec queue-saveladderresult php artisan config:cache
-            docker compose exec scheduler php artisan config:cache
+            docker compose exec app php artisan optimize
+            docker compose exec queue-findmatch php artisan optimize
+            docker compose exec queue-saveladderresult php artisan optimize
+            docker compose exec scheduler php artisan optimize

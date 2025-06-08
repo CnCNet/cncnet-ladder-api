@@ -48,8 +48,7 @@ COPY docker/frankenphp/queue.sh /usr/local/bin/queue
 RUN chmod +x /usr/local/bin/queue
 WORKDIR /app
 USER ${USER}
-RUN composer dump-autoload -o && \
-    php artisan optimize
+RUN composer dump-autoload -o
 ENTRYPOINT ["/usr/local/bin/queue"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD pgrep -f "artisan queue:work" > /dev/null || exit 1
 
@@ -62,8 +61,7 @@ COPY docker/frankenphp/scheduler.sh /usr/local/bin/scheduler
 RUN chmod +x /usr/local/bin/scheduler
 WORKDIR /app
 USER ${USER}
-RUN composer dump-autoload -o && \
-    php artisan optimize
+RUN composer dump-autoload -o
 ENTRYPOINT ["/usr/local/bin/scheduler"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD pgrep -f 'php artisan schedule:run' || exit 1
 
@@ -75,8 +73,7 @@ FROM phpbuilder AS app
 COPY --from=assetsbuilder --chown=${USER}:${USER} /app/public /app/public
 WORKDIR /app
 USER ${USER}
-RUN composer dump-autoload -o && \
-    php artisan optimize
+RUN composer dump-autoload -o
 EXPOSE 8000
 ENTRYPOINT ["php", "/app/artisan", "octane:frankenphp"]
 HEALTHCHECK --start-period=5s --interval=10s --timeout=5s --retries=8 CMD php /app/artisan octane:status || exit 1
