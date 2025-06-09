@@ -72,7 +72,7 @@ return [
 		],
 
 	],
-	'dmp' => public_path() . '/dmp',
+	'dmp' => storage_path('app/dmp'),
 	'map_images' => public_path() . '/images/maps',
 	'map_files' => public_path() . '/files/maps',
 
@@ -89,6 +89,7 @@ return [
     */
 
 	'links' => [
+        public_path('dmp') => storage_path('app/dmp'),
 		public_path('storage') => storage_path('app/public'),
 		public_path('avatars') => storage_path('app/avatars'),
 	],
