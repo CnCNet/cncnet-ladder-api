@@ -119,7 +119,6 @@ services:
     image: ghcr.io/cncnet/cncnet-ladder-elo-computation-cron:latest
     restart: unless-stopped
     container_name: cncnet_ladder_elogen${ENV_SUFFIX}
-    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     environment:
       MYSQL_HOST: mysql
       MYSQL_USER: ${MYSQL_USER}
