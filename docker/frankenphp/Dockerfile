@@ -50,7 +50,6 @@ WORKDIR /app
 USER ${USER}
 RUN composer dump-autoload -o
 ENTRYPOINT ["/usr/local/bin/queue"]
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD pgrep -f "artisan queue:work" > /dev/null || exit 1
 
 
 # Stage scheduler
@@ -63,7 +62,6 @@ WORKDIR /app
 USER ${USER}
 RUN composer dump-autoload -o
 ENTRYPOINT ["/usr/local/bin/scheduler"]
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD pgrep -f 'php artisan schedule:run' || exit 1
 
 
 # Stage : app
