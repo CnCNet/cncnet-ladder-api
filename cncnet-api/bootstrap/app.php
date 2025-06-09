@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -34,6 +35,30 @@ return Application::configure(basePath: dirname(__DIR__))
             'restrict' => \App\Http\Middleware\Restrict::class,
             'group' => \App\Http\Middleware\Group::class,
         ]);
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        $schedule->command('prune_logs')
+            ->daily();
+        $schedule->command('prune_stats')
+            ->daily();
+        $schedule->command('update_player_cache')
+            ->hourly();
+        // $schedule->command('update_clan_cache')
+        //     ->hourly();
+        $schedule->command('QmMatchPlayers:prune')
+            ->monthly();
+        $schedule->command('QmMatches:prune')
+            ->monthly();
+        $schedule->command('GameReports:prune')
+            ->monthly();
+        // $schedule->command('update_stats_cache')
+        //     ->hourly();
+        $schedule->command('QmCanceledMatches:prune')
+            ->monthly();
+        $schedule->command('update_player_ratings')
+            ->monthly();
+
+        $schedule->command('clear_inactive_queue_entries')->everyMinute();
     })
     ->withExceptions(function (Exceptions $exceptions) {
 
