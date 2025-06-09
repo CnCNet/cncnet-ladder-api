@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admi\Podium;
+namespace App\Http\Requests\Admin\Podium;
 
 use Illuminate\Foundation\Http\FormRequest;
 

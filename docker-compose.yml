@@ -41,7 +41,7 @@ services:
         command: --max_connections=1000 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=31536000 --slow-query-log --interactive_timeout=31536000
         volumes:
             - cncnet-ladder-db:/var/lib/mysql
-            - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init 
+            - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables if we haven't a database yet
         # https://medium.com/@kauminikg/how-to-increase-max-connections-in-mysql-docker-container-772ae17e3526
         ulimits:
             nofile:

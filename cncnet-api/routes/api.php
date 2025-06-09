@@ -125,7 +125,9 @@ Route::group(['prefix' => 'v1'], function ()
 # API V2 Endpoints
 Route::group(['prefix' => 'v2'], function ()
 {
-    Route::get("/bans", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'getBans']);
+    Route::post("/check-in", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'checkIn']);
+    Route::get("/warnings", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'getWarnings']);
+    Route::post("/warnings/receive", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'receiveWarningAcknowledgments']);
     Route::get("/events", [\App\Http\Controllers\Api\V2\Events\ApiEventController::class, 'getEvents']);
 
     Route::group(['middleware' => 'jwt.auth'], function ()

@@ -13,6 +13,6 @@ class QmConnectionStats extends Model
 
     public function ipAddress()
     {
-        return $this->belongsTo(IpAddress::class);
+        return $this->belongsTo(IrcIpAddress::class);
     }
 }

@@ -166,7 +166,7 @@ class PlayerService
             return $ban;
         }
 
-        $ban = \App\Models\IpAddress::findByIP($ip)->getBan(true);
+        $ban = \App\Models\IrcIpAddress::findByIP($ip)->getBan(true);
         if ($ban !== null)
         {
             return $ban;
@@ -206,7 +206,7 @@ class PlayerService
             return $ban;
         }
 
-        $ban = \App\Models\IpAddress::findByIP($ip)->getBan(true);
+        $ban = \App\Models\IrcIpAddress::findByIP($ip)->getBan(true);
         if ($ban !== null)
         {
             return $ban;

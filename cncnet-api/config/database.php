@@ -13,7 +13,7 @@ return [
 	|
 	*/
 
-    'default' => env('DB_CONNECTION', 'mariadb'),
+	'default' => env('DB_CONNECTION', 'mariadb'),
 
 	/*
 	|--------------------------------------------------------------------------
@@ -33,9 +33,17 @@ return [
 
 	'connections' => [
 
+		'irc' => [
+			'driver' => 'mariadb',
+			'host' => env('MYSQL_IRC_HOST', 'mysql'),
+			'database' => env('MYSQL_IRC_DATABASE', 'mysql'),
+			'username' => env('MYSQL_USERNAME', 'cncnet'),
+			'password' => env('MYSQL_PASSWORD', 'cncnet'),
+		],
+
 		'sqlite' => [
 			'driver'   => 'sqlite',
-			'database' => storage_path().'/database.sqlite',
+			'database' => storage_path() . '/database.sqlite',
 			'prefix'   => '',
 		],
 
@@ -51,17 +59,17 @@ return [
 			'strict'    => false,
 		],
 
-        'testing' => [
-            'driver'    => 'mariadb',
-            'host'      => env('DB_HOST', 'localhost'),
-            'database'  => 'cncnet_api_testing',
-            'username'  => env('DB_USERNAME', 'forge'),
-            'password'  => env('DB_PASSWORD', ''),
-            'charset'   => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix'    => '',
-            'strict'    => false,
-        ],
+		'testing' => [
+			'driver'    => 'mariadb',
+			'host'      => env('DB_HOST', 'localhost'),
+			'database'  => 'cncnet_api_testing',
+			'username'  => env('DB_USERNAME', 'forge'),
+			'password'  => env('DB_PASSWORD', ''),
+			'charset'   => 'utf8',
+			'collation' => 'utf8_unicode_ci',
+			'prefix'    => '',
+			'strict'    => false,
+		],
 
 	],
 
@@ -101,8 +109,8 @@ return [
 
 	],
 
-    /* Maxmind GeoIP Database */
-    'mmdb' => [
-        'file' => database_path() . '/GeoLite2-City/GeoLite2-City.mmdb'
-    ],
+	/* Maxmind GeoIP Database */
+	'mmdb' => [
+		'file' => database_path() . '/GeoLite2-City/GeoLite2-City.mmdb'
+	],
 ];

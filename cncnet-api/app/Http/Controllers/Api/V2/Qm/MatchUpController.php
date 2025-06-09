@@ -10,7 +10,7 @@ use App\Http\Services\QuickMatchService;
 use App\Http\Services\QuickMatchSpawnService;
 use App\Jobs\Qm\FindOpponentJob;
 use App\Models\Game;
-use App\Models\IpAddress;
+use App\Models\IrcIpAddress;
 use App\Models\Ladder;
 use App\Models\MapPool;
 use App\Models\Player;
@@ -60,7 +60,8 @@ class MatchUpController
         }
 
         // failsafe, is user allowed to match on 2v2 ladder
-        if ($ladder->ladder_type == Ladder::TWO_VS_TWO && !$user->userSettings->allow_2v2_ladders) {
+        if ($ladder->ladder_type == Ladder::TWO_VS_TWO && !$user->userSettings->allow_2v2_ladders)
+        {
             return $this->quickMatchService->onFatalError(
                 $playerName . ' is not allowed to play on 2v2 ladders, speak with admins for assistance ' . $ladder->abbreviation
             );
@@ -198,7 +199,7 @@ class MatchUpController
                             $con->qm_match_id = $qmMatch->id;
                             $con->player_id = $player->id;
                             $con->peer_id = $peer['id'];
-                            $con->ip_address_id = IpAddress::getID($peer['address']);
+                            $con->ip_address_id = IrcIpAddress::getID($peer['address']);
                             $con->port = $peer['port'];
                             $con->rtt = $peer['rtt'];
                             $con->save();

@@ -142,7 +142,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
                 return true;
             }
 
-            $users = IpAddress::findByIP($ip)->users;
+            $users = IrcIpAddress::findByIP($ip)->users;
             foreach ($users as $user)
             {
                 $shadowBans = Ban::where("user_id", $user->id)
@@ -445,6 +445,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function ip()
     {
-        return $this->belongsTo(IpAddress::class, 'ip_address_id');
+        return $this->belongsTo(IrcIpAddress::class, 'ip_address_id');
     }
 }
