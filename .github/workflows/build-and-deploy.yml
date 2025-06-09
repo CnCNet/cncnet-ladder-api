@@ -106,6 +106,7 @@ jobs:
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker compose -f ${{ steps.vars.outputs.compose_file }} down
             docker compose -f ${{ steps.vars.outputs.compose_file }} pull
+            rm -rf cache/*
             docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
             docker compose exec app php artisan optimize
             docker compose exec queue-findmatch php artisan optimize
