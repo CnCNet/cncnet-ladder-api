@@ -84,8 +84,9 @@ USER root
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g chokidar-cli
+COPY docker/frankenphp/dev-entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 USER ${USER}
 WORKDIR /app
-EXPOSE 8000
-ENTRYPOINT ["php", "/app/artisan", "octane:frankenphp"]
-HEALTHCHECK --start-period=5s --interval=10s --timeout=5s --retries=8 CMD php /app/artisan octane:status || exit 1
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["tail", "-f", "/dev/null"]

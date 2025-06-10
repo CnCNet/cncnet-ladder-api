@@ -8,21 +8,26 @@ services:
       args:
         USER: ${HOST_USER}
         UID: ${HOST_UID}
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    #command: php artisan octane:frankenphp --watch
+    command: php artisan serve --host=0.0.0.0 --port=8000
     restart: unless-stopped
     container_name: dev_cncnet_ladder_app
     env_file: ./cncnet-api/.env
-    command: --watch
     environment:
       XDG_CONFIG_HOME: /app/.config
       XDG_DATA_HOME: /app/.data
     ports:
       - 3000:8000
+      - 5173:5173
     volumes:
       - caddy_data:/app/.config
       - caddy_config:/app/.data
       - ./cncnet-api/:/app
     depends_on:
       - redis
+      - mysql
 
 #  queue-findmatch:
 #    image: cncnet-ladder-queue
@@ -101,6 +106,15 @@ services:
     volumes:
       - cncnet-ladder-db:/var/lib/mysql
       - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql # Import latest db tables on init
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: dev_cncnet_ladder_pma
+    restart: always
+    environment:
+      PMA_HOST: mysql
+    ports:
+      - 8080:80
 
 volumes:
   caddy_data:

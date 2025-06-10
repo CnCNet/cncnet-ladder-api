@@ -5,13 +5,15 @@ on:
   push:
     branches:
       - 'main'
-      - 'staging'
+      # disable staging build
+      # - 'staging'
     tags:
       - 'v*'
   pull_request:
     branches:
       - 'main'
-      - 'staging'
+      # disable staging build
+      # - 'staging'
 
 jobs:
   build-and-push:
@@ -58,6 +60,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          # cache not available for us
           # cache-from: type=gha,scope=${{ matrix.target }}
           # cache-to: type=gha,mode=max,scope=${{ matrix.target }}
 
@@ -65,7 +68,9 @@ jobs:
     needs: build-and-push
     if: >
       github.event_name != 'pull_request' &&
-      (github.ref_name == 'main' || github.ref_name == 'staging')
+      (github.ref_name == 'main')
+    # disable deployment to staging
+    #  || github.ref_name == 'staging'
     runs-on: ubuntu-latest
 
     steps:
@@ -108,4 +113,4 @@ jobs:
             docker compose -f ${{ steps.vars.outputs.compose_file }} pull
             rm -rf cache/*
             docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
-            docker compose exec app php artisan optimize
+            docker compose -f ${{ steps.vars.outputs.compose_file }} exec app php artisan optimize

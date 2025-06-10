@@ -12,3 +12,4 @@ storage/framework/
 /caddy
 frankenphp
 frankenphp-worker.php
+/.npm
