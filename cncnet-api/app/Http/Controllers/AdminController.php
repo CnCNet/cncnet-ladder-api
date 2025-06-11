@@ -7,11 +7,13 @@ use App\Http\Services\AdminService;
 use App\Http\Services\LadderService;
 use App\Models\Clan;
 use App\Models\GameObjectSchema;
+use App\Models\GameReport;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\LadderType;
-use App\Models\PlayerCache;
 use App\Models\Player;
+use App\Models\PlayerCache;
+use App\Models\PlayerGameReport;
 use App\Models\SpawnOptionString;
 use App\Models\URLHelper;
 use App\Models\User;
@@ -1133,6 +1135,45 @@ class AdminController extends Controller
         $ladderHistory = $ladder->currentHistory();
 
         $bailedGames = $this->adminService->fetchBailedGames($ladderHistory)->get();
+    }
+
+
+    /**
+     * For points for games, which have
+     */
+    public function fixPoints(Request $request)
+    {
+        $request->validate([
+        'game_id' => 'required|exists:games,id',
+        'game_report_id' => 'required|exists:game_reports,id',
+        'mode' => 'required|in:zero_for_loser,plus10_minus10',
+        ]);
+
+
+        $report = GameReport::with('playerGameReports')->findOrFail($request->input('game_report_id'));
+
+        if ($report->playerGameReports->count() !== 2) {
+            return back()->with('error', 'Cannot fix other then 2-player-games.');
+        }
+
+        foreach ($report->playerGameReports as $pgr) {
+            if ($request->mode === 'plus10_minus10') {
+                $pgr->points = $pgr->won ? 10 : -10;
+            } elseif ($request->mode === 'zero_for_loser') {
+                if (!$pgr->won && $pgr->points > 0) {
+                    $pgr->points = 0;
+                }
+            }
+            $pgr->save();
+        }
+
+        Log::info('Fixed points ', [
+            'game_id' => $request->input('game_id'),
+            'report_id' => $report->id,
+            'by_admin' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Points fixed.');
     }
 }
 

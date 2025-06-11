@@ -179,6 +179,7 @@ Route::group(['prefix' => 'admin'], function ()
             Route::post('/games/{cncnetGame}/delete', [AdminController::class, 'deleteGame']);
             Route::post('/games/switch', [AdminController::class, 'switchGameReport']);
             Route::post('/games/wash', [AdminController::class, 'washGame']);
+            Route::post('/games/fix-points', [AdminController::class, 'fixPoints']);
 
             Route::get('/player/{playerId}', [AdminController::class, 'getLadderPlayer']);
             Route::get('/player/{playerId}/newban/{banType}', [AdminController::class, 'getUserBan']);
