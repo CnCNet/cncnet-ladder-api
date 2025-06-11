@@ -86,6 +86,53 @@
                             @endif
                         @endforeach
 
+                       @php
+                            $pgrs = $playerGameReports;
+                            $showBothPositiveFix = false;
+                            $showBothZeroFix = false;
+
+                            if ($pgrs->count() === 2) {
+                                $p1 = $pgrs[0];
+                                $p2 = $pgrs[1];
+
+                                // Only fix points if there's a clear winner.
+                                $hasOneWinner = $p1->won != $p2->won;
+
+                                // Fix 1: both players got positive points.
+                                $bothPositive = $p1->points > 0 && $p2->points > 0;
+
+                                // Fix 2: both players got zero points.
+                                $bothZero = $p1->points == 0 && $p2->points == 0;
+
+                                $showBothPositiveFix = ($hasOneWinner && $bothPositive);
+                                $showBothZeroFix = ($hasOneWinner && $bothZero);
+                            }
+                        @endphp
+
+                        @if ($showBothZeroFix && $userIsMod)
+                        <form method="POST" action="/admin/moderate/{{ $history->ladder->id }}/games/fix-points" class="text-center mt-4">
+                            @csrf
+                            <input type="hidden" name="game_id" value="{{ $game->id }}">
+                            <input type="hidden" name="game_report_id" value="{{ $gameReport->id }}">
+                            <input type="hidden" name="mode" value="plus10_minus10">
+                            <button type="submit" class="btn btn-outline-secondary">
+                                Set points to +10/-10.
+                            </button>
+                        </form>
+                        @endif
+
+                        @if ($showBothPositiveFix && $userIsMod)
+                        <form method="POST" action="/admin/moderate/{{ $history->ladder->id }}/games/fix-points" class="text-center mt-4">
+                            @csrf
+                            <input type="hidden" name="game_id" value="{{ $game->id }}">
+                            <input type="hidden" name="game_report_id" value="{{ $gameReport->id }}">
+                            <input type="hidden" name="mode" value="zero_for_loser">
+                            <button type="submit" class="btn btn-outline-secondary">
+                               Fix points for loser.
+                            </button>
+                        </form>
+                        @endif
+
                         @if ($thesePlayerGameReports->count() < 1)
                             <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">
                                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
