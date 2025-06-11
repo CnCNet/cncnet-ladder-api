@@ -113,4 +113,3 @@ jobs:
             docker compose -f ${{ steps.vars.outputs.compose_file }} pull
             rm -rf cache/*
             docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
-            docker compose -f ${{ steps.vars.outputs.compose_file }} exec app php artisan optimize

@@ -12,7 +12,6 @@ services:
       - ./caddy/data:/app/.data
       - ./caddy/config:/app/.config
       - ./storage:/app/storage
-      - ./cache:/app/bootstrap/cache
     ports:
       - '${APP_PORT:-3000}:8000'
     depends_on:
@@ -32,7 +31,6 @@ services:
     environment:
       QUEUE_NAME: 'findmatch'
     volumes:
-      - ./cache:/app/bootstrap/cache
       - ./storage:/app/storage
     networks:
       - cncnet
@@ -48,7 +46,6 @@ services:
     environment:
       QUEUE_NAME: 'saveladderresult'
     volumes:
-      - ./cache:/app/bootstrap/cache
       - ./storage:/app/storage
     networks:
       - cncnet
@@ -62,7 +59,6 @@ services:
       - app
     env_file: ".app.env"
     volumes:
-      - ./cache:/app/bootstrap/cache
       - ./storage:/app/storage
     networks:
       - cncnet

@@ -4,6 +4,8 @@ set -e
 
 cd /app
 
+php artisan optimize
+
 # Default to 'default' if QUEUE_NAME is not set
 QUEUE_NAME="${QUEUE_NAME:-default}"
 

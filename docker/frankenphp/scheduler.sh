@@ -2,6 +2,8 @@
 
 set -e
 
+php artisan optimize
+
 cd /app
 while [ true ]
 do

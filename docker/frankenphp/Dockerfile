@@ -68,12 +68,15 @@ ENTRYPOINT ["/usr/local/bin/scheduler"]
 # Build the app with needed composer dependencies, add assets dependencies
 # and run laravel octane to serve the app
 FROM phpbuilder AS app
+USER root
+COPY docker/frankenphp/octane.sh /usr/local/bin/octane
+RUN chmod +x /usr/local/bin/octane
 COPY --from=assetsbuilder --chown=${USER}:${USER} /app/public /app/public
 WORKDIR /app
 USER ${USER}
 RUN composer dump-autoload -o
 EXPOSE 8000
-ENTRYPOINT ["php", "/app/artisan", "octane:frankenphp"]
+ENTRYPOINT ["/usr/local/bin/octane"]
 HEALTHCHECK --start-period=5s --interval=10s --timeout=5s --retries=8 CMD php /app/artisan octane:status || exit 1
 
 # Stage : development
