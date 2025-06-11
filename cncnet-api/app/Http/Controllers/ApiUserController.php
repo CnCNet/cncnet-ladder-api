@@ -58,7 +58,7 @@ class ApiUserController extends Controller
     {
         try
         {
-            $user = $request->user();
+            $user = auth('api')->user();
             return Ladder::getAllowedQMLaddersByUser($user);
         }
         catch (Exception $ex)

@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| Here is where you can register API routes for your application.
 |
 */
 
@@ -33,7 +31,7 @@ Route::group(['prefix' => 'v1'], function ()
     // Route::get('/test-reward-points', [\App\Http\Controllers\ApiLadderController::class, 'reprocessTeamPointsByGameId']);
     Route::post('/test', [\App\Http\Controllers\ApiLadderController::class, 'testStatsDump']);
 
-    Route::group(['middleware' => 'jwt.auth'], function ()
+    Route::group(['middleware' => 'auth:api'], function ()
     {
 
         Route::get('/user/info', [\App\Http\Controllers\ApiUserController::class, 'getUserInfo']);
@@ -128,7 +126,7 @@ Route::group(['prefix' => 'v2'], function ()
     Route::get("/bans", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'getBans']);
     Route::get("/events", [\App\Http\Controllers\Api\V2\Events\ApiEventController::class, 'getEvents']);
 
-    Route::group(['middleware' => 'jwt.auth'], function ()
+    Route::group(['middleware' => 'auth:api'], function ()
     {
         Route::get('/user/account', [\App\Http\Controllers\Api\V2\User\ApiUserController::class, 'getAccount']);
     });
@@ -137,7 +135,7 @@ Route::group(['prefix' => 'v2'], function ()
 
 Route::group(['prefix' => 'v1'], function ()
 {
-    Route::group(['middleware' => 'jwt.auth'], function ()
+    Route::group(['middleware' => 'auth:api'], function ()
     {
         Route::post('/qm/{ladder:abbreviation}/{playerName}', \App\Http\Controllers\Api\V2\Qm\MatchUpController::class)
             ->middleware([
