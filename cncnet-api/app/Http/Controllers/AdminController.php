@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\GameHelper;
 use App\Http\Services\AdminService;
 use App\Http\Services\LadderService;
+use App\Http\Services\PlayerService;
 use App\Models\Clan;
 use App\Models\GameObjectSchema;
 use App\Models\GameReport;
@@ -1147,26 +1148,32 @@ class AdminController extends Controller
 
 
     /**
-     * For points for games, which have
+     * For points for games, where both player got zero points or both players gained points.
      */
     public function fixPoints(Request $request)
     {
         $request->validate([
         'game_id' => 'required|exists:games,id',
         'game_report_id' => 'required|exists:game_reports,id',
-        'mode' => 'required|in:zero_for_loser,plus10_minus10',
+        'mode' => 'required|in:zero_for_loser,fix_points',
+        'player_points' => 'required_if:mode,fix_points|array'
         ]);
 
 
         $report = GameReport::with('playerGameReports')->findOrFail($request->input('game_report_id'));
 
         if ($report->playerGameReports->count() !== 2) {
-            return back()->with('error', 'Cannot fix other then 2-player-games.');
+            return back()->with('error', 'Cannot fix games with more or less than 2 players.');
         }
 
         foreach ($report->playerGameReports as $pgr) {
-            if ($request->mode === 'plus10_minus10') {
-                $pgr->points = $pgr->won ? 10 : -10;
+            if ($request->mode === 'fix_points') {
+                $submittedPoints = $request->input('player_points');
+                $playerId = $pgr->player_id;
+                if (!isset($submittedPoints[$playerId])) {
+                    return back()->with('error', 'No points submitted for ' . $playerId . '.');
+                }
+                $pgr->points = (int)$submittedPoints[$playerId];
             } elseif ($request->mode === 'zero_for_loser') {
                 if (!$pgr->won && $pgr->points > 0) {
                     $pgr->points = 0;
@@ -1175,7 +1182,7 @@ class AdminController extends Controller
             $pgr->save();
         }
 
-        Log::info('Fixed points ', [
+        Log::info('Fixed points: ', [
             'game_id' => $request->input('game_id'),
             'report_id' => $report->id,
             'by_admin' => auth()->id(),
@@ -1183,9 +1190,106 @@ class AdminController extends Controller
 
         return back()->with('success', 'Points fixed.');
     }
+
+    public function awardedPointsPreview(GameReport $gameReport, LadderHistory $history): array
+    {
+        $playerGameReports = $gameReport->playerGameReports()->with('player')->get();
+        $playerService = new PlayerService();
+
+        if ($playerGameReports->count() !== 2) {
+            return [];
+        }
+
+        $results = [];
+
+        foreach ($playerGameReports as $playerGR) {
+            $player = $playerGR->player;
+
+            $ally_points = 0;
+            $enemy_points = 0;
+            $ally_rating = 0;
+            $enemy_rating = 0;
+            $ally_count = 0;
+            $enemy_count = 0;
+            $enemy_games = 0;
+
+            foreach ($playerGameReports as $pgr) {
+                $rating = $playerService->findUserRatingByPlayerId($pgr->player_id);
+                $pointsBefore = $pgr->player->pointsBefore($history, $pgr->game_id);
+
+                if ($pgr->local_team_id === $playerGR->local_team_id) {
+                    $ally_rating += $rating->rating;
+                    $ally_points += $pointsBefore;
+                    $ally_count++;
+                } else {
+                    $enemy_rating += $rating->rating;
+                    $enemy_points += $pointsBefore;
+                    $enemy_count++;
+                    $enemy_games += $pgr->player->totalGames($history);
+                }
+            }
+
+            $ally_rating = $ally_count ? $ally_rating / $ally_count : 0;
+            $enemy_rating = $enemy_count ? $enemy_rating / $enemy_count : 0;
+
+            $base_rating = max($ally_rating, $enemy_rating);
+            $gvc = 8;
+            if ($history->ladder->qmLadderRules->use_elo_points) {
+                $gvc = ceil(($base_rating * $enemy_rating) / 230000);
+            }
+
+            $diff = $enemy_points - $ally_points;
+            $we = 1 / (pow(10, abs($diff) / 600) + 1);
+            if ($diff > 0 && $playerGR->wonOrDisco()) {
+                $we = 1 - $we;
+            } elseif ($diff < 0 && !$playerGR->wonOrDisco()) {
+                $we = 1 - $we;
+            }
+            $wol_k = $history->ladder->qmLadderRules->wol_k;
+            $wol = (int)($wol_k * $we);
+
+            $points = 0;
+
+            if ($playerGR->draw) {
+                $points = 0;
+            } elseif ($playerGR->wonOrDisco()) {
+                // Points for winner
+                $eloDiff = 0;
+                if ($history->ladder->qmLadderRules->use_elo_points) {
+                    $elo = new \App\Services\EloService(16, $ally_rating, $enemy_rating, 1, 0);
+                    $eloNew = $elo->getNewRatings()["a"];
+                    $eloDiff = (int)($eloNew - $ally_rating);
+                }
+                $points = $gvc + $eloDiff + $wol;
+            } else {
+                // Points for loser
+                if ($enemy_games < 10) {
+                    $wol = (int)($wol * ($enemy_games / 10));
+                }
+                if ($ally_points < ($wol + $gvc) * 10) {
+                    $points = -1 * (int)($ally_points / 10);
+                } else {
+                    $points = -1 * ($wol + $gvc);
+                }
+            }
+
+            $cache = $player->playerCache($history->id);
+            if ($points < 0 && ($cache === null || $cache->points < 0)) {
+                $points = 0;
+            }
+
+            $results[] = [
+                'player' => $player->username,
+                'calculated_points' => $points,
+                'won' => $playerGR->won,
+            ];
+        }
+
+        return $results;
+    }
+
+
 }
-
-
 
 
 function ini_to_b($string)
