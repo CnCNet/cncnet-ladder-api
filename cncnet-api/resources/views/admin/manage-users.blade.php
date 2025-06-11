@@ -67,15 +67,20 @@
                             </p>
 
                             <div class="search" style="margin-bottom: 15px; max-width: 500px">
-                                <form>
-                                    <input type="hidden" name="userId" value="{{ $userId }}" />
+                                <form method="GET">
                                     <input type="hidden" name="hostname" value="{{ $hostname }}" />
 
-                                    <input class="form-control" name="search" placeholder="Search by player username" value="{{ $search }}"
-                                        style="height: 50px" />
-                                    <a href="?" style="color: silver;padding: 5px;margin-bottom: 5px; display: block;text-align:right;">
-                                        Clear search
-                                    </a>
+                                    <input class="form-control mb-2" name="search" placeholder="Search by player username" value="{{ $search }}" style="height: 50px" />
+
+                                    <input class="form-control mb-2" name="userIdOrAlias" placeholder="Search by user ID or alias" value="{{ request('userIdOrAlias') }}" style="height: 50px" />
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <button type="submit" class="btn btn-primary">Filter</button>
+
+                                        <a href="{{ url()->current() }}" style="color: silver; padding: 5px; margin-bottom: 5px; text-align:right;">
+                                            Clear search
+                                        </a>
+                                    </div>
                                 </form>
                             </div>
 

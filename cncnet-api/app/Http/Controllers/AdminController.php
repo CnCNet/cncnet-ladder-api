@@ -219,35 +219,43 @@ class AdminController extends Controller
     public function getManageUsersIndex(Request $request)
     {
         $hostname = $request->hostname;
-        $userId = $request->userId;
+        $userIdOrAlias = $request->userIdOrAlias;
         $search = $request->search;
-        $players = null;
-        $users = null;
+        $players = collect();
+        $users = collect();
 
         if ($request->user() == null || !$request->user()->isAdmin())
             return response('Unauthorized.', 401);
 
         if ($search)
         {
-            $players = Cache::remember("admin/users/{$search}", 20 * 60, function () use ($search)
+            $players = Cache::remember("admin/users/players/{$search}", 20 * 60, function () use ($search)
             {
                 return \App\Models\Player::where('username', '=', $search)->get();
             });
         }
-        else if ($userId)
+
+        if ($userIdOrAlias)
         {
-            $users = Cache::remember("admin/users/users/{$userId}", 20 * 60, function () use ($userId)
+            $users = Cache::remember("admin/users/users/{$userIdOrAlias}", 20 * 60, function () use ($userIdOrAlias)
             {
-                return \App\Models\User::where("id", $userId)->get();
+                return \App\Models\User::where(function ($query) use ($userIdOrAlias) {
+                    if (is_numeric($userIdOrAlias))
+                        $query->orWhere('id', $userIdOrAlias);
+
+                    $query->orWhere('alias', 'like', '%' . $userIdOrAlias . '%');
+                })->get();
             });
         }
 
         return view("admin.manage-users", [
-            "users" => $users != null ? $users : [],
-            "players" => $players != null ? $players : [],
+            "users" => $users,
+            "players" => $players,
             "search" => $search,
-            "userId" => $userId,
-            "hostname" => $hostname
+            "userId" => null,
+            "hostname" => $hostname,
+            "alias" => null,
+            "userIdOrAlias" => $userIdOrAlias
         ]);
     }
 
