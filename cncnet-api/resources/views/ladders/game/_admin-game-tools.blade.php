@@ -106,22 +106,43 @@
 
                                 $showBothPositiveFix = ($hasOneWinner && $bothPositive);
                                 $showBothZeroFix = ($hasOneWinner && $bothZero);
+
+                                $preview = app(\App\Http\Controllers\AdminController::class)->awardedPointsPreview($gameReport, $history);
+
                             }
                         @endphp
 
-                        @if ($showBothZeroFix && $userIsMod)
+                        @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
+                            <div class="alert alert-info mt-4">
+                                <strong>FPS too low – no points awarded.</strong><br>Minimum FPS for this ladder is {{ $history->ladder->qmLadderRules->bail_fps}}.
+                            </div>
+                        @endif
+
+                        @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $gameReport->duration < $history->ladder->qmLadderRules->bail_time)
+                            <div class="alert alert-info mt-4">
+                                <strong>Game duration too short – no points awarded.</strong><br>Minimum time for this ladder is {{ $history->ladder->qmLadderRules->bail_time}}.
+                            </div>
+                        @endif
+
+                        @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $userIsMod && !empty($preview) && count($preview) === 2)
                         <form method="POST" action="/admin/moderate/{{ $history->ladder->id }}/games/fix-points" class="text-center mt-4">
                             @csrf
+                            @php
+                                $p1 = $preview[0];
+                                $p2 = $preview[1];
+                            @endphp
+                            <input type="hidden" name="player_points[{{ $playerGameReports[0]->player_id }}]" value="{{ $p1['calculated_points'] }}">
+                            <input type="hidden" name="player_points[{{ $playerGameReports[1]->player_id }}]" value="{{ $p2['calculated_points'] }}">
                             <input type="hidden" name="game_id" value="{{ $game->id }}">
                             <input type="hidden" name="game_report_id" value="{{ $gameReport->id }}">
-                            <input type="hidden" name="mode" value="plus10_minus10">
+                            <input type="hidden" name="mode" value="fix_points">
                             <button type="submit" class="btn btn-outline-secondary">
-                                Set points to +10/-10.
+                                Fix points ({{ $preview[0]['player'] }}: {{ $preview[0]['calculated_points'] >= 0 ? '+' : '' }}{{ $preview[0]['calculated_points'] }}, {{ $preview[1]['player'] }}: {{ $preview[1]['calculated_points'] >= 0 ? '+' : '' }}{{ $preview[1]['calculated_points'] }})
                             </button>
                         </form>
                         @endif
 
-                        @if ($showBothPositiveFix && $userIsMod)
+                        @if ($thisGameReport->id === $gameReport->id && $showBothPositiveFix && $userIsMod)
                         <form method="POST" action="/admin/moderate/{{ $history->ladder->id }}/games/fix-points" class="text-center mt-4">
                             @csrf
                             <input type="hidden" name="game_id" value="{{ $game->id }}">
