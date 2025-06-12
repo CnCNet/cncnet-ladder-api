@@ -9,9 +9,9 @@ on:
       # - 'staging'
     tags:
       - 'v*'
-  pull_request:
-    branches:
-      - 'main'
+#  pull_request:
+#    branches:
+#      - 'main'
       # disable staging build
       # - 'staging'
 
