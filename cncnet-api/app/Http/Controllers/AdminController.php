@@ -220,25 +220,28 @@ class AdminController extends Controller
     {
         $hostname = $request->hostname;
         $userIdOrAlias = $request->userIdOrAlias;
+        if (empty($userIdOrAlias) && $request->filled('userId')) {
+            $userIdOrAlias = $request->userId;
+        }
         $search = $request->search;
-        $players = collect();
+
         $users = collect();
 
         if ($request->user() == null || !$request->user()->isAdmin())
             return response('Unauthorized.', 401);
 
-        if ($search)
-        {
-            $players = Cache::remember("admin/users/players/{$search}", 20 * 60, function () use ($search)
-            {
+
+        if ($search) {
+            $players = Cache::remember("admin/users/players/{$search}", 20 * 60, function () use ($search) {
                 return \App\Models\Player::where('username', '=', $search)->get();
             });
+
+            $playerUsers = $players->map(fn($p) => $p->user)->filter();
+            $users = $users->concat($playerUsers);
         }
 
-        if ($userIdOrAlias)
-        {
-            $users = Cache::remember("admin/users/users/{$userIdOrAlias}", 20 * 60, function () use ($userIdOrAlias)
-            {
+        if ($userIdOrAlias) {
+            $queryUsers = Cache::remember("admin/users/users/{$userIdOrAlias}", 20 * 60, function () use ($userIdOrAlias) {
                 return \App\Models\User::where(function ($query) use ($userIdOrAlias) {
                     if (is_numeric($userIdOrAlias))
                         $query->orWhere('id', $userIdOrAlias);
@@ -246,11 +249,15 @@ class AdminController extends Controller
                     $query->orWhere('alias', 'like', '%' . $userIdOrAlias . '%');
                 })->get();
             });
+
+            $users = $users->concat($queryUsers);
         }
+
+        // Remove null and duplicate users.
+        $users = $users->filter()->unique('id')->values();
 
         return view("admin.manage-users", [
             "users" => $users,
-            "players" => $players,
             "search" => $search,
             "userId" => null,
             "hostname" => $hostname,
@@ -368,7 +375,31 @@ class AdminController extends Controller
             $user->save();
         }
 
-        $user->updateAlias($request->alias);
+        if ($request->exists('alias')) {
+            $request->validate([
+                'alias' => [
+                    'nullable',
+                    'string',
+                    'min:2',
+                    'max:20',
+                    'regex:/^[A-Z][a-zA-Z]{1,19}$/',
+                    'unique:users,alias,' . $user->id,
+                    ]
+                ],
+                [
+                    'alias.regex' => 'The alias must start with an uppercase letter and contain only letters.',
+                    'alias.unique' => 'This alias is already taken.',
+                    'alias.min' => 'Minimum length for alias is 2.',
+                    'alias.max' => 'Maximum length for alias is 20.'
+                ]
+            );
+
+            if (preg_match('/[A-Z]{2}/', $request->alias)) {
+                return back()->withErrors(['alias' => 'No consecutive uppercase letters allowed in alias.'])->withInput();
+            }
+
+            $user->updateAlias($request->alias);
+        }
 
         $user->userSettings->is_anonymous = $request->is_anonymous == "on" ? true : false;
         $user->userSettings->allow_2v2_ladders = $request->allow_2v2_ladders == "on" ? true : false;

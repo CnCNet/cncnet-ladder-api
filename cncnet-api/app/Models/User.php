@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
@@ -245,6 +246,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function updateAlias($alias)
     {
+        // Clear cache
+        if ($this->alias) {
+            Cache::forget("admin/users/users/{$this->alias}");
+        }
+        Cache::forget("admin/users/users/{$this->id}");
+
         $this->alias = $alias;
         $this->save();
     }

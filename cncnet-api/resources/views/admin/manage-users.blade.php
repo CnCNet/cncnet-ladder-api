@@ -72,7 +72,7 @@
 
                                     <input class="form-control mb-2" name="search" placeholder="Search by player username" value="{{ $search }}" style="height: 50px" />
 
-                                    <input class="form-control mb-2" name="userIdOrAlias" placeholder="Search by user ID or alias" value="{{ request('userIdOrAlias') }}" style="height: 50px" />
+                                    <input class="form-control mb-2" name="userIdOrAlias" placeholder="Search by user ID or alias" value="{{ request('userIdOrAlias') ?? request('userId') }}" style="height: 50px" />
 
                                     <div class="d-flex justify-content-between align-items-center">
                                         <button type="submit" class="btn btn-primary">Filter</button>
@@ -83,55 +83,20 @@
                                     </div>
                                 </form>
                             </div>
-
-                            <div class="users">
-                                <?php $unique = []; ?>
-                                <?php foreach ($players as $pResult) : ?>
-
-                                <?php
-                                $user = $pResult->user()->first();
-                                if ($user == null) {
-                                    continue;
-                                }
-                                
-                                if (in_array($user->id, $unique)) {
-                                    continue;
-                                }
-                                $unique[] = $user->id;
-                                ?>
-
-                                <style>
-                                    .user-info {
-                                        margin-bottom: 50px;
-                                        background: #1e212d;
-                                        border-radius: 4px;
-                                        padding: 1rem;
-                                    }
-                                </style>
-
-                                <div class="user-info">
-                                    <h4><a href="?userId={{ $user->id }}">{{ $user->name }}</a></h4>
-                                    <h5>User id: <strong>{{ $user->id }}</strong></h5>
-                                    @if ($user->alias != null)
-                                        <h5>Alias: <strong>{{ $user->alias }}</strong></h5>
-                                    @endif
-                                    <h5>Email: <strong>{{ $user->email }}</strong></h5>
-                                    <div class="base-info">
-                                        Created: {{ $user->created_at->toDateString() }}
-                                    </div>
-
-                                    @include('admin._duplicates', [$user])
-                                    @include('admin._bans', [$user])
-                                    @include('admin._nicknames')
-                                </div>
-                                <?php endforeach; ?>
-                            </div>
                         </div>
 
                         <?php if ($users) : ?>
                         <h2>Users</h2>
                         <?php endif; ?>
                         <div class="users">
+                            <style>
+                                .user-info {
+                                    margin-bottom: 50px;
+                                    background: #1e212d;
+                                    border-radius: 4px;
+                                    padding: 1rem;
+                                }
+                            </style>
                             <?php foreach ($users as $user) : ?>
                             <div class="user-info">
                                 <h4><a href="?userId={{ $user->id }}">{{ $user->name }}</a></h4>

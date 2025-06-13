@@ -105,6 +105,10 @@
                 </p>
 
                 <button class="btn btn-primary mt-2">Update User</button>
+
+                @error('alias')
+                    <div class="alert alert-danger">{{ $message }}</div>
+                @enderror
             </form>
         </div>
     </div>
