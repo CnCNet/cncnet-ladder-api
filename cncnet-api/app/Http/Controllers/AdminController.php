@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\GameHelper;
 use App\Http\Services\AdminService;
 use App\Http\Services\LadderService;
-use App\Http\Services\PlayerService;
 use App\Models\Clan;
 use App\Models\GameObjectSchema;
 use App\Models\GameReport;
@@ -1197,7 +1196,6 @@ class AdminController extends Controller
     public function awardedPointsPreview(GameReport $gameReport, LadderHistory $history): array
     {
         $playerGameReports = $gameReport->playerGameReports()->with('player')->get();
-        $playerService = new PlayerService();
 
         if ($playerGameReports->count() !== 2) {
             return [];
