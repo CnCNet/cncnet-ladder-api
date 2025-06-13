@@ -86,32 +86,6 @@
                             @endif
                         @endforeach
 
-                       @php
-                            $pgrs = $playerGameReports;
-                            $showBothPositiveFix = false;
-                            $showBothZeroFix = false;
-
-                            if ($pgrs->count() === 2) {
-                                $p1 = $pgrs[0];
-                                $p2 = $pgrs[1];
-
-                                // Only fix points if there's a clear winner.
-                                $hasOneWinner = $p1->won != $p2->won;
-
-                                // Fix 1: both players got positive points.
-                                $bothPositive = $p1->points > 0 && $p2->points > 0;
-
-                                // Fix 2: both players got zero points.
-                                $bothZero = $p1->points == 0 && $p2->points == 0;
-
-                                $showBothPositiveFix = ($hasOneWinner && $bothPositive);
-                                $showBothZeroFix = ($hasOneWinner && $bothZero);
-
-                                $preview = app(\App\Http\Controllers\AdminController::class)->awardedPointsPreview($gameReport, $history);
-
-                            }
-                        @endphp
-
                         @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
                             <div class="alert alert-info mt-4">
                                 <strong>FPS too low – no points awarded.</strong><br>Minimum FPS for this ladder is {{ $history->ladder->qmLadderRules->bail_fps}}.
@@ -124,17 +98,17 @@
                             </div>
                         @endif
 
-                        @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $userIsMod && !empty($preview) && count($preview) === 2)
+                        @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $userIsMod && !empty($fixedPointsPreview) && count($fixedPointsPreview) === 2)
                         <form method="POST" action="/admin/moderate/{{ $history->ladder->id }}/games/fix-points" class="text-center mt-4">
                             @csrf
-                            @foreach ($preview as $entry)
+                            @foreach ($fixedPointsPreview as $entry)
                                 <input type="hidden" name="player_points[{{ $entry['player_id'] }}]" value="{{ $entry['calculated_points'] }}">
                             @endforeach
                             <input type="hidden" name="game_id" value="{{ $game->id }}">
                             <input type="hidden" name="game_report_id" value="{{ $gameReport->id }}">
                             <input type="hidden" name="mode" value="fix_points">
                             <button type="submit" class="btn btn-outline-secondary">
-                                Fix points ({{ $preview[0]['player'] }}: {{ $preview[0]['calculated_points'] >= 0 ? '+' : '' }}{{ $preview[0]['calculated_points'] }}, {{ $preview[1]['player'] }}: {{ $preview[1]['calculated_points'] >= 0 ? '+' : '' }}{{ $preview[1]['calculated_points'] }})
+                                Fix points ({{ $fixedPointsPreview[0]['player'] }}: {{ $fixedPointsPreview[0]['calculated_points'] >= 0 ? '+' : '' }}{{ $fixedPointsPreview[0]['calculated_points'] }}, {{ $fixedPointsPreview[1]['player'] }}: {{ $fixedPointsPreview[1]['calculated_points'] >= 0 ? '+' : '' }}{{ $fixedPointsPreview[1]['calculated_points'] }})
                             </button>
                         </form>
                         @endif
@@ -146,7 +120,7 @@
                             <input type="hidden" name="game_report_id" value="{{ $gameReport->id }}">
                             <input type="hidden" name="mode" value="zero_for_loser">
                             <button type="submit" class="btn btn-outline-secondary">
-                               Fix points for loser.
+                               Set points for loser to 0
                             </button>
                         </form>
                         @endif

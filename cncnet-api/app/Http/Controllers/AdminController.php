@@ -1151,29 +1151,29 @@ class AdminController extends Controller
      */
     public function fixPoints(Request $request)
     {
-        $request->validate([
-        'game_id' => 'required|exists:games,id',
-        'game_report_id' => 'required|exists:game_reports,id',
-        'mode' => 'required|in:zero_for_loser,fix_points',
-        'player_points' => 'required_if:mode,fix_points|array'
+        $inputs = $request->validate([
+            'game_id' => 'required|exists:games,id',
+            'game_report_id' => 'required|exists:game_reports,id',
+            'mode' => 'required|in:zero_for_loser,fix_points',
+            'player_points' => 'required_if:mode,fix_points|array'
         ]);
 
 
-        $report = GameReport::with('playerGameReports')->findOrFail($request->input('game_report_id'));
+        $report = GameReport::with('playerGameReports')->findOrFail($inputs['game_report_id']);
 
         if ($report->playerGameReports->count() !== 2) {
             return back()->with('error', 'Cannot fix games with more or less than 2 players.');
         }
 
         foreach ($report->playerGameReports as $pgr) {
-            if ($request->mode === 'fix_points') {
-                $submittedPoints = $request->input('player_points');
+            if ($inputs['mode'] === 'fix_points') {
+                $submittedPoints = $inputs['player_points'];
                 $playerId = $pgr->player_id;
                 if (!isset($submittedPoints[$playerId])) {
                     return back()->with('error', 'No points submitted for ' . $playerId . '.');
                 }
                 $pgr->points = (int)$submittedPoints[$playerId];
-            } elseif ($request->mode === 'zero_for_loser') {
+            } elseif ($inputs['mode'] === 'zero_for_loser') {
                 if (!$pgr->won && $pgr->points > 0) {
                     $pgr->points = 0;
                 }
@@ -1182,7 +1182,7 @@ class AdminController extends Controller
         }
 
         Log::info('Fixed points: ', [
-            'game_id' => $request->input('game_id'),
+            'game_id' => $inputs['game_id'],
             'report_id' => $report->id,
             'by_admin' => auth()->id(),
         ]);

@@ -257,6 +257,26 @@ class LadderController extends Controller
         $playerGameReports = $gameReport->playerGameReports ?? [];
         $groupedPlayerGameReports = [];
 
+        $showBothPositiveFix = false;
+        $showBothZeroFix = false;
+        $fixedPointsPreview = [];
+
+        if (count($playerGameReports) === 2) {
+            $p1 = $playerGameReports[0];
+            $p2 = $playerGameReports[1];
+
+            $hasOneWinner = $p1->won != $p2->won;
+            $bothPositive = $p1->points > 0 && $p2->points > 0;
+            $bothZero = $p1->points == 0 && $p2->points == 0;
+
+            $showBothPositiveFix = $hasOneWinner && $bothPositive;
+            $showBothZeroFix = $hasOneWinner && $bothZero;
+
+            if ($showBothZeroFix && $userIsMod) {
+                $fixedPointsPreview = app(\App\Http\Controllers\AdminController::class)->awardedPointsPreview($gameReport, $history);
+            }
+        }
+
         if ($history->ladder->ladder_type == Ladder::TWO_VS_TWO)
         {
             $groupedPlayerGameReports = [];
@@ -349,6 +369,9 @@ class LadderController extends Controller
                     "qmMatchPlayers" => $qmMatchPlayers,
                     "tunnels" => $tunnels,
                     "date" => $date,
+                    "showBothPositiveFix" => $showBothPositiveFix,
+                    "showBothZeroFix" => $showBothZeroFix,
+                    "fixedPointsPreview" => $fixedPointsPreview,
                 ]
             );
         }
@@ -375,6 +398,9 @@ class LadderController extends Controller
                     "qmConnectionStats" => $qmConnectionStats,
                     "qmMatchPlayers" => $qmMatchPlayers,
                     "date" => $date,
+                    "showBothPositiveFix" => $showBothPositiveFix,
+                    "showBothZeroFix" => $showBothZeroFix,
+                    "fixedPointsPreview" => $fixedPointsPreview,
                 ]
             );
         }
