@@ -127,12 +127,9 @@
                         @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $userIsMod && !empty($preview) && count($preview) === 2)
                         <form method="POST" action="/admin/moderate/{{ $history->ladder->id }}/games/fix-points" class="text-center mt-4">
                             @csrf
-                            @php
-                                $p1 = $preview[0];
-                                $p2 = $preview[1];
-                            @endphp
-                            <input type="hidden" name="player_points[{{ $playerGameReports[0]->player_id }}]" value="{{ $p1['calculated_points'] }}">
-                            <input type="hidden" name="player_points[{{ $playerGameReports[1]->player_id }}]" value="{{ $p2['calculated_points'] }}">
+                            @foreach ($preview as $entry)
+                                <input type="hidden" name="player_points[{{ $entry['player_id'] }}]" value="{{ $entry['calculated_points'] }}">
+                            @endforeach
                             <input type="hidden" name="game_id" value="{{ $game->id }}">
                             <input type="hidden" name="game_report_id" value="{{ $gameReport->id }}">
                             <input type="hidden" name="mode" value="fix_points">
