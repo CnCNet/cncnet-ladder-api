@@ -7,11 +7,13 @@ use App\Http\Services\AdminService;
 use App\Http\Services\LadderService;
 use App\Models\Clan;
 use App\Models\GameObjectSchema;
+use App\Models\GameReport;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\LadderType;
-use App\Models\PlayerCache;
 use App\Models\Player;
+use App\Models\PlayerCache;
+use App\Models\PlayerGameReport;
 use App\Models\SpawnOptionString;
 use App\Models\URLHelper;
 use App\Models\User;
@@ -1173,9 +1175,111 @@ class AdminController extends Controller
 
         $bailedGames = $this->adminService->fetchBailedGames($ladderHistory)->get();
     }
+
+
+    /**
+     * For points for games, where both player got zero points or both players gained points.
+     */
+    public function fixPoints(Request $request)
+    {
+        $inputs = $request->validate([
+            'game_id' => 'required|exists:games,id',
+            'game_report_id' => 'required|exists:game_reports,id',
+            'mode' => 'required|in:zero_for_loser,fix_points',
+            'player_points' => 'required_if:mode,fix_points|array'
+        ]);
+
+
+        $report = GameReport::with('playerGameReports')->findOrFail($inputs['game_report_id']);
+
+        if ($report->playerGameReports->count() !== 2) {
+            return back()->with('error', 'Cannot fix games with more or less than 2 players.');
+        }
+
+        foreach ($report->playerGameReports as $pgr) {
+            if ($inputs['mode'] === 'fix_points') {
+                $submittedPoints = $inputs['player_points'];
+                $playerId = $pgr->player_id;
+                if (!isset($submittedPoints[$playerId])) {
+                    return back()->with('error', 'No points submitted for ' . $playerId . '.');
+                }
+                $pgr->points = (int)$submittedPoints[$playerId];
+            } elseif ($inputs['mode'] === 'zero_for_loser') {
+                if (!$pgr->won && $pgr->points > 0) {
+                    $pgr->points = 0;
+                }
+            }
+            $pgr->save();
+        }
+
+        Log::info('Fixed points: ', [
+            'game_id' => $inputs['game_id'],
+            'report_id' => $report->id,
+            'by_admin' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Points fixed.');
+    }
+
+    /**
+     * Simplified points calculation for ladder games. Only used to fix broken game results. 
+     */
+    public function awardedPointsPreview(GameReport $gameReport, LadderHistory $history): array
+    {
+        $playerGameReports = $gameReport->playerGameReports()->with('player')->get();
+
+        if ($playerGameReports->count() !== 2) {
+            return [];
+        }
+
+        $winner = $playerGameReports->firstWhere(fn($pgr) => $pgr->wonOrDisco());
+        $loser = $playerGameReports->firstWhere(fn($pgr) => !$pgr->wonOrDisco());
+
+        if (!$winner || !$loser) {
+            return [];
+        }
+
+        $winnerPointsBefore = $winner->player->pointsBefore($history, $winner->game_id);
+        $loserPointsBefore = $loser->player->pointsBefore($history, $loser->game_id);
+        $diff = $loserPointsBefore - $winnerPointsBefore;
+
+        $we = 1 / (pow(10, abs($diff) / 600) + 1);
+        if ($diff > 0) {
+            $we = 1 - $we;
+        }
+
+        $wol_k = $history->ladder->qmLadderRules->wol_k;
+        $wol = (int)($wol_k * $we);
+        $gvc = 8;
+
+        $winnerPoints = $gvc + $wol;
+        if ($winnerPointsBefore < 10 * ($gvc + $wol)) {
+            $loserPoints = -1 * (int)($loserPointsBefore / 10);
+        } else {
+            $loserPoints = -1 * ($gvc + $wol);
+        }
+
+        $loserCache = $loser->player->playerCache($history->id);
+        if ($loserPoints < 0 && (!$loserCache || $loserCache->points < 0)) {
+            $loserPoints = 0;
+        }
+
+        return [
+            [
+                'player_id' => $winner->player->id,
+                'player' => $winner->player->username,
+                'calculated_points' => $winnerPoints,
+                'won' => true,
+            ],
+            [
+                'player_id' => $loser->player->id,
+                'player' => $loser->player->username,
+                'calculated_points' => $loserPoints,
+                'won' => false,
+            ]
+        ];
+    }
 }
-
-
 
 
 function ini_to_b($string)
