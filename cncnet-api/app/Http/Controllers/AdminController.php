@@ -375,10 +375,10 @@ class AdminController extends Controller
             $user->save();
         }
 
-        if ($request->has('alias')) {
+        if ($request->exists('alias')) {
             $request->validate([
                 'alias' => [
-                    'required',
+                    'nullable',
                     'string',
                     'min:2',
                     'max:20',
