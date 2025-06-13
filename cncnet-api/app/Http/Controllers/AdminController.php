@@ -1191,6 +1191,9 @@ class AdminController extends Controller
         return back()->with('success', 'Points fixed.');
     }
 
+    /**
+     * Simplified points calculation for ladder games. Only used to fix broken game results. 
+     */
     public function awardedPointsPreview(GameReport $gameReport, LadderHistory $history): array
     {
         $playerGameReports = $gameReport->playerGameReports()->with('player')->get();
@@ -1200,95 +1203,53 @@ class AdminController extends Controller
             return [];
         }
 
-        $results = [];
+        $winner = $playerGameReports->firstWhere(fn($pgr) => $pgr->wonOrDisco());
+        $loser = $playerGameReports->firstWhere(fn($pgr) => !$pgr->wonOrDisco());
 
-        foreach ($playerGameReports as $playerGR) {
-            $player = $playerGR->player;
-
-            $ally_points = 0;
-            $enemy_points = 0;
-            $ally_rating = 0;
-            $enemy_rating = 0;
-            $ally_count = 0;
-            $enemy_count = 0;
-            $enemy_games = 0;
-
-            foreach ($playerGameReports as $pgr) {
-                $rating = $playerService->findUserRatingByPlayerId($pgr->player_id);
-                $pointsBefore = $pgr->player->pointsBefore($history, $pgr->game_id);
-
-                if ($pgr->local_team_id === $playerGR->local_team_id) {
-                    $ally_rating += $rating->rating;
-                    $ally_points += $pointsBefore;
-                    $ally_count++;
-                } else {
-                    $enemy_rating += $rating->rating;
-                    $enemy_points += $pointsBefore;
-                    $enemy_count++;
-                    $enemy_games += $pgr->player->totalGames($history);
-                }
-            }
-
-            $ally_rating = $ally_count ? $ally_rating / $ally_count : 0;
-            $enemy_rating = $enemy_count ? $enemy_rating / $enemy_count : 0;
-
-            $base_rating = max($ally_rating, $enemy_rating);
-            $gvc = 8;
-            if ($history->ladder->qmLadderRules->use_elo_points) {
-                $gvc = ceil(($base_rating * $enemy_rating) / 230000);
-            }
-
-            $diff = $enemy_points - $ally_points;
-            $we = 1 / (pow(10, abs($diff) / 600) + 1);
-            if ($diff > 0 && $playerGR->wonOrDisco()) {
-                $we = 1 - $we;
-            } elseif ($diff < 0 && !$playerGR->wonOrDisco()) {
-                $we = 1 - $we;
-            }
-            $wol_k = $history->ladder->qmLadderRules->wol_k;
-            $wol = (int)($wol_k * $we);
-
-            $points = 0;
-
-            if ($playerGR->draw) {
-                $points = 0;
-            } elseif ($playerGR->wonOrDisco()) {
-                // Points for winner
-                $eloDiff = 0;
-                if ($history->ladder->qmLadderRules->use_elo_points) {
-                    $elo = new \App\Services\EloService(16, $ally_rating, $enemy_rating, 1, 0);
-                    $eloNew = $elo->getNewRatings()["a"];
-                    $eloDiff = (int)($eloNew - $ally_rating);
-                }
-                $points = $gvc + $eloDiff + $wol;
-            } else {
-                // Points for loser
-                if ($enemy_games < 10) {
-                    $wol = (int)($wol * ($enemy_games / 10));
-                }
-                if ($ally_points < ($wol + $gvc) * 10) {
-                    $points = -1 * (int)($ally_points / 10);
-                } else {
-                    $points = -1 * ($wol + $gvc);
-                }
-            }
-
-            $cache = $player->playerCache($history->id);
-            if ($points < 0 && ($cache === null || $cache->points < 0)) {
-                $points = 0;
-            }
-
-            $results[] = [
-                'player' => $player->username,
-                'calculated_points' => $points,
-                'won' => $playerGR->won,
-            ];
+        if (!$winner || !$loser) {
+            return [];
         }
 
-        return $results;
+        $winnerPointsBefore = $winner->player->pointsBefore($history, $winner->game_id);
+        $loserPointsBefore = $loser->player->pointsBefore($history, $loser->game_id);
+        $diff = $loserPointsBefore - $winnerPointsBefore;
+
+        $we = 1 / (pow(10, abs($diff) / 600) + 1);
+        if ($diff > 0) {
+            $we = 1 - $we;
+        }
+
+        $wol_k = $history->ladder->qmLadderRules->wol_k;
+        $wol = (int)($wol_k * $we);
+        $gvc = 8;
+
+        $winnerPoints = $gvc + $wol;
+        if ($winnerPointsBefore < 10 * ($gvc + $wol)) {
+            $loserPoints = -1 * (int)($loserPointsBefore / 10);
+        } else {
+            $loserPoints = -1 * ($gvc + $wol);
+        }
+
+        $loserCache = $loser->player->playerCache($history->id);
+        if ($loserPoints < 0 && (!$loserCache || $loserCache->points < 0)) {
+            $loserPoints = 0;
+        }
+
+        return [
+            [
+                'player_id' => $winner->player->id,
+                'player' => $winner->player->username,
+                'calculated_points' => $winnerPoints,
+                'won' => true,
+            ],
+            [
+                'player_id' => $loser->player->id,
+                'player' => $loser->player->username,
+                'calculated_points' => $loserPoints,
+                'won' => false,
+            ]
+        ];
     }
-
-
 }
 
 
