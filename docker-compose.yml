@@ -121,7 +121,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_PORT: 3306
     volumes:
-      - ./docker/elogen/crontab:/etc/cron.d/elogen-cron:ro
+      - ./docker/elogen/crontab:/mnt/crontab:ro
       - ./storage/app/rating:/data
     depends_on:
       - mysql
