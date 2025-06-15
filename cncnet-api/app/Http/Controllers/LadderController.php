@@ -210,7 +210,13 @@ class LadderController extends Controller
     {
         // $start = $this->debugStart();
         $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+        $history->load([
+            'ladder',
+            'ladder.qmLadderRules',
+            'ladder.sides'
+        ]);
         $game = $this->ladderService->getLadderGameById($history, $gameId);
+
         $user = $request->user();
 
         if ($game == null)
@@ -225,7 +231,7 @@ class LadderController extends Controller
         }
         else
         {
-            $allGameReports = $game->report()->get();
+            $allGameReports = $game->report;
             $userIsMod = false;
         }
 
@@ -237,6 +243,16 @@ class LadderController extends Controller
         {
             $gameReport = $game->report;
         }
+
+        $gameReport->load([
+            'playerGameReports',
+            'playerGameReports.player',
+            'playerGameReports.player.user',
+            'playerGameReports.stats',
+            'playerGameReports.stats.gameObjectCounts',
+            'playerGameReports.stats.gameObjectCounts.countableGameObject',
+        ]);
+
 
         if ($gameReport == null)
         {
@@ -297,7 +313,6 @@ class LadderController extends Controller
         foreach ($playerGameReports as $pgr)
         {
             $pings = '?';
-            $game = $pgr->game;
             $connectionStats = null;
 
             if ($game != null)

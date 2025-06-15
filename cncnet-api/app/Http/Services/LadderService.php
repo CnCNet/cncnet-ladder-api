@@ -564,12 +564,12 @@ class LadderService
         return $response;
     }
 
-    public function getLadderGameById($history, $gameId)
+    public function getLadderGameById($history, $gameId): Game
     {
         if ($history == null || $gameId == null)
             return "Invalid parameters";
 
-        return \App\Models\Game::where("id", "=", $gameId)->where('ladder_history_id', $history->id)->first();
+        return Game::where("id", "=", $gameId)->where('ladder_history_id', $history->id)->first();
     }
 
     public function getLadderPlayer($history, $username)

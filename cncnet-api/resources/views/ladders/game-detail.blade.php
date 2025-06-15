@@ -18,8 +18,7 @@ if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO) {
 }
 else {
     foreach ($reports as $k => $pgr) {
-        $player = $pgr->player()->first();
-        $clan = $pgr->clan()->first();
+        $player = $pgr->player;
         if ($k == 1) {
             $pageTitle .= ' vs ';
         }
@@ -168,7 +167,7 @@ else {
                         {{-- 1vs1 --}}
                         @foreach ($playerGameReports as $k => $pgr)
                             @php $gameStats = $pgr->stats; @endphp
-                            @php $player = $pgr->player()->first(); @endphp
+                            @php $player = $pgr->player; @endphp
                             @php $playerCache = $player->playerCache($history->id);@endphp
                             @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
                             @php $points = $playerCache ? $playerCache->points : 0;@endphp
@@ -180,7 +179,9 @@ else {
                                     </div>
                                 </div>
                             @endif
-                            @include('ladders.game._player-card')
+                            @include('ladders.game._player-card', [
+                                'pgr' => $pgr
+                            ])
                         @endforeach
                     @endif
 
