@@ -89,6 +89,13 @@ return [
             'driver' => 'errorlog',
             'level' => env('LOG_LEVEL', 'debug'),
         ],
+
+        'deprecations' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/laravel_DEPRECATIONS.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 7,
+        ],
     ],
 
 ];
