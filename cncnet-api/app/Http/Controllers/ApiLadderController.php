@@ -854,7 +854,7 @@ class ApiLadderController extends Controller
             }
 
             $date = $request->date ?? Carbon::now()->format("m-Y");
-            $response = $this->ladderService->getGamesFormattedForEloService($date, $cncnetGame, 200, $request->query());
+            $response = $this->ladderService->getGamesFormattedForEloService($date, $cncnetGame, $request->query(), 200);
 
             return $response;
         }
