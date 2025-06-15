@@ -1,8 +1,8 @@
 # Daily jobs
-10 5 * * * cncnet /app/elogen -o /data -m blitz -l info
-20 5 * * * cncnet /app/elogen -o /data -m ra2 -l info
-30 5 * * * cncnet /app/elogen -o /data -m yr -l info
-40 5 * * * cncnet /app/elogen -o /data -m blitz-2v2 -l info
+10 5 * * * cncnet /app/elogen -o /data -m ra2 -l info
+30 5 * * * cncnet /app/elogen -o /data -m blitz-2v2 -l info
+40 5 * * * cncnet /app/elogen -o /data -m yr -l info
 
-# Weekly job
-50 5 * * 0 cncnet /app/elogen -o /data -m ra -l info
+# Three times a week
+55 5 * * 1,3,5 cncnet /app/elogen -o /data -m blitz -l info
+10 6 * * 1,3,5 cncnet /app/elogen -o /data -m ra -l info
