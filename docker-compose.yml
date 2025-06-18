@@ -82,7 +82,7 @@ services:
     image: mariadb:latest
     container_name: cncnet_ladder_mysql${ENV_SUFFIX}
     restart: unless-stopped
-    command: --max_connections=1000 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=31536000 --slow-query-log --interactive_timeout=31536000
+    command: --max_connections=500 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=600 --slow-query-log --interactive_timeout=600 --long_query_time=2
     environment:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
