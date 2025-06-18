@@ -12,6 +12,6 @@ QUEUE_NAME="${QUEUE_NAME:-default}"
 php artisan queue:work \
   --queue="$QUEUE_NAME" \
   --memory=2048 \
-  --timeout=60 \
+  --timeout=180 \
   --tries=3 \
   --backoff=0
