@@ -55,7 +55,8 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./docker/frankenphp/Dockerfile
+          # Use frankenphp for app and workers for queue and scheduler
+          file: ${{ matrix.target == 'app' && './docker/frankenphp/Dockerfile' || './docker/workers/Dockerfile' }}
           target: ${{ matrix.target }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}

@@ -39,31 +39,6 @@ COPY --from=phpbuilder /app .
 RUN ls -l node_modules/.bin/vite && file node_modules/.bin/vite && cat -A node_modules/.bin/vite
 RUN npm run build
 
-
-# Stage queue
-# Run the queue using supervisor
-FROM phpbuilder AS queue
-USER root
-COPY docker/frankenphp/queue.sh /usr/local/bin/queue
-RUN chmod +x /usr/local/bin/queue
-WORKDIR /app
-USER ${USER}
-RUN composer dump-autoload -o
-ENTRYPOINT ["/usr/local/bin/queue"]
-
-
-# Stage scheduler
-# Run the scheduler using supervisor
-FROM phpbuilder AS scheduler
-USER root
-COPY docker/frankenphp/scheduler.sh /usr/local/bin/scheduler
-RUN chmod +x /usr/local/bin/scheduler
-WORKDIR /app
-USER ${USER}
-RUN composer dump-autoload -o
-ENTRYPOINT ["/usr/local/bin/scheduler"]
-
-
 # Stage : app
 # Build the app with needed composer dependencies, add assets dependencies
 # and run laravel octane to serve the app
