@@ -94,6 +94,7 @@ return [
         public_path('files') => storage_path('app/files'),
 		public_path('storage') => storage_path('app/public'),
 		public_path('avatars') => storage_path('app/avatars'),
+        public_path('media') => storage_path('app/media'),
 	],
 
 ];

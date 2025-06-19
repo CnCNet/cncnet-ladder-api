@@ -80,7 +80,7 @@ class AdminNewsController extends Controller
             // Save the image as WebP format
             $webpHash = md5(time() . $request->file('featured_image')->getClientOriginalName());
             $outputPath = "media/{$webpHash}.webp";
-            $image->encode('webp', 80)->save(public_path($outputPath));
+            $image->encode('webp', 80)->save(app_path($outputPath));
 
             $news->featured_image = $outputPath;
             $news->save();
