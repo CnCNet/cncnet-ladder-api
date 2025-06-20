@@ -2,12 +2,12 @@
     "type": "module",
     "devDependencies": {
         "@popperjs/core": "^2.11.6",
-        "axios": "^1.6.8",
+        "axios": "^1.7.4",
         "bootstrap": "^5.2.3",
-        "laravel-vite-plugin": "^0.8.0",
+        "laravel-vite-plugin": "^1.0",
         "sass": "^1.56.1",
         "typescript": "^5.2.2",
-        "vite": "^4.0.0"
+        "vite": "^6.0"
     },
     "scripts": {
         "dev": "vite",
