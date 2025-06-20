@@ -49,6 +49,12 @@ class RankingController extends Controller
             array_push($jsonFiles, "mapstats_yvs.json");
         }
 
+        if (Storage::disk('rating')->exists($gameMode . "_best_teams.json"))
+        {
+            array_push($stats, "Best teams");
+            array_push($jsonFiles, "best_teams.json");
+        }
+
         $index = isset($request->list) ? max(min(intval($request->list), sizeof($players) + sizeof($upsets) + sizeof($stats) - 1), 0) : 0;
 
 
