@@ -35,6 +35,10 @@ class Restrict
      */
     public function handle(Request $request, Closure $next, string $permission): Response
     {
+        if($this->auth->guest() || $this->auth->user() === null) {
+            return response('Unauthorized.', 401);
+        }
+
         if (!$this->auth->user()->isGod())
         {
             $response = null;

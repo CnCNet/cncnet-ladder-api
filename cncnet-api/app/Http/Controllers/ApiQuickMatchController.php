@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Models\Ladder;
 
 class ApiQuickMatchController extends Controller
 {
@@ -50,12 +51,12 @@ class ApiQuickMatchController extends Controller
         return json_encode(DB::table("client_version")->where("platform", $platform)->first());
     }
 
-    public function statsRequest(Request $request, string $ladderAbbrev = null, int $tierId = 1)
+    public function statsRequest(Request $request, string $ladderAbbrev, int $tierId = 1)
     {
         if ($ladderAbbrev == 'all')
         {
             $allStats = [];
-            $ladders = \App\Models\Ladder::query()
+            $ladders = Ladder::query()
                 ->where('private', '=', false)
                 ->with([
                     'current_history' => function ($q)
@@ -66,33 +67,21 @@ class ApiQuickMatchController extends Controller
                     },
                 ])
                 ->withCount([
-                    'recent_matched_players',
-                    'recent_matches',
-                    'active_matches',
                     'past_24_hours_matches',
                 ])
                 ->get();
 
             foreach ($ladders as $ladder)
             {
-                $clans = [];
-                if ($ladder->clans_allowed)
-                {
-                    $groupedByClans = $ladder->current_history->queued_players->groupBy('clan_id');
-                    $queuedPlayersOrClans = $groupedByClans->count();
-                    $clans = $groupedByClans->map->count();
-                }
-                else
-                {
-                    $queuedPlayersOrClans = $ladder->current_history->queued_players->count();
-                }
+                $queuedPlayers = $ladder->current_history->queued_players->count();
+
                 $results = [
-                    'recentMatchedPlayers' => $ladder->recent_matched_players_count,
+                    'recentMatchedPlayers' => 0, # DEPRECATED
                     'past24hMatches' => $ladder->past_24_hours_matches_count,
-                    'recentMatches' => $ladder->recent_matches_count,
-                    'activeMatches' => $ladder->active_matches_count,
-                    'queuedPlayers' => $queuedPlayersOrClans,
-                    'clans' => $clans,
+                    'recentMatches' => 0, # DEPRECATED
+                    'activeMatches' => 0, # DEPRECATED
+                    'queuedPlayers' => $queuedPlayers,
+                    'clans' => 0,
                     'time' => now(),
                 ];
                 $allStats[$ladder->abbreviation] = $results;

@@ -31,60 +31,20 @@ class StatsService
     {
         $ladder = $history->ladder;
         $ladderAbbrev = $ladder->abbreviation;
+
         return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1 * 60, function () use (&$history, &$ladder)
         {
-            $carbonDateSubHour = Carbon::now()->subHour();
             $carbonDateSub24Hours = Carbon::now()->subHours(24);
 
             $ladderId = $ladder->id;
             $startOfMonth = Carbon::now()->startOfMonth();
             $endOfMonth = Carbon::now()->endOfMonth();
 
-            $recentMatchedPlayers = QmMatchPlayer::where('qm_match_players.created_at', '>', $carbonDateSubHour)
-                ->where('ladder_id', '=', $ladderId)
-                ->count();
+            $queuedPlayers = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+                ->where('ladder_history_id', $history->id)
+                ->whereNull('qm_match_id');
 
-            $clans = [];
-
-            if ($history->ladder->clans_allowed)
-            {
-                $queuedClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
-                    ->where('ladder_history_id', $history->id)
-                    ->whereNull('qm_match_id')
-                    ->get();
-
-                //count how many players are in queue for each clan
-                foreach ($queuedClans as $queuedClan)
-                {
-                    $count = 1;
-                    if (isset($clans[$queuedClan->clan_id]))
-                    {
-                        $count = $clans[$queuedClan->clan_id] + 1;
-                    }
-                    $clans[$queuedClan->clan_id] = $count;
-                }
-
-                // Groupby doesn't work with ->count()
-                $queuedPlayersOrClans = count($clans);
-            }
-            else
-            {
-                $queuedPlayersOrClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
-                    ->where('ladder_history_id', $history->id)
-                    ->whereNull('qm_match_id')
-                    ->count();
-            }
-
-            $recentMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSubHour)
-                ->where('qm_matches.ladder_id', '=', $ladderId)
-                ->count();
-
-            $activeMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSubHour)
-                ->where('qm_matches.ladder_id', '=', $ladderId)
-                ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
-                ->count();
-
-            $past24hMatches = \App\Models\QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
+            $past24hMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->count();
 
@@ -94,13 +54,13 @@ class StatsService
                 ->count();
 
             return [
-                "recentMatchedPlayers" => $recentMatchedPlayers,
-                "queuedPlayers" => $queuedPlayersOrClans,
+                "recentMatchedPlayers" => 0, # deprecated
+                "queuedPlayers" => $queuedPlayers,
                 "past24hMatches" => $past24hMatches,
-                "recentMatches" => $recentMatches,
+                "recentMatches" => 0, #deprecated
                 "matchesByMonth" => $matchesByMonth,
-                "activeMatches" => $activeMatches,
-                "clans" => $clans,
+                "activeMatches" => 0, # deprecated
+                "clans" => 0, # $clans
                 "time" => Carbon::now()
             ];
         });
