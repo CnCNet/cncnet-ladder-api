@@ -27,7 +27,6 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Models\Ladder;
 
 class ApiQuickMatchController extends Controller
 {
