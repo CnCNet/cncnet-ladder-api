@@ -24,6 +24,7 @@ use App\Models\Stats2;
 use App\Models\UrlHelper;
 use App\Models\QmMatchPlayer;
 use App\Models\QmMatch;
+use App\Models\Player;
 
 class LadderService
 {
