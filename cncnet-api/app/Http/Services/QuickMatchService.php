@@ -1573,12 +1573,12 @@ class QuickMatchService
         $players = $matchableOpponents->concat([$currentPlayer]);
 
         $opponentsRating = [];
-        $currentPlayerRank = $currentPlayer->qmPlayer->player->rank($history);
+        $currentPlayerRank = $currentPlayer->qmPlayer->player->points($history);
         foreach ($matchableOpponents as $opponent)
         {
             $opponentsRating[] = [
                 'id' => $opponent->id,
-                'rank' => $opponent->qmPlayer->player->rank($history)
+                'rank' => $opponent->qmPlayer->player->points($history)
             ];
         }
 
