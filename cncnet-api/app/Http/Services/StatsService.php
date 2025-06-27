@@ -42,7 +42,8 @@ class StatsService
 
             $queuedPlayers = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
                 ->where('ladder_history_id', $history->id)
-                ->whereNull('qm_match_id');
+                ->whereNull('qm_match_id')
+                ->count();
 
             $past24hMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
@@ -55,7 +56,7 @@ class StatsService
 
             return [
                 "recentMatchedPlayers" => 0, # deprecated
-                "queuedPlayers" => $queuedPlayers->count(),
+                "queuedPlayers" => $queuedPlayers,
                 "past24hMatches" => $past24hMatches,
                 "recentMatches" => 0, #deprecated
                 "matchesByMonth" => $matchesByMonth,
