@@ -55,7 +55,7 @@ class StatsService
 
             return [
                 "recentMatchedPlayers" => 0, # deprecated
-                "queuedPlayers" => $queuedPlayers,
+                "queuedPlayers" => $queuedPlayers->count(),
                 "past24hMatches" => $past24hMatches,
                 "recentMatches" => 0, #deprecated
                 "matchesByMonth" => $matchesByMonth,
