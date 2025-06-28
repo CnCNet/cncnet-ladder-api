@@ -26,6 +26,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Models\IpAddressHistory;
+use App\Models\QmUserId;
 
 class AdminController extends Controller
 {
@@ -221,33 +223,39 @@ class AdminController extends Controller
     public function getManageUsersIndex(Request $request)
     {
         $hostname = $request->hostname;
-        $userIdOrAlias = $request->userIdOrAlias;
-        if (empty($userIdOrAlias) && $request->filled('userId')) {
-            $userIdOrAlias = $request->userId;
-        }
+        $userIdOrAlias = $request->userIdOrAlias ?: $request->input('userId');
         $search = $request->search;
+
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
+            return response('Unauthorized.', 401);
+        }
 
         $users = collect();
 
-        if ($request->user() == null || !$request->user()->isAdmin())
-            return response('Unauthorized.', 401);
-
-
-        if ($search) {
-            $players = Cache::remember("admin/users/players/{$search}", 20 * 60, function () use ($search) {
-                return \App\Models\Player::where('username', '=', $search)->get();
-            });
+        if ($search)
+        {
+            $players = Cache::remember(
+                "admin/users/players/{$search}",
+                20 * 60,
+                fn() =>
+                Player::where('username', '=', $search)->get()
+            );
 
             $playerUsers = $players->map(fn($p) => $p->user)->filter();
             $users = $users->concat($playerUsers);
         }
 
-        if ($userIdOrAlias) {
-            $queryUsers = Cache::remember("admin/users/users/{$userIdOrAlias}", 20 * 60, function () use ($userIdOrAlias) {
-                return \App\Models\User::where(function ($query) use ($userIdOrAlias) {
+        if ($userIdOrAlias)
+        {
+            $queryUsers = Cache::remember("admin/users/users/{$userIdOrAlias}", 20 * 60, function () use ($userIdOrAlias)
+            {
+                return User::where(function ($query) use ($userIdOrAlias)
+                {
                     if (is_numeric($userIdOrAlias))
+                    {
                         $query->orWhere('id', $userIdOrAlias);
-
+                    }
                     $query->orWhere('alias', 'like', '%' . $userIdOrAlias . '%');
                 })->get();
             });
@@ -255,8 +263,55 @@ class AdminController extends Controller
             $users = $users->concat($queryUsers);
         }
 
-        // Remove null and duplicate users.
-        $users = $users->filter()->unique('id')->values();
+        // Remove nulls and duplicates
+        $users = $users->filter()->unique('id')->take(10)->values(); // limit to 10 users maximum
+
+        $userIds = $users->pluck('id');
+        $ipAddressIds = $users->pluck('ip_address_id')->filter()->unique();
+
+        $now = Carbon::now();
+        $start = $now->startOfMonth()->toDateTimeString();
+        $end = $now->endOfMonth()->toDateTimeString();
+
+        $playerNicknames = Player::with('ladder')
+            ->whereIn('user_id', $userIds)
+            ->get()
+            ->groupBy('user_id');
+
+        $ladderHistory = LadderHistory::where('starts', $start)
+            ->where('ends', $end)
+            ->first();
+
+        $ipHistories = IpAddressHistory::with('ipaddress')
+            ->whereIn('user_id', $userIds)
+            ->orderBy('created_at', 'desc')  // Most recent first
+            ->get()
+            ->groupBy('user_id');
+
+        $ipDuplicates = IpAddressHistory::whereIn('ip_address_id', $ipAddressIds)
+            ->whereNotIn('user_id', $userIds) // avoid self
+            ->with('user')
+            ->get()
+            ->groupBy('ip_address_id');
+
+        $qmUserIds = QmUserId::with('user')
+            ->whereIn('user_id', $userIds)
+            ->get()
+            ->groupBy('user_id');
+
+        // Map ip_address_id → user_id for reverse lookup
+        $userIpMap = $users->mapWithKeys(fn($u) => [$u->ip_address_id => $u->id]);
+
+        // Rebuild ipDuplicates structure to group by user_id
+        $ipDuplicatesByUser = [];
+        foreach ($ipDuplicates as $ipId => $dupeRecords)
+        {
+            $uid = $userIpMap[$ipId] ?? null;
+            if ($uid !== null)
+            {
+                $ipDuplicatesByUser[$uid] = $dupeRecords->pluck('user')->filter()->unique('id')->values();
+            }
+        }
 
         return view("admin.manage-users", [
             "users" => $users,
@@ -264,9 +319,15 @@ class AdminController extends Controller
             "userId" => null,
             "hostname" => $hostname,
             "alias" => null,
-            "userIdOrAlias" => $userIdOrAlias
+            "userIdOrAlias" => $userIdOrAlias,
+            "playerNicknames" => $playerNicknames,
+            "ladderHistory" => $ladderHistory,
+            "ipHistories" => $ipHistories,
+            "ipDuplicates" => $ipDuplicatesByUser,
+            "qmUserIds" => $qmUserIds,
         ]);
     }
+
 
     public function saveProList(Request $request)
     {
@@ -377,15 +438,17 @@ class AdminController extends Controller
             $user->save();
         }
 
-        if ($request->exists('alias')) {
-            $request->validate([
-                'alias' => [
-                    'nullable',
-                    'string',
-                    'min:2',
-                    'max:20',
-                    'regex:/^[A-Z][a-zA-Z]{1,19}$/',
-                    'unique:users,alias,' . $user->id,
+        if ($request->exists('alias'))
+        {
+            $request->validate(
+                [
+                    'alias' => [
+                        'nullable',
+                        'string',
+                        'min:2',
+                        'max:20',
+                        'regex:/^[A-Z][a-zA-Z]{1,19}$/',
+                        'unique:users,alias,' . $user->id,
                     ]
                 ],
                 [
@@ -396,7 +459,8 @@ class AdminController extends Controller
                 ]
             );
 
-            if (preg_match('/[A-Z]{2}/', $request->alias)) {
+            if (preg_match('/[A-Z]{2}/', $request->alias))
+            {
                 return back()->withErrors(['alias' => 'No consecutive uppercase letters allowed in alias.'])->withInput();
             }
 
@@ -406,7 +470,7 @@ class AdminController extends Controller
         $user->userSettings->is_anonymous = $request->is_anonymous == "on" ? true : false;
         $user->userSettings->allow_2v2_ladders = $request->allow_2v2_ladders == "on" ? true : false;
         $user->userSettings->save();
-        
+
         return view("admin.edit-user", [
             "user" => $user
         ]);
@@ -1093,20 +1157,23 @@ class AdminController extends Controller
 
     public function editPlayerName(Request $request, $ladderId, $playerId)
     {
-        try {
+        try
+        {
             $this->validate($request, [
                 'player_name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
             ]);
-        } catch (ValidationException $e) {
+        }
+        catch (ValidationException $e)
+        {
             Log::error('Validation failed', [
                 'url' => $request->fullUrl(),
                 'errors' => $e->errors(),
                 'input' => $request->all(),
             ]);
-    
+
             throw $e;
         }
-  
+
         $history = LadderHistory::where('id', $request->history_id)->first();
 
         $player = Player::where('id', $playerId)
@@ -1192,20 +1259,27 @@ class AdminController extends Controller
 
         $report = GameReport::with('playerGameReports')->findOrFail($inputs['game_report_id']);
 
-        if ($report->playerGameReports->count() !== 2) {
+        if ($report->playerGameReports->count() !== 2)
+        {
             return back()->with('error', 'Cannot fix games with more or less than 2 players.');
         }
 
-        foreach ($report->playerGameReports as $pgr) {
-            if ($inputs['mode'] === 'fix_points') {
+        foreach ($report->playerGameReports as $pgr)
+        {
+            if ($inputs['mode'] === 'fix_points')
+            {
                 $submittedPoints = $inputs['player_points'];
                 $playerId = $pgr->player_id;
-                if (!isset($submittedPoints[$playerId])) {
+                if (!isset($submittedPoints[$playerId]))
+                {
                     return back()->with('error', 'No points submitted for ' . $playerId . '.');
                 }
                 $pgr->points = (int)$submittedPoints[$playerId];
-            } elseif ($inputs['mode'] === 'zero_for_loser') {
-                if (!$pgr->won && $pgr->points > 0) {
+            }
+            elseif ($inputs['mode'] === 'zero_for_loser')
+            {
+                if (!$pgr->won && $pgr->points > 0)
+                {
                     $pgr->points = 0;
                 }
             }
@@ -1228,14 +1302,16 @@ class AdminController extends Controller
     {
         $playerGameReports = $gameReport->playerGameReports()->with('player')->get();
 
-        if ($playerGameReports->count() !== 2) {
+        if ($playerGameReports->count() !== 2)
+        {
             return [];
         }
 
         $winner = $playerGameReports->firstWhere(fn($pgr) => $pgr->wonOrDisco());
         $loser = $playerGameReports->firstWhere(fn($pgr) => !$pgr->wonOrDisco());
 
-        if (!$winner || !$loser) {
+        if (!$winner || !$loser)
+        {
             return [];
         }
 
@@ -1244,7 +1320,8 @@ class AdminController extends Controller
         $diff = $loserPointsBefore - $winnerPointsBefore;
 
         $we = 1 / (pow(10, abs($diff) / 600) + 1);
-        if ($diff > 0) {
+        if ($diff > 0)
+        {
             $we = 1 - $we;
         }
 
@@ -1253,14 +1330,18 @@ class AdminController extends Controller
         $gvc = 8;
 
         $winnerPoints = $gvc + $wol;
-        if ($winnerPointsBefore < 10 * ($gvc + $wol)) {
+        if ($winnerPointsBefore < 10 * ($gvc + $wol))
+        {
             $loserPoints = -1 * (int)($loserPointsBefore / 10);
-        } else {
+        }
+        else
+        {
             $loserPoints = -1 * ($gvc + $wol);
         }
 
         $loserCache = $loser->player->playerCache($history->id);
-        if ($loserPoints < 0 && (!$loserCache || $loserCache->points < 0)) {
+        if ($loserPoints < 0 && (!$loserCache || $loserCache->points < 0))
+        {
             $loserPoints = 0;
         }
 
