@@ -438,6 +438,17 @@ class AdminController extends Controller
             $user->save();
         }
 
+        if ($request->can_observe == "on" && !$user->isModerator())
+        {
+            $user->group = 'Observer';
+            $user->save();
+        }
+        else if ($request->can_observe != "on" && !$user->isModerator())
+        {
+            $user->group = 'User';
+            $user->save();
+        }
+
         if ($request->exists('alias'))
         {
             $request->validate(
