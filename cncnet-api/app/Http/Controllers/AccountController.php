@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use App\Models\UserSettings;
 
 class AccountController extends Controller
 {
@@ -342,7 +343,7 @@ class AccountController extends Controller
         $userSettings = $user->userSettings;
         if ($userSettings === null)
         {
-            $userSettings = new \App\Models\UserSettings();
+            $userSettings = new UserSettings();
             $userSettings->user_id = $user->id;
         }
         $userSettings->disabledPointFilter = $request->disabledPointFilter == "on" ? true : false;
@@ -351,7 +352,7 @@ class AccountController extends Controller
         $userSettings->match_any_map = $request->match_any_map == "on" ? true : false;
         $userSettings->is_anonymous = $request->is_anonymous == "on" ? true : false;
         $userSettings->match_ai = $request->matchAI == "on" ? true : false;
-        $userSettings->is_observer = $request->isObserver == "on" ? true : false;
+        $userSettings->is_observer = $request->isObserver == "on" ? true : false; // user turned on observer mode
         $userSettings->allow_observers = $request->allowObservers == "on" ? true : false;
         $userSettings->save();
 
