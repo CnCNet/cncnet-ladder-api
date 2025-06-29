@@ -767,7 +767,7 @@ class AdminController extends Controller
         if ($playerId === null)
             return;
 
-        $player = \App\Models\Player::find($playerId);
+        $player = Player::find($playerId);
 
         if ($player === null || !$mod->isLadderMod($player->ladder))
             return;
