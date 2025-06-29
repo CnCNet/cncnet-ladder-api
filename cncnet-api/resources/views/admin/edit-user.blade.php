@@ -70,6 +70,13 @@
                 </p>
 
                 <p class="mt-2 mb-2">
+                    <input id="can_observe" type="checkbox" name="can_observe"
+                        {{ $user->isObserver() ? 'checked' : '' }}
+                        {{ $user->isModerator() ? 'disabled' : '' }} />
+                    <label for="can_observe">User can observe QM matches?</label>
+                </p>
+
+                <p class="mt-2 mb-2">
                     <label>
                         <input id="disabledPointFilter" type="checkbox" name="disabledPointFilter" {{ $user->userSettings->disabledPointFilter ? 'checked' : '' }} />
                         disabledPointFilter
@@ -85,7 +92,9 @@
 
                 <p class="mt-2 mb-2">
                     <label>
-                        <input id="is_anonymous" type="checkbox" name="is_anonymous" {{ $user->userSettings->is_anonymous ? 'checked' : '' }} />
+                        <input id="is_anonymous" type="checkbox" name="is_anonymous"
+                            {{ $user->userSettings->is_anonymous && !$user->userSettings->isModerator() ? 'checked' : '' }}
+                            {{ $user->isModerator() ? 'disabled' : '' }} />
                         is_anonymous
                     </label>
                 </p>
@@ -107,7 +116,7 @@
                 <button class="btn btn-primary mt-2">Update User</button>
 
                 @error('alias')
-                    <div class="alert alert-danger">{{ $message }}</div>
+                <div class="alert alert-danger">{{ $message }}</div>
                 @enderror
             </form>
         </div>

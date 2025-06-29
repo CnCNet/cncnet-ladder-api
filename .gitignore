@@ -268,3 +268,4 @@ cncnet-api/database/migrations/2022_05_14_214858_createDummyTestAccounts.php
 /caddy
 /.backup.env
 docker-compose.test.yml
+cncnet-api/.bash_history

@@ -17,7 +17,7 @@ class UserService
         $userSettings = $user->userSettings;
 
         // Check this user is allowed to set this
-        if (!in_array($user->id, config('app.allowed_observer_user_ids')))
+        if (!$user->isObserver())
         {
             unset($userSettings["is_observer"]);
         }
@@ -54,7 +54,7 @@ class UserService
         }));
 
         // Check this user is allowed to set this
-        if (!in_array($user->id, config('app.allowed_observer_user_ids')))
+        if (!$user->isObserver())
         {
             $requestData["is_observer"] = 0;
         }

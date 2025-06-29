@@ -151,20 +151,4 @@ return [
 	],
 */
 	'irc_pipe' => env('IRC_PIPE', '/tmp/pp_file'),
-
-	'allowed_observer_user_ids' => [
-		9466, // MJ
-		30045, // Matt
-		53431, // Iver
-		38417, // Doofus
-		332, // Burg
-		1, 	// Grant
-		48373, // Root
-		2152, // Edd
-		68318, // Wu
-		17221, // Lloyd
-		60350, // shamou
-		38610, // Poppa
-		19083 // Brian
-	]
 ];

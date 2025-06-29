@@ -25,6 +25,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     const God = "God";
     const Admin = "Admin";
     const Moderator = "Moderator";
+    const Observer = "Observer";
     const User = "User";
 
     protected $table = 'users';
@@ -41,6 +42,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function isGod()
     {
         return in_array($this->group, [self::God]);
+    }
+
+    /**
+     * Is user allowed to observe games? 
+     * This is different than userSettings->is_observer where the user turns it on and only if they are allowed to.
+     */
+    public function isObserver()
+    {
+        return in_array($this->group, [self::God, self::Admin, self::Moderator, self::Observer]);
     }
 
     public function isModerator()
@@ -247,7 +257,8 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function updateAlias($alias)
     {
         // Clear cache
-        if ($this->alias) {
+        if ($this->alias)
+        {
             Cache::forget("admin/users/users/{$this->alias}");
         }
         Cache::forget("admin/users/users/{$this->id}");
