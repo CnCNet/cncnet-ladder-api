@@ -34,7 +34,9 @@
                 <div class="player-header mt-3 mb-3">
                     <div class="player-stats">
                         <h1 class="username">
-                            {{ $player->username }}
+                            <a href="/ladder/{{ $history->short }}/{{ $ladder->abbreviation }}/player/{{ $player->username }}">
+                                {{ $player->username }}
+                            </a>
                         </h1>
                         {{ $user->getBan() }}
                     </div>
