@@ -351,6 +351,16 @@
                                             <td class="inactive">{{ $value[$column['name']] }}</td>
                                         @elseif ($column['name'] == 'status' && strtolower(str($value[$column['name']])) == 'active')
                                             <td class="active">{{ $value[$column['name']] }}</td>
+                                        @elseif (str_starts_with($column['name'], 'delta_'))
+                                            @php
+                                                $delta = $value[$column['name']];
+                                                $direction = $delta > 0 ? '▲' : ($delta < 0 ? '▼' : '');
+                                                $color = $delta > 0 ? '#40E040' : ($delta < 0 ? '#FF6060' : '#CCCCCC');
+                                                $absValue = $delta != 0 ? abs($delta) : '';
+                                            @endphp
+                                            <td style="text-align: right; color: {{ $color }};">
+                                                {!! $direction !!} {{ $absValue }}
+                                            </td>
                                         @elseif (isset($value['elo']) && is_numeric($value[$column['name']]) && (str_starts_with($column['name'], 'all_') || str_starts_with($column['name'], 'sov_') || str_starts_with($column['name'], 'yur_')))
                                             <td class="mini" style="text-align: right;">{{ $value[$column['name']] }}</td>
                                         @elseif ((is_numeric($value[$column['name']]) || str_ends_with($column['name'], 'rate') || str_ends_with($column['name'], 'duration')) && $column['name'] != 'name')
