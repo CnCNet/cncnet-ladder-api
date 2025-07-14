@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - 'main'
-      # disable staging build
+      # Disable staging build
       # - 'staging'
     tags:
       - 'v*'
@@ -26,10 +26,15 @@ jobs:
         target: [app, queue, scheduler]
     outputs:
       branch: ${{ github.ref_name }}
+      app_tag: ${{ steps.set_tag.outputs.sha }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Generate tags that will be used on the image
+      # If default branch -> latest
+      # if branch staging -> staging
+      # Always -> the short sha
       - name: Extract metadata (tags, labels)
         id: meta
         uses: docker/metadata-action@v5
@@ -43,6 +48,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=raw,value=latest,enable={{is_default_branch}}
             type=raw,value=staging,enable=${{ github.ref == 'refs/heads/staging' }}
+            type=sha,format=short,prefix=
 
       - name: Log in to GHCR
         uses: docker/login-action@v3
@@ -55,15 +61,21 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          # Use frankenphp for app and workers for queue and scheduler
+          # Use docker/frankenphp/Dockerfile for app and docker/workers/Dockerfile for queue and scheduler
           file: ${{ matrix.target == 'app' && './docker/frankenphp/Dockerfile' || './docker/workers/Dockerfile' }}
           target: ${{ matrix.target }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # cache not available for us
+          # Cache not available for us
           # cache-from: type=gha,scope=${{ matrix.target }}
           # cache-to: type=gha,mode=max,scope=${{ matrix.target }}
+
+      - name: Set image tag output
+        id: set_tag
+        run: |
+          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT  
 
   deploy:
     needs: build-and-push
@@ -78,6 +90,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Set a few variables that will be used by steps later in this job
+      # - target_dir : the directory where to upload the docker-compose.yml
+      # - compose_file : the name of the docker compose file that will be uploaded
       - name: Set deployment variables
         id: vars
         run: |
@@ -101,6 +116,12 @@ jobs:
           source: ${{ steps.vars.outputs.compose_file }}
           target: ${{ steps.vars.outputs.target_dir }}
 
+        # This step will run a few commands on the server using SSH
+        # - update the APP_TAG in the .env file and then will
+        # - login to ghcr
+        # - pull the new images
+        # - stop the services
+        # - start the services
       - name: Stop and start app on server
         uses: appleboy/ssh-action@v1.2.1
         with:
@@ -109,8 +130,15 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd ${{ steps.vars.outputs.target_dir }}
+            APP_TAG="${{ needs.build-and-push.outputs.app_tag }}"
+            ENV_FILE=.env
+            if grep -q "^APP_TAG=" "$ENV_FILE"; then
+              sed -i "s/^APP_TAG=.*/APP_TAG=$APP_TAG/" "$ENV_FILE"
+            else
+              echo "APP_TAG=$APP_TAG" >> "$ENV_FILE"
+            fi
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            docker compose -f ${{ steps.vars.outputs.compose_file }} down
             docker compose -f ${{ steps.vars.outputs.compose_file }} pull
+            docker compose -f ${{ steps.vars.outputs.compose_file }} down
             rm -rf cache/*
             docker compose -f ${{ steps.vars.outputs.compose_file }} up -d
