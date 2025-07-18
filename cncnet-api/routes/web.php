@@ -91,6 +91,9 @@ Route::group(['prefix' => 'admin'], function ()
             Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser']);
             Route::post('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'updateUser']);
             Route::post('users/tier/update', [\App\Http\Controllers\AdminController::class, 'updateUserLadderTier']);
+            Route::post('users/duplicates/confirm', [AdminController::class, 'confirmDuplicate']);
+            Route::post('users/duplicates/unlink', [AdminController::class, 'unlinkDuplicate']);
+            Route::post('users/duplicates/resetprimary', [AdminController::class, 'resetToUnconfirmedPrimary']);
 
             Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);

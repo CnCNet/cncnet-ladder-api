@@ -104,6 +104,55 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $la->tester;
     }
 
+    public function isConfirmedPrimary(): bool
+    {
+        return !empty($this->alias) || $this->primary_user_id === $this->id;
+    }
+
+    public function isUnconfirmedPrimary(): bool
+    {
+        return $this->primary_user_id === null && empty($this->alias);
+    }
+
+    public function isDuplicate(): bool
+    {
+        return $this->primary_user_id !== null && $this->primary_user_id != $this->id;
+    }
+
+    public function hasDuplicates(): bool
+    {
+        return User::where('primary_user_id', $this->id)->where('id', '!=', $this->id)->exists();
+    }
+
+    public function accountType() : string
+    {
+        if ($this->isConfirmedPrimary())
+        {
+            return "Primary";
+        }
+        else if ($this->isUnconfirmedPrimary())
+        {
+            return "Unconfirmed primary";
+        }
+        else if ($this->isDuplicate())
+        {
+            $primary = User::find($this->primary_user_id);
+            if ($primary)
+            {
+                $text = 'Duplicate of #' . $primary->id . ' (';
+                $text .= $primary->alias ?: $primary->name;
+                $text .= ')';
+                return $text;
+            }
+            else
+            {
+                $text = 'Duplicate of #' . $this->primary->id . ' (Unknown user)';
+            }
+        }
+
+        return "Unknown";
+    }
+
     public function canEditAnyLadders()
     {
         if ($this->isGod())
