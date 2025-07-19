@@ -33,7 +33,7 @@
         <div class="col-md-12 mt-5 mb-5">
             <h2 class="mb-2">Edit {{ $user->name }}'s profile</h2>
             <h5>Email: {{ $user->email }}</h5>
-            <h5>User ID: <a href="{{ url('/admin/users') }}?userId={{ $user->id }}">#{{ $user->id }}</a></h5>
+            <h5>User ID: <a href="{{ route('admin.users', ['userId' => $user->id]) }}">#{{ $user->id }}</a></h5>
             <h5>Account type: {{ $user->accountType() }}</h5>
             <div class="user-info" id="settings">
                 <h2>Basic user settings</h2>
@@ -150,7 +150,7 @@
                                 @endphp
 
                                 <li>
-                                    <a href="{{ $dupe->id }}">#{{ $dupe->id }} {{ $displayName }} - {{ $dupe->email }}</a>
+                                    <a href="{{ route('admin.edit-user', ['userId' => $dupe->id]) }}">#{{ $dupe->id }} {{ $displayName }} - {{ $dupe->email }}</a>
                                     @if ($dupe->isConfirmedPrimary())
                                         <strong>(Primary account)</strong>
                                     @endif

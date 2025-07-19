@@ -779,9 +779,13 @@ class AdminController extends Controller
                 $dupe->save();
                 return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->primary_user_id}).");
             }
-            else
+            else if ($dupe->isDuplicate())
             {
-                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
+            }
+            else if ($dupe->isConfirmedPrimary())
+            {
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is a primary account."])->withInput();
             }
         }
 
