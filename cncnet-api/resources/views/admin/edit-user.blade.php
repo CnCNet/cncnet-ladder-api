@@ -93,7 +93,7 @@
                 <p class="mt-2 mb-2">
                     <label>
                         <input id="is_anonymous" type="checkbox" name="is_anonymous"
-                            {{ $user->userSettings->is_anonymous && !$user->userSettings->isModerator() ? 'checked' : '' }}
+                            {{ $user->userSettings->is_anonymous && !$user->isModerator() ? 'checked' : '' }}
                             {{ $user->isModerator() ? 'disabled' : '' }} />
                         is_anonymous
                     </label>
