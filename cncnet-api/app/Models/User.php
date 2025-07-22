@@ -119,9 +119,24 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->primary_user_id !== null && $this->primary_user_id != $this->id;
     }
 
+    public function primaryId()
+    {
+        return $this->primary_user_id !== null ? $this->primary_user_id : $this->id;
+    }
+
     public function hasDuplicates(): bool
     {
         return User::where('primary_user_id', $this->id)->where('id', '!=', $this->id)->exists();
+    }
+
+    public function collectDuplicates(bool $includeSelf = false)
+    {
+        $primaryUserId = $this->primaryId();
+        $results = User::where('primary_user_id', $primaryUserId)
+                    ->orWhere('id', $primaryUserId)
+                    ->get();
+
+        return $includeSelf ? $results : $results->where('id', '!=', $this->id)->values();
     }
 
     public function accountType() : string
@@ -139,14 +154,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             $primary = User::find($this->primary_user_id);
             if ($primary)
             {
-                $text = 'Duplicate of #' . $primary->id . ' (';
-                $text .= $primary->alias ?: $primary->name;
-                $text .= ')';
-                return $text;
+                return 'Duplicate of #' . $primary->id . ' (' . ($primary->alias ?: $primary->name) . ')';
             }
             else
             {
-                $text = 'Duplicate of #' . $this->primary->id . ' (Unknown user)';
+                return 'Duplicate of #' . $this->primary->id . ' (Unknown user)';
             }
         }
 
@@ -431,7 +443,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function userSince()
     {
-        return $this->created_at->diffForHumans();
+        return $this->collectDuplicates($includeSelf = true)->pluck('created_at')->filter()->min()->diffForHumans();
     }
 
     public function canUserPlayBothTiers($ladder)

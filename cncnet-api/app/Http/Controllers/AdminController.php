@@ -317,9 +317,26 @@ class AdminController extends Controller
 
                 if ($userPrimaryId === $dupePrimaryId)
                 {
+                    $finalReason = $reason;
+
+                    if (!str_contains($finalReason, 'IP'))
+                    {
+                        // Perform a full IP history comparison if 'IP' is not already part of the reason.
+                        // This helps preserve the IP-based link even if users no longer share a current IP.
+                        $userIpIds = IpAddressHistory::where('user_id', $user->id)->pluck('ip_address_id')->toArray();
+                        $dupeIpIds = IpAddressHistory::where('user_id', $dupeUser->id)->pluck('ip_address_id')->toArray();
+
+                        $sharedIpIds = array_intersect($userIpIds, $dupeIpIds);
+
+                        if (!empty($sharedIpIds))
+                        {
+                            $finalReason .= ' & IP';
+                        }
+                    }
+
                     $confirmed->push([
                         'user' => $dupeUser,
-                        'reason' => $reason,
+                        'reason' => $finalReason,
                     ]);
                 }
                 elseif ($user->isDuplicate() && $dupeUser->isConfirmedPrimary() && $userPrimaryId !== $dupePrimaryId) 
@@ -398,7 +415,7 @@ class AdminController extends Controller
                 ->values();
         }
 
-        $allRelatedUsers = $this->findAllRelatedUsers($user);
+        $allRelatedUsers = $user->collectDuplicates();
 
         return $this->buildDuplicateList(
             collect([$user]),
@@ -410,22 +427,6 @@ class AdminController extends Controller
             'unconfirmed' => collect(),
             'rejected'    => collect(),
         ];
-    }
-
-    private function findAllRelatedUsers(User $user): Collection
-    {
-        $relatedUsers = collect();
-
-        // Get the primary user id.
-        $primaryId = $user->primary_user_id ?? $user->id;
-
-        // Find all related users.
-        $groupUsers = User::where(function($query) use ($primaryId) {
-            $query->where('id', $primaryId)
-                ->orWhere('primary_user_id', $primaryId);
-        })->where('id', '!=', $user->id)->get();
-
-        return $groupUsers;
     }
 
     private function loadDuplicateDataForUsers(Collection $users): array
