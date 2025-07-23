@@ -288,15 +288,6 @@ class AdminController extends Controller
             $dupeUser = $entry['user'];
             $reason = $entry['reason'];
 
-     /*       $user = User::find($user->id);
-$dupeUser = User::find($dupeUser->id);
-
-            dd([
-    'user_id' => $user->id,
-    'user_primary_user_id' => $user->primary_user_id,
-    'dupe_id' => $dupeUser->id,
-    'dupe_primary_user_id' => $dupeUser->primary_user_id,
-]);*/
             if ($userPrimaryId === $dupeUser->primaryId())
             {
                 // This is a confirmed duplicates.
