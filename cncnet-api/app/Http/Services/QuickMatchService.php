@@ -1537,7 +1537,7 @@ class QuickMatchService
         $possibleMatches = collect($possibleMatches);
 
         // TODO : move this hard-coded value to the qmLadderRules
-        $similarEloMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 400);
+        $similarEloMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 4000); // TODO hardcoding 4000 right now to ensure random teams, will re-visit this
 
         if ($similarEloMatches->count() > 0)
         {
