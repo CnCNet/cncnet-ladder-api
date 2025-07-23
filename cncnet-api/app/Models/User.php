@@ -317,14 +317,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function updateAlias($alias)
     {
-        // Clear cache
+        $this->alias = $alias;
+        $this->clearCacheAndSave();
+    }
+
+    public function clearCacheAndSave()
+    {
+         // Clear cache
         if ($this->alias)
         {
             Cache::forget("admin/users/users/{$this->alias}");
         }
         Cache::forget("admin/users/users/{$this->id}");
-
-        $this->alias = $alias;
         $this->save();
     }
 
