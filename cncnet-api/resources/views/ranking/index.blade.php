@@ -361,7 +361,7 @@
                                             <td style="text-align: right; color: {{ $color }};">
                                                 {!! $direction !!} {{ $absValue }}
                                             </td>
-                                        @elseif (isset($value['elo']) && is_numeric($value[$column['name']]) && (str_starts_with($column['name'], 'all_') || str_starts_with($column['name'], 'sov_') || str_starts_with($column['name'], 'yur_')))
+                                        @elseif (isset($value['elo']) && (is_numeric($value[$column['name']]) || str_contains($value[$column['name']], '±')) && (str_starts_with($column['name'], 'all_') || str_starts_with($column['name'], 'sov_') || str_starts_with($column['name'], 'yur_')))
                                             <td class="mini" style="text-align: right;">{{ $value[$column['name']] }}</td>
                                         @elseif ((is_numeric($value[$column['name']]) || str_ends_with($column['name'], 'rate') || str_ends_with($column['name'], 'duration')) && $column['name'] != 'name')
                                             <td style="text-align:right;">{{ $value[$column['name']] }}</td>
