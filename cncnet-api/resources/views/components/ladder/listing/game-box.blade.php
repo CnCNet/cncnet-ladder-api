@@ -2,7 +2,7 @@
 @php
     $mapName = $game->qmMatch?->map?->description;
 @endphp
-<a href="{{ '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/games/' . $game->id }}" class="game-box"
+<a href="{{ route('ladder.game', ['date' => $history->short, 'game' => $history->ladder->abbreviation, 'gameId' => $game->id]) }}" class="game-box"
     data-timestamp="{{ $game->updated_at->timestamp }}">
 
     <div class="map-preview">
