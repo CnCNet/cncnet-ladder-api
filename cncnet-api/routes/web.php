@@ -91,8 +91,8 @@ Route::group(['prefix' => 'admin'], function ()
             Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser'])->name('admin.edit-user');
             Route::post('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'updateUser']);
             Route::post('users/tier/update', [\App\Http\Controllers\AdminController::class, 'updateUserLadderTier']);
-            Route::post('users/duplicates/confirm', [\App\Http\Controllers\AdminController::class, 'confirmDuplicate']);
-            Route::post('users/duplicates/unlink', [\App\Http\Controllers\AdminController::class, 'unlinkDuplicate']);
+            Route::post('users/duplicates/confirm', [\App\Http\Controllers\AdminController::class, 'confirmDuplicate'])->name('users.duplicate.confirm');
+            Route::post('users/duplicates/unlink', [\App\Http\Controllers\AdminController::class, 'unlinkDuplicate'])->name('users.duplicate.unlink');
             Route::post('users/duplicates/resetprimary', [\App\Http\Controllers\AdminController::class, 'resetToUnconfirmedPrimary']);
             Route::get('duplicates', [\App\Http\Controllers\ActiveDuplicatesController::class, 'index']);
 

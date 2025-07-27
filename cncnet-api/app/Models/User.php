@@ -129,6 +129,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return User::where('primary_user_id', $this->id)->where('id', '!=', $this->id)->exists();
     }
 
+    public function hasDuplicate($id): bool
+    {
+        return $this->collectDuplicates()->contains('id', $id);
+    }
+
     public function collectDuplicates(bool $includeSelf = false)
     {
         $primaryUserId = $this->primaryId();

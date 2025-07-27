@@ -796,7 +796,6 @@ CREATE TABLE `player_game_reports` (
   KEY `player_game_reports_player_id_index` (`player_id`),
   KEY `player_game_reports_game_report_id_index` (`game_report_id`),
   KEY `player_game_reports_clan_id_index` (`clan_id`)
-  KEY `player_game_reports_created_at_index` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 DROP TABLE IF EXISTS `player_games`;

@@ -717,6 +717,11 @@ class AdminController extends Controller
             {
                 $dupe->primary_user_id = $user->id;
                 $dupe->clearCacheAndSave();
+                if ($user->primary_user_id === null)
+                {
+                    $user->primary_user_id = $user->id;
+                    $user->clearCacheAndSave();
+                }
                 return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->id}).");
             }
             else if ($dupe->isConfirmedPrimary())
@@ -735,9 +740,9 @@ class AdminController extends Controller
             {
                 // Need to make user a primary account in order to assign duplicates.
                 $dupe->primary_user_id = $user->id;
-                $dupe->clearCacheAndSave();;
+                $dupe->clearCacheAndSave();
                 $user->primary_user_id = $user->id;
-                $user->clearCacheAndSave();;
+                $user->clearCacheAndSave();
                 return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->id}).");
             }
             else if ($dupe->isConfirmedPrimary())
@@ -745,11 +750,15 @@ class AdminController extends Controller
                 // Ok, so user is the dupe and dupe is a primary account.
                 $user->primary_user_id = $dupe->id;
                 $user->clearCacheAndSave();
+                $dupe->primary_user_id = $dupe->id;
+                $dupe->clearCacheAndSave();
                 return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$user->id}) as a duplicate of (#{$dupe->id}).");
             }
             else
             {
-                // This is already a duplicate.
+                // User needs to be linked to duplicates primary account.
+                $user->primary_user_id = $dupe->primary_user_id;
+                $user->clearCacheAndSave();
                 return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
             }
         }
@@ -831,7 +840,7 @@ class AdminController extends Controller
         }
 
         // Case 2: The duplicate is the primary.
-        if ($user->primary_user_id == $dupe->id)
+        if ($user->primary_user_id === $dupe->id)
         {
             $user->primary_user_id = null;
             $user->clearCacheAndSave();
@@ -840,7 +849,7 @@ class AdminController extends Controller
         }
 
         // Case 3: User and dupe have the same primary.
-        if ($user->primary_user_id == $dupe->primary_user_id)
+        if ($user->primary_user_id === $dupe->primary_user_id && $user->primary_user_id != null && $user->id != $dupe->id)
         {
             $primary = User::find($user->primary_user_id);
             $text = "Duplicate (#{$user->id}) unlinked from primary (#{$user->primary_user_id}).";
