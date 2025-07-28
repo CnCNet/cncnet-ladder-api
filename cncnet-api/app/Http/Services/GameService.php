@@ -229,13 +229,13 @@ class GameService
                         $playerGameReports[$cid]->local_team_id = $cid;
                         break;
 
-                    case "SPC":
+                    case "SPC": // ?? this does not work, observer is not even uploading a stats.dmp
                         // $playerGameReports[$cid]->spectator = $value["value"];
                         break;
 
                     case "LCN": // TS lost connection
                     case "CON":
-                        $playerGameReports[$cid]->disconnected = $value["value"]; // ?? this does not work, observer is not even uploading a stats.dmp
+                        $playerGameReports[$cid]->disconnected = $value["value"];
                         break;
 
                     case "BSP": // starting spawn
