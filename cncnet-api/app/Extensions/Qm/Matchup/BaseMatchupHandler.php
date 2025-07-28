@@ -38,6 +38,7 @@ abstract class BaseMatchupHandler
                 !strpos($map->description, 'Map Info')
                 && !strpos($map->description, 'Map Guide')
                 && !strpos($map->description, 'Ladder Guide')
+                && !strpos($map->description, 'Ladder Info')
                 && !strpos($map->description, 'Ladder Rules');
         });
 

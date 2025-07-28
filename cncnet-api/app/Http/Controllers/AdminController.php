@@ -53,7 +53,7 @@ class AdminController extends Controller
 
     public function getWashedGames($ladderAbbreviation = null)
     {
-        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbreviation)->first();
+        $ladder = Ladder::where('abbreviation', $ladderAbbreviation)->first();
 
         if ($ladder == null)
             abort(404);
@@ -1371,8 +1371,56 @@ class AdminController extends Controller
             ]
         ];
     }
-}
 
+    public function getObservedGames(Request $request, $ladderAbbreviation = null)
+    {
+        $ladder = Ladder::where('abbreviation', $ladderAbbreviation)->first();
+
+        if ($ladder == null)
+        {
+            abort(404, 'Ladder not found');
+        }
+
+        $ladderHistoryShort = $request->query('ladderHistoryShort');
+
+        if ($ladderHistoryShort)
+        {
+            $ladderHistory = \App\Models\LadderHistory::where('ladder_id', $ladder->id)
+                ->where('short', $ladderHistoryShort)
+                ->first();
+        }
+        else
+        {
+            $ladderHistory = $ladder->currentHistory();
+        }
+
+        if (!$ladderHistory)
+        {
+            abort(404, 'Ladder history not found');
+        }
+
+        // list of players and observers from previous games for this ladder history
+        $observedGames = Game::with(['players.player.user', 'observers.player.user'])
+            ->where('ladder_history_id', $ladderHistory->id)
+            ->whereHas('observers')
+            ->paginate(10);
+
+        // to populate a dropdown and user can pick which history to view observed games
+        $histories = LadderHistory::where('ladder_id', $ladder->id)
+            ->where('ends', '<=', now())
+            ->orderBy('ends', 'DESC')
+            ->select('short')
+            ->get();
+
+        return view("admin.observed-games", [
+            "observedGames" => $observedGames,
+            "ladderHistory" => $ladderHistory,
+            "histories" => $histories,
+            "ladder" => $ladder,
+            "ladderHistoryShort" => $ladderHistoryShort
+        ]);
+    }
+}
 
 function ini_to_b($string)
 {

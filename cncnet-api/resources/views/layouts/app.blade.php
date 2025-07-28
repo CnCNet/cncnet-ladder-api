@@ -54,7 +54,7 @@
 <body class="@yield('body-class'){{ $bodyClass }} @hasSection('page-body-class')@yield('page-body-class')@endif">
 
     @if(isset($history))
-        @include('components.countdown', ['target' => $history->ends->toISO8601String()])
+        @include('components.countdown', ['target' => $history->ends?->toISO8601String()])
     @endif
 
     <a href="#" class="live-event js-live-event hidden" target="_blank" title="WATCH LIVE - RED ALERT 2 &amp; YURI'S REVENGE WORLD CHAMPIONSHIPS">
