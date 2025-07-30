@@ -52,6 +52,6 @@ class QmMatch extends Model
 
     public function findQmPlayerByPlayerId(int $playerId)
     {
-        return $this->players->where('player_id', '=', $playerId)->first();
+        return $this->players->where('player_id', '=', $playerId)->first(); // returns a qm_match_player
     }
 }

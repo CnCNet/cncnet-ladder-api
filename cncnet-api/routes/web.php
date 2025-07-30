@@ -110,6 +110,7 @@ Route::group(['prefix' => 'admin'], function ()
 
             Route::post('ladder/new', [\App\Http\Controllers\LadderController::class, 'saveLadder'])->middleware('restrict:isGod');
             Route::get('washedGames/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getWashedGames']);
+            Route::get('observedGames/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getObservedGames']);
         });
 
         Route::group(['prefix' => 'setup/{ladderId}', 'middleware' => ['restrict:canModLadder']], function ()
