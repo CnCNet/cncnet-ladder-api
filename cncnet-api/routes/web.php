@@ -86,11 +86,15 @@ Route::group(['prefix' => 'admin'], function ()
         Route::group(['middleware' => 'restrict:adminRequired'], function ()
         {
 
-            Route::get('users/', [\App\Http\Controllers\AdminController::class, 'getManageUsersIndex']);
+            Route::get('users/', [\App\Http\Controllers\AdminController::class, 'getManageUsersIndex'])->name('admin.users');
             Route::get('users/chatbans', [\App\Http\Controllers\AdminController::class, 'getChatBannedUsers']);
-            Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser']);
+            Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser'])->name('admin.edit-user');
             Route::post('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'updateUser']);
             Route::post('users/tier/update', [\App\Http\Controllers\AdminController::class, 'updateUserLadderTier']);
+            Route::post('users/duplicates/confirm', [\App\Http\Controllers\AdminController::class, 'confirmDuplicate'])->name('users.duplicate.confirm');
+            Route::post('users/duplicates/unlink', [\App\Http\Controllers\AdminController::class, 'unlinkDuplicate'])->name('users.duplicate.unlink');
+            Route::post('users/duplicates/resetprimary', [\App\Http\Controllers\AdminController::class, 'resetToUnconfirmedPrimary']);
+            Route::get('duplicates', [\App\Http\Controllers\ActiveDuplicatesController::class, 'index']);
 
             Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
