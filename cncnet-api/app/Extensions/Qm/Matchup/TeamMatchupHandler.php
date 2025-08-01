@@ -76,7 +76,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         // Add observers to the match if there is any
         $observers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
-        if ($observers->count() < 0)
+        if ($observers->count() > 0)
         {
             $this->matchHasObservers = true;
         }

@@ -138,7 +138,10 @@ class GameService
 
                 $playerGameReports[$id]->player_id = $playerHere->id;
 
-                $playerGameReports[$id]->team = $game->qmMatch->findQmPlayerByPlayerId($playerHere->id)?->team;
+                // set their team and if they were an observer
+                $qmId = $game->qmMatch->findQmPlayerByPlayerId($playerHere->id);
+                $playerGameReports[$id]->team = $qmId?->team;
+                $playerGameReports[$id]->spectator =$qmId?->spectator;
 
                 if ($isClanLadderGame)
                 {
@@ -226,8 +229,8 @@ class GameService
                         $playerGameReports[$cid]->local_team_id = $cid;
                         break;
 
-                    case "SPC":
-                        $playerGameReports[$cid]->spectator = $value["value"];
+                    case "SPC": // ?? this does not work, observer is not even uploading a stats.dmp
+                        // $playerGameReports[$cid]->spectator = $value["value"];
                         break;
 
                     case "LCN": // TS lost connection

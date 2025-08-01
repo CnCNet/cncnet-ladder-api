@@ -104,6 +104,72 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $la->tester;
     }
 
+    public function isConfirmedPrimary(): bool
+    {
+        return !empty($this->alias) || $this->primary_user_id === $this->id;
+    }
+
+    public function isUnconfirmedPrimary(): bool
+    {
+        return $this->primary_user_id === null && empty($this->alias);
+    }
+
+    public function isDuplicate(): bool
+    {
+        return $this->primary_user_id !== null && $this->primary_user_id != $this->id;
+    }
+
+    public function primaryId()
+    {
+        return $this->primary_user_id !== null ? $this->primary_user_id : $this->id;
+    }
+
+    public function hasDuplicates(): bool
+    {
+        return User::where('primary_user_id', $this->id)->where('id', '!=', $this->id)->exists();
+    }
+
+    public function hasDuplicate($id): bool
+    {
+        return $this->collectDuplicates()->contains('id', $id);
+    }
+
+    public function collectDuplicates(bool $includeSelf = false)
+    {
+        $primaryUserId = $this->primaryId();
+        $results = User::where('primary_user_id', $primaryUserId)
+                    ->orWhere('id', $primaryUserId)
+                    ->get();
+
+        return $includeSelf ? $results : $results->where('id', '!=', $this->id)->values();
+    }
+
+    public function accountType() : string
+    {
+        if ($this->isConfirmedPrimary())
+        {
+            return "Primary";
+        }
+        else if ($this->isUnconfirmedPrimary())
+        {
+            return "Unconfirmed primary";
+        }
+        else if ($this->isDuplicate())
+        {
+            $primary = User::find($this->primary_user_id);
+            if ($primary)
+            {
+                return 'Duplicate of #' . $primary->id . ' (' . ($primary->alias ?: $primary->name) . ')';
+            }
+            else
+            {
+                return 'Duplicate of #' . $this->primary->id . ' (Unknown user)';
+            }
+        }
+
+        return "Unknown";
+    }
+
     public function canEditAnyLadders()
     {
         if ($this->isGod())
@@ -256,14 +322,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function updateAlias($alias)
     {
-        // Clear cache
+        $this->alias = $alias;
+        $this->clearCacheAndSave();
+    }
+
+    public function clearCacheAndSave()
+    {
+         // Clear cache
         if ($this->alias)
         {
             Cache::forget("admin/users/users/{$this->alias}");
         }
         Cache::forget("admin/users/users/{$this->id}");
-
-        $this->alias = $alias;
         $this->save();
     }
 
@@ -382,7 +452,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function userSince()
     {
-        return $this->created_at->diffForHumans();
+        return $this->collectDuplicates($includeSelf = true)->pluck('created_at')->filter()->min()->diffForHumans();
     }
 
     public function canUserPlayBothTiers($ladder)

@@ -23,6 +23,7 @@ use App\Models\UserSettings;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -53,7 +54,7 @@ class AdminController extends Controller
 
     public function getWashedGames($ladderAbbreviation = null)
     {
-        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbreviation)->first();
+        $ladder = Ladder::where('abbreviation', $ladderAbbreviation)->first();
 
         if ($ladder == null)
             abort(404);
@@ -220,6 +221,207 @@ class AdminController extends Controller
         ]);
     }
 
+    private function buildDuplicateList(User $user, Collection $ipDuplicates, Collection $qmDuplicates)
+    {
+        $userId = $user->id;
+        $userPrimaryId = $user->primaryId();
+
+        $allDupes = collect();
+
+        // Add duplicates with the same IP.
+        foreach ($ipDuplicates as $dupe)
+        {
+            $allDupes->push([
+                'user' => $dupe,
+                'reason' => 'IP',
+            ]);
+        }
+
+        // Add duplicates based on QM-ID. If already matched by IP, combine the reasons.
+        foreach ($qmDuplicates as $dupe)
+        {
+            $existingIndex = $allDupes->search(fn($item) => $item['user']->id === $dupe->id);
+            if ($existingIndex !== false)
+            {
+                // Combine IP reason with QM-ID reason.
+                $existingReason = $allDupes[$existingIndex]['reason'];
+                if (!str_contains($existingReason, 'QM-ID'))
+                {
+                    $existingItem = $allDupes->get($existingIndex);
+                    $existingReason = $existingItem['reason'];
+
+                    if (!str_contains($existingReason, 'QM-ID'))
+                    {
+                        $updatedItem = $existingItem;
+                        $updatedItem['reason'] = $existingReason . ' & QM-ID';
+                        $allDupes->put($existingIndex, $updatedItem);
+                    }
+                }
+            }
+            else
+            {
+                $allDupes->push(['user' => $dupe, 'reason' => 'QM-ID']);
+            }
+        }
+
+        // Find related users, which are not connected by IP & QM-ID. These are considered
+        // duplicates by manual action.
+        foreach ($user->collectDuplicates() as $relatedUser)
+        {
+            $existingIndex = $allDupes->search(fn($item) => $item['user']->id === $relatedUser->id);
+            if ($existingIndex === false)
+            {
+                $allDupes->push([
+                    'user' => $relatedUser,
+                    'reason' => 'Manually',
+                ]);
+            }
+        }
+
+        // Final grouping in confirmed/unconfirmed/rejected.
+        $confirmed = collect();
+        $unconfirmed = collect();
+        $rejected = collect();
+
+        foreach ($allDupes->unique('user.id') as $entry)
+        {
+            $dupeUser = $entry['user'];
+            $reason = $entry['reason'];
+
+            if ($userPrimaryId === $dupeUser->primaryId())
+            {
+                // This is a confirmed duplicates.
+                $finalReason = $reason;
+
+                if (!str_contains($finalReason, 'IP'))
+                {
+                    // Perform a full IP history comparison if 'IP' is not already part of the reason.
+                    // This helps preserve the IP-based link even if users no longer share a current IP.
+                    // Only accept IP-matches within a 1.5 year range.
+                    $userIpMap = IpAddressHistory::where('user_id', $user->id)->get()->groupBy('ip_address_id');
+                    $dupeIpMap = IpAddressHistory::where('user_id', $dupeUser->id)->get()->groupBy('ip_address_id');
+
+                    $commonIpIds = array_intersect($userIpMap->keys()->all(), $dupeIpMap->keys()->all());
+                    $matched = false;
+
+                    foreach ($commonIpIds as $ipId)
+                    {
+                        foreach ($userIpMap[$ipId] as $uEntry)
+                        {
+                            foreach ($dupeIpMap[$ipId] as $dEntry)
+                            {
+                                $diffInDays = abs($uEntry->created_at->diffInDays($dEntry->created_at));
+                                if ($diffInDays <= 500)
+                                {
+                                    $matched = true;
+                                    break 3;
+                                }
+                            }
+                        }
+                    }
+
+                    if ($matched)
+                    {
+                        $finalReason .= ' & IP';
+                    }
+                }
+
+                $confirmed->push([
+                    'user' => $dupeUser,
+                    'reason' => $finalReason,
+                ]);
+            }
+            elseif ($user->isDuplicate() && $dupeUser->isConfirmedPrimary() && $userPrimaryId !== $dupeUser->primaryId())
+            {
+                // Duplicate is primary, user is duplicate, but they are not related.
+                $rejected->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason . ', but different primary account',
+                ]);
+            }
+            elseif ($user->isConfirmedPrimary() && $dupeUser->isConfirmedPrimary())
+            {
+                // Both accounts are confirmed primary. This connection is considered rejected.
+                $rejected->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason . ', but both are confirmed primary accounts',
+                ]);
+            }
+            elseif ($dupeUser->isDuplicate() && !$user->isUnconfirmedPrimary())
+            {
+                $rejected->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason . ', but user is already a duplicate of #' . $dupeUser->primary_user_id,
+                ]);
+            }
+            elseif ($dupeUser->primary_user_id === null)
+            {
+                $unconfirmed->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason,
+                ]);
+            }
+        }
+
+        return [
+            'confirmed'   => $confirmed,
+            'unconfirmed' => $unconfirmed,
+            'rejected'    => $rejected,
+        ];
+    }
+
+    private function loadDuplicateDataForUser(User $user): array
+    {
+        $ipAddressId = $user->ip_address_id;
+        $qmIds = \App\Models\QmUserId::where('user_id', $user->id)
+            ->pluck('qm_user_id')
+            ->unique();
+
+        $ipDuplicates = collect();
+        if ($ipAddressId)
+        {
+            $ipDuplicates = \App\Models\IpAddressHistory::with('user')
+                ->where('ip_address_id', $ipAddressId)
+                ->where('user_id', '!=', $user->id)
+                ->get()
+                ->pluck('user')
+                ->filter()
+                ->unique('id')
+                ->values();
+        }
+
+        $qmDuplicates = collect();
+        if ($qmIds->isNotEmpty())
+        {
+            $qmDuplicates = \App\Models\QmUserId::with('user')
+                ->whereIn('qm_user_id', $qmIds)
+                ->where('user_id', '!=', $user->id)
+                ->get()
+                ->pluck('user')
+                ->filter()
+                ->unique('id')
+                ->values();
+        }
+
+        return $this->buildDuplicateList(
+            $user,
+            $ipDuplicates,
+            $qmDuplicates
+        );
+    }
+
+    private function loadDuplicateDataForUsers(Collection $users): array
+    {
+        $result = [];
+
+        foreach ($users as $user)
+        {
+            $result[$user->id] = $this->loadDuplicateDataForUser($user);
+        }
+
+        return $result;
+    }
+
     public function getManageUsersIndex(Request $request)
     {
         $hostname = $request->hostname;
@@ -288,12 +490,6 @@ class AdminController extends Controller
             ->get()
             ->groupBy('user_id');
 
-        $ipDuplicates = IpAddressHistory::whereIn('ip_address_id', $ipAddressIds)
-            ->whereNotIn('user_id', $userIds) // avoid self
-            ->with('user')
-            ->get()
-            ->groupBy('ip_address_id');
-
         $qmUserIds = QmUserId::with('user')
             ->whereIn('user_id', $userIds)
             ->get()
@@ -302,16 +498,14 @@ class AdminController extends Controller
         // Map ip_address_id → user_id for reverse lookup
         $userIpMap = $users->mapWithKeys(fn($u) => [$u->ip_address_id => $u->id]);
 
-        // Rebuild ipDuplicates structure to group by user_id
-        $ipDuplicatesByUser = [];
-        foreach ($ipDuplicates as $ipId => $dupeRecords)
-        {
-            $uid = $userIpMap[$ipId] ?? null;
-            if ($uid !== null)
-            {
-                $ipDuplicatesByUser[$uid] = $dupeRecords->pluck('user')->filter()->unique('id')->values();
-            }
-        }
+        // Now collect all primary users.
+        $primaryUserIds = $users
+            ->pluck('primary_user_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $primaryUsers = User::whereIn('id', $primaryUserIds)->get()->keyBy('id');
 
         return view("admin.manage-users", [
             "users" => $users,
@@ -323,11 +517,11 @@ class AdminController extends Controller
             "playerNicknames" => $playerNicknames,
             "ladderHistory" => $ladderHistory,
             "ipHistories" => $ipHistories,
-            "ipDuplicates" => $ipDuplicatesByUser,
             "qmUserIds" => $qmUserIds,
+            "primaryUsers" => $primaryUsers,
+            "duplicatesByUser" => $this->loadDuplicateDataForUsers($users)
         ]);
     }
-
 
     public function saveProList(Request $request)
     {
@@ -396,10 +590,12 @@ class AdminController extends Controller
 
     public function getEditUser(Request $request)
     {
-        $user = User::where("id", $request->userId)->first();
+        $user = User::findOrFail($request->userId);
+        $duplicates = $this->loadDuplicateDataForUser($user);
 
         return view("admin.edit-user", [
-            "user" => $user
+            "user" => $user,
+            "duplicates" => $duplicates
         ]);
     }
 
@@ -451,6 +647,11 @@ class AdminController extends Controller
 
         if ($request->exists('alias'))
         {
+            if ($user->isDuplicate())
+            {
+                return back()->withFragment("settings")->withErrors(['alias' => 'Cannot assign alias. This user is a duplicate of #' . $user->primary_user_id . '.'])->withInput();
+            }
+
             $request->validate(
                 [
                     'alias' => [
@@ -472,7 +673,7 @@ class AdminController extends Controller
 
             if (preg_match('/[A-Z]{2}/', $request->alias))
             {
-                return back()->withErrors(['alias' => 'No consecutive uppercase letters allowed in alias.'])->withInput();
+                return back()->withFragment("settings")->withErrors(['alias' => 'No consecutive uppercase letters allowed in alias.'])->withInput();
             }
 
             $user->updateAlias($request->alias);
@@ -482,9 +683,184 @@ class AdminController extends Controller
         $user->userSettings->allow_2v2_ladders = $request->allow_2v2_ladders == "on" ? true : false;
         $user->userSettings->save();
 
+        $duplicates = $this->loadDuplicateDataForUser($user);
+
         return view("admin.edit-user", [
-            "user" => $user
+            "user" => $user,
+            "duplicates" => $duplicates,
         ]);
+    }
+
+    public function confirmDuplicate(Request $request)
+    {
+        // Two users are passed to this function which need to be linked together. We don't know which one is the primary user and
+        // which one is the duplicate. Since a user account can have three states (confirmed primary, unconfirmed primrary, duplicate), we
+        // have to handle all 9 cases.
+
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'duplicate_user_id' => 'required|integer',
+        ]);
+
+
+        $user = User::findOrFail($validated['user_id']);
+        $dupe = User::find($validated['duplicate_user_id']);
+
+        if (!$dupe)
+        {
+            return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "The given user #{$validated['duplicate_user_id']} does not exist."])->withInput();
+        }
+
+        if ($user->isConfirmedPrimary())
+        {
+            if ($dupe->isUnconfirmedPrimary())
+            {
+                $dupe->primary_user_id = $user->id;
+                $dupe->clearCacheAndSave();
+                if ($user->primary_user_id === null)
+                {
+                    $user->primary_user_id = $user->id;
+                    $user->clearCacheAndSave();
+                }
+                return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->id}).");
+            }
+            else if ($dupe->isConfirmedPrimary())
+            {
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "Unable to confirm #{$dupe->id} as a duplicate of #{$user->id}, because both are primary accounts."])->withInput();
+            }
+            else
+            {
+                // This is already a duplicate.
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
+            }
+        }
+        else if ($user->isUnconfirmedPrimary())
+        {
+            if ($dupe->isUnconfirmedPrimary())
+            {
+                // Need to make user a primary account in order to assign duplicates.
+                $dupe->primary_user_id = $user->id;
+                $dupe->clearCacheAndSave();
+                $user->primary_user_id = $user->id;
+                $user->clearCacheAndSave();
+                return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->id}).");
+            }
+            else if ($dupe->isConfirmedPrimary())
+            {
+                // Ok, so user is the dupe and dupe is a primary account.
+                $user->primary_user_id = $dupe->id;
+                $user->clearCacheAndSave();
+                $dupe->primary_user_id = $dupe->id;
+                $dupe->clearCacheAndSave();
+                return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$user->id}) as a duplicate of (#{$dupe->id}).");
+            }
+            else
+            {
+                // User needs to be linked to duplicates primary account.
+                $user->primary_user_id = $dupe->primary_user_id;
+                $user->clearCacheAndSave();
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
+            }
+        }
+        else if ($user->isDuplicate())
+        {
+            if ($dupe->isUnconfirmedPrimary())
+            {
+                $dupe->primary_user_id = $user->primary_user_id;
+                $dupe->clearCacheAndSave();
+                return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->primary_user_id}).");
+            }
+            else if ($dupe->isDuplicate())
+            {
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
+            }
+            else if ($dupe->isConfirmedPrimary())
+            {
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is a primary account."])->withInput();
+            }
+        }
+
+        // This is not supposed to happen.
+        return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "Unable to confirm #{$dupe->id} as a duplicate of #{$user->id} for unknown reason."])->withInput();
+    }
+
+    public function resetToUnconfirmedPrimary(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $user = User::find($validated['user_id']);
+        $dups = User::where('primary_user_id', $user->id)->where('id', '!=', $user->id)->get();
+
+        if ($dups->count() > 0)
+        {
+            return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "This user has linked duplicates. Cannot convert to unconfirmed primary."]);
+        }
+        else if (!empty($user->alias))
+        {
+            return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "This user has an alias. Cannot convert to unconfirmed primary."]);
+        }
+
+        $user->primary_user_id = null;
+        $user->clearCacheAndSave();
+        return back()->withFragment("duplicate_handling")->with('status', "Account is now unconfirmed primary.");
+    }
+
+    public function unlinkDuplicate(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'duplicate_user_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+        $dupe = User::findOrFail($validated['duplicate_user_id']);
+
+        // Helper closure to reset primary_user_id for primary accounts that no longer have duplicates.
+        // An account is marked as primary by setting its own id as primary_user_id when the first duplicate is linked.
+        // If the last duplicate is unlinked, primary_user_id should be reset to null.
+        $maybeClearPrimaryFlag = function (User $primary) 
+        {
+            $hasDuplicates = User::where('primary_user_id', $primary->id)->where('id', '!=', $primary->id)->exists();
+            if (!$hasDuplicates && $primary->primary_user_id === $primary->id)
+            {
+                $primary->primary_user_id = null;
+                $primary->clearCacheAndSave();
+            }
+        };
+
+        // Case 1: User is the primary.
+        if ($dupe->primary_user_id === $user->id)
+        {
+            $dupe->primary_user_id = null;
+            $dupe->clearCacheAndSave();
+            $maybeClearPrimaryFlag($user);
+            return back()->withFragment("duplicate_handling")->with('status', "Duplicate (#{$dupe->id}) unlinked from primary (#{$user->id}).");
+        }
+
+        // Case 2: The duplicate is the primary.
+        if ($user->primary_user_id === $dupe->id)
+        {
+            $user->primary_user_id = null;
+            $user->clearCacheAndSave();
+            $maybeClearPrimaryFlag($dupe);
+            return back()->withFragment("duplicate_handling")->with('status', "Duplicate (#{$user->id}) unlinked from primary (#{$dupe->id}).");
+        }
+
+        // Case 3: User and dupe have the same primary.
+        if ($user->primary_user_id === $dupe->primary_user_id && $user->primary_user_id != null && $user->id != $dupe->id)
+        {
+            $primary = User::find($user->primary_user_id);
+            $text = "Duplicate (#{$user->id}) unlinked from primary (#{$user->primary_user_id}).";
+            $user->primary_user_id = null;
+            $user->clearCacheAndSave();
+            $maybeClearPrimaryFlag($primary);
+            return back()->withFragment("duplicate_handling")->with('status', $text);
+        }
+
+        // This is not supposed to happen.
+        return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "Invalid unlink attempt (User {$user->id}, Dupe {$dupe->id})"])->withInput();
     }
 
     public function getManageGameIndex(Request $request, $cncnetGame = null)
@@ -1371,8 +1747,56 @@ class AdminController extends Controller
             ]
         ];
     }
-}
 
+    public function getObservedGames(Request $request, $ladderAbbreviation = null)
+    {
+        $ladder = Ladder::where('abbreviation', $ladderAbbreviation)->first();
+
+        if ($ladder == null)
+        {
+            abort(404, 'Ladder not found');
+        }
+
+        $ladderHistoryShort = $request->query('ladderHistoryShort');
+
+        if ($ladderHistoryShort)
+        {
+            $ladderHistory = \App\Models\LadderHistory::where('ladder_id', $ladder->id)
+                ->where('short', $ladderHistoryShort)
+                ->first();
+        }
+        else
+        {
+            $ladderHistory = $ladder->currentHistory();
+        }
+
+        if (!$ladderHistory)
+        {
+            abort(404, 'Ladder history not found');
+        }
+
+        // list of players and observers from previous games for this ladder history
+        $observedGames = Game::with(['players.player.user', 'observers.player.user'])
+            ->where('ladder_history_id', $ladderHistory->id)
+            ->whereHas('observers')
+            ->paginate(10);
+
+        // to populate a dropdown and user can pick which history to view observed games
+        $histories = LadderHistory::where('ladder_id', $ladder->id)
+            ->where('ends', '<=', now())
+            ->orderBy('ends', 'DESC')
+            ->select('short')
+            ->get();
+
+        return view("admin.observed-games", [
+            "observedGames" => $observedGames,
+            "ladderHistory" => $ladderHistory,
+            "histories" => $histories,
+            "ladder" => $ladder,
+            "ladderHistoryShort" => $ladderHistoryShort
+        ]);
+    }
+}
 
 function ini_to_b($string)
 {

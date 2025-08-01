@@ -105,7 +105,7 @@
                                 <h5>Alias: <strong>{{ $user->alias }}</strong></h5>
                                 @endif
                                 <h5>Email: <strong>{{ $user->email }}</strong></h5>
-
+                                <h5>Account type: <strong>{{ $user->accountType() }}</strong></h5>
                                 <div class="base-info">
                                     Created: {{ $user->created_at->toDateString() }}
                                 </div>
