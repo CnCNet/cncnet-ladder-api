@@ -139,6 +139,7 @@ class GameService
                 $playerGameReports[$id]->player_id = $playerHere->id;
 
                 // set their team and if they were an observer
+
                 $qmPlayer = $game->qmMatch->findQmPlayerByPlayerId($playerHere->id);
                 $playerGameReports[$id]->team = $qmPlayer?->team;
                 $playerGameReports[$id]->spectator = $qmPlayer?->is_observer ?? false;
