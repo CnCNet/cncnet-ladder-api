@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class ApiPlayerController extends Controller
 {
@@ -73,6 +74,7 @@ class ApiPlayerController extends Controller
         }
         catch (Exception $ex)
         {
+            Log::error("Exception in ApiPlayerController@getUsernames", ['exception' => $ex]);
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }
@@ -126,10 +128,12 @@ class ApiPlayerController extends Controller
         }
         catch (ValidationException $ex)
         {
+            Log::warning("ValidationException in ApiPlayerController@METHOD_NAME", ['errors' => $ex->errors()]);
             return response()->json(["message" => $ex->getMessage()], 400);
         }
         catch (Exception $ex)
         {
+            Log::error("Exception in ApiPlayerController@createPlayer", ['exception' => $ex]);
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }
@@ -221,10 +225,12 @@ class ApiPlayerController extends Controller
         }
         catch (ValidationException $ex)
         {
+            Log::warning("ValidationException in ApiPlayerController@METHOD_NAME", ['errors' => $ex->errors()]);
             return response()->json(["message" => $ex->getMessage()], 400);
         }
         catch (Exception $ex)
         {
+            Log::error("Exception in ApiPlayerController@togglePlayerStatus", ['exception' => $ex]);
             return response()->json(["message" => "Something went wrong"], 500);
         }
     }
