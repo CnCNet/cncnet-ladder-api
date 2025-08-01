@@ -128,7 +128,7 @@ class ApiPlayerController extends Controller
         }
         catch (ValidationException $ex)
         {
-            Log::warning("ValidationException in ApiPlayerController@METHOD_NAME", ['errors' => $ex->errors()]);
+            Log::warning("ValidationException in ApiPlayerController@createPlayer", ['errors' => $ex->errors()]);
             return response()->json(["message" => $ex->getMessage()], 400);
         }
         catch (Exception $ex)
@@ -225,7 +225,7 @@ class ApiPlayerController extends Controller
         }
         catch (ValidationException $ex)
         {
-            Log::warning("ValidationException in ApiPlayerController@METHOD_NAME", ['errors' => $ex->errors()]);
+            Log::warning("ValidationException in ApiPlayerController@togglePlayerStatus", ['errors' => $ex->errors()]);
             return response()->json(["message" => $ex->getMessage()], 400);
         }
         catch (Exception $ex)
