@@ -100,6 +100,7 @@ services:
 
   db-backup:
     container_name: cncnet_ladder_backup${ENV_SUFFIX}
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     env_file:
       - '.backup.env'
     image: tiredofit/db-backup
