@@ -102,7 +102,7 @@ class ApiPlayerController extends Controller
 
             # Check ladder exists
             $ladder = \App\Models\Ladder::where("abbreviation", '=', $request->ladderAbbrev)->first();
-            $ladderHistory = $ladder->currentHistory;
+            $ladderHistory = $ladder->currentHistory();
             if ($ladder === null || $ladderHistory === null)
             {
                 return response()->json(["message" => "Ladder does not exist"], 400);
