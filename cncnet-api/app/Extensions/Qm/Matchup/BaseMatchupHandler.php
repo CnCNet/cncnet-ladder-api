@@ -33,14 +33,17 @@ abstract class BaseMatchupHandler
     public function createMatch(Collection $maps, Collection $otherQMQueueEntries)
     {
         // filter out placeholder maps
-        $filteredMaps = $maps->filter(function ($map) {
-            return
-                !strpos($map->description, 'Map Info')
-                && !strpos($map->description, 'Map Guide')
-                && !strpos($map->description, 'Ladder Guide')
-                && !strpos($map->description, 'Ladder Info')
-                && !strpos($map->description, 'Ladder Rules');
+        $filteredMaps = $maps->filter(function ($map)
+        {
+            return !(
+                str_contains($map->description, 'Map Info') ||
+                str_contains($map->description, 'Map Guide') ||
+                str_contains($map->description, 'Ladder Guide') ||
+                str_contains($map->description, 'Ladder Info') ||
+                str_contains($map->description, 'Ladder Rules')
+            );
         });
+
 
         $this->removeQueueEntry();
 

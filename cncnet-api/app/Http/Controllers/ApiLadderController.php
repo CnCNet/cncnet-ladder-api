@@ -474,6 +474,43 @@ class ApiLadderController extends Controller
         return 200;
     }
 
+
+    /**
+     * Determine the winning team from a collection of player game reports.
+     * Falls back to using a non-defeated player’s team if no player is marked as 'won'.
+     *
+     * @param \Illuminate\Support\Collection|\App\Models\PlayerGameReport[] $playerGameReports
+     * @return int|null The winning team number, or null if none found.
+     */
+    public function getWinningTeamFromReports($playerGameReports): ?int
+    {
+        foreach ($playerGameReports as $pgr)
+        {
+            if ($pgr->won)
+            {
+                return $pgr->team;
+            }
+        }
+
+        // Step 2: Fallback — no winner marked; use a non-defeated player (disconnected game case)
+        foreach ($playerGameReports as $pgr)
+        {
+            if (!$pgr->defeated)
+            {
+                Log::info("Fallback to 'defeated' logic for disconnected game.", [
+                    'game_id' => $pgr->game_id,
+                    'player_id' => $pgr->player_id,
+                    'team' => $pgr->team,
+                ]);
+                return $pgr->team;
+            }
+        }
+
+        // No winning team found
+        return null;
+    }
+
+
     /**
      *
      * @param GameReport $gameReport
@@ -506,17 +543,8 @@ class ApiLadderController extends Controller
 
         $disconnected = 0;
 
-        // String a or b.
-        $winningTeam = null;
-
-        foreach ($playerGameReports as $pgr)
-        {
-            if ($pgr->won)
-            {
-                // grab the qm players that belong to this qm match, return the team of the current player
-                $winningTeam = $pgr->team;
-            }
-        }
+        // determine which team won
+        $winningTeam = $this->getWinningTeamFromReports($playerGameReports);
 
         foreach ($playerGameReports as $playerGR)
         {
@@ -567,17 +595,30 @@ class ApiLadderController extends Controller
                 $gvc = ceil(($base_rating * $enemy_average) / 230000);
             }
 
-            $wol_k = $history->ladder->qmLadderRules->wol_k;
             $diff = $enemy_points - $ally_points;
             $we = 1 / (pow(10, abs($diff) / 600) + 1);
-            $we = $diff > 0 && $playerGRTeamWonTheGame ? 1 - $we : ($diff < 0 && !$playerGRTeamWonTheGame ? 1 - $we : $we);
+            if (($diff > 0 && $playerGRTeamWonTheGame) || ($diff < 0 && !$playerGRTeamWonTheGame))
+            {
+                $we = 1 - $we;
+            }
+
+            $wol_k = $history->ladder->qmLadderRules->wol_k;
             $wol = (int)($wol_k * $we);
 
             $eloAdjust = 0;
 
-            if ($playerGR->draw)
+            if ($playerGR->draw || $winningTeam === null) // draw or couldn't find a winner
             {
                 $playerGR->points = 0;
+
+                Log::info("No points awarded due to draw or missing winning team.", [
+                    'game_id'    => $playerGR->game_id,
+                    'player_id'  => $playerGR->player_id,
+                    'username'   => optional($playerGR->player)->username,
+                    'draw'       => $playerGR->draw,
+                    'team'       => $playerGR->team,
+                    'winning_team' => $winningTeam,
+                ]);
             }
             else if ($playerGRTeamWonTheGame)
             {
