@@ -8,7 +8,6 @@ use App\Models\Game;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\PlayerCache;
-use App\Models\PlayerRating;
 use App\Models\Side;
 use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;

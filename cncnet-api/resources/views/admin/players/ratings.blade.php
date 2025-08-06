@@ -157,8 +157,8 @@
 
                                         <td>
                                             Rating: {{ $user->rating }} <br />
-                                            Rated games:{{ $user->rated_games }}<br />
-                                            Peek rating: {{ $user->peak_rating }} <br />
+                                            Rated games: {{ $user->rated_games }}<br />
+                                            Deviation: {{ $user->deviation }} <br />
                                         </td>
                                     </tr>
                                 @endforeach
