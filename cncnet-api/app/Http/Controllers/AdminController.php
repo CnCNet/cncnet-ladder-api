@@ -233,7 +233,7 @@ class AdminController extends Controller
         {
             $allDupes->push([
                 'user' => $dupe,
-                'reason' => 'IP',
+                'reason' => 'Recent IP',
             ]);
         }
 
@@ -273,7 +273,7 @@ class AdminController extends Controller
             {
                 $allDupes->push([
                     'user' => $relatedUser,
-                    'reason' => 'Manually',
+                    'reason' => 'Indirect or marked manually',
                 ]);
             }
         }
@@ -288,47 +288,48 @@ class AdminController extends Controller
             $dupeUser = $entry['user'];
             $reason = $entry['reason'];
 
-            if ($userPrimaryId === $dupeUser->primaryId())
+            if (!str_contains($reason, 'IP'))
             {
-                // This is a confirmed duplicates.
-                $finalReason = $reason;
+                // Perform a full IP history comparison if 'IP' is not already part of the reason.
+                // This helps preserve the IP-based link even if users no longer share a current IP.
+                // Only accept IP-matches within a 1.5 year range.
+                $userIpMap = IpAddressHistory::where('user_id', $user->id)->get()->groupBy('ip_address_id');
+                $dupeIpMap = IpAddressHistory::where('user_id', $dupeUser->id)->get()->groupBy('ip_address_id');
 
-                if (!str_contains($finalReason, 'IP'))
+                $commonIpIds = array_intersect($userIpMap->keys()->all(), $dupeIpMap->keys()->all());
+                $matched = false;
+
+                foreach ($commonIpIds as $ipId)
                 {
-                    // Perform a full IP history comparison if 'IP' is not already part of the reason.
-                    // This helps preserve the IP-based link even if users no longer share a current IP.
-                    // Only accept IP-matches within a 1.5 year range.
-                    $userIpMap = IpAddressHistory::where('user_id', $user->id)->get()->groupBy('ip_address_id');
-                    $dupeIpMap = IpAddressHistory::where('user_id', $dupeUser->id)->get()->groupBy('ip_address_id');
-
-                    $commonIpIds = array_intersect($userIpMap->keys()->all(), $dupeIpMap->keys()->all());
-                    $matched = false;
-
-                    foreach ($commonIpIds as $ipId)
+                    foreach ($userIpMap[$ipId] as $uEntry)
                     {
-                        foreach ($userIpMap[$ipId] as $uEntry)
+                        foreach ($dupeIpMap[$ipId] as $dEntry)
                         {
-                            foreach ($dupeIpMap[$ipId] as $dEntry)
+                            $diffInDays = abs($uEntry->created_at->diffInDays($dEntry->created_at));
+                            if ($diffInDays <= 500)
                             {
-                                $diffInDays = abs($uEntry->created_at->diffInDays($dEntry->created_at));
-                                if ($diffInDays <= 500)
-                                {
-                                    $matched = true;
-                                    break 3;
-                                }
+                                $matched = true;
+                                break 3;
                             }
                         }
                     }
-
-                    if ($matched)
-                    {
-                        $finalReason .= ' & IP';
-                    }
                 }
 
+                if ($matched && str_contains($reason, "manually"))
+                {
+                    $reason = 'IP';
+                }
+                else if ($matched)
+                {
+                    $reason .= ' & IP';
+                }
+            }
+
+            if ($userPrimaryId === $dupeUser->primaryId())
+            {
                 $confirmed->push([
                     'user' => $dupeUser,
-                    'reason' => $finalReason,
+                    'reason' => $reason,
                 ]);
             }
             elseif ($user->isDuplicate() && $dupeUser->isConfirmedPrimary() && $userPrimaryId !== $dupeUser->primaryId())
