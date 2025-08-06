@@ -480,9 +480,9 @@ class ApiLadderController extends Controller
      * Falls back to using a non-defeated player’s team if no player is marked as 'won'.
      *
      * @param \Illuminate\Support\Collection|\App\Models\PlayerGameReport[] $playerGameReports
-     * @return int|null The winning team number, or null if none found.
+     * @return string|null The winning team, or null if none found.
      */
-    public function getWinningTeamFromReports($playerGameReports): ?int
+    public function getWinningTeamFromReports($playerGameReports): ?string
     {
         foreach ($playerGameReports as $pgr)
         {
