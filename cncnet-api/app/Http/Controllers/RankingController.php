@@ -51,7 +51,7 @@ class RankingController extends Controller
 
         if (Storage::disk('rating')->exists($gameMode . "_best_teams.json"))
         {
-            array_push($stats, "Best teams");
+            array_push($stats, "Best Teammates");
             array_push($jsonFiles, "best_teams.json");
         }
 
