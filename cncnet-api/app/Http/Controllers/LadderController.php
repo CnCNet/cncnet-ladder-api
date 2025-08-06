@@ -476,7 +476,7 @@ class LadderController extends Controller
         $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
         $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);
 
-        $isAnonymous = $player->user->userSettings->is_anonymous;
+        $isAnonymous = $player->user->userSettings->is_anonymous && ($history->id == $currentHistory->id);
 
         $ladderNicks = [];
         if (!$isAnonymous && $history->id != $currentHistory->id) // only hide if anonymous and is the current month

@@ -790,7 +790,7 @@ class ApiLadderController extends Controller
 
     public function getLadderPlayer(Request $request, $game = null, $player = null)
     {
-        $date = Carbon::now()->format('m-Y');
+        $date = $request->query('date') ?? Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
         return Cache::remember("getLadderPlayer/$date/$game/$player", 5 * 60, function () use ($ladderService, $date, $game, $player)
         {
@@ -801,7 +801,7 @@ class ApiLadderController extends Controller
 
     public function getLadderPlayerFromPublicApi(Request $request, $game = null, $player = null)
     {
-        $date = Carbon::now()->format('m-Y');
+        $date = $request->query('date') ?? Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
         return Cache::remember("getLadderPlayerFromPublicApi/$date/$game/$player", 5 * 60, function () use ($ladderService, $date, $game, $player)
         {

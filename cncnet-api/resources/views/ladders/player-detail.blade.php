@@ -122,11 +122,19 @@
                         <span class="me-2">{!! \App\Helpers\LeagueHelper::getLeagueIconByTier($userTier) !!}</span>
                         {{ \App\Helpers\LeagueHelper::getLeagueNameByTier($userTier) }}
                     </div>
+
+                    @if ($userPlayer->userSettings->getIsAnonymousForLadderHistory($history) == false)
+                    <div>
+                        <span class="font-secondary-bold">Alias:</span>
+                        <span class="font-secondary">{{ $userPlayer->alias() }}</span>
+                    </div>
+                    @endif
                     <div>
                         <span class="font-secondary-bold">Last online:</span>
                         <span class="font-secondary">{{ $ladderPlayer->last_active ?? 'Unknown' }}</span>
                     </div>
-                    @if ($userPlayer->userSettings->getIsAnonymous() == false)
+
+                    @if ($userPlayer->userSettings->getIsAnonymousForLadderHistory($history) == false)
                     <div>
                         <span class="font-secondary-bold">User joined:</span>
                         <span class="font-secondary">{{ $userPlayer->userSince() }}</span>
@@ -180,12 +188,24 @@
                                 <span class="name">Played today:</span> {{ $playerGamesLast24Hours }}
                             </div>
 
-                            @if ($userPlayer->userSettings->getIsAnonymous() == false)
+                            @if ($userPlayer->userSettings->getIsAnonymousForLadderHistory($history) == false)
                             <div class="stat-item">
-                                <span class="name">Elo:</span> {{ $ladderPlayer->elo->elo ?? '' }}
+                                @if (!empty($ladderPlayer->elo->rating))
+                                    <span class="name"> Elo:</span>
+                                    {{ $ladderPlayer->elo->rating }}
+                                    @if (!$ladderPlayer->elo->active)
+                                        <span class="tooltip">
+                                            <span class="circle">&#x24D8;</span>
+                                            <span class="tooltiptext">Rating too uncertain to appear on the active leaderboard.</span>
+                                        </span>
+                                    @endif
+                                @endif
                             </div>
                             <div class="stat-item">
-                                <span class="name">Elo Rank:</span> {{ $ladderPlayer->elo->rank ?? '' }}
+                                @if (!empty($ladderPlayer->elo->elo_rank))
+                                    <span class="name">Elo Rank:</span>
+                                    #{{ $ladderPlayer->elo->elo_rank ?? '' }}
+                                @endif
                             </div>
                             @endif
                         </div>

@@ -25,6 +25,7 @@ use App\Models\UrlHelper;
 use App\Models\QmMatchPlayer;
 use App\Models\QmMatch;
 use App\Models\Player;
+use App\Models\UserRating;
 
 class LadderService
 {
@@ -343,36 +344,34 @@ class LadderService
 
     public function getActiveLadderByDate($date, $cncnetGame = null)
     {
-        $date = explode("-", $date);
+        $dateParts = explode("-", $date);
 
-        if (count($date) < 2)
-            return null;
-
-        $month = $date[0];
-        $year = $date[1];
-
-        if ($month > 12 || $month < 0)
+        if (count($dateParts) < 2)
         {
             return null;
         }
 
-        $date = Carbon::create($year, $month, 1, 0);
+        $month = (int) $dateParts[0];
+        $year = (int) $dateParts[1];
 
-        $start = $date->startOfMonth()->toDateTimeString();
-        $end = $date->endOfMonth()->toDateTimeString();
-
-        if ($cncnetGame == null)
+        if ($month > 12 || $month < 1)
         {
-            return LadderHistory::where("starts", "=", $start)
-                ->where("ends", "=", $end)
+            return null;
+        }
+
+        if ($cncnetGame === null)
+        {
+            return LadderHistory::whereMonth("starts", $month)
+                ->whereYear("starts", $year)
                 ->first();
         }
         else
         {
-            return LadderHistory::query()
-                ->where("starts", "=", $start)
-                ->where("ends", "=", $end)
-                ->whereHas('ladder', fn($q) => $q->where('abbreviation', $cncnetGame))
+            return LadderHistory::whereMonth("starts", $month)
+                ->whereYear("starts", $year)
+                ->whereHas('ladder', function ($q) use ($cncnetGame) {
+                    $q->where('abbreviation', $cncnetGame);
+                })
                 ->first();
         }
     }
@@ -597,37 +596,37 @@ class LadderService
                 "id" => $player->id,
                 "player" => $player,
                 "username" => $player->username,
+                "alias" => "",
                 "points" => 0,
                 "rank" => 0,
                 "game_count" => 0,
                 "games_won" => 0,
                 "games_lost" => 0,
                 "average_fps" => 0,
-                "rating" => PlayerRating::$DEFAULT_RATING,
+                "elo" => null,
+                "last_five_games" => [],
+                "last_active" => null,
+                "user_since" => null,
             ];
         }
+
+        $isAnonymous = $player->user->userSettings->getIsAnonymousForLadderHistory($history);
 
         $last24HoursGames = $player->totalGames24Hours($history);
         $lastActive = $player->lastActive($history);
         $lastFiveGames = $player->lastFiveGames($history);
 
-        $eloProfile = null;
-        if ($player->user->userSettings->getIsAnonymous() == false)
+        $user = $player->user;
+        $rating = $user->getEffectiveUserRatingForLadder($history->ladder->id);
+
+        // Do not show default rating.
+        if ($rating->rated_games == 0)
         {
-            $rankingController = new RankingController();
-            $knownUsernames = $player->user->usernames()->pluck("username")->unique()->toArray();
-            if ($player->user->alias)
-            {
-                $knownUsernames[] = $player->user->alias;
-            }
-            $eloProfile = $rankingController->getEloProfileByKnownUsernames(
-                $history->ladder->abbreviation,
-                $knownUsernames
-            );
+            $rating = null;
         }
 
         $userSince = null;
-        if ($player->user->userSettings->getIsAnonymous() == false)
+        if (!$isAnonymous)
         {
             $userSince = $player->user->userSince();
         }
@@ -636,17 +635,17 @@ class LadderService
             "id" => $playerCache->player_id,
             "player" => $player,
             "username" => $player->username,
+            "alias" => $isAnonymous ? "" : (empty($player->user->alias()) ? "-" : $player->user->alias()),
             "points" => $playerCache->points,
             "rank" => $playerCache->rank(),
             "games_won" => $playerCache->wins,
             "game_count" => $playerCache->games,
             "games_lost" => $playerCache->games - $playerCache->wins,
             "average_fps" => $playerCache->fps,
-            "rating" => $playerCache->rating,
             "games_last_24_hours" => $last24HoursGames,
             "last_active" => $lastActive,
             "last_five_games" => $lastFiveGames,
-            "elo" => $eloProfile,
+            "elo" => $isAnonymous ? null : $rating,
             "user_since" => $userSince
         ];
     }

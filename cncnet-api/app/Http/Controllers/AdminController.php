@@ -1470,14 +1470,14 @@ class AdminController extends Controller
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
                 ->whereIn("users.id", $byPlayer->pluck("user_id"))
-                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->select(["users.*", "ur.rating", "ur.rated_games"])
                 ->paginate(50);
         }
         else
         {
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
-                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->select(["users.*", "ur.rating", "ur.rated_games"])
                 ->paginate(50);
         }
 

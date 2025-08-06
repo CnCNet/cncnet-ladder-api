@@ -83,10 +83,6 @@
             @include('auth.account-settings-nav')
         </div>
 
-        <div>
-            <h4>Ladder Elo: {{ $user->getOrCreateLiveUserRating()->rating }}</h4>
-        </div>
-
         <div class="row">
             <div class="col-md-12">
                 <form method="POST" action="/account/settings" enctype="multipart/form-data">
