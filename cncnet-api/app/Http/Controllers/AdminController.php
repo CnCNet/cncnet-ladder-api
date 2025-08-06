@@ -1475,7 +1475,7 @@ class AdminController extends Controller
                         ->orWhereColumn("users.primary_user_id", "users.id");
                 })
                 ->whereIn("users.id", $byPlayer->pluck("user_id"))
-                ->select(["users.*", "ur.rating", "ur.rated_games"])
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.deviation"])
                 ->paginate(50);
         }
         else
