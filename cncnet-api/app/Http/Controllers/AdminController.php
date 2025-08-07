@@ -646,7 +646,7 @@ class AdminController extends Controller
             $user->save();
         }
 
-        if ($request->exists('alias'))
+        if ($request->exists('alias') && trim($request->alias) !== ($user->alias ?? ''))
         {
             if ($user->isDuplicate())
             {
