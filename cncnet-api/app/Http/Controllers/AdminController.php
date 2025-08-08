@@ -1154,7 +1154,7 @@ class AdminController extends Controller
         $ladderService = new LadderService;
         $history = $ladderService->getActiveLadderByDate(Carbon::now()->format('m-Y'), $player->ladder->abbreviation);
 
-        $bans = $user->bans()->orderBy('created_at', 'DESC')->get();
+        $bans = $user->collectBans()->sortByDesc('created_at');
 
         return view(
             "admin.moderate-player",
