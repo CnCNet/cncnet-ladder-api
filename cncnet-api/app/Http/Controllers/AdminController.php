@@ -1470,15 +1470,25 @@ class AdminController extends Controller
 
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
+                ->where("ur.ladder_id", $ladder->id)
+                ->where(function ($query) {
+                    $query->whereNull("users.primary_user_id")
+                        ->orWhereColumn("users.primary_user_id", "users.id");
+                })
                 ->whereIn("users.id", $byPlayer->pluck("user_id"))
-                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.deviation"])
                 ->paginate(50);
         }
         else
         {
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
-                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->where("ur.ladder_id", $ladder->id)
+                ->where(function ($query) {
+                    $query->whereNull("users.primary_user_id")
+                        ->orWhereColumn("users.primary_user_id", "users.id");
+                })
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.deviation"])
                 ->paginate(50);
         }
 

@@ -47,4 +47,10 @@ class LadderHistory extends Model
             });
     }
 
+    public function isCurrent(): bool
+    {
+        $now = Carbon::now();
+        return $this->starts->month === $now->month && $this->starts->year === $now->year;
+    }
+
 }

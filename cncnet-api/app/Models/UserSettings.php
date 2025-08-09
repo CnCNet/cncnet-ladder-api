@@ -42,4 +42,10 @@ class UserSettings extends Model
     {
         return $this->is_anonymous == true;
     }
+
+    public function getIsAnonymousForLadderHistory(LadderHistory $history): bool
+    {
+        // Only anonymous in current month.
+        return $this->is_anonymous && $history->isCurrent();
+    }
 }
