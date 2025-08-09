@@ -1794,7 +1794,7 @@ class AdminController extends Controller
 
         // to populate a dropdown and user can pick which history to view observed games
         $histories = LadderHistory::where('ladder_id', $ladder->id)
-            ->where('ends', '<=', now())
+            ->where('starts', '<=', now())
             ->orderBy('ends', 'DESC')
             ->select('short')
             ->get();

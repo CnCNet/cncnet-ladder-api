@@ -34,8 +34,12 @@ return [
 		'secret' => '',
 	],
 
-    'sparkpost' => [
-        'secret' => env('SPARKPOST_SECRET'),
-    ],
+	'sparkpost' => [
+		'secret' => env('SPARKPOST_SECRET'),
+	],
 
+	'twitch' => [
+		'client_id' => env('TWITCH_CLIENT_ID'),
+		'client_secret' => env('TWITCH_CLIENT_SECRET'),
+	],
 ];
