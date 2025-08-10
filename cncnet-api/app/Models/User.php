@@ -483,6 +483,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $userTier = $this->getUserLadderTier($ladder);
         return $userTier->both_tiers;
     }
+  
+    public function collectBans()
+    {
+        return Ban::whereIn('user_id', $this->collectDuplicates(true)->pluck('id'))->get();
+    }
 
     /**
      * Returns true when the user only wants pro only matchups
@@ -540,7 +545,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function bans()
     {
-        return $this->hasMany(Ban::class);
+        return $this->hasMany(Ban::class, 'user_id');
     }
 
     public function bansGiven()
