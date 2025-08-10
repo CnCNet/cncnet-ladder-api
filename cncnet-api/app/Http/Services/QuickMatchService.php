@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Http\Services\TwitchService;
 use App\Extensions\Qm\Matchup\ClanMatchupHandler;
 use App\Models\Game;
 use App\Models\IpAddress;
@@ -19,6 +20,14 @@ use Illuminate\Support\Facades\Log;
 
 class QuickMatchService
 {
+
+    private TwitchService $twitchService;
+
+    public function __construct()
+    {
+        $this->twitchService = new TwitchService();
+    }
+
     public function createQMPlayer($request, $player, $history)
     {
         $qmPlayer = new QmMatchPlayer();
@@ -81,18 +90,80 @@ class QuickMatchService
         $player->user->save();
 
         // Is player an observer?
-        if ($player->user->userSettings->is_observer)
-        {
-            Log::debug("Player ** Is observing Game: " . $player->username);
-            $qmPlayer->is_observer = true;
-        }
-        else
-        {
-            // Log::debug("Player ** Is NOT observing Game: " . $player->username);
-        }
+        $this->handleObserver($qmPlayer, $player);
 
         $qmPlayer->save();
         return $qmPlayer;
+    }
+
+    /**
+     * Checks if the given player should be set as an observer and validates
+     * their Twitch status. If the player is flagged as an observer, this method
+     * verifies they have a valid Twitch username and are currently live on Twitch.
+     * 
+     * If validation fails, the $qmPlayer record is deleted and a RuntimeException
+     * is thrown to stop further processing.
+     * 
+     * @param \App\Models\QmMatchPlayer $qmPlayer The quick match player instance being created or updated.
+     * @param \App\Models\Player $player The player instance associated with the user.
+     * 
+     * @throws \RuntimeException if Twitch username is missing or user is not live.
+     * 
+     * @return void
+     */
+    public function handleObserver($qmPlayer, $player): void
+    {
+        // First check if user toggled on to observe
+        if (!optional($player->user->userSettings)->is_observer)
+        {
+            return;
+        }
+
+        if ($player->user->isAdmin())
+        {
+            Log::debug('Admin player bypassing Twitch live check to observe game.', [
+                'player_username' => $player->username,
+                'user_id' => $player->user->id,
+            ]);
+
+            $qmPlayer->is_observer = true;
+            return;
+        }
+
+        // Retrieve the Twitch username from the user's profile, null-safe
+        $twitchUsername = optional($player->user)->twitch_profile;
+
+        // Validate Twitch username presence
+        if (empty($twitchUsername))
+        {
+            Log::warning('Observer player missing Twitch username.', [
+                'player_username' => $player->username,
+                'user_id' => $player->user->id ?? null,
+            ]);
+
+            $qmPlayer->delete();
+            throw new \RuntimeException('To observe games, you must have a valid Twitch username defined in your Account Settings.');
+        }
+
+        // Check if the Twitch user is currently live
+        if (!$this->twitchService->isUserLive($twitchUsername))
+        {
+            Log::info('Twitch user not live for observer.', [
+                'twitch_username' => $twitchUsername,
+                'player_username' => $player->username,
+            ]);
+
+            $qmPlayer->delete();
+            throw new \RuntimeException('To observe games, you must be live on Twitch.');
+        }
+
+        // Log that the player passed all observer checks
+        Log::debug('Player is observing game.', [
+            'player_username' => $player->username,
+            'twitch_username' => $twitchUsername,
+        ]);
+
+        $qmPlayer->is_observer = true;
     }
 
     public function checkPlayerSidesAreValid($qmPlayer, $side, $ladderRules)
