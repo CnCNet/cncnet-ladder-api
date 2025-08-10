@@ -60,7 +60,8 @@ class MatchUpController
         }
 
         // failsafe, is user allowed to match on 2v2 ladder
-        if ($ladder->ladder_type == Ladder::TWO_VS_TWO && !$user->userSettings->allow_2v2_ladders) {
+        if ($ladder->ladder_type == Ladder::TWO_VS_TWO && !$user->userSettings->allow_2v2_ladders)
+        {
             return $this->quickMatchService->onFatalError(
                 $playerName . ' is not allowed to play on 2v2 ladders, speak with admins for assistance ' . $ladder->abbreviation
             );
@@ -240,7 +241,20 @@ class MatchUpController
         // If we're new to the queue, create required QmMatchPlayer model
         if (!isset($qmPlayer))
         {
-            $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $ladder->current_history);
+            try
+            {
+                $qmPlayer = $this->quickMatchService->createQMPlayer($request, $player, $ladder->current_history);
+            }
+            catch (\RuntimeException $ex)
+            {
+                Log::error('Failed to create QM Player: ' . $ex->getMessage(), [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                ]);
+
+                return $this->quickMatchService->onFatalError($ex->getMessage());
+            }
+
             $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladder->qmLadderRules);
             $qmPlayer->save();
 
