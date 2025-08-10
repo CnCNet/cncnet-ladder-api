@@ -41,11 +41,11 @@ class QuickMatchSpawnService
                 "UIGameMode" =>     $qmMap->game_mode,
                 "UIMapName" =>      $qmMap->description,
                 "MapHash" =>        $map->hash,
-                "Scenario" =>       ($map->filename && $ladder->game == 'd2k') ? $map->filename : "spawnmap.ini",
+                "Scenario" => ($map->filename && $ladder->game == 'd2k') ? $map->filename : "spawnmap.ini",
                 "Seed" =>           $qmMatch->seed,
                 "GameID" =>         $qmMatch->seed,
                 "WOLGameID" =>      $qmMatch->seed,
-                "Host" =>           ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
+                "Host" => ($qmPlayer->color == 0 && $ladder->abbreviation == "d2k") ? "Yes" : "No", // if Dune and player color is 0
                 "Name" =>           $qmPlayer->player()->first()->username,
                 "Port" =>           $qmPlayer->port,
                 "Side" =>           $qmPlayer->actual_side,
@@ -121,7 +121,10 @@ class QuickMatchSpawnService
      */
     public static function appendOthersAndTeamAlliancesToSpawnIni($spawnStruct, $qmPlayer, $otherQmMatchPlayers)
     {
-        Log::debug("QuickMatchSpawnService ** appendOthersAndTeamAlliancesToSpawnIni: Is Observer: " . $qmPlayer->isObserver());
+        Log::debug("QuickMatchSpawnService ** appendOthersAndTeamAlliancesToSpawnIni", [
+            'username' => $qmPlayer->player?->username ?? 'N/A',
+            'isObserver' => $qmPlayer->isObserver() ? true : false
+        ]);
 
         $otherIndex = 1;
         $multiIndex = $qmPlayer->color + 1;
@@ -347,7 +350,7 @@ class QuickMatchSpawnService
     {
 
         // group all players by team
-        $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn ($p) => $p->team);
+        $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn($p) => $p->team);
         foreach ($playersByTeam as $team => $players)
         {
             for ($i = 0; $i < $players->count(); $i++)
@@ -374,7 +377,7 @@ class QuickMatchSpawnService
         $RA1_HOUSE_MULTI_INDEX_OFFSET = 12;
 
         // Group all players by team
-        $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn ($p) => $p->team);
+        $playersByTeam = $otherQmMatchPlayers->concat([$qmPlayer])->groupBy(fn($p) => $p->team);
         foreach ($playersByTeam as $team => $players)
         {
             for ($i = 0; $i < $players->count(); $i++)

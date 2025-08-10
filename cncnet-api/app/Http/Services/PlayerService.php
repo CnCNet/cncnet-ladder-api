@@ -80,7 +80,7 @@ class PlayerService
     {
         $player = Player::find($pid);
         $user = $player->user;
-        $userRating = $user->getOrCreateLiveUserRating();
+        $userRating = $user->getEffectiveUserRating();
 
         return $userRating;
     }

@@ -392,18 +392,36 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Returns live user rating or creates a new one if one doesn't exist yet
-     * @return mixed 
+     * Get a default rating in case the user hasn't one yet.
+     * @return UserRating
      */
-    public function getOrCreateLiveUserRating()
+    protected function getDefaultUserRating($ladderId): UserRating
     {
-        $userRating = UserRating::where("user_id", "=", $this->id)->first();
-        if ($userRating == null)
-        {
-            $userRating = UserRating::createNewFromLegacyPlayerRating($this);
-            Log::info("User ** getUserRating - Rating null creating new. UserId: " . $this->id  . " Created new user rating: " . $userRating);
-        }
-        return $userRating;
+        return UserRating::make([
+            'user_id'      => $this->id,
+            'ladder_id'    => $ladderId,
+            'rating'       => UserRating::$DEFAULT_RATING,
+            'elo_rank'     => 0,
+            'deviation'    => 350,
+            'alltime_rank' => 0,
+            'rated_games'  => 0,
+            'active'       => false,
+        ]);
+    }
+
+    /**
+     * Returns live user rating. Note that the player might be inactive.
+     * @return mixed
+     */
+    public function getEffectiveUserRatingForLadder($ladderId)
+    {
+        $primaryUser = $this->isDuplicate() ? User::find($this->primaryId()) : $this;
+
+        $rating = $primaryUser->userRatings()
+            ->where('ladder_id', $ladderId)
+            ->first();
+
+        return $rating ?? $this->getDefaultUserRating($ladderId);
     }
 
     /**
@@ -416,7 +434,6 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $userRating = $this->getOrCreateLiveUserRating();
         return UserRatingService::getTierByLadderRules($userRating->rating, $history->ladder);
     }
-
 
     /**
      * 
@@ -455,12 +472,18 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->collectDuplicates($includeSelf = true)->pluck('created_at')->filter()->min()->diffForHumans();
     }
 
+    public function alias()
+    {
+        $primaryUser = $this->isDuplicate() ? User::find($this->primaryId()) : $this;
+        return $primaryUser->alias;
+    }
+
     public function canUserPlayBothTiers($ladder)
     {
         $userTier = $this->getUserLadderTier($ladder);
         return $userTier->both_tiers;
     }
-
+  
     public function collectBans()
     {
         return Ban::whereIn('user_id', $this->collectDuplicates(true)->pluck('id'))->get();
@@ -500,9 +523,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(AchievementProgress::class, 'user_id');
     }
 
-    public function userRating()
+    public function userRatings()
     {
-        return $this->hasOne(UserRating::class, 'user_id');
+        return $this->hasMany(UserRating::class, 'user_id');
     }
 
     public function ipHistory()
