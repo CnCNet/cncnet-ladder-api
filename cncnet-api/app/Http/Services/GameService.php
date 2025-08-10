@@ -142,6 +142,8 @@ class GameService
 
                 $qmPlayer = $game->qmMatch->findQmPlayerByPlayerId($playerHere->id);
                 $playerGameReports[$id]->team = $qmPlayer?->team;
+
+                // Note: YR spawner is not currently producing stats.dmp for observers. Impact: a player game report won't be created for the observer, so this current qmPlayer check won't ever be an observer
                 $playerGameReports[$id]->spectator = $qmPlayer?->is_observer ?? false;
 
                 if ($isClanLadderGame)
@@ -230,8 +232,8 @@ class GameService
                         $playerGameReports[$cid]->local_team_id = $cid;
                         break;
 
-                    case "SPC": // ?? this does not work, observer is not even uploading a stats.dmp
-                        // $playerGameReports[$cid]->spectator = $value["value"];
+                    case "SPC":
+                        $playerGameReports[$cid]->spectator = $value["value"];
                         break;
 
                     case "LCN": // TS lost connection
