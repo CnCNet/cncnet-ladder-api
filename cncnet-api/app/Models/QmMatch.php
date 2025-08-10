@@ -54,4 +54,9 @@ class QmMatch extends Model
     {
         return $this->players->where('player_id', '=', $playerId)->first(); // returns a qm_match_player
     }
+
+    public function observers()
+    {
+        return $this->hasMany(QmMatchPlayer::class)->where('is_observer', 1);
+    }
 }
