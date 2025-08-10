@@ -134,7 +134,7 @@ class PlayerService
 
         $userRating->rating = $newRating;
         $userRating->rated_games = $userRating->rated_games + 1;
-        $userRating->save();
+        // $userRating->save();
     }
 
     public function setActiveUsername($player, $ladder)
