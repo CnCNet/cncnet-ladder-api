@@ -160,11 +160,11 @@ class TeamMatchupHandler extends BaseMatchupHandler
         // Filter opponents to those that pass point range check with the current player
         $potentialOpponents = $this->filterOpponentsInRange($currentQmQueueEntry, $opponents, $rules);
 
-        Log::debug("Potential opponents for {$playerName}: " . $potentialOpponents->pluck('qmPlayer.player.username')->implode(', '));
+        Log::debug($potentialOpponents->count() . " potential opponents for {$playerName}: " . $potentialOpponents->pluck('qmPlayer.player.username')->implode(', '));
 
         if ($potentialOpponents->count() < 3)
         {
-            Log::debug("Not enough valid opponents for {$playerName} to form a 2v2 match");
+            Log::debug("Not enough valid opponents for {$playerName} to form a 2v2 match: " . $potentialOpponents->count() . "/3");
             return collect();
         }
 
@@ -175,7 +175,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         })->values();
 
         // Try all possible 3-player combinations (since the current player makes 4)
-        foreach ($sortedOpponents->combinations(3) as $threeOthers)
+        foreach ($this->getCombinations($sortedOpponents, 3) as $threeOthers)
         {
             $matchPlayers = collect([$currentQmQueueEntry])->merge($threeOthers);
 
@@ -191,6 +191,38 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         Log::debug("❌ No valid 2v2 match found for {$playerName}");
         return collect();
+    }
+
+    /**
+     * Generate combinations of a given size from a collection.
+     *
+     * @param Collection $items
+     * @param int $size
+     * @return Collection
+     */
+    private function getCombinations(Collection $items, int $size): Collection
+    {
+        $array = $items->all();
+        $results = [];
+
+        $recurse = function ($arr, $size, $start = 0, $current = []) use (&$results, &$recurse)
+        {
+            if (count($current) === $size)
+            {
+                $results[] = $current;
+                return;
+            }
+            for ($i = $start; $i < count($arr); $i++)
+            {
+                $current[] = $arr[$i];
+                $recurse($arr, $size, $i + 1, $current);
+                array_pop($current);
+            }
+        };
+
+        $recurse($array, $size);
+
+        return collect($results);
     }
 
     /**
