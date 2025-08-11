@@ -108,15 +108,9 @@ class Game extends Model
 
     public function observers()
     {
-        if (!$this->report)
-        {
-            return collect();
-        }
-
-        return PlayerGameReport::where('game_report_id', $this->report->id)
+        return $this->hasMany(PlayerGameReport::class, 'game_report_id', 'game_report_id')
             ->where('spectator', true)
-            ->with(['player', 'user'])
-            ->get();
+            ->with(['player', 'user']);
     }
 
 
@@ -126,7 +120,7 @@ class Game extends Model
         {
             return collect();
         }
-        
+
         return PlayerGameReport::where('game_report_id', $this->report->id)
             ->where('spectator', false)
             ->with('player');
