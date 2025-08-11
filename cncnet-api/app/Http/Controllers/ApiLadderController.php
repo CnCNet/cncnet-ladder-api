@@ -486,7 +486,7 @@ class ApiLadderController extends Controller
     {
         foreach ($playerGameReports as $pgr)
         {
-            if ($pgr->won && $pgr->specatator == false)
+            if ($pgr->won && $pgr->spectator == false)
             {
                 return $pgr->team;
             }
@@ -495,7 +495,7 @@ class ApiLadderController extends Controller
         // Step 2: Fallback — no winner marked; use a non-defeated player (disconnected game case)
         foreach ($playerGameReports as $pgr)
         {
-            if (!$pgr->defeated && !$pgr->disconnected && $pgr->specatator == false)
+            if (!$pgr->defeated && !$pgr->disconnected && $pgr->spectator == false)
             {
                 Log::info("Fallback to 'defeated' logic for disconnected game.", [
                     'game_id' => $pgr->game_id,
