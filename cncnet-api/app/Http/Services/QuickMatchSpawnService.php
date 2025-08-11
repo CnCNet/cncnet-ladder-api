@@ -36,6 +36,9 @@ class QuickMatchSpawnService
 
         srand($qmMatch->seed); // Seed the RNG for possibly random boolean options
 
+        $isObserver = $qmPlayer->is_observer == 1;
+        $notAllowedToChat = !$qmPlayer->player->user->getIsAllowedToChat();
+
         $spawnStruct["spawn"]["Settings"] = array_filter(
             [
                 "UIGameMode" =>     $qmMap->game_mode,
@@ -52,7 +55,7 @@ class QuickMatchSpawnService
                 "Color" =>          $qmPlayer->color,
                 "MyIndex" =>        $qmPlayer->color,
                 "IsSpectator" =>    "False",
-                "DisableChat" =>    $qmPlayer->player->user->getIsAllowedToChat() ? "False" : "True",
+                "DisableChat" => ($isObserver || $notAllowedToChat) ? "True" : "False",
                 // Filter null values
             ],
             function ($var)

@@ -116,12 +116,7 @@ class Game extends Model
 
     public function players()
     {
-        if (!$this->report)
-        {
-            return collect();
-        }
-
-        return PlayerGameReport::where('game_report_id', $this->report->id)
+        return $this->hasMany(PlayerGameReport::class, 'game_report_id', 'game_report_id')
             ->where('spectator', false)
             ->with('player');
     }
