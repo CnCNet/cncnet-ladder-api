@@ -149,6 +149,9 @@ Route::group(['prefix' => 'admin'], function ()
                 Route::post('mappool/new', [\App\Http\Controllers\MapPoolController::class, 'newMapPool']);
                 Route::post('mappool/{mapPoolId}/remove', [\App\Http\Controllers\MapPoolController::class, 'removeMapPool']);
                 Route::post('mappool/{mapPoolId}/reorder', [\App\Http\Controllers\MapPoolController::class, 'reorderMapPool']);
+                Route::post('mappool/{mapPoolId}/forcedFactionSettings', [\App\Http\Controllers\MapPoolController::class, 'updateForcedFactionSettings'])->name('mappool.updateForcedFactionSettings');
+                Route::post('mappool/{mapPoolId}/pairs/add', [\App\Http\Controllers\MapPoolController::class, 'addInvalidFactionPair'])->name('mappool.addPair');
+                Route::delete('mappool/{mapPoolId}/pairs/{index}', [\App\Http\Controllers\MapPoolController::class, 'removeInvalidFactionPair'])->name('mappool.removePair');
                 Route::post('mappool/clone', [\App\Http\Controllers\MapPoolController::class, 'cloneMapPool']);
                 Route::post('mappool/{mapPoolId}/cloneladdermaps', [\App\Http\Controllers\MapPoolController::class, 'copyMaps']);
 

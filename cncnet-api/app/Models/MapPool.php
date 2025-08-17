@@ -7,6 +7,12 @@ class MapPool extends Model {
 
     use HasFactory;
 
+    protected $casts = [
+        'invalid_faction_pairs' => 'array',
+        'forced_faction_ratio'  => 'float',
+        'forced_faction_id'     => 'integer',
+    ];
+
     protected $fillable = [
         'name',
         'ladder_id'
