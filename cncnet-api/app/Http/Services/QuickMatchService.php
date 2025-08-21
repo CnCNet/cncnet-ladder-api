@@ -861,7 +861,7 @@ class QuickMatchService
     {
         $spawnOrder = explode(',', $qmMap->spawn_order);
         $opponentPlayer = null;
-        $opponents = 0;
+        $opponentsCount = 0;
 
         Log::debug("QuickMatchService ** set1v1QmSpawns: " . $qmPlayer->player->username . " Playing " . $qmMap->map->name);
         Log::debug("QuickMatchService ** set1v1QmSpawns: Qm Map" . $qmMap->description);
@@ -953,7 +953,7 @@ class QuickMatchService
             if (!$otherQmPlayer->isObserver())
             {
                 $opponentPlayer = $otherQmPlayer;
-                $opponents++;
+                $opponentsCount++;
             }
         }
 
@@ -963,7 +963,7 @@ class QuickMatchService
         }
         $qmPlayer->save();
 
-        if ($opponentPlayer && $opponents == 1)
+        if ($opponentPlayer && $opponentsCount == 1)
         {
             $ladder = $qmMatch->ladder;
             $history = $ladder->currentHistory();
