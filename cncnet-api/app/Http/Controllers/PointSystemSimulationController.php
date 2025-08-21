@@ -20,6 +20,23 @@ class PointSystemSimulationController extends Controller
 
     public function index(Request $request)
     {
+        if ($request->query->count() === 0)
+        {
+            $defaults = [
+                'abbreviation'              => 'blitz-2v2',
+                'month'                     => now()->format('Y-m'),
+                'player_id'                 => null,
+                'wol_k'                     => 64,
+                'upset_k'                   => 20,
+                'upset_k_loser_multiplier'  => 0.25,
+                'fixed_points'              => 12,
+                'no_negative_points'        => 1,
+            ];
+
+            // redirect auf die URL mit den Defaults im Querystring
+            return redirect()->route('admin.point-system-simulation', $defaults);
+        }
+
         $start = microtime(true);
 
         $validated = $request->validate([
