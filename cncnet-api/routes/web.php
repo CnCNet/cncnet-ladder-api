@@ -95,7 +95,7 @@ Route::group(['prefix' => 'admin'], function ()
             Route::post('users/duplicates/unlink', [\App\Http\Controllers\AdminController::class, 'unlinkDuplicate'])->name('users.duplicate.unlink');
             Route::post('users/duplicates/resetprimary', [\App\Http\Controllers\AdminController::class, 'resetToUnconfirmedPrimary']);
             Route::get('duplicates', [\App\Http\Controllers\ActiveDuplicatesController::class, 'index']);
-
+            Route::get('pointsystemsimulation', [\App\Http\Controllers\PointSystemSimulationController::class, 'index'])->name('admin.point-system-simulation');
             Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
         });
