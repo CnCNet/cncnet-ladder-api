@@ -26,8 +26,11 @@ class TeamMatchupHandler extends BaseMatchupHandler
             return;
         }
 
-        // Fetch all other players in the queue
-        $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry);
+        // Fetch all other players in the queue and exclude current player
+        $opponents = $this->quickMatchService->fetchQmQueueEntry($this->history, $this->qmQueueEntry)
+            ->filter(function($entry) {
+                return $entry->id !== $this->qmQueueEntry->id;
+            })->values();
         $count = $opponents->count() + 1;
         $timeInQueue = $this->qmQueueEntry->secondsinQueue();
         Log::debug("FindOpponent ** inQueue={$playerInQueue}, players in q: {$count}, for ladder={$ladder->abbreviation}, seconds in Queue: {$timeInQueue}");
@@ -39,7 +42,10 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $matchableOpponents = $this->getEntriesInPointRange2v2($this->qmQueueEntry, $matchableOpponents);
 
         $opponentCount = $matchableOpponents->count();
-        Log::debug("FindOpponent ** inQueue={$playerInQueue}, amount of matchable opponent after point filter: {$opponentCount} of {$count}");
+        $matchableNames = $matchableOpponents->map(function($entry) {
+            return $entry->qmPlayer?->player?->username ?? 'Unknown';
+        })->implode(', ');
+        Log::debug("FindOpponent ** inQueue={$playerInQueue}, amount of matchable opponent after point filter: {$opponentCount} of {$count}. Names: [{$matchableNames}]");
 
         // Count the number of players we need to start a match
         // Excluding current player
@@ -74,6 +80,11 @@ class TeamMatchupHandler extends BaseMatchupHandler
         Log::debug("Team A (" . $teamAPlayers->count() . "): " . $teamALog);
         Log::debug("Team B (" . $teamBPlayers->count() . "): " . $teamBLog);
 
+        // Ensure both teams have exactly two players
+        if ($teamAPlayers->count() !== 2 || $teamBPlayers->count() !== 2) {
+            Log::warning("Team size error: Team A has {$teamAPlayers->count()} players, Team B has {$teamBPlayers->count()} players. Expected 2 each.");
+        }
+
         $players = $teamAPlayers->merge($teamBPlayers);
 
         $commonQmMaps = $this->quickMatchService->getCommonMapsForPlayers($ladder, $players);
@@ -90,6 +101,12 @@ class TeamMatchupHandler extends BaseMatchupHandler
         if ($observers->count() > 0)
         {
             $this->matchHasObservers = true;
+        }
+
+        // Throw exception if team sizes are not exactly two
+        if ($teamAPlayers->count() !== 2 || $teamBPlayers->count() !== 2) {
+            Log::warning("Team size error: Team A has {$teamAPlayers->count()} players, Team B has {$teamBPlayers->count()} players. Expected 2 each.");
+            throw new \RuntimeException("Team size error: Team A has {$teamAPlayers->count()} players, Team B has {$teamBPlayers->count()} players. Expected 2 each.");
         }
 
         // Start the match with all other players and other observers if there is any
@@ -191,12 +208,21 @@ class TeamMatchupHandler extends BaseMatchupHandler
     private function getCombinations(Collection $items, int $size): Collection
     {
         $array = $items->all();
+        $allNames = collect($array)->map(function($entry) {
+            return $entry->qmPlayer?->player?->username ?? 'Unknown';
+        })->implode(', ');
+        Log::debug("getCombinations called with items: [{$allNames}] and size: {$size}");
         $results = [];
 
         $recurse = function ($arr, $size, $start = 0, $current = []) use (&$results, &$recurse)
         {
             if (count($current) === $size)
             {
+                // Debug log the combination
+                $names = collect($current)->map(function($entry) {
+                    return $entry->qmPlayer?->player?->username ?? 'Unknown';
+                })->implode(', ');
+                Log::debug("getCombinations: [{$names}]");
                 $results[] = $current;
                 return;
             }
