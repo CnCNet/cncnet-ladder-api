@@ -125,7 +125,7 @@
             <option value="1" {{ old('no_negative_points', (isset($simParams) && $simParams['no_negative_points']) ? 1 : 0) == 1 ? 'selected' : '' }}>on</option>
             <option value="0" {{ old('no_negative_points', (isset($simParams) && $simParams['no_negative_points']) ? 1 : 0) == 0 ? 'selected' : '' }}>off</option>
         </select>
-        <div class="form-text">When turned on, ladder points cannot drop below zero. When turned off, players might end up with negativ points.</div>
+        <div class="form-text">When turned on, ladder points cannot drop below zero. When turned off, players might end up with negative points.</div>
         <!--  Default: {{ ($defaults['no_negative_points'] ?? false) ? 'on' : 'off' }} -->
         </div>
         <hr>
@@ -210,7 +210,7 @@
 
             @if($selectedPlayerId && !empty($gameBreakdown))
                 <hr class="my-4">
-                <h5 class="mb-3">All games for {{ optional($playerOptions->firstWhere('id', (int)$selectedPlayerId))['label'] ?? 'Auswahl' }}</h5>
+                <h5 class="mb-3">All games for {{ optional($playerOptions->firstWhere('id', (int)$selectedPlayerId))['label'] ?? '?' }}</h5>
 
                 @php
                     // Determine maximum number of participants.
@@ -227,7 +227,7 @@
                     <table class="table table-bordered table-hover table-sm table-compact align-middle w-auto" style="table-layout:auto; min-width: max-content;">
                     <thead class="thead-light">
                         <tr>
-                        <th>Datum/Zeit</th>
+                        <th>Date/Time</th>
                         <th>Game ID</th>
                         @for ($i = 1; $i <= $maxParticipants; $i++)
                             <th>Player {{ $i }}</th>
@@ -239,7 +239,7 @@
                     <tbody>
                         @foreach($gameBreakdown as $g)
                         <tr>
-                            <td>{{ \Carbon\Carbon::parse($g['created_at'])->isoFormat('DD.MM.YYYY HH:mm') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($g['created_at'])->locale(app()->getLocale())->isoFormat('LLL') }}</td>
                             <td>{{ $g['game_id'] }}</td>
                             @php
                             $p = $g['participants'] ?? [];
