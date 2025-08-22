@@ -41,7 +41,7 @@ class AdminController extends Controller
         if (!$request->user() || !$request->user()->isAdmin()) {
             abort(403);
         }
-    $observers = User::where('group', User::Observer)->get();
+        $observers = User::where('group', User::Observer)->get();
         return view('admin.observers', [
             'observers' => $observers
         ]);
