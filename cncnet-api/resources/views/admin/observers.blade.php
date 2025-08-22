@@ -23,6 +23,9 @@
                 <tr>
                     <td>
                         <a href="{{ url('/admin/users/edit/' . $observer->id) }}">{{ $observer->name }}</a>
+                        @if(!empty($observer->alias))
+                            ({{ $observer->alias }})
+                        @endif
                     </td>
                     <td>{{ $observer->email }}</td>
                     <td>
