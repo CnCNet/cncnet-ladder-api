@@ -64,6 +64,16 @@ class TeamMatchupHandler extends BaseMatchupHandler
             . json_encode($teamAPlayers) . ' VS'
             . json_encode($teamBPlayers));
 
+        // Log player names and their team
+        $teamALog = $teamAPlayers->map(function($entry) {
+            return $entry->qmPlayer?->player?->username ?? 'Unknown';
+        })->implode(', ');
+        $teamBLog = $teamBPlayers->map(function($entry) {
+            return $entry->qmPlayer?->player?->username ?? 'Unknown';
+        })->implode(', ');
+        Log::debug("Team A (" . $teamAPlayers->count() . "): " . $teamALog);
+        Log::debug("Team B (" . $teamBPlayers->count() . "): " . $teamBLog);
+
         $players = $teamAPlayers->merge($teamBPlayers);
 
         $commonQmMaps = $this->quickMatchService->getCommonMapsForPlayers($ladder, $players);
@@ -129,7 +139,10 @@ class TeamMatchupHandler extends BaseMatchupHandler
         Log::debug("2v2 Search start: queueEntry={$currentQmQueueEntry->id}, name={$playerName}, opponentsInQueue=" . count($opponents));
 
         // Filter opponents to those that pass point range check with the current player
-        $potentialOpponents = $this->filterOpponentsInRange($currentQmQueueEntry, $opponents, $rules);
+        $potentialOpponents = $this->filterOpponentsInRange($currentQmQueueEntry, $opponents, $rules)
+            ->filter(function($opponent) use ($currentQmQueueEntry) {
+                return $opponent->id !== $currentQmQueueEntry->id;
+            })->values();
 
         Log::debug($potentialOpponents->count() . " potential opponents for {$playerName}: " . $potentialOpponents->pluck('qmPlayer.player.username')->implode(', '));
 
@@ -148,7 +161,11 @@ class TeamMatchupHandler extends BaseMatchupHandler
         // Try all possible 3-player combinations (since the current player makes 4)
         foreach ($this->getCombinations($sortedOpponents, 3) as $threeOthers)
         {
-            $matchPlayers = collect([$currentQmQueueEntry])->merge($threeOthers);
+            $matchPlayers = collect([$currentQmQueueEntry])->merge($threeOthers)->unique('id')->values();
+
+            if ($matchPlayers->count() !== 4) {
+                continue;
+            }
 
             if ($this->allPlayersInRange($matchPlayers, $rules))
             {
