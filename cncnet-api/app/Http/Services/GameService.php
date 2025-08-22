@@ -6,6 +6,7 @@ use App\Models\AIPlayer;
 use App\Models\Game;
 use App\Models\GameClip;
 use App\Models\GameReport;
+use App\Models\QmMatch;
 use App\Models\Player;
 use App\Models\PlayerGameReport;
 use Exception;
@@ -93,6 +94,21 @@ class GameService
         $playerGameReports = [];
         $playerStats = [];
 
+        // workaround to track observers because stats.dmp is currently not including any observer data
+        $qmMatch = QmMatch::with('observers')->where('game_id', $game->id)->first();
+        if ($qmMatch)
+        {
+            foreach ($qmMatch->observers as $observer)
+            {
+                $playerGameReport = new PlayerGameReport();
+                $playerGameReport->game_id = $game->id;
+                $playerGameReport->spectator = 1;
+                $playerGameReport->game_report_id = $gameReport->id;
+                $playerGameReport->player_id = $observer->player->id;
+                $playerGameReport->save();
+            }
+        }
+
         foreach ($result as $key => $value)
         {
             $property = substr($key, 0, -1);
@@ -127,7 +143,8 @@ class GameService
                 if ($playerHere === null)
                 {
                     return [
-                        'error' => 'playerHere is null for username ' . json_decode($value["value"]), 'gameReport' => null
+                        'error' => 'playerHere is null for username ' . json_decode($value["value"]),
+                        'gameReport' => null
                     ];
                 }
 
@@ -142,6 +159,8 @@ class GameService
 
                 $qmPlayer = $game->qmMatch->findQmPlayerByPlayerId($playerHere->id);
                 $playerGameReports[$id]->team = $qmPlayer?->team;
+
+                // Note: YR spawner is not currently producing stats.dmp for observers. Impact: a player game report won't be created for the observer, so this current qmPlayer check won't ever be an observer
                 $playerGameReports[$id]->spectator = $qmPlayer?->is_observer ?? false;
 
                 if ($isClanLadderGame)
@@ -230,8 +249,8 @@ class GameService
                         $playerGameReports[$cid]->local_team_id = $cid;
                         break;
 
-                    case "SPC": // ?? this does not work, observer is not even uploading a stats.dmp
-                        // $playerGameReports[$cid]->spectator = $value["value"];
+                    case "SPC":
+                        $playerGameReports[$cid]->spectator = $value["value"];
                         break;
 
                     case "LCN": // TS lost connection
@@ -497,13 +516,13 @@ class GameService
 
         switch ($ttl["type"])
         {
-                //FIELDTYPE_BYTE
+            //FIELDTYPE_BYTE
             case 1:
                 $v = unpack("C", $data);
                 $response["val"] = $v[1];
                 break;
 
-                //FIELDTYPE_BOOLEAN
+            //FIELDTYPE_BOOLEAN
             case 2:
                 $v = unpack("C", $data);
                 if ($v[1] == 0)
@@ -523,25 +542,25 @@ class GameService
                 $response["val"] = $v[1];
                 break;
 
-                //FIELDTYPE_UNSIGNED_SHORT
+            //FIELDTYPE_UNSIGNED_SHORT
             case 4:
                 $v = unpack("n", $data);
                 $response["val"] = $v[1];
                 break;
 
-                //FIELDTYPE_LONG
+            //FIELDTYPE_LONG
             case 5:
                 $v = unpack("N", $data);
                 $response["val"] = $v[1];
                 break;
 
-                //FIELDTYPE_UNSIGNED_LONG
+            //FIELDTYPE_UNSIGNED_LONG
             case 6:
                 $v = unpack("N", $data);
                 $response["val"] = $v[1];
                 break;
 
-                //FIELDTYPE_CHAR
+            //FIELDTYPE_CHAR
             case 7:
                 $ttl["length"] -= 1;
                 $v = unpack("a$ttl[length]", $data);
@@ -549,7 +568,7 @@ class GameService
                 $response["val"] = preg_replace('/[^\x20-\x7e]/', '?', $v[1]);
                 break;
 
-                //FIELDTYPE_CUSTOM_LENGTH
+            //FIELDTYPE_CUSTOM_LENGTH
             case 20:
                 $response["val"] = null;
                 $response["raw"] = substr($data, 0, $ttl["length"]);;

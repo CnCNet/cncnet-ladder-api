@@ -80,7 +80,7 @@ class PlayerService
     {
         $player = Player::find($pid);
         $user = $player->user;
-        $userRating = $user->getEffectiveUserRating();
+        $userRating = $user->getEffectiveUserRatingForLadder($player->ladder_id);
 
         return $userRating;
     }
@@ -134,7 +134,7 @@ class PlayerService
 
         $userRating->rating = $newRating;
         $userRating->rated_games = $userRating->rated_games + 1;
-        $userRating->save();
+        // $userRating->save();
     }
 
     public function setActiveUsername($player, $ladder)

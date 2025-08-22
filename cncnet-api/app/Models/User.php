@@ -431,7 +431,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getLiveUserTier($history)
     {
-        $userRating = $this->getOrCreateLiveUserRating();
+        $userRating = $this->getEffectiveUserRatingForLadder($history->ladder);
         return UserRatingService::getTierByLadderRules($userRating->rating, $history->ladder);
     }
 
@@ -482,6 +482,11 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         $userTier = $this->getUserLadderTier($ladder);
         return $userTier->both_tiers;
+    }
+  
+    public function collectBans()
+    {
+        return Ban::whereIn('user_id', $this->collectDuplicates(true)->pluck('id'))->get();
     }
 
     /**
@@ -540,7 +545,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function bans()
     {
-        return $this->hasMany(Ban::class);
+        return $this->hasMany(Ban::class, 'user_id');
     }
 
     public function bansGiven()

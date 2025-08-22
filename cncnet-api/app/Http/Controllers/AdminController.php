@@ -1154,7 +1154,7 @@ class AdminController extends Controller
         $ladderService = new LadderService;
         $history = $ladderService->getActiveLadderByDate(Carbon::now()->format('m-Y'), $player->ladder->abbreviation);
 
-        $bans = $user->bans()->orderBy('created_at', 'DESC')->get();
+        $bans = $user->collectBans()->sortByDesc('created_at');
 
         return view(
             "admin.moderate-player",
@@ -1794,7 +1794,7 @@ class AdminController extends Controller
 
         // to populate a dropdown and user can pick which history to view observed games
         $histories = LadderHistory::where('ladder_id', $ladder->id)
-            ->where('ends', '<=', now())
+            ->where('starts', '<=', now())
             ->orderBy('ends', 'DESC')
             ->select('short')
             ->get();

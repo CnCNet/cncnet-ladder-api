@@ -351,7 +351,7 @@ class ApiLadderController extends Controller
         $clanGameReports = collect();
 
         // Find the winning clan report
-        $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->groupBy("clan_id")->first();
+        $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->where('spectator', 0)->groupBy("clan_id")->first();
 
         if ($winningClanReport != null)
         {
@@ -486,7 +486,7 @@ class ApiLadderController extends Controller
     {
         foreach ($playerGameReports as $pgr)
         {
-            if ($pgr->won)
+            if ($pgr->won && $pgr->spectator == false)
             {
                 return $pgr->team;
             }
@@ -495,10 +495,11 @@ class ApiLadderController extends Controller
         // Step 2: Fallback — no winner marked; use a non-defeated player (disconnected game case)
         foreach ($playerGameReports as $pgr)
         {
-            if (!$pgr->defeated)
+            if (!$pgr->defeated && !$pgr->disconnected && $pgr->spectator == false)
             {
                 Log::info("Fallback to 'defeated' logic for disconnected game.", [
                     'game_id' => $pgr->game_id,
+                    'game_report_id' => $pgr->gameReport->id,
                     'player_id' => $pgr->player_id,
                     'team' => $pgr->team,
                 ]);
@@ -548,6 +549,11 @@ class ApiLadderController extends Controller
 
         foreach ($playerGameReports as $playerGR)
         {
+            if ($playerGR->spectator == true)
+            {
+                continue;
+            }
+
             $ally_average = 0;
             $ally_points = 0;
             $ally_count = 0;
@@ -564,6 +570,11 @@ class ApiLadderController extends Controller
             // gather points from teammates and enemies, strength of team vs enemy will factor in points awarded/lost
             foreach ($playerGameReports as $otherPlayerGameReport)
             {
+                if ($otherPlayerGameReport->spectator == true)
+                {
+                    continue;
+                }
+
                 $other = $this->playerService->findUserRatingByPlayerId($otherPlayerGameReport->player_id);
                 $players[] = $other;
 
@@ -705,6 +716,11 @@ class ApiLadderController extends Controller
 
         foreach ($playerGameReports as $playerGR)
         {
+            if ($playerGR->spectator == true)
+            {
+                continue;
+            }
+
             $ally_average = 0;
             $ally_points = 0;
             $ally_count = 0;
@@ -715,6 +731,11 @@ class ApiLadderController extends Controller
 
             foreach ($playerGameReports as $pgr)
             {
+                if ($pgr->spectator == true)
+                {
+                    continue;
+                }
+                
                 $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
                 $players[] = $other;
 

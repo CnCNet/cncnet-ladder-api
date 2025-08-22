@@ -225,13 +225,13 @@ class LadderController extends Controller
         }
         else
         {
-            $allGameReports = $game->report()->get();
+            $allGameReports = $game->report;
             $userIsMod = false;
         }
 
         if ($reportId !== null)
         {
-            $gameReport = $game->allReports()->where('game_reports.id', '=', $reportId)->first();
+            $gameReport = $game->allReports->where('id', $reportId)->first();
         }
         else
         {
