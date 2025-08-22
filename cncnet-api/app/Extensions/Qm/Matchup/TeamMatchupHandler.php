@@ -169,10 +169,12 @@ class TeamMatchupHandler extends BaseMatchupHandler
             return collect();
         }
 
-        // Sort opponents by closeness in points to the current player
-        $sortedOpponents = $potentialOpponents->sortBy(function ($opponent) use ($currentQmQueueEntry)
-        {
-            return abs($currentQmQueueEntry->points - $opponent->points);
+        // Sort opponents by a combination of point difference and time in queue bonus
+        $pointsPerSecond = $rules->points_per_second;
+        $sortedOpponents = $potentialOpponents->sortBy(function ($opponent) use ($currentQmQueueEntry, $pointsPerSecond) {
+            $pointDiff = abs($currentQmQueueEntry->points - $opponent->points);
+            $waitTimeBonus = (strtotime($opponent->updated_at) - strtotime($opponent->created_at)) * $pointsPerSecond;
+            return $pointDiff - $waitTimeBonus;
         })->values();
 
         // Try all possible 3-player combinations (since the current player makes 4)
