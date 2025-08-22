@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Ladder;
 use App\Models\MapPool;
+use App\Models\LadderHistory;
 use CurlFile;
 use ErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use ZipArchive;
 
 class MapPoolController extends Controller
@@ -511,6 +513,8 @@ class MapPoolController extends Controller
         $ladder = Ladder::find($ladderId);
         $mapPool = MapPool::find($mapPoolId);
         $ladderRules = $ladder->qmLadderRules;
+        $sidesByLocal = $ladder->sides->keyBy('local_id');
+        $selectableSidesByLocal = $sidesByLocal->filter(fn($s) => $s->local_id >= 0); // Exclude "Random".
 
         return view(
             "admin.edit-map-pool",
@@ -524,6 +528,7 @@ class MapPoolController extends Controller
                 'sides' => $ladder->sides,
                 'ladderMaps' => $ladder->maps,
                 'spawnOptions' =>  \App\Models\SpawnOption::all(),
+                'selectableSidesByLocal' => $selectableSidesByLocal,
                 'allLadders' => \App\Models\Ladder::all(),
                 'use_ranked_map_picker' => $ladderRules->use_ranked_map_picker
             ]
@@ -717,5 +722,84 @@ class MapPoolController extends Controller
 
         $request->session()->flash('success', "Deleted Map Tier '" . $mapTier->name . "'.");
         return redirect()->back();
+    }
+
+    public function addInvalidFactionPair(Request $request, $ladderId, $mapPoolId)
+    {
+        $validated = $request->validate([
+            'faction_a' => [
+                'required','integer','min:0',
+                Rule::exists('sides','local_id')->where(fn($q) => $q->where('ladder_id', $ladderId)),
+            ],
+            'faction_b' => [
+                'required','integer','min:0',
+                Rule::exists('sides','local_id')->where(fn($q) => $q->where('ladder_id', $ladderId)),
+            ],
+        ], [], [], 'pairs');
+
+        $mapPool = MapPool::findOrFail($mapPoolId);
+        $pairs = $mapPool->invalid_faction_pairs ?? [];
+
+        $a = min((int)$validated['faction_a'], (int)$validated['faction_b']);
+        $b = max((int)$validated['faction_a'], (int)$validated['faction_b']);
+
+        foreach ($pairs as $p)
+        {
+            if ($p[0] == $a && $p[1] == $b)
+            {
+                return back()
+                    ->withFragment('faction-pairs')
+                    ->withErrors(['duplicate_pair' => 'This pair already exists.'], 'pairs')
+                    ->withInput();
+            }
+        }
+
+        $pairs[] = [$a, $b];
+        $mapPool->invalid_faction_pairs = $pairs;
+        $mapPool->save();
+
+        return back()->withFragment('faction-pairs')->with('success_pairs', 'Pair added.');
+    }
+
+    public function removeInvalidFactionPair(Request $request, $ladderId, $mapPoolId, $index)
+    {
+        $mapPool = MapPool::findOrFail($mapPoolId);
+        $pairs = $mapPool->invalid_faction_pairs ?? [];
+
+        if (!isset($pairs[$index]))
+        {
+            return back()
+                ->withFragment('faction-pairs')
+                ->withErrors(['not_found' => 'Faction pair not found.'], 'pairs')
+                ->withInput();
+        }
+
+        unset($pairs[$index]);
+        $pairs = array_values($pairs);
+        $mapPool->invalid_faction_pairs = $pairs ?: null;
+        $mapPool->save();
+
+        return back()->withFragment('faction-pairs')->with('success_pairs', 'Pair removed.');
+    }
+
+    public function updateForcedFactionSettings(Request $request, $ladderId, $mapPoolId)
+    {
+        $mapPool = MapPool::findOrFail($mapPoolId);
+
+        $validated = $request->validate([
+            'forced_faction_id' => [
+                'nullable','integer','min:0',
+                Rule::exists('sides','local_id')->where(fn($q) => $q->where('ladder_id', $ladderId)),
+            ],
+            'forced_faction_ratio' => ['required','numeric','between:0,1'],
+        ], [], [], 'forced_faction');
+
+        $mapPool->forced_faction_id = $validated['forced_faction_id'];
+        $mapPool->forced_faction_ratio = (float)$validated['forced_faction_ratio'];
+        $mapPool->save();
+
+        return back()
+            ->withFragment('forced_faction')
+            ->with('success_forced', 'Forced faction settings saved.');
     }
 }

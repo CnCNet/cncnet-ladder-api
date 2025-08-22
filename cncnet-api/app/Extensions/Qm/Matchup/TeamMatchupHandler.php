@@ -36,10 +36,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
 
         // Find opponents that can be matched with current player.
-        $matchableOpponents = $this->quickMatchService->getEntriesInPointRange($this->qmQueueEntry, $matchableOpponents);
-
-        // TESTING new 2v2 matching logic
-        $this->testNew2v2Logic($this->qmQueueEntry, $matchableOpponents);
+        $matchableOpponents = $this->getEntriesInPointRange2v2($this->qmQueueEntry, $matchableOpponents);
 
         $opponentCount = $matchableOpponents->count();
         Log::debug("FindOpponent ** inQueue={$playerInQueue}, amount of matchable opponent after point filter: {$opponentCount} of {$count}");
@@ -111,32 +108,6 @@ class TeamMatchupHandler extends BaseMatchupHandler
             Game::GAME_TYPE_2VS2,
             $stats
         );
-    }
-
-    /**
-     * Solely used for testing function `getEntriesInPointRange2v2()` in production
-     * Result of function is logged out.
-     * Errors are caught and then logged out.
-     */
-    public function testNew2v2Logic(QmQueueEntry $currentQmQueueEntry, Collection $opponents)
-    {
-        try
-        {
-            $match2v2 = $this->getEntriesInPointRange2v2($currentQmQueueEntry, $opponents);
-
-            Log::debug(
-                "2v2 matching result for {$currentQmQueueEntry->qmPlayer?->player?->username}: " .
-                    ($match2v2->isNotEmpty()
-                        ? 'MATCH FOUND: ' . $match2v2->pluck('qmPlayer.player.username')->implode(', ')
-                        : 'No match found')
-            );
-        }
-        catch (\Throwable $e)
-        {
-            Log::error("Error during TEST 2v2 matchmaking for queueEntry {$currentQmQueueEntry->id}: {$e->getMessage()}", [
-                'trace' => $e->getTraceAsString()
-            ]);
-        }
     }
 
     /**

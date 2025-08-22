@@ -96,6 +96,13 @@ Route::group(['prefix' => 'admin'], function ()
             Route::post('users/duplicates/resetprimary', [\App\Http\Controllers\AdminController::class, 'resetToUnconfirmedPrimary']);
             Route::get('duplicates', [\App\Http\Controllers\ActiveDuplicatesController::class, 'index']);
 
+            // Observer management
+            Route::get('users/observers', [\App\Http\Controllers\AdminController::class, 'getObservers'])->name('admin.observers');
+            Route::post('users/observers/add', [\App\Http\Controllers\AdminController::class, 'addObserver'])->name('admin.observers.add');
+            Route::post('users/observers/remove', [\App\Http\Controllers\AdminController::class, 'removeObserver'])->name('admin.observers.remove');
+
+            Route::get('pointsystemsimulation', [\App\Http\Controllers\PointSystemSimulationController::class, 'index'])->name('admin.point-system-simulation');
+
             Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
         });
@@ -149,6 +156,9 @@ Route::group(['prefix' => 'admin'], function ()
                 Route::post('mappool/new', [\App\Http\Controllers\MapPoolController::class, 'newMapPool']);
                 Route::post('mappool/{mapPoolId}/remove', [\App\Http\Controllers\MapPoolController::class, 'removeMapPool']);
                 Route::post('mappool/{mapPoolId}/reorder', [\App\Http\Controllers\MapPoolController::class, 'reorderMapPool']);
+                Route::post('mappool/{mapPoolId}/forcedFactionSettings', [\App\Http\Controllers\MapPoolController::class, 'updateForcedFactionSettings'])->name('mappool.updateForcedFactionSettings');
+                Route::post('mappool/{mapPoolId}/pairs/add', [\App\Http\Controllers\MapPoolController::class, 'addInvalidFactionPair'])->name('mappool.addPair');
+                Route::delete('mappool/{mapPoolId}/pairs/{index}', [\App\Http\Controllers\MapPoolController::class, 'removeInvalidFactionPair'])->name('mappool.removePair');
                 Route::post('mappool/clone', [\App\Http\Controllers\MapPoolController::class, 'cloneMapPool']);
                 Route::post('mappool/{mapPoolId}/cloneladdermaps', [\App\Http\Controllers\MapPoolController::class, 'copyMaps']);
 
