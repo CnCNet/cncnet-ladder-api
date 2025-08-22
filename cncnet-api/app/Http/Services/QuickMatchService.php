@@ -1653,7 +1653,9 @@ class QuickMatchService
     public function getBestMatch2v2ForPlayer(QmQueueEntry $currentPlayer, Collection $matchableOpponents, LadderHistory $history): array
     {
 
-        $players = $matchableOpponents->concat([$currentPlayer]);
+        // Ensure matchableOpponents does not contain the current player and is unique by id
+        $matchableOpponents = $matchableOpponents->filter(fn($opponent) => $opponent->id !== $currentPlayer->id)->unique('id')->values();
+        $players = $matchableOpponents->concat([$currentPlayer])->unique('id')->values();
 
         $opponentsRating = [];
         $currentPlayerRank = $currentPlayer->qmPlayer->player->points($history);
@@ -1672,17 +1674,16 @@ class QuickMatchService
             $opponentsRating
         );
 
-        // $matchup = $this->findBestMatch($possibleMatches);
-        // $matchup = $this->getRandomTeams($possibleMatches);
         $matchup = $this->findBestMatchRandomized($possibleMatches);
 
         $g = function ($players, $match, $team)
         {
+            // Only include unique players by id
             return $players
                 ->filter(fn(QmQueueEntry $qmQueueEntry) => in_array($qmQueueEntry->id, [
                     $match[$team]['player1'],
                     $match[$team]['player2']
-                ]));
+                ]))->unique('id')->values();
         };
 
         $teamAPlayers = $g($players, $matchup, 'teamA');
