@@ -323,19 +323,10 @@ class QuickMatchService
                 && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter
             )
             {
-                // Do both players rank meet the minimum rank required for no pt filter to apply
-                if (
-                    abs($currentQmQueueEntry->qmPlayer->player->rank($history) - $opponent->qmPlayer->player->rank($history))
-                    <=
-                    $ladder->qmLadderRules->point_filter_rank_threshold
-                )
-                {
-                    // Both players have the point filter disabled, we will ignore the point filter and match them
-                    $matchableOpponents->add($opponent);
-                    continue;
-                }
+                // Both players have the point filter disabled, we will ignore the point filter and match them
+                $matchableOpponents->add($opponent);
+                continue;
             }
-
 
             // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
             $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $ladder->qmLadderRules->points_per_second;

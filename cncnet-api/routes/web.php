@@ -96,6 +96,11 @@ Route::group(['prefix' => 'admin'], function ()
             Route::post('users/duplicates/resetprimary', [\App\Http\Controllers\AdminController::class, 'resetToUnconfirmedPrimary']);
             Route::get('duplicates', [\App\Http\Controllers\ActiveDuplicatesController::class, 'index']);
 
+            // Observer management
+            Route::get('users/observers', [\App\Http\Controllers\AdminController::class, 'getObservers'])->name('admin.observers');
+            Route::post('users/observers/add', [\App\Http\Controllers\AdminController::class, 'addObserver'])->name('admin.observers.add');
+            Route::post('users/observers/remove', [\App\Http\Controllers\AdminController::class, 'removeObserver'])->name('admin.observers.remove');
+
             Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
         });

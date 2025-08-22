@@ -17,6 +17,7 @@ use App\Models\PlayerGameReport;
 use App\Models\SpawnOptionString;
 use App\Models\URLHelper;
 use App\Models\User;
+use App\Models\Side;
 use App\Models\Game;
 use App\Models\UserPro;
 use App\Models\UserSettings;
@@ -32,6 +33,62 @@ use App\Models\QmUserId;
 
 class AdminController extends Controller
 {
+    /**
+     * Show all observer users and allow add/remove.
+     */
+    public function getObservers(Request $request)
+    {
+        if (!$request->user() || !$request->user()->isAdmin()) {
+            abort(403);
+        }
+    $observers = User::where('group', User::Observer)->get();
+        return view('admin.observers', [
+            'observers' => $observers
+        ]);
+    }
+
+    /**
+     * Add a user as observer by ID or email.
+     */
+    public function addObserver(Request $request)
+    {
+        if (!$request->user() || !$request->user()->isAdmin()) {
+            abort(403);
+        }
+        $request->validate([
+            'user_identifier' => 'required'
+        ]);
+        $input = $request->input('user_identifier');
+        $user = User::where('email', $input)
+            ->orWhere('name', $input)
+            ->first();
+        if ($user) {
+            $user->group = User::Observer;
+            $user->save();
+            return redirect()->route('admin.observers')->with('success', 'User added as observer.');
+        }
+        return redirect()->route('admin.observers')->with('error', 'User not found.');
+    }
+
+    /**
+     * Remove observer status from user.
+     */
+    public function removeObserver(Request $request)
+    {
+        if (!$request->user() || !$request->user()->isAdmin()) {
+            abort(403);
+        }
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id'
+        ]);
+        $user = User::find($request->input('user_id'));
+        if ($user && $user->group === User::Observer) {
+            $user->group = User::User;
+            $user->save();
+            return redirect()->route('admin.observers')->with('success', 'Observer removed.');
+        }
+        return redirect()->route('admin.observers')->with('error', 'User not found or not an observer.');
+    }
     private $ladderService;
     private $adminService;
 
@@ -931,7 +988,7 @@ class AdminController extends Controller
 
     public function remSide(Request $request, $ladderId = null)
     {
-        $ladder = \App\Models\Ladder::find($ladderId);
+        $ladder = Ladder::find($ladderId);
 
         if ($ladder === null || $ladderId === null)
         {
@@ -953,7 +1010,7 @@ class AdminController extends Controller
 
     public function addSide(Request $request, $ladderId = null)
     {
-        $ladder = \App\Models\Ladder::find($ladderId);
+        $ladder = Ladder::find($ladderId);
 
         if ($ladder === null || $ladderId === null)
         {
@@ -964,7 +1021,7 @@ class AdminController extends Controller
         $side = $ladder->sides()->where('local_id', '=', $request->local_id)->first();
         if ($side === null)
         {
-            $side = new \App\Models\Side;
+            $side = new Side;
             $side->ladder_id = $ladder->id;
             $side->local_id = $request->local_id;
         }
@@ -1787,7 +1844,12 @@ class AdminController extends Controller
         }
 
         // list of players and observers from previous games for this ladder history
-        $observedGames = Game::with(['players.player.user', 'observers.player.user'])
+        $observedGames = Game::with([
+            'players.player',
+            'players.player.user',
+            'observers.player',
+            'observers.player.user'
+        ])
             ->where('ladder_history_id', $ladderHistory->id)
             ->whereHas('observers')
             ->paginate(10);
