@@ -8,25 +8,27 @@ use App\Models\MapPool;
 use App\Models\QmMatchPlayer;
 use App\Models\QmMap;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class FactionPolicyService
 {
     protected function getForcedStats(Ladder $ladder, LadderHistory $history, QmMatchPlayer $player, int $forcedId): array
     {
-        $stats = QmMatchPlayer::query()
-            ->where('player_id', $player->player_id)
-            ->whereHas('qmMatch', function($q) use ($ladder, $history) {
-                $q->where('ladder_id', $ladder->id)
-                  ->whereBetween('created_at', [$history->start_date, $history->end_date]);
-            })
-            ->selectRaw('COUNT(*) as total')
-            ->selectRaw('SUM(CASE WHEN actual_side = ? THEN 1 ELSE 0 END) as forced_cnt', [$forcedId])
+        $query = DB::table('player_game_reports')
+            ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+            ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->join('stats2', 'stats2.id', '=', 'player_game_reports.stats_id')
+            ->where('player_game_reports.player_id', $player->player_id)
+            ->where('games.ladder_history_id', $history->id)
+            ->where('game_reports.valid', 1)
+            ->where('game_reports.best_report', 1);
+
+        $row = $query
+            ->selectRaw('COUNT(*) AS total')
+            ->selectRaw('SUM(CASE WHEN stats2.cty = ? THEN 1 ELSE 0 END) AS forced_cnt', [$forcedId])
             ->first();
 
-        $total = (int)($stats->total ?? 0);
-        $forcedCnt = (int)($stats->forced_cnt ?? 0);
-
-        return [$total, $forcedCnt];
+        return [(int) ($row->total ?? 0), (int) ($row->forced_cnt ?? 0)];
     }
 
     protected function createCandidates(array $currentSides, MapPool $pool): array

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Ladder;
 use App\Models\MapPool;
+use App\Models\LadderHistory;
 use CurlFile;
 use ErrorException;
 use Illuminate\Http\Request;
