@@ -7,6 +7,12 @@ class MapPool extends Model {
 
     use HasFactory;
 
+    protected $casts = [
+        'invalid_faction_pairs' => 'array',
+        'forced_faction_ratio'  => 'float',
+        'forced_faction_id'     => 'integer',
+    ];
+
     protected $fillable = [
         'name',
         'ladder_id'
@@ -31,5 +37,43 @@ class MapPool extends Model {
     public function tiers()
     {
         return $this->hasMany(MapTier::class, 'map_pool_id');
+    }
+
+    public function invalidPairs(): array
+    {
+        $raw = $this->invalid_faction_pairs ?? '[]';
+        $arr = json_decode($raw, true);
+        return is_array($arr) ? $arr : [];
+    }
+
+    public function isValidPair(int $faction1, int $faction2): bool
+    {
+        $pairs = $this->invalidPairs();
+        if (!is_array($pairs) || empty($pairs))
+        {
+            return true; // No limitations.
+        }
+
+        $factionA = min($faction1, $faction2);
+        $factionB = max($faction1, $faction2);
+
+        foreach ($pairs as $p)
+        {
+            if (!is_array($p) || count($p) !== 2)
+            {
+                Log::warning('isValidPair: map pool contains invalid forbidden faction pairs (' . $p . ')');
+                continue;
+            }
+
+            $pairFaction1 = (int)min($p[0], $p[1]);
+            $pairFaction2 = (int)max($p[0], $p[1]);
+
+            if ($pairFaction1 === $factionA && $pairFaction2 === $factionB)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
