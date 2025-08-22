@@ -54,10 +54,10 @@
 
 @section('content')
 <section class="mt-4">
-    <div class="mb-4">
-        <form id="historyForm" class="form-inline">
-            <label for="ladderHistoryShort" class="me-2">Select Ladder History:</label>
-            <select name="ladderHistoryShort" id="ladderHistoryShort" class="form-select d-inline w-auto me-2">
+    <div class="mb-4 d-flex justify-content-center">
+        <form id="historyForm" class="d-flex align-items-center flex-wrap gap-2" style="gap: 1rem;">
+            <label for="ladderHistoryShort" class="form-label mb-0" style="min-width: 140px;">Select Ladder History:</label>
+            <select name="ladderHistoryShort" id="ladderHistoryShort" class="form-select" style="width: 200px; min-width: 120px;">
                 @foreach ($histories as $history)
                 <option value="{{ $history->short }}" {{ isset($ladderHistoryShort) && $ladderHistoryShort == $history->short ? 'selected' : '' }}>
                     {{ $history->short }}

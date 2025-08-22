@@ -74,6 +74,7 @@
                             <p>Manage everything to do with Users</p>
                             <ul class="list-unstyled">
                                 <li><a href="/admin/users" class="btn btn-md btn-secondary">User List</a></li>
+                                <li><a href="/admin/users/observers" class="btn btn-md btn-secondary mt-2">Observer List</a></li>
                                 <li><a href="/admin/users/chatbans" class="btn btn-md btn-secondary mt-2">Chat Ban User List</a></li>
                                 <li><a href="/admin/players/ratings" class="btn btn-md btn-secondary mt-2">User Ratings</a></li>
                                 <li><a href="/admin/clans" class="btn btn-md btn-secondary mt-2">Clan List</a></li>
