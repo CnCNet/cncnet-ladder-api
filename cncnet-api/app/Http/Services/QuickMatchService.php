@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Services\FactionPolicyService;
 use App\Http\Services\TwitchService;
 use App\Extensions\Qm\Matchup\ClanMatchupHandler;
 use App\Models\Game;
@@ -921,6 +922,8 @@ class QuickMatchService
     private function set1v1QmSpawns($otherQmQueueEntries, $qmMatch, $qmPlayer, $expectedPlayerQueueCount, $matchHasObserver, $qmMap, $perMS, $qEntry)
     {
         $spawnOrder = explode(',', $qmMap->spawn_order);
+        $opponentPlayer = null;
+        $opponentsCount = 0;
 
         Log::debug("QuickMatchService ** set1v1QmSpawns: " . $qmPlayer->player->username . " Playing " . $qmMap->map->name);
         Log::debug("QuickMatchService ** set1v1QmSpawns: Qm Map" . $qmMap->description);
@@ -1008,6 +1011,12 @@ class QuickMatchService
             $otherQmPlayer->qm_match_id = $qmMatch->id;
             $otherQmPlayer->tunnel_id = $qmMatch->seed + $otherQmPlayer->color;
             $otherQmPlayer->save();
+
+            if (!$otherQmPlayer->isObserver())
+            {
+                $opponentPlayer = $otherQmPlayer;
+                $opponentsCount++;
+            }
         }
 
         if ($qmPlayer->actual_side == -1)
@@ -1015,6 +1024,18 @@ class QuickMatchService
             $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
         }
         $qmPlayer->save();
+
+        if ($opponentPlayer && $opponentsCount == 1)
+        {
+            $ladder = $qmMatch->ladder;
+            $history = $ladder->currentHistory();
+            $pool = $ladder->mapPool;
+
+            // Apply FactionPolicyService for 1v1 matches. Might change actual_side for one player.
+            // If there's not forced faction or forced faction ratio for the map pool, nothing will change.
+            $fps = app(\App\Http\Services\FactionPolicyService::class);
+            $fps->applyPolicy1v1($pool, $ladder, $history, $qmMatch->map, $qmPlayer, $opponentPlayer);
+        }
     }
 
     public function createQmMatch(
