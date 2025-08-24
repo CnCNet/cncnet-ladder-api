@@ -3,9 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class UserSettings extends Model
 {
+    use LogsActivity;
+
+    protected static $logAttributes = [
+        'user_id', 'disabledPointFilter', 'skip_score_screen', 'match_any_map', 'is_anonymous', 'match_ai', 'is_observer', 'allow_observers'
+    ];
+    protected static $logName = 'UserSettings';
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
+    protected static $recordEvents = ['updated'];
     protected $table = 'user_settings';
 
     protected $fillable = [
@@ -18,7 +28,6 @@ class UserSettings extends Model
         'is_observer',
         'allow_observers',
     ];
-
 
     public function __construct()
     {

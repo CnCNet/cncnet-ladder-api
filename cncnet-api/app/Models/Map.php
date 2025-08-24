@@ -4,10 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Map extends Model
 {
-    use HasFactory;
+    use LogsActivity, HasFactory;
+
+    protected static $logAttributes = [
+        'name', 'hash', 'image_path', 'description'
+    ];
+    protected static $logName = 'Map';
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
     protected $table = 'maps';
     protected $fillable = ['name', 'hash', 'ladder_id', 'spawn_count'];
     public $timestamps = false;

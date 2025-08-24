@@ -1,12 +1,22 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class MapPool extends Model {
+class MapPool extends Model
+{
+    use LogsActivity, HasFactory;
 
-    use HasFactory;
+    protected static $logAttributes = [
+        'name', 'ladder_id', 'invalid_faction_pairs', 'forced_faction_ratio', 'forced_faction_id'
+    ];
+    protected static $logName = 'MapPool';
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
 
     protected $casts = [
         'invalid_faction_pairs' => 'array',
