@@ -87,7 +87,7 @@ class FactionPolicyServiceTest extends TestCase
         $pool = new MapPool();
         $pool->forced_faction_id     = 5;
         $pool->forced_faction_ratio  = 0.5;
-        $pool->invalid_faction_pairs = json_encode([]);
+        $pool->invalid_faction_pairs = [];
 
         // Map allows factions 1, 2, 3, 4, but not 5.
         $qmMap = $this->mockQmMap([1,2,3,4]);
@@ -111,7 +111,7 @@ class FactionPolicyServiceTest extends TestCase
         $pool = new MapPool();
         $pool->forced_faction_id     = 9;
         $pool->forced_faction_ratio  = 0.5;
-        $pool->invalid_faction_pairs = json_encode([[0, 6], [0, 0], [6, 6], [9, 9]]);
+        $pool->invalid_faction_pairs = [[0, 6], [0, 0], [6, 6], [9, 9]];
 
         // Map allows forced faction.
         $qmMap = $this->mockQmMap([0, 6, 9]);
@@ -163,7 +163,7 @@ class FactionPolicyServiceTest extends TestCase
         $pool = new MapPool();
         $pool->forced_faction_id     = 0;
         $pool->forced_faction_ratio  = 0.5;
-        $pool->invalid_faction_pairs = json_encode([[ 0, 0 ], [ 6, 6 ]]);
+        $pool->invalid_faction_pairs = [[ 0, 0 ], [ 6, 6 ]];
 
         $qmMap = $this->mockQmMap([0, 6]);
 
