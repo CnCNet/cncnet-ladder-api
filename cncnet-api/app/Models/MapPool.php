@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class MapPool extends Model {
 
@@ -41,9 +42,7 @@ class MapPool extends Model {
 
     public function invalidPairs(): array
     {
-        $raw = $this->invalid_faction_pairs ?? '[]';
-        $arr = json_decode($raw, true);
-        return is_array($arr) ? $arr : [];
+        return $this->invalid_faction_pairs ?? [];
     }
 
     public function isValidPair(int $faction1, int $faction2): bool
