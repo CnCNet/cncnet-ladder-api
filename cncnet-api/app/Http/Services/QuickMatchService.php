@@ -1227,6 +1227,12 @@ class QuickMatchService
         $this->setTeamSpawns('A', $spawns[0], $teamAPlayers, $qmMatch, $colors);
         $this->setTeamSpawns('B', $spawns[1], $teamBPlayers, $qmMatch, $colors);
 
+        // Set observers' team to 'observer'
+        foreach ($observers->values() as $observer) {
+            $qmObserver = $observer->qmPlayer;
+            $qmObserver->team = 'observer';
+            $qmObserver->save();
+        }
         $this->setObserversSpawns($observers, $qmMatch, $colors);
 
         return $qmMatch;
