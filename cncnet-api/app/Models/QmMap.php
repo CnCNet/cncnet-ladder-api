@@ -1,11 +1,22 @@
-<?php namespace App\Models;
+<?php 
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class QmMap extends Model {
+class QmMap extends Model
+{
 
-    use HasFactory;
+    use LogsActivity, HasFactory;
+
+    protected static $logAttributes = [
+        'ladder_id', 'map_pool_id', 'map_id', 'valid', 'description', 'allowed_sides', 'team1_spawn_order', 'team2_spawn_order'
+    ];
+    protected static $logName = 'QmMap';
+    protected static $logOnlyDirty = true;
+    protected static $submitEmptyLogs = false;
 
     protected $fillable = [
         'ladder_id',
@@ -18,7 +29,7 @@ class QmMap extends Model {
         'team2_spawn_order',
     ];
 
-	//
+    //
     public function qmMatches()
     {
         return $this->hasMany(QmMatch::class);
@@ -44,12 +55,12 @@ class QmMap extends Model {
         $ladder = Ladder::find($id);
         $qmMaps = $ladder->mapPool->maps;
 
-        return $qmMaps->map( function($qmMap)
+        return $qmMaps->map(function ($qmMap)
         {
             $qmMap["hash"] = $qmMap->map->hash;
             $qmMap->map['image_url'] = asset($qmMap->map->image_path);
             $qmMap["allowed_sides"] = array_map('intval', explode(',', $qmMap->allowed_sides));
-            
+
             return $qmMap;
         });
     }

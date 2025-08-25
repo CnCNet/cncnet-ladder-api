@@ -73,8 +73,7 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/qm/ladder/{ladderAbbrev}/maps/public', [\App\Http\Controllers\ApiQuickMatchController::class, 'mapListRequest']);
         Route::get('/qm/ladder/{ladderAbbrev}/stats', [\App\Http\Controllers\ApiQuickMatchController::class, 'statsRequest']);
         Route::get('/qm/ladder/{ladderAbbrev}/stats/{tierId}', [\App\Http\Controllers\ApiQuickMatchController::class, 'statsRequest']);
-        Route::get('/qm/ladder/{ladderAbbrev}/current_matches', [\App\Http\Controllers\ApiQuickMatchController::class, 'getActiveMatches']);
-        Route::get('/qm/ladder/{ladderAbbrev}/active_matches', [\App\Http\Controllers\ApiQuickMatchController::class, 'getActiveMatchesV2']);
+        Route::get('/qm/ladder/{ladderAbbrev}/active_matches', [\App\Http\Controllers\ApiQuickMatchController::class, 'getActiveMatches']);
         Route::get('/qm/ladder/{ladderAbbrev}/erroredGames', [\App\Http\Controllers\ApiQuickMatchController::class, 'getErroredGames']);
         Route::get('/qm/ladder/{ladderAbbrev}/{hours}/recentlyWashedGames', [\App\Http\Controllers\ApiQuickMatchController::class, 'getRecentLadderWashedGamesCount']);
     });
