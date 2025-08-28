@@ -261,7 +261,8 @@ class LadderController extends Controller
         $showBothZeroFix = false;
         $fixedPointsPreview = [];
 
-        if (count($playerGameReports) === 2) {
+        if (count($playerGameReports) === 2)
+        {
             $p1 = $playerGameReports[0];
             $p2 = $playerGameReports[1];
 
@@ -272,7 +273,8 @@ class LadderController extends Controller
             $showBothPositiveFix = $hasOneWinner && $bothPositive;
             $showBothZeroFix = $hasOneWinner && $bothZero;
 
-            if ($showBothZeroFix && $userIsMod) {
+            if ($showBothZeroFix && $userIsMod)
+            {
                 $fixedPointsPreview = app(\App\Http\Controllers\AdminController::class)->awardedPointsPreview($gameReport, $history);
             }
         }
