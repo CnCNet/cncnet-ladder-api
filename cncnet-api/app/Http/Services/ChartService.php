@@ -42,7 +42,7 @@ class ChartService
 
     public function getPlayerGamesPlayedByMonth($player, $history)
     {
-        return Cache::remember("getPlayerGamesPlayedByMonth/$history->short/$player->id", 5 * 60, function () use ($player, $history)
+        return Cache::remember("getPlayerGamesPlayedByMonth/$history->short/$player->id", 10 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
