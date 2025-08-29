@@ -421,7 +421,8 @@ class LadderService
                     'qmMatch.map.map:id,name,hash',
                     'qmMatch.players:id,qm_match_id,player_id,team'
                 ])
-                ->paginate($limit);
+                ->limit($limit)
+                ->get();
         });
     }
 
