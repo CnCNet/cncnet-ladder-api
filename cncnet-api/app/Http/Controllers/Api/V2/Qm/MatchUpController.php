@@ -248,12 +248,8 @@ class MatchUpController
             }
             catch (\RuntimeException $ex)
             {
-                Log::error('Failed to create QM Player: ' . $ex->getMessage(), [
-                    'player_id' => $player->id,
-                    'username' => $player->username,
-                ]);
                 $duration = microtime(true) - $startTime;
-                Log::info("onMatchMeUp duration: {$duration} seconds", [
+                Log::error('Failed to create QM Player: ' . $ex->getMessage() . " | onMatchMeUp exit: exception | duration: {$duration} seconds", [
                     'player_id' => $player->id,
                     'username' => $player->username,
                     'ladder' => $ladder->abbreviation
@@ -267,10 +263,11 @@ class MatchUpController
             if (!$validSides)
             {
                 $duration = microtime(true) - $startTime;
-                Log::info("onMatchMeUp duration: {$duration} seconds", [
+                Log::info("onMatchMeUp exit: invalid side | duration: {$duration} seconds", [
                     'player_id' => $player->id,
                     'username' => $player->username,
-                    'ladder' => $ladder->abbreviation
+                    'ladder' => $ladder->abbreviation,
+                    'side' => $request->side
                 ]);
                 return $this->quickMatchService->onFatalError(
                     'Side (' . $request->side . ') is not allowed'
@@ -284,10 +281,11 @@ class MatchUpController
             $qmPlayer->ai_dat = $request->ai_dat;
             $qmPlayer->save();
             $duration = microtime(true) - $startTime;
-            Log::info("onMatchMeUp duration: {$duration} seconds", [
+            Log::info("onMatchMeUp exit: ai_dat error | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
-                'ladder' => $ladder->abbreviation
+                'ladder' => $ladder->abbreviation,
+                'ai_dat' => $request->ai_dat
             ]);
             return $this->quickMatchService->onFatalError(
                 'Error, please contact us on the CnCNet Discord'
@@ -321,7 +319,7 @@ class MatchUpController
             $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, $ladder, AIHelper::BRUTAL_AI);
 
             $duration = microtime(true) - $startTime;
-            Log::info("onMatchMeUp duration: {$duration} seconds", [
+            Log::info("onMatchMeUp exit: ai match | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
                 'ladder' => $ladder->abbreviation
@@ -356,7 +354,7 @@ class MatchUpController
             $qmPlayer->touch();
 
             $duration = microtime(true) - $startTime;
-            Log::info("onMatchMeUp duration: {$duration} seconds", [
+            Log::info("onMatchMeUp exit: queued opponent | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
                 'ladder' => $ladder->abbreviation
@@ -384,7 +382,7 @@ class MatchUpController
             $qmPlayer->save();
             Log::info("MatchUpController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
             $duration = microtime(true) - $startTime;
-            Log::info("onMatchMeUp duration: {$duration} seconds", [
+            Log::info("onMatchMeUp exit: not enough players | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
                 'ladder' => $ladder->abbreviation
@@ -426,7 +424,7 @@ class MatchUpController
         $qmPlayer->save();
 
         $duration = microtime(true) - $startTime;
-        Log::info("onMatchMeUp duration: {$duration} seconds", [
+        Log::info("onMatchMeUp exit: match found | duration: {$duration} seconds", [
             'player_id' => $player->id,
             'username' => $player->username,
             'ladder' => $ladder->abbreviation
