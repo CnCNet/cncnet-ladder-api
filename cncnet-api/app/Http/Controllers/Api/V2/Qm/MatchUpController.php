@@ -234,6 +234,7 @@ class MatchUpController
      */
     private function onMatchMeUp(Request $request, Ladder $ladder, Player $player, ?QmMatchPlayer $qmPlayer)
     {
+        $startTime = microtime(true);
 
         // Log::debug('Username : ' . $player->username . ' on ladder ' . $ladder->name);
         // Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
@@ -251,7 +252,12 @@ class MatchUpController
                     'player_id' => $player->id,
                     'username' => $player->username,
                 ]);
-
+                $duration = microtime(true) - $startTime;
+                Log::info("onMatchMeUp duration: {$duration} seconds", [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                    'ladder' => $ladder->abbreviation
+                ]);
                 return $this->quickMatchService->onFatalError($ex->getMessage());
             }
 
@@ -260,6 +266,12 @@ class MatchUpController
 
             if (!$validSides)
             {
+                $duration = microtime(true) - $startTime;
+                Log::info("onMatchMeUp duration: {$duration} seconds", [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                    'ladder' => $ladder->abbreviation
+                ]);
                 return $this->quickMatchService->onFatalError(
                     'Side (' . $request->side . ') is not allowed'
                 );
@@ -271,6 +283,12 @@ class MatchUpController
         {
             $qmPlayer->ai_dat = $request->ai_dat;
             $qmPlayer->save();
+            $duration = microtime(true) - $startTime;
+            Log::info("onMatchMeUp duration: {$duration} seconds", [
+                'player_id' => $player->id,
+                'username' => $player->username,
+                'ladder' => $ladder->abbreviation
+            ]);
             return $this->quickMatchService->onFatalError(
                 'Error, please contact us on the CnCNet Discord'
             );
@@ -302,6 +320,12 @@ class MatchUpController
             $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladder->qmLadderRules);
             $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, $ladder, AIHelper::BRUTAL_AI);
 
+            $duration = microtime(true) - $startTime;
+            Log::info("onMatchMeUp duration: {$duration} seconds", [
+                'player_id' => $player->id,
+                'username' => $player->username,
+                'ladder' => $ladder->abbreviation
+            ]);
             return response()->json($spawnStruct);
         }
 
@@ -331,6 +355,12 @@ class MatchUpController
 
             $qmPlayer->touch();
 
+            $duration = microtime(true) - $startTime;
+            Log::info("onMatchMeUp duration: {$duration} seconds", [
+                'player_id' => $player->id,
+                'username' => $player->username,
+                'ladder' => $ladder->abbreviation
+            ]);
             return $this->quickMatchService->onCheckback($alert);
         }
 
@@ -353,6 +383,12 @@ class MatchUpController
             $qmPlayer->waiting = false;
             $qmPlayer->save();
             Log::info("MatchUpController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
+            $duration = microtime(true) - $startTime;
+            Log::info("onMatchMeUp duration: {$duration} seconds", [
+                'player_id' => $player->id,
+                'username' => $player->username,
+                'ladder' => $ladder->abbreviation
+            ]);
             return $this->quickMatchService->onCheckback($alert);
         }
 
@@ -389,6 +425,12 @@ class MatchUpController
         $qmPlayer->waiting = false;
         $qmPlayer->save();
 
+        $duration = microtime(true) - $startTime;
+        Log::info("onMatchMeUp duration: {$duration} seconds", [
+            'player_id' => $player->id,
+            'username' => $player->username,
+            'ladder' => $ladder->abbreviation
+        ]);
         return response()->json($spawnStruct);
     }
 }
