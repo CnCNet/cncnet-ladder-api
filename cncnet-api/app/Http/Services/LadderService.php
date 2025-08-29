@@ -403,27 +403,24 @@ class LadderService
 
     public function getRecentLadderGames(LadderHistory $history, $limit = 4)
     {
-        $cacheKey = "recent_ladder_games_{$history->id}_{$limit}";
-        return Cache::remember($cacheKey, 60, function () use ($history, $limit) {
-            return Game::where("ladder_history_id", $history->id)
-                ->whereNotNull('game_report_id')
-                ->orderByDesc("id")
-                ->select(['id', 'ladder_history_id', 'game_report_id', 'qm_match_id', 'hash', 'game_type', 'updated_at'])
-                ->with([
-                    'report:id,game_id,duration,fps',
-                    'report.playerGameReports:game_report_id,player_id,clan_id,points,stats_id,won,spectator',
-                    'report.playerGameReports.player:id,username',
-                    'report.playerGameReports.player.qmPlayer:id,player_id,team',
-                    'report.playerGameReports.clan:id,short',
-                    'report.playerGameReports.stats:id,sid,cty',
-                    'qmMatch:id,qm_map_id',
-                    'qmMatch.map:id,description,map_id',
-                    'qmMatch.map.map:id,name,hash,image_path,image_hash,filename',
-                    'qmMatch.players:id,qm_match_id,player_id,team'
-                ])
-                ->limit($limit)
-                ->get();
-        });
+        return Game::where("ladder_history_id", $history->id)
+            ->whereNotNull('game_report_id')
+            ->orderByDesc("id")
+            ->select(['id', 'ladder_history_id', 'game_report_id', 'qm_match_id', 'hash', 'game_type', 'updated_at'])
+            ->with([
+                'report:id,game_id,duration,fps',
+                'report.playerGameReports:game_report_id,player_id,clan_id,points,stats_id,won,spectator',
+                'report.playerGameReports.player:id,username',
+                'report.playerGameReports.player.qmPlayer:id,player_id,team',
+                'report.playerGameReports.clan:id,short',
+                'report.playerGameReports.stats:id,sid,cty',
+                'qmMatch:id,qm_map_id',
+                'qmMatch.map:id,description,map_id',
+                'qmMatch.map.map:id,name,hash,image_path,image_hash,filename',
+                'qmMatch.players:id,qm_match_id,player_id,team'
+            ])
+            ->limit($limit)
+            ->get();
     }
 
     public function getRecentValidLadderGames($date, $cncnetGame, $limit = 4)
