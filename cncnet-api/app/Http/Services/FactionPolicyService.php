@@ -103,7 +103,7 @@ class FactionPolicyService
             return;
         }
 
-        $currentSides = [$p1->actual_side, $p2->actual_side];
+        $currentSides = [(int)$p1->actual_side, (int)$p2->actual_side];
         Log::debug('applyPolicy1v1: currentSides', $currentSides);
 
         if ($currentSides[0] < 0 || $currentSides[1] < 0)

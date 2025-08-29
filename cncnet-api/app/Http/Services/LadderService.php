@@ -403,24 +403,23 @@ class LadderService
 
     public function getRecentLadderGames(LadderHistory $history, $limit = 4)
     {
-        return Game::where("ladder_history_id", "=", $history->id)
+        return Game::where("ladder_history_id", $history->id)
             ->whereNotNull('game_report_id')
-            ->orderBy("games.id", "DESC")
-            ->limit($limit)
+            ->orderByDesc("id")
+            ->select(['id', 'ladder_history_id', 'game_report_id', 'qm_match_id', 'hash', 'game_type', 'updated_at'])
             ->with([
-                'report',
-                'report.playerGameReports.player',
-                'report.playerGameReports.player.qmPlayer',
-                'report.playerGameReports.clan',
-                'report.playerGameReports.stats',
-                'qmMatch.map.map',
-                'qmMatch.players'
+                'report:id,game_id,duration,fps',
+                'report.playerGameReports:game_report_id,player_id,clan_id,points,stats_id,won,spectator',
+                'report.playerGameReports.player:id,username',
+                'report.playerGameReports.player.qmPlayer:id,player_id,team',
+                'report.playerGameReports.clan:id,short',
+                'report.playerGameReports.stats:id,sid,cty',
+                'qmMatch:id,qm_map_id',
+                'qmMatch.map:id,description,map_id',
+                'qmMatch.map.map:id,name,hash,image_path,image_hash,filename',
+                'qmMatch.players:id,qm_match_id,player_id,team'
             ])
-            ->when(
-                $history->ladder->clans_allowed,
-                fn($q) => $q->with([]),
-                fn($q) => $q->with([]),
-            )
+            ->limit($limit)
             ->get();
     }
 
