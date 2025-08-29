@@ -91,7 +91,6 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/{game}', [\App\Http\Controllers\ApiLadderController::class, 'getLadder']);
         Route::get('/{game}/game/{gameId}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderGame']);
         Route::get('/{game}/winners/', [\App\Http\Controllers\ApiLadderController::class, 'getLadderWinners']);
-        Route::get('/{game}/games/recent/{count}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderRecentGamesList']);
 
         Route::get('/{abbreviation}/players', [\App\Http\Controllers\ApiIrcController::class, 'getPlayerNames']);
         Route::get('/{abbreviation}/active', [\App\Http\Controllers\ApiIrcController::class, 'getActivePlayers']);
