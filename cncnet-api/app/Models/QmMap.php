@@ -1,22 +1,37 @@
-<?php 
+<?php
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class QmMap extends Model
 {
+    use HasFactory;
 
-    use LogsActivity, HasFactory;
-
-    protected static $logAttributes = [
-        'ladder_id', 'map_pool_id', 'map_id', 'valid', 'description', 'allowed_sides', 'team1_spawn_order', 'team2_spawn_order'
-    ];
-    protected static $logName = 'QmMap';
-    protected static $logOnlyDirty = true;
-    protected static $submitEmptyLogs = false;
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'ladder_id',
+                'map_pool_id',
+                'map_id',
+                'valid',
+                'description',
+                'allowed_sides',
+                'team1_spawn_order',
+                'team2_spawn_order',
+                'map_tier',
+                'random_spawns',
+                'default_reject',
+                'weight',
+                'admin_description',
+                'rejectable'
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected $fillable = [
         'ladder_id',

@@ -1,21 +1,23 @@
+use Spatie\Activitylog\LogOptions;
 <?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
+
 
 class UserSettings extends Model
 {
-    use LogsActivity;
-
-        'disabledPointFilter', 'skip_score_screen', 'match_any_map', 'is_anonymous', 'match_ai', 'is_observer', 'allow_observers'
-    ];
-    protected static $logName = 'UserSettings';
-    protected static $logOnlyDirty = true;
-    protected static $submitEmptyLogs = false;
     protected static $recordEvents = ['updated'];
-    protected $table = 'user_settings';
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['user_id', 'allow_2v2_ladders', 'is_anonymous', 'other_setting1', 'other_setting2']) // Add all attributes you want to log
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected $fillable = [
         'user_id',
