@@ -80,6 +80,7 @@
                                 <li><a href="/admin/clans" class="btn btn-md btn-secondary mt-2">Clan List</a></li>
                                 <li><a href="/admin/duplicates" class="btn btn-md btn-secondary mt-2">Active Duplicates</a></li>
                                 <li><a href="/admin/pointsystemsimulation" class="btn btn-md btn-secondary mt-2">Point System Simulator</a></li>
+                                <li><a href="/admin/audit-log" class="btn btn-md btn-secondary mt-2">Audit Log</a></li>
                             </ul>
                         </div>
                         <div class="player-box player-card">

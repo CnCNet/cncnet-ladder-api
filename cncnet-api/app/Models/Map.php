@@ -4,13 +4,24 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use \Spatie\Activitylog\LogOptions;
 
 class Map extends Model
 {
-    use HasFactory;
+    use LogsActivity, HasFactory;
+
     protected $table = 'maps';
     protected $fillable = ['name', 'hash', 'ladder_id', 'spawn_count'];
     public $timestamps = false;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'hash', 'image_path', 'description'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function qmMaps()
     {

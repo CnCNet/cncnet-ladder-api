@@ -49,7 +49,7 @@ class PlayerGameReport extends Model
 
     public function stats()
     {
-        return $this->hasOne(Stats2::class);
+        return $this->belongsTo(Stats2::class);
     }
 
     public function wonOrDisco()
