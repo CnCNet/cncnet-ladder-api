@@ -362,15 +362,6 @@ class QuickMatchService
             return $opponents;
         }
 
-        $disableYuri = $currentQmQueueEntry->qmPlayer->player->user->userSettings->do_not_match_yuri;
-        $rank = $currentQmQueueEntry->qmPlayer->player->rank($history);
-
-        // If user does not disable Yuri matching or rank is better than the threshold, return opponents
-        if (!$disableYuri || $rank <= 30)
-        {
-            return $opponents;
-        }
-
         $playerName = $currentQmQueueEntry->qmPlayer->player->username;
         $matchableOpponents = collect();
         $filteredOpponents = [];

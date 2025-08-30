@@ -234,6 +234,7 @@ class MatchUpController
      */
     private function onMatchMeUp(Request $request, Ladder $ladder, Player $player, ?QmMatchPlayer $qmPlayer)
     {
+        $startTime = microtime(true);
 
         // Log::debug('Username : ' . $player->username . ' on ladder ' . $ladder->name);
         // Log::debug('Match Me Up Request Body : ' . json_encode($request->all()));
@@ -247,11 +248,12 @@ class MatchUpController
             }
             catch (\RuntimeException $ex)
             {
-                Log::error('Failed to create QM Player: ' . $ex->getMessage(), [
+                $duration = microtime(true) - $startTime;
+                Log::error('Failed to create QM Player: ' . $ex->getMessage() . " | onMatchMeUp exit: exception | duration: {$duration} seconds", [
                     'player_id' => $player->id,
                     'username' => $player->username,
+                    'ladder' => $ladder->abbreviation
                 ]);
-
                 return $this->quickMatchService->onFatalError($ex->getMessage());
             }
 
@@ -260,6 +262,13 @@ class MatchUpController
 
             if (!$validSides)
             {
+                $duration = microtime(true) - $startTime;
+                Log::info("onMatchMeUp exit: invalid side | duration: {$duration} seconds", [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                    'ladder' => $ladder->abbreviation,
+                    'side' => $request->side
+                ]);
                 return $this->quickMatchService->onFatalError(
                     'Side (' . $request->side . ') is not allowed'
                 );
@@ -271,6 +280,13 @@ class MatchUpController
         {
             $qmPlayer->ai_dat = $request->ai_dat;
             $qmPlayer->save();
+            $duration = microtime(true) - $startTime;
+            Log::info("onMatchMeUp exit: ai_dat error | duration: {$duration} seconds", [
+                'player_id' => $player->id,
+                'username' => $player->username,
+                'ladder' => $ladder->abbreviation,
+                'ai_dat' => $request->ai_dat
+            ]);
             return $this->quickMatchService->onFatalError(
                 'Error, please contact us on the CnCNet Discord'
             );
@@ -302,6 +318,12 @@ class MatchUpController
             $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladder->qmLadderRules);
             $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, $ladder, AIHelper::BRUTAL_AI);
 
+            $duration = microtime(true) - $startTime;
+            Log::info("onMatchMeUp exit: ai match | duration: {$duration} seconds", [
+                'player_id' => $player->id,
+                'username' => $player->username,
+                'ladder' => $ladder->abbreviation
+            ]);
             return response()->json($spawnStruct);
         }
 
@@ -331,6 +353,12 @@ class MatchUpController
 
             $qmPlayer->touch();
 
+            $duration = microtime(true) - $startTime;
+            Log::info("onMatchMeUp exit: queued opponent | duration: {$duration} seconds", [
+                'player_id' => $player->id,
+                'username' => $player->username,
+                'ladder' => $ladder->abbreviation
+            ]);
             return $this->quickMatchService->onCheckback($alert);
         }
 
@@ -353,6 +381,12 @@ class MatchUpController
             $qmPlayer->waiting = false;
             $qmPlayer->save();
             Log::info("MatchUpController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
+            $duration = microtime(true) - $startTime;
+            Log::info("onMatchMeUp exit: not enough players | duration: {$duration} seconds", [
+                'player_id' => $player->id,
+                'username' => $player->username,
+                'ladder' => $ladder->abbreviation
+            ]);
             return $this->quickMatchService->onCheckback($alert);
         }
 
@@ -389,6 +423,12 @@ class MatchUpController
         $qmPlayer->waiting = false;
         $qmPlayer->save();
 
+        $duration = microtime(true) - $startTime;
+        Log::info("onMatchMeUp exit: match found | duration: {$duration} seconds", [
+            'player_id' => $player->id,
+            'username' => $player->username,
+            'ladder' => $ladder->abbreviation
+        ]);
         return response()->json($spawnStruct);
     }
 }
