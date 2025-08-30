@@ -32,10 +32,12 @@
         @if ($history->ladder->ladder_type !== \App\Models\Ladder::ONE_VS_ONE)
             @php
                 $groupedGamePlayerResults = [];
+                $observerPlayers = [];
                 foreach ($game->report->playerGameReports as $pgr) {
                     $t = $game?->qmMatch?->findQmPlayerByPlayerId($pgr->player_id)?->team;
-                    if ($t != null)
-                    {
+                    if ($t == null || strtolower($t) == "observer") {
+                        $observerPlayers[] = $pgr;
+                    } elseif ($t != null) {
                         $groupedGamePlayerResults[$t][] = $pgr;
                     }
                 }
@@ -49,6 +51,12 @@
                     <x-ladder.listing.game-box-partial :history="$history" :game-player="$gamePlayer" :index="$k" />
                     @php $vs++; @endphp
                 @endforeach
+            @endforeach
+            @foreach ($observerPlayers as $observerPlayer)
+                <span class="align-middle ms-2" title="Observer">
+                    <x-ladder.listing.game-box-partial :history="$history" :game-player="$observerPlayer" :index="null" />
+                    <span class="material-symbols-outlined" style="vertical-align:middle;">visibility</span>
+                </span>
             @endforeach
         @else
             @foreach ($game->report->playerGameReports as $k => $gamePlayer)
