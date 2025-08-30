@@ -17,6 +17,7 @@
 		"laravel/ui": "^4.0",
 		"maxmind-db/reader": "1.4.1",
 		"namshi/jose": "7.0.*",
+		"spatie/laravel-activitylog": "^4.10",
 		"symfony/lock": "^6.0",
 		"tymon/jwt-auth": "^2.2.1"
 	},

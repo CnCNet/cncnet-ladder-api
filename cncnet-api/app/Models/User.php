@@ -17,16 +17,28 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, JWTSubject
 {
-    use Authenticatable, CanResetPassword, Notifiable;
+    use Authenticatable, CanResetPassword, Notifiable, LogsActivity;
 
     const God = "God";
     const Admin = "Admin";
     const Moderator = "Moderator";
     const Observer = "Observer";
     const User = "User";
+
+    protected static $recordEvents = ['updated'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['group', 'chat_allowed'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected $table = 'users';
 
@@ -138,13 +150,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         $primaryUserId = $this->primaryId();
         $results = User::where('primary_user_id', $primaryUserId)
-                    ->orWhere('id', $primaryUserId)
-                    ->get();
+            ->orWhere('id', $primaryUserId)
+            ->get();
 
         return $includeSelf ? $results : $results->where('id', '!=', $this->id)->values();
     }
 
-    public function accountType() : string
+    public function accountType(): string
     {
         if ($this->isConfirmedPrimary())
         {
@@ -328,7 +340,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function clearCacheAndSave()
     {
-         // Clear cache
+        // Clear cache
         if ($this->alias)
         {
             Cache::forget("admin/users/users/{$this->alias}");
@@ -483,7 +495,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         $userTier = $this->getUserLadderTier($ladder);
         return $userTier->both_tiers;
     }
-  
+
     public function collectBans()
     {
         return Ban::whereIn('user_id', $this->collectDuplicates(true)->pluck('id'))->get();

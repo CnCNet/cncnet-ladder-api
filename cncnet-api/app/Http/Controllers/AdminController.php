@@ -30,9 +30,32 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use App\Models\IpAddressHistory;
 use App\Models\QmUserId;
+use Spatie\Activitylog\Models\Activity;
 
 class AdminController extends Controller
 {
+    /**
+     * Show audit log events with filtering.
+     */
+    public function getAuditLog(Request $request)
+    {
+        if (!$request->user() || !$request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $query = Activity::query();
+
+        if ($request->filled('model_type')) {
+            $query->where('subject_type', $request->input('model_type'));
+        }
+        if ($request->filled('event')) {
+            $query->where('event', $request->input('event'));
+        }
+
+        $activities = $query->with('causer')->orderByDesc('created_at')->paginate(30);
+
+        return view('admin.audit-log', compact('activities'));
+    }
     /**
      * Show all observer users and allow add/remove.
      */
