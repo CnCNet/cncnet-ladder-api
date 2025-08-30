@@ -284,7 +284,7 @@ class ApiQuickMatchController extends Controller
                     "playerName" => $showRealNames ? $qmPlayer->player->username : "Player" . ($index + 1),
                     "playerFaction" => $sides[$qmPlayer->actual_side] ?? '',
                     "playerColor" => $qmPlayer->color,
-                    "twitchProfile" => $qmPlayer->player->user->twitch_profile
+                    "twitchProfile" => $qmPlayer->player?->user?->twitch_profile
                 ];
             })
             ->all();
