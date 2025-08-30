@@ -1,10 +1,22 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\Traits\LogsActivity;
+use \Spatie\Activitylog\LogOptions;
 
-class SpawnOptionValue extends Model {
+class SpawnOptionValue extends Model
+{
+    use LogsActivity;
 
-	//
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['*'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public function name()
     {
@@ -36,5 +48,4 @@ class SpawnOptionValue extends Model {
     {
         return $this->belongsTo(SpawnOptionString::class);
     }
-
 }

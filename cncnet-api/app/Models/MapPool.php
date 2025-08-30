@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class MapPool extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
     
     public function getActivitylogOptions(): LogOptions
     {

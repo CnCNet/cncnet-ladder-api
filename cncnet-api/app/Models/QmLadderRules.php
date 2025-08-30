@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 
 class QmLadderRules extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
-     public function getActivitylogOptions(): LogOptions
+    public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
+            ->logOnly(['*'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
@@ -85,6 +87,4 @@ class QmLadderRules extends Model
     {
         return $this->hasMany(SpawnOptionValue::class);
     }
-
 }
-

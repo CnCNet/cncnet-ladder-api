@@ -1,20 +1,21 @@
-use Spatie\Activitylog\LogOptions;
 <?php
 
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
-
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class UserSettings extends Model
 {
+    use LogsActivity;
+
     protected static $recordEvents = ['updated'];
 
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['user_id', 'allow_2v2_ladders', 'is_anonymous', 'other_setting1', 'other_setting2']) // Add all attributes you want to log
+            ->logOnly(['allow_2v2_ladders', 'is_anonymous', 'other_setting1', 'other_setting2', 'is_observer', 'disabledPointFilter'])
             ->logOnlyDirty()
             ->dontSubmitEmptyLogs();
     }
