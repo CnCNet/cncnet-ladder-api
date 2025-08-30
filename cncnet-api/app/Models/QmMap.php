@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\LogOptions;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class QmMap extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
     {
