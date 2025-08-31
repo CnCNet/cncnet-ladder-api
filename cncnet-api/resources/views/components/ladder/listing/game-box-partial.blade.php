@@ -24,8 +24,16 @@
             </span>
         @endif
 
-        <span class="points">
-            {{ $gamePlayer->points >= 0 ? "+$gamePlayer->points" : $gamePlayer->points }}
-        </span>
+        @php
+            $isObserver = false;
+            if (isset($gamePlayer->team)) {
+                $isObserver = strtolower($gamePlayer->team) === 'observer';
+            }
+        @endphp
+        @unless($isObserver)
+            <span class="points">
+                {{ $gamePlayer->points >= 0 ? "+$gamePlayer->points" : $gamePlayer->points }}
+            </span>
+        @endunless
     </div>
 </div>

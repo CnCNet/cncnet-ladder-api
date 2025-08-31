@@ -55,6 +55,11 @@ class LadderService
 
             if ($ladder->mapPool)
                 $ladder->mapPool->tiers;
+
+            $alert = $ladder->alerts()->latest()->first();
+
+            if ($alert !== null)
+                $ladder["alert"] = $alert->message;
         }
         return $ladders;
     }
