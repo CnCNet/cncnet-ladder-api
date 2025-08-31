@@ -256,6 +256,16 @@ class MatchUpController
                 ]);
                 return $this->quickMatchService->onFatalError($ex->getMessage());
             }
+            catch (\App\Exceptions\ObserverException $ex)
+            {
+                $duration = microtime(true) - $startTime;
+                Log::error('Failed to create QM Player: ' . $ex->getMessage() . " | onMatchMeUp exit: exception | duration: {$duration} seconds", [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                    'ladder' => $ladder->abbreviation
+                ]);
+                return $this->quickMatchService->onStop($ex->getMessage());
+            }
 
             $validSides = $this->quickMatchService->checkPlayerSidesAreValid($qmPlayer, $request->side, $ladder->qmLadderRules);
             $qmPlayer->save();
