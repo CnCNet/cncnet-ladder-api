@@ -24,6 +24,7 @@ class ChartService
                 ->get();
 
             $labels = [];
+            $results = [];
             foreach ($games as $hour => $game)
             {
                 $hourFormatted = Carbon::create(null, null, null, $hour);

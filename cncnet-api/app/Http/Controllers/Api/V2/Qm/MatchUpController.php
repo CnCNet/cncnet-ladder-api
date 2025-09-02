@@ -248,7 +248,7 @@ class MatchUpController
             }
             catch (\RuntimeException $ex)
             {
-                $duration = microtime(true) - $startTime;
+                $duration = round(microtime(true) - $startTime, 1);
                 Log::error('Failed to create QM Player: ' . $ex->getMessage() . " | onMatchMeUp exit: exception | duration: {$duration} seconds", [
                     'player_id' => $player->id,
                     'username' => $player->username,
@@ -262,7 +262,7 @@ class MatchUpController
 
             if (!$validSides)
             {
-                $duration = microtime(true) - $startTime;
+                $duration = round(microtime(true) - $startTime, 1);
                 Log::info("onMatchMeUp exit: invalid side | duration: {$duration} seconds", [
                     'player_id' => $player->id,
                     'username' => $player->username,
@@ -280,7 +280,7 @@ class MatchUpController
         {
             $qmPlayer->ai_dat = $request->ai_dat;
             $qmPlayer->save();
-            $duration = microtime(true) - $startTime;
+            $duration = round(microtime(true) - $startTime, 1);
             Log::info("onMatchMeUp exit: ai_dat error | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
@@ -318,7 +318,7 @@ class MatchUpController
             $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladder->qmLadderRules);
             $spawnStruct = QuickMatchSpawnService::addQuickMatchAISpawnIni($spawnStruct, $ladder, AIHelper::BRUTAL_AI);
 
-            $duration = microtime(true) - $startTime;
+            $duration = round(microtime(true) - $startTime, 1);
             Log::info("onMatchMeUp exit: ai match | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
@@ -353,7 +353,7 @@ class MatchUpController
 
             $qmPlayer->touch();
 
-            $duration = microtime(true) - $startTime;
+            $duration = round(microtime(true) - $startTime, 1);
             Log::info("onMatchMeUp exit: queued opponent | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
@@ -381,7 +381,7 @@ class MatchUpController
             $qmPlayer->waiting = false;
             $qmPlayer->save();
             Log::info("MatchUpController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
-            $duration = microtime(true) - $startTime;
+            $duration = round(microtime(true) - $startTime, 1);
             Log::info("onMatchMeUp exit: not enough players | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
@@ -423,7 +423,7 @@ class MatchUpController
         $qmPlayer->waiting = false;
         $qmPlayer->save();
 
-        $duration = microtime(true) - $startTime;
+        $duration = round(microtime(true) - $startTime, 1);
         Log::info("onMatchMeUp exit: match found | duration: {$duration} seconds", [
             'player_id' => $player->id,
             'username' => $player->username,
