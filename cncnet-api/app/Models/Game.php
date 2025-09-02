@@ -110,7 +110,7 @@ class Game extends Model
     {
         return $this->hasMany(PlayerGameReport::class, 'game_report_id', 'game_report_id')
             ->where('spectator', true)
-            ->with(['player', 'user']);
+            ->with(['player.user']);
     }
 
 
@@ -118,6 +118,6 @@ class Game extends Model
     {
         return $this->hasMany(PlayerGameReport::class, 'game_report_id', 'game_report_id')
             ->where('spectator', false)
-            ->with('player');
+            ->with('player.user');
     }
 }

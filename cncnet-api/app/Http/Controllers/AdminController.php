@@ -39,16 +39,19 @@ class AdminController extends Controller
      */
     public function getAuditLog(Request $request)
     {
-        if (!$request->user() || !$request->user()->isAdmin()) {
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
             abort(403);
         }
 
         $query = Activity::query();
 
-        if ($request->filled('model_type')) {
+        if ($request->filled('model_type'))
+        {
             $query->where('subject_type', $request->input('model_type'));
         }
-        if ($request->filled('event')) {
+        if ($request->filled('event'))
+        {
             $query->where('event', $request->input('event'));
         }
 
@@ -61,7 +64,8 @@ class AdminController extends Controller
      */
     public function getObservers(Request $request)
     {
-        if (!$request->user() || !$request->user()->isAdmin()) {
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
             abort(403);
         }
         $observers = User::where('group', User::Observer)->get();
@@ -75,7 +79,8 @@ class AdminController extends Controller
      */
     public function addObserver(Request $request)
     {
-        if (!$request->user() || !$request->user()->isAdmin()) {
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
             abort(403);
         }
         $request->validate([
@@ -85,7 +90,8 @@ class AdminController extends Controller
         $user = User::where('email', $input)
             ->orWhere('name', $input)
             ->first();
-        if ($user) {
+        if ($user)
+        {
             $user->group = User::Observer;
             $user->save();
             return redirect()->route('admin.observers')->with('success', 'User added as observer.');
@@ -98,14 +104,16 @@ class AdminController extends Controller
      */
     public function removeObserver(Request $request)
     {
-        if (!$request->user() || !$request->user()->isAdmin()) {
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
             abort(403);
         }
         $request->validate([
             'user_id' => 'required|integer|exists:users,id'
         ]);
         $user = User::find($request->input('user_id'));
-        if ($user && $user->group === User::Observer) {
+        if ($user && $user->group === User::Observer)
+        {
             $user->group = User::User;
             $user->save();
             return redirect()->route('admin.observers')->with('success', 'Observer removed.');
@@ -901,7 +909,7 @@ class AdminController extends Controller
         // Helper closure to reset primary_user_id for primary accounts that no longer have duplicates.
         // An account is marked as primary by setting its own id as primary_user_id when the first duplicate is linked.
         // If the last duplicate is unlinked, primary_user_id should be reset to null.
-        $maybeClearPrimaryFlag = function (User $primary) 
+        $maybeClearPrimaryFlag = function (User $primary)
         {
             $hasDuplicates = User::where('primary_user_id', $primary->id)->where('id', '!=', $primary->id)->exists();
             if (!$hasDuplicates && $primary->primary_user_id === $primary->id)
@@ -1551,7 +1559,8 @@ class AdminController extends Controller
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
                 ->where("ur.ladder_id", $ladder->id)
-                ->where(function ($query) {
+                ->where(function ($query)
+                {
                     $query->whereNull("users.primary_user_id")
                         ->orWhereColumn("users.primary_user_id", "users.id");
                 })
@@ -1564,7 +1573,8 @@ class AdminController extends Controller
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
                 ->where("ur.ladder_id", $ladder->id)
-                ->where(function ($query) {
+                ->where(function ($query)
+                {
                     $query->whereNull("users.primary_user_id")
                         ->orWhereColumn("users.primary_user_id", "users.id");
                 })
@@ -1841,18 +1851,18 @@ class AdminController extends Controller
 
     public function getObservedGames(Request $request, $ladderAbbreviation = null)
     {
-        $ladder = Ladder::where('abbreviation', $ladderAbbreviation)->first();
+        $startTime = microtime(true);
 
+        $ladder = Ladder::where('abbreviation', $ladderAbbreviation)->first();
         if ($ladder == null)
         {
             abort(404, 'Ladder not found');
         }
 
         $ladderHistoryShort = $request->query('ladderHistoryShort');
-
         if ($ladderHistoryShort)
         {
-            $ladderHistory = \App\Models\LadderHistory::where('ladder_id', $ladder->id)
+            $ladderHistory = LadderHistory::where('ladder_id', $ladder->id)
                 ->where('short', $ladderHistoryShort)
                 ->first();
         }
@@ -1860,7 +1870,6 @@ class AdminController extends Controller
         {
             $ladderHistory = $ladder->currentHistory();
         }
-
         if (!$ladderHistory)
         {
             abort(404, 'Ladder history not found');
@@ -1868,13 +1877,11 @@ class AdminController extends Controller
 
         // list of players and observers from previous games for this ladder history
         $observedGames = Game::with([
-            'players.player',
-            'players.player.user',
-            'observers.player',
-            'observers.player.user'
+            'players.player.user',     // ✅ loads player + user
+            'observers.player.user'    // ✅ loads observer + user
         ])
             ->where('ladder_history_id', $ladderHistory->id)
-            ->whereHas('observers')
+            ->whereHas('observers')       // ✅ only games that actually have observers
             ->paginate(10);
 
         // to populate a dropdown and user can pick which history to view observed games
@@ -1883,6 +1890,15 @@ class AdminController extends Controller
             ->orderBy('ends', 'DESC')
             ->select('short')
             ->get();
+
+        $endTime = microtime(true);
+        $duration = $endTime - $startTime;
+        $durationRounded = round($duration, 1);
+        Log::info('getObservedGames duration', [
+            'duration_seconds' => $durationRounded,
+            'ladderAbbreviation' => $ladderAbbreviation,
+            'ladderHistoryShort' => $ladderHistoryShort
+        ]);
 
         return view("admin.observed-games", [
             "observedGames" => $observedGames,
