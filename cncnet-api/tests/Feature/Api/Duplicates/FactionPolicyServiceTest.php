@@ -106,6 +106,52 @@ class FactionPolicyServiceTest extends TestCase
     }
 
     #[Test]
+    public function applyPolicy1v1_mueller_vs_drunk(): void
+    {
+        $pool = new MapPool();
+        $pool->forced_faction_id     = 9;
+        $pool->forced_faction_ratio  = 0.5;
+        $pool->invalid_faction_pairs = [[0, 6], [0, 0], [6, 6], [9, 9]];
+
+        // Map allows forced faction.
+        $qmMap = $this->mockQmMap([0, 6, 9]);
+
+        $ladder  = $this->makeLadder(1);
+        $history = $this->makeHistory();
+
+        $mueller = $this->makePlayerWithActualSide(101, 0);
+        $drunkmaster = $this->makePlayerWithActualSide(202, 0);
+
+        $this->mockStatsFor($mueller, [24, 1], $drunkmaster, [8, 7]);
+        $this->svc->applyPolicy1v1($pool, $ladder, $history, $qmMap, $mueller, $drunkmaster);
+        $this->assertSame(0, $drunkmaster->actual_side);
+        $this->assertSame(9, $mueller->actual_side);
+    }
+
+    #[Test]
+    public function applyPolicy1v1_sneer_vs_funky(): void
+    {
+        $pool = new MapPool();
+        $pool->forced_faction_id     = 9;
+        $pool->forced_faction_ratio  = 0.5;
+        $pool->invalid_faction_pairs = [[0, 6], [0, 0], [6, 6], [9, 9]];
+
+        // Map allows forced faction.
+        $qmMap = $this->mockQmMap([0, 6, 9]);
+
+        $ladder  = $this->makeLadder(1);
+        $history = $this->makeHistory();
+
+        $sneer = $this->makePlayerWithActualSide(101, 6);
+        $funky = $this->makePlayerWithActualSide(202, 6);
+
+        $this->mockStatsFor($sneer, [13, 3], $funky, [20, 0]);
+        $this->svc->applyPolicy1v1($pool, $ladder, $history, $qmMap, $sneer, $funky);
+        $this->assertSame(6, $sneer->actual_side);
+        $this->assertSame(9, $funky->actual_side);
+    }
+
+    #[Test]
     public function applyPolicy1v1_one_candidate_applies(): void
     {
         $pool = new MapPool();
@@ -138,8 +184,8 @@ class FactionPolicyServiceTest extends TestCase
         $this->assertSame(6, $p1->actual_side);
         $this->assertSame(9, $p2->actual_side);
 
-        // Player 2 will end up with a forced faction ratio of 2/6 while player 1
-        // will have 0.5. So faction for player 1 is changed.
+        // Player 1 will end up with a forced faction ratio of 2/6 while player 2
+        // will have 100%. So faction for player 1 is changed.
         $p1 = $this->makePlayerWithActualSide(101, 6);
         $p2 = $this->makePlayerWithActualSide(202, 0);
         $this->mockStatsFor($p1, [5, 1], $p2, [0, 0]);

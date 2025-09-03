@@ -82,6 +82,16 @@ class FactionPolicyService
         return $valid;
     }
 
+    public function getDelta(int $total, int $forced, float $ratio): float
+    {
+        if ($total === 0)
+        {
+            return $ratio - 1.0;
+        }
+        $current = $forced / $total;
+        return $ratio - $current;
+    }
+
     public function applyPolicy1v1(MapPool $pool, Ladder $ladder, LadderHistory $history, QmMap $qmMap, QmMatchPlayer $p1, QmMatchPlayer $p2): void
     {
         $forcedId = $pool->forced_faction_id !== null ? (int)$pool->forced_faction_id : null;
@@ -177,46 +187,46 @@ class FactionPolicyService
             'p2' => ['total' => $totalGames2, 'forced' => $forcedFaction2],
         ]);
 
+        $delta1 = $this->getDelta($totalGames1, $forcedFaction1, $ratio);
+        $delta2 = $this->getDelta($totalGames2, $forcedFaction2, $ratio);
+
+        Log::debug('applyPolicy1v1: deltas', [
+            'p1_delta' => $delta1,
+            'p2_delta' => $delta2,
+        ]);
+
         $bestPair = $currentSides;
-        $lowestForcedRatioDeviation = INF;
-        $bestChanges = PHP_INT_MAX;
+        $bestScore = -INF;
         
         foreach ($filteredCandidates as [$a, $b])
         {
-            $err = 0.5;
+            $score = 0.0;
 
             if ($a === $forcedId && $b !== $forcedId)
             {
-                $err = abs((($forcedFaction1 + 1) / ($totalGames1 + 1)) - $ratio);
+                $score = $delta1;
             }
             else if ($a !== $forcedId && $b === $forcedId)
             {
-                $err = abs((($forcedFaction2 + 1) / ($totalGames2 + 1)) - $ratio);
+                $score = $delta2;
             }
             else if ($a === $forcedId && $b === $forcedId)
             {
-                $err1 = abs((($forcedFaction1 + 1) / ($totalGames1 + 1)) - $ratio);
-                $err2 = abs((($forcedFaction2 + 1) / ($totalGames2 + 1)) - $ratio);
-                $err = ($err1 + $err2) / 2.0;
+                $score = ($delta1 + $delta2) / 2.0;
             }
-
-            $changes = (int)($a !== $currentSides[0]) + (int)($b !== $currentSides[1]);
 
             Log::debug('applyPolicy1v1: candidate evaluation', [
                 'pair'    => [$a, $b],
-                'err'     => $err,
-                'changes' => $changes,
+                'score'   => $score,
             ]);
 
-            if ($err < $lowestForcedRatioDeviation || ($err == $lowestForcedRatioDeviation && $changes < $bestChanges))
+            if ($score > $bestScore)
             {
-                $lowestForcedRatioDeviation = $err;
-                $bestChanges = $changes;
+                $bestScore = $score;
                 $bestPair = [$a, $b];
                 Log::debug('applyPolicy1v1: new bestPair', [
                     'bestPair' => $bestPair,
-                    'lowestErr'=> $lowestForcedRatioDeviation,
-                    'bestChanges' => $bestChanges,
+                    'bestScore'=> $bestScore,
                 ]);
             }
         }
@@ -235,5 +245,4 @@ class FactionPolicyService
             Log::info('applyPolicy1v1: keeping p1='. $p1->actual_side . ' and p2=' . $p2->actual_side);
         }
     }
-
 }
