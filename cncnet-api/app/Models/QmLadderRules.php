@@ -74,7 +74,28 @@ class QmLadderRules extends Model
 
     public function all_sides()
     {
-        return explode(',', $this->id ? $this->all_sides : "");
+        $raw = $this->id ? (string) $this->all_sides : '';
+
+        if (trim($raw) === '')
+        {
+            return [];
+        }
+
+        $parts = explode(',', $raw);
+        $result = [];
+
+        // Make sure to get an int array.
+        foreach ($parts as $p)
+        {
+            $p = trim($p);
+            if ($p === '')
+            {
+                continue; // Do not cast an empty part to 0.
+            }
+            $result[] = (int) $p;
+        }
+
+        return $result;
     }
 
     public function allowed_sides()
