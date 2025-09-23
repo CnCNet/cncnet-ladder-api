@@ -633,14 +633,17 @@ class QuickMatchService
 
         $qmPlayer->save();
 
-        $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+        $mapSides = array_values(array_filter($qmMap->sides_array(), fn($s) => $s >= 0));
+        $ladderSides = $qmMatch->ladder->qmLadderRules->all_sides();
+        $allowedForRandom = array_values(array_intersect($mapSides, $ladderSides));
+        if (empty($allowedForRandom))
         {
-            return $s >= 0;
-        }));
+            $allowedForRandom = $mapSides;
+        }
 
         if ($qmPlayer->actual_side == -1)
         {
-            $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+            $qmPlayer->actual_side = $allowedForRandom[mt_rand(0, count($allowedForRandom) - 1)];
         }
         $qmPlayer->save();
 
@@ -1102,10 +1105,19 @@ class QuickMatchService
         }
         $qmPlayerFresh->save();
 
-        $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+        $mapSides = array_values(array_filter($qmMap->sides_array(), function ($s)
         {
             return $s >= 0;
         }));
+        $ladderSides = $ladder->qmLadderRules->all_sides();
+        $perMS = array_values(array_intersect($mapSides, $ladderSides));
+
+        if (empty($perMS))
+        {
+            // Fallback: if intersection of map sides and allowed ladder sides is empty, use map sides.
+            Log::warning('No intersection between map sides and ladder sides');
+            $perMS = $mapSides;
+        }
 
         if ($qmPlayerFresh->isObserver() == true)
         {
@@ -1239,7 +1251,15 @@ class QuickMatchService
 
         Log::debug('[QuickMatchService::setTeamSpawns] $spawnOrder ' . json_encode($spawnOrder));
 
-        $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn($s) => $s >= 0));
+        $mapSides = array_values(array_filter($qmMap->sides_array(), fn($s) => $s >= 0));
+        $ladderSides = $qmMatch->ladder->qmLadderRules->all_sides();
+        $allowedForRandom = array_values(array_intersect($mapSides, $ladderSides));
+        if (empty($allowedForRandom))
+        {
+            // Fallback: if intersection of map sides and allowed ladder sides is empty, use map sides.
+            Log::warning('No intersection between map sides and ladder sides');
+            $allowedForRandom = $mapSides;
+        }
 
         foreach ($teamPlayers->values() as $i => $player)
         {
@@ -1267,7 +1287,7 @@ class QuickMatchService
 
             if ($qmPlayer->actual_side == -1)
             {
-                $qmPlayer->actual_side = $mapAllowedSides[mt_rand(0, count($mapAllowedSides) - 1)];
+                $qmPlayer->actual_side = $allowedForRandom[mt_rand(0, count($allowedForRandom) - 1)];
             }
 
             $qmPlayer->qm_match_id = $qmMatch->id;
