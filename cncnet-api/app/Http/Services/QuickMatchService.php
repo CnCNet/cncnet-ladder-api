@@ -61,6 +61,16 @@ class QuickMatchService
 
         $qmPlayer->chosen_side = $request->side;
 
+        // Store preferred colors. If not set, players get yellow/red like usual.
+        if (isset($request->colors) && is_array($request->colors))
+        {
+            $qmPlayer->colors_pref = json_encode(array_values($request->colors));
+        }
+        if (isset($request->colors_opponent) && is_array($request->colors_opponent))
+        {
+            $qmPlayer->colors_opponent_pref = json_encode(array_values($request->colors_opponent));
+        }
+
         if ($request->map_sides)
         {
             $qmPlayer->map_sides_id = \App\Models\MapSideString::findValue(join(',', $request->map_sides))->id;
@@ -935,6 +945,8 @@ class QuickMatchService
             $numSpawns = $qmMap->map->spawn_count;
             $spawnArr = [];
 
+            // Assign colour & spawn locations for current QM player
+            // Then again for ther players below
             for ($i = 1; $i <= $numSpawns; $i++)
             {
                 $spawnArr[] = $i;
@@ -947,20 +959,60 @@ class QuickMatchService
             Log::debug("QuickMatchService ** Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawnOrder[0] . "," . $spawnOrder[1]);
         }
 
-
-        # Assign colour & spawn locations for current QM player
-        # Then again for other players below
-        $colorsArr = $this->getColorsArr(8, false);
+        // Find the opponent player and check if both players submitted their preferred colors and make sure their is no observers.
+        // Streamers might not be prepared for other colors than yellow/red. With someone observer and color info missing, we stick
+        // to the old logic.
         $i = 0;
+        $colorsArr = null;
 
-        if ($qmPlayer->isObserver() == false)
+        foreach ($otherQmQueueEntries as $otherQmQueueEntry)
         {
-            $qmPlayer->color = $colorsArr[$i];
-            $qmPlayer->location = $spawnOrder[$i] - 1;
-            $qmPlayer->save();
-            $i++;
+            $candidate = \App\Models\QmMatchPlayer::where("id", $otherQmQueueEntry->qmPlayer->id)->first();
+            if ($candidate && !$candidate->isObserver())
+            {
+                $opponentPlayer = $candidate;
+                $opponentsCount++;
+            }
+        }
 
-            Log::debug("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . "Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+        $bothHaveColorPrefs = false;
+        $p1Colors = null;
+        $p2Colors = null;
+        if ($opponentPlayer && $opponentsCount === 1)
+        {
+            $p1Colors = isset($qmPlayer->colors_pref) ? json_decode($qmPlayer->colors_pref, true) : null;
+            $p2Colors = isset($opponentPlayer->colors_pref) ? json_decode($opponentPlayer->colors_pref, true) : null;
+            $p1OppColors = isset($qmPlayer->colors_opponent_pref) ? json_decode($qmPlayer->colors_opponent_pref, true) : null;
+            $p2OppColors = isset($opponentPlayer->colors_opponent_pref) ? json_decode($opponentPlayer->colors_opponent_pref, true) : null;
+            $bothHaveColorPrefs = is_array($p1Colors) && is_array($p2Colors) && is_array($p1OppColors) && is_array($p2OppColors);
+        }
+
+        if (!$matchHasObserver && $bothHaveColorPrefs)
+        {
+            // Determine best matching colors.
+            [$p1Color, $p2Color] = $this->setColors($p1Colors, $p1OppColors, $p2OppColors);
+            $colorsArr = [$p1Color, $p2Color];
+            if ($qmPlayer->isObserver() == false)
+            {
+                $qmPlayer->color = $colorsArr[$i];
+                $qmPlayer->location = $spawnOrder[$i] - 1;
+                $qmPlayer->save();
+                $i++;
+                Log::debug("QuickMatchService ** Assigning Spot (prefs) for " . $qmPlayer->player->username . " Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+            }
+        }
+        else
+        {
+            // No preferred colors. Used old logic.
+            $colorsArr = $this->getColorsArr(8, false);
+            if ($qmPlayer->isObserver() == false)
+            {
+                $qmPlayer->color = $colorsArr[$i];
+                $qmPlayer->location = $spawnOrder[$i] - 1;
+                $qmPlayer->save();
+                $i++;
+                Log::debug("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . " Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+            }
         }
 
         foreach ($otherQmQueueEntries as $otherQmQueueEntry)
@@ -1006,7 +1058,7 @@ class QuickMatchService
             $otherQmPlayer->tunnel_id = $qmMatch->seed + $otherQmPlayer->color;
             $otherQmPlayer->save();
 
-            if (!$otherQmPlayer->isObserver())
+            if (!$otherQmPlayer->isObserver() && $opponentPlayer === null)
             {
                 $opponentPlayer = $otherQmPlayer;
                 $opponentsCount++;
@@ -1526,6 +1578,19 @@ class QuickMatchService
         return array_slice($possibleColors, 0, $numPlayers);
     }
 
+    /**
+     * Selects final colors for player 1 and 2 based on their preferences.
+     * @param int[] $prefColorsP1 The preferred colors of player 1
+     * @param int[] $prefOpponentColorsP1 What player 1 prefers for their opponent.
+     * @param int[] $prefColorsP2 The preferred colors of player 2.
+     * @param int[] $prefOpponentColorsP2 What player 2 prefers for their opponent.
+     * @return array{int,int} [colorPlayer1, colorPlayer2]
+     */
+    private function setColors(array $prefColorsP1, array $prefOpponentColorsP1, array $prefColorsP2, array $prefOpponentColorsP2): array
+    {
+        // TODO: Add logic.
+        return [2, 3];
+    }
 
     /**
      *
