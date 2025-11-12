@@ -877,6 +877,76 @@ class ApiLadderController extends Controller
         });
     }
 
+    public function getPlayerDailyStats(Request $request, $game = null, $player = null)
+    {
+        return Cache::remember("getPlayerDailyStats/$game/$player/" . Carbon::now()->format('Y-m-d'), 5 * 60, function () use ($game, $player)
+        {
+            // Find the ladder by abbreviation
+            $ladder = Ladder::where('abbreviation', '=', $game)->first();
+
+            if (!$ladder)
+            {
+                return response()->json(['error' => 'Ladder not found'], 404);
+            }
+
+            // Find the player by username and ladder
+            $playerModel = Player::where('username', '=', $player)
+                ->where('ladder_id', '=', $ladder->id)
+                ->first();
+
+            if (!$playerModel)
+            {
+                return response()->json(['error' => 'Player not found'], 404);
+            }
+
+            // Get current ladder history
+            $history = $ladder->currentHistory();
+
+            if (!$history)
+            {
+                return response()->json(['error' => 'No active ladder history'], 404);
+            }
+
+            // Get today's date range
+            $startOfDay = Carbon::now()->startOfDay();
+            $endOfDay = Carbon::now()->endOfDay();
+
+            // Count wins for today
+            $wins = PlayerGameReport::where('player_id', '=', $playerModel->id)
+                ->where('won', '=', true)
+                ->where('spectator', '=', false)
+                ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
+                ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+                ->join('games', 'games.id', '=', 'game_reports.game_id')
+                ->where('games.ladder_history_id', '=', $history->id)
+                ->where('game_reports.valid', '=', true)
+                ->where('game_reports.best_report', '=', true)
+                ->count();
+
+            // Count losses for today (defeated and not won, excluding draws)
+            $losses = PlayerGameReport::where('player_id', '=', $playerModel->id)
+                ->where('defeated', '=', true)
+                ->where('won', '=', false)
+                ->where('draw', '=', false)
+                ->where('spectator', '=', false)
+                ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
+                ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+                ->join('games', 'games.id', '=', 'game_reports.game_id')
+                ->where('games.ladder_history_id', '=', $history->id)
+                ->where('game_reports.valid', '=', true)
+                ->where('game_reports.best_report', '=', true)
+                ->count();
+
+            return response()->json([
+                'player' => $player,
+                'ladder' => $game,
+                'date' => Carbon::now()->format('Y-m-d'),
+                'wins' => $wins,
+                'losses' => $losses
+            ], 200);
+        });
+    }
+
     public function viewRawGame(Request $request, $gameId)
     {
         $rawGame = GameRaw::where("game_id", "=", $gameId)->get();
