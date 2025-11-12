@@ -912,9 +912,9 @@ class ApiLadderController extends Controller
             $endOfDay = Carbon::now()->endOfDay();
 
             // Count wins for today
-            $wins = PlayerGameReport::where('player_id', '=', $playerModel->id)
-                ->where('won', '=', true)
-                ->where('spectator', '=', false)
+            $wins = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
+                ->where('player_game_reports.won', '=', true)
+                ->where('player_game_reports.spectator', '=', false)
                 ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
                 ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
                 ->join('games', 'games.id', '=', 'game_reports.game_id')
@@ -924,11 +924,11 @@ class ApiLadderController extends Controller
                 ->count();
 
             // Count losses for today (defeated and not won, excluding draws)
-            $losses = PlayerGameReport::where('player_id', '=', $playerModel->id)
-                ->where('defeated', '=', true)
-                ->where('won', '=', false)
-                ->where('draw', '=', false)
-                ->where('spectator', '=', false)
+            $losses = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
+                ->where('player_game_reports.defeated', '=', true)
+                ->where('player_game_reports.won', '=', false)
+                ->where('player_game_reports.draw', '=', false)
+                ->where('player_game_reports.spectator', '=', false)
                 ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
                 ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
                 ->join('games', 'games.id', '=', 'game_reports.game_id')
