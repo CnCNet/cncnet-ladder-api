@@ -420,27 +420,34 @@ class QuickMatchSpawnService
      */
     public static function appendObservers($spawnStruct, $qmPlayer, $otherQmMatchPlayers)
     {
-        # Checks if current player is observer
+        // Sort players by color
+        $allPlayers = $otherQmMatchPlayers->concat([$qmPlayer])->sortBy('color')->values();
+
+        $rankByPlayerId = array();
+        $index = 0;
+        foreach ($allPlayers as $player)
+        {
+            $rankByPlayerId[$player->id] = $index + 1;
+            $index = $index + 1;
+        }
+
         if ($qmPlayer->isObserver())
         {
-            $playerIndex = 1;
             $spawnStruct["spawn"]["Settings"]["IsSpectator"] = "True";
-            $spawnStruct["isspectator"]["Multi$playerIndex"] = "True";
         }
 
-        # Make sure we mark other players too
-        foreach ($otherQmMatchPlayers as $playerIndex => $opn)
+        // Multi<Rank> = True for every observer
+        foreach ($allPlayers as $player)
         {
-            if ($opn->isObserver())
+            if ($player->isObserver())
             {
-                # Because it references "Other", which is 1-8
-                $playerIndex = $playerIndex + 1;
-                $spawnStruct["isspectator"]["Multi$playerIndex"] = "True";
+                $rank = $rankByPlayerId[$player->id];
+                $spawnStruct["isspectator"]["Multi" . $rank] = "True";
             }
         }
+
         return $spawnStruct;
     }
-
 
     /**
      * Prepend quick-coop ini file to allow 2 real players vs 2 ai
