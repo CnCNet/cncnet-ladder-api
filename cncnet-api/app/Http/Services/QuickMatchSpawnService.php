@@ -56,6 +56,7 @@ class QuickMatchSpawnService
                 "MyIndex" =>        $qmPlayer->color,
                 "IsSpectator" =>    "False",
                 "DisableChat" => ($isObserver || $notAllowedToChat) ? "True" : "False",
+                "AllowChat" => (!$isObserver && !$notAllowedToChat) ? "True" : "False",
                 // Filter null values
             ],
             function ($var)
