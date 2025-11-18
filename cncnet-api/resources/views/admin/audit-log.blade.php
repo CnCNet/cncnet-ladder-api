@@ -8,14 +8,14 @@
                 <label for="model_type">Model Type</label>
                 <select name="model_type" id="model_type" class="form-control">
                     <option value="">All</option>
-                    <option value="App\\Models\\Ban" @if(request('model_type')=='App\\Models\\Ban' ) selected @endif>Ban</option>
-                    <option value="App\\Models\\Map" @if(request('model_type')=='App\\Models\\Map' ) selected @endif>Map</option>
-                    <option value="App\\Models\\MapPool" @if(request('model_type')=='App\\Models\\MapPool' ) selected @endif>MapPool</option>
-                    <option value="App\\Models\\QmLadderRules" @if(request('model_type')=='App\\Models\\QmLadderRules' ) selected @endif>QmLadderRules</option>
-                    <option value="App\\Models\\QmMap" @if(request('model_type')=='App\\Models\\QmMap' ) selected @endif>QmMap</option>
-                    <option value="App\\Models\\SpawnOptionValue" @if(request('model_type')=='App\\Models\\SpawnOptionValue' ) selected @endif>SpawnOptionValue</option>
-                    <option value="App\\Models\\User" @if(request('model_type')=='App\\Models\\User' ) selected @endif>User</option>
-                    <option value="App\\Models\\UserSettings" @if(request('model_type')=='App\\Models\\UserSettings' ) selected @endif>UserSettings</option>
+                    <option value="App\Models\Ban" @if(request('model_type')=='App\Models\Ban' ) selected @endif>Ban</option>
+                    <option value="App\Models\Map" @if(request('model_type')=='App\Models\Map' ) selected @endif>Map</option>
+                    <option value="App\Models\MapPool" @if(request('model_type')=='App\Models\MapPool' ) selected @endif>MapPool</option>
+                    <option value="App\Models\QmLadderRules" @if(request('model_type')=='App\Models\QmLadderRules' ) selected @endif>QmLadderRules</option>
+                    <option value="App\Models\QmMap" @if(request('model_type')=='App\Models\QmMap' ) selected @endif>QmMap</option>
+                    <option value="App\Models\SpawnOptionValue" @if(request('model_type')=='App\Models\SpawnOptionValue' ) selected @endif>SpawnOptionValue</option>
+                    <option value="App\Models\User" @if(request('model_type')=='App\Models\User' ) selected @endif>User</option>
+                    <option value="App\Models\UserSettings" @if(request('model_type')=='App\Models\UserSettings' ) selected @endif>UserSettings</option>
                 </select>
             </div>
             <div class="col-md-3">
