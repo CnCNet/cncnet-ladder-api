@@ -990,7 +990,7 @@ class QuickMatchService
         if (!$matchHasObserver && $bothHaveColorPrefs)
         {
             // Determine best matching colors.
-            [$p1Color, $p2Color] = $this->setColors($p1Colors, $p1OppColors, $p2OppColors);
+            [$p1Color, $p2Color] = $this->setColors($p1Colors, $p1OppColors, $p2Colors, $p2OppColors);
             $colorsArr = [$p1Color, $p2Color];
             if ($qmPlayer->isObserver() == false)
             {
@@ -1588,8 +1588,58 @@ class QuickMatchService
      */
     private function setColors(array $prefColorsP1, array $prefOpponentColorsP1, array $prefColorsP2, array $prefOpponentColorsP2): array
     {
-        // TODO: Add logic.
-        return [2, 3];
+        // Penalty mapping: position in preference array -> penalty points.
+        $penalties = [0, 2, 5, 10];
+
+        // Generate all possible color combinations (0-3).
+        $bestCombinations = [];
+        $lowestPenalty = PHP_INT_MAX;
+
+        for ($colorP1 = 0; $colorP1 < 4; $colorP1++)
+        {
+            for ($colorP2 = 0; $colorP2 < 4; $colorP2++)
+            {
+                // Cannot assign same color to both players.
+                if ($colorP1 === $colorP2)
+                {
+                    continue;
+                }
+
+                // Calculate penalty for player 1's color choice.
+                $posP1 = array_search($colorP1, $prefColorsP1);
+                $penaltyP1Color = $penalties[$posP1];
+
+                // Calculate penalty for player 1's opponent color preference.
+                $posP1Opponent = array_search($colorP2, $prefOpponentColorsP1);
+                $penaltyP1Opponent = $penalties[$posP1Opponent];
+
+                // Calculate penalty for player 2's color choice.
+                $posP2 = array_search($colorP2, $prefColorsP2);
+                $penaltyP2Color = $penalties[$posP2];
+
+                // Calculate penalty for player 2's opponent color preference.
+                $posP2Opponent = array_search($colorP1, $prefOpponentColorsP2);
+                $penaltyP2Opponent = $penalties[$posP2Opponent];
+
+                // Total penalty for this combination.
+                $totalPenalty = $penaltyP1Color + $penaltyP1Opponent + $penaltyP2Color + $penaltyP2Opponent;
+
+                // Track best combinations.
+                if ($totalPenalty < $lowestPenalty)
+                {
+                    // Replace.
+                    $lowestPenalty = $totalPenalty;
+                    $bestCombinations = [[$colorP1, $colorP2]];
+                }
+                elseif ($totalPenalty === $lowestPenalty)
+                {
+                    // Add.
+                    $bestCombinations[] = [$colorP1, $colorP2];
+                }
+            }
+        }
+
+        return $bestCombinations[array_rand($bestCombinations)];
     }
 
     /**
