@@ -946,7 +946,7 @@ class QuickMatchService
             $spawnArr = [];
 
             // Assign colour & spawn locations for current QM player
-            // Then again for ther players below
+            // Then again for other players below
             for ($i = 1; $i <= $numSpawns; $i++)
             {
                 $spawnArr[] = $i;
