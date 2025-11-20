@@ -16,6 +16,7 @@ use App\Models\Player;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use \App\Models\PlayerActiveHandle;
 
 class LadderController extends Controller
 {
@@ -479,15 +480,30 @@ class LadderController extends Controller
 
         $isAnonymous = $player->user->userSettings->getIsAnonymousForLadderHistory($history);
 
-        $ladderNicks = [];
-        if (!$isAnonymous) // only hide if anonymous and is the current month
-        {
-            $ladderNicks = $user->usernames
-                ->where('id', '!=', $player->id)
-                ->where('ladder_id', $history->ladder->id)
-                ->pluck('username')
-                ->toArray();
+        // Get the current month's date range
+        $now = Carbon::now();
+        $dateStart = $now->copy()->startOfMonth()->toDateTimeString();
+        $dateEnd = $now->copy()->endOfMonth()->toDateTimeString();
+
+        // Get the player's active handle for the current month
+        $activeHandle = PlayerActiveHandle::getPlayerActiveHandle(
+            $player->id,
+            $history->ladder->id,
+            $dateStart,
+            $dateEnd
+        );
+
+        // Start with all usernames for this ladder, excluding the current player
+        $ladderNicks = $user->usernames
+            ->where('id', '!=', $player->id)
+            ->where('ladder_id', $history->ladder->id);
+
+        // If anonymous and there's an active handle, also exclude it
+        if ($isAnonymous && $activeHandle) {
+            $ladderNicks = $ladderNicks->where('id', '!=', $activeHandle->player_id);
         }
+
+        $ladderNicks = $ladderNicks->pluck('username')->toArray();
 
         return view(
             "ladders.player-detail",

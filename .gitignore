@@ -271,3 +271,6 @@ docker-compose.test.yml
 cncnet-api/.bash_history
 **/debugging/
 **/vendor/
+
+# Claude Code local settings
+.claude/settings.local.json
