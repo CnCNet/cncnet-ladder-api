@@ -357,7 +357,8 @@ class MatchUpController
             Log::info("onMatchMeUp exit: queued opponent | duration: {$duration} seconds", [
                 'player_id' => $player->id,
                 'username' => $player->username,
-                'ladder' => $ladder->abbreviation
+                'ladder' => $ladder->abbreviation,
+                'client_version' => $qmPlayer->client_version
             ]);
             return $this->quickMatchService->onCheckback($alert);
         }
