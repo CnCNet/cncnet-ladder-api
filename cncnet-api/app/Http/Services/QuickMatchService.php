@@ -984,6 +984,23 @@ class QuickMatchService
             $p2Colors = isset($opponentPlayer->colors_pref) ? json_decode($opponentPlayer->colors_pref, true) : null;
             $p1OppColors = isset($qmPlayer->colors_opponent_pref) ? json_decode($qmPlayer->colors_opponent_pref, true) : null;
             $p2OppColors = isset($opponentPlayer->colors_opponent_pref) ? json_decode($opponentPlayer->colors_opponent_pref, true) : null;
+
+            $qmPlayerIsAnonymous = $qmPlayer->player->user->userSettings->getIsAnonymous();
+            $opponentPlayerIsAnonymous = $opponentPlayer->player->user->userSettings->getIsAnonymous();
+
+            if ($qmPlayerIsAnonymous && !$opponentPlayerIsAnonymous)
+            {
+                // Do what opponent wants.
+                $p1Colors = $p2OppColors;
+                $p1OppColors = $p2Colors;
+            }
+            else if (!$qmPlayerIsAnonymous && $opponentPlayerIsAnonymous)
+            {
+                // Do what player 1 wants.
+                $p2Colors = $p1OppColors;
+                $p2OppColors = $p1Colors;
+            }
+
             $bothHaveColorPrefs = is_array($p1Colors) && is_array($p2Colors) && is_array($p1OppColors) && is_array($p2OppColors);
         }
 
