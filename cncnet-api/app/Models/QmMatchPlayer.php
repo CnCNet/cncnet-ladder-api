@@ -17,6 +17,7 @@ class QmMatchPlayer extends Model
         'color',
         'actual_side',
         'location',
+        'client_version'
     ];
 
     protected $_map_side_array = null;

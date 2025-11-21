@@ -66,6 +66,11 @@ class QuickMatchService
             $qmPlayer->map_sides_id = \App\Models\MapSideString::findValue(join(',', $request->map_sides))->id;
         }
 
+        if ($request->client_version)
+        {
+            $qmPlayer->client_version = $request->client_version;
+        }
+
         if ($request->version && $request->platform)
         {
             $qmPlayer->version_id  = \App\Models\PlayerDataString::findValue($request->version)->id;
@@ -287,10 +292,21 @@ class QuickMatchService
 
     public function fetchQmQueueEntry(LadderHistory $history, ?QmQueueEntry $qmQueueEntry = null): \Illuminate\Database\Eloquent\Collection|array
     {
-        return QmQueueEntry::query()
-            ->when(isset($qmQueueEntry), fn($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
+        $query = QmQueueEntry::query()
             ->where('ladder_history_id', '=', $history->id)
-            ->get();
+            ->with('qmPlayer');
+
+        if ($qmQueueEntry)
+        {
+            // Client versions need to match. Otherwise players simply don't see each other.
+            $currentVersion = $qmQueueEntry->qmPlayer->client_version;
+            $query->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id)
+                ->whereHas('qmPlayer', function ($sub) use ($currentVersion) {
+                    $sub->where('client_version', $currentVersion);
+                });
+        }
+
+        return $query->get();
     }
 
     /**
