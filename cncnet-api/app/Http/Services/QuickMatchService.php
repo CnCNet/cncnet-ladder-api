@@ -61,9 +61,24 @@ class QuickMatchService
 
         $qmPlayer->chosen_side = $request->side;
 
+        // Store preferred colors. If not set, players get yellow/red like usual.
+        if (isset($request->colors) && is_array($request->colors))
+        {
+            $qmPlayer->colors_pref = json_encode(array_values($request->colors));
+        }
+        if (isset($request->colors_opponent) && is_array($request->colors_opponent))
+        {
+            $qmPlayer->colors_opponent_pref = json_encode(array_values($request->colors_opponent));
+        }
+
         if ($request->map_sides)
         {
             $qmPlayer->map_sides_id = \App\Models\MapSideString::findValue(join(',', $request->map_sides))->id;
+        }
+
+        if ($request->client_version)
+        {
+            $qmPlayer->client_version = $request->client_version;
         }
 
         if ($request->version && $request->platform)
@@ -287,10 +302,21 @@ class QuickMatchService
 
     public function fetchQmQueueEntry(LadderHistory $history, ?QmQueueEntry $qmQueueEntry = null): \Illuminate\Database\Eloquent\Collection|array
     {
-        return QmQueueEntry::query()
-            ->when(isset($qmQueueEntry), fn($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
+        $query = QmQueueEntry::query()
             ->where('ladder_history_id', '=', $history->id)
-            ->get();
+            ->with('qmPlayer');
+
+        if ($qmQueueEntry)
+        {
+            // Client versions need to match. Otherwise players simply don't see each other.
+            $currentVersion = $qmQueueEntry->qmPlayer->client_version;
+            $query->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id)
+                ->whereHas('qmPlayer', function ($sub) use ($currentVersion) {
+                    $sub->where('client_version', $currentVersion);
+                });
+        }
+
+        return $query->get();
     }
 
     /**
@@ -935,6 +961,8 @@ class QuickMatchService
             $numSpawns = $qmMap->map->spawn_count;
             $spawnArr = [];
 
+            // Assign colour & spawn locations for current QM player
+            // Then again for other players below
             for ($i = 1; $i <= $numSpawns; $i++)
             {
                 $spawnArr[] = $i;
@@ -947,20 +975,77 @@ class QuickMatchService
             Log::debug("QuickMatchService ** Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawnOrder[0] . "," . $spawnOrder[1]);
         }
 
-
-        # Assign colour & spawn locations for current QM player
-        # Then again for other players below
-        $colorsArr = $this->getColorsArr(8, false);
+        // Find the opponent player and check if both players submitted their preferred colors and make sure their is no observers.
+        // Streamers might not be prepared for other colors than yellow/red. With someone observer and color info missing, we stick
+        // to the old logic.
         $i = 0;
+        $colorsArr = null;
 
-        if ($qmPlayer->isObserver() == false)
+        foreach ($otherQmQueueEntries as $otherQmQueueEntry)
         {
-            $qmPlayer->color = $colorsArr[$i];
-            $qmPlayer->location = $spawnOrder[$i] - 1;
-            $qmPlayer->save();
-            $i++;
+            $candidate = \App\Models\QmMatchPlayer::where("id", $otherQmQueueEntry->qmPlayer->id)->first();
+            if ($candidate && !$candidate->isObserver())
+            {
+                $opponentPlayer = $candidate;
+                $opponentsCount++;
+            }
+        }
 
-            Log::debug("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . "Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+        $bothHaveColorPrefs = false;
+        $p1Colors = null;
+        $p2Colors = null;
+        if ($opponentPlayer && $opponentsCount === 1)
+        {
+            $p1Colors = isset($qmPlayer->colors_pref) ? json_decode($qmPlayer->colors_pref, true) : null;
+            $p2Colors = isset($opponentPlayer->colors_pref) ? json_decode($opponentPlayer->colors_pref, true) : null;
+            $p1OppColors = isset($qmPlayer->colors_opponent_pref) ? json_decode($qmPlayer->colors_opponent_pref, true) : null;
+            $p2OppColors = isset($opponentPlayer->colors_opponent_pref) ? json_decode($opponentPlayer->colors_opponent_pref, true) : null;
+
+            $qmPlayerIsAnonymous = $qmPlayer->player->user->userSettings->getIsAnonymous();
+            $opponentPlayerIsAnonymous = $opponentPlayer->player->user->userSettings->getIsAnonymous();
+
+            if ($qmPlayerIsAnonymous && !$opponentPlayerIsAnonymous)
+            {
+                // Do what opponent wants.
+                $p1Colors = $p2OppColors;
+                $p1OppColors = $p2Colors;
+            }
+            else if (!$qmPlayerIsAnonymous && $opponentPlayerIsAnonymous)
+            {
+                // Do what player 1 wants.
+                $p2Colors = $p1OppColors;
+                $p2OppColors = $p1Colors;
+            }
+
+            $bothHaveColorPrefs = is_array($p1Colors) && is_array($p2Colors) && is_array($p1OppColors) && is_array($p2OppColors);
+        }
+
+        if (!$matchHasObserver && $bothHaveColorPrefs)
+        {
+            // Determine best matching colors.
+            [$p1Color, $p2Color] = $this->setColors($p1Colors, $p1OppColors, $p2Colors, $p2OppColors);
+            $colorsArr = [$p1Color, $p2Color];
+            if ($qmPlayer->isObserver() == false)
+            {
+                $qmPlayer->color = $colorsArr[$i];
+                $qmPlayer->location = $spawnOrder[$i] - 1;
+                $qmPlayer->save();
+                $i++;
+                Log::debug("QuickMatchService ** Assigning Spot (prefs) for " . $qmPlayer->player->username . " Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+            }
+        }
+        else
+        {
+            // No preferred colors. Used old logic.
+            $colorsArr = $this->getColorsArr(8, false);
+            if ($qmPlayer->isObserver() == false)
+            {
+                $qmPlayer->color = $colorsArr[$i];
+                $qmPlayer->location = $spawnOrder[$i] - 1;
+                $qmPlayer->save();
+                $i++;
+                Log::debug("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . " Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+            }
         }
 
         foreach ($otherQmQueueEntries as $otherQmQueueEntry)
@@ -1006,7 +1091,7 @@ class QuickMatchService
             $otherQmPlayer->tunnel_id = $qmMatch->seed + $otherQmPlayer->color;
             $otherQmPlayer->save();
 
-            if (!$otherQmPlayer->isObserver())
+            if (!$otherQmPlayer->isObserver() && $opponentPlayer === null)
             {
                 $opponentPlayer = $otherQmPlayer;
                 $opponentsCount++;
@@ -1526,6 +1611,69 @@ class QuickMatchService
         return array_slice($possibleColors, 0, $numPlayers);
     }
 
+    /**
+     * Selects final colors for player 1 and 2 based on their preferences.
+     * @param int[] $prefColorsP1 The preferred colors of player 1
+     * @param int[] $prefOpponentColorsP1 What player 1 prefers for their opponent.
+     * @param int[] $prefColorsP2 The preferred colors of player 2.
+     * @param int[] $prefOpponentColorsP2 What player 2 prefers for their opponent.
+     * @return array{int,int} [colorPlayer1, colorPlayer2]
+     */
+    private function setColors(array $prefColorsP1, array $prefOpponentColorsP1, array $prefColorsP2, array $prefOpponentColorsP2): array
+    {
+        // Penalty mapping: position in preference array -> penalty points.
+        $penalties = [0, 2, 5, 10];
+
+        // Generate all possible color combinations (0-3).
+        $bestCombinations = [];
+        $lowestPenalty = PHP_INT_MAX;
+
+        for ($colorP1 = 0; $colorP1 < 4; $colorP1++)
+        {
+            for ($colorP2 = 0; $colorP2 < 4; $colorP2++)
+            {
+                // Cannot assign same color to both players.
+                if ($colorP1 === $colorP2)
+                {
+                    continue;
+                }
+
+                // Calculate penalty for player 1's color choice.
+                $posP1 = array_search($colorP1, $prefColorsP1);
+                $penaltyP1Color = $penalties[$posP1];
+
+                // Calculate penalty for player 1's opponent color preference.
+                $posP1Opponent = array_search($colorP2, $prefOpponentColorsP1);
+                $penaltyP1Opponent = $penalties[$posP1Opponent];
+
+                // Calculate penalty for player 2's color choice.
+                $posP2 = array_search($colorP2, $prefColorsP2);
+                $penaltyP2Color = $penalties[$posP2];
+
+                // Calculate penalty for player 2's opponent color preference.
+                $posP2Opponent = array_search($colorP1, $prefOpponentColorsP2);
+                $penaltyP2Opponent = $penalties[$posP2Opponent];
+
+                // Total penalty for this combination.
+                $totalPenalty = $penaltyP1Color + $penaltyP1Opponent + $penaltyP2Color + $penaltyP2Opponent;
+
+                // Track best combinations.
+                if ($totalPenalty < $lowestPenalty)
+                {
+                    // Replace.
+                    $lowestPenalty = $totalPenalty;
+                    $bestCombinations = [[$colorP1, $colorP2]];
+                }
+                elseif ($totalPenalty === $lowestPenalty)
+                {
+                    // Add.
+                    $bestCombinations[] = [$colorP1, $colorP2];
+                }
+            }
+        }
+
+        return $bestCombinations[array_rand($bestCombinations)];
+    }
 
     /**
      *
