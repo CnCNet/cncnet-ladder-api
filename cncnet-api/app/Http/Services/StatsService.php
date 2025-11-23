@@ -391,7 +391,8 @@ class StatsService
                         $matchupResults[$opponentName]["total"] = 0;
                     }
 
-                    if ($pgr->won)
+                    // Use points > 0 instead of won flag to handle DCs and 2v2 cases correctly
+                    if ($pgr->points > 0)
                     {
                         $matchupResults[$opponentName]["won"] = $matchupResults[$opponentName]["won"] + 1;
                     }
@@ -489,8 +490,8 @@ class StatsService
                     // Initialize matchup stats if not already set
                     $matchupResults[$teammateName] ??= ["won" => 0, "lost" => 0, "total" => 0];
 
-                    // Update win/loss count
-                    if ($myPlayerGameReport->won || $teamMatePlayerGameReport->won)
+                    // Update win/loss count - use points > 0 to handle DCs and cases where both players die but team wins
+                    if ($myPlayerGameReport->points > 0 || $teamMatePlayerGameReport->points > 0)
                     {
                         $matchupResults[$teammateName]["won"]++;
                     }

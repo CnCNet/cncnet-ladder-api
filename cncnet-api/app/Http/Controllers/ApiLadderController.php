@@ -677,7 +677,21 @@ class ApiLadderController extends Controller
             // Get correct cache type
             $cache = $playerGR->player->playerCache($history->id);
 
-            if ($playerGR->points < 0 && ($cache === null || $cache->points < 0))
+            // Prevent players from going below zero total points
+            if ($cache !== null && ($cache->points + $playerGR->points) < 0)
+            {
+                // Cap the loss: set game points to negative of current total
+                // Example: if cache = 10, set game points to -10, so new total = 10 + (-10) = 0
+                $playerGR->points = -1 * $cache->points;
+            }
+            elseif ($cache === null && $playerGR->points < 0)
+            {
+                // No cache exists, don't allow negative points
+                $playerGR->points = 0;
+            }
+
+            // Safety check: losers should NEVER get positive points. An edge case has been observed where players with negative or very low pts, earned ~+1 pts when winning, lets prevent that.
+            if (!$playerGRTeamWonTheGame && !$playerGR->draw && $playerGR->points > 0)
             {
                 $playerGR->points = 0;
             }
@@ -824,7 +838,21 @@ class ApiLadderController extends Controller
             // Get correct cache type
             $cache = $playerGR->player->playerCache($history->id);
 
-            if ($playerGR->points < 0 && ($cache === null || $cache->points < 0))
+            // Prevent players from going below zero total points
+            if ($cache !== null && ($cache->points + $playerGR->points) < 0)
+            {
+                // Cap the loss: set game points to negative of current total
+                // Example: if cache = 10, set game points to -10, so new total = 10 + (-10) = 0
+                $playerGR->points = -1 * $cache->points;
+            }
+            elseif ($cache === null && $playerGR->points < 0)
+            {
+                // No cache exists, don't allow negative points
+                $playerGR->points = 0;
+            }
+
+            // Safety check: losers should NEVER get positive points
+            if (!$playerGR->wonOrDisco() && !$playerGR->draw && $playerGR->points > 0)
             {
                 $playerGR->points = 0;
             }

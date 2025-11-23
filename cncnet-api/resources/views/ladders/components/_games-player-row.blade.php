@@ -28,9 +28,11 @@
                     @php $playerStats2 = \App\Models\Stats2::where("id", $playerGameReport->stats->id)->first(); @endphp
                     @php $playerCountry = $playerStats2->faction($history->ladder, $playerGameReport->stats->cty); @endphp
 
-                    <div class="game-status status-{{ $playerGameReport->won ? 'won' : 'lost' }}">
+                    {{-- Check points > 0 in addition to won flag because in team games (2v2), a player may have won=false
+                         if they died during the match, but their team still won and they received positive points --}}
+                    <div class="game-status status-{{ ($playerGameReport->won || $playerGameReport->points > 0) ? 'won' : 'lost' }}">
                         <span class="status-text">
-                            {{ $playerGameReport->won == true ? 'Won' : 'Lost' }}
+                            {{ ($playerGameReport->won == true || $playerGameReport->points > 0) ? 'Won' : 'Lost' }}
                         </span>
 
                         <span class="points">

@@ -730,7 +730,8 @@ class LadderService
             $pc->mark();
             $pc->points -= $playerGR->points;
             $pc->games--;
-            if ($playerGR->won)
+            // Use points > 0 instead of won flag to handle 2v2 cases where a player dies but team wins
+            if ($playerGR->points > 0)
                 $pc->wins--;
 
             $pc->save();
@@ -799,7 +800,8 @@ class LadderService
 
         $clanCache->points += $playerGameReport->points;
         $clanCache->games++;
-        if ($playerGameReport->won)
+        // Use points > 0 instead of won flag to handle 2v2 cases where a player dies but team wins
+        if ($playerGameReport->points > 0)
             $clanCache->wins++;
 
         $clanCache->save();
@@ -826,7 +828,8 @@ class LadderService
 
         $pc->points += $playerGameReport->points;
         $pc->games++;
-        if ($playerGameReport->won)
+        // Use points > 0 instead of won flag to handle 2v2 cases where a player dies but team wins
+        if ($playerGameReport->points > 0)
             $pc->wins++;
 
         $pc->save();
