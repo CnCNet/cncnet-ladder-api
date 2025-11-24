@@ -689,6 +689,9 @@ class AdminController extends Controller
 
         $user = $player->user;
 
+        $startBan = ($banType >= \App\Models\Ban::START_NOW_BEGIN
+           && $banType <= \App\Models\Ban::START_NOW_END);
+
         return view(
             "admin.edit-ban",
             [
@@ -700,7 +703,7 @@ class AdminController extends Controller
                 "expires" => null,
                 "admin_id" => $mod->id,
                 "user_id" => $user->id,
-                "start_ban" => true, // new ban,
+                "start_ban" => $startBan,
                 "end_ban" => false,
                 "ban_type" => $banType,
                 "internal_note" => "",
