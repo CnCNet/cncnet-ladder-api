@@ -280,7 +280,7 @@ class LadderService
                 $filterBy == 'games',
                 function ($q) use ($orderBy)
                 {
-                    return $q->orderBy("games", $orderBy ?? 'desc');
+                    return $q->orderBy("games", in_array($orderBy, ['asc', 'desc']) ? $orderBy : 'desc');
                 },
                 function ($q)
                 {
@@ -315,7 +315,7 @@ class LadderService
                 $filterBy == 'games',
                 function ($q) use ($orderBy)
                 {
-                    return $q->orderBy("games", $orderBy ?? 'desc');
+                    return $q->orderBy("games", in_array($orderBy, ['asc', 'desc']) ? $orderBy : 'desc');
                 },
                 function ($q)
                 {
