@@ -422,4 +422,137 @@ class AccountController extends Controller
         $request->session()->flash("success", 'User settings updated!');
         return redirect()->back();
     }
+
+    public function sendPlayerInvitation(Request $request)
+    {
+        $invitedPlayer = \App\Models\Player::where('ladder_id', $request->ladder_id)->where('username', $request->invite_player_name)->first();
+
+        $author =\App\Models\Player::where('ladder_id', $request->ladder_id)->where('id', $request->author_player_id)->first();
+
+        // can't find author
+        if ($author == null)
+        {
+            $request->session()->flash("error", "Error fetching player not found!");
+            return redirect()->back();
+        }
+
+        // can't find invited player
+        if ($invitedPlayer == null)
+        {
+            $request->session()->flash("error", "Player $request->invite_player_name not found!");
+            return redirect()->back();
+        }
+
+        // both players belong to same user
+        if ($author->user->id == $invitedPlayer->user->id)
+        {
+            $request->session()->flash("error", "You cannot add one of your own players as a teammate");
+            return redirect()->back();
+        }
+
+        // invited player already has a teammate
+        if ($invitedPlayer->preferredTeamMate() != null)
+        {
+            $invitedUsername = $invitedPlayer->username;
+            $request->session()->flash("error", "$invitedUsername already has a teammate!");
+            return redirect()->back();
+        }
+
+        // create invitation
+        $playerInvitation = new \App\Models\PlayerInvitation();
+        $playerInvitation->invited_player_id = $invitedPlayer->id;
+        $playerInvitation->author_player_id = $request->author_player_id;
+        $playerInvitation->status = 'pending';
+        $playerInvitation->save();
+
+        $request->session()->flash("success", "Player $request->invite_player_name invited!");
+        return redirect()->back();
+    }
+
+    public function processInvitation(Request $request)
+    {
+        $playerInvitation = \App\Models\PlayerInvitation::where('id', $request->id)->first();
+
+        // can't find invitation
+        if ($playerInvitation == null)
+        {
+            $request->session()->flash("error", "Invite not found!");
+            return redirect()->back();
+        }
+
+        // accept the invitation
+        if ($request->action == 'accept') # this code is processed by the 'invited' player clicking 'accept'.
+        {
+
+            // invited player already has a teammate
+            if ($playerInvitation->invitedPlayer->preferredTeamMate() != null)
+            {
+                $invitedUsername = $playerInvitation->invitedPlayer->username;
+                $request->session()->flash("error", "Your user $invitedUsername already has a teammate!");
+                return redirect()->back();
+            }
+
+            // author already has a teammate
+            if ($playerInvitation->author->preferredTeamMate() != null)
+            {
+                $authorUsername = $playerInvitation->author->username;
+                $request->session()->flash("error", "$authorUsername already has a teammate!");
+                return redirect()->back();
+            }
+
+            $invitedPlayer = $playerInvitation->invitedPlayer;
+            $invitedPlayer->preferred_teammate_id = $playerInvitation->author->id;
+            $invitedPlayer->save();
+
+            $authorPlayer = $playerInvitation->author;
+            $authorPlayer->preferred_teammate_id = $playerInvitation->invitedPlayer->id;
+            $authorPlayer->save();
+
+            $playerInvitation->status = 'accepted';
+            $playerInvitation->save();
+
+            // cancel other pending invites from author
+            foreach (\App\Models\PlayerInvitation::where('author_player_id', $authorPlayer->id)->where('status', 'pending')->get() as $pendingInvite)
+            {
+                $pendingInvite->status = 'canceled';
+                $pendingInvite->save();
+            }
+
+            // cancel other pending invites from invited
+            foreach (\App\Models\PlayerInvitation::where('author_player_id', $invitedPlayer->id)->where('status', 'pending')->get() as $pendingInvite)
+            {
+                $pendingInvite->status = 'canceled';
+                $pendingInvite->save();
+            }
+
+            $request->session()->flash("success", "$authorPlayer->username is now your teammate!");
+            return redirect()->back();
+        }
+
+        // reject the invitation
+        else if ($request->action == 'reject')
+        {
+            $playerInvitation->delete();
+            $request->session()->flash("success", "Invitation rejected!");
+            return redirect()->back();
+        }
+
+        // should not reach this code
+        $request->session()->flash("success", "Unexpected error");
+        return redirect()->back();
+    }
+
+    public function removeTeammate(Request $request)
+    {
+        $player = \App\Models\Player::where('id', $request->player_id)->first();
+        $player->preferred_teammate_id = 0;
+        $player->save();
+
+        $teammate = \App\Models\Player::where('id', $request->teammate_player_id)->first();
+        $teammate->preferred_teammate_id = 0;
+        $teammate->save();
+
+        $request->session()->flash("success", "$teammate->username removed!");
+        return redirect()->back();
+    }
 }
