@@ -493,15 +493,18 @@ class ApiLadderController extends Controller
         }
 
         // Step 2: Fallback — no winner marked; use a non-defeated player (disconnected game case)
+        // Have observed matches where disconnected=true on players who did not disconnect, but were in a dc'd game due to another player dc'ing
         foreach ($playerGameReports as $pgr)
         {
-            if (!$pgr->defeated && !$pgr->disconnected && $pgr->spectator == false)
+            if (!$pgr->defeated && $pgr->spectator == false)
             {
                 Log::info("Fallback to 'defeated' logic for disconnected game.", [
                     'game_id' => $pgr->game_id,
                     'game_report_id' => $pgr->gameReport->id,
                     'player_id' => $pgr->player_id,
                     'team' => $pgr->team,
+                    'defeated' => $pgr->defeated,
+                    'disconnected' => $pgr->disconnected,
                 ]);
                 return $pgr->team;
             }
@@ -677,7 +680,21 @@ class ApiLadderController extends Controller
             // Get correct cache type
             $cache = $playerGR->player->playerCache($history->id);
 
-            if ($playerGR->points < 0 && ($cache === null || $cache->points < 0))
+            // Prevent players from going below zero total points
+            if ($cache !== null && ($cache->points + $playerGR->points) < 0)
+            {
+                // Cap the loss: set game points to negative of current total
+                // Example: if cache = 10, set game points to -10, so new total = 10 + (-10) = 0
+                $playerGR->points = -1 * $cache->points;
+            }
+            elseif ($cache === null && $playerGR->points < 0)
+            {
+                // No cache exists, don't allow negative points
+                $playerGR->points = 0;
+            }
+
+            // Safety check: losers should NEVER get positive points. An edge case has been observed where players with negative or very low pts, earned ~+1 pts when winning, lets prevent that.
+            if (!$playerGRTeamWonTheGame && !$playerGR->draw && $playerGR->points > 0)
             {
                 $playerGR->points = 0;
             }
@@ -824,7 +841,21 @@ class ApiLadderController extends Controller
             // Get correct cache type
             $cache = $playerGR->player->playerCache($history->id);
 
-            if ($playerGR->points < 0 && ($cache === null || $cache->points < 0))
+            // Prevent players from going below zero total points
+            if ($cache !== null && ($cache->points + $playerGR->points) < 0)
+            {
+                // Cap the loss: set game points to negative of current total
+                // Example: if cache = 10, set game points to -10, so new total = 10 + (-10) = 0
+                $playerGR->points = -1 * $cache->points;
+            }
+            elseif ($cache === null && $playerGR->points < 0)
+            {
+                // No cache exists, don't allow negative points
+                $playerGR->points = 0;
+            }
+
+            // Safety check: losers should NEVER get positive points
+            if (!$playerGR->wonOrDisco() && !$playerGR->draw && $playerGR->points > 0)
             {
                 $playerGR->points = 0;
             }

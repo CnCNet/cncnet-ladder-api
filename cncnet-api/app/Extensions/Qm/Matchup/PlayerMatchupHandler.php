@@ -82,8 +82,12 @@ class PlayerMatchupHandler extends BaseMatchupHandler
             return;
         }
 
-        // Add observers to the match if there is any
-        $observers = $opponents->filter(fn (QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver());
+        // Add observers to the match if there is any (maximum of one observer per match)
+        // Prioritize observers who have been waiting the longest
+        $observers = $opponents
+            ->filter(fn (QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer->isObserver())
+            ->sortBy('created_at')
+            ->take(1);
         if ($observers->count() > 0)
         {
             $this->matchHasObservers = true;
