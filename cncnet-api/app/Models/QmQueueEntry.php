@@ -20,14 +20,12 @@ class QmQueueEntry extends Model
     public function secondsinQueue()
     {
         $createdAt = $this->created_at;
-        $updatedAt = $this->updated_at;
 
-        // Convert timestamps to Carbon instances
+        // Convert timestamp to Carbon instance
         $createdAtCarbon = Carbon::parse($createdAt);
-        $updatedAtCarbon = Carbon::parse($updatedAt);
 
-        // Calculate the difference in seconds
-        $secondsDifference = $updatedAtCarbon->diffInSeconds($createdAtCarbon);
+        // Calculate the difference in seconds from created_at to NOW
+        $secondsDifference = now()->diffInSeconds($createdAtCarbon);
 
         return $secondsDifference;
     }
