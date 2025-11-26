@@ -1017,7 +1017,15 @@ class QuickMatchService
                 $p2OppColors = $p1Colors;
             }
 
+            Log::debug('QuickMatchService ** Colors prefs', [
+                'player'          => $qmPlayer->player->username,
+                'p1Colors'        => $p1Colors,
+                'p1OppColors'     => $p1OppColors,
+                'p2Colors'        => $p2Colors,
+                'p2OppColors'     => $p2OppColors,
+            ]);
             $bothHaveColorPrefs = is_array($p1Colors) && is_array($p2Colors) && is_array($p1OppColors) && is_array($p2OppColors);
+            Log::debug("QuickMatchService ** Both have colors prefs: " . $bothHaveColorPrefs . "   Match has observer: " . $matchHasObserver . "   qmPlayer is observer: " . $qmPlayer->isObserver());
         }
 
         if (!$matchHasObserver && $bothHaveColorPrefs)
@@ -1025,7 +1033,7 @@ class QuickMatchService
             // Determine best matching colors.
             [$p1Color, $p2Color] = $this->setColors($p1Colors, $p1OppColors, $p2Colors, $p2OppColors);
             $colorsArr = [$p1Color, $p2Color];
-            if ($qmPlayer->isObserver() == false)
+            if (!$qmPlayer->isObserver())
             {
                 $qmPlayer->color = $colorsArr[$i];
                 $qmPlayer->location = $spawnOrder[$i] - 1;

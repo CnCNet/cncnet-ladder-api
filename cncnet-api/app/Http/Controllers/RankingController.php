@@ -12,7 +12,7 @@ class RankingController extends Controller
 {
     public function getIndex(Request $request)
     {
-        $gameModes = ["Blitz", "Blitz 2v2", "Red Alert", "Red Alert 2", "Yuri's Revenge"];
+        $gameModes = ["Blitz", "Blitz 2v2", "Red Alert", "Red Alert 2", "Red Alert 2 2v2", "Yuri's Revenge"];
 
         $players = ["Active", "New", "All time best", "All players" ];
         $upsets = ["All time", "Last 12 month", "Last 30 days"];
@@ -23,6 +23,7 @@ class RankingController extends Controller
             GameHelper::$GAME_BLITZ . "-2v2",
             GameHelper::$GAME_RA,
             GameHelper::$GAME_RA2,
+            GameHelper::$GAME_RA2 . "-2v2",
             GameHelper::$GAME_YR,
         ];
 

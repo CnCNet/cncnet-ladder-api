@@ -25,10 +25,14 @@ class ClanMatchupHandler extends BaseMatchupHandler
         # Fetch all entries who are currently in queue for this ladder
         $allQMQueueEntries = $this->quickMatchService->fetchQmQueueEntry($this->history);
 
-        // get all observers from qm queue entries
-        $observersQmQueueEntries = $allQMQueueEntries->filter(function($qmQueueEntry) {
-            return $qmQueueEntry->qmPlayer->isObserver();
-        });
+        // get all observers from qm queue entries (maximum of one observer per match)
+        // Prioritize observers who have been waiting the longest
+        $observersQmQueueEntries = $allQMQueueEntries
+            ->filter(function($qmQueueEntry) {
+                return $qmQueueEntry->qmPlayer->isObserver();
+            })
+            ->sortBy('created_at')
+            ->take(1);
         $this->matchHasObservers = $observersQmQueueEntries->count() > 0;
 
         Log::info("ClanMatchupHandler ** Players Per Clan Required: " . $playerCountPerClanRequired);
