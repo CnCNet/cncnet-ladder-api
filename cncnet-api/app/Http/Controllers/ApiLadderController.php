@@ -493,15 +493,18 @@ class ApiLadderController extends Controller
         }
 
         // Step 2: Fallback — no winner marked; use a non-defeated player (disconnected game case)
+        // Have observed matches where disconnected=true on players who did not disconnect, but were in a dc'd game due to another player dc'ing
         foreach ($playerGameReports as $pgr)
         {
-            if (!$pgr->defeated && !$pgr->disconnected && $pgr->spectator == false)
+            if (!$pgr->defeated && $pgr->spectator == false)
             {
                 Log::info("Fallback to 'defeated' logic for disconnected game.", [
                     'game_id' => $pgr->game_id,
                     'game_report_id' => $pgr->gameReport->id,
                     'player_id' => $pgr->player_id,
                     'team' => $pgr->team,
+                    'defeated' => $pgr->defeated,
+                    'disconnected' => $pgr->disconnected,
                 ]);
                 return $pgr->team;
             }
