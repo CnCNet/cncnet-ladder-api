@@ -34,25 +34,25 @@ class Ban extends Model
         'expires' => 'datetime',
     ];
 
-    const START_ON_CONNECT_BEGIN = 0;
+    const START_NOW_BEGIN = 0;
     const BAN_BEGIN  = 0;
     const BAN48H     = 0;
     const BAN1WEEK   = 1;
     const BAN2WEEK   = 2;
     const BAN_SHADOW = 3;
     const BAN_END    = 99;
-    const START_ON_CONNECT_END = 99;
+    const START_NOW_END = 99;
 
     const PERMBAN    = 100;
 
-    const START_NOW_BEGIN = 140;
+    const START_ON_CONNECT_BEGIN = 140;
     const COOLDOWN_BEGIN = 140;
     const COOLDOWN1H = 140;
     const COOLDOWN2H = 141;
     const COOLDOWN4H = 142;
     const COOLDOWN12H = 143;
     const COOLDOWN_END = 199;
-    const START_NOW_END = 199;
+    const START_ON_CONNECT_END = 199;
 
     public function admin()
     {
