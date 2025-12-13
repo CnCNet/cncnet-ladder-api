@@ -57,6 +57,7 @@ class QuickMatchSpawnService
                 "IsSpectator" =>    "False",
                 "DisableChat" => ($isObserver || $notAllowedToChat) ? "True" : "False",
                 "AllowChat" => (!$isObserver && !$notAllowedToChat) ? "True" : "False",
+                "AutoSaveInterval" => 0,
                 // Filter null values
             ],
             function ($var)
