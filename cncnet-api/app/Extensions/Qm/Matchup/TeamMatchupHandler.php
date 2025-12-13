@@ -20,9 +20,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         // Check if current player is an observer
         if ($this->qmPlayer->isObserver())
         {
-            // If yes, then we skip the matchup because we don't want to compare
-            // observer with other actual players to find a match.
-            // Observer will be added to the match later on.
+            Log::debug("TeamMatchup ** {$playerInQueue} is an observer, skipping matchup process. Will be added to match when other players form one.");
             return;
         }
 
@@ -31,21 +29,44 @@ class TeamMatchupHandler extends BaseMatchupHandler
             ->filter(function($entry) {
                 return $entry->id !== $this->qmQueueEntry->id;
             })->values();
-        $count = $opponents->count() + 1;
+
+        $totalInQueue = $opponents->count() + 1;
         $timeInQueue = $this->qmQueueEntry->secondsinQueue();
-        Log::debug("FindOpponent ** inQueue={$playerInQueue}, players in q: {$count}, for ladder={$ladder->abbreviation}, seconds in Queue: {$timeInQueue}");
+        $waitTimeBonus = $timeInQueue * $ladderRules->points_per_second;
+        $effectiveRange = $ladderRules->max_points_difference + $waitTimeBonus;
+
+        Log::info("=== TeamMatchup START for {$playerInQueue} ===");
+        Log::info("  Player: {$playerInQueue} | Points: {$this->qmQueueEntry->points} | Ladder: {$ladder->abbreviation}");
+        Log::info("  Time in queue: {$timeInQueue}s | Wait bonus: +{$waitTimeBonus} pts | Effective range: {$effectiveRange} pts");
+        Log::info("  Total players in queue: {$totalInQueue} (including {$playerInQueue})");
+
+        $allPlayerNames = $opponents->map(fn($e) => $e->qmPlayer?->player?->username ?? 'Unknown')->implode(', ');
+        Log::debug("  All players in queue: {$playerInQueue}, {$allPlayerNames}");
 
         // Find opponents in same tier with current player.
+        $beforeTierFilter = $opponents->count();
         $matchableOpponents = $this->quickMatchService->getEntriesInSameTier($ladder, $this->qmQueueEntry, $opponents);
+        $afterTierFilter = $matchableOpponents->count();
 
-        // Find opponents that can be matched with current player.
+        if ($afterTierFilter < $beforeTierFilter) {
+            $filtered = $beforeTierFilter - $afterTierFilter;
+            Log::debug("  Tier filter: {$filtered} players filtered out ({$afterTierFilter} remain in same tier)");
+        }
+
+        // Find opponents that can be matched with current player based on points.
         $matchableOpponents = $this->getEntriesInPointRange2v2($this->qmQueueEntry, $matchableOpponents);
 
         $opponentCount = $matchableOpponents->count();
         $matchableNames = $matchableOpponents->map(function($entry) {
             return $entry->qmPlayer?->player?->username ?? 'Unknown';
         })->implode(', ');
-        Log::debug("FindOpponent ** inQueue={$playerInQueue}, amount of matchable opponent after point filter: {$opponentCount} of {$count}. Names: [{$matchableNames}]");
+
+        if ($opponentCount > 0) {
+            Log::info("  ✅ Point filter passed: {$opponentCount} matchable opponents found");
+            Log::debug("     Matchable players: [{$matchableNames}]");
+        } else {
+            Log::info("  ❌ Point filter: No matchable opponents found after point range validation");
+        }
 
         // Count the number of players we need to start a match
         // Excluding current player
@@ -55,10 +76,13 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $matchableOpponentsCount = $matchableOpponents->count();
         if ($matchableOpponentsCount < $numberOfOpponentsNeeded)
         {
-            Log::debug("FindOpponent ** inQueue={$playerInQueue}, Team matchup handler ** Not enough players for match yet ($matchableOpponentsCount of $numberOfOpponentsNeeded)");
+            Log::info("  ❌ MATCH FAILED: Not enough players ({$matchableOpponentsCount}/{$numberOfOpponentsNeeded} needed)");
+            Log::info("=== TeamMatchup END for {$playerInQueue} - NO MATCH ===\n");
             $this->qmPlayer->touch();
             return;
         }
+
+        Log::debug("  ✅ Sufficient players found, attempting to form teams...");
 
         [$teamAPlayers, $teamBPlayers, $stats] = $this->quickMatchService->getBestMatch2v2ForPlayer(
             $this->qmQueueEntry,
@@ -66,52 +90,69 @@ class TeamMatchupHandler extends BaseMatchupHandler
             $this->history
         );
 
-        Log::debug("FindOpponent ** TEAMS : "
-            . json_encode($teamAPlayers) . ' VS'
-            . json_encode($teamBPlayers));
-
         // Log player names and their team
         $teamALog = $teamAPlayers->map(function($entry) {
-            return $entry->qmPlayer?->player?->username ?? 'Unknown';
+            $pts = $entry->points;
+            $name = $entry->qmPlayer?->player?->username ?? 'Unknown';
+            return "{$name} ({$pts} pts)";
         })->implode(', ');
         $teamBLog = $teamBPlayers->map(function($entry) {
-            return $entry->qmPlayer?->player?->username ?? 'Unknown';
+            $pts = $entry->points;
+            $name = $entry->qmPlayer?->player?->username ?? 'Unknown';
+            return "{$name} ({$pts} pts)";
         })->implode(', ');
-        Log::debug("Team A (" . $teamAPlayers->count() . "): " . $teamALog);
-        Log::debug("Team B (" . $teamBPlayers->count() . "): " . $teamBLog);
+
+        Log::info("  Teams formed:");
+        Log::info("    Team A ({$teamAPlayers->count()}): {$teamALog}");
+        Log::info("    Team B ({$teamBPlayers->count()}): {$teamBLog}");
 
         // Ensure both teams have exactly two players
         if ($teamAPlayers->count() !== 2 || $teamBPlayers->count() !== 2) {
-            Log::warning("Team size error: Team A has {$teamAPlayers->count()} players, Team B has {$teamBPlayers->count()} players. Expected 2 each.");
+            Log::warning("  ⚠️  Team size error: Team A has {$teamAPlayers->count()} players, Team B has {$teamBPlayers->count()} players. Expected 2 each.");
         }
 
         $players = $teamAPlayers->merge($teamBPlayers);
 
         $commonQmMaps = $this->quickMatchService->getCommonMapsForPlayers($ladder, $players);
+        $mapCount = count($commonQmMaps);
 
-        if (count($commonQmMaps) < 1)
+        if ($mapCount < 1)
         {
-            Log::info("FindOpponent ** No common maps available");
+            Log::info("  ❌ MATCH FAILED: No common maps available between all players");
+            Log::info("=== TeamMatchup END for {$playerInQueue} - NO MATCH ===\n");
             $this->qmPlayer->touch();
             return;
         }
 
+        Log::debug("  ✅ Map validation: {$mapCount} common maps available");
+
         // Add observers to the match if there is any (maximum of one observer per match)
         // Prioritize observers who have been waiting the longest
-        $observers = $opponents
-            ->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver())
-            ->sortBy('created_at')
-            ->take(1);
-        if ($observers->count() > 0)
-        {
+        $allObservers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
+        $observers = $allObservers->sortBy('created_at')->take(1);
+
+        if ($observers->count() > 0) {
             $this->matchHasObservers = true;
+            $observerName = $observers->first()->qmPlayer?->player?->username ?? 'Unknown';
+            $observerWait = $observers->first()->secondsinQueue();
+            Log::info("  👁  Observer added: {$observerName} (waited {$observerWait}s)");
+
+            if ($allObservers->count() > 1) {
+                $remainingCount = $allObservers->count() - 1;
+                Log::debug("     {$remainingCount} other observer(s) remain in queue");
+            }
+        } else {
+            Log::debug("  No observers in queue");
         }
 
         // Throw exception if team sizes are not exactly two
         if ($teamAPlayers->count() !== 2 || $teamBPlayers->count() !== 2) {
-            Log::warning("Team size error: Team A has {$teamAPlayers->count()} players, Team B has {$teamBPlayers->count()} players. Expected 2 each.");
+            Log::error("  ❌ MATCH FAILED: Invalid team sizes - Team A: {$teamAPlayers->count()}, Team B: {$teamBPlayers->count()}");
             throw new \RuntimeException("Team size error: Team A has {$teamAPlayers->count()} players, Team B has {$teamBPlayers->count()} players. Expected 2 each.");
         }
+
+        Log::info("  ✅ MATCH CREATED: All validations passed, creating match...");
+        Log::info("=== TeamMatchup END for {$playerInQueue} - MATCH CREATED ===\n");
 
         // Start the match with all other players and other observers if there is any
         $this->createTeamMatch($commonQmMaps, $teamAPlayers, $teamBPlayers, $observers, $stats);
@@ -156,8 +197,11 @@ class TeamMatchupHandler extends BaseMatchupHandler
     {
         $rules = $currentQmQueueEntry->ladderHistory->ladder->qmLadderRules;
         $playerName = $currentQmQueueEntry->qmPlayer?->player?->username ?? 'Unknown';
+        $playerPoints = $currentQmQueueEntry->points;
+        $playerWaitTime = $currentQmQueueEntry->secondsinQueue();
+        $waitBonus = $playerWaitTime * $rules->points_per_second;
 
-        Log::debug("2v2 Search start: queueEntry={$currentQmQueueEntry->id}, name={$playerName}, opponentsInQueue=" . count($opponents));
+        Log::debug("  --- 2v2 Point Range Search for {$playerName} ({$playerPoints} pts, +{$waitBonus} wait bonus) ---");
 
         // Filter opponents to those that pass point range check with the current player
         $potentialOpponents = $this->filterOpponentsInRange($currentQmQueueEntry, $opponents, $rules)
@@ -165,11 +209,19 @@ class TeamMatchupHandler extends BaseMatchupHandler
                 return $opponent->id !== $currentQmQueueEntry->id;
             })->values();
 
-        Log::debug($potentialOpponents->count() . " potential opponents for {$playerName}: " . $potentialOpponents->pluck('qmPlayer.player.username')->implode(', '));
+        $potentialCount = $potentialOpponents->count();
+        $potentialNames = $potentialOpponents->map(function($e) {
+            return $e->qmPlayer?->player?->username . ' (' . $e->points . ' pts)';
+        })->implode(', ');
+
+        Log::debug("     Initial filter: {$potentialCount} potential opponents pass 1-on-1 range check");
+        if ($potentialCount > 0) {
+            Log::debug("     Potential: {$potentialNames}");
+        }
 
         if ($potentialOpponents->count() < 3)
         {
-            Log::debug("Not enough valid opponents for {$playerName} to form a 2v2 match: " . $potentialOpponents->count() . "/3");
+            Log::debug("     ❌ Not enough opponents for 2v2: {$potentialCount}/3 needed");
             return collect();
         }
 
@@ -177,11 +229,14 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $pointsPerSecond = $rules->points_per_second;
         $sortedOpponents = $potentialOpponents->sortBy(function ($opponent) use ($currentQmQueueEntry, $pointsPerSecond) {
             $pointDiff = abs($currentQmQueueEntry->points - $opponent->points);
-            $waitTimeBonus = (strtotime($opponent->updated_at) - strtotime($opponent->created_at)) * $pointsPerSecond;
+            $waitTimeBonus = $opponent->secondsinQueue() * $pointsPerSecond;
             return $pointDiff - $waitTimeBonus;
         })->values();
 
+        Log::debug("     Sorted opponents by closeness (considering wait time)");
+
         // Try all possible 3-player combinations (since the current player makes 4)
+        $combinationsTried = 0;
         foreach ($this->getCombinations($sortedOpponents, 3) as $threeOthers)
         {
             $matchPlayers = collect([$currentQmQueueEntry])->merge($threeOthers)->unique('id')->values();
@@ -190,17 +245,19 @@ class TeamMatchupHandler extends BaseMatchupHandler
                 continue;
             }
 
+            $combinationsTried++;
+            $comboNames = $matchPlayers->pluck('qmPlayer.player.username')->implode(', ');
+
             if ($this->allPlayersInRange($matchPlayers, $rules))
             {
-                Log::debug(
-                    "✅ Found valid 2v2 match for {$playerName}: " .
-                        $matchPlayers->pluck('qmPlayer.player.username')->implode(', ')
-                );
+                Log::debug("     ✅ Found valid 2v2 match after trying {$combinationsTried} combination(s)");
+                Log::debug("     Match: {$comboNames}");
                 return $matchPlayers;
             }
         }
 
-        Log::debug("❌ No valid 2v2 match found for {$playerName}");
+        Log::debug("     ❌ No valid 2v2 match found after trying {$combinationsTried} combination(s)");
+        Log::debug("     Reason: All combinations failed cross-player range validation");
         return collect();
     }
 
@@ -214,21 +271,12 @@ class TeamMatchupHandler extends BaseMatchupHandler
     private function getCombinations(Collection $items, int $size): Collection
     {
         $array = $items->all();
-        $allNames = collect($array)->map(function($entry) {
-            return $entry->qmPlayer?->player?->username ?? 'Unknown';
-        })->implode(', ');
-        Log::debug("getCombinations called with items: [{$allNames}] and size: {$size}");
         $results = [];
 
         $recurse = function ($arr, $size, $start = 0, $current = []) use (&$results, &$recurse)
         {
             if (count($current) === $size)
             {
-                // Debug log the combination
-                $names = collect($current)->map(function($entry) {
-                    return $entry->qmPlayer?->player?->username ?? 'Unknown';
-                })->implode(', ');
-                Log::debug("getCombinations: [{$names}]");
                 $results[] = $current;
                 return;
             }
@@ -258,8 +306,10 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $pointsPerSecond = $rules->points_per_second;
         $maxPointsDifference = $rules->max_points_difference;
         $currentPointFilter = $current->qmPlayer->player->user->userSettings->disabledPointFilter;
+        $currentPlayer = $current->qmPlayer?->player?->username ?? 'Unknown';
 
         $matchable = collect();
+        $filtered = collect();
 
         foreach ($opponents as $opponent)
         {
@@ -268,10 +318,12 @@ class TeamMatchupHandler extends BaseMatchupHandler
                 continue;
             }
 
+            $opponentName = $opponent->qmPlayer?->player?->username ?? 'Unknown';
             $diff = abs($current->points - $opponent->points);
-            $waitTimeBonus = (strtotime($current->updated_at) - strtotime($current->created_at)) * $pointsPerSecond;
+            $waitTimeBonus = $current->secondsinQueue() * $pointsPerSecond;
+            $effectiveRange = $waitTimeBonus + $maxPointsDifference;
 
-            $inNormalRange = $waitTimeBonus + $maxPointsDifference > $diff;
+            $inNormalRange = $effectiveRange > $diff;
             $inDisabledFilterRange = $currentPointFilter
                 && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter
                 && $diff < 1000
@@ -281,6 +333,22 @@ class TeamMatchupHandler extends BaseMatchupHandler
             if ($inNormalRange || $inDisabledFilterRange)
             {
                 $matchable->push($opponent);
+            }
+            else
+            {
+                $filtered->put($opponentName, [
+                    'points' => $opponent->points,
+                    'diff' => $diff,
+                    'range' => $effectiveRange,
+                    'reason' => $diff > $effectiveRange ? 'Points too far' : 'Filter mismatch'
+                ]);
+            }
+        }
+
+        if ($filtered->count() > 0) {
+            Log::debug("     Filtered out {$filtered->count()} player(s) outside point range:");
+            foreach ($filtered as $name => $info) {
+                Log::debug("       - {$name} ({$info['points']} pts): Δ{$info['diff']} > {$info['range']} range");
             }
         }
 
@@ -308,8 +376,8 @@ class TeamMatchupHandler extends BaseMatchupHandler
                 if ($i >= $j) continue; // Skip self and duplicate checks
 
                 $diff = abs($p1->points - $p2->points);
-                $waitTimeBonusP1 = (strtotime($p1->updated_at) - strtotime($p1->created_at)) * $pointsPerSecond;
-                $waitTimeBonusP2 = (strtotime($p2->updated_at) - strtotime($p2->created_at)) * $pointsPerSecond;
+                $waitTimeBonusP1 = $p1->secondsinQueue() * $pointsPerSecond;
+                $waitTimeBonusP2 = $p2->secondsinQueue() * $pointsPerSecond;
 
                 $passesNormalRange = ($waitTimeBonusP1 + $maxPointsDifference >= $diff)
                     || ($waitTimeBonusP2 + $maxPointsDifference >= $diff);
@@ -328,6 +396,8 @@ class TeamMatchupHandler extends BaseMatchupHandler
                     'points1' => $p1->points,
                     'points2' => $p2->points,
                     'diff' => $diff,
+                    'wait1' => $p1->secondsinQueue(),
+                    'wait2' => $p2->secondsinQueue(),
                     'pass' => $pass
                 ];
 
@@ -350,20 +420,37 @@ class TeamMatchupHandler extends BaseMatchupHandler
      */
     private function logComparisonTable(array $comparisonResults): void
     {
-        Log::debug("=== 2v2 Player Comparison Table ===");
+        Log::debug("     === 2v2 Player Pair Validation ===");
+        $passCount = 0;
+        $failCount = 0;
+
         foreach ($comparisonResults as $result)
         {
-            $status = $result['pass'] ? '✅ PASS' : '❌ FAIL';
+            $status = $result['pass'] ? '✅' : '❌';
+            if ($result['pass']) {
+                $passCount++;
+            } else {
+                $failCount++;
+            }
+
+            $waitInfo = isset($result['wait1']) && isset($result['wait2'])
+                ? " | Wait: {$result['wait1']}s/{$result['wait2']}s"
+                : "";
+
             Log::debug(sprintf(
-                "%-15s (%4d pts) ↔ %-15s (%4d pts) | Diff: %4d | %s",
+                "     %s %-15s (%4d) ↔ %-15s (%4d) | Δ%4d%s",
+                $status,
                 $result['p1'],
                 $result['points1'],
                 $result['p2'],
                 $result['points2'],
                 $result['diff'],
-                $status
+                $waitInfo
             ));
         }
-        Log::debug("===================================");
+
+        $total = $passCount + $failCount;
+        Log::debug("     Summary: {$passCount}/{$total} pairs passed, {$failCount}/{$total} failed");
+        Log::debug("     =====================================");
     }
 }
