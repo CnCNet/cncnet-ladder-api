@@ -355,8 +355,8 @@ class QuickMatchService
                 continue;
             }
 
-            // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
-            $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $ladder->qmLadderRules->points_per_second;
+            // Calculate wait time bonus using secondsinQueue()
+            $pointsTime = $currentQmQueueEntry->secondsinQueue() * $ladder->qmLadderRules->points_per_second;
 
             // is the opponent within the point filter
             if ($pointsTime + $ladder->qmLadderRules->max_points_difference > abs($currentQmQueueEntry->points - $opponent->points))
@@ -460,8 +460,8 @@ class QuickMatchService
                 continue;
             }
 
-            // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
-            $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $pointsPerSecond;
+            // Calculate wait time bonus using secondsinQueue()
+            $pointsTime = $currentQmQueueEntry->secondsinQueue() * $pointsPerSecond;
 
             // is the opponent within the point filter
             if ($pointsTime + $maxPointsDifference > abs($currentQmQueueEntry->points - $opponent->points))
