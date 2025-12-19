@@ -54,7 +54,6 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         if ($matchableOpponents->count() < $numberOfOpponentsNeeded)
         {
             Log::debug("FindOpponent ** Not enough players for match yet, ladder: $ladder->abbreviation, player: $playerName");
-            $this->qmPlayer->touch();
             return;
         }
 
@@ -78,7 +77,6 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         if (count($commonQmMaps) < 1)
         {
             Log::info("FindOpponent ** No common maps available for ladder: $ladder->abbreviation, player: $playerName");
-            $this->qmPlayer->touch();
             return;
         }
 
