@@ -19,8 +19,8 @@ class QmQueueEntry extends Model
 
     public function secondsinQueue()
     {
-        // Calculate the difference between updated_at and created_at
-        // updated_at is touched by matchup handlers when no match is found
-        return $this->updated_at->diffInSeconds($this->created_at);
+        // Calculate the difference from created_at to updated_at
+        // updated_at is touched by FindOpponentJob when matching starts
+        return $this->created_at->diffInSeconds($this->updated_at);
     }
 }
