@@ -1678,11 +1678,14 @@ class AdminController extends Controller
 
         $playerCaches = PlayerCache::where('player_id', $player->id)->get();
 
-        if ($playerCaches == null || $playerCaches->count() == 0)
+        if ($playerCaches != null)
         {
-            Log::error("No player caches found with this player id: $player->id");
-            $request->session()->flash('error', "Error updating player");
-            return redirect()->back();
+            //update player name in player caches
+            foreach ($playerCaches as $playerCache)
+            {
+                $playerCache->player_name = $player->username;
+                $playerCache->save();
+            }
         }
 
         $newName = $request->player_name;
@@ -1702,13 +1705,6 @@ class AdminController extends Controller
         //update player name to the new name
         $player->username = $newName;
         $player->save();
-
-        //update player name in player caches
-        foreach ($playerCaches as $playerCache)
-        {
-            $playerCache->player_name = $player->username;
-            $playerCache->save();
-        }
 
         $url = URLHelper::getPlayerProfileUrl($history, $player->username);
         $request->session()->flash('success', "Player name has been updated to " . $player->username);
