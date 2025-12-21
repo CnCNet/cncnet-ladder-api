@@ -7,26 +7,119 @@ use App\Http\Services\AdminService;
 use App\Http\Services\LadderService;
 use App\Models\Clan;
 use App\Models\GameObjectSchema;
+use App\Models\GameReport;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\LadderType;
-use App\Models\PlayerCache;
 use App\Models\Player;
+use App\Models\PlayerCache;
+use App\Models\PlayerGameReport;
 use App\Models\SpawnOptionString;
 use App\Models\URLHelper;
 use App\Models\User;
+use App\Models\Side;
 use App\Models\Game;
 use App\Models\UserPro;
 use App\Models\UserSettings;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use App\Models\IpAddressHistory;
+use App\Models\QmUserId;
+use Spatie\Activitylog\Models\Activity;
 
 class AdminController extends Controller
 {
+    /**
+     * Show audit log events with filtering.
+     */
+    public function getAuditLog(Request $request)
+    {
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
+            abort(403);
+        }
+
+        $query = Activity::query();
+
+        if ($request->filled('model_type'))
+        {
+            $query->where('subject_type', $request->input('model_type'));
+        }
+        if ($request->filled('event'))
+        {
+            $query->where('event', $request->input('event'));
+        }
+
+        $activities = $query->with('causer')->orderByDesc('created_at')->paginate(30);
+
+        return view('admin.audit-log', compact('activities'));
+    }
+    /**
+     * Show all observer users and allow add/remove.
+     */
+    public function getObservers(Request $request)
+    {
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
+            abort(403);
+        }
+        $observers = User::where('group', User::Observer)->get();
+        return view('admin.observers', [
+            'observers' => $observers
+        ]);
+    }
+
+    /**
+     * Add a user as observer by ID or email.
+     */
+    public function addObserver(Request $request)
+    {
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
+            abort(403);
+        }
+        $request->validate([
+            'user_identifier' => 'required'
+        ]);
+        $input = $request->input('user_identifier');
+        $user = User::where('email', $input)
+            ->orWhere('name', $input)
+            ->first();
+        if ($user)
+        {
+            $user->group = User::Observer;
+            $user->save();
+            return redirect()->route('admin.observers')->with('success', 'User added as observer.');
+        }
+        return redirect()->route('admin.observers')->with('error', 'User not found.');
+    }
+
+    /**
+     * Remove observer status from user.
+     */
+    public function removeObserver(Request $request)
+    {
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
+            abort(403);
+        }
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id'
+        ]);
+        $user = User::find($request->input('user_id'));
+        if ($user && $user->group === User::Observer)
+        {
+            $user->group = User::User;
+            $user->save();
+            return redirect()->route('admin.observers')->with('success', 'Observer removed.');
+        }
+        return redirect()->route('admin.observers')->with('error', 'User not found or not an observer.');
+    }
     private $ladderService;
     private $adminService;
 
@@ -49,7 +142,7 @@ class AdminController extends Controller
 
     public function getWashedGames($ladderAbbreviation = null)
     {
-        $ladder = \App\Models\Ladder::where('abbreviation', $ladderAbbreviation)->first();
+        $ladder = Ladder::where('abbreviation', $ladderAbbreviation)->first();
 
         if ($ladder == null)
             abort(404);
@@ -216,38 +309,306 @@ class AdminController extends Controller
         ]);
     }
 
+    private function buildDuplicateList(User $user, Collection $ipDuplicates, Collection $qmDuplicates)
+    {
+        $userId = $user->id;
+        $userPrimaryId = $user->primaryId();
+
+        $allDupes = collect();
+
+        // Add duplicates with the same IP.
+        foreach ($ipDuplicates as $dupe)
+        {
+            $allDupes->push([
+                'user' => $dupe,
+                'reason' => 'Recent IP',
+            ]);
+        }
+
+        // Add duplicates based on QM-ID. If already matched by IP, combine the reasons.
+        foreach ($qmDuplicates as $dupe)
+        {
+            $existingIndex = $allDupes->search(fn($item) => $item['user']->id === $dupe->id);
+            if ($existingIndex !== false)
+            {
+                // Combine IP reason with QM-ID reason.
+                $existingReason = $allDupes[$existingIndex]['reason'];
+                if (!str_contains($existingReason, 'QM-ID'))
+                {
+                    $existingItem = $allDupes->get($existingIndex);
+                    $existingReason = $existingItem['reason'];
+
+                    if (!str_contains($existingReason, 'QM-ID'))
+                    {
+                        $updatedItem = $existingItem;
+                        $updatedItem['reason'] = $existingReason . ' & QM-ID';
+                        $allDupes->put($existingIndex, $updatedItem);
+                    }
+                }
+            }
+            else
+            {
+                $allDupes->push(['user' => $dupe, 'reason' => 'QM-ID']);
+            }
+        }
+
+        // Find related users, which are not connected by IP & QM-ID. These are considered
+        // duplicates by manual action.
+        foreach ($user->collectDuplicates() as $relatedUser)
+        {
+            $existingIndex = $allDupes->search(fn($item) => $item['user']->id === $relatedUser->id);
+            if ($existingIndex === false)
+            {
+                $allDupes->push([
+                    'user' => $relatedUser,
+                    'reason' => 'Indirect or marked manually',
+                ]);
+            }
+        }
+
+        // Final grouping in confirmed/unconfirmed/rejected.
+        $confirmed = collect();
+        $unconfirmed = collect();
+        $rejected = collect();
+
+        foreach ($allDupes->unique('user.id') as $entry)
+        {
+            $dupeUser = $entry['user'];
+            $reason = $entry['reason'];
+
+            if (!str_contains($reason, 'IP'))
+            {
+                // Perform a full IP history comparison if 'IP' is not already part of the reason.
+                // This helps preserve the IP-based link even if users no longer share a current IP.
+                // Only accept IP-matches within a 1.5 year range.
+                $userIpMap = IpAddressHistory::where('user_id', $user->id)->get()->groupBy('ip_address_id');
+                $dupeIpMap = IpAddressHistory::where('user_id', $dupeUser->id)->get()->groupBy('ip_address_id');
+
+                $commonIpIds = array_intersect($userIpMap->keys()->all(), $dupeIpMap->keys()->all());
+                $matched = false;
+
+                foreach ($commonIpIds as $ipId)
+                {
+                    foreach ($userIpMap[$ipId] as $uEntry)
+                    {
+                        foreach ($dupeIpMap[$ipId] as $dEntry)
+                        {
+                            $diffInDays = abs($uEntry->created_at->diffInDays($dEntry->created_at));
+                            if ($diffInDays <= 500)
+                            {
+                                $matched = true;
+                                break 3;
+                            }
+                        }
+                    }
+                }
+
+                if ($matched && str_contains($reason, "manually"))
+                {
+                    $reason = 'IP';
+                }
+                else if ($matched)
+                {
+                    $reason .= ' & IP';
+                }
+            }
+
+            if ($userPrimaryId === $dupeUser->primaryId())
+            {
+                $confirmed->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason,
+                ]);
+            }
+            elseif ($user->isDuplicate() && $dupeUser->isConfirmedPrimary() && $userPrimaryId !== $dupeUser->primaryId())
+            {
+                // Duplicate is primary, user is duplicate, but they are not related.
+                $rejected->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason . ', but different primary account',
+                ]);
+            }
+            elseif ($user->isConfirmedPrimary() && $dupeUser->isConfirmedPrimary())
+            {
+                // Both accounts are confirmed primary. This connection is considered rejected.
+                $rejected->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason . ', but both are confirmed primary accounts',
+                ]);
+            }
+            elseif ($dupeUser->isDuplicate() && !$user->isUnconfirmedPrimary())
+            {
+                $rejected->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason . ', but user is already a duplicate of #' . $dupeUser->primary_user_id,
+                ]);
+            }
+            elseif ($dupeUser->primary_user_id === null)
+            {
+                $unconfirmed->push([
+                    'user' => $dupeUser,
+                    'reason' => $reason,
+                ]);
+            }
+        }
+
+        return [
+            'confirmed'   => $confirmed,
+            'unconfirmed' => $unconfirmed,
+            'rejected'    => $rejected,
+        ];
+    }
+
+    private function loadDuplicateDataForUser(User $user): array
+    {
+        $ipAddressId = $user->ip_address_id;
+        $qmIds = \App\Models\QmUserId::where('user_id', $user->id)
+            ->pluck('qm_user_id')
+            ->unique();
+
+        $ipDuplicates = collect();
+        if ($ipAddressId)
+        {
+            $ipDuplicates = \App\Models\IpAddressHistory::with('user')
+                ->where('ip_address_id', $ipAddressId)
+                ->where('user_id', '!=', $user->id)
+                ->get()
+                ->pluck('user')
+                ->filter()
+                ->unique('id')
+                ->values();
+        }
+
+        $qmDuplicates = collect();
+        if ($qmIds->isNotEmpty())
+        {
+            $qmDuplicates = \App\Models\QmUserId::with('user')
+                ->whereIn('qm_user_id', $qmIds)
+                ->where('user_id', '!=', $user->id)
+                ->get()
+                ->pluck('user')
+                ->filter()
+                ->unique('id')
+                ->values();
+        }
+
+        return $this->buildDuplicateList(
+            $user,
+            $ipDuplicates,
+            $qmDuplicates
+        );
+    }
+
+    private function loadDuplicateDataForUsers(Collection $users): array
+    {
+        $result = [];
+
+        foreach ($users as $user)
+        {
+            $result[$user->id] = $this->loadDuplicateDataForUser($user);
+        }
+
+        return $result;
+    }
+
     public function getManageUsersIndex(Request $request)
     {
         $hostname = $request->hostname;
-        $userId = $request->userId;
+        $userIdOrAlias = $request->userIdOrAlias ?: $request->input('userId');
         $search = $request->search;
-        $players = null;
-        $users = null;
 
-        if ($request->user() == null || !$request->user()->isAdmin())
+        if (!$request->user() || !$request->user()->isAdmin())
+        {
             return response('Unauthorized.', 401);
+        }
+
+        $users = collect();
 
         if ($search)
         {
-            $players = Cache::remember("admin/users/{$search}", 20 * 60, function () use ($search)
-            {
-                return \App\Models\Player::where('username', '=', $search)->get();
-            });
-        }
-        else if ($userId)
-        {
-            $users = Cache::remember("admin/users/users/{$userId}", 20 * 60, function () use ($userId)
-            {
-                return \App\Models\User::where("id", $userId)->get();
-            });
+            $players = Cache::remember(
+                "admin/users/players/{$search}",
+                20 * 60,
+                fn() =>
+                Player::where('username', '=', $search)->get()
+            );
+
+            $playerUsers = $players->map(fn($p) => $p->user)->filter();
+            $users = $users->concat($playerUsers);
         }
 
+        if ($userIdOrAlias)
+        {
+            $queryUsers = Cache::remember("admin/users/users/{$userIdOrAlias}", 20 * 60, function () use ($userIdOrAlias)
+            {
+                return User::where(function ($query) use ($userIdOrAlias)
+                {
+                    if (is_numeric($userIdOrAlias))
+                    {
+                        $query->orWhere('id', $userIdOrAlias);
+                    }
+                    $query->orWhere('alias', 'like', '%' . $userIdOrAlias . '%');
+                })->get();
+            });
+
+            $users = $users->concat($queryUsers);
+        }
+
+        // Remove nulls and duplicates
+        $users = $users->filter()->unique('id')->take(10)->values(); // limit to 10 users maximum
+
+        $userIds = $users->pluck('id');
+        $ipAddressIds = $users->pluck('ip_address_id')->filter()->unique();
+
+        $now = Carbon::now();
+        $start = $now->startOfMonth()->toDateTimeString();
+        $end = $now->endOfMonth()->toDateTimeString();
+
+        $playerNicknames = Player::with('ladder')
+            ->whereIn('user_id', $userIds)
+            ->get()
+            ->groupBy('user_id');
+
+        $ladderHistory = LadderHistory::where('starts', $start)
+            ->where('ends', $end)
+            ->first();
+
+        $ipHistories = IpAddressHistory::with('ipaddress')
+            ->whereIn('user_id', $userIds)
+            ->orderBy('created_at', 'desc')  // Most recent first
+            ->get()
+            ->groupBy('user_id');
+
+        $qmUserIds = QmUserId::with('user')
+            ->whereIn('user_id', $userIds)
+            ->get()
+            ->groupBy('user_id');
+
+        // Map ip_address_id → user_id for reverse lookup
+        $userIpMap = $users->mapWithKeys(fn($u) => [$u->ip_address_id => $u->id]);
+
+        // Now collect all primary users.
+        $primaryUserIds = $users
+            ->pluck('primary_user_id')
+            ->filter()
+            ->unique()
+            ->values();
+
+        $primaryUsers = User::whereIn('id', $primaryUserIds)->get()->keyBy('id');
+
         return view("admin.manage-users", [
-            "users" => $users != null ? $users : [],
-            "players" => $players != null ? $players : [],
+            "users" => $users,
             "search" => $search,
-            "userId" => $userId,
-            "hostname" => $hostname
+            "userId" => null,
+            "hostname" => $hostname,
+            "alias" => null,
+            "userIdOrAlias" => $userIdOrAlias,
+            "playerNicknames" => $playerNicknames,
+            "ladderHistory" => $ladderHistory,
+            "ipHistories" => $ipHistories,
+            "qmUserIds" => $qmUserIds,
+            "primaryUsers" => $primaryUsers,
+            "duplicatesByUser" => $this->loadDuplicateDataForUsers($users)
         ]);
     }
 
@@ -318,10 +679,12 @@ class AdminController extends Controller
 
     public function getEditUser(Request $request)
     {
-        $user = User::where("id", $request->userId)->first();
+        $user = User::findOrFail($request->userId);
+        $duplicates = $this->loadDuplicateDataForUser($user);
 
         return view("admin.edit-user", [
-            "user" => $user
+            "user" => $user,
+            "duplicates" => $duplicates
         ]);
     }
 
@@ -360,15 +723,233 @@ class AdminController extends Controller
             $user->save();
         }
 
-        $user->updateAlias($request->alias);
+        if ($request->can_observe == "on" && !$user->isModerator())
+        {
+            $user->group = 'Observer';
+            $user->save();
+        }
+        else if ($request->can_observe != "on" && !$user->isModerator())
+        {
+            $user->group = 'User';
+            $user->save();
+        }
+
+        if ($request->exists('alias') && trim($request->alias) !== ($user->alias ?? ''))
+        {
+            if ($user->isDuplicate())
+            {
+                return back()->withFragment("settings")->withErrors(['alias' => 'Cannot assign alias. This user is a duplicate of #' . $user->primary_user_id . '.'])->withInput();
+            }
+
+            $request->validate(
+                [
+                    'alias' => [
+                        'nullable',
+                        'string',
+                        'min:2',
+                        'max:20',
+                        'regex:/^[A-Z][a-zA-Z]{1,19}$/',
+                        'unique:users,alias,' . $user->id,
+                    ]
+                ],
+                [
+                    'alias.regex' => 'The alias must start with an uppercase letter and contain only letters.',
+                    'alias.unique' => 'This alias is already taken.',
+                    'alias.min' => 'Minimum length for alias is 2.',
+                    'alias.max' => 'Maximum length for alias is 20.'
+                ]
+            );
+
+            if (preg_match('/[A-Z]{2}/', $request->alias))
+            {
+                return back()->withFragment("settings")->withErrors(['alias' => 'No consecutive uppercase letters allowed in alias.'])->withInput();
+            }
+
+            $user->updateAlias($request->alias);
+        }
 
         $user->userSettings->is_anonymous = $request->is_anonymous == "on" ? true : false;
         $user->userSettings->allow_2v2_ladders = $request->allow_2v2_ladders == "on" ? true : false;
         $user->userSettings->save();
-        
+
+        $duplicates = $this->loadDuplicateDataForUser($user);
+
         return view("admin.edit-user", [
-            "user" => $user
+            "user" => $user,
+            "duplicates" => $duplicates,
         ]);
+    }
+
+    public function confirmDuplicate(Request $request)
+    {
+        // Two users are passed to this function which need to be linked together. We don't know which one is the primary user and
+        // which one is the duplicate. Since a user account can have three states (confirmed primary, unconfirmed primrary, duplicate), we
+        // have to handle all 9 cases.
+
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'duplicate_user_id' => 'required|integer',
+        ]);
+
+
+        $user = User::findOrFail($validated['user_id']);
+        $dupe = User::find($validated['duplicate_user_id']);
+
+        if (!$dupe)
+        {
+            return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "The given user #{$validated['duplicate_user_id']} does not exist."])->withInput();
+        }
+
+        if ($user->isConfirmedPrimary())
+        {
+            if ($dupe->isUnconfirmedPrimary())
+            {
+                $dupe->primary_user_id = $user->id;
+                $dupe->clearCacheAndSave();
+                if ($user->primary_user_id === null)
+                {
+                    $user->primary_user_id = $user->id;
+                    $user->clearCacheAndSave();
+                }
+                return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->id}).");
+            }
+            else if ($dupe->isConfirmedPrimary())
+            {
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "Unable to confirm #{$dupe->id} as a duplicate of #{$user->id}, because both are primary accounts."])->withInput();
+            }
+            else
+            {
+                // This is already a duplicate.
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
+            }
+        }
+        else if ($user->isUnconfirmedPrimary())
+        {
+            if ($dupe->isUnconfirmedPrimary())
+            {
+                // Need to make user a primary account in order to assign duplicates.
+                $dupe->primary_user_id = $user->id;
+                $dupe->clearCacheAndSave();
+                $user->primary_user_id = $user->id;
+                $user->clearCacheAndSave();
+                return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->id}).");
+            }
+            else if ($dupe->isConfirmedPrimary())
+            {
+                // Ok, so user is the dupe and dupe is a primary account.
+                $user->primary_user_id = $dupe->id;
+                $user->clearCacheAndSave();
+                $dupe->primary_user_id = $dupe->id;
+                $dupe->clearCacheAndSave();
+                return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$user->id}) as a duplicate of (#{$dupe->id}).");
+            }
+            else
+            {
+                // User needs to be linked to duplicates primary account.
+                $user->primary_user_id = $dupe->primary_user_id;
+                $user->clearCacheAndSave();
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
+            }
+        }
+        else if ($user->isDuplicate())
+        {
+            if ($dupe->isUnconfirmedPrimary())
+            {
+                $dupe->primary_user_id = $user->primary_user_id;
+                $dupe->clearCacheAndSave();
+                return back()->withFragment("duplicate_handling")->with('status', "Confirmed (#{$dupe->id}) as a duplicate of (#{$user->primary_user_id}).");
+            }
+            else if ($dupe->isDuplicate())
+            {
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is already a duplicate of #{$dupe->primary_user_id}."])->withInput();
+            }
+            else if ($dupe->isConfirmedPrimary())
+            {
+                return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "No action taken. #{$dupe->id} is a primary account."])->withInput();
+            }
+        }
+
+        // This is not supposed to happen.
+        return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "Unable to confirm #{$dupe->id} as a duplicate of #{$user->id} for unknown reason."])->withInput();
+    }
+
+    public function resetToUnconfirmedPrimary(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $user = User::find($validated['user_id']);
+        $dups = User::where('primary_user_id', $user->id)->where('id', '!=', $user->id)->get();
+
+        if ($dups->count() > 0)
+        {
+            return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "This user has linked duplicates. Cannot convert to unconfirmed primary."]);
+        }
+        else if (!empty($user->alias))
+        {
+            return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "This user has an alias. Cannot convert to unconfirmed primary."]);
+        }
+
+        $user->primary_user_id = null;
+        $user->clearCacheAndSave();
+        return back()->withFragment("duplicate_handling")->with('status', "Account is now unconfirmed primary.");
+    }
+
+    public function unlinkDuplicate(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'duplicate_user_id' => 'required|integer|exists:users,id'
+        ]);
+
+        $user = User::findOrFail($validated['user_id']);
+        $dupe = User::findOrFail($validated['duplicate_user_id']);
+
+        // Helper closure to reset primary_user_id for primary accounts that no longer have duplicates.
+        // An account is marked as primary by setting its own id as primary_user_id when the first duplicate is linked.
+        // If the last duplicate is unlinked, primary_user_id should be reset to null.
+        $maybeClearPrimaryFlag = function (User $primary)
+        {
+            $hasDuplicates = User::where('primary_user_id', $primary->id)->where('id', '!=', $primary->id)->exists();
+            if (!$hasDuplicates && $primary->primary_user_id === $primary->id)
+            {
+                $primary->primary_user_id = null;
+                $primary->clearCacheAndSave();
+            }
+        };
+
+        // Case 1: User is the primary.
+        if ($dupe->primary_user_id === $user->id)
+        {
+            $dupe->primary_user_id = null;
+            $dupe->clearCacheAndSave();
+            $maybeClearPrimaryFlag($user);
+            return back()->withFragment("duplicate_handling")->with('status', "Duplicate (#{$dupe->id}) unlinked from primary (#{$user->id}).");
+        }
+
+        // Case 2: The duplicate is the primary.
+        if ($user->primary_user_id === $dupe->id)
+        {
+            $user->primary_user_id = null;
+            $user->clearCacheAndSave();
+            $maybeClearPrimaryFlag($dupe);
+            return back()->withFragment("duplicate_handling")->with('status', "Duplicate (#{$user->id}) unlinked from primary (#{$dupe->id}).");
+        }
+
+        // Case 3: User and dupe have the same primary.
+        if ($user->primary_user_id === $dupe->primary_user_id && $user->primary_user_id != null && $user->id != $dupe->id)
+        {
+            $primary = User::find($user->primary_user_id);
+            $text = "Duplicate (#{$user->id}) unlinked from primary (#{$user->primary_user_id}).";
+            $user->primary_user_id = null;
+            $user->clearCacheAndSave();
+            $maybeClearPrimaryFlag($primary);
+            return back()->withFragment("duplicate_handling")->with('status', $text);
+        }
+
+        // This is not supposed to happen.
+        return back()->withFragment("duplicate_handling")->withErrors(["duplicate_action" => "Invalid unlink attempt (User {$user->id}, Dupe {$dupe->id})"])->withInput();
     }
 
     public function getManageGameIndex(Request $request, $cncnetGame = null)
@@ -438,7 +1019,7 @@ class AdminController extends Controller
 
     public function remSide(Request $request, $ladderId = null)
     {
-        $ladder = \App\Models\Ladder::find($ladderId);
+        $ladder = Ladder::find($ladderId);
 
         if ($ladder === null || $ladderId === null)
         {
@@ -460,7 +1041,7 @@ class AdminController extends Controller
 
     public function addSide(Request $request, $ladderId = null)
     {
-        $ladder = \App\Models\Ladder::find($ladderId);
+        $ladder = Ladder::find($ladderId);
 
         if ($ladder === null || $ladderId === null)
         {
@@ -471,7 +1052,7 @@ class AdminController extends Controller
         $side = $ladder->sides()->where('local_id', '=', $request->local_id)->first();
         if ($side === null)
         {
-            $side = new \App\Models\Side;
+            $side = new Side;
             $side->ladder_id = $ladder->id;
             $side->local_id = $request->local_id;
         }
@@ -651,7 +1232,7 @@ class AdminController extends Controller
         if ($playerId === null)
             return;
 
-        $player = \App\Models\Player::find($playerId);
+        $player = Player::find($playerId);
 
         if ($player === null || !$mod->isLadderMod($player->ladder))
             return;
@@ -661,7 +1242,7 @@ class AdminController extends Controller
         $ladderService = new LadderService;
         $history = $ladderService->getActiveLadderByDate(Carbon::now()->format('m-Y'), $player->ladder->abbreviation);
 
-        $bans = $user->bans()->orderBy('created_at', 'DESC')->get();
+        $bans = $user->collectBans()->sortByDesc('created_at');
 
         return view(
             "admin.moderate-player",
@@ -980,15 +1561,27 @@ class AdminController extends Controller
 
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
+                ->where("ur.ladder_id", $ladder->id)
+                ->where(function ($query)
+                {
+                    $query->whereNull("users.primary_user_id")
+                        ->orWhereColumn("users.primary_user_id", "users.id");
+                })
                 ->whereIn("users.id", $byPlayer->pluck("user_id"))
-                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.deviation"])
                 ->paginate(50);
         }
         else
         {
             $users = User::join("user_ratings as ur", "ur.user_id", "=", "users.id")
                 ->orderBy("ur.rating", "DESC")
-                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.peak_rating"])
+                ->where("ur.ladder_id", $ladder->id)
+                ->where(function ($query)
+                {
+                    $query->whereNull("users.primary_user_id")
+                        ->orWhereColumn("users.primary_user_id", "users.id");
+                })
+                ->select(["users.*", "ur.rating", "ur.rated_games", "ur.deviation"])
                 ->paginate(50);
         }
 
@@ -1055,20 +1648,23 @@ class AdminController extends Controller
 
     public function editPlayerName(Request $request, $ladderId, $playerId)
     {
-        try {
+        try
+        {
             $this->validate($request, [
                 'player_name' => 'required|string|regex:/^[a-zA-Z0-9_\[\]\{\}\^\`\-\\x7c]+$/|max:11', //\x7c = | aka pipe
             ]);
-        } catch (ValidationException $e) {
+        }
+        catch (ValidationException $e)
+        {
             Log::error('Validation failed', [
                 'url' => $request->fullUrl(),
                 'errors' => $e->errors(),
                 'input' => $request->all(),
             ]);
-    
+
             throw $e;
         }
-  
+
         $history = LadderHistory::where('id', $request->history_id)->first();
 
         $player = Player::where('id', $playerId)
@@ -1137,10 +1733,185 @@ class AdminController extends Controller
 
         $bailedGames = $this->adminService->fetchBailedGames($ladderHistory)->get();
     }
+
+
+    /**
+     * For points for games, where both player got zero points or both players gained points.
+     */
+    public function fixPoints(Request $request)
+    {
+        $inputs = $request->validate([
+            'game_id' => 'required|exists:games,id',
+            'game_report_id' => 'required|exists:game_reports,id',
+            'mode' => 'required|in:zero_for_loser,fix_points',
+            'player_points' => 'required_if:mode,fix_points|array'
+        ]);
+
+
+        $report = GameReport::with('playerGameReports')->findOrFail($inputs['game_report_id']);
+
+        if ($report->playerGameReports->count() !== 2)
+        {
+            return back()->with('error', 'Cannot fix games with more or less than 2 players.');
+        }
+
+        foreach ($report->playerGameReports as $pgr)
+        {
+            if ($inputs['mode'] === 'fix_points')
+            {
+                $submittedPoints = $inputs['player_points'];
+                $playerId = $pgr->player_id;
+                if (!isset($submittedPoints[$playerId]))
+                {
+                    return back()->with('error', 'No points submitted for ' . $playerId . '.');
+                }
+                $pgr->points = (int)$submittedPoints[$playerId];
+            }
+            elseif ($inputs['mode'] === 'zero_for_loser')
+            {
+                if (!$pgr->won && $pgr->points > 0)
+                {
+                    $pgr->points = 0;
+                }
+            }
+            $pgr->save();
+        }
+
+        Log::info('Fixed points: ', [
+            'game_id' => $inputs['game_id'],
+            'report_id' => $report->id,
+            'by_admin' => auth()->id(),
+        ]);
+
+        return back()->with('success', 'Points fixed.');
+    }
+
+    /**
+     * Simplified points calculation for ladder games. Only used to fix broken game results. 
+     */
+    public function awardedPointsPreview(GameReport $gameReport, LadderHistory $history): array
+    {
+        $playerGameReports = $gameReport->playerGameReports()->with('player')->get();
+
+        if ($playerGameReports->count() !== 2)
+        {
+            return [];
+        }
+
+        $winner = $playerGameReports->firstWhere(fn($pgr) => $pgr->wonOrDisco());
+        $loser = $playerGameReports->firstWhere(fn($pgr) => !$pgr->wonOrDisco());
+
+        if (!$winner || !$loser)
+        {
+            return [];
+        }
+
+        $winnerPointsBefore = $winner->player->pointsBefore($history, $winner->game_id);
+        $loserPointsBefore = $loser->player->pointsBefore($history, $loser->game_id);
+        $diff = $loserPointsBefore - $winnerPointsBefore;
+
+        $we = 1 / (pow(10, abs($diff) / 600) + 1);
+        if ($diff > 0)
+        {
+            $we = 1 - $we;
+        }
+
+        $wol_k = $history->ladder->qmLadderRules->wol_k;
+        $wol = (int)($wol_k * $we);
+        $gvc = 8;
+
+        $winnerPoints = $gvc + $wol;
+        if ($winnerPointsBefore < 10 * ($gvc + $wol))
+        {
+            $loserPoints = -1 * (int)($loserPointsBefore / 10);
+        }
+        else
+        {
+            $loserPoints = -1 * ($gvc + $wol);
+        }
+
+        $loserCache = $loser->player->playerCache($history->id);
+        if ($loserPoints < 0 && (!$loserCache || $loserCache->points < 0))
+        {
+            $loserPoints = 0;
+        }
+
+        return [
+            [
+                'player_id' => $winner->player->id,
+                'player' => $winner->player->username,
+                'calculated_points' => $winnerPoints,
+                'won' => true,
+            ],
+            [
+                'player_id' => $loser->player->id,
+                'player' => $loser->player->username,
+                'calculated_points' => $loserPoints,
+                'won' => false,
+            ]
+        ];
+    }
+
+    public function getObservedGames(Request $request, $ladderAbbreviation = null)
+    {
+        $startTime = microtime(true);
+
+        $ladder = Ladder::where('abbreviation', $ladderAbbreviation)->first();
+        if ($ladder == null)
+        {
+            abort(404, 'Ladder not found');
+        }
+
+        $ladderHistoryShort = $request->query('ladderHistoryShort');
+        if ($ladderHistoryShort)
+        {
+            $ladderHistory = LadderHistory::where('ladder_id', $ladder->id)
+                ->where('short', $ladderHistoryShort)
+                ->first();
+        }
+        else
+        {
+            $ladderHistory = $ladder->currentHistory();
+        }
+        if (!$ladderHistory)
+        {
+            abort(404, 'Ladder history not found');
+        }
+
+        // list of players and observers from previous games for this ladder history
+        $observedGames = Game::with([
+            'players.player.user',     // ✅ loads player + user
+            'observers.player.user'    // ✅ loads observer + user
+        ])
+            ->where('ladder_history_id', $ladderHistory->id)
+            ->whereHas('observers')       // ✅ only games that actually have observers
+            ->paginate(10);
+
+        // to populate a dropdown and user can pick which history to view observed games
+        $histories = LadderHistory::where('ladder_id', $ladder->id)
+            ->where('starts', '<=', now())
+            ->orderBy('ends', 'DESC')
+            ->select('short')
+            ->get();
+
+        $endTime = microtime(true);
+        $duration = $endTime - $startTime;
+        $durationRounded = round($duration, 1);
+        Log::info('getObservedGames duration', [
+            'duration_seconds' => $durationRounded,
+            'ladderAbbreviation' => $ladderAbbreviation,
+            'ladderHistoryShort' => $ladderHistoryShort
+        ]);
+
+        return view("admin.observed-games", [
+            "observedGames" => $observedGames,
+            "ladderHistory" => $ladderHistory,
+            "histories" => $histories,
+            "ladder" => $ladder,
+            "ladderHistoryShort" => $ladderHistoryShort
+        ]);
+    }
 }
-
-
-
 
 function ini_to_b($string)
 {

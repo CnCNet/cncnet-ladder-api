@@ -21,16 +21,19 @@ class PodiumController extends Controller
             ->where('private', 0)
             ->pluck('name', 'id')
             ->toArray();
+        Log::debug('Entering getPodiumForm in PodiumController');
         $fromDate = Carbon::now()->subWeek()->endOfWeek()->subDays(2)->setTime(20, 0, 0);
         $toDate = Carbon::now()->subWeek()->endOfWeek()->setTime(22, 0, 0);
         return view('admin.podium', compact('ladders', 'fromDate', 'toDate'));
     }
 
-    public function computePodium(ComputePodiumRequest $request) {
-
-        if (RateLimiter::tooManyAttempts($this->getRateLimiterKey(), 1)) {
+    public function computePodium(ComputePodiumRequest $request)
+    {
+        Log::debug('Entering computePodium in PodiumController', ['user_id' => auth()->id(), 'request' => $request->all()]);
+        if (RateLimiter::tooManyAttempts($this->getRateLimiterKey(), 1))
+        {
             $seconds = RateLimiter::availableIn($this->getRateLimiterKey());
-            $message = 'Don\'t submit this form this too often... You may try again in '.$seconds.' seconds.';
+            $message = 'Don\'t submit this form this too often... You may try again in ' . $seconds . ' seconds.';
             return view('admin.podium.result-too-many-attempts', compact('message'));
         }
 
@@ -41,7 +44,8 @@ class PodiumController extends Controller
         $from = Carbon::createFromFormat('Y-m-d H:i', $inputs['date_from'] . ' ' . $inputs['time_from']);
         $to = Carbon::createFromFormat('Y-m-d H:i', $inputs['date_to'] . ' ' . $inputs['time_to']);
 
-        if ($from->diffInDays($to, true) > 31) {
+        if ($from->diffInDays($to, true) > 31)
+        {
             return redirect()->back()->withErrors([
                 'period' => 'Please select a period of 1 month or less.'
             ]);
@@ -69,7 +73,9 @@ class PodiumController extends Controller
         return view('admin.podium.result', compact('players', 'from', 'to', 'ladder'));
     }
 
-    private function getRateLimiterKey() {
-        return 'compute-podium-win-count:'.auth()->id();
+    private function getRateLimiterKey()
+    {
+        Log::debug('Entering getRateLimiterKey in PodiumController', ['user_id' => auth()->id()]);
+        return 'compute-podium-win-count:' . auth()->id();
     }
 }

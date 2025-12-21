@@ -34,7 +34,9 @@
                 <div class="player-header mt-3 mb-3">
                     <div class="player-stats">
                         <h1 class="username">
-                            {{ $player->username }}
+                            <a href="/ladder/{{ $history->short }}/{{ $ladder->abbreviation }}/player/{{ $player->username }}">
+                                {{ $player->username }}
+                            </a>
                         </h1>
                         {{ $user->getBan() }}
                     </div>
@@ -129,6 +131,7 @@
                                     <th>Ban type</th>
                                     <th>Internal Notes</th>
                                     <th>Displayed Reason for ban</th>
+                                    <th>User ID</th>
                                     <th>IP</th>
                                     <th>Expiration</th>
                                     <th></th>
@@ -142,6 +145,7 @@
                                         <td>{{ $ban->typeDescription() }}</td>
                                         <td>{{ $ban->internal_note }}</td>
                                         <td>{{ $ban->plubic_reason }}</td>
+                                        <td>{{ $ban->user_id }}</td>
                                         <td>
                                             @if ($ban->ip && $mod->isLadderAdmin($player->ladder))
                                                 {{ $ban->ip->address }}

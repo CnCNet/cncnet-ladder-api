@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\StatsCache;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use App\Models\LadderHistory;
 
 class UpdateStatsCache extends Command
 {
@@ -44,8 +45,10 @@ class UpdateStatsCache extends Command
         $now = Carbon::now();
         $start = $now->startOfMonth()->toDateTimeString();
         $end = $now->endOfMonth()->toDateTimeString();
-        $ladderHistories = \App\Models\LadderHistory::whereBetween("starts", [$start, $start])
+        $ladderHistories = LadderHistory::whereBetween("starts", [$start, $start])
             ->whereBetween("ends", [$end, $end])
+            ->join('ladders', 'ladder_history.ladder_id', '=', 'ladder.id')
+            ->where('ladders.private', false)
             ->get();
 
 
@@ -54,11 +57,11 @@ class UpdateStatsCache extends Command
             echo "\n Setting setPlayersTodayCache for ladder history id: $history->id";
             StatsCache::setPlayersTodayCache($history);
 
-            if ($history->ladder?->ladder_type == \App\Models\Ladder::CLAN_MATCH) // NULL pointer on ladder, how?
-            {
-                echo "\n Setting setClansTodayCache for ladder history id: $history->id";
-                StatsCache::setClansTodayCache($history);
-            }
+            // if ($history->ladder?->ladder_type == \App\Models\Ladder::CLAN_MATCH) // NULL pointer on ladder, how?
+            // {
+            //     echo "\n Setting setClansTodayCache for ladder history id: $history->id";
+            //     StatsCache::setClansTodayCache($history);
+            // }
         }
     }
 }

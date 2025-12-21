@@ -12,19 +12,33 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, JWTSubject
 {
-    use Authenticatable, CanResetPassword, Notifiable;
+    use Authenticatable, CanResetPassword, Notifiable, LogsActivity;
 
     const God = "God";
     const Admin = "Admin";
     const Moderator = "Moderator";
+    const Observer = "Observer";
     const User = "User";
+
+    protected static $recordEvents = ['updated'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['group', 'chat_allowed'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected $table = 'users';
 
@@ -40,6 +54,15 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function isGod()
     {
         return in_array($this->group, [self::God]);
+    }
+
+    /**
+     * Is user allowed to observe games? 
+     * This is different than userSettings->is_observer where the user turns it on and only if they are allowed to.
+     */
+    public function isObserver()
+    {
+        return in_array($this->group, [self::God, self::Admin, self::Moderator, self::Observer]);
     }
 
     public function isModerator()
@@ -91,6 +114,72 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
             return false;
 
         return $la->tester;
+    }
+
+    public function isConfirmedPrimary(): bool
+    {
+        return !empty($this->alias) || $this->primary_user_id === $this->id;
+    }
+
+    public function isUnconfirmedPrimary(): bool
+    {
+        return $this->primary_user_id === null && empty($this->alias);
+    }
+
+    public function isDuplicate(): bool
+    {
+        return $this->primary_user_id !== null && $this->primary_user_id != $this->id;
+    }
+
+    public function primaryId()
+    {
+        return $this->primary_user_id !== null ? $this->primary_user_id : $this->id;
+    }
+
+    public function hasDuplicates(): bool
+    {
+        return User::where('primary_user_id', $this->id)->where('id', '!=', $this->id)->exists();
+    }
+
+    public function hasDuplicate($id): bool
+    {
+        return $this->collectDuplicates()->contains('id', $id);
+    }
+
+    public function collectDuplicates(bool $includeSelf = false)
+    {
+        $primaryUserId = $this->primaryId();
+        $results = User::where('primary_user_id', $primaryUserId)
+            ->orWhere('id', $primaryUserId)
+            ->get();
+
+        return $includeSelf ? $results : $results->where('id', '!=', $this->id)->values();
+    }
+
+    public function accountType(): string
+    {
+        if ($this->isConfirmedPrimary())
+        {
+            return "Primary";
+        }
+        else if ($this->isUnconfirmedPrimary())
+        {
+            return "Unconfirmed primary";
+        }
+        else if ($this->isDuplicate())
+        {
+            $primary = User::find($this->primary_user_id);
+            if ($primary)
+            {
+                return 'Duplicate of #' . $primary->id . ' (' . ($primary->alias ?: $primary->name) . ')';
+            }
+            else
+            {
+                return 'Duplicate of #' . $this->primary->id . ' (Unknown user)';
+            }
+        }
+
+        return "Unknown";
     }
 
     public function canEditAnyLadders()
@@ -246,6 +335,17 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     public function updateAlias($alias)
     {
         $this->alias = $alias;
+        $this->clearCacheAndSave();
+    }
+
+    public function clearCacheAndSave()
+    {
+        // Clear cache
+        if ($this->alias)
+        {
+            Cache::forget("admin/users/users/{$this->alias}");
+        }
+        Cache::forget("admin/users/users/{$this->id}");
         $this->save();
     }
 
@@ -304,18 +404,36 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     }
 
     /**
-     * Returns live user rating or creates a new one if one doesn't exist yet
-     * @return mixed 
+     * Get a default rating in case the user hasn't one yet.
+     * @return UserRating
      */
-    public function getOrCreateLiveUserRating()
+    protected function getDefaultUserRating($ladderId): UserRating
     {
-        $userRating = UserRating::where("user_id", "=", $this->id)->first();
-        if ($userRating == null)
-        {
-            $userRating = UserRating::createNewFromLegacyPlayerRating($this);
-            Log::info("User ** getUserRating - Rating null creating new. UserId: " . $this->id  . " Created new user rating: " . $userRating);
-        }
-        return $userRating;
+        return UserRating::make([
+            'user_id'      => $this->id,
+            'ladder_id'    => $ladderId,
+            'rating'       => UserRating::$DEFAULT_RATING,
+            'elo_rank'     => 0,
+            'deviation'    => 350,
+            'alltime_rank' => 0,
+            'rated_games'  => 0,
+            'active'       => false,
+        ]);
+    }
+
+    /**
+     * Returns live user rating. Note that the player might be inactive.
+     * @return mixed
+     */
+    public function getEffectiveUserRatingForLadder($ladderId)
+    {
+        $primaryUser = $this->isDuplicate() ? User::find($this->primaryId()) : $this;
+
+        $rating = $primaryUser->userRatings()
+            ->where('ladder_id', $ladderId)
+            ->first();
+
+        return $rating ?? $this->getDefaultUserRating($ladderId);
     }
 
     /**
@@ -325,10 +443,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     public function getLiveUserTier($history)
     {
-        $userRating = $this->getOrCreateLiveUserRating();
+        $userRating = $this->getEffectiveUserRatingForLadder($history->ladder);
         return UserRatingService::getTierByLadderRules($userRating->rating, $history->ladder);
     }
-
 
     /**
      * 
@@ -364,7 +481,13 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function userSince()
     {
-        return $this->created_at->diffForHumans();
+        return $this->collectDuplicates($includeSelf = true)->pluck('created_at')->filter()->min()->diffForHumans();
+    }
+
+    public function alias()
+    {
+        $primaryUser = $this->isDuplicate() ? User::find($this->primaryId()) : $this;
+        return $primaryUser->alias;
     }
 
     public function canUserPlayBothTiers($ladder)
@@ -373,6 +496,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $userTier->both_tiers;
     }
 
+    public function collectBans()
+    {
+        return Ban::whereIn('user_id', $this->collectDuplicates(true)->pluck('id'))->get();
+    }
 
     /**
      * Returns true when the user only wants pro only matchups
@@ -408,9 +535,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
         return $this->hasMany(AchievementProgress::class, 'user_id');
     }
 
-    public function userRating()
+    public function userRatings()
     {
-        return $this->hasOne(UserRating::class, 'user_id');
+        return $this->hasMany(UserRating::class, 'user_id');
     }
 
     public function ipHistory()
@@ -430,7 +557,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function bans()
     {
-        return $this->hasMany(Ban::class);
+        return $this->hasMany(Ban::class, 'user_id');
     }
 
     public function bansGiven()

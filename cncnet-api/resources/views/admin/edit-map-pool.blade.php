@@ -250,6 +250,129 @@
                         </div>
                     </div>
                 @endforeach
+
+                <div class="row">
+                    <div class="form-group col-4">
+                        <hr>
+                        <h4 id="faction-pairs">Forbidden faction setups</h4>
+
+                        @if($mapPool->invalid_faction_pairs && count($mapPool->invalid_faction_pairs) > 0)
+                            <table class="table table-sm">
+                                <tbody>
+                                @foreach($mapPool->invalid_faction_pairs as $idx => $pair)
+                                    <tr>
+                                        <td>{{ $idx+1 }}</td>
+                                        <td>{{ optional($sides->firstWhere('local_id', (int)$pair[0]))->name ?? $pair[0] }}</td>
+                                        <td>{{ optional($sides->firstWhere('local_id', (int)$pair[1]))->name ?? $pair[1] }}</td>
+                                        <td>
+                                            <form method="POST" action="{{ route('mappool.removePair', [$ladder->id, $mapPool->id, $idx]) }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <p><em>No invalid faction pairs.</em></p>
+                        @endif
+                    </div>
+                    <div class="form-group col-4">
+                        <hr>
+                        <h4>Add pair</h4>
+                        <form method="POST" action="{{ route('mappool.addPair', [$ladder->id, $mapPool->id]) }}">
+                            @csrf
+                            <div class="row mb-3">
+                                <div class="col">
+                                    <select name="faction_a" class="form-select">
+                                        @foreach($selectableSidesByLocal as $side)
+                                            <option value="{{ $side->local_id }}" @selected(old('faction_a') == $side->local_id)>
+                                            {{ $side->name }} ( {{ $side->local_id }} )
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <select name="faction_b" class="form-select">
+                                        @foreach($selectableSidesByLocal as $side)
+                                            <option value="{{ $side->local_id }}" @selected(old('faction_b') == $side->local_id)>
+                                            {{ $side->name }} ( {{ $side->local_id }} )
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <button class="btn btn-primary" type="submit">Add</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    @if(session('success_pairs'))
+                    <div class="alert alert-success mt-2">
+                        {{ session('success_pairs') }}
+                    </div>
+                    @endif
+
+                    @if($errors->pairs->any())
+                    <div class="alert alert-danger mt-2">
+                        {{ $errors->pairs->first() }}
+                    </div>
+                    @endif
+
+                    <div id="forced_faction" class="card my-3">
+                </div>
+
+                <div class="row">
+                    <h4 id="faction-pairs">Forced Faction</h4>
+
+                    <form method="post" action="{{ route('mappool.updateForcedFactionSettings', [$ladder->id, $mapPool->id]) }}">
+                        @csrf
+
+                        <div class="row mb-3">
+                            <div class="form-group col">
+                                <label for="forced_faction_id" class="form-label">Faction</label>
+                                <select name="forced_faction_id" id="forced_faction_id" class="form-select">
+                                    <option value="">None</option>
+                                    @foreach($sides->where('local_id','>=',0) as $side)
+                                        <option value="{{ $side->local_id }}"
+                                            @if($mapPool->forced_faction_id === $side->local_id) selected @endif>
+                                            {{ $side->local_id }} — {{ $side->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <small class="form-text text-muted">
+                                    Faction forced playing.
+                                </small>
+                            </div>
+                            <div class="form-group col">
+                                <label for="forced_faction_ratio" class="form-label">Ratio (%)</label>
+                                <input type="number" name="forced_faction_ratio" id="forced_faction_ratio"
+                                    class="form-control"
+                                    value="{{ old('forced_faction_ratio', $mapPool->forced_faction_ratio ?? 0) }}"
+                                    min="0.0" max="1.0" step="0.05">
+                                <small class="form-text text-muted">
+                                    Probablity, that the forced faction overrides the users choice (0.0 = never, 1.0 = always).
+                                </small>
+                            </div>
+                            <div class="form-group col">
+                                <br>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            <div>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    {{-- Failure/success for forced faction settings. --}}
+                    @if(session('success_forced'))
+                        <div class="alert alert-success">{{ session('success_forced') }}</div>
+                    @endif
+                    @if($errors->forced_faction && $errors->forced_faction->any())
+                        <div class="alert alert-danger">{{ $errors->forced_faction->first() }}</div>
+                    @endif
+                </div>
             </div>
         </div>
     </section>

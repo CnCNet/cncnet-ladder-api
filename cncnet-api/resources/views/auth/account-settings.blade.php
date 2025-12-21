@@ -83,10 +83,6 @@
             @include('auth.account-settings-nav')
         </div>
 
-        <div>
-            <h4>Ladder Elo: {{ $user->getOrCreateLiveUserRating()->rating }}</h4>
-        </div>
-
         <div class="row">
             <div class="col-md-12">
                 <form method="POST" action="/account/settings" enctype="multipart/form-data">
@@ -221,18 +217,19 @@
                     @endif
 
 
-                    @if (in_array($user->id, config('app.allowed_observer_user_ids')))
+                    @if ($user->isObserver())
                     <div class="form-group mt-5 mb-5">
                         <h3>Observer Mode (Invite only)</h3>
                         <strong>Strictly for streaming games only</strong>
                         <p>
                             Watch any match on any ladder. Enabling this will take any username you have in the
                             ladder and make you an
-                            observer.
+                            observer. **MUST** be streaming while this is enabled.
                         </p>
                         <p>
                             <label>
-                                <input id="isObserver" type="checkbox" name="isObserver" @if ($userSettings->is_observer) checked @endif />
+                                <input id="isObserver" type="checkbox" name="isObserver"
+                                    @if ($userSettings->is_observer) checked @endif />
                                 Enable Observer Mode
                             </label>
                         </p>
@@ -259,7 +256,7 @@
                             <label>
                                 <input id="do_not_match_yuri" type="checkbox" name="do_not_match_yuri"
                                     @if ($userSettings->do_not_match_yuri) checked @endif />
-                                    You can disable matching with Yuri only if your rank is worse than 30 (rank 31 or lower). If your rank is 1-30, you cannot disable matching with Yuri
+                                You can disable matching with Yuri only if your rank is worse than 30 (rank 31 or lower). If your rank is 1-30, you cannot disable matching with Yuri
                             </label>
                         </p>
                     </div>

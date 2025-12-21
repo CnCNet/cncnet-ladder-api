@@ -5,13 +5,29 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Ban extends Model
 {
+    use LogsActivity;
 
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['*'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     public $fillable = [
-        'admin_id', 'user_id', 'ban_type', 'internal_note', 'plubic_reason', 'expires', 'ip_address_id'
+        'admin_id',
+        'user_id',
+        'ban_type',
+        'internal_note',
+        'plubic_reason',
+        'expires',
+        'ip_address_id'
     ];
 
     protected $casts = [

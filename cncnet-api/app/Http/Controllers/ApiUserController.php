@@ -26,7 +26,21 @@ class ApiUserController extends Controller
         try
         {
             $user = $request->user();
-            return $user;
+
+            $elo = $user->userRatings()->get([
+                'ladder_id',
+                'rating',
+                'deviation',
+                'elo_rank',
+                'alltime_rank',
+                'rated_games',
+                'active',
+            ]);
+
+            $userData = $user->toArray();
+            $userData['elo'] = $elo;
+
+            return $userData;
         }
         catch (Exception $ex)
         {
@@ -58,7 +72,7 @@ class ApiUserController extends Controller
     {
         try
         {
-            $user = $request->user();
+            $user = auth('api')->user();
             return Ladder::getAllowedQMLaddersByUser($user);
         }
         catch (Exception $ex)

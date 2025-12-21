@@ -2,12 +2,22 @@
 
 namespace App\Models;
 
+use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
 
 class QmLadderRules extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['*'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected $fillable = [
         'ladder_id', 'player_count', 'map_vetoes', 'max_difference', 'all_sides',
@@ -64,7 +74,28 @@ class QmLadderRules extends Model
 
     public function all_sides()
     {
-        return explode(',', $this->id ? $this->all_sides : "");
+        $raw = $this->id ? (string) $this->all_sides : '';
+
+        if (trim($raw) === '')
+        {
+            return [];
+        }
+
+        $parts = explode(',', $raw);
+        $result = [];
+
+        // Make sure to get an int array.
+        foreach ($parts as $p)
+        {
+            $p = trim($p);
+            if ($p === '')
+            {
+                continue; // Do not cast an empty part to 0.
+            }
+            $result[] = (int) $p;
+        }
+
+        return $result;
     }
 
     public function allowed_sides()
@@ -77,6 +108,4 @@ class QmLadderRules extends Model
     {
         return $this->hasMany(SpawnOptionValue::class);
     }
-
 }
-

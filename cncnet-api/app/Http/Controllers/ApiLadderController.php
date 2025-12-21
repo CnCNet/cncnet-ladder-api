@@ -351,7 +351,7 @@ class ApiLadderController extends Controller
         $clanGameReports = collect();
 
         // Find the winning clan report
-        $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->groupBy("clan_id")->first();
+        $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->where('spectator', 0)->groupBy("clan_id")->first();
 
         if ($winningClanReport != null)
         {
@@ -474,6 +474,44 @@ class ApiLadderController extends Controller
         return 200;
     }
 
+
+    /**
+     * Determine the winning team from a collection of player game reports.
+     * Falls back to using a non-defeated player’s team if no player is marked as 'won'.
+     *
+     * @param \Illuminate\Support\Collection|\App\Models\PlayerGameReport[] $playerGameReports
+     * @return string|null The winning team, or null if none found.
+     */
+    public function getWinningTeamFromReports($playerGameReports): ?string
+    {
+        foreach ($playerGameReports as $pgr)
+        {
+            if ($pgr->won && $pgr->spectator == false)
+            {
+                return $pgr->team;
+            }
+        }
+
+        // Step 2: Fallback — no winner marked; use a non-defeated player (disconnected game case)
+        foreach ($playerGameReports as $pgr)
+        {
+            if (!$pgr->defeated && !$pgr->disconnected && $pgr->spectator == false)
+            {
+                Log::info("Fallback to 'defeated' logic for disconnected game.", [
+                    'game_id' => $pgr->game_id,
+                    'game_report_id' => $pgr->gameReport->id,
+                    'player_id' => $pgr->player_id,
+                    'team' => $pgr->team,
+                ]);
+                return $pgr->team;
+            }
+        }
+
+        // No winning team found
+        return null;
+    }
+
+
     /**
      *
      * @param GameReport $gameReport
@@ -506,20 +544,16 @@ class ApiLadderController extends Controller
 
         $disconnected = 0;
 
-        // String a or b.
-        $winningTeam = null;
-
-        foreach ($playerGameReports as $pgr)
-        {
-            if ($pgr->won)
-            {
-                // grab the qm players that belong to this qm match, return the team of the current player
-                $winningTeam = $pgr->team;
-            }
-        }
+        // determine which team won
+        $winningTeam = $this->getWinningTeamFromReports($playerGameReports);
 
         foreach ($playerGameReports as $playerGR)
         {
+            if ($playerGR->spectator == true)
+            {
+                continue;
+            }
+
             $ally_average = 0;
             $ally_points = 0;
             $ally_count = 0;
@@ -536,6 +570,11 @@ class ApiLadderController extends Controller
             // gather points from teammates and enemies, strength of team vs enemy will factor in points awarded/lost
             foreach ($playerGameReports as $otherPlayerGameReport)
             {
+                if ($otherPlayerGameReport->spectator == true)
+                {
+                    continue;
+                }
+
                 $other = $this->playerService->findUserRatingByPlayerId($otherPlayerGameReport->player_id);
                 $players[] = $other;
 
@@ -567,17 +606,30 @@ class ApiLadderController extends Controller
                 $gvc = ceil(($base_rating * $enemy_average) / 230000);
             }
 
-            $wol_k = $history->ladder->qmLadderRules->wol_k;
             $diff = $enemy_points - $ally_points;
             $we = 1 / (pow(10, abs($diff) / 600) + 1);
-            $we = $diff > 0 && $playerGRTeamWonTheGame ? 1 - $we : ($diff < 0 && !$playerGRTeamWonTheGame ? 1 - $we : $we);
+            if (($diff > 0 && $playerGRTeamWonTheGame) || ($diff < 0 && !$playerGRTeamWonTheGame))
+            {
+                $we = 1 - $we;
+            }
+
+            $wol_k = $history->ladder->qmLadderRules->wol_k;
             $wol = (int)($wol_k * $we);
 
             $eloAdjust = 0;
 
-            if ($playerGR->draw)
+            if ($playerGR->draw || $winningTeam === null) // draw or couldn't find a winner
             {
                 $playerGR->points = 0;
+
+                Log::info("No points awarded due to draw or missing winning team.", [
+                    'game_id'    => $playerGR->game_id,
+                    'player_id'  => $playerGR->player_id,
+                    'username'   => optional($playerGR->player)->username,
+                    'draw'       => $playerGR->draw,
+                    'team'       => $playerGR->team,
+                    'winning_team' => $winningTeam,
+                ]);
             }
             else if ($playerGRTeamWonTheGame)
             {
@@ -664,6 +716,11 @@ class ApiLadderController extends Controller
 
         foreach ($playerGameReports as $playerGR)
         {
+            if ($playerGR->spectator == true)
+            {
+                continue;
+            }
+
             $ally_average = 0;
             $ally_points = 0;
             $ally_count = 0;
@@ -674,6 +731,11 @@ class ApiLadderController extends Controller
 
             foreach ($playerGameReports as $pgr)
             {
+                if ($pgr->spectator == true)
+                {
+                    continue;
+                }
+                
                 $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
                 $players[] = $other;
 
@@ -790,7 +852,7 @@ class ApiLadderController extends Controller
 
     public function getLadderPlayer(Request $request, $game = null, $player = null)
     {
-        $date = Carbon::now()->format('m-Y');
+        $date = $request->query('date') ?? Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
         return Cache::remember("getLadderPlayer/$date/$game/$player", 5 * 60, function () use ($ladderService, $date, $game, $player)
         {
@@ -801,7 +863,7 @@ class ApiLadderController extends Controller
 
     public function getLadderPlayerFromPublicApi(Request $request, $game = null, $player = null)
     {
-        $date = Carbon::now()->format('m-Y');
+        $date = $request->query('date') ?? Carbon::now()->format('m-Y');
         $ladderService = $this->ladderService;
         return Cache::remember("getLadderPlayerFromPublicApi/$date/$game/$player", 5 * 60, function () use ($ladderService, $date, $game, $player)
         {
@@ -812,6 +874,76 @@ class ApiLadderController extends Controller
             $response["player"] = null;
 
             return $response;
+        });
+    }
+
+    public function getPlayerDailyStats(Request $request, $game = null, $player = null)
+    {
+        return Cache::remember("getPlayerDailyStats/$game/$player/" . Carbon::now()->format('Y-m-d'), 5 * 60, function () use ($game, $player)
+        {
+            // Find the ladder by abbreviation
+            $ladder = Ladder::where('abbreviation', '=', $game)->first();
+
+            if (!$ladder)
+            {
+                return response()->json(['error' => 'Ladder not found'], 404);
+            }
+
+            // Find the player by username and ladder
+            $playerModel = Player::where('username', '=', $player)
+                ->where('ladder_id', '=', $ladder->id)
+                ->first();
+
+            if (!$playerModel)
+            {
+                return response()->json(['error' => 'Player not found'], 404);
+            }
+
+            // Get current ladder history
+            $history = $ladder->currentHistory();
+
+            if (!$history)
+            {
+                return response()->json(['error' => 'No active ladder history'], 404);
+            }
+
+            // Get today's date range
+            $startOfDay = Carbon::now()->startOfDay();
+            $endOfDay = Carbon::now()->endOfDay();
+
+            // Count wins for today
+            $wins = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
+                ->where('player_game_reports.won', '=', true)
+                ->where('player_game_reports.spectator', '=', false)
+                ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
+                ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+                ->join('games', 'games.id', '=', 'game_reports.game_id')
+                ->where('games.ladder_history_id', '=', $history->id)
+                ->where('game_reports.valid', '=', true)
+                ->where('game_reports.best_report', '=', true)
+                ->count();
+
+            // Count losses for today (defeated and not won, excluding draws)
+            $losses = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
+                ->where('player_game_reports.defeated', '=', true)
+                ->where('player_game_reports.won', '=', false)
+                ->where('player_game_reports.draw', '=', false)
+                ->where('player_game_reports.spectator', '=', false)
+                ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
+                ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+                ->join('games', 'games.id', '=', 'game_reports.game_id')
+                ->where('games.ladder_history_id', '=', $history->id)
+                ->where('game_reports.valid', '=', true)
+                ->where('game_reports.best_report', '=', true)
+                ->count();
+
+            return response()->json([
+                'player' => $player,
+                'ladder' => $game,
+                'date' => Carbon::now()->format('Y-m-d'),
+                'wins' => $wins,
+                'losses' => $losses
+            ], 200);
         });
     }
 
@@ -854,7 +986,7 @@ class ApiLadderController extends Controller
             }
 
             $date = $request->date ?? Carbon::now()->format("m-Y");
-            $response = $this->ladderService->getGamesFormattedForEloService($date, $cncnetGame, 200, $request->query());
+            $response = $this->ladderService->getGamesFormattedForEloService($date, $cncnetGame, $request->query(), 200);
 
             return $response;
         }

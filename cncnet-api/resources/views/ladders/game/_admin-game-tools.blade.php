@@ -70,7 +70,7 @@
                             @if ($k == 0)
                                 @if ($userIsMod && $thisGameReport->id != $gameReport->id)
                                     <a class="btn btn-outline-secondary"
-                                        href="{{ action([\App\Http\Controllers\LadderController::class, 'getLadderGame'], ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
+                                        href="{{ route('ladder.game.report', ['date' => $date, 'game' => $cncnetGame, 'gameId' => $game->id, 'reportId' => $thisGameReport->id]) }}">View</a>
                                 @elseif ($userIsMod && $thisGameReport->id == $gameReport->id && !$thisGameReport->best_report)
                                     <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">
                                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -85,6 +85,45 @@
                                 @endif
                             @endif
                         @endforeach
+
+                        @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
+                            <div class="alert alert-info mt-4">
+                                <strong>FPS too low – no points awarded.</strong><br>Minimum FPS for this ladder is {{ $history->ladder->qmLadderRules->bail_fps}}.
+                            </div>
+                        @endif
+
+                        @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $gameReport->duration < $history->ladder->qmLadderRules->bail_time)
+                            <div class="alert alert-info mt-4">
+                                <strong>Game duration too short – no points awarded.</strong><br>Minimum time for this ladder is {{ $history->ladder->qmLadderRules->bail_time}}.
+                            </div>
+                        @endif
+
+                        @if ($thisGameReport->id === $gameReport->id && $showBothZeroFix && $userIsMod && !empty($fixedPointsPreview) && count($fixedPointsPreview) === 2)
+                        <form method="POST" action="/admin/moderate/{{ $history->ladder->id }}/games/fix-points" class="text-center mt-4">
+                            @csrf
+                            @foreach ($fixedPointsPreview as $entry)
+                                <input type="hidden" name="player_points[{{ $entry['player_id'] }}]" value="{{ $entry['calculated_points'] }}">
+                            @endforeach
+                            <input type="hidden" name="game_id" value="{{ $game->id }}">
+                            <input type="hidden" name="game_report_id" value="{{ $gameReport->id }}">
+                            <input type="hidden" name="mode" value="fix_points">
+                            <button type="submit" class="btn btn-outline-secondary">
+                                Fix points ({{ $fixedPointsPreview[0]['player'] }}: {{ $fixedPointsPreview[0]['calculated_points'] >= 0 ? '+' : '' }}{{ $fixedPointsPreview[0]['calculated_points'] }}, {{ $fixedPointsPreview[1]['player'] }}: {{ $fixedPointsPreview[1]['calculated_points'] >= 0 ? '+' : '' }}{{ $fixedPointsPreview[1]['calculated_points'] }})
+                            </button>
+                        </form>
+                        @endif
+
+                        @if ($thisGameReport->id === $gameReport->id && $showBothPositiveFix && $userIsMod)
+                        <form method="POST" action="/admin/moderate/{{ $history->ladder->id }}/games/fix-points" class="text-center mt-4">
+                            @csrf
+                            <input type="hidden" name="game_id" value="{{ $game->id }}">
+                            <input type="hidden" name="game_report_id" value="{{ $gameReport->id }}">
+                            <input type="hidden" name="mode" value="zero_for_loser">
+                            <button type="submit" class="btn btn-outline-secondary">
+                               Set points for loser to 0
+                            </button>
+                        </form>
+                        @endif
 
                         @if ($thesePlayerGameReports->count() < 1)
                             <form action="/admin/moderate/{{ $history->ladder->id }}/games/switch" class="text-center" method="POST">

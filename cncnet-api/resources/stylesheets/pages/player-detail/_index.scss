@@ -273,3 +273,49 @@ body.body-player-detail .page-image-feature
     margin-right: 0.5rem;
     margin-bottom: 0.5rem;
 }
+
+.player-detail .tooltip
+{
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.player-detail .tooltip .tooltiptext
+{
+    visibility: hidden;
+    width: 256px;
+    background-color: #292929;
+    color: #b7b7b7;
+    text-align: center;
+    border-radius: 4px;
+    border-width: 1px;
+    border-style: solid;
+    border-color:gray;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.player-detail .tooltip .tooltiptext::after
+{
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 3px;
+    border-style: solid;
+    border-color: transparent transparent black transparent;
+}
+
+.player-detail .tooltip:hover .tooltiptext
+{
+    visibility: visible;
+    opacity: 1;
+}

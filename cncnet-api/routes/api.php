@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\Route;
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
+| Here is where you can register API routes for your application.
 |
 */
 
@@ -33,7 +31,7 @@ Route::group(['prefix' => 'v1'], function ()
     // Route::get('/test-reward-points', [\App\Http\Controllers\ApiLadderController::class, 'reprocessTeamPointsByGameId']);
     Route::post('/test', [\App\Http\Controllers\ApiLadderController::class, 'testStatsDump']);
 
-    Route::group(['middleware' => 'jwt.auth'], function ()
+    Route::group(['middleware' => 'auth:api'], function ()
     {
 
         Route::get('/user/info', [\App\Http\Controllers\ApiUserController::class, 'getUserInfo']);
@@ -75,7 +73,7 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/qm/ladder/{ladderAbbrev}/maps/public', [\App\Http\Controllers\ApiQuickMatchController::class, 'mapListRequest']);
         Route::get('/qm/ladder/{ladderAbbrev}/stats', [\App\Http\Controllers\ApiQuickMatchController::class, 'statsRequest']);
         Route::get('/qm/ladder/{ladderAbbrev}/stats/{tierId}', [\App\Http\Controllers\ApiQuickMatchController::class, 'statsRequest']);
-        Route::get('/qm/ladder/{ladderAbbrev}/current_matches', [\App\Http\Controllers\ApiQuickMatchController::class, 'getActiveMatches']);
+        Route::get('/qm/ladder/{ladderAbbrev}/active_matches', [\App\Http\Controllers\ApiQuickMatchController::class, 'getActiveMatches']);
         Route::get('/qm/ladder/{ladderAbbrev}/erroredGames', [\App\Http\Controllers\ApiQuickMatchController::class, 'getErroredGames']);
         Route::get('/qm/ladder/{ladderAbbrev}/{hours}/recentlyWashedGames', [\App\Http\Controllers\ApiQuickMatchController::class, 'getRecentLadderWashedGamesCount']);
     });
@@ -92,7 +90,6 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/{game}', [\App\Http\Controllers\ApiLadderController::class, 'getLadder']);
         Route::get('/{game}/game/{gameId}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderGame']);
         Route::get('/{game}/winners/', [\App\Http\Controllers\ApiLadderController::class, 'getLadderWinners']);
-        Route::get('/{game}/games/recent/{count}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderRecentGamesList']);
 
         Route::get('/{abbreviation}/players', [\App\Http\Controllers\ApiIrcController::class, 'getPlayerNames']);
         Route::get('/{abbreviation}/active', [\App\Http\Controllers\ApiIrcController::class, 'getActivePlayers']);
@@ -105,6 +102,7 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/{game}/top/{count}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderTopList']);
         Route::get('/{game}/player/{player}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderPlayerFromPublicApi']);
         Route::get('/{game}/player/{player}/webview', [\App\Http\Controllers\ApiLadderStatsProfile::class, 'getWebview']);
+        Route::get('/{game}/player/{player}/today', [\App\Http\Controllers\ApiLadderController::class, 'getPlayerDailyStats']);
     });
 
     // Ultra short cache ladder endpoints
@@ -127,7 +125,7 @@ Route::group(['prefix' => 'v2'], function ()
     Route::get("/bans", [\App\Http\Controllers\Api\V2\Bans\ApiBanController::class, 'getBans']);
     Route::get("/events", [\App\Http\Controllers\Api\V2\Events\ApiEventController::class, 'getEvents']);
 
-    Route::group(['middleware' => 'jwt.auth'], function ()
+    Route::group(['middleware' => 'auth:api'], function ()
     {
         Route::get('/user/account', [\App\Http\Controllers\Api\V2\User\ApiUserController::class, 'getAccount']);
     });
@@ -136,7 +134,7 @@ Route::group(['prefix' => 'v2'], function ()
 
 Route::group(['prefix' => 'v1'], function ()
 {
-    Route::group(['middleware' => 'jwt.auth'], function ()
+    Route::group(['middleware' => 'auth:api'], function ()
     {
         Route::post('/qm/{ladder:abbreviation}/{playerName}', \App\Http\Controllers\Api\V2\Qm\MatchUpController::class)
             ->middleware([

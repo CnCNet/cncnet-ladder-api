@@ -6,6 +6,7 @@ use App\Models\LadderHistory;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use App\Models\Map;
 
 class SiteHelper
 {
@@ -60,6 +61,28 @@ class SiteHelper
             return "";
         }
     }
+
+    public static function getMapPreviewUrlV2(string $game, Map $map)
+    {
+        try {
+            if (!$map) {
+                return "";
+            }
+    
+            $description = $map->description ?? '';
+            $imageHash = $map->image_hash ?: $map->hash;
+    
+            if (!$imageHash) {
+                return "";
+            }
+    
+            return "https://ladder.cncnet.org/images/maps/{$game}/{$imageHash}.png";
+        } catch (Exception $ex) {
+            Log::info("Error fetching map preview url for map='$description', ladder='$game'");
+            return "";
+        }
+    }
+    
 
     public static function getEmojiByMonth()
     {

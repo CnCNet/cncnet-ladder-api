@@ -1,0 +1,8 @@
+# Daily jobs
+10 9 * * * cncnet /app/elogen -o /data -m ra2 -l info >> /tmp/elogen_ra2.log 2>&1
+30 9 * * * cncnet /app/elogen -o /data -m blitz-2v2 -l verbose >> /tmp/elogen_blitz-2v2.log 2>&1
+40 9 * * * cncnet /app/elogen -o /data -m yr -l info >> /tmp/elogen_yr.log 2>&1
+0 10 * * * cncnet /app/elogen -o /data -m blitz -t /data/blitz_ra2_worldseries.json -l info >> /tmp/elogen_blitz.log 2>&1
+
+# Three times a week
+30 10 * * 1,3,5 cncnet /app/elogen -o /data -m ra -l info >> /tmp/elogen_ra.log 2>&1

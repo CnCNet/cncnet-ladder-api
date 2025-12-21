@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 
+use App\Services\FactionPolicyService;
+use App\Http\Services\TwitchService;
 use App\Extensions\Qm\Matchup\ClanMatchupHandler;
 use App\Models\Game;
 use App\Models\IpAddress;
@@ -19,6 +21,14 @@ use Illuminate\Support\Facades\Log;
 
 class QuickMatchService
 {
+
+    private TwitchService $twitchService;
+
+    public function __construct()
+    {
+        $this->twitchService = new TwitchService();
+    }
+
     public function createQMPlayer($request, $player, $history)
     {
         $qmPlayer = new QmMatchPlayer();
@@ -51,9 +61,24 @@ class QuickMatchService
 
         $qmPlayer->chosen_side = $request->side;
 
+        // Store preferred colors. If not set, players get yellow/red like usual.
+        if (isset($request->colors) && is_array($request->colors))
+        {
+            $qmPlayer->colors_pref = json_encode(array_values($request->colors));
+        }
+        if (isset($request->colors_opponent) && is_array($request->colors_opponent))
+        {
+            $qmPlayer->colors_opponent_pref = json_encode(array_values($request->colors_opponent));
+        }
+
         if ($request->map_sides)
         {
             $qmPlayer->map_sides_id = \App\Models\MapSideString::findValue(join(',', $request->map_sides))->id;
+        }
+
+        if ($request->client_version)
+        {
+            $qmPlayer->client_version = $request->client_version;
         }
 
         if ($request->version && $request->platform)
@@ -81,18 +106,80 @@ class QuickMatchService
         $player->user->save();
 
         // Is player an observer?
-        if ($player->user->userSettings->is_observer)
-        {
-            Log::debug("Player ** Is observing Game: " . $player->username);
-            $qmPlayer->is_observer = true;
-        }
-        else
-        {
-            // Log::debug("Player ** Is NOT observing Game: " . $player->username);
-        }
+        $this->handleObserver($qmPlayer, $player);
 
         $qmPlayer->save();
         return $qmPlayer;
+    }
+
+    /**
+     * Checks if the given player should be set as an observer and validates
+     * their Twitch status. If the player is flagged as an observer, this method
+     * verifies they have a valid Twitch username and are currently live on Twitch.
+     * 
+     * If validation fails, the $qmPlayer record is deleted and a RuntimeException
+     * is thrown to stop further processing.
+     * 
+     * @param \App\Models\QmMatchPlayer $qmPlayer The quick match player instance being created or updated.
+     * @param \App\Models\Player $player The player instance associated with the user.
+     * 
+     * @throws \RuntimeException if Twitch username is missing or user is not live.
+     * 
+     * @return void
+     */
+    public function handleObserver($qmPlayer, $player): void
+    {
+        // First check if user toggled on to observe
+        if (!optional($player->user->userSettings)->is_observer)
+        {
+            return;
+        }
+
+        if ($player->user->isAdmin())
+        {
+            Log::debug('Admin player bypassing Twitch live check to observe game.', [
+                'player_username' => $player->username,
+                'user_id' => $player->user->id,
+            ]);
+
+            $qmPlayer->is_observer = true;
+            return;
+        }
+
+        // Retrieve the Twitch username from the user's profile, null-safe
+        $twitchUsername = optional($player->user)->twitch_profile;
+
+        // Validate Twitch username presence
+        if (empty($twitchUsername))
+        {
+            Log::warning('Observer player missing Twitch username.', [
+                'player_username' => $player->username,
+                'user_id' => $player->user->id ?? null,
+            ]);
+
+            $qmPlayer->delete();
+            throw new \RuntimeException('To observe games, you must have a valid Twitch username defined in your Account Settings.');
+        }
+
+        // Check if the Twitch user is currently live
+        if (!$this->twitchService->isUserLive($twitchUsername))
+        {
+            Log::info('Twitch user not live for observer.', [
+                'twitch_username' => $twitchUsername,
+                'player_username' => $player->username,
+            ]);
+
+            $qmPlayer->delete();
+            throw new \RuntimeException('To observe games, you must be live on Twitch.');
+        }
+
+        // Log that the player passed all observer checks
+        Log::debug('Player is observing game.', [
+            'player_username' => $player->username,
+            'twitch_username' => $twitchUsername,
+        ]);
+
+        $qmPlayer->is_observer = true;
     }
 
     public function checkPlayerSidesAreValid($qmPlayer, $side, $ladderRules)
@@ -215,10 +302,21 @@ class QuickMatchService
 
     public function fetchQmQueueEntry(LadderHistory $history, ?QmQueueEntry $qmQueueEntry = null): \Illuminate\Database\Eloquent\Collection|array
     {
-        return QmQueueEntry::query()
-            ->when(isset($qmQueueEntry), fn($q) => $q->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id))
+        $query = QmQueueEntry::query()
             ->where('ladder_history_id', '=', $history->id)
-            ->get();
+            ->with('qmPlayer');
+
+        if ($qmQueueEntry)
+        {
+            // Client versions need to match. Otherwise players simply don't see each other.
+            $currentVersion = $qmQueueEntry->qmPlayer->client_version;
+            $query->where('qm_match_player_id', '!=', $qmQueueEntry->qmPlayer->id)
+                ->whereHas('qmPlayer', function ($sub) use ($currentVersion) {
+                    $sub->where('client_version', $currentVersion);
+                });
+        }
+
+        return $query->get();
     }
 
     /**
@@ -252,19 +350,10 @@ class QuickMatchService
                 && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter
             )
             {
-                // Do both players rank meet the minimum rank required for no pt filter to apply
-                if (
-                    abs($currentQmQueueEntry->qmPlayer->player->rank($history) - $opponent->qmPlayer->player->rank($history))
-                    <=
-                    $ladder->qmLadderRules->point_filter_rank_threshold
-                )
-                {
-                    // Both players have the point filter disabled, we will ignore the point filter and match them
-                    $matchableOpponents->add($opponent);
-                    continue;
-                }
+                // Both players have the point filter disabled, we will ignore the point filter and match them
+                $matchableOpponents->add($opponent);
+                continue;
             }
-
 
             // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
             $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $ladder->qmLadderRules->points_per_second;
@@ -295,15 +384,6 @@ class QuickMatchService
 
         // If not in Yuri mode, return opponents as is
         if ($ladder->abbreviation !== 'yr')
-        {
-            return $opponents;
-        }
-
-        $disableYuri = $currentQmQueueEntry->qmPlayer->player->user->userSettings->do_not_match_yuri;
-        $rank = $currentQmQueueEntry->qmPlayer->player->rank($history);
-
-        // If user does not disable Yuri matching or rank is better than the threshold, return opponents
-        if (!$disableYuri || $rank <= 30)
         {
             return $opponents;
         }
@@ -579,14 +659,17 @@ class QuickMatchService
 
         $qmPlayer->save();
 
-        $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+        $mapSides = array_values(array_filter($qmMap->sides_array(), fn($s) => $s >= 0));
+        $ladderSides = $qmMatch->ladder->qmLadderRules->all_sides();
+        $allowedForRandom = array_values(array_intersect($mapSides, $ladderSides));
+        if (empty($allowedForRandom))
         {
-            return $s >= 0;
-        }));
+            $allowedForRandom = $mapSides;
+        }
 
         if ($qmPlayer->actual_side == -1)
         {
-            $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
+            $qmPlayer->actual_side = $allowedForRandom[mt_rand(0, count($allowedForRandom) - 1)];
         }
         $qmPlayer->save();
 
@@ -625,12 +708,12 @@ class QuickMatchService
         else if ($ladderRules->use_elo_map_picker) // consider a player's ELO when selecting a map
         {
             $matchAnyMap = false;
-            $myEloRating = $qmPlayer->player->user->getOrCreateLiveUserRating()->rating;
+            $myEloRating = $qmPlayer->player->user->getEffectiveUserRatingForLadder($history->ladder->id)->rating;
 
             foreach ($otherQMQueueEntries as $otherQMQueueEntry)
             {
                 // choose the person who has the lowest elo rating to base our map pick off of
-                $minEloRating = min($myEloRating, $otherQMQueueEntry->qmPlayer->player->user->getOrCreateLiveUserRating()->rating);
+                $minEloRating = min($myEloRating, $otherQMQueueEntry->qmPlayer->player->user->getEffectiveUserRatingForLadder($history->ladder->id)->rating);
 
                 // true if both players allow any map
                 $matchAnyMap = $otherQMQueueEntry->qmPlayer->player->user->userSettings->match_any_map
@@ -859,6 +942,8 @@ class QuickMatchService
     private function set1v1QmSpawns($otherQmQueueEntries, $qmMatch, $qmPlayer, $expectedPlayerQueueCount, $matchHasObserver, $qmMap, $perMS, $qEntry)
     {
         $spawnOrder = explode(',', $qmMap->spawn_order);
+        $opponentPlayer = null;
+        $opponentsCount = 0;
 
         Log::debug("QuickMatchService ** set1v1QmSpawns: " . $qmPlayer->player->username . " Playing " . $qmMap->map->name);
         Log::debug("QuickMatchService ** set1v1QmSpawns: Qm Map" . $qmMap->description);
@@ -876,6 +961,8 @@ class QuickMatchService
             $numSpawns = $qmMap->map->spawn_count;
             $spawnArr = [];
 
+            // Assign colour & spawn locations for current QM player
+            // Then again for other players below
             for ($i = 1; $i <= $numSpawns; $i++)
             {
                 $spawnArr[] = $i;
@@ -888,20 +975,77 @@ class QuickMatchService
             Log::debug("QuickMatchService ** Random spawns selected for qmMap: '" . $qmMap->description . "', " . $spawnOrder[0] . "," . $spawnOrder[1]);
         }
 
-
-        # Assign colour & spawn locations for current QM player
-        # Then again for other players below
-        $colorsArr = $this->getColorsArr(8, false);
+        // Find the opponent player and check if both players submitted their preferred colors and make sure their is no observers.
+        // Streamers might not be prepared for other colors than yellow/red. With someone observer and color info missing, we stick
+        // to the old logic.
         $i = 0;
+        $colorsArr = null;
 
-        if ($qmPlayer->isObserver() == false)
+        foreach ($otherQmQueueEntries as $otherQmQueueEntry)
         {
-            $qmPlayer->color = $colorsArr[$i];
-            $qmPlayer->location = $spawnOrder[$i] - 1;
-            $qmPlayer->save();
-            $i++;
+            $candidate = \App\Models\QmMatchPlayer::where("id", $otherQmQueueEntry->qmPlayer->id)->first();
+            if ($candidate && !$candidate->isObserver())
+            {
+                $opponentPlayer = $candidate;
+                $opponentsCount++;
+            }
+        }
 
-            Log::debug("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . "Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+        $bothHaveColorPrefs = false;
+        $p1Colors = null;
+        $p2Colors = null;
+        if ($opponentPlayer && $opponentsCount === 1)
+        {
+            $p1Colors = isset($qmPlayer->colors_pref) ? json_decode($qmPlayer->colors_pref, true) : null;
+            $p2Colors = isset($opponentPlayer->colors_pref) ? json_decode($opponentPlayer->colors_pref, true) : null;
+            $p1OppColors = isset($qmPlayer->colors_opponent_pref) ? json_decode($qmPlayer->colors_opponent_pref, true) : null;
+            $p2OppColors = isset($opponentPlayer->colors_opponent_pref) ? json_decode($opponentPlayer->colors_opponent_pref, true) : null;
+
+            $qmPlayerIsAnonymous = $qmPlayer->player->user->userSettings->getIsAnonymous();
+            $opponentPlayerIsAnonymous = $opponentPlayer->player->user->userSettings->getIsAnonymous();
+
+            if ($qmPlayerIsAnonymous && !$opponentPlayerIsAnonymous)
+            {
+                // Do what opponent wants.
+                $p1Colors = $p2OppColors;
+                $p1OppColors = $p2Colors;
+            }
+            else if (!$qmPlayerIsAnonymous && $opponentPlayerIsAnonymous)
+            {
+                // Do what player 1 wants.
+                $p2Colors = $p1OppColors;
+                $p2OppColors = $p1Colors;
+            }
+
+            $bothHaveColorPrefs = is_array($p1Colors) && is_array($p2Colors) && is_array($p1OppColors) && is_array($p2OppColors);
+        }
+
+        if (!$matchHasObserver && $bothHaveColorPrefs)
+        {
+            // Determine best matching colors.
+            [$p1Color, $p2Color] = $this->setColors($p1Colors, $p1OppColors, $p2Colors, $p2OppColors);
+            $colorsArr = [$p1Color, $p2Color];
+            if ($qmPlayer->isObserver() == false)
+            {
+                $qmPlayer->color = $colorsArr[$i];
+                $qmPlayer->location = $spawnOrder[$i] - 1;
+                $qmPlayer->save();
+                $i++;
+                Log::debug("QuickMatchService ** Assigning Spot (prefs) for " . $qmPlayer->player->username . " Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+            }
+        }
+        else
+        {
+            // No preferred colors. Used old logic.
+            $colorsArr = $this->getColorsArr(8, false);
+            if ($qmPlayer->isObserver() == false)
+            {
+                $qmPlayer->color = $colorsArr[$i];
+                $qmPlayer->location = $spawnOrder[$i] - 1;
+                $qmPlayer->save();
+                $i++;
+                Log::debug("QuickMatchService ** Assigning Spot for " . $qmPlayer->player->username . " Color: " . $qmPlayer->color .  " Location: " . $qmPlayer->location);
+            }
         }
 
         foreach ($otherQmQueueEntries as $otherQmQueueEntry)
@@ -946,6 +1090,12 @@ class QuickMatchService
             $otherQmPlayer->qm_match_id = $qmMatch->id;
             $otherQmPlayer->tunnel_id = $qmMatch->seed + $otherQmPlayer->color;
             $otherQmPlayer->save();
+
+            if (!$otherQmPlayer->isObserver() && $opponentPlayer === null)
+            {
+                $opponentPlayer = $otherQmPlayer;
+                $opponentsCount++;
+            }
         }
 
         if ($qmPlayer->actual_side == -1)
@@ -953,6 +1103,18 @@ class QuickMatchService
             $qmPlayer->actual_side = $perMS[mt_rand(0, count($perMS) - 1)];
         }
         $qmPlayer->save();
+
+        if ($opponentPlayer && $opponentsCount == 1)
+        {
+            $ladder = $qmMatch->ladder;
+            $history = $ladder->currentHistory();
+            $pool = $ladder->mapPool;
+
+            // Apply FactionPolicyService for 1v1 matches. Might change actual_side for one player.
+            // If there's not forced faction or forced faction ratio for the map pool, nothing will change.
+            $fps = app(\App\Http\Services\FactionPolicyService::class);
+            $fps->applyPolicy1v1($pool, $ladder, $history, $qmMatch->map, $qmPlayer, $opponentPlayer);
+        }
     }
 
     public function createQmMatch(
@@ -1028,10 +1190,19 @@ class QuickMatchService
         }
         $qmPlayerFresh->save();
 
-        $perMS = array_values(array_filter($qmMap->sides_array(), function ($s)
+        $mapSides = array_values(array_filter($qmMap->sides_array(), function ($s)
         {
             return $s >= 0;
         }));
+        $ladderSides = $ladder->qmLadderRules->all_sides();
+        $perMS = array_values(array_intersect($mapSides, $ladderSides));
+
+        if (empty($perMS))
+        {
+            // Fallback: if intersection of map sides and allowed ladder sides is empty, use map sides.
+            Log::warning('No intersection between map sides and ladder sides');
+            $perMS = $mapSides;
+        }
 
         if ($qmPlayerFresh->isObserver() == true)
         {
@@ -1144,6 +1315,12 @@ class QuickMatchService
         $this->setTeamSpawns('A', $spawns[0], $teamAPlayers, $qmMatch, $colors);
         $this->setTeamSpawns('B', $spawns[1], $teamBPlayers, $qmMatch, $colors);
 
+        // Set observers' team to 'observer'
+        foreach ($observers->values() as $observer) {
+            $qmObserver = $observer->qmPlayer;
+            $qmObserver->team = 'observer';
+            $qmObserver->save();
+        }
         $this->setObserversSpawns($observers, $qmMatch, $colors);
 
         return $qmMatch;
@@ -1159,7 +1336,15 @@ class QuickMatchService
 
         Log::debug('[QuickMatchService::setTeamSpawns] $spawnOrder ' . json_encode($spawnOrder));
 
-        $mapAllowedSides = array_values(array_filter($qmMap->sides_array(), fn($s) => $s >= 0));
+        $mapSides = array_values(array_filter($qmMap->sides_array(), fn($s) => $s >= 0));
+        $ladderSides = $qmMatch->ladder->qmLadderRules->all_sides();
+        $allowedForRandom = array_values(array_intersect($mapSides, $ladderSides));
+        if (empty($allowedForRandom))
+        {
+            // Fallback: if intersection of map sides and allowed ladder sides is empty, use map sides.
+            Log::warning('No intersection between map sides and ladder sides');
+            $allowedForRandom = $mapSides;
+        }
 
         foreach ($teamPlayers->values() as $i => $player)
         {
@@ -1187,7 +1372,7 @@ class QuickMatchService
 
             if ($qmPlayer->actual_side == -1)
             {
-                $qmPlayer->actual_side = $mapAllowedSides[mt_rand(0, count($mapAllowedSides) - 1)];
+                $qmPlayer->actual_side = $allowedForRandom[mt_rand(0, count($allowedForRandom) - 1)];
             }
 
             $qmPlayer->qm_match_id = $qmMatch->id;
@@ -1426,6 +1611,69 @@ class QuickMatchService
         return array_slice($possibleColors, 0, $numPlayers);
     }
 
+    /**
+     * Selects final colors for player 1 and 2 based on their preferences.
+     * @param int[] $prefColorsP1 The preferred colors of player 1
+     * @param int[] $prefOpponentColorsP1 What player 1 prefers for their opponent.
+     * @param int[] $prefColorsP2 The preferred colors of player 2.
+     * @param int[] $prefOpponentColorsP2 What player 2 prefers for their opponent.
+     * @return array{int,int} [colorPlayer1, colorPlayer2]
+     */
+    private function setColors(array $prefColorsP1, array $prefOpponentColorsP1, array $prefColorsP2, array $prefOpponentColorsP2): array
+    {
+        // Penalty mapping: position in preference array -> penalty points.
+        $penalties = [0, 2, 5, 10];
+
+        // Generate all possible color combinations (0-3).
+        $bestCombinations = [];
+        $lowestPenalty = PHP_INT_MAX;
+
+        for ($colorP1 = 0; $colorP1 < 4; $colorP1++)
+        {
+            for ($colorP2 = 0; $colorP2 < 4; $colorP2++)
+            {
+                // Cannot assign same color to both players.
+                if ($colorP1 === $colorP2)
+                {
+                    continue;
+                }
+
+                // Calculate penalty for player 1's color choice.
+                $posP1 = array_search($colorP1, $prefColorsP1);
+                $penaltyP1Color = $penalties[$posP1];
+
+                // Calculate penalty for player 1's opponent color preference.
+                $posP1Opponent = array_search($colorP2, $prefOpponentColorsP1);
+                $penaltyP1Opponent = $penalties[$posP1Opponent];
+
+                // Calculate penalty for player 2's color choice.
+                $posP2 = array_search($colorP2, $prefColorsP2);
+                $penaltyP2Color = $penalties[$posP2];
+
+                // Calculate penalty for player 2's opponent color preference.
+                $posP2Opponent = array_search($colorP1, $prefOpponentColorsP2);
+                $penaltyP2Opponent = $penalties[$posP2Opponent];
+
+                // Total penalty for this combination.
+                $totalPenalty = $penaltyP1Color + $penaltyP1Opponent + $penaltyP2Color + $penaltyP2Opponent;
+
+                // Track best combinations.
+                if ($totalPenalty < $lowestPenalty)
+                {
+                    // Replace.
+                    $lowestPenalty = $totalPenalty;
+                    $bestCombinations = [[$colorP1, $colorP2]];
+                }
+                elseif ($totalPenalty === $lowestPenalty)
+                {
+                    // Add.
+                    $bestCombinations[] = [$colorP1, $colorP2];
+                }
+            }
+        }
+
+        return $bestCombinations[array_rand($bestCombinations)];
+    }
 
     /**
      *
@@ -1537,7 +1785,7 @@ class QuickMatchService
         $possibleMatches = collect($possibleMatches);
 
         // TODO : move this hard-coded value to the qmLadderRules
-        $similarEloMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 400);
+        $similarEloMatches = $possibleMatches->filter(fn($match) => $match['teams_elo_diff'] < 4000); // TODO hardcoding 4000 right now to ensure random teams, will re-visit this
 
         if ($similarEloMatches->count() > 0)
         {
@@ -1570,15 +1818,17 @@ class QuickMatchService
     public function getBestMatch2v2ForPlayer(QmQueueEntry $currentPlayer, Collection $matchableOpponents, LadderHistory $history): array
     {
 
-        $players = $matchableOpponents->concat([$currentPlayer]);
+        // Ensure matchableOpponents does not contain the current player and is unique by id
+        $matchableOpponents = $matchableOpponents->filter(fn($opponent) => $opponent->id !== $currentPlayer->id)->unique('id')->values();
+        $players = $matchableOpponents->concat([$currentPlayer])->unique('id')->values();
 
         $opponentsRating = [];
-        $currentPlayerRank = $currentPlayer->qmPlayer->player->rank($history);
+        $currentPlayerRank = $currentPlayer->qmPlayer->player->points($history);
         foreach ($matchableOpponents as $opponent)
         {
             $opponentsRating[] = [
                 'id' => $opponent->id,
-                'rank' => $opponent->qmPlayer->player->rank($history)
+                'rank' => $opponent->qmPlayer->player->points($history)
             ];
         }
 
@@ -1589,17 +1839,16 @@ class QuickMatchService
             $opponentsRating
         );
 
-        // $matchup = $this->findBestMatch($possibleMatches);
-        // $matchup = $this->getRandomTeams($possibleMatches);
         $matchup = $this->findBestMatchRandomized($possibleMatches);
 
         $g = function ($players, $match, $team)
         {
+            // Only include unique players by id
             return $players
                 ->filter(fn(QmQueueEntry $qmQueueEntry) => in_array($qmQueueEntry->id, [
                     $match[$team]['player1'],
                     $match[$team]['player2']
-                ]));
+                ]))->unique('id')->values();
         };
 
         $teamAPlayers = $g($players, $matchup, 'teamA');

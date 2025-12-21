@@ -1,0 +1,144 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+      # Disable staging build
+      # - 'staging'
+    tags:
+      - 'v*'
+#  pull_request:
+#    branches:
+#      - 'main'
+      # disable staging build
+      # - 'staging'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        target: [app, queue, scheduler]
+    outputs:
+      branch: ${{ github.ref_name }}
+      app_tag: ${{ steps.set_tag.outputs.sha }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Generate tags that will be used on the image
+      # If default branch -> latest
+      # if branch staging -> staging
+      # Always -> the short sha
+      - name: Extract metadata (tags, labels)
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/cncnet-ladder-${{ matrix.target }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=staging,enable=${{ github.ref == 'refs/heads/staging' }}
+            type=sha,format=short,prefix=
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image (${{ matrix.target }})
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # Use docker/frankenphp/Dockerfile for app and docker/workers/Dockerfile for queue and scheduler
+          file: ${{ matrix.target == 'app' && './docker/frankenphp/Dockerfile' || './docker/workers/Dockerfile' }}
+          target: ${{ matrix.target }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # Cache not available for us
+          # cache-from: type=gha,scope=${{ matrix.target }}
+          # cache-to: type=gha,mode=max,scope=${{ matrix.target }}
+
+      - name: Set image tag output
+        id: set_tag
+        run: |
+          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          echo "sha=$SHORT_SHA" >> $GITHUB_OUTPUT  
+
+  deploy:
+    needs: build-and-push
+    if: >
+      github.event_name != 'pull_request' &&
+      (github.ref_name == 'main')
+    # disable deployment to staging
+    #  || github.ref_name == 'staging'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Set a few variables that will be used by steps later in this job
+      # - target_dir : the directory where to upload the docker-compose.yml
+      # - compose_file : the name of the docker compose file that will be uploaded
+      - name: Set deployment variables
+        id: vars
+        run: |
+          if [[ "${{ github.ref_name }}" == "staging" ]]; then
+            echo "target_dir=~/ladder-staging-new" >> "$GITHUB_OUTPUT"
+            echo "compose_file=docker-compose.yml" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.ref_name }}" == "main" ]]; then
+            echo "target_dir=~/ladder-new" >> "$GITHUB_OUTPUT"
+            echo "compose_file=docker-compose.yml" >> "$GITHUB_OUTPUT"
+          else
+            echo "Unsupported branch"
+            exit 1
+          fi
+
+      - name: Copy compose file to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: ${{ steps.vars.outputs.compose_file }}
+          target: ${{ steps.vars.outputs.target_dir }}
+
+        # This step will run a few commands on the server using SSH
+        # - update the APP_TAG in the .env file and then will
+        # - login to ghcr
+        # - pull the new images
+        # - stop the services
+        # - start the services
+      - name: Stop and start app on server
+        uses: appleboy/ssh-action@v1.2.1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd ${{ steps.vars.outputs.target_dir }}
+            APP_TAG="${{ needs.build-and-push.outputs.app_tag }}"
+            ENV_FILE=.env
+            if grep -q "^APP_TAG=" "$ENV_FILE"; then
+              sed -i "s/^APP_TAG=.*/APP_TAG=$APP_TAG/" "$ENV_FILE"
+            else
+              echo "APP_TAG=$APP_TAG" >> "$ENV_FILE"
+            fi
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            docker compose -f ${{ steps.vars.outputs.compose_file }} pull
+            docker compose -f ${{ steps.vars.outputs.compose_file }} down
+            rm -rf cache/*
+            docker compose -f ${{ steps.vars.outputs.compose_file }} up -d

@@ -8,7 +8,7 @@
         <div class="container px-4 py-5 text-light">
             <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
                 <div class="col-12 col-lg-6">
-                    <img src="{{ Vite::asset("resources/images/games/$gameMode/logo.png") }}" alt="logo" class="d-block img-fluid me-lg-0 ms-lg-auto" />
+                    <img src="{{ Vite::asset("$logoToUse") }}" alt="logo" class="d-block img-fluid me-lg-0 ms-lg-auto" />
                 </div>
 
                 <div class="col-12 col-lg-6">
@@ -351,7 +351,17 @@
                                             <td class="inactive">{{ $value[$column['name']] }}</td>
                                         @elseif ($column['name'] == 'status' && strtolower(str($value[$column['name']])) == 'active')
                                             <td class="active">{{ $value[$column['name']] }}</td>
-                                        @elseif (isset($value['elo']) && is_numeric($value[$column['name']]) && (str_starts_with($column['name'], 'all_') || str_starts_with($column['name'], 'sov_') || str_starts_with($column['name'], 'yur_')))
+                                        @elseif (str_starts_with($column['name'], 'delta_'))
+                                            @php
+                                                $delta = $value[$column['name']];
+                                                $direction = $delta > 0 ? '▲' : ($delta < 0 ? '▼' : '');
+                                                $color = $delta > 0 ? '#40E040' : ($delta < 0 ? '#FF6060' : '#CCCCCC');
+                                                $absValue = $delta != 0 ? abs($delta) : '';
+                                            @endphp
+                                            <td style="text-align: right; color: {{ $color }};">
+                                                {!! $direction !!} {{ $absValue }}
+                                            </td>
+                                        @elseif (isset($value['elo']) && (is_numeric($value[$column['name']]) || str_contains($value[$column['name']], '±')) && (str_starts_with($column['name'], 'all_') || str_starts_with($column['name'], 'sov_') || str_starts_with($column['name'], 'yur_')))
                                             <td class="mini" style="text-align: right;">{{ $value[$column['name']] }}</td>
                                         @elseif ((is_numeric($value[$column['name']]) || str_ends_with($column['name'], 'rate') || str_ends_with($column['name'], 'duration')) && $column['name'] != 'name')
                                             <td style="text-align:right;">{{ $value[$column['name']] }}</td>

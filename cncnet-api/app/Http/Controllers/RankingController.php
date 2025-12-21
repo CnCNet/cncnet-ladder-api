@@ -12,7 +12,7 @@ class RankingController extends Controller
 {
     public function getIndex(Request $request)
     {
-        $gameModes = ["Blitz", "Red Alert 2", "Yuri's Revenge"];
+        $gameModes = ["Blitz", "Blitz 2v2", "Red Alert", "Red Alert 2", "Yuri's Revenge"];
 
         $players = ["Active", "New", "All time best", "All players" ];
         $upsets = ["All time", "Last 12 month", "Last 30 days"];
@@ -20,8 +20,10 @@ class RankingController extends Controller
 
         $gameModesShort = [
             GameHelper::$GAME_BLITZ,
+            GameHelper::$GAME_BLITZ . "-2v2",
+            GameHelper::$GAME_RA,
             GameHelper::$GAME_RA2,
-            GameHelper::$GAME_YR
+            GameHelper::$GAME_YR,
         ];
 
         $gameMode = isset($request->mode) ? strval($request->mode) : "blitz";
@@ -47,6 +49,12 @@ class RankingController extends Controller
             array_push($jsonFiles, "mapstats_yvs.json");
         }
 
+        if (Storage::disk('rating')->exists($gameMode . "_best_teams.json"))
+        {
+            array_push($stats, "Best Teammates");
+            array_push($jsonFiles, "best_teams.json");
+        }
+
         $index = isset($request->list) ? max(min(intval($request->list), sizeof($players) + sizeof($upsets) + sizeof($stats) - 1), 0) : 0;
 
 
@@ -61,7 +69,32 @@ class RankingController extends Controller
 
         $dateLastUpdated = Carbon::createFromTimestamp(Storage::disk("rating")->lastModified($jsonPath));
 
-        $mixedFactionImage = ($gameMode == GameHelper::$GAME_YR) ? "resources/images/games/yr/allfactions.png" : "resources/images/games/ra2/ra2-icon.png";
+        if ($gameMode == GameHelper::$GAME_YR) {
+            $mixedFactionImage = "resources/images/games/yr/allfactions.png";
+        } elseif ($gameMode == GameHelper::$GAME_RA) {
+            $mixedFactionImage = "resources/images/games/ra/ra_factions.png";
+        } else {
+            $mixedFactionImage = "resources/images/games/ra2/ra2-icon.png";
+        }
+
+        # Make sure to have a fallback for specialized game modes (e.g, blitz-2v2 or ra2-new-maps).
+        # Prefer custom logo, but use standard logo if it does not exists.
+        $primaryLogoPath = "resources/images/games/{$gameMode}/logo.png";
+        $fallbackGameMode = explode('-', $gameMode)[0];
+        $logoToUse = "resources/images/games/{$fallbackGameMode}/logo.png";
+
+        $manifestPath = public_path('build/manifest.json');
+
+        if (file_exists($manifestPath)) {
+            $manifest = json_decode(file_get_contents($manifestPath), true);
+            if (isset($manifest[$primaryLogoPath])) {
+                $logoToUse = $primaryLogoPath;
+            }
+        }
+
+        $alliedImage = "resources/images/game-icons/allied" . (($gameMode == GameHelper::$GAME_RA) ? "_ra" : "") . ".png";
+        $sovietImage = "resources/images/game-icons/" . (($gameMode == GameHelper::$GAME_RA) ? "soviet_ra.png" : "ra2.png");
+
         return view(
             "ranking.index",
             [
@@ -75,11 +108,12 @@ class RankingController extends Controller
                 "index" => $index,
                 "columns" => $jsonData["columns"],
                 "description" => $jsonData["description"],
-                "factionImages" => array("all" => "resources/images/game-icons/allied.png",
-                                         "sov" => "resources/images/game-icons/ra2.png",
+                "factionImages" => array("all" => $alliedImage,
+                                         "sov" => $sovietImage,
                                          "mix" => $mixedFactionImage,
                                          "yur" => "resources/images/games/yr/yr-icon.png"),
-                "dateLastUpdated" => $dateLastUpdated
+                "dateLastUpdated" => $dateLastUpdated,
+                "logoToUse" => $logoToUse
             ]
         );
     }

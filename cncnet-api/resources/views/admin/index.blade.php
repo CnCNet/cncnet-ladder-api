@@ -74,9 +74,13 @@
                             <p>Manage everything to do with Users</p>
                             <ul class="list-unstyled">
                                 <li><a href="/admin/users" class="btn btn-md btn-secondary">User List</a></li>
+                                <li><a href="/admin/users/observers" class="btn btn-md btn-secondary mt-2">Observer List</a></li>
                                 <li><a href="/admin/users/chatbans" class="btn btn-md btn-secondary mt-2">Chat Ban User List</a></li>
                                 <li><a href="/admin/players/ratings" class="btn btn-md btn-secondary mt-2">User Ratings</a></li>
                                 <li><a href="/admin/clans" class="btn btn-md btn-secondary mt-2">Clan List</a></li>
+                                <li><a href="/admin/duplicates" class="btn btn-md btn-secondary mt-2">Active Duplicates</a></li>
+                                <li><a href="/admin/pointsystemsimulation" class="btn btn-md btn-secondary mt-2">Point System Simulator</a></li>
+                                <li><a href="/admin/audit-log" class="btn btn-md btn-secondary mt-2">Audit Log</a></li>
                             </ul>
                         </div>
                         <div class="player-box player-card">
@@ -162,6 +166,25 @@
                         </div>
                     </div>
 
+                    <div class="col-md-4 mt-4">
+                        <div class="profile-link">
+                            <div class="player-box player-card">
+                                <h3>Observed Games</h3>
+
+                                <label for="ladders_label">Ladder</label>
+
+                                <select name="ladder_dropdown3" id="ladder_dropdown3" class="form-control border">
+                                    @foreach ($ladders as $ladder)
+                                        <option value="{{ $ladder->abbreviation }}"> {{ $ladder->abbreviation }} </option>
+                                    @endforeach
+                                </select>
+
+                                <a id="observedGamesLink" href="/admin/observedGames/{{ $ladders[0]->abbreviation }}"
+                                    class="btn btn-md btn-secondary mt-2">View</a>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -186,6 +209,16 @@
             ladderDropdown2.onchange = function() {
                 let value = ladderDropdown2.value
                 washLink.setAttribute("href", "washedGames/" + value);
+            }
+        })();
+
+        (function() {
+            let ladderDropdown3 = document.getElementById("ladder_dropdown3")
+            let washLink = document.getElementById("observedGamesLink")
+
+            ladderDropdown3.onchange = function() {
+                let value = ladderDropdown3.value
+                washLink.setAttribute("href", "observedGames/" + value);
             }
         })();
     </script>

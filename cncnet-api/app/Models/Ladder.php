@@ -230,6 +230,13 @@ class Ladder extends Model
             ->where("updated_at", "<", Carbon::now()->endOfMonth());
     }
 
+    public function last_month_matches()
+    {
+        return $this->hasMany(QmMatch::class)
+            ->where("updated_at", ">", Carbon::now()->subMonthNoOverflow()->startOfMonth())
+            ->where("updated_at", "<", Carbon::now()->subMonthNoOverflow()->endOfMonth());
+    }
+
     public function recent_spawned_matches() {
         return $this->hasMany(QmMatch::class)
             ->where('created_at', '>', Carbon::now()->subMinutes(30))

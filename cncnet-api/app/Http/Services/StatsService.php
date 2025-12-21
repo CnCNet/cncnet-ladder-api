@@ -31,60 +31,22 @@ class StatsService
     {
         $ladder = $history->ladder;
         $ladderAbbrev = $ladder->abbreviation;
+
         return Cache::remember("getQmStats/$ladderAbbrev/$tierId", 1 * 60, function () use (&$history, &$ladder)
         {
-            $carbonDateSubHour = Carbon::now()->subHour();
             $carbonDateSub24Hours = Carbon::now()->subHours(24);
 
             $ladderId = $ladder->id;
             $startOfMonth = Carbon::now()->startOfMonth();
             $endOfMonth = Carbon::now()->endOfMonth();
 
-            $recentMatchedPlayers = QmMatchPlayer::where('qm_match_players.created_at', '>', $carbonDateSubHour)
-                ->where('ladder_id', '=', $ladderId)
+            $queuedPlayers = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
+                ->where('ladder_history_id', $history->id)
+                ->where('is_observer', false)
+                ->whereNull('qm_match_id')
                 ->count();
 
-            $clans = [];
-
-            if ($history->ladder->clans_allowed)
-            {
-                $queuedClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
-                    ->where('ladder_history_id', $history->id)
-                    ->whereNull('qm_match_id')
-                    ->get();
-
-                //count how many players are in queue for each clan
-                foreach ($queuedClans as $queuedClan)
-                {
-                    $count = 1;
-                    if (isset($clans[$queuedClan->clan_id]))
-                    {
-                        $count = $clans[$queuedClan->clan_id] + 1;
-                    }
-                    $clans[$queuedClan->clan_id] = $count;
-                }
-
-                // Groupby doesn't work with ->count()
-                $queuedPlayersOrClans = count($clans);
-            }
-            else
-            {
-                $queuedPlayersOrClans = QmQueueEntry::join('qm_match_players', 'qm_match_players.id', '=', 'qm_queue_entries.qm_match_player_id')
-                    ->where('ladder_history_id', $history->id)
-                    ->whereNull('qm_match_id')
-                    ->count();
-            }
-
-            $recentMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSubHour)
-                ->where('qm_matches.ladder_id', '=', $ladderId)
-                ->count();
-
-            $activeMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSubHour)
-                ->where('qm_matches.ladder_id', '=', $ladderId)
-                ->where('qm_matches.updated_at', '>', Carbon::now()->subMinute(2))
-                ->count();
-
-            $past24hMatches = \App\Models\QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
+            $past24hMatches = QmMatch::where('qm_matches.created_at', '>', $carbonDateSub24Hours)
                 ->where('qm_matches.ladder_id', '=', $ladderId)
                 ->count();
 
@@ -94,13 +56,13 @@ class StatsService
                 ->count();
 
             return [
-                "recentMatchedPlayers" => $recentMatchedPlayers,
-                "queuedPlayers" => $queuedPlayersOrClans,
+                "recentMatchedPlayers" => 0, # deprecated
+                "queuedPlayers" => $queuedPlayers,
                 "past24hMatches" => $past24hMatches,
-                "recentMatches" => $recentMatches,
+                "recentMatches" => 0, #deprecated
                 "matchesByMonth" => $matchesByMonth,
-                "activeMatches" => $activeMatches,
-                "clans" => $clans,
+                "activeMatches" => 0, # deprecated
+                "clans" => 0, # $clans
                 "time" => Carbon::now()
             ];
         });
@@ -108,7 +70,7 @@ class StatsService
 
     public function getFactionsPlayedByPlayer($player, $history)
     {
-        return Cache::remember("getFactionsPlayedByPlayer/$history->short/$player->id", 5 * 60, function () use ($player, $history)
+        return Cache::remember("getFactionsPlayedByPlayer/$history->short/$player->id", 10 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
@@ -215,50 +177,51 @@ class StatsService
 
     public function getMapWinLossByPlayer($player, $history)
     {
-        // return Cache::remember("getMapWinLossByPlayer/$history->short/$player->id", 5, function () use ($player, $history)
-        // {
-        $now = $history->starts;
-        $from = $now->copy()->startOfMonth()->toDateTimeString();
-        $to = $now->copy()->endOfMonth()->toDateTimeString();
-
-        $playerGamesByMaps = $player->playerGames()
-            ->where("ladder_history_id", $history->id)
-            ->whereBetween("player_game_reports.created_at", [$from, $to])
-            ->groupBy("scen")
-            ->get();
-
-        $mapResults = [];
-        foreach ($playerGamesByMaps as $pg)
+        // 10 mins cache, this is pretty heavy? 
+        return Cache::remember("getMapWinLossByPlayer/$history->short/$player->id", 10 * 60, function () use ($player, $history)
         {
-            $mapWins = $player->playerGames()
+            $now = $history->starts;
+            $from = $now->copy()->startOfMonth()->toDateTimeString();
+            $to = $now->copy()->endOfMonth()->toDateTimeString();
+
+            $playerGamesByMaps = $player->playerGames()
                 ->where("ladder_history_id", $history->id)
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("scen", $pg->scen)
-                ->where("won", true)
-                ->count();
+                ->groupBy("scen")
+                ->get();
 
-            $mapLosses = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("scen", $pg->scen)
-                ->where("won", false)
-                ->count();
+            $mapResults = [];
+            foreach ($playerGamesByMaps as $pg)
+            {
+                $mapWins = $player->playerGames()
+                    ->where("ladder_history_id", $history->id)
+                    ->whereBetween("player_game_reports.created_at", [$from, $to])
+                    ->where("scen", $pg->scen)
+                    ->where("won", true)
+                    ->count();
 
-            $mapTotal = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("scen", $pg->scen)
-                ->count();
+                $mapLosses = $player->playerGames()
+                    ->where("ladder_history_id", $history->id)
+                    ->whereBetween("player_game_reports.created_at", [$from, $to])
+                    ->where("scen", $pg->scen)
+                    ->where("won", false)
+                    ->count();
 
-            $mapResults[$pg->scen] = [
-                "map" => $pg->game->map,
-                "won" => $mapWins,
-                "lost" => $mapLosses,
-                "total" => $mapTotal
-            ];
-        }
-        return $mapResults;
-        // });
+                $mapTotal = $player->playerGames()
+                    ->where("ladder_history_id", $history->id)
+                    ->whereBetween("player_game_reports.created_at", [$from, $to])
+                    ->where("scen", $pg->scen)
+                    ->count();
+
+                $mapResults[$pg->scen] = [
+                    "map" => $pg->game->map,
+                    "won" => $mapWins,
+                    "lost" => $mapLosses,
+                    "total" => $mapTotal
+                ];
+            }
+            return $mapResults;
+        });
     }
 
     public function getWinnerOfTheDay(LadderHistory $history)

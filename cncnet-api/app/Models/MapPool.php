@@ -1,11 +1,30 @@
-<?php namespace App\Models;
+<?php
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
+use Spatie\Activitylog\LogOptions;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Activitylog\Traits\LogsActivity;
 
-class MapPool extends Model {
+class MapPool extends Model
+{
+    use HasFactory, LogsActivity;
+    
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['name', 'ladder_id', 'invalid_faction_pairs', 'forced_faction_ratio', 'forced_faction_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
-    use HasFactory;
+    protected $casts = [
+        'invalid_faction_pairs' => 'array',
+        'forced_faction_ratio'  => 'float',
+        'forced_faction_id'     => 'integer',
+    ];
 
     protected $fillable = [
         'name',
@@ -31,5 +50,41 @@ class MapPool extends Model {
     public function tiers()
     {
         return $this->hasMany(MapTier::class, 'map_pool_id');
+    }
+
+    public function invalidPairs(): array
+    {
+        return $this->invalid_faction_pairs ?? [];
+    }
+
+    public function isValidPair(int $faction1, int $faction2): bool
+    {
+        $pairs = $this->invalidPairs();
+        if (!is_array($pairs) || empty($pairs))
+        {
+            return true; // No limitations.
+        }
+
+        $factionA = min($faction1, $faction2);
+        $factionB = max($faction1, $faction2);
+
+        foreach ($pairs as $p)
+        {
+            if (!is_array($p) || count($p) !== 2)
+            {
+                Log::warning('isValidPair: map pool contains invalid forbidden faction pairs (' . $p . ')');
+                continue;
+            }
+
+            $pairFaction1 = (int)min($p[0], $p[1]);
+            $pairFaction2 = (int)max($p[0], $p[1]);
+
+            if ($pairFaction1 === $factionA && $pairFaction2 === $factionB)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

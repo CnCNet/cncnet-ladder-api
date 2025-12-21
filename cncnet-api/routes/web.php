@@ -33,8 +33,8 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function
     Route::get('{date}/{game}/clan/{clan}', [\App\Http\Controllers\LadderController::class, 'getLadderClan']);
     Route::get('{date}/{game}/clan/{clan}/achievements', [\App\Http\Controllers\LadderController::class, 'getPlayerAchievementsPage']);
 
-    Route::get('{date}/{game}/games/{gameId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame']);
-    Route::get('{date}/{game}/games/{gameId}/{reportId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame']);
+    Route::get('{date}/{game}/games/{gameId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame'])->name('ladder.game');
+    Route::get('{date}/{game}/games/{gameId}/{reportId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame'])->name('ladder.game.report');
 });
 
 # Clan Ladders
@@ -86,11 +86,23 @@ Route::group(['prefix' => 'admin'], function ()
         Route::group(['middleware' => 'restrict:adminRequired'], function ()
         {
 
-            Route::get('users/', [\App\Http\Controllers\AdminController::class, 'getManageUsersIndex']);
+            Route::get('users/', [\App\Http\Controllers\AdminController::class, 'getManageUsersIndex'])->name('admin.users');
+            Route::get('audit-log', [\App\Http\Controllers\AdminController::class, 'getAuditLog'])->name('admin.audit-log');
             Route::get('users/chatbans', [\App\Http\Controllers\AdminController::class, 'getChatBannedUsers']);
-            Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser']);
+            Route::get('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'getEditUser'])->name('admin.edit-user');
             Route::post('users/edit/{userId}', [\App\Http\Controllers\AdminController::class, 'updateUser']);
             Route::post('users/tier/update', [\App\Http\Controllers\AdminController::class, 'updateUserLadderTier']);
+            Route::post('users/duplicates/confirm', [\App\Http\Controllers\AdminController::class, 'confirmDuplicate'])->name('users.duplicate.confirm');
+            Route::post('users/duplicates/unlink', [\App\Http\Controllers\AdminController::class, 'unlinkDuplicate'])->name('users.duplicate.unlink');
+            Route::post('users/duplicates/resetprimary', [\App\Http\Controllers\AdminController::class, 'resetToUnconfirmedPrimary']);
+            Route::get('duplicates', [\App\Http\Controllers\ActiveDuplicatesController::class, 'index']);
+
+            // Observer management
+            Route::get('users/observers', [\App\Http\Controllers\AdminController::class, 'getObservers'])->name('admin.observers');
+            Route::post('users/observers/add', [\App\Http\Controllers\AdminController::class, 'addObserver'])->name('admin.observers.add');
+            Route::post('users/observers/remove', [\App\Http\Controllers\AdminController::class, 'removeObserver'])->name('admin.observers.remove');
+
+            Route::get('pointsystemsimulation', [\App\Http\Controllers\PointSystemSimulationController::class, 'index'])->name('admin.point-system-simulation');
 
             Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
@@ -110,6 +122,7 @@ Route::group(['prefix' => 'admin'], function ()
 
             Route::post('ladder/new', [\App\Http\Controllers\LadderController::class, 'saveLadder'])->middleware('restrict:isGod');
             Route::get('washedGames/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getWashedGames']);
+            Route::get('observedGames/{ladderAbbreviation}', [\App\Http\Controllers\AdminController::class, 'getObservedGames']);
         });
 
         Route::group(['prefix' => 'setup/{ladderId}', 'middleware' => ['restrict:canModLadder']], function ()
@@ -144,6 +157,9 @@ Route::group(['prefix' => 'admin'], function ()
                 Route::post('mappool/new', [\App\Http\Controllers\MapPoolController::class, 'newMapPool']);
                 Route::post('mappool/{mapPoolId}/remove', [\App\Http\Controllers\MapPoolController::class, 'removeMapPool']);
                 Route::post('mappool/{mapPoolId}/reorder', [\App\Http\Controllers\MapPoolController::class, 'reorderMapPool']);
+                Route::post('mappool/{mapPoolId}/forcedFactionSettings', [\App\Http\Controllers\MapPoolController::class, 'updateForcedFactionSettings'])->name('mappool.updateForcedFactionSettings');
+                Route::post('mappool/{mapPoolId}/pairs/add', [\App\Http\Controllers\MapPoolController::class, 'addInvalidFactionPair'])->name('mappool.addPair');
+                Route::delete('mappool/{mapPoolId}/pairs/{index}', [\App\Http\Controllers\MapPoolController::class, 'removeInvalidFactionPair'])->name('mappool.removePair');
                 Route::post('mappool/clone', [\App\Http\Controllers\MapPoolController::class, 'cloneMapPool']);
                 Route::post('mappool/{mapPoolId}/cloneladdermaps', [\App\Http\Controllers\MapPoolController::class, 'copyMaps']);
 
@@ -179,6 +195,7 @@ Route::group(['prefix' => 'admin'], function ()
             Route::post('/games/{cncnetGame}/delete', [AdminController::class, 'deleteGame']);
             Route::post('/games/switch', [AdminController::class, 'switchGameReport']);
             Route::post('/games/wash', [AdminController::class, 'washGame']);
+            Route::post('/games/fix-points', [AdminController::class, 'fixPoints']);
 
             Route::get('/player/{playerId}', [AdminController::class, 'getLadderPlayer']);
             Route::get('/player/{playerId}/newban/{banType}', [AdminController::class, 'getUserBan']);

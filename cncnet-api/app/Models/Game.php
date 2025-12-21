@@ -105,4 +105,19 @@ class Game extends Model
     {
         return $this->hasMany(GameClip::class, 'game_id');
     }
+
+    public function observers()
+    {
+        return $this->hasMany(PlayerGameReport::class, 'game_report_id', 'game_report_id')
+            ->where('spectator', true)
+            ->with(['player.user']);
+    }
+
+
+    public function players()
+    {
+        return $this->hasMany(PlayerGameReport::class, 'game_report_id', 'game_report_id')
+            ->where('spectator', false)
+            ->with('player.user');
+    }
 }

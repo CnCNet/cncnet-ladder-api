@@ -3,10 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class UserSettings extends Model
 {
-    protected $table = 'user_settings';
+    use LogsActivity;
+
+    protected static $recordEvents = ['updated'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['allow_2v2_ladders', 'is_anonymous', 'other_setting1', 'other_setting2', 'is_observer', 'disabledPointFilter'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
 
     protected $fillable = [
         'user_id',
@@ -18,7 +30,6 @@ class UserSettings extends Model
         'is_observer',
         'allow_observers',
     ];
-
 
     public function __construct()
     {
@@ -41,5 +52,11 @@ class UserSettings extends Model
     public function getIsAnonymous()
     {
         return $this->is_anonymous == true;
+    }
+
+    public function getIsAnonymousForLadderHistory(LadderHistory $history): bool
+    {
+        // Only anonymous in current month.
+        return $this->is_anonymous && $history->isCurrent();
     }
 }

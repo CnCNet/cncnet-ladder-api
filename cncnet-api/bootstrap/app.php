@@ -1,55 +1,66 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Create The Application
-|--------------------------------------------------------------------------
-|
-| The first thing we will do is create a new Laravel application instance
-| which serves as the "glue" for all the components of Laravel, and is
-| the IoC container for the system binding all of the various parts.
-|
-*/
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Http\Request;
 
-$app = new Illuminate\Foundation\Application(
-    $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
-);
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->trustProxies(
+            at: '*',
+            headers: Request::HEADER_FORWARDED |
+            Request::HEADER_X_FORWARDED_FOR |
+            Request::HEADER_X_FORWARDED_HOST |
+            Request::HEADER_X_FORWARDED_PROTO |
+            Request::HEADER_X_FORWARDED_PORT |
+            Request::HEADER_X_FORWARDED_PREFIX |
+            Request::HEADER_X_FORWARDED_TRAEFIK
+        );
+        $middleware->alias([
+            'cache.public' => \App\Http\Middleware\CachePublicMiddleware::class,
+            'cache.private' => \App\Http\Middleware\CachePrivateMiddleware::class,
+            'cache.long.public' => \App\Http\Middleware\CacheLongPublicMiddleware::class,
+            'cache.long.private' => \App\Http\Middleware\CacheLongPrivateMiddleware::class,
+            'cache.short.public' => \App\Http\Middleware\CacheShortPublic::class,
+            'cache.ultra.public' => \App\Http\Middleware\CacheUltraShortPublic::class,
 
-/*
-|--------------------------------------------------------------------------
-| Bind Important Interfaces
-|--------------------------------------------------------------------------
-|
-| Next, we need to bind some important interfaces into the container so
-| we will be able to resolve them when needed. The kernels serve the
-| incoming requests to this application from both the web and CLI.
-|
-*/
+            'restrict' => \App\Http\Middleware\Restrict::class,
+            'group' => \App\Http\Middleware\Group::class,
+        ]);
+    })
+    ->withSchedule(function (Schedule $schedule) {
+        $schedule->command('prune_logs')
+            ->daily();
+        $schedule->command('prune_stats')
+            ->daily();
+        $schedule->command('update_player_cache')
+            ->hourly();
+        // $schedule->command('update_clan_cache')
+        //     ->hourly();
+        $schedule->command('QmMatchPlayers:prune')
+            ->monthly();
+        $schedule->command('QmMatches:prune')
+            ->monthly();
+        $schedule->command('GameReports:prune')
+            ->monthly();
+        // $schedule->command('update_stats_cache')
+        //     ->hourly();
+        $schedule->command('QmCanceledMatches:prune')
+            ->monthly();
+        $schedule->command('update_player_ratings')
+            ->monthly();
 
-$app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    App\Http\Kernel::class
-);
+        $schedule->command('clear_inactive_queue_entries')->everyMinute();
+    })
+    ->withExceptions(function (Exceptions $exceptions) {
 
-$app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    App\Console\Kernel::class
-);
-
-$app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    App\Exceptions\Handler::class
-);
-
-/*
-|--------------------------------------------------------------------------
-| Return The Application
-|--------------------------------------------------------------------------
-|
-| This script returns the application instance. The instance is given to
-| the calling script so we can separate the building of the instances
-| from the actual running of the application and sending responses.
-|
-*/
-
-return $app;
+    })
+    ->create();
