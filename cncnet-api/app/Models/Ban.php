@@ -69,11 +69,6 @@ class Ban extends Model
         return $this->belongsTo(IpAddress::class, 'ip_address_id');
     }
 
-    public static function unstartedBanTime()
-    {
-        return Carbon::now();
-    }
-
     public function banHasExpired()
     {
         // Convert the timestamp to a Carbon instance
@@ -88,31 +83,72 @@ class Ban extends Model
 
     public function started()
     {
-        if ($this->expires === null || $this->expires->eq(Ban::unstartedBanTime()))
-        {
-            return false;
-        }
-        return true;
+        return $this->expires !== null;
     }
 
+    /**
+     * Check if a ban is active and optionally start it if not already started.
+     *
+     * This method handles two types of bans:
+     * - START_NOW bans (0-99): Regular bans that start immediately when created
+     * - START_ON_CONNECT bans (140-199): Cooldown bans that start when user tries to queue
+     *
+     * Behavior depends on the $startBanStraightAway parameter:
+     *
+     * When $startBanStraightAway = false (checking existing bans):
+     *   - For cooldown bans: Returns message only if already started and not expired
+     *   - For regular bans: Returns message if ban is active
+     *   - Does NOT modify the ban record
+     *
+     * When $startBanStraightAway = true (creating new ban or user connecting):
+     *   - Sets the expiry time based on ban type if not already started
+     *   - Saves the ban record to database
+     *   - Returns appropriate ban/cooldown message
+     *
+     * @param bool $startBanStraightAway Whether to initialize the ban (set expiry time).
+     *                                   Pass true when creating a ban or when user attempts to queue.
+     *                                   Pass false when simply checking if a ban is active.
+     *
+     * @return string|null Returns a ban/cooldown message if the ban is active, null otherwise.
+     *                     Message format varies by ban type (regular ban vs cooldown).
+     *
+     * @side-effects May update $this->expires and save to database when $startBanStraightAway = true
+     */
     public function checkStartBan($startBanStraightAway = false)
     {
         // Log::debug("checkStartBan: ban_id=" . $this->id . ", startBanStraightAway=" . $startBanStraightAway . ", ban_type=" . $this->ban_type . ", desc=" . Ban::typeToDescription($this->ban_type) . ", expires=" . $this->expires);
 
         $banned = false;
         $cooldown = false;
-        if (!$startBanStraightAway && !($this->ban_type >= Ban::START_NOW_BEGIN && $this->ban_type <= Ban::START_NOW_END))
+
+        // Check if this is a cooldown ban that hasn't been triggered yet
+        $isCooldownBan = ($this->ban_type >= Ban::START_ON_CONNECT_BEGIN && $this->ban_type <= Ban::START_ON_CONNECT_END);
+
+        if (!$startBanStraightAway && $isCooldownBan)
         {
+            // Cooldown ban hasn't been triggered yet, only show if already started
+            if ($this->started() && $this->expires->gt(Carbon::now()))
+            {
+                $cooldown = true;
+            }
+            else
+            {
+                // Cooldown not started yet, don't block the user
+                return null;
+            }
+        }
+        else if (!$startBanStraightAway)
+        {
+            // Checking existing START_NOW bans (not actively starting them)
             if ($this->ban_type == Ban::PERMBAN)
                 return "You are permanently banned!\n{$this->plubic_reason}";
 
-            if ($this->ban_type <= Ban::BAN_END && $this->ban_type >= Ban::BAN_BEGIN)
+            if ($this->ban_type >= Ban::BAN_BEGIN && $this->ban_type <= Ban::BAN_END)
                 $banned = true;
-            else if ($this->ban_type <= Ban::COOLDOWN_END && $this->ban_type >= Ban::COOLDOWN_BEGIN)
-                $cooldown = true;
         }
         else
         {
+            // Starting a ban (either creation or user connecting for cooldowns)
             switch ($this->ban_type)
             {
                 case Ban::BAN48H:
