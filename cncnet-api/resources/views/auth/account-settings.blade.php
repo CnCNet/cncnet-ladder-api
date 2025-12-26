@@ -250,17 +250,6 @@
                         </p><br />
                     </div>
 
-                    <div class="form-group">
-                        <h3>Match Yuri?</h3>
-                        <p>
-                            <label>
-                                <input id="do_not_match_yuri" type="checkbox" name="do_not_match_yuri"
-                                    @if ($userSettings->do_not_match_yuri) checked @endif />
-                                You can disable matching with Yuri only if your rank is worse than 30 (rank 31 or lower). If your rank is 1-30, you cannot disable matching with Yuri
-                            </label>
-                        </p>
-                    </div>
-
                     <div class="form-group mt-5 mb-5">
                         <div class="checkbox">
                             @if (isset($userSettings))
@@ -324,7 +313,7 @@
                     </div>
 
                     <div class="form-group mt-2">
-                        <label for="discord">Discord username, <strong>E.g. user#9999</strong></label>
+                        <label for="discord">Discord username</label>
                         <input id="discord" type="text" class="form-control" name="discord_profile" value="{{ $user->discord_profile }}"
                             placeholder="Enter your Discord username only" style="max-width:300px;" />
                     </div>

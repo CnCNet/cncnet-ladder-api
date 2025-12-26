@@ -1270,6 +1270,9 @@ class AdminController extends Controller
 
         $user = $player->user;
 
+        $startBan = ($banType >= \App\Models\Ban::START_NOW_BEGIN
+           && $banType <= \App\Models\Ban::START_NOW_END);
+
         return view(
             "admin.edit-ban",
             [
@@ -1281,7 +1284,7 @@ class AdminController extends Controller
                 "expires" => null,
                 "admin_id" => $mod->id,
                 "user_id" => $user->id,
-                "start_ban" => true, // new ban,
+                "start_ban" => $startBan,
                 "end_ban" => false,
                 "ban_type" => $banType,
                 "internal_note" => "",
@@ -1678,11 +1681,14 @@ class AdminController extends Controller
 
         $playerCaches = PlayerCache::where('player_id', $player->id)->get();
 
-        if ($playerCaches == null || $playerCaches->count() == 0)
+        if ($playerCaches != null)
         {
-            Log::error("No player caches found with this player id: $player->id");
-            $request->session()->flash('error', "Error updating player");
-            return redirect()->back();
+            //update player name in player caches
+            foreach ($playerCaches as $playerCache)
+            {
+                $playerCache->player_name = $player->username;
+                $playerCache->save();
+            }
         }
 
         $newName = $request->player_name;
@@ -1702,13 +1708,6 @@ class AdminController extends Controller
         //update player name to the new name
         $player->username = $newName;
         $player->save();
-
-        //update player name in player caches
-        foreach ($playerCaches as $playerCache)
-        {
-            $playerCache->player_name = $player->username;
-            $playerCache->save();
-        }
 
         $url = URLHelper::getPlayerProfileUrl($history, $player->username);
         $request->session()->flash('success', "Player name has been updated to " . $player->username);
