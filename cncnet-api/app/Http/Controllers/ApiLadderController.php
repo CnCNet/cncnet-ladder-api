@@ -550,6 +550,19 @@ class ApiLadderController extends Controller
         // determine which team won
         $winningTeam = $this->getWinningTeamFromReports($playerGameReports);
 
+        // Normalize won flags for all players on winning team (fixes 2v2 cases where player died but team won)
+        if ($winningTeam !== null && $gameReport->best_report)
+        {
+            foreach ($playerGameReports as $pgr)
+            {
+                if ($pgr->spectator == false && $pgr->team == $winningTeam && !$pgr->won)
+                {
+                    $pgr->won = true;
+                    $pgr->save();
+                }
+            }
+        }
+
         foreach ($playerGameReports as $playerGR)
         {
             if ($playerGR->spectator == true)
@@ -942,9 +955,8 @@ class ApiLadderController extends Controller
             $startOfDay = Carbon::now()->startOfDay();
             $endOfDay = Carbon::now()->endOfDay();
 
-            // Count wins for today
+            // Count wins for today - check if player's team won (handles 2v2 where player may have died but team won)
             $wins = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
-                ->where('player_game_reports.won', '=', true)
                 ->where('player_game_reports.spectator', '=', false)
                 ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
                 ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
@@ -952,12 +964,18 @@ class ApiLadderController extends Controller
                 ->where('games.ladder_history_id', '=', $history->id)
                 ->where('game_reports.valid', '=', true)
                 ->where('game_reports.best_report', '=', true)
+                ->whereExists(function ($query) {
+                    $query->selectRaw(1)
+                          ->from('player_game_reports as teammate_reports')
+                          ->whereColumn('teammate_reports.game_id', 'player_game_reports.game_id')
+                          ->whereColumn('teammate_reports.team', 'player_game_reports.team')
+                          ->where('teammate_reports.won', '=', true)
+                          ->where('teammate_reports.spectator', '=', false);
+                })
                 ->count();
 
-            // Count losses for today (defeated and not won, excluding draws)
+            // Count losses for today - check if player's team lost (no teammate won, excluding draws)
             $losses = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
-                ->where('player_game_reports.defeated', '=', true)
-                ->where('player_game_reports.won', '=', false)
                 ->where('player_game_reports.draw', '=', false)
                 ->where('player_game_reports.spectator', '=', false)
                 ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
@@ -966,6 +984,14 @@ class ApiLadderController extends Controller
                 ->where('games.ladder_history_id', '=', $history->id)
                 ->where('game_reports.valid', '=', true)
                 ->where('game_reports.best_report', '=', true)
+                ->whereNotExists(function ($query) {
+                    $query->selectRaw(1)
+                          ->from('player_game_reports as teammate_reports')
+                          ->whereColumn('teammate_reports.game_id', 'player_game_reports.game_id')
+                          ->whereColumn('teammate_reports.team', 'player_game_reports.team')
+                          ->where('teammate_reports.won', '=', true)
+                          ->where('teammate_reports.spectator', '=', false);
+                })
                 ->count();
 
             return response()->json([
