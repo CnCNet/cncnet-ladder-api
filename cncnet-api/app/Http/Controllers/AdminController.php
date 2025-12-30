@@ -1312,7 +1312,7 @@ class AdminController extends Controller
 
         $user = $player->user;
 
-        $expires = $ban->expires->eq(\App\Models\Ban::unstartedBanTime()) ? null : $ban->expires;
+        $expires = $ban->started() ? $ban->expires : null;
 
         return view(
             "admin.edit-ban",
