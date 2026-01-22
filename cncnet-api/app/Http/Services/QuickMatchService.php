@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Services\FactionPolicyService;
 use App\Http\Services\TwitchService;
 use App\Extensions\Qm\Matchup\ClanMatchupHandler;
+use App\Exceptions\ObserverException;
 use App\Models\Game;
 use App\Models\IpAddress;
 use App\Models\Ladder;
@@ -158,7 +159,7 @@ class QuickMatchService
             ]);
 
             $qmPlayer->delete();
-            throw new \RuntimeException('To observe games, you must have a valid Twitch username defined in your Account Settings.');
+            throw new \App\Exceptions\ObserverException('To observe games, you must have a valid Twitch username defined in your Account Settings.');
         }
 
         // Check if the Twitch user is currently live
@@ -170,7 +171,7 @@ class QuickMatchService
             ]);
 
             $qmPlayer->delete();
-            throw new \RuntimeException('To observe games, you must be live on Twitch.');
+            throw new \App\Exceptions\ObserverException('To observe games, you must be live on Twitch.');
         }
 
         // Log that the player passed all observer checks
@@ -1901,6 +1902,14 @@ class QuickMatchService
     {
         return response()->json([
             "type" => "fatal",
+            "message" => $error
+        ]);
+    }
+
+    public function onStop(string $error)
+    {
+        return response()->json([
+            "type" => "stop",
             "message" => $error
         ]);
     }
