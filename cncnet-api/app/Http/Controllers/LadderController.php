@@ -31,6 +31,10 @@ class LadderController extends Controller
         $this->statsService = new StatsService();
         $this->chartService = new ChartService();
         $this->achievementService = new AchievementService();
+
+        // Note: These services are instantiated here for backward compatibility.
+        // Ideally, they should be constructor-injected using Laravel's dependency injection.
+        // The GetPlayerDetailAction already uses proper constructor injection.
     }
 
     public function getLadders(Request $request)
@@ -409,131 +413,31 @@ class LadderController extends Controller
         }
     }
 
-    public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $username = null)
-    {
-        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
+    /**
+     * Display player detail page
+     *
+     * @param Request $request
+     * @param string|null $date Ladder history date (format: M-YYYY)
+     * @param string|null $cncnetGame Game abbreviation (e.g., 'yr', 'ra2')
+     * @param string|null $username Player username
+     * @return \Illuminate\View\View
+     */
+    public function getLadderPlayer(
+        Request $request,
+        ?string $date = null,
+        ?string $cncnetGame = null,
+        ?string $username = null
+    ) {
+        $action = app(\App\Actions\Player\GetPlayerDetailAction::class);
 
-        if ($history == null)
-        {
-            abort(404, "Ladder not found");
-        }
-
-        $player = Player::where("ladder_id", "=", $history->ladder->id)
-            ->where("username", "=", $username)
-            ->first();
-
-        if ($player == null)
-        {
-            abort(404, "No player found");
-        }
-
-        $user = $request->user();
-
-        $userIsMod = false;
-        if ($user !== null && $user->isLadderMod($player->ladder))
-        {
-            $userIsMod = true;
-        }
-
-        $games = $player->playerGames()
-            ->where("ladder_history_id", "=", $history->id)
-            ->orderBy('created_at', 'DESC')
-            ->paginate(24);
-
-        $playerUser = $player->user;
-
-        $bans = [];
-        $alerts = [];
-        if ($user && ($playerUser->id == $user->id || $userIsMod))
-        {
-            $alerts = $player->alerts;
-            $ban = $playerUser->getBan();
-            if ($ban)
-            {
-                $bans[] = $ban;
-            }
-        }
-        $mod = $request->user();
-
-        $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
-        $user = User::where("id", $player->user_id)->first();
-        $userTier = $user->getUserLadderTier($history->ladder)->tier;
-
-        # Stats
-        $graphGamesPlayedByMonth = $this->chartService->getPlayerGamesPlayedByMonth($player, $history);
-        $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
-        $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
-        $playerGamesLast24Hours = $player->totalGames24Hours($history);
-
-        // incorrect data for 2v2
-        $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
-
-        $teamMatchups = [];
-        if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
-        {
-            $teamMatchups = $this->statsService->getTeamMatchups($player, $history);
-        }
-
-        $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
-        $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
-        $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);
-
-        $isAnonymous = $player->user->userSettings->getIsAnonymousForLadderHistory($history);
-
-        // Get the current month's date range
-        $now = Carbon::now();
-        $dateStart = $now->copy()->startOfMonth()->toDateTimeString();
-        $dateEnd = $now->copy()->endOfMonth()->toDateTimeString();
-
-        // Get the player's active handle for the current month
-        $activeHandle = PlayerActiveHandle::getPlayerActiveHandle(
-            $player->id,
-            $history->ladder->id,
-            $dateStart,
-            $dateEnd
+        $viewData = $action->execute(
+            date: $date,
+            cncnetGame: $cncnetGame,
+            username: $username,
+            authenticatedUser: $request->user()
         );
 
-        // Start with all usernames for this ladder, excluding the current player
-        $ladderNicks = $user->usernames
-            ->where('id', '!=', $player->id)
-            ->where('ladder_id', $history->ladder->id);
-
-        // If anonymous and there's an active handle, also exclude it
-        if ($isAnonymous && $activeHandle) {
-            $ladderNicks = $ladderNicks->where('id', '!=', $activeHandle->player_id);
-        }
-
-        $ladderNicks = $ladderNicks->pluck('username')->toArray();
-
-        return view(
-            "ladders.player-detail",
-            [
-                "ladderNicks" => $ladderNicks,
-                "mod" => $mod,
-                "isAnonymous" => $isAnonymous,
-                "history" => $history,
-                "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
-                "player" => $ladderPlayer['player'],
-                "games" => $games,
-                "userIsMod" => $userIsMod,
-                "playerUser" => $playerUser,
-                "ladderId" => $player->ladder->id,
-                "alerts" => $alerts,
-                "bans" => $bans,
-                "userTier" => $userTier,
-                "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
-                "playerFactionsByMonth" => $playerFactionsByMonth,
-                "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "playerWinLossByMaps" => $playerWinLossByMaps,
-                "playerOfTheDayAward" => $playerOfTheDayAward,
-                "userPlayer" => $user,
-                "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "teamMatchups" => $teamMatchups,
-                "playerMatchups" => $playerMatchups,
-                "achievements" => $recentAchievements,
-                "achievementsCount" => $achievementProgressCounts
-            ]
-        );
+        return view('ladders.player-detail', $viewData);
     }
 
     public function getLadderClan(Request $request, $date = null, $cncnetGame = null, $clanNameShort = null)

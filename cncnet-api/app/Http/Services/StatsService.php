@@ -93,131 +93,98 @@ class StatsService
 
     private function getFactionResults($player, $history, $from, $to)
     {
-        $factionResults = [];
-
-        $playerGames = $player->playerGames()
+        // Use single query with aggregation instead of N+1 loop
+        $results = $player->playerGames()
             ->where("ladder_history_id", $history->id)
             ->whereBetween("player_game_reports.created_at", [$from, $to])
+            ->selectRaw('
+                sid,
+                SUM(CASE WHEN won = 1 THEN 1 ELSE 0 END) as won,
+                SUM(CASE WHEN won = 0 THEN 1 ELSE 0 END) as lost,
+                COUNT(*) as total
+            ')
             ->groupBy("sid")
             ->get();
 
-        foreach ($playerGames as $pg)
+        $factionResults = [];
+        foreach ($results as $result)
         {
-            $sideCountWon = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("sid", $pg->sid)
-                ->where("won", true)
-                ->count();
-
-            $sideCountLost = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("sid", $pg->sid)
-                ->where("won", false)
-                ->count();
-
-            $total = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("sid", $pg->sid)
-                ->count();
-
-            $factionResults[$pg->sid] =
-                [
-                    "won" => $sideCountWon,
-                    "lost" => $sideCountLost,
-                    "total" => $total
-                ];
+            $factionResults[$result->sid] = [
+                "won" => $result->won,
+                "lost" => $result->lost,
+                "total" => $result->total
+            ];
         }
         return $factionResults;
     }
 
     private function getFactionResultsForYR($player, $history, $from, $to)
     {
-        $factionResults = [];
-
-        $playerGames = $player->playerGames()
+        // Use single query with aggregation instead of N+1 loop
+        $results = $player->playerGames()
             ->where("ladder_history_id", $history->id)
             ->whereBetween("player_game_reports.created_at", [$from, $to])
+            ->selectRaw('
+                cty,
+                SUM(CASE WHEN won = 1 THEN 1 ELSE 0 END) as won,
+                SUM(CASE WHEN won = 0 THEN 1 ELSE 0 END) as lost,
+                COUNT(*) as total
+            ')
             ->groupBy("cty")
             ->get();
 
-        foreach ($playerGames as $pg)
+        $factionResults = [];
+        foreach ($results as $result)
         {
-            $sideCountWon = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("cty", $pg->cty)
-                ->where("won", true)
-                ->count();
-
-            $sideCountLost = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("cty", $pg->cty)
-                ->where("won", false)
-                ->count();
-
-            $total = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("cty", $pg->cty)
-                ->count();
-
-            $factionResults[$pg->cty] =
-                [
-                    "won" => $sideCountWon,
-                    "lost" => $sideCountLost,
-                    "total" => $total
-                ];
+            $factionResults[$result->cty] = [
+                "won" => $result->won,
+                "lost" => $result->lost,
+                "total" => $result->total
+            ];
         }
         return $factionResults;
     }
 
+
     public function getMapWinLossByPlayer($player, $history)
     {
-        // 10 mins cache, this is pretty heavy? 
+        // 10 mins cache, this is pretty heavy?
         return Cache::remember("getMapWinLossByPlayer/$history->short/$player->id", 10 * 60, function () use ($player, $history)
         {
             $now = $history->starts;
             $from = $now->copy()->startOfMonth()->toDateTimeString();
             $to = $now->copy()->endOfMonth()->toDateTimeString();
 
-            $playerGamesByMaps = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->groupBy("scen")
+            // Use direct query with aggregation to avoid conflicts with playerGames() select
+            // Join maps table to get map name, group by scen
+            $playerGamesByMaps = \DB::table('player_game_reports')
+                ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+                ->join('games', 'games.id', '=', 'game_reports.game_id')
+                ->join('stats2', 'player_game_reports.stats_id', '=', 'stats2.id')
+                ->leftJoin('maps', 'games.hash', '=', 'maps.hash')
+                ->where('player_game_reports.player_id', $player->id)
+                ->where('game_reports.valid', true)
+                ->where('game_reports.best_report', true)
+                ->where('games.ladder_history_id', $history->id)
+                ->whereBetween('player_game_reports.created_at', [$from, $to])
+                ->selectRaw('
+                    games.scen,
+                    MAX(maps.name) as map,
+                    SUM(CASE WHEN player_game_reports.won = 1 THEN 1 ELSE 0 END) as won,
+                    SUM(CASE WHEN player_game_reports.won = 0 THEN 1 ELSE 0 END) as lost,
+                    COUNT(*) as total
+                ')
+                ->groupBy('games.scen')
                 ->get();
 
             $mapResults = [];
             foreach ($playerGamesByMaps as $pg)
             {
-                $mapWins = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("scen", $pg->scen)
-                    ->where("won", true)
-                    ->count();
-
-                $mapLosses = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("scen", $pg->scen)
-                    ->where("won", false)
-                    ->count();
-
-                $mapTotal = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$from, $to])
-                    ->where("scen", $pg->scen)
-                    ->count();
-
                 $mapResults[$pg->scen] = [
-                    "map" => $pg->game->map,
-                    "won" => $mapWins,
-                    "lost" => $mapLosses,
-                    "total" => $mapTotal
+                    "map" => $pg->map,
+                    "won" => $pg->won,
+                    "lost" => $pg->lost,
+                    "total" => $pg->total
                 ];
             }
             return $mapResults;
@@ -336,20 +303,22 @@ class StatsService
             $from = $now->copy()->startOfMonth()->toDateTimeString();
             $to = $now->copy()->endOfMonth()->toDateTimeString();
 
+            // Eager load gameReport and its playerGameReports to avoid N+1
             $playerGameReports = $player->playerGames()
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
                 ->where('draw', false)
                 ->where('no_completion', false)
+                ->with(['gameReport.playerGameReports.player'])
                 ->get();
 
             $matchupResults = [];
             foreach ($playerGameReports as $pgr)
             {
 
-                // are all player game reports for this game 0pts, skip
-                $allZeroPoints = !$pgr->gameReport->playerGameReports()
+                // Use eager-loaded relationship instead of query
+                $allZeroPoints = !$pgr->gameReport->playerGameReports
                     ->where('points', '!=', 0)
-                    ->exists();
+                    ->count();
                 if ($allZeroPoints)
                 {
                     continue;
@@ -362,15 +331,19 @@ class StatsService
                     continue;
                 }
 
-                // get the opponents from this game
-                $opponentReports = \App\Models\PlayerGameReport::join('players as p', 'player_game_reports.player_id', '=', 'p.id')
-                    ->join('game_reports as gr', 'player_game_reports.game_report_id', '=', 'gr.id')
-                    ->where('gr.game_id', $pgr->game_id)
-                    ->where('p.id', '!=', $player->id)
-                    ->where('gr.valid', true)
-                    ->where('gr.best_report', true)
-                    ->select('p.username', 'player_game_reports.team', 'player_game_reports.player_id', 'player_game_reports.game_id', 'player_game_reports.game_report_id')
-                    ->get();
+                // Use eager-loaded playerGameReports instead of fresh query
+                $opponentReports = $pgr->gameReport->playerGameReports
+                    ->where('player_id', '!=', $player->id)
+                    ->map(function($report) {
+                        // Map to match the original select structure
+                        return (object)[
+                            'username' => $report->player->username,
+                            'team' => $report->team,
+                            'player_id' => $report->player_id,
+                            'game_id' => $report->game_id,
+                            'game_report_id' => $report->game_report_id
+                        ];
+                    });
 
                 foreach ($opponentReports as $opponentReport)
                 {
@@ -420,6 +393,7 @@ class StatsService
         return Cache::remember($cacheKey, 5 * 60, function () use ($player, $history)
         {
 
+            // Eager load playerGameReports and their players to avoid N+1
             $gameReports = GameReport
                 ::whereHas('game', function ($query) use ($history)
                 {
@@ -432,23 +406,26 @@ class StatsService
                 ->where('valid', true)
                 ->where('manual_report', false)
                 ->where('best_report', true)
+                ->with(['playerGameReports.player', 'game'])
                 ->get();
 
             $matchupResults = [];
 
             foreach ($gameReports as $gameReport)
             {
-                $allZeroPoints = !$gameReport->playerGameReports()
+                // Use eager-loaded collection instead of query
+                $allZeroPoints = !$gameReport->playerGameReports
                     ->where('points', '!=', 0)
-                    ->exists();
+                    ->count();
                 if ($allZeroPoints)
                 {
                     continue;
                 }
 
-                $myPlayerGameReport = $gameReport->playerGameReports()
+                // Use eager-loaded collection instead of query
+                $myPlayerGameReport = $gameReport->playerGameReports
                     ->where('draw', false)
-                    ->where('player_game_reports.player_id', '=', $player->id) // get my player report
+                    ->where('player_id', $player->id) // get my player report
                     ->first();
 
                 if (!$myPlayerGameReport)
@@ -464,13 +441,10 @@ class StatsService
                     continue;
                 }
 
-                // Get teammates
-                $teamMatePlayerGameReports = $gameReport->playerGameReports()
-                    ->join('players as p', 'player_game_reports.player_id', '=', 'p.id')
-                    ->where('player_game_reports.team', '=', $team) // my teammate(s)
-                    ->where('player_game_reports.id', '!=', $myPlayerGameReport->id) // ignore my report
-                    ->select('p.username', 'player_game_reports.won', 'player_game_reports.team', 'player_game_reports.id', 'player_game_reports.game_id')
-                    ->get();
+                // Use eager-loaded collection instead of fresh query
+                $teamMatePlayerGameReports = $gameReport->playerGameReports
+                    ->where('team', $team) // my teammate(s)
+                    ->where('id', '!=', $myPlayerGameReport->id); // ignore my report
 
                 if ($teamMatePlayerGameReports->isEmpty())
                 {
@@ -485,7 +459,7 @@ class StatsService
                         continue;
                     }
 
-                    $teammateName = $teamMatePlayerGameReport->username;
+                    $teammateName = $teamMatePlayerGameReport->player->username;
 
                     // Initialize matchup stats if not already set
                     $matchupResults[$teammateName] ??= ["won" => 0, "lost" => 0, "total" => 0];
