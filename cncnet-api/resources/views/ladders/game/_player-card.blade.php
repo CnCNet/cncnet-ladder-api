@@ -51,7 +51,7 @@
     <div class="m-auto text-center mt-4">
         @if (!$history->ladder->clans_allowed)
             <div style="font-size: 1rem" class="mt-2 mb-2 font-secondary-bold">
-                <?php $tier = $player->getCachedPlayerTierByLadderHistory($history); ?>
+                <?php $tier = $pgr->playerTier ?? 1; ?>
                 <span class="me-2">
                     {!! \App\Helpers\LeagueHelper::getLeagueIconByTier($tier) !!}
                 </span>

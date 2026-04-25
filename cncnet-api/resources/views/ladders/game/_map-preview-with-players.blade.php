@@ -43,7 +43,7 @@
 
                         $hasValidSpawnData = false;
                         $gameStats = $pgr->stats;
-                        $player = $pgr->player()->first();
+                        $player = $pgr->player;
 
                         try {
                             $clan = $pgr->clan;

@@ -64,6 +64,9 @@ class GetGameDetailAction
             $game->qmMatch
         );
 
+        // Pre-compute player data to avoid queries in view
+        $this->attachPlayerCacheData($playerGameReports, $history);
+
         // Detect if points fix is needed
         $fixDetection = $this->pointsFixService->detectFixNeeded($playerGameReports);
         $showBothPositiveFix = $fixDetection['showBothPositiveFix'];
@@ -194,6 +197,24 @@ class GetGameDetailAction
     }
 
     /**
+     * Attach player cache data to player game reports
+     * Pre-computes rank, points, and tier to avoid queries in views
+     */
+    private function attachPlayerCacheData($playerGameReports, LadderHistory $history): void
+    {
+        foreach ($playerGameReports as $pgr) {
+            // Get player cache once per player
+            $playerCache = $pgr->player->playerCache($history->id);
+
+            // Attach pre-computed data to avoid repeated queries in views
+            $pgr->playerCache = $playerCache;
+            $pgr->playerRank = $playerCache ? $playerCache->rank() : 0;
+            $pgr->playerPoints = $playerCache ? $playerCache->points : 0;
+            $pgr->playerTier = $playerCache ? $pgr->player->getCachedPlayerTierByLadderHistory($history) : 1;
+        }
+    }
+
+    /**
      * Prepare data for regular (non-clan) game view
      */
     private function prepareRegularGameData(
@@ -244,6 +265,9 @@ class GetGameDetailAction
             'showBothPositiveFix' => $showBothPositiveFix,
             'showBothZeroFix' => $showBothZeroFix,
             'fixedPointsPreview' => $fixedPointsPreview,
+            // Pre-computed data to avoid queries in views
+            'map' => $game->map,  // Already eager loaded
+            'gameAbbreviation' => $history->ladder->abbreviation,  // Use property, not method
         ];
     }
 
@@ -307,6 +331,9 @@ class GetGameDetailAction
             'showBothPositiveFix' => $showBothPositiveFix,
             'showBothZeroFix' => $showBothZeroFix,
             'fixedPointsPreview' => $fixedPointsPreview,
+            // Pre-computed data to avoid queries in views
+            'map' => $game->map,  // Already eager loaded
+            'gameAbbreviation' => $history->ladder->abbreviation,  // Use property, not method
         ];
     }
 }
