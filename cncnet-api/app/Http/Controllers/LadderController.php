@@ -200,217 +200,39 @@ class LadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    private function debugStart()
-    {
-        return microtime(true);
-    }
+    /**
+     * Display game detail page
+     *
+     * @param Request $request
+     * @param string|null $date Ladder history date (format: M-YYYY)
+     * @param string|null $cncnetGame Game abbreviation (e.g., 'yr', 'ra2')
+     * @param int|null $gameId Game ID
+     * @param int|null $reportId Optional specific report ID
+     * @return \Illuminate\View\View
+     */
+    public function getLadderGame(
+        Request $request,
+        ?string $date = null,
+        ?string $cncnetGame = null,
+        ?int $gameId = null,
+        ?int $reportId = null
+    ) {
+        $action = app(\App\Actions\Game\GetGameDetailAction::class);
 
-    private function debugEnd($start)
-    {
-        //dividing with 60 will give the execution time in minutes otherwise seconds
-        dd((microtime(true) - $start));
-    }
+        $viewData = $action->execute(
+            date: $date,
+            cncnetGame: $cncnetGame,
+            gameId: $gameId,
+            reportId: $reportId,
+            authenticatedUser: $request->user()
+        );
 
-    public function getLadderGame(Request $request, $date = null, $cncnetGame = null, $gameId = null, $reportId = null)
-    {
-        // $start = $this->debugStart();
-        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
-        $game = $this->ladderService->getLadderGameById($history, $gameId);
-        $user = $request->user();
+        // Determine which view to render based on ladder type
+        $viewName = $viewData['history']->ladder->clans_allowed
+            ? 'ladders.clan-game-detail'
+            : 'ladders.game-detail';
 
-        if ($game == null)
-        {
-            abort(404, "Game not found");
-        }
-
-        if ($user !== null && $user->isLadderMod($history->ladder))
-        {
-            $allGameReports = $game->allReports;
-            $userIsMod = true;
-        }
-        else
-        {
-            $allGameReports = $game->report;
-            $userIsMod = false;
-        }
-
-        if ($reportId !== null)
-        {
-            $gameReport = $game->allReports->where('id', $reportId)->first();
-        }
-        else
-        {
-            $gameReport = $game->report;
-        }
-
-        if ($gameReport == null)
-        {
-            abort(404, "Game Report not found");
-        }
-
-        $qmMatchStates = [];
-        $qmConnectionStats = [];
-        $qmMatchPlayers = [];
-
-        if ($userIsMod)
-        {
-            $qmMatchStates = $game->qmMatch ? $game->qmMatch->states : [];
-            $qmMatchPlayers = $game->qmMatch ? $game->qmMatch->players : [];
-        }
-        $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
-
-        $playerGameReports = $gameReport->playerGameReports ?? [];
-        $groupedPlayerGameReports = [];
-
-        $showBothPositiveFix = false;
-        $showBothZeroFix = false;
-        $fixedPointsPreview = [];
-
-        if (count($playerGameReports) === 2)
-        {
-            $p1 = $playerGameReports[0];
-            $p2 = $playerGameReports[1];
-
-            $hasOneWinner = $p1->won != $p2->won;
-            $bothPositive = $p1->points > 0 && $p2->points > 0;
-            $bothZero = $p1->points == 0 && $p2->points == 0;
-
-            $showBothPositiveFix = $hasOneWinner && $bothPositive;
-            $showBothZeroFix = $hasOneWinner && $bothZero;
-
-            if ($showBothZeroFix && $userIsMod)
-            {
-                $fixedPointsPreview = app(\App\Http\Controllers\AdminController::class)->awardedPointsPreview($gameReport, $history);
-            }
-        }
-
-        if ($history->ladder->ladder_type == Ladder::TWO_VS_TWO)
-        {
-            $groupedPlayerGameReports = [];
-            foreach ($playerGameReports as $playerGameReport)
-            {
-                $team = $playerGameReport->team;
-
-                if ($team != null)
-                {
-                    $groupedPlayerGameReports[$team][] = $playerGameReport;
-                }
-            }
-        }
-
-        $heaps = CountableObjectHeap::all();
-
-        //grab player pings
-        foreach ($playerGameReports as $pgr)
-        {
-            $pings = '?';
-            $game = $pgr->game;
-            $connectionStats = null;
-
-            if ($game != null)
-            {
-                $qmMatch = $game->qmMatch;
-                if ($qmMatch != null)
-                {
-                    if ($pgr != null)
-                        $connectionStats = $qmMatch->qmConnectionStats->where('player_id', $pgr->player_id);
-                }
-            }
-            if ($connectionStats != null && count($connectionStats) > 0)
-            {
-                $pingsArr = $connectionStats->map(function ($connectionStat)
-                {
-                    if ($connectionStat == null)
-                        return -1;
-                    else
-                        return $connectionStat->rtt;
-                })
-                    ->all();
-                $pings = (isset($pings) && $pings != null && count($pingsArr) > 0) ? implode(', ', $pingsArr) : '?';
-            }
-
-            $pgr['pings'] = $pings;
-        }
-
-        if ($history->ladder->clans_allowed)
-        {
-            $clans = [];
-            foreach ($playerGameReports as $pgr)
-            {
-                $clans[$pgr->clan_id][] = $pgr;
-            }
-
-            $orderedClanReports = [];
-            foreach ($clans as $clanId => $pgrArr)
-            {
-                foreach ($pgrArr as $pgr)
-                {
-                    $orderedClanReports[] = $pgr;
-                }
-            }
-
-            $tunnels = \App\Helpers\TunnelHelper::getTunnelsFromStats($qmConnectionStats);
-
-            if (!$userIsMod)
-                $qmConnectionStats = [];
-
-            // $this->debugEnd($start);
-            $clanGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
-
-            return view(
-                'ladders.clan-game-detail',
-                [
-                    "game" => $game,
-                    "gameReport" => $gameReport,
-                    "allGameReports" => $allGameReports,
-                    "clanGameReports" => $clanGameReports,
-                    "orderedClanReports" => $orderedClanReports,
-                    "playerGameReports" => $playerGameReports,
-                    "history" => $history,
-                    "heaps" => $heaps,
-                    "user" => $user,
-                    "userIsMod" => $userIsMod,
-                    "cncnetGame" => $cncnetGame,
-                    "qmMatchStates" => $qmMatchStates,
-                    "qmConnectionStats" => $qmConnectionStats,
-                    "qmMatchPlayers" => $qmMatchPlayers,
-                    "tunnels" => $tunnels,
-                    "date" => $date,
-                    "showBothPositiveFix" => $showBothPositiveFix,
-                    "showBothZeroFix" => $showBothZeroFix,
-                    "fixedPointsPreview" => $fixedPointsPreview,
-                ]
-            );
-        }
-        else
-        {
-
-            if (!$userIsMod)
-                $qmConnectionStats = [];
-
-            return view(
-                'ladders.game-detail',
-                [
-                    "game" => $game,
-                    "gameReport" => $gameReport,
-                    "allGameReports" => $allGameReports,
-                    "playerGameReports" => $playerGameReports,
-                    "groupedByTeamPlayerGameReports" => $groupedPlayerGameReports,
-                    "history" => $history,
-                    "heaps" => $heaps,
-                    "user" => $user,
-                    "userIsMod" => $userIsMod,
-                    "cncnetGame" => $cncnetGame,
-                    "qmMatchStates" => $qmMatchStates,
-                    "qmConnectionStats" => $qmConnectionStats,
-                    "qmMatchPlayers" => $qmMatchPlayers,
-                    "date" => $date,
-                    "showBothPositiveFix" => $showBothPositiveFix,
-                    "showBothZeroFix" => $showBothZeroFix,
-                    "fixedPointsPreview" => $fixedPointsPreview,
-                ]
-            );
-        }
+        return view($viewName, $viewData);
     }
 
     /**
