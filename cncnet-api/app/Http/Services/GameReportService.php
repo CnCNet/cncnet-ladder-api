@@ -24,25 +24,54 @@ class GameReportService
         $query = Game::where("id", "=", $gameId)
             ->where('ladder_history_id', $history->id);
 
-        // Build eager loading based on what data is needed
+        // Build comprehensive eager loading to eliminate N+1 queries
+        // These relationships are accessed in the views
         $with = [
-            'report.playerGameReports.player.user',
+            // Game's own relationships
+            'map.mapHeaders',
+
+            // Default report and all its nested relationships
+            // Using closure to consolidate all player-related eager loads
+            'report.playerGameReports.player' => function ($query) use ($history) {
+                $query->with([
+                    'user.userSettings',
+                    'clanPlayer.clan',
+                    'playerCaches' => function ($q) use ($history) {
+                        $q->where('ladder_history_id', $history->id);
+                    }
+                ]);
+            },
             'report.playerGameReports.stats',
-            'map',
+            'report.playerGameReports.clan',
+            'report.playerGameReports.gameReport', // Needed for clan logic in views
+            'report.game.qmMatch.map', // Needed for map preview
+
+            // QM Match data (available to all users for connection stats)
+            'qmMatch.qmConnectionStats',
+            'qmMatch.map',
         ];
 
         // Add moderator-specific eager loading
         if ($includeModData) {
             $with = array_merge($with, [
-                'allReports.playerGameReports.player.user',
+                // All reports with nested relationships
+                'allReports.playerGameReports.player' => function ($query) use ($history) {
+                    $query->with([
+                        'user.userSettings',
+                        'clanPlayer.clan',
+                        'playerCaches' => function ($q) use ($history) {
+                            $q->where('ladder_history_id', $history->id);
+                        }
+                    ]);
+                },
                 'allReports.playerGameReports.stats',
+                'allReports.playerGameReports.clan',
+                'allReports.playerGameReports.gameReport',
+
+                // Mod-only QM match data
                 'qmMatch.states',
                 'qmMatch.players.player.user',
-                'qmMatch.qmConnectionStats',
             ]);
-        } else {
-            // Non-mods still need basic qmMatch for connection stats display
-            $with[] = 'qmMatch.qmConnectionStats';
         }
 
         return $query->with($with)->first();
