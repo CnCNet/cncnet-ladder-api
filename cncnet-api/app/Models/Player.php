@@ -287,6 +287,11 @@ class Player extends Model
         return GameClip::where("player_id", $this->id)->where("game_id", $gameId)->first();
     }
 
+    public function gameClips()
+    {
+        return $this->hasMany(GameClip::class);
+    }
+
     public function unSeenAlerts()
     {
         return $this->hasMany(PlayerAlert::class)->whereNull('seen_at')->where('expires_at', '>', Carbon::now());
