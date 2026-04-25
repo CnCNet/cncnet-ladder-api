@@ -40,6 +40,10 @@ class SiteHelper
      */
     public static function getMapPreviewUrl($history, $map, $hash)
     {
+        // Initialize variables before try block to avoid undefined variable errors in catch
+        $description = '';
+        $ladderName = '';
+
         try
         {
             if (!$map || $map == null)

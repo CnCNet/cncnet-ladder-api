@@ -4,31 +4,11 @@
 
         @foreach ($games as $gameReport)
 
-
-            @php
-                $gameUrl = \App\Models\URLHelper::getGameUrl($history, $gameReport->game_id);
-                $timestamp = $gameReport->gameReport->updated_at->timestamp;
-            @endphp
-
-
-            <tr class="align-middle" data-timestamp="{{ $timestamp }}">
+            <tr class="align-middle" data-timestamp="{{ $gameReport->gameReport->updated_at->timestamp }}">
                 @if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO)
 
-                    @php
-                        $playerGameReports = \App\Models\PlayerGameReport::query()
-                        ->where('game_report_id', $gameReport->game_report_id)
-                        ->get();
-                        $groupedPlayerGameReports = [];
-                        foreach ($playerGameReports as $playerGameReport) {
-                            $team = $playerGameReport->team;
-                            if ($team == null)
-                                continue;
-                            $groupedPlayerGameReports[$team][] = $playerGameReport;
-                        }
-                    @endphp
-
                     @php $vs = 0; @endphp
-                    @foreach ($groupedPlayerGameReports as $team => $teamPlayerGameReportArr)
+                    @foreach ($gameReport->groupedPlayerGameReports as $team => $teamPlayerGameReportArr)
                         @foreach ($teamPlayerGameReportArr as $k => $pgr)
                             @if ($vs == 2)
                                 <td class="td-versus">
@@ -39,9 +19,9 @@
                             @endif
                             <td class="td-player td-player-opponent">
                                 @include('ladders.components._games-player-row', [
-                                    'profileUrl' => \App\Models\URLHelper::getPlayerProfileUrl($history, $pgr->player->username),
+                                    'profileUrl' => $pgr->profileUrl,
                                     'username' => $pgr->player->username,
-                                    'avatar' => $pgr->player->user->getUserAvatar(),
+                                    'avatar' => $pgr->avatarUrl,
                                     'playerGameReport' => $pgr,
                                 ])
                             </td>
@@ -50,25 +30,12 @@
                     @endforeach
 
                 @else
-                    @php
-                        $playerGameReport = \App\Models\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
-                            ->where('player_id', '=', $player->id)
-                            ->first();
-                        $playerProfileUrl = \App\Models\URLHelper::getPlayerProfileUrl($history, $player->username);
-                        $opponentPlayerReport = \App\Models\PlayerGameReport::where('game_report_id', $gameReport->game_report_id)
-                            ->where('player_id', '!=', $player->id)
-                            ->first();
-                        if ($opponentPlayerReport) {
-                            $opponentPlayerUrl = \App\Models\URLHelper::getPlayerProfileUrl($history, $opponentPlayerReport->player->username);
-                        }
-                    @endphp
-
                     <td class="td-player">
                         @include('ladders.components._games-player-row', [
-                            'profileUrl' => $playerProfileUrl,
+                            'profileUrl' => $gameReport->playerGameReport->profileUrl,
                             'username' => $gameReport->player->username,
                             'avatar' => $gameReport->player->user->getUserAvatar(),
-                            'playerGameReport' => $playerGameReport,
+                            'playerGameReport' => $gameReport->playerGameReport,
                         ])
                     </td>
                     <td class="td-versus">
@@ -77,12 +44,12 @@
                         </div>
                     </td>
                     <td class="td-player td-player-opponent">
-                        @if ($opponentPlayerReport)
+                        @if ($gameReport->opponentPlayerReport)
                             @include('ladders.components._games-player-row', [
-                                'profileUrl' => $opponentPlayerUrl,
-                                'username' => $opponentPlayerReport->player->username,
-                                'avatar' => $opponentPlayerReport->player->user->getUserAvatar(),
-                                'playerGameReport' => $opponentPlayerReport,
+                                'profileUrl' => $gameReport->opponentPlayerReport->profileUrl,
+                                'username' => $gameReport->opponentPlayerReport->player->username,
+                                'avatar' => $gameReport->opponentPlayerReport->avatarUrl,
+                                'playerGameReport' => $gameReport->opponentPlayerReport,
                             ])
                         @endif
                     </td>
@@ -106,16 +73,13 @@
 
                 <td>
                     <div class="d-flex align-items-center">
-                        @php
-                            $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $gameReport->gameReport->game->map, $gameReport->gameReport->game->hash);
-                        @endphp
-                        <div class="map-preview" style="background-image:url({{ $mapPreview }})">
+                        <div class="map-preview" style="background-image:url({{ $gameReport->mapPreviewUrl }})">
                         </div>
                     </div>
                 </td>
 
                 <td class="td-link">
-                    <a href="{{ $gameUrl }}" class="game-link">
+                    <a href="{{ $gameReport->gameUrl }}" class="game-link">
                         <i class="bi bi-chevron-right"></i>
                     </a>
                 </td>

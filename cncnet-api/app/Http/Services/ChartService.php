@@ -49,31 +49,30 @@ class ChartService
             $from = $now->copy()->startOfMonth()->toDateTimeString();
             $to = $now->copy()->endOfMonth()->toDateTimeString();
 
-            $period = CarbonPeriod::create($from, $to);
+            // Use single query with DATE grouping instead of looping through each day
+            $gamesByDate = $player->playerGames()
+                ->where("ladder_history_id", $history->id)
+                ->whereBetween("player_game_reports.created_at", [$from, $to])
+                ->selectRaw('
+                    DATE(player_game_reports.created_at) as date,
+                    SUM(CASE WHEN won = 1 THEN 1 ELSE 0 END) as won,
+                    SUM(CASE WHEN won = 0 THEN 1 ELSE 0 END) as lost
+                ')
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get()
+                ->keyBy('date');
 
+            // Fill in missing dates with zeros to maintain chart continuity
+            $period = CarbonPeriod::create($from, $to);
             $results = [];
             foreach ($period as $date)
             {
                 $dateKey = $date->format("Y-m-d");
-
-                $s = $date->copy()->startOfDay();
-                $e = $date->copy()->endOfDay();
-
-                $wins = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$s, $e])
-                    ->where("won", true)
-                    ->count();
-
-                $results[$dateKey]["won"] = $wins;
-
-                $losses = $player->playerGames()
-                    ->where("ladder_history_id", $history->id)
-                    ->whereBetween("player_game_reports.created_at", [$s, $e])
-                    ->where("won", false)
-                    ->count();
-
-                $results[$dateKey]["lost"] = $losses;
+                $results[$dateKey] = [
+                    "won" => $gamesByDate->get($dateKey)?->won ?? 0,
+                    "lost" => $gamesByDate->get($dateKey)?->lost ?? 0
+                ];
             }
 
             $resultCollection = collect($results);
