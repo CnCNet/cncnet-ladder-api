@@ -67,6 +67,9 @@ class GetGameDetailAction
         // Pre-compute player data to avoid queries in view
         $this->attachPlayerCacheData($playerGameReports, $history);
 
+        // Pre-compute point reports for clan games
+        $this->attachPointReports($playerGameReports, $gameReport, $history);
+
         // Detect if points fix is needed
         $fixDetection = $this->pointsFixService->detectFixNeeded($playerGameReports);
         $showBothPositiveFix = $fixDetection['showBothPositiveFix'];
@@ -216,6 +219,26 @@ class GetGameDetailAction
             $pgr->playerGameClip = $pgr->player->gameClips
                 ->where('game_id', $pgr->game_id)
                 ->first();
+
+            // Pre-compute faction for display (fixes redundant Stats2 query in views)
+            if ($pgr->stats) {
+                $pgr->playerFaction = $pgr->stats->faction($history->ladder, $pgr->stats->cty);
+            }
+        }
+    }
+
+    /**
+     * Attach point reports for clan games
+     * Pre-computes the winning/losing clan report to avoid method calls in views
+     */
+    private function attachPointReports($playerGameReports, GameReport $gameReport, LadderHistory $history): void
+    {
+        if (!$history->ladder->clans_allowed) {
+            return;
+        }
+
+        foreach ($playerGameReports as $pgr) {
+            $pgr->pointReport = $gameReport->getPointReportByClan($pgr->clan_id);
         }
     }
 

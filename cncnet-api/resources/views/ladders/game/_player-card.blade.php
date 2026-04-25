@@ -6,10 +6,8 @@
                 @include('components.avatar', ['avatar' => $player->user->getUserAvatar(), 'size' => 120])
 
                 <div class="faction mt-2" style="padding-left:0;">
-                    @if ($pgr->stats)
-                        @php $playerStats2 = \App\Models\Stats2::where("id", $pgr->stats->id)->first(); @endphp
-                        @php $playerCountry = $playerStats2->faction($history->ladder, $pgr->stats->cty); @endphp
-                        <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
+                    @if ($pgr->stats && isset($pgr->playerFaction))
+                        <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $pgr->playerFaction }}"></div>
                     @endif
                 </div>
             </div>

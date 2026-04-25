@@ -28,7 +28,7 @@ class GameReportService
         // These relationships are accessed in the views
         $with = [
             // Game's own relationships
-            'map.mapHeaders',
+            'map.mapHeaders.waypoints', // For player spawn positions on map preview
 
             // Default report and all its nested relationships
             'report.playerGameReports.player.user.userSettings',

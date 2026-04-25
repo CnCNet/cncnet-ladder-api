@@ -36,10 +36,7 @@
                 @foreach ($playerGameReports as $k => $pgr)
                     @php
 
-                        $pointReport = $pgr;
-                        if ($history->ladder->clans_allowed) {
-                            $pointReport = $pgr->gameReport->getPointReportByClan($pgr->clan_id);
-                        }
+                        $pointReport = $pgr->pointReport ?? $pgr;
 
                         $hasValidSpawnData = false;
                         $gameStats = $pgr->stats;
@@ -107,10 +104,8 @@
                                 </div>
 
                                 <div class="faction">
-                                    @if ($pgr->stats)
-                                        @php $playerStats2 = \App\Models\Stats2::where("id", $pgr->stats->id)->first(); @endphp
-                                        @php $playerCountry = $playerStats2->faction($history->ladder, $pgr->stats->cty); @endphp
-                                        <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $playerCountry }}"></div>
+                                    @if ($pgr->stats && isset($pgr->playerFaction))
+                                        <div class="{{ $history->ladder->game }} player-faction player-faction-{{ $pgr->playerFaction }}"></div>
                                     @endif
                                 </div>
                             </div>
