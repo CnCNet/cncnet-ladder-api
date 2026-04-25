@@ -198,7 +198,7 @@ class GetGameDetailAction
 
     /**
      * Attach player cache data to player game reports
-     * Pre-computes rank, points, and tier to avoid queries in views
+     * Pre-computes rank, points, tier, and game clips to avoid queries in views
      */
     private function attachPlayerCacheData($playerGameReports, LadderHistory $history): void
     {
@@ -211,6 +211,11 @@ class GetGameDetailAction
             $pgr->playerRank = $playerCache ? $playerCache->rank() : 0;
             $pgr->playerPoints = $playerCache ? $playerCache->points : 0;
             $pgr->playerTier = $playerCache ? $pgr->player->getCachedPlayerTierByLadderHistory($history) : 1;
+
+            // Pre-compute game clip (uses eager-loaded gameClips collection)
+            $pgr->playerGameClip = $pgr->player->gameClips
+                ->where('game_id', $pgr->game_id)
+                ->first();
         }
     }
 

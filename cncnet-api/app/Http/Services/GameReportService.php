@@ -33,7 +33,8 @@ class GameReportService
             // Default report and all its nested relationships
             'report.playerGameReports.player.user.userSettings',
             'report.playerGameReports.player.clanPlayer.clan',
-            'report.playerGameReports.stats',
+            'report.playerGameReports.player.gameClips', // For game clips display
+            'report.playerGameReports.stats.gameObjectCounts.countableGameObject', // CRITICAL: Eliminates N+1 for cameo stats
             'report.playerGameReports.clan',
             'report.playerGameReports.gameReport', // Needed for clan logic in views
             'report.game.qmMatch.map', // Needed for map preview
@@ -49,7 +50,8 @@ class GameReportService
                 // All reports with nested relationships
                 'allReports.playerGameReports.player.user.userSettings',
                 'allReports.playerGameReports.player.clanPlayer.clan',
-                'allReports.playerGameReports.stats',
+                'allReports.playerGameReports.player.gameClips',
+                'allReports.playerGameReports.stats.gameObjectCounts.countableGameObject',
                 'allReports.playerGameReports.clan',
                 'allReports.playerGameReports.gameReport',
 
