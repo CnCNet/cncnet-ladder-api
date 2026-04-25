@@ -31,16 +31,8 @@ class GameReportService
             'map.mapHeaders',
 
             // Default report and all its nested relationships
-            // Using closure to consolidate all player-related eager loads
-            'report.playerGameReports.player' => function ($query) use ($history) {
-                $query->with([
-                    'user.userSettings',
-                    'clanPlayer.clan',
-                    'playerCaches' => function ($q) use ($history) {
-                        $q->where('ladder_history_id', $history->id);
-                    }
-                ]);
-            },
+            'report.playerGameReports.player.user.userSettings',
+            'report.playerGameReports.player.clanPlayer.clan',
             'report.playerGameReports.stats',
             'report.playerGameReports.clan',
             'report.playerGameReports.gameReport', // Needed for clan logic in views
@@ -55,15 +47,8 @@ class GameReportService
         if ($includeModData) {
             $with = array_merge($with, [
                 // All reports with nested relationships
-                'allReports.playerGameReports.player' => function ($query) use ($history) {
-                    $query->with([
-                        'user.userSettings',
-                        'clanPlayer.clan',
-                        'playerCaches' => function ($q) use ($history) {
-                            $q->where('ladder_history_id', $history->id);
-                        }
-                    ]);
-                },
+                'allReports.playerGameReports.player.user.userSettings',
+                'allReports.playerGameReports.player.clanPlayer.clan',
                 'allReports.playerGameReports.stats',
                 'allReports.playerGameReports.clan',
                 'allReports.playerGameReports.gameReport',
