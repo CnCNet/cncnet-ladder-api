@@ -284,7 +284,8 @@ class ApiQuickMatchController extends Controller
                     "playerName" => $showRealNames ? $qmPlayer->player->username : "Player" . ($index + 1),
                     "playerFaction" => $sides[$qmPlayer->actual_side] ?? '',
                     "playerColor" => $qmPlayer->color,
-                    "twitchProfile" => $qmPlayer->player?->user?->twitch_profile
+                    "twitchProfile" => $qmPlayer->player?->user?->twitch_profile,
+                    "twitchLiveAtStart" => $qmPlayer->twitch_live_at_start ?? false
                 ];
             })
             ->all();
@@ -308,7 +309,8 @@ class ApiQuickMatchController extends Controller
                     "playerName" => $useRealName ? $qmPlayer->player->username : "Player" . ($index + 1),
                     "playerFaction" => $faction,
                     "playerColor" => $qmPlayer->color,
-                    "twitchProfile" => $qmPlayer->player->user->twitch_profile
+                    "twitchProfile" => $qmPlayer->player->user->twitch_profile,
+                    "twitchLiveAtStart" => $qmPlayer->twitch_live_at_start ?? false
                 ];
             })
             ->all();

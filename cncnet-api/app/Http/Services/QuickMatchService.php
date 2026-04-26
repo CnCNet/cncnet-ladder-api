@@ -108,6 +108,39 @@ class QuickMatchService
         // Is player an observer?
         $this->handleObserver($qmPlayer, $player);
 
+        // Check if player is live on Twitch when match is forming
+        // This applies to both observers and regular players
+        if ($player->user?->twitch_profile)
+        {
+            try
+            {
+                $twitchUsername = $player->user->twitch_profile;
+                $qmPlayer->twitch_live_at_start = $this->twitchService->isUserLive($twitchUsername);
+
+                Log::debug('Checked Twitch live status for player', [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                    'twitch_username' => $twitchUsername,
+                    'is_live' => $qmPlayer->twitch_live_at_start
+                ]);
+            }
+            catch (Exception $e)
+            {
+                // Fail gracefully - don't block match creation if Twitch API fails
+                $qmPlayer->twitch_live_at_start = false;
+
+                Log::warning('Failed to check Twitch live status', [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+        else
+        {
+            $qmPlayer->twitch_live_at_start = false;
+        }
+
         $qmPlayer->save();
         return $qmPlayer;
     }
