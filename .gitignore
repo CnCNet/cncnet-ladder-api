@@ -9,6 +9,8 @@ backups
 *.user
 *.userosscache
 *.sln.docstates
+*.pem
+*.ppk
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
