@@ -31,6 +31,10 @@ class LadderController extends Controller
         $this->statsService = new StatsService();
         $this->chartService = new ChartService();
         $this->achievementService = new AchievementService();
+
+        // Note: These services are instantiated here for backward compatibility.
+        // Ideally, they should be constructor-injected using Laravel's dependency injection.
+        // The GetPlayerDetailAction already uses proper constructor injection.
     }
 
     public function getLadders(Request $request)
@@ -196,344 +200,66 @@ class LadderController extends Controller
         return $this->ladderService->getLadderByGameAbbreviation($game);
     }
 
-    private function debugStart()
-    {
-        return microtime(true);
-    }
+    /**
+     * Display game detail page
+     *
+     * @param Request $request
+     * @param string|null $date Ladder history date (format: M-YYYY)
+     * @param string|null $cncnetGame Game abbreviation (e.g., 'yr', 'ra2')
+     * @param int|null $gameId Game ID
+     * @param int|null $reportId Optional specific report ID
+     * @return \Illuminate\View\View
+     */
+    public function getLadderGame(
+        Request $request,
+        ?string $date = null,
+        ?string $cncnetGame = null,
+        ?int $gameId = null,
+        ?int $reportId = null
+    ) {
+        $action = app(\App\Actions\Game\GetGameDetailAction::class);
 
-    private function debugEnd($start)
-    {
-        //dividing with 60 will give the execution time in minutes otherwise seconds
-        dd((microtime(true) - $start));
-    }
-
-    public function getLadderGame(Request $request, $date = null, $cncnetGame = null, $gameId = null, $reportId = null)
-    {
-        // $start = $this->debugStart();
-        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
-        $game = $this->ladderService->getLadderGameById($history, $gameId);
-        $user = $request->user();
-
-        if ($game == null)
-        {
-            abort(404, "Game not found");
-        }
-
-        if ($user !== null && $user->isLadderMod($history->ladder))
-        {
-            $allGameReports = $game->allReports;
-            $userIsMod = true;
-        }
-        else
-        {
-            $allGameReports = $game->report;
-            $userIsMod = false;
-        }
-
-        if ($reportId !== null)
-        {
-            $gameReport = $game->allReports->where('id', $reportId)->first();
-        }
-        else
-        {
-            $gameReport = $game->report;
-        }
-
-        if ($gameReport == null)
-        {
-            abort(404, "Game Report not found");
-        }
-
-        $qmMatchStates = [];
-        $qmConnectionStats = [];
-        $qmMatchPlayers = [];
-
-        if ($userIsMod)
-        {
-            $qmMatchStates = $game->qmMatch ? $game->qmMatch->states : [];
-            $qmMatchPlayers = $game->qmMatch ? $game->qmMatch->players : [];
-        }
-        $qmConnectionStats = $game->qmMatch ? $game->qmMatch->qmConnectionStats : [];
-
-        $playerGameReports = $gameReport->playerGameReports ?? [];
-        $groupedPlayerGameReports = [];
-
-        $showBothPositiveFix = false;
-        $showBothZeroFix = false;
-        $fixedPointsPreview = [];
-
-        if (count($playerGameReports) === 2)
-        {
-            $p1 = $playerGameReports[0];
-            $p2 = $playerGameReports[1];
-
-            $hasOneWinner = $p1->won != $p2->won;
-            $bothPositive = $p1->points > 0 && $p2->points > 0;
-            $bothZero = $p1->points == 0 && $p2->points == 0;
-
-            $showBothPositiveFix = $hasOneWinner && $bothPositive;
-            $showBothZeroFix = $hasOneWinner && $bothZero;
-
-            if ($showBothZeroFix && $userIsMod)
-            {
-                $fixedPointsPreview = app(\App\Http\Controllers\AdminController::class)->awardedPointsPreview($gameReport, $history);
-            }
-        }
-
-        if ($history->ladder->ladder_type == Ladder::TWO_VS_TWO)
-        {
-            $groupedPlayerGameReports = [];
-            foreach ($playerGameReports as $playerGameReport)
-            {
-                $team = $playerGameReport->team;
-
-                if ($team != null)
-                {
-                    $groupedPlayerGameReports[$team][] = $playerGameReport;
-                }
-            }
-        }
-
-        $heaps = CountableObjectHeap::all();
-
-        //grab player pings
-        foreach ($playerGameReports as $pgr)
-        {
-            $pings = '?';
-            $game = $pgr->game;
-            $connectionStats = null;
-
-            if ($game != null)
-            {
-                $qmMatch = $game->qmMatch;
-                if ($qmMatch != null)
-                {
-                    if ($pgr != null)
-                        $connectionStats = $qmMatch->qmConnectionStats->where('player_id', $pgr->player_id);
-                }
-            }
-            if ($connectionStats != null && count($connectionStats) > 0)
-            {
-                $pingsArr = $connectionStats->map(function ($connectionStat)
-                {
-                    if ($connectionStat == null)
-                        return -1;
-                    else
-                        return $connectionStat->rtt;
-                })
-                    ->all();
-                $pings = (isset($pings) && $pings != null && count($pingsArr) > 0) ? implode(', ', $pingsArr) : '?';
-            }
-
-            $pgr['pings'] = $pings;
-        }
-
-        if ($history->ladder->clans_allowed)
-        {
-            $clans = [];
-            foreach ($playerGameReports as $pgr)
-            {
-                $clans[$pgr->clan_id][] = $pgr;
-            }
-
-            $orderedClanReports = [];
-            foreach ($clans as $clanId => $pgrArr)
-            {
-                foreach ($pgrArr as $pgr)
-                {
-                    $orderedClanReports[] = $pgr;
-                }
-            }
-
-            $tunnels = \App\Helpers\TunnelHelper::getTunnelsFromStats($qmConnectionStats);
-
-            if (!$userIsMod)
-                $qmConnectionStats = [];
-
-            // $this->debugEnd($start);
-            $clanGameReports = $gameReport->playerGameReports()->groupBy("clan_id")->get();
-
-            return view(
-                'ladders.clan-game-detail',
-                [
-                    "game" => $game,
-                    "gameReport" => $gameReport,
-                    "allGameReports" => $allGameReports,
-                    "clanGameReports" => $clanGameReports,
-                    "orderedClanReports" => $orderedClanReports,
-                    "playerGameReports" => $playerGameReports,
-                    "history" => $history,
-                    "heaps" => $heaps,
-                    "user" => $user,
-                    "userIsMod" => $userIsMod,
-                    "cncnetGame" => $cncnetGame,
-                    "qmMatchStates" => $qmMatchStates,
-                    "qmConnectionStats" => $qmConnectionStats,
-                    "qmMatchPlayers" => $qmMatchPlayers,
-                    "tunnels" => $tunnels,
-                    "date" => $date,
-                    "showBothPositiveFix" => $showBothPositiveFix,
-                    "showBothZeroFix" => $showBothZeroFix,
-                    "fixedPointsPreview" => $fixedPointsPreview,
-                ]
-            );
-        }
-        else
-        {
-
-            if (!$userIsMod)
-                $qmConnectionStats = [];
-
-            return view(
-                'ladders.game-detail',
-                [
-                    "game" => $game,
-                    "gameReport" => $gameReport,
-                    "allGameReports" => $allGameReports,
-                    "playerGameReports" => $playerGameReports,
-                    "groupedByTeamPlayerGameReports" => $groupedPlayerGameReports,
-                    "history" => $history,
-                    "heaps" => $heaps,
-                    "user" => $user,
-                    "userIsMod" => $userIsMod,
-                    "cncnetGame" => $cncnetGame,
-                    "qmMatchStates" => $qmMatchStates,
-                    "qmConnectionStats" => $qmConnectionStats,
-                    "qmMatchPlayers" => $qmMatchPlayers,
-                    "date" => $date,
-                    "showBothPositiveFix" => $showBothPositiveFix,
-                    "showBothZeroFix" => $showBothZeroFix,
-                    "fixedPointsPreview" => $fixedPointsPreview,
-                ]
-            );
-        }
-    }
-
-    public function getLadderPlayer(Request $request, $date = null, $cncnetGame = null, $username = null)
-    {
-        $history = $this->ladderService->getActiveLadderByDate($date, $cncnetGame);
-
-        if ($history == null)
-        {
-            abort(404, "Ladder not found");
-        }
-
-        $player = Player::where("ladder_id", "=", $history->ladder->id)
-            ->where("username", "=", $username)
-            ->first();
-
-        if ($player == null)
-        {
-            abort(404, "No player found");
-        }
-
-        $user = $request->user();
-
-        $userIsMod = false;
-        if ($user !== null && $user->isLadderMod($player->ladder))
-        {
-            $userIsMod = true;
-        }
-
-        $games = $player->playerGames()
-            ->where("ladder_history_id", "=", $history->id)
-            ->orderBy('created_at', 'DESC')
-            ->paginate(24);
-
-        $playerUser = $player->user;
-
-        $bans = [];
-        $alerts = [];
-        if ($user && ($playerUser->id == $user->id || $userIsMod))
-        {
-            $alerts = $player->alerts;
-            $ban = $playerUser->getBan();
-            if ($ban)
-            {
-                $bans[] = $ban;
-            }
-        }
-        $mod = $request->user();
-
-        $ladderPlayer = $this->ladderService->getLadderPlayer($history, $player->username);
-        $user = User::where("id", $player->user_id)->first();
-        $userTier = $user->getUserLadderTier($history->ladder)->tier;
-
-        # Stats
-        $graphGamesPlayedByMonth = $this->chartService->getPlayerGamesPlayedByMonth($player, $history);
-        $playerFactionsByMonth = $this->statsService->getFactionsPlayedByPlayer($player, $history);
-        $playerWinLossByMaps = $this->statsService->getMapWinLossByPlayer($player, $history);
-        $playerGamesLast24Hours = $player->totalGames24Hours($history);
-
-        // incorrect data for 2v2
-        $playerMatchups = $this->statsService->getPlayerMatchups($player, $history);
-
-        $teamMatchups = [];
-        if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
-        {
-            $teamMatchups = $this->statsService->getTeamMatchups($player, $history);
-        }
-
-        $playerOfTheDayAward = $this->statsService->checkPlayerIsPlayerOfTheDay($history, $player);
-        $recentAchievements = $this->achievementService->getRecentlyUnlockedAchievements($history, $user, 3);
-        $achievementProgressCounts = $this->achievementService->getProgressCountsByUser($history, $user);
-
-        $isAnonymous = $player->user->userSettings->getIsAnonymousForLadderHistory($history);
-
-        // Get the current month's date range
-        $now = Carbon::now();
-        $dateStart = $now->copy()->startOfMonth()->toDateTimeString();
-        $dateEnd = $now->copy()->endOfMonth()->toDateTimeString();
-
-        // Get the player's active handle for the current month
-        $activeHandle = PlayerActiveHandle::getPlayerActiveHandle(
-            $player->id,
-            $history->ladder->id,
-            $dateStart,
-            $dateEnd
+        $viewData = $action->execute(
+            date: $date,
+            cncnetGame: $cncnetGame,
+            gameId: $gameId,
+            reportId: $reportId,
+            authenticatedUser: $request->user()
         );
 
-        // Start with all usernames for this ladder, excluding the current player
-        $ladderNicks = $user->usernames
-            ->where('id', '!=', $player->id)
-            ->where('ladder_id', $history->ladder->id);
+        // Determine which view to render based on ladder type
+        $viewName = $viewData['history']->ladder->clans_allowed
+            ? 'ladders.clan-game-detail'
+            : 'ladders.game-detail';
 
-        // If anonymous and there's an active handle, also exclude it
-        if ($isAnonymous && $activeHandle) {
-            $ladderNicks = $ladderNicks->where('id', '!=', $activeHandle->player_id);
-        }
+        return view($viewName, $viewData);
+    }
 
-        $ladderNicks = $ladderNicks->pluck('username')->toArray();
+    /**
+     * Display player detail page
+     *
+     * @param Request $request
+     * @param string|null $date Ladder history date (format: M-YYYY)
+     * @param string|null $cncnetGame Game abbreviation (e.g., 'yr', 'ra2')
+     * @param string|null $username Player username
+     * @return \Illuminate\View\View
+     */
+    public function getLadderPlayer(
+        Request $request,
+        ?string $date = null,
+        ?string $cncnetGame = null,
+        ?string $username = null
+    ) {
+        $action = app(\App\Actions\Player\GetPlayerDetailAction::class);
 
-        return view(
-            "ladders.player-detail",
-            [
-                "ladderNicks" => $ladderNicks,
-                "mod" => $mod,
-                "isAnonymous" => $isAnonymous,
-                "history" => $history,
-                "ladderPlayer" => json_decode(json_encode($ladderPlayer)),
-                "player" => $ladderPlayer['player'],
-                "games" => $games,
-                "userIsMod" => $userIsMod,
-                "playerUser" => $playerUser,
-                "ladderId" => $player->ladder->id,
-                "alerts" => $alerts,
-                "bans" => $bans,
-                "userTier" => $userTier,
-                "graphGamesPlayedByMonth" => $graphGamesPlayedByMonth,
-                "playerFactionsByMonth" => $playerFactionsByMonth,
-                "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "playerWinLossByMaps" => $playerWinLossByMaps,
-                "playerOfTheDayAward" => $playerOfTheDayAward,
-                "userPlayer" => $user,
-                "playerGamesLast24Hours" => $playerGamesLast24Hours,
-                "teamMatchups" => $teamMatchups,
-                "playerMatchups" => $playerMatchups,
-                "achievements" => $recentAchievements,
-                "achievementsCount" => $achievementProgressCounts
-            ]
+        $viewData = $action->execute(
+            date: $date,
+            cncnetGame: $cncnetGame,
+            username: $username,
+            authenticatedUser: $request->user()
         );
+
+        return view('ladders.player-detail', $viewData);
     }
 
     public function getLadderClan(Request $request, $date = null, $cncnetGame = null, $clanNameShort = null)

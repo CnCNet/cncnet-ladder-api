@@ -8,8 +8,8 @@ $pageTitle = 'Viewing Game - ';
 
 @foreach ($clanGameReports as $k => $pgr)
     <?php
-    $player = $pgr->player()->first();
-    $clan = $pgr->clan()->first();
+    $player = $pgr->player;
+    $clan = $pgr->clan;
     if ($k == 1) {
         $pageTitle .= ' vs ';
     }
@@ -61,7 +61,7 @@ $pageTitle = 'Viewing Game - ';
         <x-slot name="description">
             @foreach ($clanGameReports as $k => $pgr)
                 <?php $gameStats = $pgr->stats; ?>
-                <?php $player = $pgr->player()->first(); ?>
+                <?php $player = $pgr->player; ?>
 
                 @if ($player->clanPlayer)
                     Clan <strong>{{ $player->clanPlayer->clan->short }}</strong>
