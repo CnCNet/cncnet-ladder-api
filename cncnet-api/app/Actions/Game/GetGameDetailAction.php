@@ -187,13 +187,13 @@ class GetGameDetailAction
         $qmMatchPlayers = [];
 
         if ($userIsMod && $game->qmMatch) {
-            $qmMatchStates = $game->qmMatch->states;
-            $qmMatchPlayers = $game->qmMatch->players;
+            $qmMatchStates = $game->qmMatch->states->all();
+            $qmMatchPlayers = $game->qmMatch->players->all();
         }
 
         // Connection stats visible to all (but limited for non-mods in view)
         if ($game->qmMatch) {
-            $qmConnectionStats = $userIsMod ? $game->qmMatch->qmConnectionStats : [];
+            $qmConnectionStats = $userIsMod ? $game->qmMatch->qmConnectionStats->all() : [];
         }
 
         return [$qmMatchStates, $qmConnectionStats, $qmMatchPlayers];
