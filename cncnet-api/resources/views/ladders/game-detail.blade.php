@@ -9,8 +9,7 @@ if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO) {
     foreach ($groupedByTeamPlayerGameReports as $team => $teamPlayerGameReportArr) {
         $playersName = [];
         foreach ($teamPlayerGameReportArr as $k => $pgr) {
-            $player = $pgr->player()->first();
-            $playersName[] = $player->username;
+            $playersName[] = $pgr->player->username;
         }
         $teams[] = join(' & ', $playersName);
     }
@@ -18,12 +17,10 @@ if ($history->ladder->ladder_type === \App\Models\Ladder::TWO_VS_TWO) {
 }
 else {
     foreach ($reports as $k => $pgr) {
-        $player = $pgr->player()->first();
-        $clan = $pgr->clan()->first();
         if ($k == 1) {
             $pageTitle .= ' vs ';
         }
-        $pageTitle .= "$player->username";
+        $pageTitle .= $pgr->player->username;
     }
 }
 @endphp
@@ -122,11 +119,6 @@ else {
     @endif
 
     <section class="game-detail">
-        @php
-            $gameAbbreviation = $history->ladder()->first()->abbreviation;
-            $map = \App\Models\Map::where('hash', '=', $game->hash)->first();
-        @endphp
-
         <div class="game-players-container">
             <div class="{{ $history->ladder->qmLadderRules->player_count > 2 ? 'container-xl' : 'container' }}">
                 <section class="game-players">
@@ -137,10 +129,9 @@ else {
                         @foreach ($groupedByTeamPlayerGameReports as $team => $teamPlayerGameReportArr)
                             @foreach ($teamPlayerGameReportArr as $k => $pgr)
                                 @php $gameStats = $pgr->stats; @endphp
-                                @php $player = $pgr->player()->first(); @endphp
-                                @php $playerCache = $player->playerCache($history->id);@endphp
-                                @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
-                                @php $points = $playerCache ? $playerCache->points : 0; @endphp
+                                @php $player = $pgr->player; @endphp
+                                @php $playerRank = $pgr->playerRank; @endphp
+                                @php $points = $pgr->playerPoints; @endphp
                                 @php
                                     if (\Auth::user() && \Auth::user()->isLadderMod($history->ladder)) {
                                         $disablePointFilter = $player->user->userSettings->disabledPointFilter == 1 ? 'yes' : 'no';
@@ -168,10 +159,9 @@ else {
                         {{-- 1vs1 --}}
                         @foreach ($playerGameReports as $k => $pgr)
                             @php $gameStats = $pgr->stats; @endphp
-                            @php $player = $pgr->player()->first(); @endphp
-                            @php $playerCache = $player->playerCache($history->id);@endphp
-                            @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
-                            @php $points = $playerCache ? $playerCache->points : 0;@endphp
+                            @php $player = $pgr->player; @endphp
+                            @php $playerRank = $pgr->playerRank; @endphp
+                            @php $points = $pgr->playerPoints; @endphp
 
                             @if ($k == floor($history->ladder->qmLadderRules->player_count) / 2)
                                 <div class="text-center mt-5 mb-5 mt-lg-0 mb-lg-0">

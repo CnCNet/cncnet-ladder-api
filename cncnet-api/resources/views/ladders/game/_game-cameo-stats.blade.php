@@ -1,10 +1,9 @@
 <div class="stats-breakdown">
     @foreach ($playerGameReports as $k => $pgr)
         @php $gameStats = $pgr->stats; @endphp
-        @php $player = $pgr->player()->first(); @endphp
-        @php $playerCache = $player->playerCache($history->id);@endphp
-        @php $playerRank = $playerCache ? $playerCache->rank() : 0; @endphp
-        @php $playerGameClip = $player->gameClip($pgr->game_id); @endphp
+        @php $player = $pgr->player; @endphp
+        @php $playerRank = $pgr->playerRank; @endphp
+        @php $playerGameClip = $pgr->playerGameClip; @endphp
 
         @php
             $pointReport = $pgr;
