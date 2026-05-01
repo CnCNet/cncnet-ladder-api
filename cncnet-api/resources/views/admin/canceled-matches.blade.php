@@ -5,7 +5,7 @@
     <x-hero-with-video video="{{ \App\Models\URLHelper::getVideoUrlbyAbbrev('ra2') }}">
         <x-slot name="title">CnCNet Canceled Matches</x-slot>
         <x-slot name="description">
-            View all canceled games
+            View canceled games and failed launches (games that failed to start)
         </x-slot>
 
         <div class="mini-breadcrumb d-none d-lg-flex">
@@ -60,18 +60,53 @@
                 <thead>
                     <tr>
                         <th>Created At</th>
-                        <th>Canceled By</th>
-                        <th>Affected Players</th>
+                        <th>Reason</th>
+                        <th>Players</th>
                         <th>Map</th>
                     </tr>
                 </thead>
                 <tbody class="table">
                     @foreach ($canceled_matches as $canceled_match)
-                        <tr title="QM Match ID: {{ $canceled_match->qm_match_id }}">
+                        @php
+                            $playerData = $canceled_match->player_data ?? [];
+                            $canceledByList = $canceled_match->canceled_by ? explode(',', $canceled_match->canceled_by) : [];
+                        @endphp
+                        <tr title="QM Match ID: {{ $canceled_match->qm_match_id }}"
+                            class="{{ $canceled_match->reason === 'failed_launch' ? 'table-warning' : '' }}">
                             <td>{{ $canceled_match->created_at->format('F j, Y, g:i a T') }}</td>
-                            <td>{{ $canceled_match->canceled_by }}</td>
-                            <td>{{ $canceled_match->affected_players }}</td>
-                            <td>{{ $canceled_match->map }}</td>
+                            <td>
+                                @if($canceled_match->reason === 'failed_launch')
+                                    <span class="badge bg-warning text-dark">Failed Launch</span>
+                                @else
+                                    <span class="badge bg-secondary">Player Canceled</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if(count($playerData) > 0)
+                                    @foreach($playerData as $player)
+                                        @php
+                                            $color = \App\Models\QmCanceledMatch::getColorForId($player['color'] ?? 0);
+                                            $username = $player['username'] ?? 'Unknown';
+                                            $isCanceler = in_array($username, $canceledByList);
+                                        @endphp
+                                        <span style="color: {{ $color }}; font-weight: bold;">
+                                            {{ $username }}
+                                            @if($isCanceler && $canceled_match->reason === 'player_canceled')
+                                                <small style="color: #999;">(canceled)</small>
+                                            @endif
+                                        </span>
+                                        @if(!$loop->last), @endif
+                                    @endforeach
+                                @else
+                                    {{-- Fallback to legacy comma-separated format --}}
+                                    @if($canceled_match->canceled_by)
+                                        <strong>{{ $canceled_match->canceled_by }}</strong>
+                                        @if($canceled_match->affected_players), @endif
+                                    @endif
+                                    {{ $canceled_match->affected_players ?? '-' }}
+                                @endif
+                            </td>
+                            <td>{{ $canceled_match->map ?? 'Unknown' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
