@@ -364,6 +364,7 @@ class LadderController extends Controller
          */
         $matches = \App\Models\QmCanceledMatch::where('ladder_id', $ladder->id)
             ->where('created_at', '>=', Carbon::now()->subWeek()) // Show last week of data
+            ->whereNotNull('player_data') // Filter out rows with empty player data
             ->orderBy('created_at', 'DESC')
             ->select([
                 'id',
