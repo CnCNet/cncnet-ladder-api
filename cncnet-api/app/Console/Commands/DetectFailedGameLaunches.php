@@ -99,7 +99,7 @@ class DetectFailedGameLaunches extends Command
             $canceledMatch->qm_match_id = $qmMatch->id;
             $canceledMatch->player_id = null; // Unknown who caused the failure
             $canceledMatch->ladder_id = $qmMatch->ladder_id;
-            $canceledMatch->map_name = $qmMatch->map->map->name ?? $qmMatch->map->description ?? 'Unknown';
+            $canceledMatch->map_name = $qmMatch->map->description ?? $qmMatch->map->map->name ?? 'Unknown';
             $canceledMatch->canceled_by_usernames = null; // No explicit cancellation
             $canceledMatch->affected_player_usernames = implode(',', $allPlayerUsernames);
             $canceledMatch->player_data = json_encode($playerData);
