@@ -69,7 +69,7 @@
                     @foreach ($canceled_matches as $canceled_match)
                         @php
                             $playerData = $canceled_match->player_data ?? [];
-                            $canceledByList = $canceled_match->canceled_by ? explode(',', $canceled_match->canceled_by) : [];
+                            $canceledByList = $canceled_match->canceled_by_usernames ? explode(',', $canceled_match->canceled_by_usernames) : [];
                         @endphp
                         <tr title="QM Match ID: {{ $canceled_match->qm_match_id }}"
                             class="{{ $canceled_match->reason === 'failed_launch' ? 'table-warning' : '' }}">
@@ -99,11 +99,11 @@
                                     @endforeach
                                 @else
                                     {{-- Fallback to legacy comma-separated format --}}
-                                    @if($canceled_match->canceled_by)
-                                        <strong>{{ $canceled_match->canceled_by }}</strong>
-                                        @if($canceled_match->affected_players), @endif
+                                    @if($canceled_match->canceled_by_usernames)
+                                        <strong>{{ $canceled_match->canceled_by_usernames }}</strong>
+                                        @if($canceled_match->affected_player_usernames), @endif
                                     @endif
-                                    {{ $canceled_match->affected_players ?? '-' }}
+                                    {{ $canceled_match->affected_player_usernames ?? '-' }}
                                 @endif
                             </td>
                             <td>{{ $canceled_match->map ?? 'Unknown' }}</td>
