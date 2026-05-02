@@ -65,7 +65,7 @@
                         <th>Map</th>
                     </tr>
                 </thead>
-                <tbody class="table">
+                <tbody>
                     @foreach ($canceled_matches as $canceled_match)
                         @php
                             $playerData = $canceled_match->player_data ?? [];
@@ -75,9 +75,9 @@
                             <td>{{ $canceled_match->created_at->format('F j, Y, g:i a T') }}</td>
                             <td>
                                 @if($canceled_match->reason === 'failed_launch')
-                                    Failed Launch
+                                    <span style="background-color: #ffc107; color: #000; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500; display: inline-block;">Failed Launch</span>
                                 @else
-                                    Player Canceled
+                                    <span style="background-color: #dc3545; color: #fff; padding: 0.25rem 0.5rem; border-radius: 0.25rem; font-size: 0.875rem; font-weight: 500; display: inline-block;">Player Canceled</span>
                                 @endif
                             </td>
                             <td>
