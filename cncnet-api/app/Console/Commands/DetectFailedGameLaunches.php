@@ -40,7 +40,7 @@ class DetectFailedGameLaunches extends Command
      *
      * Finds games that:
      * 1. Have a qm_match_id (were created from Quick Match)
-     * 2. Are at least 15 minutes old (to avoid false positives for games in progress)
+     * 2. Are at least 45 minutes old (to avoid false positives for games in progress)
      * 3. Have no player_game_reports (game never launched or crashed during loading)
      * 4. Haven't already been logged in qm_canceled_matches
      *
@@ -49,24 +49,26 @@ class DetectFailedGameLaunches extends Command
     public function handle()
     {
         // Find games created from QM that are old enough and have no reports
-        $timeThreshold = Carbon::now()->subMinutes(15);
+        $timeThreshold = Carbon::now()->subMinutes(45);
 
         $failedGames = Game::whereNotNull('qm_match_id')
             ->where('created_at', '<', $timeThreshold)
-            ->where('created_at', '>', Carbon::now()->subDay()) // Only look at last 24 hours
+            ->where('created_at', '>', Carbon::now()->subHours(2)) // Only look at last 2 hours
             ->whereDoesntHave('player_game_reports') // No reports submitted
             ->with(['qmMatch.map.map', 'qmMatch.players.player']) // Eager load for performance
             ->get();
 
         $recordsCreated = 0;
 
+        // Batch check for already-logged matches to avoid N+1 queries
+        $loggedMatchIds = QmCanceledMatch::where('reason', 'failed_launch')
+            ->whereIn('qm_match_id', $failedGames->pluck('qm_match_id'))
+            ->pluck('qm_match_id')
+            ->toArray();
+
         foreach ($failedGames as $game) {
             // Check if we've already logged this failed launch
-            $alreadyLogged = QmCanceledMatch::where('qm_match_id', $game->qm_match_id)
-                ->where('reason', 'failed_launch')
-                ->exists();
-
-            if ($alreadyLogged) {
+            if (in_array($game->qm_match_id, $loggedMatchIds)) {
                 continue;
             }
 

@@ -60,7 +60,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $schedule->command('clear_inactive_queue_entries')->everyMinute();
         $schedule->command('qm:detect-failed-launches')
-            ->everyFiveMinutes();
+            ->everyThirtyMinutes();
     })
     ->withExceptions(function (Exceptions $exceptions) {
 
