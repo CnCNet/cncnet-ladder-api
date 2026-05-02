@@ -40,16 +40,18 @@ class DetectFailedGameLaunches extends Command
      *
      * Finds games that:
      * 1. Have a qm_match_id (were created from Quick Match)
-     * 2. Are at least 45 minutes old (to avoid false positives for games in progress)
+     * 2. Are at least 20 minutes old (to avoid false positives for games in progress)
      * 3. Have no player_game_reports (game never launched or crashed during loading)
      * 4. Haven't already been logged in qm_canceled_matches
+     *
+     * Note: False positives (long games) are auto-cleaned when reports arrive via saveLadderResult
      *
      * @return mixed
      */
     public function handle()
     {
         // Find games created from QM that are old enough and have no reports
-        $timeThreshold = Carbon::now()->subMinutes(45);
+        $timeThreshold = Carbon::now()->subMinutes(20);
 
         $failedGames = Game::whereNotNull('qm_match_id')
             ->where('created_at', '<', $timeThreshold)
