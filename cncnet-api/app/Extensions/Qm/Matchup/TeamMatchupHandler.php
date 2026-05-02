@@ -125,8 +125,66 @@ class TeamMatchupHandler extends BaseMatchupHandler
         Log::debug("  ✅ Map validation: {$mapCount} common maps available");
 
         // Add observers to the match if there is any (maximum of one observer per match)
+        // Priority 1: observe_only players
+        // Priority 2: play_and_observe players who were excluded from the match
+        $allObservers = collect();
+
+        // Get observe_only players
+        $observeOnlyPlayers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
+        $allObservers = $allObservers->merge($observeOnlyPlayers);
+
+        // Get play_and_observe players who were excluded from match
+        $playerIds = $players->pluck('qmPlayer.player.id')->filter();
+        $playAndObservePlayers = $opponents->filter(function(QmQueueEntry $qmQueueEntry) use ($playerIds) {
+            if (!$qmQueueEntry->qmPlayer || !$qmQueueEntry->qmPlayer->player) {
+                return false;
+            }
+
+            // Check if they have play_and_observe mode
+            $userSettings = $qmQueueEntry->qmPlayer->player->user->userSettings;
+            if (!$userSettings || !$userSettings->canPlayAndObserve()) {
+                return false;
+            }
+
+            // Check if they were excluded from the match
+            if ($playerIds->contains($qmQueueEntry->qmPlayer->player->id)) {
+                return false;
+            }
+
+            // Validate Twitch requirements for observing (unless admin)
+            $player = $qmQueueEntry->qmPlayer->player;
+            $user = $player->user;
+
+            // Admins bypass Twitch check
+            if ($user->isAdmin()) {
+                Log::debug("  play_and_observe: {$player->username} is admin, bypassing Twitch check");
+                return true;
+            }
+
+            // Check Twitch username exists
+            $twitchUsername = $user->twitch_profile;
+            if (empty($twitchUsername)) {
+                Log::debug("  play_and_observe: {$player->username} excluded - no Twitch username");
+                return false;
+            }
+
+            // Check if live on Twitch
+            if (!$this->quickMatchService->twitchService->isUserLive($twitchUsername)) {
+                Log::debug("  play_and_observe: {$player->username} excluded - not live on Twitch");
+                return false;
+            }
+
+            Log::debug("  play_and_observe: {$player->username} validated for observing");
+            return true;
+        });
+
+        if ($playAndObservePlayers->count() > 0) {
+            Log::debug("  Found {$playAndObservePlayers->count()} play_and_observe player(s) excluded from match");
+        }
+
+        $allObservers = $allObservers->merge($playAndObservePlayers);
+
         // Prioritize observers who have been waiting the longest
-        $allObservers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
         $observers = $allObservers->sortBy('created_at')->take(1);
 
         if ($observers->count() > 0) {
@@ -311,7 +369,14 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         foreach ($opponents as $opponent)
         {
-            if (!isset($opponent->qmPlayer) || $opponent->qmPlayer->isObserver())
+            // Skip if no qmPlayer or if they are observe_only (but allow play_and_observe users)
+            if (!isset($opponent->qmPlayer))
+            {
+                continue;
+            }
+
+            // Only skip observe_only observers, not play_and_observe
+            if ($opponent->qmPlayer->isObserver())
             {
                 continue;
             }

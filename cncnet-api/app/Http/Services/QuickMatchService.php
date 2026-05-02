@@ -162,8 +162,9 @@ class QuickMatchService
      */
     public function handleObserver($qmPlayer, $player): void
     {
-        // First check if user toggled on to observe
-        if (!optional($player->user->userSettings)->is_observer)
+        // Check if user wants to observe only (not play_and_observe mode)
+        $userSettings = $player->user->userSettings;
+        if (!$userSettings || !$userSettings->wantsToObserveOnly())
         {
             return;
         }
