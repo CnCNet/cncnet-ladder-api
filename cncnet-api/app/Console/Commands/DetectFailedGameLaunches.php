@@ -87,6 +87,12 @@ class DetectFailedGameLaunches extends Command
             // Get all player usernames from this match
             $allPlayerUsernames = $qmMatch->players->pluck('player.username')->filter()->toArray();
 
+            // Validate that we have at least some usernames
+            if (empty($allPlayerUsernames)) {
+                $this->warn("QM Match {$qmMatch->id} has no valid player usernames - skipping");
+                continue;
+            }
+
             // For failed launches, we don't know who specifically failed, so list all as "affected"
             // Leave canceled_by empty since no one explicitly canceled
             $canceledMatch = new QmCanceledMatch();
@@ -103,7 +109,7 @@ class DetectFailedGameLaunches extends Command
             $recordsCreated++;
         }
 
-        echo "Detected and logged {$recordsCreated} failed game launches\n";
+        $this->info("Detected and logged {$recordsCreated} failed game launches");
 
         return 0;
     }

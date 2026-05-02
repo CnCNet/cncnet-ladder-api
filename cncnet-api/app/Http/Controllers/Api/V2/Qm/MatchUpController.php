@@ -198,6 +198,12 @@ class MatchUpController
                         // Get all player usernames from this match
                         $allPlayerUsernames = $qmMatch->players->pluck('player.username')->filter()->toArray();
 
+                        // Validate that we have at least some usernames
+                        if (empty($allPlayerUsernames)) {
+                            \Log::warning("QM Match {$qmMatch->id} has no valid player usernames");
+                            // Continue with empty arrays - better to track the match than skip it
+                        }
+
                         // Current player is the one canceling
                         $canceledByUsernames = [$player->username];
 
@@ -210,7 +216,7 @@ class MatchUpController
                         $canceledMatch->qm_match_id = $qmMatch->id;
                         $canceledMatch->player_id = $player->id;
                         $canceledMatch->ladder_id = $qmMatch->ladder_id;
-                        $canceledMatch->map_name = $qmMatch->map->map->name ?? $qmMatch->map->description ?? null;
+                        $canceledMatch->map_name = $qmMatch->map->map->name ?? $qmMatch->map->description ?? 'Unknown';
                         $canceledMatch->canceled_by_usernames = implode(',', $canceledByUsernames);
                         $canceledMatch->affected_player_usernames = implode(',', $affectedPlayerUsernames);
                         $canceledMatch->player_data = json_encode($playerData);

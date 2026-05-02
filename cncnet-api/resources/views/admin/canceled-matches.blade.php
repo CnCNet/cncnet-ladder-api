@@ -82,7 +82,7 @@
                                 @endif
                             </td>
                             <td>
-                                @if(count($playerData) > 0)
+                                @if(is_array($playerData) && count($playerData) > 0)
                                     @foreach($playerData as $player)
                                         @php
                                             $color = \App\Models\QmCanceledMatch::getColorForId($player['color'] ?? 0);

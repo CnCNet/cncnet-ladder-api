@@ -40,17 +40,9 @@ class QmCanceledMatch extends Model {
      */
     public static function getColorForId($colorId)
     {
-        $colors = [
-            0 => '#FFD700', // Yellow/Gold
-            1 => '#FF0000', // Red
-            2 => '#0080FF', // Blue
-            3 => '#00FF00', // Green
-            4 => '#FF8000', // Orange
-            5 => '#00FFFF', // Cyan/Teal
-            6 => '#FF00FF', // Purple/Magenta
-            7 => '#FFB6C1', // Pink/Light Pink
-        ];
+        $colors = config('game_colors.ra2_player_colors', []);
+        $defaultColor = config('game_colors.default_color', '#FFFFFF');
 
-        return $colors[$colorId] ?? '#FFFFFF'; // Default to white if unknown
+        return $colors[$colorId] ?? $defaultColor;
     }
 }

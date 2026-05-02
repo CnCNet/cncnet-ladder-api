@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -11,10 +12,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('qm_canceled_matches', function (Blueprint $table) {
-            // Make player_id nullable (for failed launches where we don't know who caused it)
-            $table->unsignedInteger('player_id')->nullable()->change();
+        // Use raw SQL to avoid doctrine/dbal dependency for column modification
+        DB::statement('ALTER TABLE qm_canceled_matches MODIFY player_id INT UNSIGNED NULL');
 
+        Schema::table('qm_canceled_matches', function (Blueprint $table) {
             // Denormalized data from qm_matches and qm_match_players
             $table->string('map_name')->nullable()->after('ladder_id');
             $table->text('canceled_by_usernames')->nullable()->after('map_name')->comment('Comma-separated list of usernames who canceled');
@@ -25,6 +26,10 @@ return new class extends Migration
 
             // Track reason for cancellation
             $table->enum('reason', ['player_canceled', 'failed_launch'])->default('player_canceled')->after('player_data');
+
+            // Add indexes for query performance
+            $table->index(['ladder_id', 'created_at'], 'idx_ladder_created');
+            $table->index(['qm_match_id', 'reason'], 'idx_match_reason');
         });
     }
 
@@ -34,11 +39,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('qm_canceled_matches', function (Blueprint $table) {
-            // Revert player_id to NOT NULL
-            $table->unsignedInteger('player_id')->nullable(false)->change();
+            // Drop indexes first
+            $table->dropIndex('idx_ladder_created');
+            $table->dropIndex('idx_match_reason');
 
             // Drop the new columns
             $table->dropColumn(['map_name', 'canceled_by_usernames', 'affected_player_usernames', 'player_data', 'reason']);
         });
+
+        // Revert player_id to NOT NULL using raw SQL
+        DB::statement('ALTER TABLE qm_canceled_matches MODIFY player_id INT UNSIGNED NOT NULL');
     }
 };
