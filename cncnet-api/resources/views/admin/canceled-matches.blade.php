@@ -69,16 +69,15 @@
                     @foreach ($canceled_matches as $canceled_match)
                         @php
                             $playerData = $canceled_match->player_data ?? [];
-                            $canceledByList = $canceled_match->canceled_by_usernames ? explode(',', $canceled_match->canceled_by_usernames) : [];
+                            $canceledByList = $canceled_match->canceled_by ? explode(',', $canceled_match->canceled_by) : [];
                         @endphp
-                        <tr title="QM Match ID: {{ $canceled_match->qm_match_id }}"
-                            class="{{ $canceled_match->reason === 'failed_launch' ? 'table-warning' : '' }}">
+                        <tr title="QM Match ID: {{ $canceled_match->qm_match_id }}">
                             <td>{{ $canceled_match->created_at->format('F j, Y, g:i a T') }}</td>
                             <td>
                                 @if($canceled_match->reason === 'failed_launch')
-                                    <span class="badge bg-warning text-dark">Failed Launch</span>
+                                    Failed Launch
                                 @else
-                                    <span class="badge bg-secondary">Player Canceled</span>
+                                    Player Canceled
                                 @endif
                             </td>
                             <td>
@@ -89,21 +88,15 @@
                                             $username = $player['username'] ?? 'Unknown';
                                             $isCanceler = in_array($username, $canceledByList);
                                         @endphp
-                                        <span style="color: {{ $color }}; font-weight: bold;">
-                                            {{ $username }}
-                                            @if($isCanceler && $canceled_match->reason === 'player_canceled')
-                                                <small style="color: #999;">(canceled)</small>
-                                            @endif
-                                        </span>
-                                        @if(!$loop->last), @endif
+                                        <span style="color: {{ $color }}; font-weight: bold;">{{ $username }}@if($isCanceler && $canceled_match->reason === 'player_canceled')<small style="color: #999;"> (canceled)</small>@endif</span>@if(!$loop->last), @endif
                                     @endforeach
                                 @else
                                     {{-- Fallback to legacy comma-separated format --}}
-                                    @if($canceled_match->canceled_by_usernames)
-                                        <strong>{{ $canceled_match->canceled_by_usernames }}</strong>
-                                        @if($canceled_match->affected_player_usernames), @endif
+                                    @if($canceled_match->canceled_by)
+                                        <strong>{{ $canceled_match->canceled_by }}</strong>
+                                        @if($canceled_match->affected_players), @endif
                                     @endif
-                                    {{ $canceled_match->affected_player_usernames ?? '-' }}
+                                    {{ $canceled_match->affected_players ?? '-' }}
                                 @endif
                             </td>
                             <td>{{ $canceled_match->map ?? 'Unknown' }}</td>
