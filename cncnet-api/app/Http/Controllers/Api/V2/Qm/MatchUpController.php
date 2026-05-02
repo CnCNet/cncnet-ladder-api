@@ -184,10 +184,43 @@ class MatchUpController
                     //match not ready
                     if ($qmState->state_type_id === 7)
                     {
+                        // Load match data with relationships for denormalization
+                        $qmMatch->load(['map.map', 'players.player']);
+
+                        // Build player data array with username and color
+                        $playerData = $qmMatch->players->map(function($qmPlayer) {
+                            return [
+                                'username' => $qmPlayer->player->username ?? 'Unknown',
+                                'color' => $qmPlayer->color
+                            ];
+                        })->values()->toArray();
+
+                        // Get all player usernames from this match
+                        $allPlayerUsernames = $qmMatch->players->pluck('player.username')->filter()->toArray();
+
+                        // Validate that we have at least some usernames
+                        if (empty($allPlayerUsernames)) {
+                            \Log::warning("QM Match {$qmMatch->id} has no valid player usernames");
+                            // Continue with empty arrays - better to track the match than skip it
+                        }
+
+                        // Current player is the one canceling
+                        $canceledByUsernames = [$player->username];
+
+                        // Affected players are everyone except the canceling player
+                        $affectedPlayerUsernames = array_filter($allPlayerUsernames, function($username) use ($player) {
+                            return $username !== $player->username;
+                        });
+
                         $canceledMatch = new QmCanceledMatch();
                         $canceledMatch->qm_match_id = $qmMatch->id;
                         $canceledMatch->player_id = $player->id;
                         $canceledMatch->ladder_id = $qmMatch->ladder_id;
+                        $canceledMatch->map_name = $qmMatch->map->map->name ?? $qmMatch->map->description ?? 'Unknown';
+                        $canceledMatch->canceled_by_usernames = implode(',', $canceledByUsernames);
+                        $canceledMatch->affected_player_usernames = implode(',', $affectedPlayerUsernames);
+                        $canceledMatch->player_data = json_encode($playerData);
+                        $canceledMatch->reason = 'player_canceled';
                         $canceledMatch->save();
                     }
 
