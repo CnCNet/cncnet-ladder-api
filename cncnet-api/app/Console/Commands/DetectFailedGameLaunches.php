@@ -102,7 +102,7 @@ class DetectFailedGameLaunches extends Command
             $canceledMatch->map_name = $qmMatch->map->description ?? $qmMatch->map->map->name ?? 'Unknown';
             $canceledMatch->canceled_by_usernames = null; // No explicit cancellation
             $canceledMatch->affected_player_usernames = implode(',', $allPlayerUsernames);
-            $canceledMatch->player_data = json_encode($playerData);
+            $canceledMatch->player_data = $playerData; // Model has array cast, auto json_encodes
             $canceledMatch->reason = 'failed_launch';
             $canceledMatch->save();
 

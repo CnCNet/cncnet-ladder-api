@@ -219,7 +219,7 @@ class MatchUpController
                         $canceledMatch->map_name = $qmMatch->map->map->name ?? $qmMatch->map->description ?? 'Unknown';
                         $canceledMatch->canceled_by_usernames = implode(',', $canceledByUsernames);
                         $canceledMatch->affected_player_usernames = implode(',', $affectedPlayerUsernames);
-                        $canceledMatch->player_data = json_encode($playerData);
+                        $canceledMatch->player_data = $playerData; // Model has array cast, auto json_encodes
                         $canceledMatch->reason = 'player_canceled';
                         $canceledMatch->save();
                     }

@@ -73,17 +73,23 @@ All server connection variables are **required** if you want to download backups
 ### 3. Make Script Executable
 
 ```bash
-chmod +x import-db-backup.sh
+chmod +x scripts/import-db-backup.sh
 ```
 
 ## Usage
+
+**Important**: Always run from the project root directory:
+
+```bash
+cd /path/to/cncnet-ladder-api-main
+```
 
 ### Full Import (Default)
 
 Run the complete workflow from download to import:
 
 ```bash
-./import-db-backup.sh
+./scripts/import-db-backup.sh
 ```
 
 Answer `y` (or press Enter for defaults) to proceed through each step.
@@ -93,7 +99,7 @@ Answer `y` (or press Enter for defaults) to proceed through each step.
 To download and extract the backup without importing:
 
 ```bash
-./import-db-backup.sh
+./scripts/import-db-backup.sh
 ```
 
 1. Confirm download and extraction steps (`y`)
@@ -104,7 +110,7 @@ To download and extract the backup without importing:
 If you've already downloaded a backup and just want to import:
 
 ```bash
-./import-db-backup.sh
+./scripts/import-db-backup.sh
 ```
 
 1. Decline re-download (`n`) - uses existing file
@@ -185,7 +191,9 @@ Total time: ~15-45 minutes for full workflow
 
 ```
 cncnet-ladder-api-main/
-├── import-db-backup.sh          # This script
+├── scripts/
+│   ├── import-db-backup.sh      # This script
+│   └── DATABASE_IMPORT_README.md # This file
 ├── .env                          # Configuration (add SERVER_* variables here)
 ├── cnc_comm_private_key.pem     # SSH key (gitignored)
 └── backups/                      # Created by script

@@ -2,12 +2,22 @@
 
 set -e  # Exit on error
 
+# IMPORTANT: This script must be run from the project root directory
+# Example: cd /path/to/cncnet-ladder-api-main && ./scripts/import-db-backup.sh
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+
+# Verify script is run from project root
+if [ ! -f "docker-compose.dev.yml" ]; then
+    echo -e "${RED}Error: This script must be run from the project root directory${NC}"
+    echo "Example: cd /path/to/cncnet-ladder-api-main && ./scripts/import-db-backup.sh"
+    exit 1
+fi
 
 # Helper function to prompt for confirmation
 confirm() {
