@@ -1068,7 +1068,7 @@ class ApiLadderController extends Controller
                 ->whereExists(function ($query) {
                     $query->selectRaw(1)
                           ->from('player_game_reports as teammate_reports')
-                          ->whereColumn('teammate_reports.game_id', 'player_game_reports.game_id')
+                          ->whereColumn('teammate_reports.game_report_id', 'player_game_reports.game_report_id')
                           ->whereColumn('teammate_reports.team', 'player_game_reports.team')
                           ->where('teammate_reports.won', '=', true)
                           ->where('teammate_reports.spectator', '=', false);
@@ -1088,7 +1088,7 @@ class ApiLadderController extends Controller
                 ->whereNotExists(function ($query) {
                     $query->selectRaw(1)
                           ->from('player_game_reports as teammate_reports')
-                          ->whereColumn('teammate_reports.game_id', 'player_game_reports.game_id')
+                          ->whereColumn('teammate_reports.game_report_id', 'player_game_reports.game_report_id')
                           ->whereColumn('teammate_reports.team', 'player_game_reports.team')
                           ->where('teammate_reports.won', '=', true)
                           ->where('teammate_reports.spectator', '=', false);
