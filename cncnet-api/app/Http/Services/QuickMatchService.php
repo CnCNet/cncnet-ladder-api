@@ -108,6 +108,39 @@ class QuickMatchService
         // Is player an observer?
         $this->handleObserver($qmPlayer, $player);
 
+        // Check if player is live on Twitch when match is forming
+        // This applies to both observers and regular players
+        if ($player->user?->twitch_profile)
+        {
+            try
+            {
+                $twitchUsername = $player->user->twitch_profile;
+                $qmPlayer->twitch_live_at_start = $this->twitchService->isUserLive($twitchUsername);
+
+                Log::debug('Checked Twitch live status for player', [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                    'twitch_username' => $twitchUsername,
+                    'is_live' => $qmPlayer->twitch_live_at_start
+                ]);
+            }
+            catch (Exception $e)
+            {
+                // Fail gracefully - don't block match creation if Twitch API fails
+                $qmPlayer->twitch_live_at_start = false;
+
+                Log::warning('Failed to check Twitch live status', [
+                    'player_id' => $player->id,
+                    'username' => $player->username,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+        else
+        {
+            $qmPlayer->twitch_live_at_start = false;
+        }
+
         $qmPlayer->save();
         return $qmPlayer;
     }
@@ -355,8 +388,8 @@ class QuickMatchService
                 continue;
             }
 
-            // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
-            $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $ladder->qmLadderRules->points_per_second;
+            // Calculate wait time bonus using secondsinQueue()
+            $pointsTime = $currentQmQueueEntry->secondsinQueue() * $ladder->qmLadderRules->points_per_second;
 
             // is the opponent within the point filter
             if ($pointsTime + $ladder->qmLadderRules->max_points_difference > abs($currentQmQueueEntry->points - $opponent->points))
@@ -460,8 +493,8 @@ class QuickMatchService
                 continue;
             }
 
-            // (updated_at - created_at) / 60 = seconds duration player has been waiting in queue
-            $pointsTime = ((strtotime($currentQmQueueEntry->updated_at) - strtotime($currentQmQueueEntry->created_at))) * $pointsPerSecond;
+            // Calculate wait time bonus using secondsinQueue()
+            $pointsTime = $currentQmQueueEntry->secondsinQueue() * $pointsPerSecond;
 
             // is the opponent within the point filter
             if ($pointsTime + $maxPointsDifference > abs($currentQmQueueEntry->points - $opponent->points))

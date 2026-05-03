@@ -184,10 +184,43 @@ class MatchUpController
                     //match not ready
                     if ($qmState->state_type_id === 7)
                     {
+                        // Load match data with relationships for denormalization
+                        $qmMatch->load(['map.map', 'players.player']);
+
+                        // Build player data array with username and color
+                        $playerData = $qmMatch->players->map(function($qmPlayer) {
+                            return [
+                                'username' => $qmPlayer->player->username ?? 'Unknown',
+                                'color' => $qmPlayer->color
+                            ];
+                        })->values()->toArray();
+
+                        // Get all player usernames from this match
+                        $allPlayerUsernames = $qmMatch->players->pluck('player.username')->filter()->toArray();
+
+                        // Validate that we have at least some usernames
+                        if (empty($allPlayerUsernames)) {
+                            \Log::warning("QM Match {$qmMatch->id} has no valid player usernames");
+                            // Continue with empty arrays - better to track the match than skip it
+                        }
+
+                        // Current player is the one canceling
+                        $canceledByUsernames = [$player->username];
+
+                        // Affected players are everyone except the canceling player
+                        $affectedPlayerUsernames = array_filter($allPlayerUsernames, function($username) use ($player) {
+                            return $username !== $player->username;
+                        });
+
                         $canceledMatch = new QmCanceledMatch();
                         $canceledMatch->qm_match_id = $qmMatch->id;
                         $canceledMatch->player_id = $player->id;
                         $canceledMatch->ladder_id = $qmMatch->ladder_id;
+                        $canceledMatch->map_name = $qmMatch->map->description ?? $qmMatch->map->map->name ?? 'Unknown';
+                        $canceledMatch->canceled_by_usernames = implode(',', $canceledByUsernames);
+                        $canceledMatch->affected_player_usernames = implode(',', $affectedPlayerUsernames);
+                        $canceledMatch->player_data = $playerData; // Model has array cast, auto json_encodes
+                        $canceledMatch->reason = 'player_canceled';
                         $canceledMatch->save();
                     }
 
@@ -369,19 +402,33 @@ class MatchUpController
         // Creates the initial spawn.ini to send to client
         $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmPlayer, $ladder, $ladder->qmLadderRules);
 
-        // Check we have all players ready before writing them to spawn.ini
-        $otherQmMatchPlayers = $qmMatch->players()
+        // BUGFIX: Separate ready-check from spawn config to properly handle observers
+        //
+        // Step 1: Check if enough ACTUAL players (non-observers) are ready
+        // Observers should NOT count toward the required player count
+        $otherActualPlayers = $qmMatch->players()
             ->where('id', '<>', $qmPlayer->id)
+            ->where(function($query) {
+                $query->where('is_observer', '!=', 1)
+                      ->orWhereNull('is_observer');
+            })
             ->orderBy('color', 'ASC')
             ->get();
 
-        Log::debug('MatchUpController ** count otherQmMatchPlayers : ' . $otherQmMatchPlayers->count());
+        Log::debug('MatchUpController ** count otherActualPlayers : ' . $otherActualPlayers->count());
+        Log::debug('MatchUpController ** required player_count : ' . $ladder->qmLadderRules->player_count);
 
-        if ($otherQmMatchPlayers->count() < $ladder->qmLadderRules->player_count - 1)
+        // Validate we have enough ACTUAL players ready (excluding observers)
+        if ($otherActualPlayers->count() < $ladder->qmLadderRules->player_count - 1)
         {
             $qmPlayer->waiting = false;
             $qmPlayer->save();
-            Log::info("MatchUpController ** Player Check: QMPlayer: $qmPlayer  - QMMatch: $qmMatch");
+            Log::info("MatchUpController ** Player Check: Not enough actual players ready", [
+                'actual_players_count' => $otherActualPlayers->count() + 1, // +1 for current player
+                'required_count' => $ladder->qmLadderRules->player_count,
+                'qm_player_id' => $qmPlayer->id,
+                'qm_match_id' => $qmMatch->id
+            ]);
             $duration = round(microtime(true) - $startTime, 1);
             Log::info("onMatchMeUp exit: not enough players | duration: {$duration} seconds", [
                 'player_id' => $player->id,
@@ -390,6 +437,15 @@ class MatchUpController
             ]);
             return $this->quickMatchService->onCheckback($alert);
         }
+
+        // Step 2: Get ALL players (including observers) for spawn configuration
+        // If observers are ready and polling, they should be included in the game
+        $otherQmMatchPlayers = $qmMatch->players()
+            ->where('id', '<>', $qmPlayer->id)
+            ->orderBy('color', 'ASC')
+            ->get();
+
+        Log::debug('MatchUpController ** count otherQmMatchPlayers (including observers): ' . $otherQmMatchPlayers->count());
 
         if ($gameType == Game::GAME_TYPE_2VS2_AI)
         {

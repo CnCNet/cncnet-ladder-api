@@ -45,16 +45,12 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         // Find opponents that can be matched with current player.
         $matchableOpponents = $this->quickMatchService->getMatchableOpponents($this->qmQueueEntry, $matchableOpponents)->shuffle();
 
-        // filter out yuri players
-        $matchableOpponents = $this->quickMatchService->removeYuriPlayers($this->qmQueueEntry, $matchableOpponents);
-
         $numberOfOpponentsNeeded = $ladderRules->player_count - 1;
 
         // Check if there is enough opponents
         if ($matchableOpponents->count() < $numberOfOpponentsNeeded)
         {
             Log::debug("FindOpponent ** Not enough players for match yet, ladder: $ladder->abbreviation, player: $playerName");
-            $this->qmPlayer->touch();
             return;
         }
 
@@ -78,7 +74,6 @@ class PlayerMatchupHandler extends BaseMatchupHandler
         if (count($commonQmMaps) < 1)
         {
             Log::info("FindOpponent ** No common maps available for ladder: $ladder->abbreviation, player: $playerName");
-            $this->qmPlayer->touch();
             return;
         }
 

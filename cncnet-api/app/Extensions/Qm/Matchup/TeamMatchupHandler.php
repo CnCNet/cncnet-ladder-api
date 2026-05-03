@@ -78,7 +78,6 @@ class TeamMatchupHandler extends BaseMatchupHandler
         {
             Log::info("  ❌ MATCH FAILED: Not enough players ({$matchableOpponentsCount}/{$numberOfOpponentsNeeded} needed)");
             Log::info("=== TeamMatchup END for {$playerInQueue} - NO MATCH ===\n");
-            $this->qmPlayer->touch();
             return;
         }
 
@@ -120,7 +119,6 @@ class TeamMatchupHandler extends BaseMatchupHandler
         {
             Log::info("  ❌ MATCH FAILED: No common maps available between all players");
             Log::info("=== TeamMatchup END for {$playerInQueue} - NO MATCH ===\n");
-            $this->qmPlayer->touch();
             return;
         }
 

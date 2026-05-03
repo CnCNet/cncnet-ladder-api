@@ -44,20 +44,27 @@ class SiteHelper
         {
             if (!$map || $map == null)
             {
-                // Log::info("Null map found for hash='$hash'");
                 return "";
             }
 
-            $description = $map && $map !== null ? $map->description : "";
-            $ladderName = $history && $history !== null ? $history->ladder->name : "";
-            $imageHash = $map->image_hash;
-            if ($imageHash == "") $imageHash = $map->hash;
-            $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $history->ladder->game . '/' . $imageHash . '.png';
+            // Use null-safe operators to prevent exceptions
+            $imageHash = $map->image_hash ?: $map->hash;
+            if (!$imageHash) {
+                return "";
+            }
+
+            // Check history and ladder exist before accessing game property
+            $game = $history?->ladder?->game;
+            if (!$game) {
+                return "";
+            }
+
+            $mapPreview = 'https://ladder.cncnet.org/images/maps/' . $game . '/' . $imageHash . '.png';
             return $mapPreview;
         }
         catch (Exception $ex)
         {
-            Log::info("Error fetching map preview url for map='$description', ladder='$ladderName', hash='$hash'");
+            // Log removed - was spamming production logs with empty values
             return "";
         }
     }
@@ -68,17 +75,16 @@ class SiteHelper
             if (!$map) {
                 return "";
             }
-    
-            $description = $map->description ?? '';
+
             $imageHash = $map->image_hash ?: $map->hash;
-    
+
             if (!$imageHash) {
                 return "";
             }
-    
+
             return "https://ladder.cncnet.org/images/maps/{$game}/{$imageHash}.png";
         } catch (Exception $ex) {
-            Log::info("Error fetching map preview url for map='$description', ladder='$game'");
+            // Log removed - was spamming production logs
             return "";
         }
     }

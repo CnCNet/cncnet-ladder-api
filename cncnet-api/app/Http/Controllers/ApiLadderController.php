@@ -23,6 +23,7 @@ use App\Models\LadderHistory;
 use App\Models\Player;
 use App\Models\PlayerCache;
 use App\Models\PlayerGameReport;
+use App\Models\QmCanceledMatch;
 use App\Models\QmMap;
 use App\Models\QmMatchPlayer;
 use Carbon\Carbon;
@@ -195,6 +196,14 @@ class ApiLadderController extends Controller
         if ($gameReport === null)
         {
             return response()->json(['Error' => $result['error']], 400);
+        }
+
+        // Clean up any false-positive canceled match if game report arrived
+        if ($game->qm_match_id)
+        {
+            QmCanceledMatch::where('qm_match_id', $game->qm_match_id)
+                ->where('reason', 'failed_launch')
+                ->delete();
         }
 
         $gameReport->pings_sent = $pingSent;

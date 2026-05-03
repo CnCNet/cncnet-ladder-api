@@ -1,4 +1,11 @@
 .table {
     --bs-table-bg: transparent;
+    --bs-table-color: #f1f1f1;
     --bs-border-color: #212121;
+}
+
+.table-warning {
+    --bs-table-bg: rgba(255, 193, 7, 0.1);
+    --bs-table-color: #f1f1f1;
+    --bs-table-border-color: rgba(255, 193, 7, 0.2);
 }

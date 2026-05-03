@@ -154,7 +154,7 @@
                                             @endif
                                         </td>
 
-                                        @if ($ban->expires === null || $ban->expires->eq(\App\Models\Ban::unstartedBanTime()))
+                                        @if (!$ban->started())
                                             <td>Not Started</td>
                                             <td>
                                                 <form method="POST"

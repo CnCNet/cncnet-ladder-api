@@ -15,9 +15,9 @@
                                         @else
                                             <div class="player-vs">
                         @endif
-                        <?php $thesePlayerGameReports = $thisGameReport !== null ? $thisGameReport->playerGameReports()->get() : []; ?>
+                        <?php $thesePlayerGameReports = $thisGameReport !== null ? $thisGameReport->playerGameReports : []; ?>
                         @foreach ($thesePlayerGameReports as $k => $pgr)
-                            <?php $player = $pgr->player()->first(); ?>
+                            <?php $player = $pgr->player; ?>
                             <?php $url = '/ladder/' . $history->short . '/' . $history->ladder->abbreviation . '/player/' . $player->username; ?>
 
                             <h3 class="game-intro">

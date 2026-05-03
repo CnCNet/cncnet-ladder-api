@@ -19,14 +19,8 @@ class QmQueueEntry extends Model
 
     public function secondsinQueue()
     {
-        $createdAt = $this->created_at;
-
-        // Convert timestamp to Carbon instance
-        $createdAtCarbon = Carbon::parse($createdAt);
-
-        // Calculate the difference in seconds from created_at to NOW
-        $secondsDifference = now()->diffInSeconds($createdAtCarbon);
-
-        return $secondsDifference;
+        // Calculate the difference from created_at to updated_at
+        // updated_at is touched by FindOpponentJob when matching starts
+        return $this->created_at->diffInSeconds($this->updated_at);
     }
 }

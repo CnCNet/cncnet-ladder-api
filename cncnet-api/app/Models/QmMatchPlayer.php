@@ -17,7 +17,14 @@ class QmMatchPlayer extends Model
         'color',
         'actual_side',
         'location',
-        'client_version'
+        'client_version',
+        'twitch_live_at_start'
+    ];
+
+    protected $casts = [
+        'twitch_live_at_start' => 'boolean',
+        'is_observer' => 'boolean',
+        'waiting' => 'boolean'
     ];
 
     protected $_map_side_array = null;
