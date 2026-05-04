@@ -248,6 +248,12 @@ class ApiLadderController extends Controller
 
         if ($game->game_report_id == $gameReport->id)
         {
+            // This is already the best report, normalize won flags for 2v2
+            $history = $game->ladderHistory;
+            if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+            {
+                $this->normalizeTeamWonFlags($gameReport);
+            }
             $this->ladderService->updateCache($gameReport);
             return;
         }
@@ -305,6 +311,14 @@ class ApiLadderController extends Controller
                 $game->save();
                 $gameReport->save();
                 $bestReport->save();
+
+                // Normalize won flags for 2v2 after promoting to best report
+                $history = $game->ladderHistory;
+                if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+                {
+                    $this->normalizeTeamWonFlags($gameReport);
+                }
+
                 $this->ladderService->undoCache($bestReport);
                 $this->ladderService->updateCache($gameReport);
                 return;
@@ -334,13 +348,37 @@ class ApiLadderController extends Controller
             $game->save();
             $gameReport->save();
             $bestReport->save();
+
+            // Normalize won flags for 2v2 after promoting to best report
+            $history = $game->ladderHistory;
+            if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+            {
+                $this->normalizeTeamWonFlags($gameReport);
+            }
+
             $this->ladderService->undoCache($bestReport);
             $this->ladderService->updateCache($gameReport);
             return;
         }
 
-        // Prefer the longer game
-        if ($bestReport->duration + 5 < $gameReport->duration)
+        // Reject new report if best report is finished but new report is not
+        // Prevents OOS/incomplete reports from overriding valid finished reports
+        if ($bestReport->finished && !$gameReport->finished)
+        {
+            Log::info("Rejecting unfinished report - current best report is finished.", [
+                'game_id' => $game->id,
+                'best_report_id' => $bestReport->id,
+                'new_report_id' => $gameReport->id,
+                'best_finished' => $bestReport->finished,
+                'new_finished' => $gameReport->finished,
+                'new_oos' => $gameReport->oos,
+            ]);
+            return;
+        }
+
+        // Prefer the longer game (only if both reports have similar quality)
+        // Don't promote OOS reports based on duration alone
+        if ($bestReport->duration + 5 < $gameReport->duration && !$gameReport->oos)
         {
             $bestReport->best_report = false;
             $gameReport->best_report = true;
@@ -348,6 +386,14 @@ class ApiLadderController extends Controller
             $game->save();
             $gameReport->save();
             $bestReport->save();
+
+            // Normalize won flags for 2v2 after promoting to best report
+            $history = $game->ladderHistory;
+            if ($history->ladder->ladder_type == \App\Models\Ladder::TWO_VS_TWO)
+            {
+                $this->normalizeTeamWonFlags($gameReport);
+            }
+
             $this->ladderService->undoCache($bestReport);
             $this->ladderService->updateCache($gameReport);
             return;
@@ -503,24 +549,71 @@ class ApiLadderController extends Controller
 
         // Step 2: Fallback — no winner marked; use a non-defeated player (disconnected game case)
         // Have observed matches where disconnected=true on players who did not disconnect, but were in a dc'd game due to another player dc'ing
+
+        // First, collect all non-defeated teams to detect ambiguous cases
+        $nonDefeatedTeams = [];
         foreach ($playerGameReports as $pgr)
         {
             if (!$pgr->defeated && $pgr->spectator == false)
             {
-                Log::info("Fallback to 'defeated' logic for disconnected game.", [
-                    'game_id' => $pgr->game_id,
-                    'game_report_id' => $pgr->gameReport->id,
-                    'player_id' => $pgr->player_id,
-                    'team' => $pgr->team,
-                    'defeated' => $pgr->defeated,
-                    'disconnected' => $pgr->disconnected,
-                ]);
-                return $pgr->team;
+                if (!in_array($pgr->team, $nonDefeatedTeams))
+                {
+                    $nonDefeatedTeams[] = $pgr->team;
+                }
             }
         }
 
-        // No winning team found
+        // If multiple teams have non-defeated players, it's ambiguous (likely mutual disconnect) → treat as draw
+        if (count($nonDefeatedTeams) > 1)
+        {
+            Log::info("Ambiguous winner: multiple teams have non-defeated players, treating as draw.", [
+                'game_id' => $playerGameReports->first()->game_id,
+                'game_report_id' => $playerGameReports->first()->gameReport->id,
+                'non_defeated_teams' => $nonDefeatedTeams,
+            ]);
+            return null;
+        }
+
+        // Single team with non-defeated players → clear winner
+        if (count($nonDefeatedTeams) == 1)
+        {
+            $winningTeam = $nonDefeatedTeams[0];
+            Log::info("Fallback to 'defeated' logic for disconnected game.", [
+                'game_id' => $playerGameReports->first()->game_id,
+                'game_report_id' => $playerGameReports->first()->gameReport->id,
+                'winning_team' => $winningTeam,
+            ]);
+            return $winningTeam;
+        }
+
+        // No winning team found (all defeated or no players)
         return null;
+    }
+
+
+    /**
+     * Normalize won flags for all players on winning team.
+     * Fixes 2v2 cases where player died but team won.
+     *
+     * @param GameReport $gameReport The best report to normalize
+     * @return void
+     */
+    public function normalizeTeamWonFlags(GameReport $gameReport): void
+    {
+        $playerGameReports = $gameReport->playerGameReports()->get();
+        $winningTeam = $this->getWinningTeamFromReports($playerGameReports);
+
+        if ($winningTeam !== null)
+        {
+            foreach ($playerGameReports as $pgr)
+            {
+                if ($pgr->spectator == false && $pgr->team == $winningTeam && !$pgr->won)
+                {
+                    $pgr->won = true;
+                    $pgr->save();
+                }
+            }
+        }
     }
 
 
@@ -604,6 +697,18 @@ class ApiLadderController extends Controller
                     $enemy_count++;
                     $enemy_games += $otherPlayerGameReport->player->totalGames($history);
                 }
+            }
+
+            // Prevent division by zero (malformed reports with only spectators or missing teams)
+            if ($ally_count == 0 || $enemy_count == 0)
+            {
+                Log::warning("Team game missing ally or enemy players", [
+                    'game_id' => $playerGR->game_id,
+                    'game_report_id' => $gameReport->id,
+                    'ally_count' => $ally_count,
+                    'enemy_count' => $enemy_count,
+                ]);
+                return 604; // Error code: no players
             }
 
             $ally_average /= $ally_count;
@@ -951,9 +1056,8 @@ class ApiLadderController extends Controller
             $startOfDay = Carbon::now()->startOfDay();
             $endOfDay = Carbon::now()->endOfDay();
 
-            // Count wins for today
+            // Count wins for today - check if player's team won (handles 2v2 where player may have died but team won)
             $wins = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
-                ->where('player_game_reports.won', '=', true)
                 ->where('player_game_reports.spectator', '=', false)
                 ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
                 ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
@@ -961,12 +1065,18 @@ class ApiLadderController extends Controller
                 ->where('games.ladder_history_id', '=', $history->id)
                 ->where('game_reports.valid', '=', true)
                 ->where('game_reports.best_report', '=', true)
+                ->whereExists(function ($query) {
+                    $query->selectRaw(1)
+                          ->from('player_game_reports as teammate_reports')
+                          ->whereColumn('teammate_reports.game_report_id', 'player_game_reports.game_report_id')
+                          ->whereColumn('teammate_reports.team', 'player_game_reports.team')
+                          ->where('teammate_reports.won', '=', true)
+                          ->where('teammate_reports.spectator', '=', false);
+                })
                 ->count();
 
-            // Count losses for today (defeated and not won, excluding draws)
+            // Count losses for today - check if player's team lost (no teammate won, excluding draws)
             $losses = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
-                ->where('player_game_reports.defeated', '=', true)
-                ->where('player_game_reports.won', '=', false)
                 ->where('player_game_reports.draw', '=', false)
                 ->where('player_game_reports.spectator', '=', false)
                 ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
@@ -975,6 +1085,14 @@ class ApiLadderController extends Controller
                 ->where('games.ladder_history_id', '=', $history->id)
                 ->where('game_reports.valid', '=', true)
                 ->where('game_reports.best_report', '=', true)
+                ->whereNotExists(function ($query) {
+                    $query->selectRaw(1)
+                          ->from('player_game_reports as teammate_reports')
+                          ->whereColumn('teammate_reports.game_report_id', 'player_game_reports.game_report_id')
+                          ->whereColumn('teammate_reports.team', 'player_game_reports.team')
+                          ->where('teammate_reports.won', '=', true)
+                          ->where('teammate_reports.spectator', '=', false);
+                })
                 ->count();
 
             return response()->json([
