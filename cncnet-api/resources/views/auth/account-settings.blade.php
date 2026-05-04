@@ -222,17 +222,29 @@
                         <h3>Observer Mode (Invite only)</h3>
                         <strong>Strictly for streaming games only</strong>
                         <p>
-                            Watch any match on any ladder. Enabling this will take any username you have in the
-                            ladder and make you an
-                            observer. **MUST** be streaming while this is enabled.
+                            Watch any match on any ladder. **MUST** be streaming on Twitch while observing.
                         </p>
-                        <p>
+                        <div>
                             <label>
-                                <input id="isObserver" type="checkbox" name="isObserver"
-                                    @if ($userSettings->is_observer) checked @endif />
-                                Enable Observer Mode
+                                <input type="radio" name="observer_mode" value=""
+                                    @if (!$userSettings->observer_mode) checked @endif />
+                                <strong>Play Only</strong> - Join matches as player only
                             </label>
-                        </p>
+                        </div>
+                        <div class="mt-2">
+                            <label>
+                                <input type="radio" name="observer_mode" value="play_and_observe"
+                                    @if ($userSettings->observer_mode === 'play_and_observe') checked @endif />
+                                <strong>Play & Observe</strong> - Join as player if selected, otherwise observe if excluded
+                            </label>
+                        </div>
+                        <div class="mt-2">
+                            <label>
+                                <input type="radio" name="observer_mode" value="observe_only"
+                                    @if ($userSettings->observer_mode === 'observe_only') checked @endif />
+                                <strong>Observe Only</strong> - Always observe, never play
+                            </label>
+                        </div>
                     </div>
                     @endif
 

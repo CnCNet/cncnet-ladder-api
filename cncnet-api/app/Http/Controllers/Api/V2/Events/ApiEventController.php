@@ -19,7 +19,7 @@ class ApiEventController extends Controller
         $matt = User::find(30045);
         $doof = User::find(38417);
 
-        if ($mj->userSettings->is_observer == true)
+        if ($mj->userSettings && $mj->userSettings->hasObserverModeEnabled())
         {
             return [
                 "live" => true,
@@ -27,7 +27,7 @@ class ApiEventController extends Controller
             ];
         }
 
-        if ($matt->userSettings->is_observer == true)
+        if ($matt->userSettings && $matt->userSettings->hasObserverModeEnabled())
         {
             return [
                 "live" => true,
@@ -35,7 +35,7 @@ class ApiEventController extends Controller
             ];
         }
 
-        if ($doof->userSettings->is_observer == true)
+        if ($doof->userSettings && $doof->userSettings->hasObserverModeEnabled())
         {
             return [
                 "live" => true,

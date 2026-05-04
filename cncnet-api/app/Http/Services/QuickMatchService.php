@@ -146,70 +146,95 @@ class QuickMatchService
     }
 
     /**
+     * Validate if player can observe based on Twitch requirements.
+     * Admins bypass check. Others need Twitch username + be live.
+     *
+     * @param \App\Models\Player $player The player to validate
+     * @param bool $throwOnFailure If true, throws exception on validation failure. If false, returns boolean.
+     *
+     * @return bool True if player can observe, false otherwise
+     * @throws \RuntimeException if throwOnFailure is true and validation fails
+     */
+    public function canPlayerObserve(\App\Models\Player $player, bool $throwOnFailure = false): bool
+    {
+        $user = $player->user;
+
+        // Admins bypass Twitch check
+        if ($user->isAdmin())
+        {
+            Log::debug("Player {$player->username} is admin, bypassing Twitch check");
+            return true;
+        }
+
+        // Check Twitch username exists
+        $twitchUsername = $user->twitch_profile;
+        if (empty($twitchUsername))
+        {
+            if ($throwOnFailure) {
+                Log::warning('Observer player missing Twitch username.', [
+                    'player_username' => $player->username,
+                    'user_id' => $user->id ?? null,
+                ]);
+                throw new \RuntimeException('To observe games, you must have a valid Twitch username defined in your Account Settings.');
+            }
+            Log::debug("Player {$player->username} excluded - no Twitch username");
+            return false;
+        }
+
+        // Check if live on Twitch
+        if (!$this->twitchService->isUserLive($twitchUsername))
+        {
+            if ($throwOnFailure) {
+                Log::info('Twitch user not live for observer.', [
+                    'twitch_username' => $twitchUsername,
+                    'player_username' => $player->username,
+                ]);
+                throw new \RuntimeException('To observe games, you must be live on Twitch.');
+            }
+            Log::debug("Player {$player->username} excluded - not live on Twitch");
+            return false;
+        }
+
+        Log::debug("Player {$player->username} validated for observing");
+        return true;
+    }
+
+    /**
      * Checks if the given player should be set as an observer and validates
      * their Twitch status. If the player is flagged as an observer, this method
      * verifies they have a valid Twitch username and are currently live on Twitch.
-     * 
+     *
      * If validation fails, the $qmPlayer record is deleted and a RuntimeException
      * is thrown to stop further processing.
-     * 
+     *
      * @param \App\Models\QmMatchPlayer $qmPlayer The quick match player instance being created or updated.
      * @param \App\Models\Player $player The player instance associated with the user.
-     * 
+     *
      * @throws \RuntimeException if Twitch username is missing or user is not live.
-     * 
+     *
      * @return void
      */
     public function handleObserver($qmPlayer, $player): void
     {
-        // First check if user toggled on to observe
-        if (!optional($player->user->userSettings)->is_observer)
+        // Check if user wants to observe only (not play_and_observe mode)
+        $userSettings = $player->user->userSettings;
+        if (!$userSettings || !$userSettings->wantsToObserveOnly())
         {
             return;
         }
 
-        if ($player->user->isAdmin())
-        {
-            Log::debug('Admin player bypassing Twitch live check to observe game.', [
-                'player_username' => $player->username,
-                'user_id' => $player->user->id,
-            ]);
-
-            $qmPlayer->is_observer = true;
-            return;
-        }
-
-        // Retrieve the Twitch username from the user's profile, null-safe
-        $twitchUsername = optional($player->user)->twitch_profile;
-
-        // Validate Twitch username presence
-        if (empty($twitchUsername))
-        {
-            Log::warning('Observer player missing Twitch username.', [
-                'player_username' => $player->username,
-                'user_id' => $player->user->id ?? null,
-            ]);
-
+        // Validate Twitch requirements (throws exception on failure)
+        try {
+            $this->canPlayerObserve($player, true);
+        } catch (\RuntimeException $e) {
             $qmPlayer->delete();
-            throw new \RuntimeException('To observe games, you must have a valid Twitch username defined in your Account Settings.');
+            throw $e;
         }
 
-        // Check if the Twitch user is currently live
-        if (!$this->twitchService->isUserLive($twitchUsername))
-        {
-            Log::info('Twitch user not live for observer.', [
-                'twitch_username' => $twitchUsername,
-                'player_username' => $player->username,
-            ]);
-
-            $qmPlayer->delete();
-            throw new \RuntimeException('To observe games, you must be live on Twitch.');
-        }
-
-        // Log that the player passed all observer checks
+        // Passed validation
         Log::debug('Player is observing game.', [
             'player_username' => $player->username,
-            'twitch_username' => $twitchUsername,
+            'twitch_username' => $player->user->twitch_profile,
         ]);
 
         $qmPlayer->is_observer = true;
