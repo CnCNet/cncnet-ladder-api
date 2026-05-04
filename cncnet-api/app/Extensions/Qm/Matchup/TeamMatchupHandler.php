@@ -135,48 +135,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         // Get play_and_observe players who were excluded from match
         $playerIds = $players->pluck('qmPlayer.player.id')->filter();
-        $playAndObservePlayers = $opponents->filter(function(QmQueueEntry $qmQueueEntry) use ($playerIds) {
-            if (!$qmQueueEntry->qmPlayer || !$qmQueueEntry->qmPlayer->player) {
-                return false;
-            }
-
-            // Check if they have play_and_observe mode
-            $userSettings = $qmQueueEntry->qmPlayer->player->user->userSettings;
-            if (!$userSettings || !$userSettings->canPlayAndObserve()) {
-                return false;
-            }
-
-            // Check if they were excluded from the match
-            if ($playerIds->contains($qmQueueEntry->qmPlayer->player->id)) {
-                return false;
-            }
-
-            // Validate Twitch requirements for observing (unless admin)
-            $player = $qmQueueEntry->qmPlayer->player;
-            $user = $player->user;
-
-            // Admins bypass Twitch check
-            if ($user->isAdmin()) {
-                Log::debug("  play_and_observe: {$player->username} is admin, bypassing Twitch check");
-                return true;
-            }
-
-            // Check Twitch username exists
-            $twitchUsername = $user->twitch_profile;
-            if (empty($twitchUsername)) {
-                Log::debug("  play_and_observe: {$player->username} excluded - no Twitch username");
-                return false;
-            }
-
-            // Check if live on Twitch
-            if (!$this->quickMatchService->twitchService->isUserLive($twitchUsername)) {
-                Log::debug("  play_and_observe: {$player->username} excluded - not live on Twitch");
-                return false;
-            }
-
-            Log::debug("  play_and_observe: {$player->username} validated for observing");
-            return true;
-        });
+        $playAndObservePlayers = $this->findPlayAndObservePlayers($opponents, $playerIds);
 
         if ($playAndObservePlayers->count() > 0) {
             Log::debug("  Found {$playAndObservePlayers->count()} play_and_observe player(s) excluded from match");
@@ -515,5 +474,44 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $total = $passCount + $failCount;
         Log::debug("     Summary: {$passCount}/{$total} pairs passed, {$failCount}/{$total} failed");
         Log::debug("     =====================================");
+    }
+
+    /**
+     * Find play_and_observe players who were excluded from the match and can observe.
+     * Validates they have play_and_observe mode enabled, were not selected for the match,
+     * and pass Twitch requirements.
+     *
+     * @param Collection|QmQueueEntry[] $opponents All opponents in queue
+     * @param Collection $playerIds IDs of players selected for the match
+     * @return Collection|QmQueueEntry[] Filtered play_and_observe players who can observe
+     */
+    private function findPlayAndObservePlayers(Collection $opponents, Collection $playerIds): Collection
+    {
+        return $opponents->filter(function(QmQueueEntry $qmQueueEntry) use ($playerIds) {
+            if (!$qmQueueEntry->qmPlayer || !$qmQueueEntry->qmPlayer->player) {
+                return false;
+            }
+
+            // Check if they have play_and_observe mode
+            $userSettings = $qmQueueEntry->qmPlayer->player->user->userSettings;
+            if (!$userSettings || !$userSettings->canPlayAndObserve()) {
+                return false;
+            }
+
+            // Check if they were excluded from the match
+            if ($playerIds->contains($qmQueueEntry->qmPlayer->player->id)) {
+                return false;
+            }
+
+            // Validate Twitch requirements using helper method
+            $player = $qmQueueEntry->qmPlayer->player;
+            $canObserve = $this->quickMatchService->canPlayerObserve($player, false);
+
+            if ($canObserve) {
+                Log::debug("  play_and_observe: {$player->username} validated for observing");
+            }
+
+            return $canObserve;
+        });
     }
 }
