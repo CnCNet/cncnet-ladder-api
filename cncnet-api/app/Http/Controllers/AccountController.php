@@ -352,7 +352,15 @@ class AccountController extends Controller
         $userSettings->match_any_map = $request->match_any_map == "on" ? true : false;
         $userSettings->is_anonymous = $request->is_anonymous == "on" ? true : false;
         $userSettings->match_ai = $request->matchAI == "on" ? true : false;
-        $userSettings->is_observer = $request->isObserver == "on" ? true : false; // user turned on observer mode
+
+        // Handle observer mode (radio/dropdown input)
+        $observerMode = $request->observer_mode;
+        if (in_array($observerMode, ['observe_only', 'play_and_observe'])) {
+            $userSettings->observer_mode = $observerMode;
+        } else {
+            $userSettings->observer_mode = null; // Default to play mode
+        }
+
         $userSettings->allow_observers = $request->allowObservers == "on" ? true : false;
         $userSettings->save();
 

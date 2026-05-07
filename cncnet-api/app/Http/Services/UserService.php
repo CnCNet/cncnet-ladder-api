@@ -16,10 +16,10 @@ class UserService
     {
         $userSettings = $user->userSettings;
 
-        // Check this user is allowed to set this
+        // Check this user is allowed to set observer mode
         if (!$user->isObserver())
         {
-            unset($userSettings["is_observer"]);
+            unset($userSettings["observer_mode"]);
         }
 
         return $userSettings;
@@ -43,20 +43,28 @@ class UserService
         $requestData = array_map('intval', array_filter($request->only([
             'skip_score_screen',
             'match_any_map',
-            'disabledPointFilter', // As column in database 
-            'is_anonymous', // As column in database 
+            'disabledPointFilter', // As column in database
+            'is_anonymous', // As column in database
             'match_ai',
-            'is_observer',
             'allow_observers',
         ]), function ($value)
         {
             return $value !== null; // Include 0 in the filtered array
         }));
 
-        // Check this user is allowed to set this
-        if (!$user->isObserver())
+        // Handle observer_mode separately (string field, not integer)
+        if ($user->isObserver())
         {
-            $requestData["is_observer"] = 0;
+            $observerMode = $request->input('observer_mode');
+            if (in_array($observerMode, ['observe_only', 'play_and_observe'])) {
+                $requestData['observer_mode'] = $observerMode;
+            } else {
+                $requestData['observer_mode'] = null; // Default to play mode
+            }
+        }
+        else
+        {
+            $requestData['observer_mode'] = null;
         }
 
         $userSettings->update($requestData);
