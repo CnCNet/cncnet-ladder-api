@@ -125,8 +125,25 @@ class TeamMatchupHandler extends BaseMatchupHandler
         Log::debug("  ✅ Map validation: {$mapCount} common maps available");
 
         // Add observers to the match if there is any (maximum of one observer per match)
+        // Priority 1: observe_only players
+        // Priority 2: play_and_observe players who were excluded from the match
+        $allObservers = collect();
+
+        // Get observe_only players
+        $observeOnlyPlayers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
+        $allObservers = $allObservers->merge($observeOnlyPlayers);
+
+        // Get play_and_observe players who were excluded from match
+        $playerIds = $players->pluck('qmPlayer.player.id')->filter();
+        $playAndObservePlayers = $this->findPlayAndObservePlayers($opponents, $playerIds);
+
+        if ($playAndObservePlayers->count() > 0) {
+            Log::debug("  Found {$playAndObservePlayers->count()} play_and_observe player(s) excluded from match");
+        }
+
+        $allObservers = $allObservers->merge($playAndObservePlayers);
+
         // Prioritize observers who have been waiting the longest
-        $allObservers = $opponents->filter(fn(QmQueueEntry $qmQueueEntry) => $qmQueueEntry->qmPlayer?->isObserver());
         $observers = $allObservers->sortBy('created_at')->take(1);
 
         if ($observers->count() > 0) {
@@ -311,7 +328,14 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         foreach ($opponents as $opponent)
         {
-            if (!isset($opponent->qmPlayer) || $opponent->qmPlayer->isObserver())
+            // Skip if no qmPlayer or if they are observe_only (but allow play_and_observe users)
+            if (!isset($opponent->qmPlayer))
+            {
+                continue;
+            }
+
+            // Only skip observe_only observers, not play_and_observe
+            if ($opponent->qmPlayer->isObserver())
             {
                 continue;
             }
@@ -450,5 +474,44 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $total = $passCount + $failCount;
         Log::debug("     Summary: {$passCount}/{$total} pairs passed, {$failCount}/{$total} failed");
         Log::debug("     =====================================");
+    }
+
+    /**
+     * Find play_and_observe players who were excluded from the match and can observe.
+     * Validates they have play_and_observe mode enabled, were not selected for the match,
+     * and pass Twitch requirements.
+     *
+     * @param Collection|QmQueueEntry[] $opponents All opponents in queue
+     * @param Collection $playerIds IDs of players selected for the match
+     * @return Collection|QmQueueEntry[] Filtered play_and_observe players who can observe
+     */
+    private function findPlayAndObservePlayers(Collection $opponents, Collection $playerIds): Collection
+    {
+        return $opponents->filter(function(QmQueueEntry $qmQueueEntry) use ($playerIds) {
+            if (!$qmQueueEntry->qmPlayer || !$qmQueueEntry->qmPlayer->player) {
+                return false;
+            }
+
+            // Check if they have play_and_observe mode
+            $userSettings = $qmQueueEntry->qmPlayer->player->user->userSettings;
+            if (!$userSettings || !$userSettings->canPlayAndObserve()) {
+                return false;
+            }
+
+            // Check if they were excluded from the match
+            if ($playerIds->contains($qmQueueEntry->qmPlayer->player->id)) {
+                return false;
+            }
+
+            // Validate Twitch requirements using helper method
+            $player = $qmQueueEntry->qmPlayer->player;
+            $canObserve = $this->quickMatchService->canPlayerObserve($player, false);
+
+            if ($canObserve) {
+                Log::debug("  play_and_observe: {$player->username} validated for observing");
+            }
+
+            return $canObserve;
+        });
     }
 }
