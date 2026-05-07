@@ -187,6 +187,9 @@ class ApiQuickMatchController extends Controller
             //get the player data pertaining to this quick match
             $qmPlayers = $qm->players;
 
+            $namesMasked = $this->shouldMaskPlayerNames($qm->created_at, $ladder);
+            $showRealNames = !$namesMasked;
+
             $playersData = [];
             if ($ladder->clans_allowed)
             {
@@ -194,11 +197,11 @@ class ApiQuickMatchController extends Controller
             }
             else if ($ladder->ladder_type == Ladder::TWO_VS_TWO) // 2v2
             {
-                $playersData = $this->getTeamActivePlayerMatchesData($sides, $qmPlayers, $qm->created_at);
+                $playersData = $this->getTeamActivePlayerMatchesData($sides, $qmPlayers, $showRealNames);
             }
             else
             {
-                $playersData = $this->getActivePlayerMatchesData($sides, $qmPlayers, $qm->created_at);
+                $playersData = $this->getActivePlayerMatchesData($sides, $qmPlayers, $showRealNames);
             }
 
             $duration = Carbon::now()->diff($dt);
@@ -211,11 +214,28 @@ class ApiQuickMatchController extends Controller
                 "gameDuration" => $duration_formatted,
                 "mapName" => trim($qm->map->description),
                 "mapHash" => $qm->map->map->hash,
-                "mapUrl" => SiteHelper::getMapPreviewUrlV2($ladder->game, $qm->map->map)
+                "mapUrl" => SiteHelper::getMapPreviewUrlV2($ladder->game, $qm->map->map),
+                "namesMasked" => $namesMasked
             ];
         }
 
         return $games;
+    }
+
+    private function shouldMaskPlayerNames($created_at, Ladder $ladder)
+    {
+        if ($ladder->clans_allowed)
+        {
+            return false; // Clan matches never mask names
+        }
+
+        $dt = new DateTime($created_at);
+        $secondsSinceStart = abs(Carbon::now()->diffInSeconds($dt));
+
+        // 2v2 uses 90 second threshold, 1v1 uses 120 second threshold
+        $threshold = $ladder->ladder_type == Ladder::TWO_VS_TWO ? 90 : 120;
+
+        return $secondsSinceStart <= $threshold;
     }
 
     private function getActiveClanMatchesData($sides, $players)
@@ -271,11 +291,8 @@ class ApiQuickMatchController extends Controller
     /**
      * @return an array containing every player's name and their faction
      */
-    private function getActivePlayerMatchesData(array $sides, $qmPlayers, $created_at)
+    private function getActivePlayerMatchesData(array $sides, $qmPlayers, bool $showRealNames)
     {
-        $dt = new DateTime($created_at);
-        $showRealNames = abs(Carbon::now()->diffInSeconds($dt)) > 120;
-
         return collect($qmPlayers)
             ->values()
             ->map(function ($qmPlayer, $index) use ($sides, $showRealNames)
@@ -291,11 +308,8 @@ class ApiQuickMatchController extends Controller
             ->all();
     }
 
-    private function getTeamActivePlayerMatchesData(array $sides, $qmPlayers, $created_at)
+    private function getTeamActivePlayerMatchesData(array $sides, $qmPlayers, bool $showRealNames)
     {
-        $dt = new DateTime($created_at);
-        $showRealNames = abs(Carbon::now()->diffInSeconds($dt)) > 90;
-
         return collect($qmPlayers)
             ->groupBy('team')
             ->flatten()
