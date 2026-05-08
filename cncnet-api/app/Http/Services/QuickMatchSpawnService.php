@@ -39,6 +39,9 @@ class QuickMatchSpawnService
         $isObserver = $qmPlayer->is_observer == 1;
         $notAllowedToChat = !$qmPlayer->player->user->getIsAllowedToChat();
 
+        // Validate player configuration before spawn generation
+        self::validatePlayerSpawnConfig($qmPlayer, $qmMatch);
+
         $spawnStruct["spawn"]["Settings"] = array_filter(
             [
                 "UIGameMode" =>     $qmMap->game_mode,
@@ -493,5 +496,51 @@ class QuickMatchSpawnService
         }
 
         return $spawnStruct;
+    }
+
+    /**
+     * Validates player spawn configuration before generating spawn.ini.
+     * This is the final safeguard to prevent bugged matches from launching.
+     *
+     * @param QmMatchPlayer $qmPlayer The player to validate
+     * @param mixed $qmMatch The match context
+     * @throws \RuntimeException if validation fails
+     */
+    private static function validatePlayerSpawnConfig(QmMatchPlayer $qmPlayer, $qmMatch): void
+    {
+        $playerName = $qmPlayer->player?->username ?? 'Unknown';
+        $isObserver = $qmPlayer->is_observer;
+        $location = $qmPlayer->location;
+        $team = $qmPlayer->team;
+
+        Log::debug("[QuickMatchSpawnService::validatePlayerSpawnConfig] Validating spawn for {$playerName}: is_observer={$isObserver}, location={$location}, team={$team}");
+
+        // Validate observer configuration
+        if ($team === 'observer') {
+            if (!$isObserver) {
+                Log::error("[QuickMatchSpawnService::validatePlayerSpawnConfig] CRITICAL: Observer {$playerName} has is_observer=false");
+                throw new \RuntimeException("Critical spawn configuration error: Observer {$playerName} in match {$qmMatch->id} has is_observer=false. This would cause the game to crash. Match aborted.");
+            }
+
+            if ($location !== -1) {
+                Log::error("[QuickMatchSpawnService::validatePlayerSpawnConfig] CRITICAL: Observer {$playerName} has location={$location} instead of -1");
+                throw new \RuntimeException("Critical spawn configuration error: Observer {$playerName} in match {$qmMatch->id} has invalid spawn location {$location}. This would cause the game to crash. Match aborted.");
+            }
+        }
+
+        // Validate player configuration
+        if ($team !== 'observer') {
+            if ($isObserver) {
+                Log::error("[QuickMatchSpawnService::validatePlayerSpawnConfig] CRITICAL: Player {$playerName} in team {$team} has is_observer=true");
+                throw new \RuntimeException("Critical spawn configuration error: Player {$playerName} in match {$qmMatch->id} has is_observer=true. This would cause the game to crash. Match aborted.");
+            }
+
+            if ($location < 0) {
+                Log::error("[QuickMatchSpawnService::validatePlayerSpawnConfig] CRITICAL: Player {$playerName} has invalid location={$location}");
+                throw new \RuntimeException("Critical spawn configuration error: Player {$playerName} in match {$qmMatch->id} has invalid spawn location {$location}. This would cause the game to crash. Match aborted.");
+            }
+        }
+
+        Log::debug("[QuickMatchSpawnService::validatePlayerSpawnConfig] Validation passed for {$playerName}");
     }
 }

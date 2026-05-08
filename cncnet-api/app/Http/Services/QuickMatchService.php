@@ -1307,6 +1307,9 @@ class QuickMatchService
 
         Log::debug("Launching match with players $playerNames, " . $qmPlayer->player->username . " on map: " . $qmMatch->map->description);
 
+        // Validate match configuration before launching
+        $this->validateMatchConfiguration($qmMatch);
+
         return $qmMatch;
     }
 
@@ -1322,7 +1325,7 @@ class QuickMatchService
         $currentQueuePlayerCount = $teamAPlayers->count() + $teamBPlayers->count();
         $expectedPlayerQueueCount = $currentQueuePlayerCount + $observers->count();
 
-        Log::debug("ApiQuickMatchController ** createQmMatch: Observer Present: " . $matchHasObserver ? 'Yes' : 'No');
+        Log::debug("ApiQuickMatchController ** createQmMatch: Observer Present: " . ($matchHasObserver ? 'Yes' : 'No'));
         Log::debug("ApiQuickMatchController ** createQmMatch: Player counts " . $currentQueuePlayerCount . "/" . $expectedPlayerQueueCount);
 
         # Create the qm_matches db entry
@@ -1381,13 +1384,11 @@ class QuickMatchService
         $this->setTeamSpawns('A', $spawns[0], $teamAPlayers, $qmMatch, $colors);
         $this->setTeamSpawns('B', $spawns[1], $teamBPlayers, $qmMatch, $colors);
 
-        // Set observers' team to 'observer'
-        foreach ($observers->values() as $observer) {
-            $qmObserver = $observer->qmPlayer;
-            $qmObserver->team = 'observer';
-            $qmObserver->save();
-        }
+        // Set observer spawn locations and flags
         $this->setObserversSpawns($observers, $qmMatch, $colors);
+
+        // Validate match configuration before launching
+        $this->validateMatchConfiguration($qmMatch);
 
         return $qmMatch;
     }
@@ -1451,18 +1452,100 @@ class QuickMatchService
 
     private function setObserversSpawns(Collection $observers, QmMatch $qmMatch, int &$colors)
     {
+        Log::debug('[QuickMatchService::setObserversSpawns] Processing ' . $observers->count() . ' observer(s)');
 
         foreach ($observers->values() as $i => $observer)
         {
             $qmObserver = $observer->qmPlayer;
+            $playerName = $qmObserver->player?->username ?? 'Unknown';
+            $wasObserver = $qmObserver->is_observer;
+
             $observer->delete();
 
+            $qmObserver->is_observer = true;
+            $qmObserver->team = 'observer';
             $qmObserver->color = $colors++;
             $qmObserver->location = -1;
             $qmObserver->qm_match_id = $qmMatch->id;
             $qmObserver->tunnel_id = $qmMatch->seed + $qmObserver->color;
             $qmObserver->save();
+
+            Log::debug("[QuickMatchService::setObserversSpawns] Observer {$playerName}: is_observer={$wasObserver}->{$qmObserver->is_observer}, team={$qmObserver->team}, location={$qmObserver->location}, color={$qmObserver->color}");
         }
+    }
+
+    /**
+     * Validates match configuration to prevent bugged matches from launching.
+     * Ensures observers are properly configured and players have valid spawn locations.
+     *
+     * @param QmMatch $qmMatch The match to validate
+     * @throws \RuntimeException if validation fails
+     */
+    private function validateMatchConfiguration(QmMatch $qmMatch): void
+    {
+        $allPlayers = $qmMatch->players;
+        $errors = [];
+
+        Log::debug('[QuickMatchService::validateMatchConfiguration] Validating match ' . $qmMatch->id . ' with ' . $allPlayers->count() . ' player(s)');
+
+        $observers = $allPlayers->filter(fn($p) => $p->team === 'observer');
+        $players = $allPlayers->filter(fn($p) => $p->team !== 'observer');
+        $spawnLocations = [];
+
+        // Validate observers
+        foreach ($observers as $observer) {
+            $playerName = $observer->player?->username ?? 'Unknown';
+
+            if (!$observer->is_observer) {
+                $errors[] = "Observer {$playerName} has is_observer=false (should be true)";
+            }
+
+            if ($observer->location !== -1) {
+                $errors[] = "Observer {$playerName} has location={$observer->location} (should be -1)";
+            }
+
+            if ($observer->team !== 'observer') {
+                $errors[] = "Observer {$playerName} has team={$observer->team} (should be 'observer')";
+            }
+        }
+
+        // Validate players
+        foreach ($players as $player) {
+            $playerName = $player->player?->username ?? 'Unknown';
+
+            if ($player->is_observer) {
+                $errors[] = "Player {$playerName} has is_observer=true (should be false)";
+            }
+
+            if ($player->location < 0) {
+                $errors[] = "Player {$playerName} has invalid location={$player->location} (should be >= 0)";
+            } else {
+                // Check for duplicate spawn locations
+                if (isset($spawnLocations[$player->location])) {
+                    $errors[] = "Duplicate spawn location {$player->location}: {$spawnLocations[$player->location]} and {$playerName}";
+                } else {
+                    $spawnLocations[$player->location] = $playerName;
+                }
+            }
+
+            if (!in_array($player->team, ['A', 'B'])) {
+                $errors[] = "Player {$playerName} has invalid team={$player->team} (should be 'A' or 'B')";
+            }
+        }
+
+        // Log summary
+        Log::info('[QuickMatchService::validateMatchConfiguration] Match ' . $qmMatch->id . ': ' . $players->count() . ' player(s), ' . $observers->count() . ' observer(s)');
+
+        if (count($errors) > 0) {
+            Log::error('[QuickMatchService::validateMatchConfiguration] MATCH VALIDATION FAILED for match ' . $qmMatch->id);
+            foreach ($errors as $error) {
+                Log::error('  - ' . $error);
+            }
+
+            throw new \RuntimeException('Match configuration validation failed: ' . implode('; ', $errors));
+        }
+
+        Log::info('[QuickMatchService::validateMatchConfiguration] Match ' . $qmMatch->id . ' validation PASSED');
     }
 
     private function chooseQmMapId(Collection $qmQueueEntries, bool $useRankedMapPicker, LadderHistory $history, Collection $qmMaps)
