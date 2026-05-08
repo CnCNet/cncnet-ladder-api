@@ -457,6 +457,20 @@ class LadderService
 
         return Game::where("ladder_history_id", "=", $history->id)
             ->whereNotNull('game_report_id')
+            ->with([
+                // Game report data
+                'report:id,game_id,duration,fps',
+
+                // Player game reports with nested relationships
+                'report.playerGameReports:id,game_report_id,player_id,team,stats_id,points,won',
+                'report.playerGameReports.player:id,username,user_id',
+                'report.playerGameReports.player.user:id',  // For getUserAvatar()
+
+                // QM Match and map data
+                'qmMatch:id,qm_map_id',
+                'qmMatch.map:id,description,map_id',
+                'qmMatch.map.map:id,name,hash,image_path,image_hash',
+            ])
             ->orderBy("games.id", "DESC")
             ->paginate(45);
     }
@@ -494,6 +508,20 @@ class LadderService
             ->where("ladder_history_id", "=", $history->id)
             ->where('game_reports.duration', '=', 3)
             ->where('finished', '=', 1)
+            ->with([
+                // Game report data
+                'report:id,game_id,duration,fps',
+
+                // Player game reports with nested relationships
+                'report.playerGameReports:id,game_report_id,player_id,team,stats_id,points,won',
+                'report.playerGameReports.player:id,username,user_id',
+                'report.playerGameReports.player.user:id',  // For getUserAvatar()
+
+                // QM Match and map data
+                'qmMatch:id,qm_map_id',
+                'qmMatch.map:id,description,map_id',
+                'qmMatch.map.map:id,name,hash,image_path,image_hash',
+            ])
             ->orderBy("games.id", "DESC")
             ->paginate(45);
     }
