@@ -7,11 +7,11 @@
     $username = $playerCache->player_name . ($playerOfTheDay ? ' ' . \App\Helpers\SiteHelper::getEmojiByMonth() : '');
     $url = \App\Models\URLHelper::getPlayerProfileUrl($history, $playerCache->player_name);
     $mostPlayedFaction = $mostUsedFactions[$playerCache->id] ?? '';
-    $avatar = $playerCache->player->user->getUserAvatar();
-    $emoji = $playerCache->player->user->getEmoji();
-    $twitch = $playerCache->player->user->getTwitchProfile();
-    $youtube = $playerCache->player->user->getYouTubeProfile();
-    $discord = $playerCache->player->user->getDiscordProfile();
+    $avatar = $playerCache->player?->user?->getUserAvatar() ?? '';
+    $emoji = $playerCache->player?->user?->getEmoji() ?? '';
+    $twitch = $playerCache->player?->user?->getTwitchProfile() ?? '';
+    $youtube = $playerCache->player?->user?->getYouTubeProfile() ?? '';
+    $discord = $playerCache->player?->user?->getDiscordProfile() ?? '';
     $ladderHasEnded = $history->hasEnded();
 
     $rank = $ranks[$playerCache->id] ?? 9999;
