@@ -1523,6 +1523,8 @@ class QuickMatchService
         }
 
         // Validate players
+        $isTeamGame = $players->count() > 2;
+
         foreach ($players as $player) {
             $playerName = $player->player?->username ?? 'Unknown';
 
@@ -1533,15 +1535,16 @@ class QuickMatchService
             if ($player->location < -1) {
                 $errors[] = "Player {$playerName} has invalid location={$player->location} (should be >= -1)";
             } else {
-                // Check for duplicate spawn locations
-                if (isset($spawnLocations[$player->location])) {
+                // Check for duplicate spawn locations (skip -1 as multiple players can have random spawn)
+                if ($player->location !== -1 && isset($spawnLocations[$player->location])) {
                     $errors[] = "Duplicate spawn location {$player->location}: {$spawnLocations[$player->location]} and {$playerName}";
                 } else {
                     $spawnLocations[$player->location] = $playerName;
                 }
             }
 
-            if (!in_array($player->team, ['A', 'B'])) {
+            // Only validate teams for team games (2v2+), not 1v1
+            if ($isTeamGame && !in_array($player->team, ['A', 'B'])) {
                 $errors[] = "Player {$playerName} has invalid team={$player->team} (should be 'A' or 'B')";
             }
         }
