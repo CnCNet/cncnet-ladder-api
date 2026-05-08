@@ -1530,8 +1530,8 @@ class QuickMatchService
                 $errors[] = "Player {$playerName} has is_observer=true (should be false)";
             }
 
-            if ($player->location < 0) {
-                $errors[] = "Player {$playerName} has invalid location={$player->location} (should be >= 0)";
+            if ($player->location < -1) {
+                $errors[] = "Player {$playerName} has invalid location={$player->location} (should be >= -1)";
             } else {
                 // Check for duplicate spawn locations
                 if (isset($spawnLocations[$player->location])) {
