@@ -535,7 +535,7 @@ class QuickMatchSpawnService
                 throw new \RuntimeException("Critical spawn configuration error: Player {$playerName} in match {$qmMatch->id} has is_observer=true. This would cause the game to crash. Match aborted.");
             }
 
-            if ($location < 0) {
+            if ($location < -1) {
                 Log::error("[QuickMatchSpawnService::validatePlayerSpawnConfig] CRITICAL: Player {$playerName} has invalid location={$location}");
                 throw new \RuntimeException("Critical spawn configuration error: Player {$playerName} in match {$qmMatch->id} has invalid spawn location {$location}. This would cause the game to crash. Match aborted.");
             }
