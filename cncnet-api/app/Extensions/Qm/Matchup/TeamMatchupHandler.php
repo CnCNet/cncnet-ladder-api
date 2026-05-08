@@ -46,7 +46,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
             if ($e->qmPlayer) {
                 if ($e->qmPlayer->isObserver()) {
                     $name .= '[obs]';
-                } elseif ($e->qmPlayer->player->user->userSettings->canPlayAndObserve()) {
+                } elseif ($e->qmPlayer?->player?->user?->userSettings?->canPlayAndObserve()) {
                     $name .= '[p+o]';
                 }
             }
@@ -55,7 +55,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         // Add mode indicator for current player
         $currentPlayerMode = '';
-        if ($this->qmPlayer && $this->qmPlayer->player->user->userSettings->canPlayAndObserve()) {
+        if ($this->qmPlayer?->player?->user?->userSettings?->canPlayAndObserve()) {
             $currentPlayerMode = '[p+o]';
         }
 
@@ -78,7 +78,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
         $matchableNames = $matchableOpponents->map(function($entry) {
             $name = $entry->qmPlayer?->player?->username ?? 'Unknown';
             // Add mode indicator
-            if ($entry->qmPlayer && $entry->qmPlayer->player->user->userSettings->canPlayAndObserve()) {
+            if ($entry->qmPlayer?->player?->user?->userSettings?->canPlayAndObserve()) {
                 $name .= '[p+o]';
             }
             return $name;
@@ -86,7 +86,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
         // Add current player to matchable list with mode indicator
         $currentPlayerName = $playerInQueue;
-        if ($this->qmPlayer && $this->qmPlayer->player->user->userSettings->canPlayAndObserve()) {
+        if ($this->qmPlayer?->player?->user?->userSettings?->canPlayAndObserve()) {
             $currentPlayerName .= '[p+o]';
         }
 
@@ -361,7 +361,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
     {
         $pointsPerSecond = $rules->points_per_second;
         $maxPointsDifference = $rules->max_points_difference;
-        $currentPointFilter = $current->qmPlayer->player->user->userSettings->disabledPointFilter;
+        $currentPointFilter = $current->qmPlayer?->player?->user?->userSettings?->disabledPointFilter;
         $currentPlayer = $current->qmPlayer?->player?->username ?? 'Unknown';
 
         $matchable = collect();
@@ -388,7 +388,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
 
             $inNormalRange = $effectiveRange > $diff;
             $inDisabledFilterRange = $currentPointFilter
-                && $opponent->qmPlayer->player->user->userSettings->disabledPointFilter
+                && $opponent->qmPlayer?->player?->user?->userSettings?->disabledPointFilter
                 && $diff < 1000
                 && $current->points > 400
                 && $opponent->points > 400;
@@ -445,8 +445,8 @@ class TeamMatchupHandler extends BaseMatchupHandler
                 $passesNormalRange = ($waitTimeBonusP1 + $maxPointsDifference >= $diff)
                     || ($waitTimeBonusP2 + $maxPointsDifference >= $diff);
 
-                $passesDisabledFilter = $p1->qmPlayer->player->user->userSettings->disabledPointFilter
-                    && $p2->qmPlayer->player->user->userSettings->disabledPointFilter
+                $passesDisabledFilter = $p1->qmPlayer?->player?->user?->userSettings?->disabledPointFilter
+                    && $p2->qmPlayer?->player?->user?->userSettings?->disabledPointFilter
                     && $diff < 1000
                     && $p1->points > 400
                     && $p2->points > 400;
@@ -534,7 +534,7 @@ class TeamMatchupHandler extends BaseMatchupHandler
             }
 
             // Check if they have play_and_observe mode
-            $userSettings = $qmQueueEntry->qmPlayer->player->user->userSettings;
+            $userSettings = $qmQueueEntry->qmPlayer?->player?->user?->userSettings;
             if (!$userSettings || !$userSettings->canPlayAndObserve()) {
                 return false;
             }

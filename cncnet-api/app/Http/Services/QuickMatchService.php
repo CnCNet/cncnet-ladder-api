@@ -362,7 +362,7 @@ class QuickMatchService
     {
         $query = QmQueueEntry::query()
             ->where('ladder_history_id', '=', $history->id)
-            ->with('qmPlayer');
+            ->with('qmPlayer.player.user.userSettings');
 
         if ($qmQueueEntry)
         {
