@@ -1395,6 +1395,8 @@ class QuickMatchService
 
     private function setTeamSpawns(string $team, string $spawnOrders, Collection $teamPlayers, QmMatch $qmMatch, int &$colors)
     {
+        // TODO: Wrap entire match creation in DB transaction for atomicity
+        // Currently save-then-delete pattern reduces risk but doesn't guarantee atomicity
 
         Log::debug('[QuickMatchService::setTeamSpawns]');
         $spawnOrder = array_map(fn($i) => intval($i), explode(',', $spawnOrders));
@@ -1419,8 +1421,8 @@ class QuickMatchService
             Log::debug('[QuickMatchService::setTeamSpawns] trying to set spawn for player ' . $player->id . ' with i : ' . $i . ' and color ' . $colors);
 
             $qmPlayer = $player->qmPlayer;
-            $player->delete();
 
+            // Set match player attributes
             $qmPlayer->color = $colors++;
             $qmPlayer->location = $spawnOrder[$i] - 1;
 
@@ -1446,12 +1448,19 @@ class QuickMatchService
             $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
             $qmPlayer->team = $team;
 
+            // Save BEFORE deleting queue entry - if save fails, player can retry
             $qmPlayer->save();
+
+            // Delete queue entry only after successful save
+            $player->delete();
         }
     }
 
     private function setObserversSpawns(Collection $observers, QmMatch $qmMatch, int &$colors)
     {
+        // TODO: Wrap entire match creation in DB transaction for atomicity
+        // Currently save-then-delete pattern reduces risk but doesn't guarantee atomicity
+
         Log::debug('[QuickMatchService::setObserversSpawns] Processing ' . $observers->count() . ' observer(s)');
 
         foreach ($observers->values() as $i => $observer)
@@ -1460,15 +1469,19 @@ class QuickMatchService
             $playerName = $qmObserver->player?->username ?? 'Unknown';
             $wasObserver = $qmObserver->is_observer;
 
-            $observer->delete();
-
+            // Set match player attributes
             $qmObserver->is_observer = true;
             $qmObserver->team = 'observer';
             $qmObserver->color = $colors++;
             $qmObserver->location = -1;
             $qmObserver->qm_match_id = $qmMatch->id;
             $qmObserver->tunnel_id = $qmMatch->seed + $qmObserver->color;
+
+            // Save BEFORE deleting queue entry - if save fails, player can retry
             $qmObserver->save();
+
+            // Delete queue entry only after successful save
+            $observer->delete();
 
             Log::debug("[QuickMatchService::setObserversSpawns] Observer {$playerName}: is_observer={$wasObserver}->{$qmObserver->is_observer}, team={$qmObserver->team}, location={$qmObserver->location}, color={$qmObserver->color}");
         }
