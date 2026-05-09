@@ -449,6 +449,31 @@ class LadderService
             ->get();
     }
 
+    /**
+     * Get eager loading configuration for games listing pages
+     *
+     * @return array Eager loading relationships with column selection
+     */
+    private function getGamesListingEagerLoads(): array
+    {
+        return [
+            // Game report data
+            'report:id,game_id,duration,fps',
+
+            // Player game reports with nested relationships
+            'report.playerGameReports:id,game_report_id,player_id,team,stats_id,points,won',
+            'report.playerGameReports.player:id,username,user_id',
+            'report.playerGameReports.player.user:id,avatar_path',  // For getUserAvatar()
+            'report.playerGameReports.player.user.userSettings:user_id,is_anonymous',  // For getUserAvatar() anonymous check
+            'report.playerGameReports.stats:id,cty,sid',  // For faction() method - needs cty (YR) and sid (other games)
+
+            // QM Match and map data
+            'qmMatch:id,qm_map_id',
+            'qmMatch.map:id,description,map_id',
+            'qmMatch.map.map:id,name,hash,image_path,image_hash',
+        ];
+    }
+
     public function getRecentLadderGamesPaginated($date, $cncnetGame)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
@@ -457,24 +482,16 @@ class LadderService
             return [];
         }
 
-        return Game::where("ladder_history_id", "=", $history->id)
+        return Game::select(
+                'games.id',
+                'games.game_report_id',
+                'games.qm_match_id',
+                'games.ladder_history_id',
+                'games.updated_at'
+            )
+            ->where("ladder_history_id", "=", $history->id)
             ->whereNotNull('game_report_id')
-            ->with([
-                // Game report data
-                'report:id,game_id,duration,fps',
-
-                // Player game reports with nested relationships
-                'report.playerGameReports:id,game_report_id,player_id,team,stats_id,points,won',
-                'report.playerGameReports.player:id,username,user_id',
-                'report.playerGameReports.player.user:id,avatar_path',  // For getUserAvatar()
-                'report.playerGameReports.player.user.userSettings:user_id,is_anonymous',  // For getUserAvatar() anonymous check
-                'report.playerGameReports.stats',  // For stats2 table
-
-                // QM Match and map data
-                'qmMatch:id,qm_map_id',
-                'qmMatch.map:id,description,map_id',
-                'qmMatch.map.map:id,name,hash,image_path,image_hash',
-            ])
+            ->with($this->getGamesListingEagerLoads())
             ->orderBy("games.id", "DESC")
             ->paginate(45);
     }
@@ -512,22 +529,7 @@ class LadderService
             ->where("ladder_history_id", "=", $history->id)
             ->where('game_reports.duration', '=', 3)
             ->where('finished', '=', 1)
-            ->with([
-                // Game report data
-                'report:id,game_id,duration,fps',
-
-                // Player game reports with nested relationships
-                'report.playerGameReports:id,game_report_id,player_id,team,stats_id,points,won',
-                'report.playerGameReports.player:id,username,user_id',
-                'report.playerGameReports.player.user:id,avatar_path',  // For getUserAvatar()
-                'report.playerGameReports.player.user.userSettings:user_id,is_anonymous',  // For getUserAvatar() anonymous check
-                'report.playerGameReports.stats',  // For stats2 table
-
-                // QM Match and map data
-                'qmMatch:id,qm_map_id',
-                'qmMatch.map:id,description,map_id',
-                'qmMatch.map.map:id,name,hash,image_path,image_hash',
-            ])
+            ->with($this->getGamesListingEagerLoads())
             ->orderBy("games.id", "DESC")
             ->paginate(45);
     }
