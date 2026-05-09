@@ -290,6 +290,7 @@ class LadderService
             ->with([
                 'player',
                 'player.user',
+                'player.user.userSettings',
             ])
             ->paginate($paginateCount);
     }
