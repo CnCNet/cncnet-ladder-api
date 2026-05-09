@@ -367,6 +367,7 @@ class LadderService
         {
             return LadderHistory::whereMonth("starts", $month)
                 ->whereYear("starts", $year)
+                ->with('ladder')
                 ->first();
         }
         else
@@ -376,6 +377,7 @@ class LadderService
                 ->whereHas('ladder', function ($q) use ($cncnetGame) {
                     $q->where('abbreviation', $cncnetGame);
                 })
+                ->with('ladder')
                 ->first();
         }
     }
@@ -464,7 +466,9 @@ class LadderService
                 // Player game reports with nested relationships
                 'report.playerGameReports:id,game_report_id,player_id,team,stats_id,points,won',
                 'report.playerGameReports.player:id,username,user_id',
-                'report.playerGameReports.player.user:id',  // For getUserAvatar()
+                'report.playerGameReports.player.user:id,avatar_path',  // For getUserAvatar()
+                'report.playerGameReports.player.user.userSettings:user_id,is_anonymous',  // For getUserAvatar() anonymous check
+                'report.playerGameReports.stats',  // For stats2 table
 
                 // QM Match and map data
                 'qmMatch:id,qm_map_id',
@@ -515,7 +519,9 @@ class LadderService
                 // Player game reports with nested relationships
                 'report.playerGameReports:id,game_report_id,player_id,team,stats_id,points,won',
                 'report.playerGameReports.player:id,username,user_id',
-                'report.playerGameReports.player.user:id',  // For getUserAvatar()
+                'report.playerGameReports.player.user:id,avatar_path',  // For getUserAvatar()
+                'report.playerGameReports.player.user.userSettings:user_id,is_anonymous',  // For getUserAvatar() anonymous check
+                'report.playerGameReports.stats',  // For stats2 table
 
                 // QM Match and map data
                 'qmMatch:id,qm_map_id',
