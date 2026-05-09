@@ -182,7 +182,7 @@ class LadderController extends Controller
             [
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
-                "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
+                "history" => $history,
                 "games" => $games,
                 "userIsMod" => $userIsMod,
                 "errorGames" => $errorGames
