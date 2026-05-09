@@ -110,9 +110,9 @@ class LadderService
     }
 
     /**
-     * Returns ladder history 
-     * @param mixed $user 
-     * @return array 
+     * Returns ladder history
+     * @param mixed $user
+     * @return array
      */
     public function getLatestPrivateLadderHistory($user)
     {
@@ -126,20 +126,29 @@ class LadderService
             ->where("ladder_history.starts", "=", $start)
             ->where("ladder_history.ends", "=", $end)
             ->where('ladder.private', true)
+            ->select('ladder_history.*')
+            ->with('ladder')
             ->get();
+
+        // Eager load user's ladder admin/tester relationships to avoid N+1
+        $user->load('ladderAdmins');
+        $userLadderAdmins = $user->ladderAdmins->keyBy('ladder_id');
+        $isGod = $user->isGod();
 
         $allowedLadderHistory = [];
         foreach ($ladderHistories as $ladderHistory)
         {
-            if (!$user->isLadderTester($ladderHistory->ladder))
-            {
-                if (!$user->isLadderAdmin($ladderHistory->ladder))
-                {
-                    continue;
-                }
-            }
+            $ladderId = $ladderHistory->ladder->id;
+            $ladderAdmin = $userLadderAdmins->get($ladderId);
 
-            $allowedLadderHistory[] = $ladderHistory;
+            // Check if user is tester or admin for this ladder
+            $isTester = $ladderAdmin && $ladderAdmin->tester;
+            $isAdmin = $isGod || ($ladderAdmin && $ladderAdmin->admin);
+
+            if ($isTester || $isAdmin)
+            {
+                $allowedLadderHistory[] = $ladderHistory;
+            }
         }
         return $allowedLadderHistory;
     }
