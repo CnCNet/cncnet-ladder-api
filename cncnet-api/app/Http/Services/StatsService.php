@@ -208,32 +208,36 @@ class StatsService
     public function getPlayerOfTheDay($history)
     {
         // Players won't change too often, cache them for 30 minutes under each ladder
-        $players = StatsCache::getPlayersTodayFromCache($history);
+        $playerIds = StatsCache::getPlayersTodayFromCache($history);
+
+        if (empty($playerIds))
+        {
+            return null;
+        }
 
         // These stats will update instantly
         $now = Carbon::now();
         $from = $now->copy()->startOfDay()->toDateTimeString();
         $to = $now->copy()->endOfDay()->toDateTimeString();
-        $stats = [];
 
-        foreach ($players as $k => $playerId)
+        // Single query with aggregation instead of N+1
+        $stats = PlayerGameReport::join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+            ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->join('players', 'players.id', '=', 'player_game_reports.player_id')
+            ->whereIn('player_game_reports.player_id', $playerIds)
+            ->where('games.ladder_history_id', $history->id)
+            ->where('game_reports.valid', true)
+            ->where('game_reports.best_report', true)
+            ->whereBetween('player_game_reports.created_at', [$from, $to])
+            ->where('player_game_reports.won', true)
+            ->selectRaw('players.id, players.username as name, COUNT(*) as wins')
+            ->groupBy('players.id', 'players.username')
+            ->orderByDesc('wins')
+            ->first();
+
+        if ($stats)
         {
-            $player = Player::where("id", $playerId)->first();
-            $winCount = $player->playerGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("won", true)
-                ->count();
-
-            $stats[$k]["id"] = $player->id;
-            $stats[$k]["name"] = $player->username;
-            $stats[$k]["wins"] = $winCount;
-        }
-
-        if (count($stats) > 0)
-        {
-            $playerOfDay = collect($stats)->sortByDesc("wins")->first();
-            return json_decode(json_encode($playerOfDay));
+            return json_decode(json_encode($stats));
         }
 
         return null;
@@ -243,38 +247,36 @@ class StatsService
     public function getClanOfTheDay($history)
     {
         // Clans won't change too often, cache them for 30 minutes under each ladder
-        $clans = StatsCache::getClansTodayFromCache($history);
+        $clanIds = StatsCache::getClansTodayFromCache($history);
+
+        if (empty($clanIds))
+        {
+            return null;
+        }
 
         // These stats will update instantly
         $now = Carbon::now();
         $from = $now->copy()->startOfDay()->toDateTimeString();
         $to = $now->copy()->endOfDay()->toDateTimeString();
-        $stats = [];
 
-        foreach ($clans as $k => $clanId)
+        // Single query with aggregation instead of N+1
+        $stats = PlayerGameReport::join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+            ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->join('clans', 'clans.id', '=', 'player_game_reports.clan_id')
+            ->whereIn('player_game_reports.clan_id', $clanIds)
+            ->where('games.ladder_history_id', $history->id)
+            ->where('game_reports.valid', true)
+            ->where('game_reports.best_report', true)
+            ->whereBetween('player_game_reports.created_at', [$from, $to])
+            ->where('player_game_reports.won', true)
+            ->selectRaw('clans.id, clans.short as name, COUNT(DISTINCT games.id) as wins')
+            ->groupBy('clans.id', 'clans.short')
+            ->orderByDesc('wins')
+            ->first();
+
+        if ($stats)
         {
-            $clan = Clan::where("id", $clanId)->first();
-
-            if ($clan == null)
-                continue;
-
-            $winCountGames = $clan->clanGames()
-                ->where("ladder_history_id", $history->id)
-                ->whereBetween("player_game_reports.created_at", [$from, $to])
-                ->where("won", true)
-                ->get();
-
-            $winCount = count($winCountGames);
-
-            $stats[$k]["id"] = $clan->id;
-            $stats[$k]["name"] = $clan->short;
-            $stats[$k]["wins"] = $winCount;
-        }
-
-        if (count($stats) > 0)
-        {
-            $clanOfTheDay = collect($stats)->sortByDesc("wins")->first();
-            return json_decode(json_encode($clanOfTheDay));
+            return json_decode(json_encode($stats));
         }
 
         return null;
