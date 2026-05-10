@@ -279,6 +279,7 @@ cncnet-api/.bash_history
 
 # Claude Code local settings
 .claude/settings.local.json
+.workflow/
 
 # Technical specifications (local development documentation)
 .specs/

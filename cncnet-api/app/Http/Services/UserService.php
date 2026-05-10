@@ -53,17 +53,39 @@ class UserService
         }));
 
         // Handle observer_mode separately (string field, not integer)
+        // Only update if explicitly provided in request to prevent partial updates from wiping the setting
         if ($user->isObserver())
         {
-            $observerMode = $request->input('observer_mode');
-            if (in_array($observerMode, ['observe_only', 'play_and_observe'])) {
-                $requestData['observer_mode'] = $observerMode;
-            } else {
-                $requestData['observer_mode'] = null; // Default to play mode
+            if ($request->has('observer_mode')) {
+                $observerMode = $request->input('observer_mode');
+                $oldValue = $userSettings->observer_mode;
+
+                if (in_array($observerMode, ['play', 'observe_only', 'play_and_observe'])) {
+                    $requestData['observer_mode'] = $observerMode;
+                } else {
+                    $requestData['observer_mode'] = null; // Default/fallback for invalid values
+                }
+
+                // Log if value changed
+                if ($oldValue !== $requestData['observer_mode']) {
+                    \Illuminate\Support\Facades\Log::info('Observer mode changed via API', [
+                        'user_id' => $user->id,
+                        'old_value' => $oldValue,
+                        'new_value' => $requestData['observer_mode']
+                    ]);
+                }
             }
+            // If not in request, preserve existing value (don't modify)
         }
         else
         {
+            // User doesn't have observer permission, force to null
+            if ($userSettings->observer_mode !== null) {
+                \Illuminate\Support\Facades\Log::info('Observer mode cleared - user lost observer permission', [
+                    'user_id' => $user->id,
+                    'old_value' => $userSettings->observer_mode
+                ]);
+            }
             $requestData['observer_mode'] = null;
         }
 

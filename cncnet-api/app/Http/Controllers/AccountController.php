@@ -355,10 +355,21 @@ class AccountController extends Controller
 
         // Handle observer mode (radio/dropdown input)
         $observerMode = $request->observer_mode;
-        if (in_array($observerMode, ['observe_only', 'play_and_observe'])) {
+        $oldObserverMode = $userSettings->observer_mode;
+
+        if (in_array($observerMode, ['play', 'observe_only', 'play_and_observe'])) {
             $userSettings->observer_mode = $observerMode;
         } else {
-            $userSettings->observer_mode = null; // Default to play mode
+            $userSettings->observer_mode = null; // Default/fallback for invalid values
+        }
+
+        // Log if value changed
+        if ($oldObserverMode !== $userSettings->observer_mode) {
+            Log::info('Observer mode changed via web form', [
+                'user_id' => $user->id,
+                'old_value' => $oldObserverMode,
+                'new_value' => $userSettings->observer_mode
+            ]);
         }
 
         $userSettings->allow_observers = $request->allowObservers == "on" ? true : false;

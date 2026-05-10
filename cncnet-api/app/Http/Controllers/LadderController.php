@@ -96,7 +96,8 @@ class LadderController extends Controller
             abort(404, "No ladder history found");
         }
 
-        $history->load([
+        // Use loadMissing to avoid reloading 'ladder' relation already loaded by getActiveLadderByDate()
+        $history->loadMissing([
             'ladder',
             'ladder.qmLadderRules',
             'ladder.sides',
@@ -182,7 +183,7 @@ class LadderController extends Controller
             [
                 "ladders" => $this->ladderService->getLatestLadders(),
                 "clan_ladders" => $this->ladderService->getLatestClanLadders(),
-                "history" => $this->ladderService->getActiveLadderByDate($request->date, $request->game),
+                "history" => $history,
                 "games" => $games,
                 "userIsMod" => $userIsMod,
                 "errorGames" => $errorGames

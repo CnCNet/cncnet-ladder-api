@@ -5,7 +5,7 @@
             @foreach ($games as $game)
 
                 @php
-                    $playerGameReports = \App\Models\PlayerGameReport::where('game_report_id', $game->game_report_id)->get();
+                    $playerGameReports = $game->report->playerGameReports ?? collect();
                     $gameUrl = \App\Models\URLHelper::getGameUrl($history, $game->id);
                     $timestamp = $game->updated_at->timestamp;
                 @endphp
