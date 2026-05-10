@@ -69,6 +69,21 @@ class QmMap extends Model
     public static function findMapsByLadder($id)
     {
         $ladder = Ladder::find($id);
+
+        if (!$ladder) {
+            \Illuminate\Support\Facades\Log::error('QmMap::findMapsByLadder - Ladder not found', ['ladder_id' => $id]);
+            return collect();
+        }
+
+        if (!$ladder->mapPool) {
+            \Illuminate\Support\Facades\Log::error('QmMap::findMapsByLadder - Ladder has no mapPool', [
+                'ladder_id' => $id,
+                'ladder_abbreviation' => $ladder->abbreviation,
+                'ladder_name' => $ladder->name
+            ]);
+            return collect();
+        }
+
         $qmMaps = $ladder->mapPool->maps;
 
         return $qmMaps->map(function ($qmMap)
