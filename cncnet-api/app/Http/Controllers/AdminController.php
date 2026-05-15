@@ -1017,6 +1017,41 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    public function reprocessGamePoints(Request $request)
+    {
+        $winningTeam = $request->input('winning_team', null);
+
+        \Log::info("AdminController.reprocessGamePoints called", [
+            'game_id' => $request->game_id,
+            'winning_team_input' => $winningTeam,
+            'all_inputs' => $request->all()
+        ]);
+
+        $status = $this->adminService->reprocessGamePoints($request->game_id, $request->user()->name, $winningTeam);
+
+        // Build success message
+        if ($winningTeam && str_starts_with($winningTeam, 'player_'))
+        {
+            $playerId = (int) str_replace('player_', '', $winningTeam);
+            $player = \App\Models\Player::find($playerId);
+            $playerName = $player ? $player->username : "Player #$playerId";
+            $message = "Game points reprocessed with $playerName set as winner (status: $status)";
+        }
+        else if ($winningTeam)
+        {
+            $message = "Game points reprocessed with Team $winningTeam set as winner (status: $status)";
+        }
+        else
+        {
+            $message = "Game points reprocessed (status: $status)";
+        }
+
+        \Log::info("Reprocess complete", ['message' => $message, 'status' => $status]);
+
+        $request->session()->flash('success', $message);
+        return redirect()->back();
+    }
+
     public function remSide(Request $request, $ladderId = null)
     {
         $ladder = Ladder::find($ladderId);

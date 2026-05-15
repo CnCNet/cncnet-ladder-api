@@ -152,11 +152,11 @@ class Player extends Model
 
     public function averageFPS($history)
     {
-        $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
-        $total = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->sum('fps');
-        if ($count != 0)
-            return $total / $count;
-        return 0;
+        return $this->playerGames()
+            ->where('ladder_history_id', '=', $history->id)
+            ->where('fps', '>', 25)
+            ->where('fps', '<=', 60)
+            ->avg('fps') ?? 0;
     }
 
     public function sideUsage($history)

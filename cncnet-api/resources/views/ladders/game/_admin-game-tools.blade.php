@@ -142,11 +142,77 @@
             @endforeach
 
             @if (!(isset($hasWash) && $hasWash) && $userIsMod)
-                <form action="/admin/moderate/{{ $history->ladder->id }}/games/wash" class="text-center" method="POST">
-                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <input name="game_id" type="hidden" value="{{ $game->id }}" />
-                    <button type="submit" class="btn btn-md btn-danger">Wash</button>
-                </form>
+                <div class="d-flex justify-content-center gap-3 mt-4 mb-4">
+                    <form action="/admin/moderate/{{ $history->ladder->id }}/games/wash" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <input name="game_id" type="hidden" value="{{ $game->id }}" />
+                        <button type="submit" class="btn btn-lg shadow-sm" style="background-color: #ffc107; color: #000; font-weight: bold; border: none;">
+                            <i class="fa fa-refresh fa-fw"></i> Wash Game
+                        </button>
+                    </form>
+                </div>
+            @endif
+
+            @if ($userIsMod)
+                <div class="card shadow-lg border-0 mt-4 mb-4 mx-auto" style="max-width: 600px; border-radius: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-body p-4">
+                        <form action="/admin/moderate/{{ $history->ladder->id }}/games/reprocess" method="POST">
+                            @csrf
+                            <input name="game_id" type="hidden" value="{{ $game->id }}" />
+
+                            <h5 class="text-white text-center mb-3">
+                                <i class="fa fa-refresh fa-fw"></i> Reprocess Game Points
+                            </h5>
+
+                            <div class="mb-3">
+                                @php
+                                    $is1v1 = $history->ladder->ladder_type == \App\Models\Ladder::ONE_VS_ONE;
+                                    $playerGameReports = $gameReport->playerGameReports()->where('spectator', 0)->get();
+                                @endphp
+
+                                <label for="winning_team" class="form-label text-white">
+                                    <strong>{{ $is1v1 ? 'Select Winner (Optional)' : 'Select Winning Team (Optional)' }}</strong>
+                                </label>
+
+                                <select name="winning_team" id="winning_team" class="form-select form-select-lg">
+                                    <option value="">Keep current outcome</option>
+
+                                    @if ($is1v1)
+                                        {{-- For 1v1, use player_id as identifier since team field is null --}}
+                                        @foreach ($playerGameReports as $pgr)
+                                            <option value="player_{{ $pgr->player_id }}">{{ $pgr->player->username }}</option>
+                                        @endforeach
+                                    @else
+                                        {{-- For 2v2/clan, show teams with player names --}}
+                                        @php
+                                            $teamPlayers = $playerGameReports->groupBy('team');
+                                        @endphp
+                                        @foreach ($teamPlayers as $team => $players)
+                                            @php
+                                                $playerNames = $players->pluck('player.username')->implode(', ');
+                                            @endphp
+                                            <option value="{{ $team }}">Team {{ $team }}: {{ $playerNames }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
+
+                                <small class="text-white-50 d-block mt-2">
+                                    {{ $is1v1 ? 'Choose a player to set as winner, or leave default to use existing outcome' : 'Choose a team to override the winner, or leave default to use existing outcome' }}
+                                </small>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-warning btn-lg shadow" style="font-weight: bold; border: 3px solid #fff;">
+                                    <i class="fa fa-cogs fa-fw"></i> Reprocess Points
+                                </button>
+                            </div>
+
+                            <small class="text-white-50 d-block mt-3 text-center">
+                                Recalculates points using current ladder rules. Use team override if system chose wrong winner.
+                            </small>
+                        </form>
+                    </div>
+                </div>
             @endif
 
             <div class="game-details text-center">

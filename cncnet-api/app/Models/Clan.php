@@ -167,11 +167,11 @@ class Clan extends Model
 
     public function averageFPS($history)
     {
-        $count = $this->clanGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
-        $total = $this->clanGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->sum('fps');
-        if ($count != 0)
-            return $total / $count;
-        return 0;
+        return $this->clanGames()
+            ->where('ladder_history_id', '=', $history->id)
+            ->where('fps', '>', 25)
+            ->where('fps', '<=', 60)
+            ->avg('fps') ?? 0;
     }
 
     public function points($history)
