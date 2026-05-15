@@ -202,7 +202,7 @@
                             </div>
 
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-warning btn-lg shadow" style="font-weight: bold; border: 3px solid #fff;">
+                                <button type="submit" class="btn btn-warning btn-lg shadow" style="font-weight: bold; border: 3px solid #fff;" onclick="return confirm('Reprocess this game? Points will be recalculated using current ladder rules.');">
                                     <i class="fa fa-cogs fa-fw"></i> Reprocess Points
                                 </button>
                             </div>

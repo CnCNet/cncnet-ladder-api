@@ -152,6 +152,10 @@ class Player extends Model
 
     public function averageFPS($history)
     {
+        // Filter FPS to 25-60 range to exclude outliers:
+        // - Below 25: likely game crashes, instant disconnects, or corrupted data
+        // - Above 60: spawner bug
+        // This range represents legitimate gameplay on period-accurate hardware
         return $this->playerGames()
             ->where('ladder_history_id', '=', $history->id)
             ->where('fps', '>', 25)

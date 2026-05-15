@@ -1027,7 +1027,12 @@ class AdminController extends Controller
             'all_inputs' => $request->all()
         ]);
 
-        $status = $this->adminService->reprocessGamePoints($request->game_id, $request->user()->name, $winningTeam);
+        $status = $this->adminService->reprocessGamePoints(
+            $request->game_id,
+            $request->user()->name,
+            $winningTeam,
+            $request->user()
+        );
 
         // Build success message
         if ($winningTeam && str_starts_with($winningTeam, 'player_'))
