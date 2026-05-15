@@ -137,6 +137,21 @@ class AdminService
                 return "No player reports found";
             }
 
+            // Capture before state for audit trail
+            $beforeState = [];
+            foreach ($currentPlayerGameReports as $pgr) {
+                $beforeState[] = [
+                    'player_id' => $pgr->player_id,
+                    'player_username' => $pgr->player->username ?? 'Unknown',
+                    'team' => $pgr->team,
+                    'won' => $pgr->won,
+                    'defeated' => $pgr->defeated,
+                    'draw' => $pgr->draw,
+                    'disconnected' => $pgr->disconnected,
+                    'points' => $pgr->points,
+                ];
+            }
+
             // Undo existing points from cache using current report
             $this->ladderService->undoCache($currentGameReport);
 
@@ -257,6 +272,35 @@ class AdminService
             // Update cache with new points
             $this->ladderService->updateCache($newGameReport);
 
+            // Capture after state for audit trail
+            $newPlayerGameReports = $newGameReport->playerGameReports()->get();
+            $afterState = [];
+            foreach ($newPlayerGameReports as $pgr) {
+                $afterState[] = [
+                    'player_id' => $pgr->player_id,
+                    'player_username' => $pgr->player->username ?? 'Unknown',
+                    'team' => $pgr->team,
+                    'won' => $pgr->won,
+                    'defeated' => $pgr->defeated,
+                    'draw' => $pgr->draw,
+                    'disconnected' => $pgr->disconnected,
+                    'points' => $pgr->points,
+                ];
+            }
+
+            // Build changes summary for quick reference
+            $changes = [];
+            foreach ($beforeState as $index => $before) {
+                $after = $afterState[$index] ?? null;
+                if ($after && ($before['won'] != $after['won'] || $before['points'] != $after['points'])) {
+                    $changes[] = $before['player_username'] . ': '
+                        . ($before['won'] ? 'W' : ($before['defeated'] ? 'L' : 'D'))
+                        . ' (' . $before['points'] . 'pts) → '
+                        . ($after['won'] ? 'W' : ($after['defeated'] ? 'L' : 'D'))
+                        . ' (' . $after['points'] . 'pts)';
+                }
+            }
+
             // Log the reprocess action
             $logMessage = 'Game points reprocessed';
             if ($is1v1PlayerOverride)
@@ -281,7 +325,10 @@ class AdminService
                         'winning_team_override' => $winningTeam,
                         'winning_player_id' => $winningPlayerId,
                         'old_report_id' => $currentGameReport->id,
-                        'new_report_id' => $newGameReport->id
+                        'new_report_id' => $newGameReport->id,
+                        'before_state' => $beforeState,
+                        'after_state' => $afterState,
+                        'changes_summary' => $changes
                     ])
                     ->log($logMessage);
             } else {
