@@ -164,6 +164,16 @@
                                 <i class="fa fa-refresh fa-fw"></i> Reprocess Game Points
                             </h5>
 
+                            @if ($errors->any())
+                                <div class="alert alert-danger" role="alert">
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
+
                             <div class="mb-3">
                                 @php
                                     $is1v1 = $history->ladder->ladder_type == \App\Models\Ladder::ONE_VS_ONE;
