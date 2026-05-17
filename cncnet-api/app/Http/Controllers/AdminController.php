@@ -1017,6 +1017,80 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
+    public function reprocessGamePoints(Request $request)
+    {
+        $winningTeam = $request->input('winning_team', null);
+
+        \Log::info("AdminController.reprocessGamePoints called", [
+            'game_id' => $request->game_id,
+            'winning_team_input' => $winningTeam,
+            'ladder_id' => $request->route('ladderId')
+        ]);
+
+        // Validate game exists
+        $game = \App\Models\Game::find($request->game_id);
+        if (!$game) {
+            return redirect()->back()->withErrors(['game_id' => 'Game not found']);
+        }
+
+        // Validate winning_team if provided
+        if ($winningTeam !== null && $winningTeam !== '') {
+            $gameReport = $game->report()->first();
+            if (!$gameReport) {
+                return redirect()->back()->withErrors(['game' => 'Game report not found']);
+            }
+
+            // Get non-spectator players
+            $playerGameReports = $gameReport->playerGameReports()->where('spectator', 0)->get();
+
+            if (str_starts_with($winningTeam, 'player_')) {
+                // Validate player exists in this game
+                $playerId = (int) str_replace('player_', '', $winningTeam);
+                $playerExists = $playerGameReports->contains('player_id', $playerId);
+
+                if (!$playerExists) {
+                    return redirect()->back()->withErrors(['winning_team' => 'Selected player not found in this game']);
+                }
+            } else {
+                // Validate team exists in this game
+                $teamExists = $playerGameReports->contains('team', $winningTeam);
+
+                if (!$teamExists) {
+                    return redirect()->back()->withErrors(['winning_team' => 'Selected team not found in this game']);
+                }
+            }
+        }
+
+        $status = $this->adminService->reprocessGamePoints(
+            $request->game_id,
+            $request->user()->name,
+            $winningTeam,
+            $request->user()
+        );
+
+        // Build success message
+        if ($winningTeam && str_starts_with($winningTeam, 'player_'))
+        {
+            $playerId = (int) str_replace('player_', '', $winningTeam);
+            $player = \App\Models\Player::find($playerId);
+            $playerName = $player ? $player->username : "Player #$playerId";
+            $message = "Game points reprocessed with $playerName set as winner (status: $status)";
+        }
+        else if ($winningTeam)
+        {
+            $message = "Game points reprocessed with Team $winningTeam set as winner (status: $status)";
+        }
+        else
+        {
+            $message = "Game points reprocessed (status: $status)";
+        }
+
+        \Log::info("Reprocess complete", ['message' => $message, 'status' => $status]);
+
+        $request->session()->flash('success', $message);
+        return redirect()->back();
+    }
+
     public function remSide(Request $request, $ladderId = null)
     {
         $ladder = Ladder::find($ladderId);

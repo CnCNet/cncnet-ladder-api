@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class PlayerGameReport extends Model
 {
+    use LogsActivity;
+
     // This is a report of disputable information about a game. Undisputed information is stored in the games table
     protected $fillable = [
         'game_id',
@@ -26,6 +30,23 @@ class PlayerGameReport extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['player_id', 'points', 'won', 'defeated', 'draw', 'disconnected', 'quit', 'no_completion', 'team', 'clan_id'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            // Only log admin manual actions, not routine game processing
+            ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at'])
+            ->useLogName('admin');
+    }
+
+    // Only log when part of manual report (admin reprocess, wash, etc)
+    public function shouldLogActivity(): bool
+    {
+        return $this->gameReport && $this->gameReport->manual_report === true;
+    }
 
     public function player()
     {

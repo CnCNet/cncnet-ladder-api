@@ -9,8 +9,11 @@
                 <select name="model_type" id="model_type" class="form-control">
                     <option value="">All</option>
                     <option value="App\Models\Ban" @if(request('model_type')=='App\Models\Ban' ) selected @endif>Ban</option>
+                    <option value="App\Models\Game" @if(request('model_type')=='App\Models\Game' ) selected @endif>Game</option>
+                    <option value="App\Models\GameReport" @if(request('model_type')=='App\Models\GameReport' ) selected @endif>GameReport</option>
                     <option value="App\Models\Map" @if(request('model_type')=='App\Models\Map' ) selected @endif>Map</option>
                     <option value="App\Models\MapPool" @if(request('model_type')=='App\Models\MapPool' ) selected @endif>MapPool</option>
+                    <option value="App\Models\PlayerGameReport" @if(request('model_type')=='App\Models\PlayerGameReport' ) selected @endif>PlayerGameReport</option>
                     <option value="App\Models\QmLadderRules" @if(request('model_type')=='App\Models\QmLadderRules' ) selected @endif>QmLadderRules</option>
                     <option value="App\Models\QmMap" @if(request('model_type')=='App\Models\QmMap' ) selected @endif>QmMap</option>
                     <option value="App\Models\SpawnOptionValue" @if(request('model_type')=='App\Models\SpawnOptionValue' ) selected @endif>SpawnOptionValue</option>
@@ -40,6 +43,7 @@
                 <th>Event</th>
                 <th>Model ID</th>
                 <th>User</th>
+                <th>Description</th>
                 <th>Changes</th>
             </tr>
         </thead>
@@ -60,22 +64,56 @@
                     System
                     @endif
                 </td>
-                    <td>
-                        @if($activity->properties && isset($activity->properties['attributes']))
-                            <strong>New:</strong>
-                            <pre>{{ json_encode($activity->properties['attributes'], JSON_PRETTY_PRINT) }}</pre>
-                            @if(isset($activity->properties['old']))
-                                <strong>Old:</strong>
-                                <pre>{{ json_encode($activity->properties['old'], JSON_PRETTY_PRINT) }}</pre>
-                            @endif
-                        @else
-                            <em>No changes</em>
+                <td>
+                    @if($activity->description)
+                        <strong>{{ $activity->description }}</strong>
+                    @else
+                        <em>-</em>
+                    @endif
+                </td>
+                <td>
+                    @if($activity->properties && isset($activity->properties['changes_summary']))
+                        {{-- Custom reprocess format --}}
+                        <div class="mb-2">
+                            <strong>Changes:</strong>
+                            <ul class="mb-0">
+                                @foreach($activity->properties['changes_summary'] as $change)
+                                    <li>{{ $change }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @if(isset($activity->properties['status']))
+                            <small class="text-muted">Status: {{ $activity->properties['status'] }}</small>
                         @endif
-                    </td>
+                        <details class="mt-2">
+                            <summary style="cursor: pointer;" class="text-primary">Show full details</summary>
+                            <div class="mt-2">
+                                @if(isset($activity->properties['before_state']))
+                                    <strong>Before:</strong>
+                                    <pre style="font-size: 0.8rem; max-height: 300px; overflow-y: auto;">{{ json_encode($activity->properties['before_state'], JSON_PRETTY_PRINT) }}</pre>
+                                @endif
+                                @if(isset($activity->properties['after_state']))
+                                    <strong>After:</strong>
+                                    <pre style="font-size: 0.8rem; max-height: 300px; overflow-y: auto;">{{ json_encode($activity->properties['after_state'], JSON_PRETTY_PRINT) }}</pre>
+                                @endif
+                            </div>
+                        </details>
+                    @elseif($activity->properties && isset($activity->properties['attributes']))
+                        {{-- Standard Spatie format --}}
+                        <strong>New:</strong>
+                        <pre style="font-size: 0.8rem; max-height: 300px; overflow-y: auto;">{{ json_encode($activity->properties['attributes'], JSON_PRETTY_PRINT) }}</pre>
+                        @if(isset($activity->properties['old']))
+                            <strong>Old:</strong>
+                            <pre style="font-size: 0.8rem; max-height: 300px; overflow-y: auto;">{{ json_encode($activity->properties['old'], JSON_PRETTY_PRINT) }}</pre>
+                        @endif
+                    @else
+                        <em>No changes</em>
+                    @endif
+                </td>
             </tr>
             @empty
             <tr>
-                <td colspan="6">No audit events found.</td>
+                <td colspan="7">No audit events found.</td>
             </tr>
             @endforelse
         </tbody>

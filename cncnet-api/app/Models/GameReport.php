@@ -3,11 +3,32 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class GameReport extends Model
 {
+    use LogsActivity;
+
     protected $table = 'game_reports';
     protected $fillable = ['game_id', 'player_id', 'best_report', 'manual_report', 'duration', 'valid', 'fps', 'oos', 'created_at'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['game_id', 'player_id', 'best_report', 'manual_report', 'duration', 'valid', 'finished', 'fps', 'oos'])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs()
+            // Only log admin manual actions, not routine game processing
+            ->dontLogIfAttributesChangedOnly(['created_at', 'updated_at'])
+            ->useLogName('admin');
+    }
+
+    // Only log when manually created by admin (reprocess, wash, etc)
+    public function shouldLogActivity(): bool
+    {
+        return $this->manual_report === true;
+    }
 
     public function getPointReportByClan($clanId)
     {
