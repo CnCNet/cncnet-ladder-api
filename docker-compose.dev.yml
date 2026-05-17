@@ -14,6 +14,8 @@ services:
     command: php artisan serve --host=0.0.0.0 --port=8000
     restart: unless-stopped
     container_name: dev_cncnet_ladder_app
+    group_add:
+      - "${DOCKER_GID:-1001}"
     env_file: ./cncnet-api/.env
     environment:
       XDG_CONFIG_HOME: /app/.config
@@ -25,6 +27,7 @@ services:
       - caddy_data:/app/.config
       - caddy_config:/app/.data
       - ./cncnet-api/:/app
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - redis
       - mysql
