@@ -437,16 +437,19 @@ class ApiLadderController extends Controller
             return 604;
         }
 
-        if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
-        {
-            // FPS too low, no points awarded
-            return 630;
-        }
-
         if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
         {
             // Duration too low, no points awarded
             return 660;
+        }
+
+        // Only apply FPS filter on short games (< 2 minutes)
+        // Prevents awarding points for instant disconnects/crashes at game start
+        // Long games with low FPS are still legitimate matches (poor performance, not bail)
+        if ($gameReport->duration < 120 && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
+        {
+            // FPS too low on short game, likely disconnect/crash
+            return 630;
         }
 
         foreach ($clanGameReports as $clanGameReport)
@@ -635,16 +638,19 @@ class ApiLadderController extends Controller
             return 604;
         }
 
-        if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
-        {
-            // FPS too low, no points awarded
-            return 630;
-        }
-
         if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
         {
             // Duration too low, no points awarded
             return 660;
+        }
+
+        // Only apply FPS filter on short games (< 2 minutes)
+        // Prevents awarding points for instant disconnects/crashes at game start
+        // Long games with low FPS are still legitimate matches (poor performance, not bail)
+        if ($gameReport->duration < 120 && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
+        {
+            // FPS too low on short game, likely disconnect/crash
+            return 630;
         }
 
         $disconnected = 0;
@@ -831,16 +837,19 @@ class ApiLadderController extends Controller
             return 604;
         }
 
-        if ($gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
-        {
-            // FPS too low, no points awarded
-            return 630;
-        }
-
         if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
         {
             // Duration too low, no points awarded
             return 660;
+        }
+
+        // Only apply FPS filter on short games (< 2 minutes)
+        // Prevents awarding points for instant disconnects/crashes at game start
+        // Long games with low FPS are still legitimate matches (poor performance, not bail)
+        if ($gameReport->duration < 120 && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
+        {
+            // FPS too low on short game, likely disconnect/crash
+            return 630;
         }
 
         $disconnected = 0;

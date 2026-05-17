@@ -152,11 +152,15 @@ class Player extends Model
 
     public function averageFPS($history)
     {
-        $count = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->count();
-        $total = $this->playerGames()->where('ladder_history_id', '=', $history->id)->where('fps', '>', 25)->sum('fps');
-        if ($count != 0)
-            return $total / $count;
-        return 0;
+        // Filter FPS to 25-60 range to exclude outliers:
+        // - Below 25: likely game crashes, instant disconnects, or corrupted data
+        // - Above 60: spawner bug
+        // This range represents legitimate gameplay on period-accurate hardware
+        return $this->playerGames()
+            ->where('ladder_history_id', '=', $history->id)
+            ->where('fps', '>', 25)
+            ->where('fps', '<=', 60)
+            ->avg('fps') ?? 0;
     }
 
     public function sideUsage($history)

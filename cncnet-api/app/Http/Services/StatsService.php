@@ -94,13 +94,17 @@ class StatsService
     private function getFactionResults($player, $history, $from, $to)
     {
         // Use single query with aggregation instead of N+1 loop
+        // Use points > 0 instead of won = 1 because the 'won' column is set from client stats dump
+        // before server processes team logic. For 2v2, when server can't determine clear winner
+        // (e.g., ambiguous outcomes, mutual disconnects), it sets points=0 but doesn't update won flag.
+        // Using points > 0 ensures consistency with player stats and reflects server's final decision.
         $results = $player->playerGames()
             ->where("ladder_history_id", $history->id)
             ->whereBetween("player_game_reports.created_at", [$from, $to])
             ->selectRaw('
                 sid,
-                SUM(CASE WHEN won = 1 THEN 1 ELSE 0 END) as won,
-                SUM(CASE WHEN won = 0 THEN 1 ELSE 0 END) as lost,
+                SUM(CASE WHEN points > 0 THEN 1 ELSE 0 END) as won,
+                SUM(CASE WHEN points <= 0 THEN 1 ELSE 0 END) as lost,
                 COUNT(*) as total
             ')
             ->groupBy("sid")
@@ -121,13 +125,17 @@ class StatsService
     private function getFactionResultsForYR($player, $history, $from, $to)
     {
         // Use single query with aggregation instead of N+1 loop
+        // Use points > 0 instead of won = 1 because the 'won' column is set from client stats dump
+        // before server processes team logic. For 2v2, when server can't determine clear winner
+        // (e.g., ambiguous outcomes, mutual disconnects), it sets points=0 but doesn't update won flag.
+        // Using points > 0 ensures consistency with player stats and reflects server's final decision.
         $results = $player->playerGames()
             ->where("ladder_history_id", $history->id)
             ->whereBetween("player_game_reports.created_at", [$from, $to])
             ->selectRaw('
                 cty,
-                SUM(CASE WHEN won = 1 THEN 1 ELSE 0 END) as won,
-                SUM(CASE WHEN won = 0 THEN 1 ELSE 0 END) as lost,
+                SUM(CASE WHEN points > 0 THEN 1 ELSE 0 END) as won,
+                SUM(CASE WHEN points <= 0 THEN 1 ELSE 0 END) as lost,
                 COUNT(*) as total
             ')
             ->groupBy("cty")

@@ -226,8 +226,8 @@
                         </p>
                         <div>
                             <label>
-                                <input type="radio" name="observer_mode" value=""
-                                    @if (!$userSettings->observer_mode) checked @endif />
+                                <input type="radio" name="observer_mode" value="play"
+                                    @if ($userSettings->observer_mode === 'play' || !$userSettings->observer_mode) checked @endif />
                                 <strong>Play Only</strong> - Join matches as player only
                             </label>
                         </div>
