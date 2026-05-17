@@ -1,4 +1,10 @@
 services:
+  # SECURITY WARNING: Docker Socket Mount
+  # The app container has access to /var/run/docker.sock for bot management.
+  # See docker-compose.yml for full security implications and mitigation measures.
+  #
+  # DOCKER_GID must match the host's docker group ID:
+  # Find with: getent group docker | cut -d: -f3
   app:
     image: cncnet-ladder
     build:
@@ -15,7 +21,7 @@ services:
     restart: unless-stopped
     container_name: dev_cncnet_ladder_app
     group_add:
-      - "${DOCKER_GID:-1001}"
+      - "${DOCKER_GID:-1001}"  # Docker group access for bot management
     env_file: ./cncnet-api/.env
     environment:
       XDG_CONFIG_HOME: /app/.config
@@ -27,7 +33,7 @@ services:
       - caddy_data:/app/.config
       - caddy_config:/app/.data
       - ./cncnet-api/:/app
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock  # Required for bot container management
     depends_on:
       - redis
       - mysql

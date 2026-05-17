@@ -1,11 +1,31 @@
 services:
+  # SECURITY WARNING: Docker Socket Mount
+  # The app container has access to /var/run/docker.sock to enable remote bot
+  # container management. This grants the container full control over the host
+  # Docker daemon. Any security compromise of this container could lead to full
+  # host compromise.
+  #
+  # Security measures in place:
+  # - Admin-only endpoint protected by session authentication
+  # - Rate limiting (30-minute cooldown)
+  # - Path validation and whitelist checks
+  # - Audit logging of all restart attempts
+  # - Background job execution with timeout
+  #
+  # DOCKER_GID must match the host's docker group ID:
+  # Find with: getent group docker | cut -d: -f3
+  #
+  # Alternative approaches for production:
+  # - Use SSH-based remote execution instead
+  # - Use Docker socket proxy (tecnativa/docker-socket-proxy)
+  # - Dedicated management service with restricted permissions
   app:
     image: ghcr.io/cncnet/cncnet-ladder-app:${APP_TAG}
     restart: unless-stopped
     container_name: cncnet_ladder_app${ENV_SUFFIX}
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     group_add:
-      - "${DOCKER_GID:-1001}"
+      - "${DOCKER_GID:-1001}"  # Docker group access for bot management
     env_file: ".app.env"
     environment:
       XDG_CONFIG_HOME: /app/.config
@@ -14,7 +34,7 @@ services:
       - ./caddy/data:/app/.data
       - ./caddy/config:/app/.config
       - ./storage:/app/storage
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock  # Required for bot container management
     ports:
       - '${APP_PORT:-3000}:8000'
     depends_on:
