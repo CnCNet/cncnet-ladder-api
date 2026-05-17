@@ -16,8 +16,8 @@ class BotManagementController extends Controller
     /**
      * Restart the ladder bot container.
      *
-     * Dispatches a background job to recreate and start the bot container using
-     * docker compose. Includes rate limiting to prevent abuse.
+     * Dispatches a background job to restart the bot using a sudo-configured
+     * script. Includes rate limiting to prevent abuse.
      */
     public function restart(Request $request): RedirectResponse
     {
@@ -29,24 +29,23 @@ class BotManagementController extends Controller
             }
 
             // Get configuration
-            $composePath = config('bot.compose_path');
+            $scriptPath = config('bot.restart_script_path');
             $cooldownMinutes = config('bot.restart_cooldown_minutes', 30);
 
             // Validate configuration
-            if (!$composePath) {
-                throw new Exception('BOT_COMPOSE_PATH is not configured. Please contact system administrator.');
+            if (!$scriptPath) {
+                throw new Exception('BOT_RESTART_SCRIPT is not configured. Please contact system administrator.');
             }
 
-            // Validate compose file exists
-            $realPath = realpath($composePath);
+            // Validate script exists and is executable
+            $realPath = realpath($scriptPath);
 
             if ($realPath === false || !file_exists($realPath)) {
-                throw new Exception('Bot compose file not found at configured path.');
+                throw new Exception('Bot restart script not found at configured path.');
             }
 
-            // Validate file extension
-            if (!str_ends_with($realPath, '.yml') && !str_ends_with($realPath, '.yaml')) {
-                throw new Exception('Invalid compose file: must be .yml or .yaml');
+            if (!is_executable($realPath)) {
+                throw new Exception('Bot restart script is not executable.');
             }
 
             // Check rate limit (per-user to prevent one user from blocking others)
@@ -69,27 +68,27 @@ class BotManagementController extends Controller
             }
 
             // Dispatch job for async execution
-            RestartBotContainerJob::dispatch($user->id, $realPath);
+            RestartBotContainerJob::dispatch($user, $realPath);
 
             // Store current timestamp in cache (expires after cooldown period)
-            Cache::put($cacheKey, time(), $cooldownSeconds ?? $cooldownMinutes * 60);
+            Cache::put($cacheKey, time(), $cooldownMinutes * 60);
 
             // Log the restart request
             activity()
                 ->causedBy($user)
                 ->withProperties([
-                    'compose_path' => $realPath,
+                    'script_path' => $realPath,
                     'action' => 'restart_requested',
                 ])
                 ->log('Requested ladder bot container restart');
 
             Log::info('Bot restart queued', [
                 'user_id' => $user->id,
-                'compose_path' => $realPath,
+                'script_path' => $realPath,
             ]);
 
             return redirect('/admin')
-                ->with('success', 'Bot container restart has been queued. The operation will complete in the background.');
+                ->with('success', 'Bot container restart requested. The operation will complete in the background.');
 
         } catch (Exception $ex) {
             // Log the error with full context
@@ -102,11 +101,9 @@ class BotManagementController extends Controller
             // Return user-friendly error message
             $errorMessage = 'Failed to restart bot container';
 
-            // Only show detailed error to super admins
-            if ($request->user()?->isAdmin()) {
+            // Only show detailed error for clarity
+            if ($ex->getMessage()) {
                 $errorMessage .= ': ' . $ex->getMessage();
-            } else {
-                $errorMessage .= '. Please contact an administrator.';
             }
 
             return redirect('/admin')

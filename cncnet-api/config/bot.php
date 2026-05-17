@@ -13,14 +13,16 @@ return [
     */
 
     /**
-     * Absolute path to the bot's docker-compose.yml file.
+     * Absolute path to the bot restart script.
      *
-     * Example: /opt/cncnet-ladder-bot/docker-compose.yml
+     * Example: /usr/local/bin/restart-ladder-bot
      *
-     * This path is validated before execution to prevent path traversal attacks.
+     * This script should be executable and configured in sudoers:
+     * www-data ALL=(root) NOPASSWD: /usr/local/bin/restart-ladder-bot
+     *
      * Leave null to disable bot restart functionality.
      */
-    'compose_path' => env('BOT_COMPOSE_PATH'),
+    'restart_script_path' => env('BOT_RESTART_SCRIPT', '/usr/local/bin/restart-ladder-bot'),
 
     /**
      * Rate limit cooldown period in minutes for bot restarts.
@@ -29,9 +31,9 @@ return [
     'restart_cooldown_minutes' => env('BOT_RESTART_COOLDOWN', 30),
 
     /**
-     * Whether to show docker compose output to admins.
-     * Set to false in production to prevent information disclosure.
+     * Process timeout in seconds for restart operation.
+     * Prevents hanging processes from blocking the system.
      */
-    'show_output_to_admins' => env('BOT_SHOW_OUTPUT', false),
+    'restart_timeout_seconds' => env('BOT_RESTART_TIMEOUT', 120),
 
 ];
