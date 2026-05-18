@@ -65,32 +65,62 @@ class PointsFixDetectionService
             return [];
         }
 
-        $winnerPointsBefore = $winner->player->pointsBefore($history, $winner->game_id);
-        $loserPointsBefore = $loser->player->pointsBefore($history, $loser->game_id);
-        $diff = $loserPointsBefore - $winnerPointsBefore;
+        $rules = $history->ladder->qmLadderRules;
+        $pointService = new PointService();
+        $playerService = new PlayerService();
 
-        // ELO calculation
-        $we = 1 / (pow(10, abs($diff) / 600) + 1);
-        if ($diff > 0) {
-            $we = 1 - $we;
-        }
-
-        $wol_k = $history->ladder->qmLadderRules->wol_k;
-        $wol = (int)($wol_k * $we);
-        $gvc = 8;
-
-        $winnerPoints = $gvc + $wol;
-
-        // Calculate loser points
-        if ($winnerPointsBefore < 10 * ($gvc + $wol)) {
-            $loserPoints = -1 * (int)($loserPointsBefore / 10);
-        } else {
-            $loserPoints = -1 * ($gvc + $wol);
-        }
-
-        // Prevent negative total points
+        $winnerCache = $winner->player->playerCache($history->id);
+        $winnerCurrentPts = $winnerCache ? $winnerCache->points : 0;
         $loserCache = $loser->player->playerCache($history->id);
-        if ($loserPoints < 0 && (!$loserCache || $loserCache->points < 0)) {
+        $loserCurrentPts = $loserCache ? $loserCache->points : 0;
+
+        $winnerRating = $playerService->findUserRatingByPlayerId($winner->player_id);
+        $loserRating = $playerService->findUserRatingByPlayerId($loser->player_id);
+
+        $winnerPoints = $pointService->calculatePoints([
+            'draw'               => false,
+            'hasWinner'          => true,
+            'myTeamWon'          => true,
+            'allyPts'            => $winner->player->pointsBefore($history, $winner->game_id),
+            'enemyPts'           => $loser->player->pointsBefore($history, $loser->game_id),
+            'allyElo'            => $winnerRating->rating,
+            'enemyElo'           => $loserRating->rating,
+            'allyCount'          => 1,
+            'enemyCount'         => 1,
+            'allyDeviationSum'   => $winnerRating->deviation,
+            'enemyDeviationSum'  => $loserRating->deviation,
+            'enemyGamesSum'      => $loser->player->totalGames($history),
+            'currentPoints'      => $winnerCurrentPts,
+            'wol_k'              => $rules->wol_k,
+            'upset_k'            => $rules->upset_k,
+            'upset_k_loser_multiplier' => $rules->upset_k_loser_multiplier,
+            'fixed_points'       => $rules->fixed_points,
+            'no_negative_points' => $rules->no_negative_points,
+        ]);
+
+        $loserPoints = $pointService->calculatePoints([
+            'draw'               => false,
+            'hasWinner'          => true,
+            'myTeamWon'          => false,
+            'allyPts'            => $loser->player->pointsBefore($history, $loser->game_id),
+            'enemyPts'           => $winner->player->pointsBefore($history, $winner->game_id),
+            'allyElo'            => $loserRating->rating,
+            'enemyElo'           => $winnerRating->rating,
+            'allyCount'          => 1,
+            'enemyCount'         => 1,
+            'allyDeviationSum'   => $loserRating->deviation,
+            'enemyDeviationSum'  => $winnerRating->deviation,
+            'enemyGamesSum'      => $winner->player->totalGames($history),
+            'currentPoints'      => $loserCurrentPts,
+            'wol_k'              => $rules->wol_k,
+            'upset_k'            => $rules->upset_k,
+            'upset_k_loser_multiplier' => $rules->upset_k_loser_multiplier,
+            'fixed_points'       => $rules->fixed_points,
+            'no_negative_points' => $rules->no_negative_points,
+        ]);
+
+        if ($loserPoints > 0)
+        {
             $loserPoints = 0;
         }
 

@@ -48,8 +48,11 @@ class AdminService
         $ladderRule->points_per_second = $request->points_per_second;
 
         $ladderRule->show_map_preview = $request->show_map_preview;
-        $ladderRule->use_elo_points = $request->use_elo_points;
         $ladderRule->wol_k = $request->wol_k;
+        $ladderRule->upset_k = $request->upset_k;
+        $ladderRule->upset_k_loser_multiplier = $request->upset_k_loser_multiplier;
+        $ladderRule->fixed_points = $request->fixed_points;
+        $ladderRule->no_negative_points = $request->no_negative_points;
         $ladderRule->bail_time = $request->bail_time;
         $ladderRule->bail_fps = $request->bail_fps;
         $ladderRule->tier2_rating = $request->tier2_rating;

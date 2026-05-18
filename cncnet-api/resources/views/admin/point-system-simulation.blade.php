@@ -107,7 +107,7 @@
 
             <div class="col-md-3">
                 <label class="form-label">upset_k_loser_multiplier</label>
-                <input type="number" step="0.01" class="form-control" name="upset_k_loser_multiplier" value="{{ old('upseupset_k_loser_multipliert_k', $simParams['upset_k_loser_multiplier'] ?? '') }}">
+                <input type="number" step="0.01" class="form-control" name="upset_k_loser_multiplier" value="{{ old('upset_k_loser_multiplier', $simParams['upset_k_loser_multiplier'] ?? '') }}">
                 <div class="form-text">Factor applied to the loser’s penalty for the upset component (<code>upset_k</code> × <code>upset_k_loser_multiplier</code>).</div>
                 <!-- Default: {{ $defaults['upset_k_loser_multiplier'] ?? '–' }} -->
             </div>

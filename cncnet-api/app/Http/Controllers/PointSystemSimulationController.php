@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\PointService;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\PlayerCache;
@@ -17,6 +18,12 @@ class PointSystemSimulationController extends Controller
 {
     // Limit ladder to RA, RA2, YR, Blitz and 2v2-Blitz.
     private array $allowedLadderIds = [1, 3, 5, 8, 15];
+    private PointService $pointService;
+
+    public function __construct()
+    {
+        $this->pointService = new PointService();
+    }
 
     public function index(Request $request)
     {
@@ -444,53 +451,32 @@ class PointSystemSimulationController extends Controller
                 $pid = (int) $pgr->player_id;
 
                 $calc = $allyEnemyCache[$pid];
-                $total = 0;
 
-                if (!$calc['draw'] && $hasWinner)
-                {
-                    $wol = $this->computeWOL($calc['allyPts'], $calc['enemyPts'], $calc['myTeamWon'], (int) $rules['wol_k']);
-                    if (!$calc['myTeamWon'] && $calc['enemyGamesSum'] < 10)
-                    {
-                        $wol = (int) floor($wol * ($calc['enemyGamesSum'] / 10));
-                    }
-
-                    $fixed = $calc['myTeamWon'] ? (int) $rules['fixed_points'] : -(int) $rules['fixed_points'];
-
-                    $upset = 0;
-                    if ($calc['allyCount'] > 0 && $calc['enemyCount'] > 0 && $calc['allyCount'] == $calc['enemyCount'])
-                    {
-                        $avgDevForWeight = max($calc['allyDeviationSum'] / $calc['allyCount'], $calc['enemyDeviationSum'] / $calc['enemyCount']);
-                        $devWeight = $avgDevForWeight <= 100 ? 1.0 : ($avgDevForWeight >= 200 ? 0.0 : 1.0 - (($avgDevForWeight - 100.0) / 100.0));
-
-                        if ($calc['myTeamWon'])
-                        {
-                            $upset = $devWeight * $this->computeUpset($calc['allyElo'], $calc['enemyElo'], (int) $rules['upset_k']);
-                        }
-                        else
-                        {
-                            $winUpset = $this->computeUpset($calc['enemyElo'], $calc['allyElo'], (int) $rules['upset_k']);
-                            $upset = - (int) (floor($winUpset * (float) $rules['upset_k_loser_multiplier']) * $devWeight);
-                        }
-                    }
-
-                    $total = $fixed + $wol + $upset;
-
-                    // no_negative_points (abhängig vom Start-Cache)
-                    if ($rules['no_negative_points'])
-                    {
-                        $prior = $pointsSoFar[$pid] ?? null;
-                        if ($total < 0 && ($prior === null || $prior < 0)) {
-                            $total = 0;
-                        }
-                    }
-                }
-
-                $perPlayerNewPoints[$pid] = (int) $total;
+                $perPlayerNewPoints[$pid] = $this->pointService->calculatePoints([
+                    'draw'               => (bool) $calc['draw'],
+                    'hasWinner'          => $hasWinner,
+                    'myTeamWon'          => $calc['myTeamWon'],
+                    'allyPts'            => $calc['allyPts'],
+                    'enemyPts'           => $calc['enemyPts'],
+                    'allyElo'            => $calc['allyElo'],
+                    'enemyElo'           => $calc['enemyElo'],
+                    'allyCount'          => $calc['allyCount'],
+                    'enemyCount'         => $calc['enemyCount'],
+                    'allyDeviationSum'   => $calc['allyDeviationSum'],
+                    'enemyDeviationSum'  => $calc['enemyDeviationSum'],
+                    'enemyGamesSum'      => $calc['enemyGamesSum'],
+                    'currentPoints'      => $pointsSoFar[$pid] ?? 0,
+                    'wol_k'              => (int) $rules['wol_k'],
+                    'upset_k'            => (int) $rules['upset_k'],
+                    'upset_k_loser_multiplier' => (float) $rules['upset_k_loser_multiplier'],
+                    'fixed_points'       => (int) $rules['fixed_points'],
+                    'no_negative_points' => (bool) $rules['no_negative_points'],
+                ]);
 
                 // Update points per user.
                 if (!isset($pointsSoFar[$pid]))
                     $pointsSoFar[$pid] = 0;
-                $pointsSoFar[$pid] += (int) $total;
+                $pointsSoFar[$pid] += (int) $perPlayerNewPoints[$pid];
             }
 
             // Create breakdown only if selected player participated.
@@ -555,21 +541,6 @@ class PointSystemSimulationController extends Controller
             if (!$r->defeated && !$r->disconnected) return $r->team_key;
         }
         return null;
-    }
-
-    private function computeWOL(int $allyPts, int $enemyPts, bool $myTeamWon, int $wolK): int
-    {
-        $diff = $enemyPts - $allyPts;
-        $we = 1.0 / (pow(10.0, abs($diff) / 600.0) + 1.0);
-        if (($diff > 0 && $myTeamWon) || ($diff < 0 && !$myTeamWon)) $we = 1.0 - $we;
-        $wol = (int) floor($wolK * $we);
-        return $myTeamWon ? $wol : -$wol;
-    }
-
-    private function computeUpset(float $winEloSum, float $loseEloSum, int $upsetK): int
-    {
-        $pWin = 1.0 / (1.0 + pow(10.0, ($loseEloSum - $winEloSum) / 400.0));
-        return (int) floor((1.0 - $pWin) * $upsetK);
     }
 
     private function countPlayedGamesByPlayer(?LadderHistory $history): array
