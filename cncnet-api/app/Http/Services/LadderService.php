@@ -555,7 +555,7 @@ class LadderService
      * @throws InvalidArgumentException 
      * @throws RuntimeException 
      */
-    public function getGamesFormattedForEloService(string $date, string $cncnetGame, string|array|null $requestQuery, int $paginateCount = 200)
+    public function getLadderGamesFormatted(string $date, string $cncnetGame, string|array|null $requestQuery, int $paginateCount = 200)
     {
         $history = $this->getActiveLadderByDate($date, $cncnetGame);
         $games = Game::where("ladder_history_id", "=", $history->id)

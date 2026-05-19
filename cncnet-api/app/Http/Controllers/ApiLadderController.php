@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Services\AdminService;
 use App\Http\Services\ClanService;
 use App\Http\Services\DuneGameService;
-use App\Http\Services\EloService;
 use App\Http\Services\GameService;
 use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
@@ -402,8 +401,6 @@ class ApiLadderController extends Controller
 
     public function awardClanPoints($gameReport, $history)
     {
-        $clanRatings = [];
-        $clanGameReports = collect();
 
         $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->where('spectator', 0)->groupBy("clan_id")->first();
 
@@ -469,8 +466,6 @@ class ApiLadderController extends Controller
                 $otherClanRatingModel = $this->clanService->findClanRatingById($otherClanId);
                 $gameId = $cgr->game_id;
 
-                $clanRatings[] = $otherClanRatingModel;
-
                 if ($otherClanId == $clanGameReport->clan_id)
                 {
                     $allyRatingAverage += $otherClanRatingModel->rating;
@@ -497,7 +492,6 @@ class ApiLadderController extends Controller
             $allyRatingAverage /= $allyCount;
             $enemyRatingAverage /= $enemyCount;
 
-            $eloK = $this->clanService->getEloKvalue($clanRatings);
             $isBestReport = $gameReport->best_report;
 
             $cache = null;
@@ -515,7 +509,6 @@ class ApiLadderController extends Controller
                 $allyRatingAverage,
                 $allyPoints,
                 $isBestReport,
-                $eloK,
                 $pointRules,
                 350.0,
                 350.0,
@@ -730,23 +723,6 @@ class ApiLadderController extends Controller
                 'no_negative_points' => $rules->no_negative_points,
             ]);
 
-            $elo_k = $this->playerService->getEloKvalue(
-                $playerGameReports
-                    ->filter(fn($p) => !$p->spectator)
-                    ->map(fn($p) => $this->playerService->findUserRatingByPlayerId($p->player_id))
-                    ->all()
-            );
-
-            if (!$playerGR->draw && $hasWinner)
-            {
-                $eloAdjust = new EloService($elo_k, $ally_elo / max($ally_count, 1), $enemy_elo / max($enemy_count, 1), $myTeamWon ? 1 : 0, $myTeamWon ? 0 : 1);
-
-                if ($gameReport->best_report)
-                {
-                    $this->playerService->updateUserRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
-                }
-            }
-
             if (!$myTeamWon && !$playerGR->draw && $playerGR->points > 0)
             {
                 $playerGR->points = 0;
@@ -852,23 +828,6 @@ class ApiLadderController extends Controller
                 'fixed_points'       => $rules->fixed_points,
                 'no_negative_points' => $rules->no_negative_points,
             ]);
-
-            $elo_k = $this->playerService->getEloKvalue(
-                $playerGameReports
-                    ->filter(fn($p) => !$p->spectator)
-                    ->map(fn($p) => $this->playerService->findUserRatingByPlayerId($p->player_id))
-                    ->all()
-            );
-
-            if (!$playerGR->draw && $hasWinner)
-            {
-                $eloAdjust = new EloService($elo_k, $ally_elo / max($ally_count, 1), $enemy_elo / max($enemy_count, 1), $myTeamWon ? 1 : 0, $myTeamWon ? 0 : 1);
-
-                if ($gameReport->best_report)
-                {
-                    $this->playerService->updateUserRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
-                }
-            }
 
             if (!$myTeamWon && !$playerGR->draw && $playerGR->points > 0)
             {
@@ -1045,7 +1004,7 @@ class ApiLadderController extends Controller
             }
 
             $date = $request->date ?? Carbon::now()->format("m-Y");
-            $response = $this->ladderService->getGamesFormattedForEloService($date, $cncnetGame, $request->query(), 200);
+            $response = $this->ladderService->getLadderGamesFormatted($date, $cncnetGame, $request->query(), 200);
 
             return $response;
         }

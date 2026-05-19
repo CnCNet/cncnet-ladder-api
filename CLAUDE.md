@@ -78,7 +78,6 @@ The main application lives in `cncnet-api/`. Key architectural patterns:
 **Services** (`app/Http/Services/`):
 Business logic layer:
 - `QuickMatchService`: Core matchmaking logic
-- `EloService`: Rating calculations using ELO algorithm
 - `GameService`: Game result processing and validation
 - `LadderService`: Ladder operations and caching
 - `PlayerService`: Player management and ratings
@@ -136,8 +135,7 @@ Matchup handlers for different game modes:
 8. Game results submitted via `POST /api/v1/result/ladder/{ladderId}/game/{gameId}/player/{playerId}/pings/{sent}/{received}`
 9. `SaveLadderResultJob` processes stats dump file
 10. Points calculated (`awardPlayerPoints`, `awardTeamPoints`, or `awardClanPoints` methods)
-11. ELO ratings updated via `EloService`
-12. Player cache updated via `PlayerCache` model
+11. Player cache updated via `PlayerCache` model
 
 ### Middleware & Caching
 
