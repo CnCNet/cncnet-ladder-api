@@ -537,7 +537,7 @@ class ApiLadderController extends Controller
         {
             if ($pgr->won && $pgr->spectator == false)
             {
-                return $pgr->team;
+                return $pgr->team ?? $pgr->local_team_id;
             }
         }
 
@@ -550,9 +550,10 @@ class ApiLadderController extends Controller
         {
             if (!$pgr->defeated && $pgr->spectator == false)
             {
-                if (!in_array($pgr->team, $nonDefeatedTeams))
+                $teamKey = $pgr->team ?? $pgr->local_team_id;
+                if (!in_array($teamKey, $nonDefeatedTeams))
                 {
-                    $nonDefeatedTeams[] = $pgr->team;
+                    $nonDefeatedTeams[] = $teamKey;
                 }
             }
         }
@@ -755,6 +756,15 @@ class ApiLadderController extends Controller
 
         $winningTeam = $this->getWinningTeamFromReports($playerGameReports);
         $hasWinner = $winningTeam !== null;
+
+        Log::info("awardPlayerPoints", [
+            'game_id' => $gameReport->game_id,
+            'game_report_id' => $gameReport->id,
+            'duration' => $gameReport->duration,
+            'fps' => $gameReport->fps,
+            'winningTeam' => $winningTeam,
+            'hasWinner' => $hasWinner,
+        ]);
 
         foreach ($playerGameReports as $playerGR)
         {
