@@ -619,13 +619,15 @@ class LadderController extends Controller
             ->first();
 
         if (!$history) {
-            // Create history if it doesn't exist
-            $history = new LadderHistory();
-            $history->ladder_id = $ladder->id;
-            $history->starts = $startDate->toDateTimeString();
-            $history->ends = $endDate->toDateTimeString();
-            $history->short = $month . "-" . $year;
-            $history->save();
+            // Redirect to current month if history doesn't exist
+            $currentHistory = $ladder->currentHistory();
+            if ($currentHistory) {
+                return redirect()->route('ladder.map-stats', [
+                    'date' => $currentHistory->short,
+                    'game' => $ladder->abbreviation
+                ]);
+            }
+            abort(404, "No ladder history found");
         }
 
         // Get available months for dropdown (last 24 months + next 3 months)

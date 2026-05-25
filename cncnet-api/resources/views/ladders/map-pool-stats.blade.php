@@ -144,7 +144,7 @@
                         $percentage = $stat['percentage'];
                         $noGamesClass = $gameCount == 0 ? 'opacity-50' : '';
                         $imageHash = $map->image_hash ?: $map->hash;
-                        $imageUrl = "https://ladder.cncnet.org/images/maps/{$ladder->game}/{$imageHash}.png";
+                        $imageUrl = "/images/maps/{$ladder->game}/{$imageHash}.png";
                     @endphp
 
                     <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
@@ -201,7 +201,7 @@
                                     $percentage = $stat['percentage'];
                                     $noGamesClass = $gameCount == 0 ? 'opacity-50' : '';
                                     $imageHash = $map->image_hash ?: $map->hash;
-                                    $imageUrl = "https://ladder.cncnet.org/images/maps/{$ladder->game}/{$imageHash}.png";
+                                    $imageUrl = "/images/maps/{$ladder->game}/{$imageHash}.png";
                                 @endphp
 
                                 <div class="col-xl-3 col-lg-4 col-md-6 mb-4">

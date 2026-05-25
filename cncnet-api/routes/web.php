@@ -22,7 +22,7 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function
     Route::get('/', [\App\Http\Controllers\LadderController::class, 'getLadders']);
     Route::get('/play', [\App\Http\Controllers\LadderController::class, 'getPopularTimes']);
 
-    // Specific routes first (before generic {date}/{tier}/{game})
+    // Specific routes must be registered before generic catch-all routes
     Route::get('{date}/{game}/map-stats', [\App\Http\Controllers\LadderController::class, 'getMapPoolStats'])->name('ladder.map-stats');
     Route::get('{date}/{game}/games', [\App\Http\Controllers\LadderController::class, 'getLadderGames']);
     Route::get('{date}/{game}/games/{gameId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame'])->name('ladder.game');
@@ -36,7 +36,7 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function
     Route::get('{date}/{game}/clan/{clan}', [\App\Http\Controllers\LadderController::class, 'getLadderClan']);
     Route::get('{date}/{game}/clan/{clan}/achievements', [\App\Http\Controllers\LadderController::class, 'getPlayerAchievementsPage']);
 
-    // Generic routes last
+    // Generic catch-all routes (must be last to prevent matching specific routes above)
     Route::get('{date}/{game}', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
     Route::get('{date}/{tier}/{game}', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
 });
