@@ -503,14 +503,27 @@ class LadderController extends Controller
             abort(403, "Access denied");
         }
 
-        // Check if ladder has map pool
-        if (!$ladder->mapPool) {
-            abort(404, "Ladder has no map pool configured");
-        }
-
         // Get date range for the month
         $startDate = Carbon::create($year, $month, 1)->startOfMonth();
         $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+
+        // Get ladder history for this month
+        $history = LadderHistory::where('ladder_id', '=', $ladder->id)
+            ->where('starts', '=', $startDate->toDateTimeString())
+            ->where('ends', '=', $endDate->toDateTimeString())
+            ->first();
+
+        if (!$history) {
+            // Redirect to current month if history doesn't exist
+            $currentHistory = $ladder->currentHistory();
+            if ($currentHistory) {
+                return redirect()->route('ladder.map-stats', [
+                    'date' => $currentHistory->short,
+                    'game' => $ladder->abbreviation
+                ]);
+            }
+            abort(404, "No ladder history found");
+        }
 
         // Build cache key
         $cacheKey = "map_stats:{$ladder->id}:{$year}:{$month}";
@@ -528,41 +541,54 @@ class LadderController extends Controller
             $cacheTTL = 86400; // 24 hours for past months
         }
 
-        // Query matches with caching
-        $mapStats = \Illuminate\Support\Facades\Cache::remember($cacheKey, $cacheTTL, function () use ($ladder, $startDate, $endDate) {
-            return \App\Models\QmMatch::where('ladder_id', $ladder->id)
-                ->whereBetween('created_at', [$startDate, $endDate])
+        // Query games with caching - uses games table which persists data permanently
+        $mapStats = \Illuminate\Support\Facades\Cache::remember($cacheKey, $cacheTTL, function () use ($history) {
+            return \App\Models\Game::where('ladder_history_id', $history->id)
                 ->whereNotNull('qm_map_id')
+                ->whereNotNull('game_report_id')
                 ->select('qm_map_id', \Illuminate\Support\Facades\DB::raw('COUNT(*) as game_count'))
                 ->groupBy('qm_map_id')
                 ->orderBy('game_count', 'DESC')
                 ->get();
         });
 
-        // Get all maps from map pool
-        $mapPoolMaps = $ladder->mapPool->maps;
+        // Get map pool tiers for tier names (if map pool exists)
+        $mapPoolTiers = [];
+        if ($ladder->mapPool) {
+            $tiers = $ladder->mapPool->tiers()->orderBy('tier')->get();
+            foreach ($tiers as $tier) {
+                $mapPoolTiers[$tier->tier] = $tier;
+            }
+        }
 
-        // Get map tiers
-        $mapTiers = $ladder->mapPool->tiers()->orderBy('tier')->get();
-
-        // Build full stats including maps with 0 games
+        // Build stats from actual game data only
         $statsData = [];
         $totalGames = 0;
+        $tierInfo = [];
 
-        foreach ($mapPoolMaps as $qmMap) {
-            $stat = $mapStats->firstWhere('qm_map_id', $qmMap->id);
-            $gameCount = $stat ? $stat->game_count : 0;
+        foreach ($mapStats as $stat) {
+            $qmMap = \App\Models\QmMap::with('map')->find($stat->qm_map_id);
+
+            // Skip if QmMap was deleted
+            if (!$qmMap || !$qmMap->map) {
+                continue;
+            }
+
+            $gameCount = $stat->game_count;
             $totalGames += $gameCount;
-
-            $map = $qmMap->map;
 
             $statsData[] = [
                 'qm_map' => $qmMap,
-                'map' => $map,
+                'map' => $qmMap->map,
                 'game_count' => $gameCount,
-                'percentage' => 0,
+                'percentage' => 0, // calculated below
                 'tier' => $qmMap->map_tier,
             ];
+
+            // Track unique tiers
+            if ($qmMap->map_tier && !isset($tierInfo[$qmMap->map_tier])) {
+                $tierInfo[$qmMap->map_tier] = $qmMap->map_tier;
+            }
         }
 
         // Calculate percentages
@@ -573,17 +599,15 @@ class LadderController extends Controller
         }
         unset($stat);
 
-        // Sort by game count descending
-        usort($statsData, fn($a, $b) => $b['game_count'] <=> $a['game_count']);
-
-        // Group stats by tier
+        // Group stats by tier (only tiers that have games)
         $statsByTier = [];
-        $tierStats = [];
 
-        foreach ($mapTiers as $mapTier) {
-            $tierNumber = $mapTier->tier;
+        foreach ($tierInfo as $tierNumber) {
+            $tierObj = $mapPoolTiers[$tierNumber] ?? null;
+
             $statsByTier[$tierNumber] = [
-                'tier_info' => $mapTier,
+                'tier_number' => $tierNumber,
+                'tier_info' => $tierObj,
                 'maps' => [],
                 'total_games' => 0,
                 'percentage' => 0,
@@ -593,13 +617,13 @@ class LadderController extends Controller
         // Populate tier groups
         foreach ($statsData as $stat) {
             $tierNumber = $stat['tier'];
-            if (isset($statsByTier[$tierNumber])) {
+            if ($tierNumber && isset($statsByTier[$tierNumber])) {
                 $statsByTier[$tierNumber]['maps'][] = $stat;
                 $statsByTier[$tierNumber]['total_games'] += $stat['game_count'];
             }
         }
 
-        // Calculate tier percentages and filter empty tiers
+        // Calculate tier percentages
         foreach ($statsByTier as $tierNumber => &$tierData) {
             if ($totalGames > 0) {
                 $tierData['percentage'] = round(($tierData['total_games'] / $totalGames) * 100, 2);
@@ -609,26 +633,8 @@ class LadderController extends Controller
         }
         unset($tierData);
 
-        // Remove tiers with no maps
-        $statsByTier = array_filter($statsByTier, fn($tierData) => count($tierData['maps']) > 0);
-
-        // Get ladder history for navigation
-        $history = LadderHistory::where('ladder_id', '=', $ladder->id)
-            ->where('starts', '=', $startDate->toDateTimeString())
-            ->where('ends', '=', $endDate->toDateTimeString())
-            ->first();
-
-        if (!$history) {
-            // Redirect to current month if history doesn't exist
-            $currentHistory = $ladder->currentHistory();
-            if ($currentHistory) {
-                return redirect()->route('ladder.map-stats', [
-                    'date' => $currentHistory->short,
-                    'game' => $ladder->abbreviation
-                ]);
-            }
-            abort(404, "No ladder history found");
-        }
+        // Sort tiers by tier number
+        ksort($statsByTier);
 
         // Get available months for dropdown (last 24 months + next 3 months)
         $availableMonths = [];
@@ -650,7 +656,6 @@ class LadderController extends Controller
             'ladder' => $ladder,
             'mapStats' => $statsData,
             'statsByTier' => $statsByTier,
-            'mapTiers' => $mapTiers,
             'totalGames' => $totalGames,
             'availableMonths' => $availableMonths,
             'period' => [

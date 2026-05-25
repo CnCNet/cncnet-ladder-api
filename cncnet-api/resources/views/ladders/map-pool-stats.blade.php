@@ -103,7 +103,11 @@
                             <div class="card bg-secondary text-white h-100">
                                 <div class="card-body text-center">
                                     <h6 class="text-uppercase text-muted mb-2">Tier {{ $tierNumber }}</h6>
-                                    <h5 class="mb-2">{{ $tierData['tier_info']->name }}</h5>
+                                    @if ($tierData['tier_info'])
+                                        <h5 class="mb-2">{{ $tierData['tier_info']->name }}</h5>
+                                    @else
+                                        <h5 class="mb-2">Tier {{ $tierNumber }}</h5>
+                                    @endif
                                     <h3 class="display-6 mb-2 text-primary">{{ $tierData['total_games'] }}</h3>
                                     <p class="mb-0 text-muted small">
                                         {{ $tierData['percentage'] }}% of total
@@ -126,7 +130,11 @@
                 @foreach ($statsByTier as $tierNumber => $tierData)
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="tier{{ $tierNumber }}-tab" data-bs-toggle="tab" data-bs-target="#tier{{ $tierNumber }}" type="button" role="tab">
-                            Tier {{ $tierNumber }}: {{ $tierData['tier_info']->name }}
+                            @if ($tierData['tier_info'])
+                                Tier {{ $tierNumber }}: {{ $tierData['tier_info']->name }}
+                            @else
+                                Tier {{ $tierNumber }}
+                            @endif
                         </button>
                     </li>
                 @endforeach

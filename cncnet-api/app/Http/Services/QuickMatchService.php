@@ -691,6 +691,7 @@ class QuickMatchService
         $qmMatch->save();
 
         $game->qm_match_id = $qmMatch->id;
+        $game->qm_map_id = $qmMatch->qm_map_id;
         $game->save();
 
         $qmMap = $qmMatch->map;
@@ -1228,6 +1229,7 @@ class QuickMatchService
         $qmMatch->game_id = $game->id;
         $qmMatch->save();
         $game->qm_match_id = $qmMatch->id;
+        $game->qm_map_id = $qmMatch->qm_map_id;
         $game->save();
 
 
@@ -1345,6 +1347,7 @@ class QuickMatchService
         }
         $qmMatch->save();
         $game->qm_match_id = $qmMatch->id;
+        $game->qm_map_id = $qmMatch->qm_map_id;
         $game->save();
 
         $qmMap = $qmMatch->map;
