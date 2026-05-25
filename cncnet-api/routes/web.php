@@ -21,9 +21,12 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function
 {
     Route::get('/', [\App\Http\Controllers\LadderController::class, 'getLadders']);
     Route::get('/play', [\App\Http\Controllers\LadderController::class, 'getPopularTimes']);
-    Route::get('{date}/{game}', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
+
+    // Specific routes first (before generic {date}/{tier}/{game})
+    Route::get('{date}/{game}/map-stats', [\App\Http\Controllers\LadderController::class, 'getMapPoolStats'])->name('ladder.map-stats');
     Route::get('{date}/{game}/games', [\App\Http\Controllers\LadderController::class, 'getLadderGames']);
-    Route::get('{date}/{tier}/{game}', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
+    Route::get('{date}/{game}/games/{gameId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame'])->name('ladder.game');
+    Route::get('{date}/{game}/games/{gameId}/{reportId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame'])->name('ladder.game.report');
 
     Route::get('{date}/{game}/player/', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
     Route::get('{date}/{game}/player/{player}', [\App\Http\Controllers\LadderController::class, 'getLadderPlayer']);
@@ -33,8 +36,9 @@ Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function
     Route::get('{date}/{game}/clan/{clan}', [\App\Http\Controllers\LadderController::class, 'getLadderClan']);
     Route::get('{date}/{game}/clan/{clan}/achievements', [\App\Http\Controllers\LadderController::class, 'getPlayerAchievementsPage']);
 
-    Route::get('{date}/{game}/games/{gameId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame'])->name('ladder.game');
-    Route::get('{date}/{game}/games/{gameId}/{reportId}', [\App\Http\Controllers\LadderController::class, 'getLadderGame'])->name('ladder.game.report');
+    // Generic routes last
+    Route::get('{date}/{game}', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
+    Route::get('{date}/{tier}/{game}', [\App\Http\Controllers\LadderController::class, 'getLadderIndex']);
 });
 
 # Clan Ladders

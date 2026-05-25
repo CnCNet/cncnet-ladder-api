@@ -481,4 +481,167 @@ class LadderController extends Controller
 
         return redirect("/admin/setup/{$ladder->id}/edit");
     }
+
+    public function getMapPoolStats(Request $request)
+    {
+        $abbreviation = $request->game;
+        $dateString = $request->date;
+
+        // Parse month/year from date string (format: "M-YYYY" like "5-2025")
+        $dateParts = explode('-', $dateString);
+        $month = (int) $dateParts[0];
+        $year = (int) $dateParts[1];
+
+        // Find ladder
+        $ladder = Ladder::where('abbreviation', '=', $abbreviation)->first();
+        if (!$ladder) {
+            abort(404, "Ladder not found");
+        }
+
+        // Check user permissions for private ladders
+        if (!$ladder->allowedToView(auth()->user())) {
+            abort(403, "Access denied");
+        }
+
+        // Check if ladder has map pool
+        if (!$ladder->mapPool) {
+            abort(404, "Ladder has no map pool configured");
+        }
+
+        // Get date range for the month
+        $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+        $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+
+        // Build cache key
+        $cacheKey = "map_stats:{$ladder->id}:{$year}:{$month}";
+
+        // Determine cache TTL
+        $now = Carbon::now();
+        $isCurrentMonth = $now->year == $year && $now->month == $month;
+        $isFutureMonth = Carbon::create($year, $month, 1)->isFuture();
+
+        if ($isFutureMonth) {
+            $cacheTTL = 0; // No cache for future months
+        } elseif ($isCurrentMonth) {
+            $cacheTTL = 3600 * 3; // 3 hours for current month
+        } else {
+            $cacheTTL = 86400; // 24 hours for past months
+        }
+
+        // Query matches with caching
+        $mapStats = \Illuminate\Support\Facades\Cache::remember($cacheKey, $cacheTTL, function () use ($ladder, $startDate, $endDate) {
+            return \App\Models\QmMatch::where('ladder_id', $ladder->id)
+                ->whereBetween('created_at', [$startDate, $endDate])
+                ->whereNotNull('qm_map_id')
+                ->select('qm_map_id', \Illuminate\Support\Facades\DB::raw('COUNT(*) as game_count'))
+                ->groupBy('qm_map_id')
+                ->orderBy('game_count', 'DESC')
+                ->get();
+        });
+
+        // Get all maps from map pool
+        $mapPoolMaps = $ladder->mapPool->maps;
+
+        // Get map tiers
+        $mapTiers = $ladder->mapPool->tiers()->orderBy('tier')->get();
+
+        // Build full stats including maps with 0 games
+        $statsData = [];
+        $totalGames = 0;
+
+        foreach ($mapPoolMaps as $qmMap) {
+            $stat = $mapStats->firstWhere('qm_map_id', $qmMap->id);
+            $gameCount = $stat ? $stat->game_count : 0;
+            $totalGames += $gameCount;
+
+            $map = $qmMap->map;
+
+            $statsData[] = [
+                'qm_map' => $qmMap,
+                'map' => $map,
+                'game_count' => $gameCount,
+                'percentage' => 0,
+                'tier' => $qmMap->map_tier,
+            ];
+        }
+
+        // Calculate percentages
+        foreach ($statsData as &$stat) {
+            if ($totalGames > 0) {
+                $stat['percentage'] = round(($stat['game_count'] / $totalGames) * 100, 2);
+            }
+        }
+        unset($stat);
+
+        // Sort by game count descending
+        usort($statsData, fn($a, $b) => $b['game_count'] <=> $a['game_count']);
+
+        // Group stats by tier
+        $statsByTier = [];
+        $tierStats = [];
+
+        foreach ($mapTiers as $mapTier) {
+            $tierNumber = $mapTier->tier;
+            $statsByTier[$tierNumber] = [
+                'tier_info' => $mapTier,
+                'maps' => [],
+                'total_games' => 0,
+                'percentage' => 0,
+            ];
+        }
+
+        // Populate tier groups
+        foreach ($statsData as $stat) {
+            $tierNumber = $stat['tier'];
+            if (isset($statsByTier[$tierNumber])) {
+                $statsByTier[$tierNumber]['maps'][] = $stat;
+                $statsByTier[$tierNumber]['total_games'] += $stat['game_count'];
+            }
+        }
+
+        // Calculate tier percentages and filter empty tiers
+        foreach ($statsByTier as $tierNumber => &$tierData) {
+            if ($totalGames > 0) {
+                $tierData['percentage'] = round(($tierData['total_games'] / $totalGames) * 100, 2);
+            }
+            // Sort maps within tier by game count
+            usort($tierData['maps'], fn($a, $b) => $b['game_count'] <=> $a['game_count']);
+        }
+        unset($tierData);
+
+        // Remove tiers with no maps
+        $statsByTier = array_filter($statsByTier, fn($tierData) => count($tierData['maps']) > 0);
+
+        // Get ladder history for navigation
+        $history = LadderHistory::where('ladder_id', '=', $ladder->id)
+            ->where('starts', '=', $startDate->toDateTimeString())
+            ->where('ends', '=', $endDate->toDateTimeString())
+            ->first();
+
+        if (!$history) {
+            // Create history if it doesn't exist
+            $history = new LadderHistory();
+            $history->ladder_id = $ladder->id;
+            $history->starts = $startDate->toDateTimeString();
+            $history->ends = $endDate->toDateTimeString();
+            $history->short = $month . "-" . $year;
+            $history->save();
+        }
+
+        return view('ladders.map-pool-stats', [
+            'history' => $history,
+            'ladder' => $ladder,
+            'mapStats' => $statsData,
+            'statsByTier' => $statsByTier,
+            'mapTiers' => $mapTiers,
+            'totalGames' => $totalGames,
+            'period' => [
+                'month' => $month,
+                'year' => $year,
+                'month_name' => Carbon::create($year, $month, 1)->format('F'),
+                'start_date' => $startDate->toDateString(),
+                'end_date' => $endDate->toDateString(),
+            ],
+        ]);
+    }
 }
