@@ -48,6 +48,25 @@
     <section class="pt-4 pb-5">
         <div class="container-xl">
             <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h3 class="text-white mb-0">Statistics Overview</h3>
+                        <div class="month-selector">
+                            <label for="monthSelect" class="text-muted me-2">Select Month:</label>
+                            <select id="monthSelect" class="form-select form-select-sm d-inline-block w-auto">
+                                @foreach ($availableMonths as $monthOption)
+                                    <option value="{{ $monthOption['short'] }}"
+                                            @if ($monthOption['month'] == $period['month'] && $monthOption['year'] == $period['year']) selected @endif>
+                                        {{ $monthOption['label'] }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="card bg-dark text-white mb-3">
                         <div class="card-body text-center">
@@ -271,5 +290,19 @@
             background-color: transparent;
             border-bottom-color: #3498db;
         }
+        .month-selector {
+            display: flex;
+            align-items: center;
+        }
     </style>
+@endsection
+
+@section('js')
+    <script>
+        document.getElementById('monthSelect').addEventListener('change', function() {
+            const selectedMonth = this.value;
+            const ladderAbbrev = '{{ $ladder->abbreviation }}';
+            window.location.href = `/ladder/${selectedMonth}/${ladderAbbrev}/map-stats`;
+        });
+    </script>
 @endsection

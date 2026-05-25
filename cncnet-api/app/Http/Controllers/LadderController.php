@@ -628,6 +628,21 @@ class LadderController extends Controller
             $history->save();
         }
 
+        // Get available months for dropdown (last 24 months + next 3 months)
+        $availableMonths = [];
+        $currentDate = Carbon::now();
+        $startMonth = $currentDate->copy()->subMonths(24);
+        $endMonth = $currentDate->copy()->addMonths(3);
+
+        for ($date = $startMonth->copy(); $date <= $endMonth; $date->addMonth()) {
+            $availableMonths[] = [
+                'month' => $date->month,
+                'year' => $date->year,
+                'short' => $date->month . '-' . $date->year,
+                'label' => $date->format('F Y'),
+            ];
+        }
+
         return view('ladders.map-pool-stats', [
             'history' => $history,
             'ladder' => $ladder,
@@ -635,6 +650,7 @@ class LadderController extends Controller
             'statsByTier' => $statsByTier,
             'mapTiers' => $mapTiers,
             'totalGames' => $totalGames,
+            'availableMonths' => $availableMonths,
             'period' => [
                 'month' => $month,
                 'year' => $year,
