@@ -15,6 +15,9 @@ return new class extends Migration
             $table->unsignedBigInteger('qm_map_id')->nullable()->after('qm_match_id');
             $table->index(['ladder_history_id', 'qm_map_id'], 'idx_games_map_stats');
         });
+
+        // Backfill qm_map_id from existing qm_matches (before they're pruned)
+        \Illuminate\Support\Facades\Artisan::call('games:backfill-map-ids');
     }
 
     /**
