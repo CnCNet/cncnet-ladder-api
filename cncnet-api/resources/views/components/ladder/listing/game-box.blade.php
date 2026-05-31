@@ -1,12 +1,13 @@
 @props(['history', 'game'])
 @php
-    $mapName = $game->qmMatch?->map?->description;
+    $mapName = $game->qmMap?->description ?? $game->map?->name;
+    $mapObject = $game->qmMap?->map ?? $game->map;
 @endphp
 <a href="{{ route('ladder.game', ['date' => $history->short, 'game' => $history->ladder->abbreviation, 'gameId' => $game->id]) }}" class="game-box"
     data-timestamp="{{ $game->updated_at->timestamp }}">
 
     <div class="map-preview">
-        <img src="{{ \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->qmMatch?->map?->map, $game->qmMatch?->map?->map->hash) }}"
+        <img src="{{ \App\Helpers\SiteHelper::getMapPreviewUrl($history, $mapObject, $mapObject?->hash) }}"
             alt="" />
     </div>
 

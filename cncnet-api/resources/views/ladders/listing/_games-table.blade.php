@@ -71,7 +71,7 @@
                     <td class="td-game-details">
                         <div class="d-flex align-items-center game-details">
                             <div>
-                                <p class="fw-bold mb-1">{{ $game->qmMatch?->map?->description }}</p>
+                                <p class="fw-bold mb-1">{{ $game->qmMap?->description ?? $game->map?->name }}</p>
                                 <p class="text-muted mb-0">Duration: {{ gmdate('H:i:s', $game->report->duration) }}</p>
                                 <p class="text-muted mb-0">
                                     Played: {{ $game->updated_at->diffForHumans() }}
@@ -82,7 +82,10 @@
 
                     <td>
                         <div class="d-flex align-items-center">
-                            @php $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $game->qmMatch?->map?->map, $game->qmMatch?->map?->map->hash); @endphp
+                            @php
+                                $mapObject = $game->qmMap?->map ?? $game->map;
+                                $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $mapObject, $mapObject?->hash);
+                            @endphp
                             @if ($mapPreview)
                                 <div class="map-preview" style="background-image:url({{ $mapPreview }})">
                                 </div>
