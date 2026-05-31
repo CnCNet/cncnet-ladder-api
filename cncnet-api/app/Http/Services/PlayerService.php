@@ -111,32 +111,6 @@ class PlayerService
         $player->save();
     }
 
-    public function getEloKvalue($users)
-    {
-        // For players with less than 10 games, K will be 32, otherwise 16
-        foreach ($users as $userRating)
-        {
-            if ($userRating->rated_games < 10)
-            {
-                return 32;
-            }
-        }
-        return 16;
-    }
-
-    public function updateUserRating($playerID, $newRating)
-    {
-        $userRating = $this->findUserRatingByPlayerId($playerID);
-        if ($newRating > $userRating->peak_rating)
-        {
-            $userRating->peak_rating = $newRating;
-        }
-
-        $userRating->rating = $newRating;
-        $userRating->rated_games = $userRating->rated_games + 1;
-        // $userRating->save();
-    }
-
     public function setActiveUsername($player, $ladder)
     {
         $date = Carbon::now();
