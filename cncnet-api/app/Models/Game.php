@@ -101,6 +101,11 @@ class Game extends Model
         return $this->belongsTo(QmMatch::class);
     }
 
+    public function qmMap()
+    {
+        return $this->belongsTo(QmMap::class, 'qm_map_id');
+    }
+
     public function gameClips()
     {
         return $this->hasMany(GameClip::class, 'game_id');

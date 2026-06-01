@@ -93,6 +93,13 @@
                     </a>
                 </div>
                 <div>
+                    <a href="{{ route('ladder.map-stats', ['date' => $history->short, 'game' => $history->ladder->abbreviation]) }}" class="btn btn-secondary d-flex">
+                        <span class="material-symbols-outlined pe-3">
+                            map
+                        </span> Map Pool Stats
+                    </a>
+                </div>
+                <div>
                     <button type="button" class="btn btn-secondary d-flex" data-bs-toggle="modal" data-bs-target="#openLadderRules">
                         <span class="material-symbols-outlined pe-3">
                             gavel

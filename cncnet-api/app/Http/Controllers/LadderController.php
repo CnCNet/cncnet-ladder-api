@@ -481,4 +481,190 @@ class LadderController extends Controller
 
         return redirect("/admin/setup/{$ladder->id}/edit");
     }
+
+    public function getMapPoolStats(Request $request)
+    {
+        $abbreviation = $request->game;
+        $dateString = $request->date;
+
+        // Parse month/year from date string (format: "M-YYYY" like "5-2025")
+        $dateParts = explode('-', $dateString);
+        $month = (int) $dateParts[0];
+        $year = (int) $dateParts[1];
+
+        // Find ladder
+        $ladder = Ladder::where('abbreviation', '=', $abbreviation)->first();
+        if (!$ladder) {
+            abort(404, "Ladder not found");
+        }
+
+        // Check user permissions for private ladders
+        if (!$ladder->allowedToView(auth()->user())) {
+            abort(403, "Access denied");
+        }
+
+        // Get date range for the month
+        $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+        $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+
+        // Get ladder history for this month
+        $history = LadderHistory::where('ladder_id', '=', $ladder->id)
+            ->where('starts', '=', $startDate->toDateTimeString())
+            ->where('ends', '=', $endDate->toDateTimeString())
+            ->first();
+
+        if (!$history) {
+            // Redirect to current month if history doesn't exist
+            $currentHistory = $ladder->currentHistory();
+            if ($currentHistory) {
+                return redirect()->route('ladder.map-stats', [
+                    'date' => $currentHistory->short,
+                    'game' => $ladder->abbreviation
+                ]);
+            }
+            abort(404, "No ladder history found");
+        }
+
+        // Build cache key
+        $cacheKey = "map_stats:{$ladder->id}:{$year}:{$month}";
+
+        // Determine cache TTL
+        $now = Carbon::now();
+        $isCurrentMonth = $now->year == $year && $now->month == $month;
+        $isFutureMonth = Carbon::create($year, $month, 1)->isFuture();
+
+        if ($isFutureMonth) {
+            $cacheTTL = 0; // No cache for future months
+        } elseif ($isCurrentMonth) {
+            $cacheTTL = 3600 * 3; // 3 hours for current month
+        } else {
+            $cacheTTL = 86400; // 24 hours for past months
+        }
+
+        // Query games with caching - uses games table which persists data permanently
+        $mapStats = \Illuminate\Support\Facades\Cache::remember($cacheKey, $cacheTTL, function () use ($history) {
+            return \App\Models\Game::where('ladder_history_id', $history->id)
+                ->whereNotNull('qm_map_id')
+                ->whereNotNull('game_report_id')
+                ->select('qm_map_id', \Illuminate\Support\Facades\DB::raw('COUNT(*) as game_count'))
+                ->groupBy('qm_map_id')
+                ->orderBy('game_count', 'DESC')
+                ->get();
+        });
+
+        // Get map pool tiers for tier names (if map pool exists)
+        $mapPoolTiers = [];
+        if ($ladder->mapPool) {
+            $tiers = $ladder->mapPool->tiers()->orderBy('tier')->get();
+            foreach ($tiers as $tier) {
+                $mapPoolTiers[$tier->tier] = $tier;
+            }
+        }
+
+        // Build stats from actual game data only
+        $statsData = [];
+        $totalGames = 0;
+        $tierInfo = [];
+
+        foreach ($mapStats as $stat) {
+            $qmMap = \App\Models\QmMap::with('map')->find($stat->qm_map_id);
+
+            // Skip if QmMap was deleted
+            if (!$qmMap || !$qmMap->map) {
+                continue;
+            }
+
+            $gameCount = $stat->game_count;
+            $totalGames += $gameCount;
+
+            $statsData[] = [
+                'qm_map' => $qmMap,
+                'map' => $qmMap->map,
+                'game_count' => $gameCount,
+                'percentage' => 0, // calculated below
+                'tier' => $qmMap->map_tier,
+            ];
+
+            // Track unique tiers
+            if ($qmMap->map_tier && !isset($tierInfo[$qmMap->map_tier])) {
+                $tierInfo[$qmMap->map_tier] = $qmMap->map_tier;
+            }
+        }
+
+        // Calculate percentages
+        foreach ($statsData as &$stat) {
+            if ($totalGames > 0) {
+                $stat['percentage'] = round(($stat['game_count'] / $totalGames) * 100, 2);
+            }
+        }
+        unset($stat);
+
+        // Group stats by tier (only tiers that have games)
+        $statsByTier = [];
+
+        foreach ($tierInfo as $tierNumber) {
+            $tierObj = $mapPoolTiers[$tierNumber] ?? null;
+
+            $statsByTier[$tierNumber] = [
+                'tier_number' => $tierNumber,
+                'tier_info' => $tierObj,
+                'maps' => [],
+                'total_games' => 0,
+                'percentage' => 0,
+            ];
+        }
+
+        // Populate tier groups
+        foreach ($statsData as $stat) {
+            $tierNumber = $stat['tier'];
+            if ($tierNumber && isset($statsByTier[$tierNumber])) {
+                $statsByTier[$tierNumber]['maps'][] = $stat;
+                $statsByTier[$tierNumber]['total_games'] += $stat['game_count'];
+            }
+        }
+
+        // Calculate tier percentages
+        foreach ($statsByTier as $tierNumber => &$tierData) {
+            if ($totalGames > 0) {
+                $tierData['percentage'] = round(($tierData['total_games'] / $totalGames) * 100, 2);
+            }
+            // Sort maps within tier by game count
+            usort($tierData['maps'], fn($a, $b) => $b['game_count'] <=> $a['game_count']);
+        }
+        unset($tierData);
+
+        // Sort tiers by tier number
+        ksort($statsByTier);
+
+        // Get available months for dropdown (last 24 months + next 3 months)
+        $availableMonths = [];
+        $currentDate = Carbon::now();
+        $startMonth = $currentDate->copy()->subMonths(24);
+        $endMonth = $currentDate->copy()->addMonths(3);
+
+        for ($date = $startMonth->copy(); $date <= $endMonth; $date->addMonth()) {
+            $availableMonths[] = [
+                'month' => $date->month,
+                'year' => $date->year,
+                'short' => $date->month . '-' . $date->year,
+                'label' => $date->format('F Y'),
+            ];
+        }
+
+        return view('ladders.map-pool-stats', [
+            'history' => $history,
+            'ladder' => $ladder,
+            'mapStats' => $statsData,
+            'statsByTier' => $statsByTier,
+            'totalGames' => $totalGames,
+            'availableMonths' => $availableMonths,
+            'period' => [
+                'month' => $month,
+                'year' => $year,
+                'month_name' => Carbon::create($year, $month, 1)->format('F'),
+                'start_date' => $startDate->toDateString(),
+                'end_date' => $endDate->toDateString(),
+            ],
+        ]);
+    }
 }
