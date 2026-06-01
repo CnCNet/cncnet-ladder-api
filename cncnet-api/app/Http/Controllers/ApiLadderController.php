@@ -783,7 +783,7 @@ class ApiLadderController extends Controller
             $ally_deviation = 0.0;
             $enemy_deviation = 0.0;
 
-            $myTeam = $playerGR->local_team_id ?: (string) $playerGR->local_team_id;
+            $myTeam = (string) $playerGR->local_team_id;
             $myTeamWon = ($winningTeam === $myTeam);
 
             foreach ($playerGameReports as $pgr)
@@ -794,7 +794,7 @@ class ApiLadderController extends Controller
                 }
 
                 $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
-                $otherTeam = $pgr->local_team_id ?: (string) $pgr->local_team_id;
+                $otherTeam = (string) $pgr->local_team_id;
 
                 if ($otherTeam == $myTeam)
                 {
