@@ -414,20 +414,53 @@
                                                     </select>
                                                 </div>
 
-                                                <div class="form-group">
-                                                    <label for="{{ $rule->use_elo_points }}_use_elo_points">Use Elo for
-                                                        Points</label>
-                                                    <input id="{{ $rule->use_elo_points }}_use_elo_points" type="number" min="0"
-                                                        max="1" name="use_elo_points" class="form-control"
-                                                        value="{{ $rule->use_elo_points }}" />
-                                                </div>
+                                                <hr>
+                                                <p style="color: #fff">Point System</p>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->wol_k }}_use_elo_points">WOL Points K
-                                                        Value</label>
+                                                        Value
+                                                        <span class="material-symbols-outlined" data-bs-toggle="tooltip" title="The Westwood Online (WOL) component. This is an ELO-like system that resets every month." style="font-size: 16px; cursor: help; color: #999;">help</span>
+                                                    </label>
                                                     <input id="{{ $rule->wol_k }}_use_elo_points" type="number" min="0" name="wol_k"
                                                         class="form-control" value="{{ $rule->wol_k }}" />
                                                 </div>
+
+                                                <div class="form-group">
+                                                    <label for="{{ $rule->upset_k }}_upset_k">Upset K Value
+                                                        <span class="material-symbols-outlined" data-bs-toggle="tooltip" title="Based on continuous CnCNet-ELO. Depending on win probability, the winner may gain up to upset_k bonus points." style="font-size: 16px; cursor: help; color: #999;">help</span>
+                                                    </label>
+                                                    <input id="{{ $rule->upset_k }}_upset_k" type="number" min="0" name="upset_k"
+                                                        class="form-control" value="{{ $rule->upset_k }}" />
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="{{ $rule->upset_k_loser_multiplier }}_upset_k_loser_multiplier">Upset K Loser Multiplier
+                                                        <span class="material-symbols-outlined" data-bs-toggle="tooltip" title="Factor applied to the loser's penalty for the upset component (upset_k × upset_k_loser_multiplier)." style="font-size: 16px; cursor: help; color: #999;">help</span>
+                                                    </label>
+                                                    <input id="{{ $rule->upset_k_loser_multiplier }}_upset_k_loser_multiplier" type="number" step="0.01" min="0" max="1" name="upset_k_loser_multiplier"
+                                                        class="form-control" value="{{ $rule->upset_k_loser_multiplier }}" />
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="{{ $rule->fixed_points }}_fixed_points">Fixed Points
+                                                        <span class="material-symbols-outlined" data-bs-toggle="tooltip" title="Fixed amount of points granted for each win or loss." style="font-size: 16px; cursor: help; color: #999;">help</span>
+                                                    </label>
+                                                    <input id="{{ $rule->fixed_points }}_fixed_points" type="number" min="0" name="fixed_points"
+                                                        class="form-control" value="{{ $rule->fixed_points }}" />
+                                                </div>
+
+                                                <div class="form-group">
+                                                    <label for="no_negative_points">No Negative Points
+                                                        <span class="material-symbols-outlined" data-bs-toggle="tooltip" title="When turned on, ladder points cannot drop below zero. When turned off, players might end up with negative points." style="font-size: 16px; cursor: help; color: #999;">help</span>
+                                                    </label>
+                                                    <select id="no_negative_points" name="no_negative_points" class="form-control">
+                                                        <option value="1" @if ($rule->no_negative_points) selected @endif>Yes</option>
+                                                        <option value="0" @if (!$rule->no_negative_points) selected @endif>No</option>
+                                                    </select>
+                                                </div>
+
+                                                <hr>
 
                                                 <div class="form-group">
                                                     <label for="{{ $rule->ladder_id }}_bail_fps">Bail FPS</label>
@@ -609,6 +642,13 @@
             document.getElementById("alertText").value = ladderAlerts[this.value]["message"];
             document.getElementById("alertDate").value = ladderAlerts[this.value]["expires_at"];
         };
+
+        (function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (el) {
+                return new bootstrap.Tooltip(el);
+            });
+        })();
 
         (function() {
             if (document.getElementById("alertList").value === '')

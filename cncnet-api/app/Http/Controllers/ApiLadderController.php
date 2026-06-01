@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Services\AdminService;
 use App\Http\Services\ClanService;
 use App\Http\Services\DuneGameService;
-use App\Http\Services\EloService;
 use App\Http\Services\GameService;
 use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
@@ -402,10 +401,7 @@ class ApiLadderController extends Controller
 
     public function awardClanPoints($gameReport, $history)
     {
-        $clanRatings = [];
-        $clanGameReports = collect();
 
-        // Find the winning clan report
         $winningClanReport = $gameReport->playerGameReports()->where('won', 1)->where('spectator', 0)->groupBy("clan_id")->first();
 
         if ($winningClanReport != null)
@@ -413,7 +409,6 @@ class ApiLadderController extends Controller
             $clanGameReports->push($winningClanReport);
         }
 
-        // Find the losing clan report
         if ($winningClanReport)
         {
             $losingClanReport = $gameReport->playerGameReports()->where('clan_id', '!=', $winningClanReport->clan_id)
@@ -431,7 +426,6 @@ class ApiLadderController extends Controller
             }
         }
 
-        // Oops we don't have any players
         if ($clanGameReports->count() < 1)
         {
             return 604;
@@ -439,18 +433,22 @@ class ApiLadderController extends Controller
 
         if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
         {
-            // Duration too low, no points awarded
             return 660;
         }
 
-        // Only apply FPS filter on short games (< 2 minutes)
-        // Prevents awarding points for instant disconnects/crashes at game start
-        // Long games with low FPS are still legitimate matches (poor performance, not bail)
         if ($gameReport->duration < 120 && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
         {
-            // FPS too low on short game, likely disconnect/crash
             return 630;
         }
+
+        $rules = $history->ladder->qmLadderRules;
+        $pointRules = [
+            'wol_k'                   => $rules->wol_k,
+            'upset_k'                 => $rules->upset_k,
+            'upset_k_loser_multiplier' => $rules->upset_k_loser_multiplier,
+            'fixed_points'            => $rules->fixed_points,
+            'no_negative_points'      => $rules->no_negative_points,
+        ];
 
         foreach ($clanGameReports as $clanGameReport)
         {
@@ -467,8 +465,6 @@ class ApiLadderController extends Controller
                 $otherClanId = $cgr->clan_id;
                 $otherClanRatingModel = $this->clanService->findClanRatingById($otherClanId);
                 $gameId = $cgr->game_id;
-
-                $clanRatings[] = $otherClanRatingModel;
 
                 if ($otherClanId == $clanGameReport->clan_id)
                 {
@@ -496,10 +492,14 @@ class ApiLadderController extends Controller
             $allyRatingAverage /= $allyCount;
             $enemyRatingAverage /= $enemyCount;
 
-            $eloK = $this->clanService->getEloKvalue($clanRatings);
-            $wolK = $history->ladder->qmLadderRules->wol_k;
-            $useEloPoints = $history->ladder->qmLadderRules->use_elo_points;
             $isBestReport = $gameReport->best_report;
+
+            $cache = null;
+            if ($clanGameReport->player->clanPlayer)
+            {
+                $cache = $clanGameReport->player->clanPlayer->clanCache($history->id);
+            }
+            $currentPoints = $cache ? $cache->points : 0;
 
             $this->clanService->awardPointsByClanRating(
                 $clanGameReport,
@@ -508,23 +508,14 @@ class ApiLadderController extends Controller
                 $enemyGames,
                 $allyRatingAverage,
                 $allyPoints,
-                $useEloPoints,
                 $isBestReport,
-                $eloK,
-                $wolK
+                $pointRules,
+                350.0,
+                350.0,
+                $allyCount,
+                $enemyCount,
+                $currentPoints
             );
-
-            // Get correct cache type
-            $cache = null;
-            if ($clanGameReport->player->clanPlayer)
-            {
-                $cache = $clanGameReport->player->clanPlayer->clanCache($history->id);
-            }
-
-            if ($clanGameReport->points < 0 && ($cache === null || $cache->points < 0))
-            {
-                $clanGameReport->points = 0;
-            }
 
             $clanGameReport->save();
         }
@@ -546,7 +537,7 @@ class ApiLadderController extends Controller
         {
             if ($pgr->won && $pgr->spectator == false)
             {
-                return $pgr->team;
+                return $pgr->team ?? $pgr->local_team_id;
             }
         }
 
@@ -559,9 +550,10 @@ class ApiLadderController extends Controller
         {
             if (!$pgr->defeated && $pgr->spectator == false)
             {
-                if (!in_array($pgr->team, $nonDefeatedTeams))
+                $teamKey = $pgr->team ?? $pgr->local_team_id;
+                if (!in_array($teamKey, $nonDefeatedTeams))
                 {
-                    $nonDefeatedTeams[] = $pgr->team;
+                    $nonDefeatedTeams[] = $teamKey;
                 }
             }
         }
@@ -628,11 +620,8 @@ class ApiLadderController extends Controller
      */
     public function awardTeamPoints(GameReport $gameReport, LadderHistory $history)
     {
-        $players = [];
-
         $playerGameReports = $gameReport->playerGameReports()->get();
 
-        // Oops we don't have any players
         if ($playerGameReports->count() < 1)
         {
             return 604;
@@ -640,23 +629,16 @@ class ApiLadderController extends Controller
 
         if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
         {
-            // Duration too low, no points awarded
             return 660;
         }
 
-        // Only apply FPS filter on short games (< 2 minutes)
-        // Prevents awarding points for instant disconnects/crashes at game start
-        // Long games with low FPS are still legitimate matches (poor performance, not bail)
         if ($gameReport->duration < 120 && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
         {
-            // FPS too low on short game, likely disconnect/crash
             return 630;
         }
 
-        $disconnected = 0;
-
-        // determine which team won
         $winningTeam = $this->getWinningTeamFromReports($playerGameReports);
+        $hasWinner = $winningTeam !== null;
 
         foreach ($playerGameReports as $playerGR)
         {
@@ -665,20 +647,19 @@ class ApiLadderController extends Controller
                 continue;
             }
 
-            $ally_average = 0;
             $ally_points = 0;
             $ally_count = 0;
-            $enemy_average = 0;
             $enemy_points = 0;
             $enemy_count = 0;
             $enemy_games = 0;
+            $ally_elo = 0.0;
+            $enemy_elo = 0.0;
+            $ally_deviation = 0.0;
+            $enemy_deviation = 0.0;
 
-            // grab the qm players that belong to this qm match, return the team of the current player
             $myTeam = $playerGR->team;
+            $myTeamWon = ($myTeam == $winningTeam);
 
-            $playerGRTeamWonTheGame = $myTeam == $winningTeam;
-
-            // gather points from teammates and enemies, strength of team vs enemy will factor in points awarded/lost
             foreach ($playerGameReports as $otherPlayerGameReport)
             {
                 if ($otherPlayerGameReport->spectator == true)
@@ -687,25 +668,25 @@ class ApiLadderController extends Controller
                 }
 
                 $other = $this->playerService->findUserRatingByPlayerId($otherPlayerGameReport->player_id);
-                $players[] = $other;
-
                 $otherTeam = $otherPlayerGameReport->team;
+
                 if ($otherTeam == $myTeam)
                 {
-                    $ally_average += $other->rating;
                     $ally_points += $otherPlayerGameReport->player->pointsBefore($history, $otherPlayerGameReport->game_id);
+                    $ally_elo += $other->rating;
+                    $ally_deviation += $other->deviation;
                     $ally_count++;
                 }
                 else
                 {
-                    $enemy_average += $other->rating;
                     $enemy_points += $otherPlayerGameReport->player->pointsBefore($history, $otherPlayerGameReport->game_id);
+                    $enemy_elo += $other->rating;
+                    $enemy_deviation += $other->deviation;
                     $enemy_count++;
                     $enemy_games += $otherPlayerGameReport->player->totalGames($history);
                 }
             }
 
-            // Prevent division by zero (malformed reports with only spectators or missing teams)
             if ($ally_count == 0 || $enemy_count == 0)
             {
                 Log::warning("Team game missing ally or enemy players", [
@@ -714,107 +695,36 @@ class ApiLadderController extends Controller
                     'ally_count' => $ally_count,
                     'enemy_count' => $enemy_count,
                 ]);
-                return 604; // Error code: no players
+                return 604;
             }
 
-            $ally_average /= $ally_count;
-            $enemy_average /= $enemy_count;
-            $elo_k = $this->playerService->getEloKvalue($players);
-            $points = null;
-            $base_rating = $enemy_average > $ally_average ? $enemy_average : $ally_average;
-
-            $gvc = 8;
-            if ($history->ladder->qmLadderRules->use_elo_points)
-            {
-                $gvc = ceil(($base_rating * $enemy_average) / 230000);
-            }
-
-            $diff = $enemy_points - $ally_points;
-            $we = 1 / (pow(10, abs($diff) / 600) + 1);
-            if (($diff > 0 && $playerGRTeamWonTheGame) || ($diff < 0 && !$playerGRTeamWonTheGame))
-            {
-                $we = 1 - $we;
-            }
-
-            $wol_k = $history->ladder->qmLadderRules->wol_k;
-            $wol = (int)($wol_k * $we);
-
-            $eloAdjust = 0;
-
-            if ($playerGR->draw || $winningTeam === null) // draw or couldn't find a winner
-            {
-                $playerGR->points = 0;
-
-                Log::info("No points awarded due to draw or missing winning team.", [
-                    'game_id'    => $playerGR->game_id,
-                    'player_id'  => $playerGR->player_id,
-                    'username'   => optional($playerGR->player)->username,
-                    'draw'       => $playerGR->draw,
-                    'team'       => $playerGR->team,
-                    'winning_team' => $winningTeam,
-                ]);
-            }
-            else if ($playerGRTeamWonTheGame)
-            {
-                $points = (new EloService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
-                $diff = (int)($points - $ally_average);
-                if (!$history->ladder->qmLadderRules->use_elo_points)
-                {
-                    $diff = 0;
-                }
-
-                $playerGR->points = $gvc + $diff + $wol;
-
-                $eloAdjust = new EloService($elo_k, $ally_average, $enemy_average, 1, 0);
-
-                if ($gameReport->best_report)
-                {
-                    $this->playerService->updateUserRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
-                }
-            }
-            else
-            {
-                if ($enemy_games < 10)
-                {
-                    $wol = (int)($wol * ($enemy_games / 10));
-                }
-                if ($ally_points  < ($wol + $gvc) * 10)
-                {
-                    $playerGR->points = -1 * (int)($ally_points / 10);
-                }
-                else
-                {
-                    $playerGR->points = -1 * ($wol + $gvc);
-                }
-
-                $eloAdjust = new EloService($elo_k, $ally_average, $enemy_average, 0, 1);
-                if ($gameReport->best_report)
-                {
-                    $this->playerService->updateUserRating(
-                        $playerGR->player_id,
-                        $eloAdjust->getNewRatings()["a"]
-                    );
-                }
-            }
-
-            // Get correct cache type
             $cache = $playerGR->player->playerCache($history->id);
+            $currentPoints = $cache ? $cache->points : 0;
 
-            // Prevent players from going below zero total points
-            if ($cache !== null && ($cache->points + $playerGR->points) < 0)
-            {
-                // Cap the loss: set game points to negative of current total
-                // Example: if cache = 10, set game points to -10, so new total = 10 + (-10) = 0
-                $playerGR->points = -1 * $cache->points;
-            }
-            elseif ($cache === null && $playerGR->points < 0)
-            {
-                // No cache exists, don't allow negative points
-                $playerGR->points = 0;
-            }
+            $rules = $history->ladder->qmLadderRules;
 
-            // Safety check: losers should NEVER get positive points. An edge case has been observed where players with negative or very low pts, earned ~+1 pts when winning, lets prevent that.
-            if (!$playerGRTeamWonTheGame && !$playerGR->draw && $playerGR->points > 0)
+            $playerGR->points = $this->pointService->calculatePoints([
+                'draw'               => $playerGR->draw,
+                'hasWinner'          => $hasWinner,
+                'myTeamWon'          => $myTeamWon,
+                'allyPts'            => $ally_points,
+                'enemyPts'           => $enemy_points,
+                'allyElo'            => $ally_elo,
+                'enemyElo'           => $enemy_elo,
+                'allyCount'          => $ally_count,
+                'enemyCount'         => $enemy_count,
+                'allyDeviationSum'   => $ally_deviation,
+                'enemyDeviationSum'  => $enemy_deviation,
+                'enemyGamesSum'      => $enemy_games,
+                'currentPoints'      => $currentPoints,
+                'wol_k'              => $rules->wol_k,
+                'upset_k'            => $rules->upset_k,
+                'upset_k_loser_multiplier' => $rules->upset_k_loser_multiplier,
+                'fixed_points'       => $rules->fixed_points,
+                'no_negative_points' => $rules->no_negative_points,
+            ]);
+
+            if (!$myTeamWon && !$playerGR->draw && $playerGR->points > 0)
             {
                 $playerGR->points = 0;
             }
@@ -827,11 +737,8 @@ class ApiLadderController extends Controller
 
     public function awardPlayerPoints(GameReport $gameReport, LadderHistory $history)
     {
-        $players = [];
-
         $playerGameReports = $gameReport->playerGameReports()->get();
 
-        // Oops we don't have any players
         if ($playerGameReports->count() < 1)
         {
             return 604;
@@ -839,20 +746,25 @@ class ApiLadderController extends Controller
 
         if ($gameReport->duration < $history->ladder->qmLadderRules->bail_time)
         {
-            // Duration too low, no points awarded
             return 660;
         }
 
-        // Only apply FPS filter on short games (< 2 minutes)
-        // Prevents awarding points for instant disconnects/crashes at game start
-        // Long games with low FPS are still legitimate matches (poor performance, not bail)
         if ($gameReport->duration < 120 && $gameReport->fps < $history->ladder->qmLadderRules->bail_fps)
         {
-            // FPS too low on short game, likely disconnect/crash
             return 630;
         }
 
-        $disconnected = 0;
+        $winningTeam = $this->getWinningTeamFromReports($playerGameReports);
+        $hasWinner = $winningTeam !== null;
+
+        Log::info("awardPlayerPoints", [
+            'game_id' => $gameReport->game_id,
+            'game_report_id' => $gameReport->id,
+            'duration' => $gameReport->duration,
+            'fps' => $gameReport->fps,
+            'winningTeam' => $winningTeam,
+            'hasWinner' => $hasWinner,
+        ]);
 
         foreach ($playerGameReports as $playerGR)
         {
@@ -861,13 +773,18 @@ class ApiLadderController extends Controller
                 continue;
             }
 
-            $ally_average = 0;
             $ally_points = 0;
             $ally_count = 0;
-            $enemy_average = 0;
             $enemy_points = 0;
             $enemy_count = 0;
             $enemy_games = 0;
+            $ally_elo = 0.0;
+            $enemy_elo = 0.0;
+            $ally_deviation = 0.0;
+            $enemy_deviation = 0.0;
+
+            $myTeam = $playerGR->local_team_id ?: (string) $playerGR->local_team_id;
+            $myTeamWon = ($winningTeam === $myTeam);
 
             foreach ($playerGameReports as $pgr)
             {
@@ -875,110 +792,54 @@ class ApiLadderController extends Controller
                 {
                     continue;
                 }
-                
-                $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
-                $players[] = $other;
 
-                if ($pgr->local_team_id == $playerGR->local_team_id)
+                $other = $this->playerService->findUserRatingByPlayerId($pgr->player_id);
+                $otherTeam = $pgr->local_team_id ?: (string) $pgr->local_team_id;
+
+                if ($otherTeam == $myTeam)
                 {
-                    $ally_average += $other->rating;
                     $ally_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $ally_elo += $other->rating;
+                    $ally_deviation += $other->deviation;
                     $ally_count++;
                 }
                 else
                 {
-                    $enemy_average += $other->rating;
                     $enemy_points += $pgr->player->pointsBefore($history, $pgr->game_id);
+                    $enemy_elo += $other->rating;
+                    $enemy_deviation += $other->deviation;
                     $enemy_count++;
                     $enemy_games += $pgr->player->totalGames($history);
                 }
             }
 
-            $ally_average /= $ally_count;
-            $enemy_average /= $enemy_count;
-            $elo_k = $this->playerService->getEloKvalue($players);
-            $points = null;
-            $base_rating = $enemy_average > $ally_average ? $enemy_average : $ally_average;
-
-            $gvc = 8;
-            if ($history->ladder->qmLadderRules->use_elo_points)
-            {
-                $gvc = ceil(($base_rating * $enemy_average) / 230000);
-            }
-
-            $wol_k = $history->ladder->qmLadderRules->wol_k;
-            $diff = $enemy_points - $ally_points;
-            $we = 1 / (pow(10, abs($diff) / 600) + 1);
-            $we = $diff > 0 && $playerGR->wonOrDisco() ? 1 - $we : ($diff < 0 && !$playerGR->wonOrDisco() ? 1 - $we : $we);
-            $wol = (int)($wol_k * $we);
-
-            $eloAdjust = 0;
-
-            if ($playerGR->draw)
-            {
-                $playerGR->points = 0;
-            }
-            else if ($playerGR->wonOrDisco())
-            {
-                $points = (new EloService(16, $ally_average, $enemy_average, 1, 0))->getNewRatings()["a"];
-                $diff = (int)($points - $ally_average);
-                if (!$history->ladder->qmLadderRules->use_elo_points)
-                {
-                    $diff = 0;
-                }
-
-                $playerGR->points = $gvc + $diff + $wol;
-
-                $eloAdjust = new EloService($elo_k, $ally_average, $enemy_average, 1, 0);
-
-                if ($gameReport->best_report)
-                {
-                    $this->playerService->updateUserRating($playerGR->player_id, $eloAdjust->getNewRatings()["a"]);
-                }
-            }
-            else
-            {
-                if ($enemy_games < 10)
-                {
-                    $wol = (int)($wol * ($enemy_games / 10));
-                }
-                if ($ally_points  < ($wol + $gvc) * 10)
-                {
-                    $playerGR->points = -1 * (int)($ally_points / 10);
-                }
-                else
-                {
-                    $playerGR->points = -1 * ($wol + $gvc);
-                }
-
-                $eloAdjust = new EloService($elo_k, $ally_average, $enemy_average, 0, 1);
-                if ($gameReport->best_report)
-                {
-                    $this->playerService->updateUserRating(
-                        $playerGR->player_id,
-                        $eloAdjust->getNewRatings()["a"]
-                    );
-                }
-            }
-
-            // Get correct cache type
             $cache = $playerGR->player->playerCache($history->id);
+            $currentPoints = $cache ? $cache->points : 0;
 
-            // Prevent players from going below zero total points
-            if ($cache !== null && ($cache->points + $playerGR->points) < 0)
-            {
-                // Cap the loss: set game points to negative of current total
-                // Example: if cache = 10, set game points to -10, so new total = 10 + (-10) = 0
-                $playerGR->points = -1 * $cache->points;
-            }
-            elseif ($cache === null && $playerGR->points < 0)
-            {
-                // No cache exists, don't allow negative points
-                $playerGR->points = 0;
-            }
+            $rules = $history->ladder->qmLadderRules;
 
-            // Safety check: losers should NEVER get positive points
-            if (!$playerGR->wonOrDisco() && !$playerGR->draw && $playerGR->points > 0)
+            $playerGR->points = $this->pointService->calculatePoints([
+                'draw'               => $playerGR->draw,
+                'hasWinner'          => $hasWinner,
+                'myTeamWon'          => $myTeamWon,
+                'allyPts'            => $ally_points,
+                'enemyPts'           => $enemy_points,
+                'allyElo'            => $ally_elo,
+                'enemyElo'           => $enemy_elo,
+                'allyCount'          => $ally_count,
+                'enemyCount'         => $enemy_count,
+                'allyDeviationSum'   => $ally_deviation,
+                'enemyDeviationSum'  => $enemy_deviation,
+                'enemyGamesSum'      => $enemy_games,
+                'currentPoints'      => $currentPoints,
+                'wol_k'              => $rules->wol_k,
+                'upset_k'            => $rules->upset_k,
+                'upset_k_loser_multiplier' => $rules->upset_k_loser_multiplier,
+                'fixed_points'       => $rules->fixed_points,
+                'no_negative_points' => $rules->no_negative_points,
+            ]);
+
+            if (!$myTeamWon && !$playerGR->draw && $playerGR->points > 0)
             {
                 $playerGR->points = 0;
             }
@@ -1153,7 +1014,7 @@ class ApiLadderController extends Controller
             }
 
             $date = $request->date ?? Carbon::now()->format("m-Y");
-            $response = $this->ladderService->getGamesFormattedForEloService($date, $cncnetGame, $request->query(), 200);
+            $response = $this->ladderService->getLadderGamesFormatted($date, $cncnetGame, $request->query(), 200);
 
             return $response;
         }

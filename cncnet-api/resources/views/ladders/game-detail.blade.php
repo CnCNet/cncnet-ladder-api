@@ -180,7 +180,7 @@ else {
 
         <div class="mt-2">
             <div class="match-details text-center mt-2">
-                <h4>{{ $game->qmMatch?->map?->description }}</h4>
+                <h4>{{ $game->qmMap?->description ?? $game->map?->name }}</h4>
                 <p>
                     {{ $gameReport->created_at->diffForHumans() }} -
                     <em>{{ $gameReport->created_at->format('Y-m-d') }}</em>
