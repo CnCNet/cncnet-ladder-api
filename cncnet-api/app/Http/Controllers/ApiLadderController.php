@@ -926,8 +926,8 @@ class ApiLadderController extends Controller
             $startOfDay = Carbon::now()->startOfDay();
             $endOfDay = Carbon::now()->endOfDay();
 
-            // Count wins for today - check if player's team won (handles 2v2 where player may have died but team won)
-            $wins = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
+            // Single optimized query - fetch all player's games for today with teammate data
+            $playerGames = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
                 ->where('player_game_reports.spectator', '=', false)
                 ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
                 ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
@@ -935,42 +935,40 @@ class ApiLadderController extends Controller
                 ->where('games.ladder_history_id', '=', $history->id)
                 ->where('game_reports.valid', '=', true)
                 ->where('game_reports.best_report', '=', true)
-                ->whereExists(function ($query) {
-                    $query->selectRaw(1)
-                          ->from('player_game_reports as teammate_reports')
-                          ->whereColumn('teammate_reports.game_report_id', 'player_game_reports.game_report_id')
-                          ->whereColumn('teammate_reports.team', 'player_game_reports.team')
-                          ->where('teammate_reports.won', '=', true)
-                          ->where('teammate_reports.spectator', '=', false);
-                })
-                ->count();
+                ->select('player_game_reports.*')
+                ->with(['gameReport.playerGameReports' => function($q) {
+                    $q->where('spectator', false)->select('id', 'game_report_id', 'team', 'won', 'spectator');
+                }])
+                ->get();
 
-            // Count losses for today - check if player's team lost (no teammate won, excluding draws)
-            $losses = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
-                ->where('player_game_reports.draw', '=', false)
-                ->where('player_game_reports.spectator', '=', false)
-                ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
-                ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
-                ->join('games', 'games.id', '=', 'game_reports.game_id')
-                ->where('games.ladder_history_id', '=', $history->id)
-                ->where('game_reports.valid', '=', true)
-                ->where('game_reports.best_report', '=', true)
-                ->whereNotExists(function ($query) {
-                    $query->selectRaw(1)
-                          ->from('player_game_reports as teammate_reports')
-                          ->whereColumn('teammate_reports.game_report_id', 'player_game_reports.game_report_id')
-                          ->whereColumn('teammate_reports.team', 'player_game_reports.team')
-                          ->where('teammate_reports.won', '=', true)
-                          ->where('teammate_reports.spectator', '=', false);
-                })
-                ->count();
+            // Process results in PHP to calculate wins, losses, and points
+            $wins = 0;
+            $losses = 0;
+            $points = 0;
+
+            foreach ($playerGames as $pgr) {
+                $points += $pgr->points ?? 0;
+
+                // Check if any teammate on same team won
+                $teammateWon = $pgr->gameReport->playerGameReports
+                    ->where('team', $pgr->team)
+                    ->where('won', true)
+                    ->isNotEmpty();
+
+                if ($teammateWon) {
+                    $wins++;
+                } else if (!$pgr->draw) {
+                    $losses++;
+                }
+            }
 
             return response()->json([
                 'player' => $player,
                 'ladder' => $game,
                 'date' => Carbon::now()->format('Y-m-d'),
                 'wins' => $wins,
-                'losses' => $losses
+                'losses' => $losses,
+                'points' => $points
             ], 200);
         });
     }
