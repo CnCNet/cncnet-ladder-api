@@ -339,13 +339,8 @@ class StatsService
         foreach ($playerGames as $pgr) {
             $points += $pgr->points ?? 0;
 
-            // Check if any teammate on same team won
-            $teammateWon = $pgr->gameReport->playerGameReports
-                ->where('team', $pgr->team)
-                ->where('won', true)
-                ->isNotEmpty();
-
-            if ($teammateWon) {
+            // Use points > 0 instead of won flag to handle 2v2 cases where a player dies but team wins
+            if ($pgr->points > 0) {
                 $wins++;
             } else if (!$pgr->draw) {
                 $losses++;
