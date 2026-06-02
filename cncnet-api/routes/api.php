@@ -103,6 +103,7 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/{game}/player/{player}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderPlayerFromPublicApi']);
         Route::get('/{game}/player/{player}/webview', [\App\Http\Controllers\ApiLadderStatsProfile::class, 'getWebview']);
         Route::get('/{game}/player/{player}/today', [\App\Http\Controllers\ApiLadderController::class, 'getPlayerDailyStats']);
+        Route::get('/{game}/player/{player}/month', [\App\Http\Controllers\ApiLadderController::class, 'getPlayerMonthlyStats']);
     });
 
     // Ultra short cache ladder endpoints

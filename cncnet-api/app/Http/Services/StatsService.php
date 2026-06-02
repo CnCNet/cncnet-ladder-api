@@ -14,6 +14,7 @@ use App\Models\Games;
 use App\Models\GameReport;
 use App\Models\PlayerGameReport;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -302,6 +303,60 @@ class StatsService
             }
         }
         return null;
+    }
+
+    /**
+     * Get player stats for a given time range (daily, monthly, or custom).
+     *
+     * @param Player $player
+     * @param LadderHistory $history
+     * @param DateTime $startTime
+     * @param DateTime $endTime
+     * @return array
+     */
+    public function getPlayerTimeRangeStats(Player $player, LadderHistory $history, DateTime $startTime, DateTime $endTime): array
+    {
+        // Single optimized query - fetch all player's games for time range with teammate data
+        $playerGames = PlayerGameReport::where('player_game_reports.player_id', '=', $player->id)
+            ->where('player_game_reports.spectator', '=', false)
+            ->whereBetween('player_game_reports.created_at', [$startTime, $endTime])
+            ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+            ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->where('games.ladder_history_id', '=', $history->id)
+            ->where('game_reports.valid', '=', true)
+            ->where('game_reports.best_report', '=', true)
+            ->select('player_game_reports.*')
+            ->with(['gameReport.playerGameReports' => function($q) {
+                $q->where('spectator', false)->select('id', 'game_report_id', 'team', 'won', 'spectator');
+            }])
+            ->get();
+
+        // Process results to calculate wins, losses, and points
+        $wins = 0;
+        $losses = 0;
+        $points = 0;
+
+        foreach ($playerGames as $pgr) {
+            $points += $pgr->points ?? 0;
+
+            // Check if any teammate on same team won
+            $teammateWon = $pgr->gameReport->playerGameReports
+                ->where('team', $pgr->team)
+                ->where('won', true)
+                ->isNotEmpty();
+
+            if ($teammateWon) {
+                $wins++;
+            } else if (!$pgr->draw) {
+                $losses++;
+            }
+        }
+
+        return [
+            'wins' => $wins,
+            'losses' => $losses,
+            'points' => $points,
+        ];
     }
 
     public function getPlayerMatchups($player, $history)
