@@ -9,6 +9,7 @@ use App\Http\Services\GameService;
 use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
 use App\Http\Services\PointService;
+use App\Http\Services\StatsService;
 use App\Jobs\Qm\SaveLadderResultJob;
 use App\Models\Achievement;
 use App\Models\AchievementProgress;
@@ -40,6 +41,7 @@ class ApiLadderController extends Controller
     private $adminService;
     private $pointService;
     private $duneGameService;
+    private $statsService;
 
     public function __construct()
     {
@@ -50,6 +52,7 @@ class ApiLadderController extends Controller
         $this->clanService = new ClanService();
         $this->adminService = new AdminService();
         $this->pointService = new PointService();
+        $this->statsService = new StatsService();
     }
 
     public function pingLadder(Request $request)
@@ -922,53 +925,70 @@ class ApiLadderController extends Controller
                 return response()->json(['error' => 'No active ladder history'], 404);
             }
 
-            // Get today's date range
-            $startOfDay = Carbon::now()->startOfDay();
-            $endOfDay = Carbon::now()->endOfDay();
-
-            // Single optimized query - fetch all player's games for today with teammate data
-            $playerGames = PlayerGameReport::where('player_game_reports.player_id', '=', $playerModel->id)
-                ->where('player_game_reports.spectator', '=', false)
-                ->whereBetween('player_game_reports.created_at', [$startOfDay, $endOfDay])
-                ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
-                ->join('games', 'games.id', '=', 'game_reports.game_id')
-                ->where('games.ladder_history_id', '=', $history->id)
-                ->where('game_reports.valid', '=', true)
-                ->where('game_reports.best_report', '=', true)
-                ->select('player_game_reports.*')
-                ->with(['gameReport.playerGameReports' => function($q) {
-                    $q->where('spectator', false)->select('id', 'game_report_id', 'team', 'won', 'spectator');
-                }])
-                ->get();
-
-            // Process results in PHP to calculate wins, losses, and points
-            $wins = 0;
-            $losses = 0;
-            $points = 0;
-
-            foreach ($playerGames as $pgr) {
-                $points += $pgr->points ?? 0;
-
-                // Check if any teammate on same team won
-                $teammateWon = $pgr->gameReport->playerGameReports
-                    ->where('team', $pgr->team)
-                    ->where('won', true)
-                    ->isNotEmpty();
-
-                if ($teammateWon) {
-                    $wins++;
-                } else if (!$pgr->draw) {
-                    $losses++;
-                }
-            }
+            // Get stats for today
+            $stats = $this->statsService->getPlayerTimeRangeStats(
+                $playerModel,
+                $history,
+                Carbon::now()->startOfDay(),
+                Carbon::now()->endOfDay()
+            );
 
             return response()->json([
                 'player' => $player,
                 'ladder' => $game,
                 'date' => Carbon::now()->format('Y-m-d'),
-                'wins' => $wins,
-                'losses' => $losses,
-                'points' => $points
+                'wins' => $stats['wins'],
+                'losses' => $stats['losses'],
+                'points' => $stats['points']
+            ], 200);
+        });
+    }
+
+    public function getPlayerMonthlyStats(Request $request, $game = null, $player = null)
+    {
+        return Cache::remember("getPlayerMonthlyStats/$game/$player/" . Carbon::now()->format('m-Y'), 5 * 60, function () use ($game, $player)
+        {
+            // Find the ladder by abbreviation
+            $ladder = Ladder::where('abbreviation', '=', $game)->first();
+
+            if (!$ladder)
+            {
+                return response()->json(['error' => 'Ladder not found'], 404);
+            }
+
+            // Find the player by username and ladder
+            $playerModel = Player::where('username', '=', $player)
+                ->where('ladder_id', '=', $ladder->id)
+                ->first();
+
+            if (!$playerModel)
+            {
+                return response()->json(['error' => 'Player not found'], 404);
+            }
+
+            // Get current ladder history
+            $history = $ladder->currentHistory();
+
+            if (!$history)
+            {
+                return response()->json(['error' => 'No active ladder history'], 404);
+            }
+
+            // Get stats for current month
+            $stats = $this->statsService->getPlayerTimeRangeStats(
+                $playerModel,
+                $history,
+                Carbon::now()->startOfMonth(),
+                Carbon::now()->endOfMonth()
+            );
+
+            return response()->json([
+                'player' => $player,
+                'ladder' => $game,
+                'month' => Carbon::now()->format('m-Y'),
+                'wins' => $stats['wins'],
+                'losses' => $stats['losses'],
+                'points' => $stats['points']
             ], 200);
         });
     }
