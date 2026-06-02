@@ -37,9 +37,13 @@ class GameReportService
             'report.playerGameReports.stats.gameObjectCounts.countableGameObject', // CRITICAL: Eliminates N+1 for cameo stats
             'report.playerGameReports.clan',
             'report.playerGameReports.gameReport', // Needed for clan logic in views
-            'report.game.qmMatch.map', // Needed for map preview
+            'report.game.qmMap.map', // Needed for map preview (persists after qm_matches pruning)
+            'report.game.qmMatch.map', // Needed for map preview (legacy, backward compatibility)
 
-            // QM Match data (available to all users for connection stats)
+            // QM Map data (direct relationship, persists after qm_matches pruning)
+            'qmMap.map',
+
+            // QM Match data (legacy, for backward compatibility)
             'qmMatch.qmConnectionStats',
             'qmMatch.map',
         ];

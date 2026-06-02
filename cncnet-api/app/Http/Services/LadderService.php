@@ -423,7 +423,7 @@ class LadderService
         return Game::where("ladder_history_id", $history->id)
             ->whereNotNull('game_report_id')
             ->orderByDesc("id")
-            ->select(['id', 'ladder_history_id', 'game_report_id', 'qm_match_id', 'hash', 'game_type', 'updated_at'])
+            ->select(['id', 'ladder_history_id', 'game_report_id', 'qm_match_id', 'qm_map_id', 'hash', 'game_type', 'updated_at'])
             ->with([
                 'report:id,game_id,duration,fps',
                 'report.playerGameReports:game_report_id,player_id,clan_id,points,stats_id,won,spectator',
@@ -431,6 +431,8 @@ class LadderService
                 'report.playerGameReports.player.qmPlayer:id,player_id,team',
                 'report.playerGameReports.clan:id,short',
                 'report.playerGameReports.stats:id,sid,cty',
+                'qmMap:id,description,map_id',
+                'qmMap.map:id,name,hash,image_path,image_hash,filename',
                 'qmMatch:id,qm_map_id',
                 'qmMatch.map:id,description,map_id',
                 'qmMatch.map.map:id,name,hash,image_path,image_hash,filename',
@@ -477,7 +479,11 @@ class LadderService
             'report.playerGameReports.player.user.userSettings:user_id,is_anonymous',  // For getUserAvatar() anonymous check
             'report.playerGameReports.stats:id,cty,sid',  // For faction() method - needs cty (YR) and sid (other games)
 
-            // QM Match and map data
+            // QM Map data (direct relationship, persists after qm_matches pruning)
+            'qmMap:id,description,map_id',
+            'qmMap.map:id,name,hash,image_path,image_hash',
+
+            // QM Match and map data (legacy, for backward compatibility)
             'qmMatch:id,qm_map_id',
             'qmMatch.map:id,description,map_id',
             'qmMatch.map.map:id,name,hash,image_path,image_hash',
@@ -496,6 +502,7 @@ class LadderService
                 'games.id',
                 'games.game_report_id',
                 'games.qm_match_id',
+                'games.qm_map_id',
                 'games.ladder_history_id',
                 'games.updated_at'
             )
@@ -534,7 +541,8 @@ class LadderService
                 'scen',
                 'hash',
                 'game_report_id',
-                'qm_match_id'
+                'qm_match_id',
+                'qm_map_id'
             )
             ->where("ladder_history_id", "=", $history->id)
             ->where('game_reports.duration', '=', 3)
