@@ -297,8 +297,11 @@ class ApiQuickMatchController extends Controller
             ->values()
             ->map(function ($qmPlayer, $index) use ($sides, $showRealNames)
             {
+                // Show real name if globally unmasked OR if player is streaming
+                $useRealName = $showRealNames || ($qmPlayer->twitch_live_at_start ?? false);
+
                 return [
-                    "playerName" => $showRealNames ? $qmPlayer->player->username : "Player" . ($index + 1),
+                    "playerName" => $useRealName ? $qmPlayer->player->username : "Player" . ($index + 1),
                     "playerFaction" => $sides[$qmPlayer->actual_side] ?? '',
                     "playerColor" => $qmPlayer->color,
                     "twitchProfile" => $qmPlayer->player?->user?->twitch_profile,
@@ -316,7 +319,8 @@ class ApiQuickMatchController extends Controller
             ->values()
             ->map(function ($qmPlayer, $index) use ($sides, $showRealNames)
             {
-                $useRealName = $showRealNames || $qmPlayer->team === "observer";
+                // Show real name if globally unmasked OR observer OR player is streaming
+                $useRealName = $showRealNames || $qmPlayer->team === "observer" || ($qmPlayer->twitch_live_at_start ?? false);
                 $faction = $qmPlayer->team === "observer" ? "Observer" : $sides[$qmPlayer->actual_side] ?? '';
                 return [
                     "teamId" => $qmPlayer->team,
