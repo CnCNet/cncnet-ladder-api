@@ -110,6 +110,9 @@ Route::group(['prefix' => 'admin'], function ()
 
             Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
+
+            // Bot Management
+            Route::post('bot/restart', [\App\Http\Controllers\BotManagementController::class, 'restart'])->name('admin.bot.restart');
         });
 
         Route::group(['prefix' => 'news', 'middleware' => ['restrict:adminRequired', 'restrict:isNewsAdmin']], function ()
