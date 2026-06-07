@@ -1,8 +1,7 @@
 @php
     $mapPreview = null;
     try {
-        $mapObject = $gameReport->game->qmMap?->map ?? $gameReport->game->map;
-        $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $mapObject, $gameReport->game);
+        $mapPreview = \App\Helpers\SiteHelper::getMapPreviewUrl($history, $map, $gameReport->game);
         if (isset($mapPreview) && !empty($mapPreview)) {
             $mapPreviewSize = getimagesize($mapPreview);
 
