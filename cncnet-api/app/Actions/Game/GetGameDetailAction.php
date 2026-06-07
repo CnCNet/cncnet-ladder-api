@@ -275,6 +275,22 @@ class GetGameDetailAction
             }
         }
 
+        // Select correct map: prefer qmMap->map (proper FK), fallback to game->map (hash-based)
+        $map = $game->qmMap?->map ?? $game->map;
+
+        // Fix: hash-based map relation can match multiple maps (duplicate hashes)
+        // If current map has no mapHeaders, try finding another map with same hash that has mapHeaders
+        if ($map && !$map->mapHeaders) {
+            $alternateMap = \App\Models\Map::where('hash', $map->hash)
+                ->whereHas('mapHeaders')
+                ->with('mapHeaders.waypoints')
+                ->first();
+
+            if ($alternateMap) {
+                $map = $alternateMap;
+            }
+        }
+
         return [
             'game' => $game,
             'gameReport' => $gameReport,
@@ -294,7 +310,7 @@ class GetGameDetailAction
             'showBothZeroFix' => $showBothZeroFix,
             'fixedPointsPreview' => $fixedPointsPreview,
             // Pre-computed data to avoid queries in views
-            'map' => $game->map,  // Already eager loaded
+            'map' => $map,
             'gameAbbreviation' => $history->ladder->abbreviation,  // Use property, not method
         ];
     }
@@ -339,6 +355,22 @@ class GetGameDetailAction
         // Get tunnels from connection stats
         $tunnels = TunnelHelper::getTunnelsFromStats($qmConnectionStats);
 
+        // Select correct map: prefer qmMap->map (proper FK), fallback to game->map (hash-based)
+        $map = $game->qmMap?->map ?? $game->map;
+
+        // Fix: hash-based map relation can match multiple maps (duplicate hashes)
+        // If current map has no mapHeaders, try finding another map with same hash that has mapHeaders
+        if ($map && !$map->mapHeaders) {
+            $alternateMap = \App\Models\Map::where('hash', $map->hash)
+                ->whereHas('mapHeaders')
+                ->with('mapHeaders.waypoints')
+                ->first();
+
+            if ($alternateMap) {
+                $map = $alternateMap;
+            }
+        }
+
         return [
             'game' => $game,
             'gameReport' => $gameReport,
@@ -360,7 +392,7 @@ class GetGameDetailAction
             'showBothZeroFix' => $showBothZeroFix,
             'fixedPointsPreview' => $fixedPointsPreview,
             // Pre-computed data to avoid queries in views
-            'map' => $game->map,  // Already eager loaded
+            'map' => $map,
             'gameAbbreviation' => $history->ladder->abbreviation,  // Use property, not method
         ];
     }
