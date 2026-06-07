@@ -326,6 +326,65 @@ Separate cron-based ELO computation system:
 - **Development Vite**: http://localhost:5173
 - **Production**: https://ladder.cncnet.org
 
+## Known Issues & Workarounds
+
+### Hash-based Map Relationship Limitations
+
+The `Game->map()` relationship uses hash matching instead of foreign keys:
+```php
+// Game.php line 51
+return $this->belongsTo(Map::class, 'hash', 'hash');
+```
+
+**Problems:**
+- Nested eager loading fails: `'map.mapHeaders.waypoints'` marks relation as loaded but returns null
+- Multiple maps can have same hash → relationship returns arbitrary match
+- No guarantee correct map selected when duplicates exist
+
+**Solution:**
+- Prefer `game->qmMap->map` (proper FK chain) when available (games since June 2026)
+- Fallback to hash-based with manual mapHeaders check for older games
+- See `GetGameDetailAction.php` lines 278-290 for reference pattern
+
+### Map Selection Pattern
+
+Always use this pattern when displaying map data with mapHeaders:
+
+```php
+// Select map: prefer qmMap (FK chain), fallback to hash-based
+$map = $game->qmMap?->map ?? $game->map;
+
+// Handle duplicate hash collision - find map with mapHeaders if current doesn't have it
+if ($map && !$map->mapHeaders) {
+    $alternateMap = \App\Models\Map::where('hash', $map->hash)
+        ->whereHas('mapHeaders')
+        ->with('mapHeaders.waypoints')
+        ->first();
+
+    if ($alternateMap) {
+        $map = $alternateMap;
+    }
+}
+```
+
+**Don't** compute map selection in views - do it in controller/action layer for single source of truth.
+
+### Running Laravel Commands in Development
+
+**IMPORTANT**: All Laravel/Artisan commands must run inside Docker container:
+
+```bash
+# ✓ CORRECT - via docker exec
+docker exec dev_cncnet_ladder_app php artisan tinker
+docker exec dev_cncnet_ladder_app php artisan migrate
+
+# ✗ WRONG - will fail (no PHP/DB access outside container)
+php artisan tinker
+cd cncnet-api && php artisan tinker
+```
+
+This applies to: artisan, composer, tinker, migrations, queue commands, etc.
+
 ## Troubleshooting
 
 **"No supported encrypter found"**:
