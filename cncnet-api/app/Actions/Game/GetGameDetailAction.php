@@ -12,6 +12,7 @@ use App\Models\Game;
 use App\Models\GameReport;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
+use App\Models\Map;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetGameDetailAction
@@ -275,21 +276,7 @@ class GetGameDetailAction
             }
         }
 
-        // Select correct map: prefer qmMap->map (proper FK), fallback to game->map (hash-based)
-        $map = $game->qmMap?->map ?? $game->map;
-
-        // Fix: hash-based map relation can match multiple maps (duplicate hashes)
-        // If current map has no mapHeaders, try finding another map with same hash that has mapHeaders
-        if ($map && !$map->mapHeaders) {
-            $alternateMap = \App\Models\Map::where('hash', $map->hash)
-                ->whereHas('mapHeaders')
-                ->with('mapHeaders.waypoints')
-                ->first();
-
-            if ($alternateMap) {
-                $map = $alternateMap;
-            }
-        }
+        $map = $this->resolveMapWithHeaders($game);
 
         return [
             'game' => $game,
@@ -355,21 +342,7 @@ class GetGameDetailAction
         // Get tunnels from connection stats
         $tunnels = TunnelHelper::getTunnelsFromStats($qmConnectionStats);
 
-        // Select correct map: prefer qmMap->map (proper FK), fallback to game->map (hash-based)
-        $map = $game->qmMap?->map ?? $game->map;
-
-        // Fix: hash-based map relation can match multiple maps (duplicate hashes)
-        // If current map has no mapHeaders, try finding another map with same hash that has mapHeaders
-        if ($map && !$map->mapHeaders) {
-            $alternateMap = \App\Models\Map::where('hash', $map->hash)
-                ->whereHas('mapHeaders')
-                ->with('mapHeaders.waypoints')
-                ->first();
-
-            if ($alternateMap) {
-                $map = $alternateMap;
-            }
-        }
+        $map = $this->resolveMapWithHeaders($game);
 
         return [
             'game' => $game,
@@ -395,5 +368,35 @@ class GetGameDetailAction
             'map' => $map,
             'gameAbbreviation' => $history->ladder->abbreviation,  // Use property, not method
         ];
+    }
+
+    /**
+     * Resolve map with mapHeaders, handling hash collisions
+     *
+     * Prefers qmMap->map (proper FK chain), falls back to game->map (hash-based).
+     * When hash-based map has duplicate records, finds one with mapHeaders populated.
+     *
+     * @param Game $game
+     * @return Map|null
+     */
+    private function resolveMapWithHeaders(Game $game): ?Map
+    {
+        // Select correct map: prefer qmMap->map (proper FK), fallback to game->map (hash-based)
+        $map = $game->qmMap?->map ?? $game->map;
+
+        // Fix: hash-based map relation can match multiple maps (duplicate hashes)
+        // If current map has no mapHeaders, try finding another map with same hash that has mapHeaders
+        if ($map && !$map->mapHeaders) {
+            $alternateMap = Map::where('hash', $map->hash)
+                ->whereHas('mapHeaders')
+                ->with('mapHeaders.waypoints')
+                ->first();
+
+            if ($alternateMap) {
+                return $alternateMap;
+            }
+        }
+
+        return $map;
     }
 }
