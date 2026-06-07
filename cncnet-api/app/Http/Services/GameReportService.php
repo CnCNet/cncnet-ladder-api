@@ -41,11 +41,11 @@ class GameReportService
             'report.game.qmMatch.map', // Needed for map preview (legacy, backward compatibility)
 
             // QM Map data (direct relationship, persists after qm_matches pruning)
-            'qmMap.map',
+            'qmMap.map', // Note: mapHeaders loaded manually in action due to Laravel eager loading limitations
 
             // QM Match data (legacy, for backward compatibility)
             'qmMatch.qmConnectionStats',
-            'qmMatch.map',
+            'qmMatch.map', // Note: mapHeaders loaded manually in action
         ];
 
         // Add moderator-specific eager loading
