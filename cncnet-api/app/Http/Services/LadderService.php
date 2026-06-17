@@ -37,7 +37,7 @@ class LadderService
 
     public function getAllLadders()
     {
-        $ladders = Ladder::all();
+        $ladders = Ladder::where('private', false)->get();
 
         foreach ($ladders as $ladder)
         {

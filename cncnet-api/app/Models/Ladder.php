@@ -68,7 +68,7 @@ class Ladder extends Model
 
     /**
      * Returns array of QM ladders user has access to
-     * Show private ladders to ladder testers only
+     * Show private ladders to ladder admins, testers, mods and god users only
      * @param User $user 
      * @return array 
      */
@@ -84,10 +84,9 @@ class Ladder extends Model
 
         foreach ($ladders as $ladder)
         {
-            // Show private ladders to ladder testers only
             if ($ladder->private == true)
             {
-                if (!$user->isLadderAdmin($ladder) || !$user->isLadderTester($ladder))
+                if (!$user->isGod() && !$user->isLadderAdmin($ladder) && !$user->isLadderMod($ladder) && !$user->isLadderTester($ladder))
                 {
                     continue;
                 }
