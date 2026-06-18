@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\LadderService;
 use App\Http\Services\PlayerService;
 use App\Http\Services\UserService;
-use App\Models\Ladder;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,11 +14,13 @@ class ApiUserController extends Controller
 {
     private $playerService;
     private $userService;
+    private $ladderService;
 
     public function __construct()
     {
         $this->playerService = new PlayerService();
         $this->userService = new UserService();
+        $this->ladderService = new LadderService();
     }
 
     public function getUserInfo(Request $request)
@@ -73,7 +75,7 @@ class ApiUserController extends Controller
         try
         {
             $user = auth('api')->user();
-            return Ladder::getAllowedQMLaddersByUser($user);
+            return $this->ladderService->getAllowedPrivateLadders($user);
         }
         catch (Exception $ex)
         {
