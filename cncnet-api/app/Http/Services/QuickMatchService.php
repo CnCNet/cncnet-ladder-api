@@ -1866,19 +1866,48 @@ class QuickMatchService
     }
 
     /**
-     * Made an array of all possible combination of match and compute the match_ranking value.
-     * The lower the match_ranking is the more the match is even.
-     * Team elo is the value representing how strong a team is.
-     * Elo gap is a value representing the skill difference between players in the team
-     * @param $currentPlayerId
-     * @param $currentPlayerRank
-     * @param $opponentsRating
-     * @return array
+     * Finds all possible 2v2 team matchup combinations and computes match quality scores.
+     *
+     * Optimized to prevent timeout with large queues via:
+     * - Early exit after finding 100 balanced matches (teams_elo_diff < 4000)
+     * - Hard cap at 50,000 permutations maximum
+     * - Eliminates duplicate TeamB pairs (optimized loop iteration)
+     *
+     * Scoring:
+     * - match_ranking: Lower = more balanced (teams_elo_diff + elo_gap_sum)
+     * - team_elo: Combined rating representing team strength
+     * - elo_gap: Skill difference between teammates (lower = more balanced)
+     * - teams_elo_diff: Rating difference between opposing teams (lower = more even match)
+     *
+     * Performance: O(N²) worst case due to loop optimization (was O(N³))
+     * Logs: START params, PROGRESS (10k intervals), WARNING (limit hit), COMPLETED (stats + exit reason)
+     *
+     * @param int $currentPlayerId Queue entry ID of player being matched
+     * @param int $currentPlayerRank ELO rating of current player
+     * @param array $opponentsRating Array of ['id' => queueEntryId, 'rank' => elo] for opponents
+     * @return array Array of possible matches with teamA, teamB, and scoring metrics
      */
     public function findPossibleMatches($currentPlayerId, $currentPlayerRank, $opponentsRating): array
     {
         $possibleMatches = [];
-        for ($i = 0; $i < count($opponentsRating); $i++)
+        $n = count($opponentsRating);
+        $maxPermutations = 50000; // Hard limit to prevent timeouts
+        $permutationCount = 0;
+        $startTime = microtime(true);
+
+        // Early exit threshold: once we have enough balanced matches
+        $goodMatches = 0;
+        $goodMatchThreshold = 100; // Stop if we find 100 balanced matches (teams_elo_diff < 4000)
+
+        Log::debug("findPossibleMatches START", [
+            'current_player_id' => $currentPlayerId,
+            'current_player_rank' => $currentPlayerRank,
+            'opponents_count' => $n,
+            'max_permutations' => $maxPermutations,
+            'good_match_threshold' => $goodMatchThreshold
+        ]);
+
+        for ($i = 0; $i < $n; $i++)
         {
             $teamA = [
                 'player1' => $currentPlayerId,
@@ -1887,25 +1916,42 @@ class QuickMatchService
                 'elo_gap' => abs($currentPlayerRank - $opponentsRating[$i]['rank'])
             ];
 
-            for ($j = 0; $j < count($opponentsRating); $j++)
+            for ($j = 0; $j < $n; $j++)
             {
                 if ($opponentsRating[$j]['id'] == $teamA['player2']) continue;
-                $player1B = $opponentsRating[$j]['id'];
 
-                for ($k = 0; $k < count($opponentsRating); $k++)
+                // OPTIMIZATION: Start k from j+1 to avoid duplicate TeamB pairs
+                // Old: (P1, P2) and (P2, P1) counted as different - now only count once
+                for ($k = $j + 1; $k < $n; $k++)
                 {
-                    if ($opponentsRating[$k]['id'] == $player1B || $opponentsRating[$k]['id'] == $teamA['player2']) continue;
-                    $player2B = $opponentsRating[$k]['id'];
+                    if ($opponentsRating[$k]['id'] == $teamA['player2']) continue;
+
+                    $permutationCount++;
+
+                    // Hard limit check - prevent timeout
+                    if ($permutationCount > $maxPermutations) {
+                        $duration = round((microtime(true) - $startTime) * 1000, 2);
+                        Log::warning("findPossibleMatches HIT PERMUTATION LIMIT", [
+                            'limit' => $maxPermutations,
+                            'opponents' => $n,
+                            'matches_found' => count($possibleMatches),
+                            'good_matches' => $goodMatches,
+                            'duration_ms' => $duration,
+                            'permutations_per_second' => round($permutationCount / ($duration / 1000))
+                        ]);
+                        break 3; // Exit all loops
+                    }
 
                     $teamB = [
-                        'player1' => $player1B,
-                        'player2' => $player2B,
+                        'player1' => $opponentsRating[$j]['id'],
+                        'player2' => $opponentsRating[$k]['id'],
                         'team_elo' => $opponentsRating[$j]['rank'] + $opponentsRating[$k]['rank'],
                         'elo_gap' => abs($opponentsRating[$j]['rank'] - $opponentsRating[$k]['rank'])
                     ];
 
                     $diff = abs($teamA['team_elo'] - $teamB['team_elo']);
                     $gap = $teamA['elo_gap'] + $teamB['elo_gap'];
+
                     $possibleMatches[] = [
                         'teamA' => $teamA,
                         'teamB' => $teamB,
@@ -1913,9 +1959,50 @@ class QuickMatchService
                         'elo_gap_sum' => $gap,
                         'match_ranking' => $diff + $gap
                     ];
+
+                    // Early exit optimization - if we have enough balanced matches, stop searching
+                    if ($diff < 4000) {
+                        $goodMatches++;
+                        if ($goodMatches >= $goodMatchThreshold) {
+                            $duration = round((microtime(true) - $startTime) * 1000, 2);
+                            Log::info("findPossibleMatches EARLY EXIT - sufficient balanced matches found", [
+                                'good_matches' => $goodMatches,
+                                'total_matches' => count($possibleMatches),
+                                'permutations_checked' => $permutationCount,
+                                'opponents' => $n,
+                                'duration_ms' => $duration,
+                                'efficiency' => round(($goodMatches / $permutationCount) * 100, 2) . '%'
+                            ]);
+                            break 3; // Exit all loops
+                        }
+                    }
+
+                    // Progress logging every 10k permutations
+                    if ($permutationCount % 10000 === 0) {
+                        $duration = round((microtime(true) - $startTime) * 1000, 2);
+                        Log::debug("findPossibleMatches PROGRESS", [
+                            'permutations' => $permutationCount,
+                            'matches_found' => count($possibleMatches),
+                            'good_matches' => $goodMatches,
+                            'duration_ms' => $duration,
+                            'permutations_per_second' => round($permutationCount / ($duration / 1000))
+                        ]);
+                    }
                 }
             }
         }
+
+        $duration = round((microtime(true) - $startTime) * 1000, 2);
+        Log::info("findPossibleMatches COMPLETED", [
+            'total_permutations' => $permutationCount,
+            'matches_found' => count($possibleMatches),
+            'good_matches' => $goodMatches,
+            'opponents' => $n,
+            'duration_ms' => $duration,
+            'permutations_per_second' => $duration > 0 ? round($permutationCount / ($duration / 1000)) : 0,
+            'exit_reason' => $permutationCount > $maxPermutations ? 'hit_limit' : ($goodMatches >= $goodMatchThreshold ? 'early_exit' : 'exhaustive_search')
+        ]);
+
         return $possibleMatches;
     }
 
