@@ -737,9 +737,16 @@ class QuickMatchService
 
     private function setQmPlayerObserverColorLocation($qmPlayer)
     {
+        $playerName = $qmPlayer->player?->username ?? 'Unknown';
+        Log::debug("[QuickMatchService::setQmPlayerObserverColorLocation] Setting observer spawn for {$playerName}");
+        Log::debug("[QuickMatchService::setQmPlayerObserverColorLocation] BEFORE: is_observer={$qmPlayer->is_observer}, team={$qmPlayer->team}, color={$qmPlayer->color}, location={$qmPlayer->location}");
+
         $qmPlayer->color = 5;
         $qmPlayer->location = -1;
+        $qmPlayer->team = 'observer'; // BUGFIX: Set team field for validation
         $qmPlayer->save();
+
+        Log::debug("[QuickMatchService::setQmPlayerObserverColorLocation] AFTER: is_observer={$qmPlayer->is_observer}, team={$qmPlayer->team}, color={$qmPlayer->color}, location={$qmPlayer->location}");
     }
 
     private function pickQmMapId(Collection $otherQMQueueEntries, QmLadderRules $ladderRules, QmMatchPlayer $qmPlayer, LadderHistory $history, Collection $qmMaps)
@@ -1272,14 +1279,22 @@ class QuickMatchService
             $perMS = $mapSides;
         }
 
+        $playerName = $qmPlayerFresh->player?->username ?? 'Unknown';
+        $isCurrentPlayerObserver = $qmPlayerFresh->isObserver();
+        $matchType = $ladder->clans_allowed ? 'CLAN' : '1v1';
+        $ladderAbbr = $ladder->abbreviation;
+
+        Log::debug("[QuickMatchService::createQmMatch] Match ID {$qmMatch->id} - Ladder: {$ladderAbbr}, Type: {$matchType}, Current player: {$playerName}, Is observer: " . ($isCurrentPlayerObserver ? 'YES' : 'NO'));
+
         if ($qmPlayerFresh->isObserver() == true)
         {
             $this->setQmPlayerObserverColorLocation($qmPlayerFresh);
         }
 
-        # These both really really really need refactoring 
+        # These both really really really need refactoring
         if ($ladder->clans_allowed)
         {
+            Log::debug("[QuickMatchService::createQmMatch] Calling setClanSpawns for match {$qmMatch->id}");
             $this->setClanSpawns(
                 $otherQmQueueEntries,
                 $ladder,
@@ -1292,6 +1307,7 @@ class QuickMatchService
         }
         else
         {
+            Log::debug("[QuickMatchService::createQmMatch] Calling set1v1QmSpawns for match {$qmMatch->id}");
             $this->set1v1QmSpawns(
                 $otherQmQueueEntries,
                 $qmMatch,
@@ -1309,6 +1325,13 @@ class QuickMatchService
 
         Log::debug("Launching match with players $playerNames, " . $qmPlayer->player->username . " on map: " . $qmMatch->map->description);
 
+        // Log final spawn configuration for all players
+        $allPlayers = $qmMatch->players;
+        foreach ($allPlayers as $p) {
+            $pName = $p->player?->username ?? 'Unknown';
+            Log::debug("[QuickMatchService::createQmMatch] Match {$qmMatch->id} - Player {$pName}: is_observer={$p->is_observer}, team={$p->team}, color={$p->color}, location={$p->location}");
+        }
+
         // Validate match configuration before launching
         $this->validateMatchConfiguration($qmMatch);
 
@@ -1319,6 +1342,13 @@ class QuickMatchService
     {
         $ladder = $history->ladder;
         $currentQmQueueEntry = $teamAPlayers->first();
+
+        $teamANames = $teamAPlayers->map(fn($e) => $e->qmPlayer?->player?->username ?? 'Unknown')->implode(', ');
+        $teamBNames = $teamBPlayers->map(fn($e) => $e->qmPlayer?->player?->username ?? 'Unknown')->implode(', ');
+        $observerNames = $observers->map(fn($e) => $e->qmPlayer?->player?->username ?? 'Unknown')->implode(', ');
+        $ladderAbbr = $ladder->abbreviation;
+
+        Log::debug("[QuickMatchService::createTeamQmMatch] Ladder: {$ladderAbbr}, Creating TEAM match - Team A: [{$teamANames}], Team B: [{$teamBNames}], Observers: [{$observerNames}]");
 
         $qmMapId = $this->chooseQmMapId($teamAPlayers->merge($teamBPlayers), $ladder->qmLadderRules->use_ranked_map_picker, $history, $maps);
 
@@ -1389,6 +1419,13 @@ class QuickMatchService
 
         // Set observer spawn locations and flags
         $this->setObserversSpawns($observers, $qmMatch, $colors);
+
+        // Log final spawn configuration for all players
+        $allPlayers = $qmMatch->players;
+        foreach ($allPlayers as $p) {
+            $pName = $p->player?->username ?? 'Unknown';
+            Log::debug("[QuickMatchService::createTeamQmMatch] Match {$qmMatch->id} - Player {$pName}: is_observer={$p->is_observer}, team={$p->team}, color={$p->color}, location={$p->location}");
+        }
 
         // Validate match configuration before launching
         $this->validateMatchConfiguration($qmMatch);
