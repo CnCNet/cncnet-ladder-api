@@ -5,7 +5,9 @@
             @foreach ($games as $game)
 
                 @php
-                    $playerGameReports = $game->report->playerGameReports ?? collect();
+                    $allPlayerGameReports = $game->report->playerGameReports ?? collect();
+                    // Filter out spectators for regular player display
+                    $playerGameReports = $allPlayerGameReports->filter(fn($pgr) => !$pgr->spectator);
                     $gameUrl = \App\Models\URLHelper::getGameUrl($history, $game->id);
                     $timestamp = $game->updated_at->timestamp;
                 @endphp

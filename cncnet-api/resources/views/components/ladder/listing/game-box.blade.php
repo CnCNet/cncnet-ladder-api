@@ -55,16 +55,34 @@
             @endforeach
             @foreach ($observerPlayers as $observerPlayer)
                 <span class="align-middle ms-2" title="Observer">
-                    <x-ladder.listing.game-box-partial :history="$history" :game-player="$observerPlayer" :index="null" />
+                    <x-ladder.listing.game-box-partial :history="$history" :game-player="$observerPlayer" :index="-1" />
                     <span class="material-symbols-outlined" style="vertical-align:middle;">visibility</span>
                 </span>
             @endforeach
         @else
-            @foreach ($game->report->playerGameReports as $k => $gamePlayer)
+            @php
+                // Separate observers from regular players
+                $regularPlayers = [];
+                $observerPlayers = [];
+                foreach ($game->report->playerGameReports as $pgr) {
+                    if ($pgr->spectator) {
+                        $observerPlayers[] = $pgr;
+                    } else {
+                        $regularPlayers[] = $pgr;
+                    }
+                }
+            @endphp
+            @foreach ($regularPlayers as $k => $gamePlayer)
                 <x-ladder.listing.game-box-partial :history="$history" :game-player="$gamePlayer" :index="$k" />
                 @if ($k == 0)
                     <em class="font-impact text-center">Vs</em>
                 @endif
+            @endforeach
+            @foreach ($observerPlayers as $observerPlayer)
+                <span class="align-middle ms-2" title="Observer">
+                    <x-ladder.listing.game-box-partial :history="$history" :game-player="$observerPlayer" :index="-1" />
+                    <span class="material-symbols-outlined" style="vertical-align:middle;">visibility</span>
+                </span>
             @endforeach
         @endif
 
