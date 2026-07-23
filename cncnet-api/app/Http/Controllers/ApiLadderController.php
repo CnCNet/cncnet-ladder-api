@@ -299,6 +299,10 @@ class ApiLadderController extends Controller
                 $playerGR->defeated = false;
                 $playerGR->draw = true;
                 $playerGR->spectator = $pgr->spectator;
+                $playerGR->stats_id = $pgr->stats_id;
+                $playerGR->team = $pgr->team;
+                $playerGR->spawn = $pgr->spawn;
+                $playerGR->clan_id = $pgr->clan_id;
                 $playerGR->save();
             }
 
