@@ -40,6 +40,17 @@
 
                         $hasValidSpawnData = false;
                         $gameStats = $pgr->stats;
+
+                        // Log missing stats for non-spectators (potential data issue)
+                        if (!$gameStats && !$pgr->spectator) {
+                            \Log::warning('PlayerGameReport missing stats', [
+                                'pgr_id' => $pgr->id,
+                                'game_id' => $pgr->game_id,
+                                'player_id' => $pgr->player_id,
+                                'game_report_id' => $pgr->game_report_id,
+                                'spectator' => $pgr->spectator
+                            ]);
+                        }
                         $player = $pgr->player;
 
                         try {
@@ -70,12 +81,12 @@
                     @if ($hasValidSpawnData)
                         <div id="marker-{{ $k }}" class="player-marker" style="left: {{ $playerX }}px; top: {{ $playerY }}px;"
                             data-x="{{ $playerX }}" data-y="{{ $playerY }}">
-                            <div class="player-start-position {{ $gameStats->colour($gameStats->col) }}">
+                            <div class="player-start-position {{ $gameStats ? $gameStats->colour($gameStats->col) : '' }}">
                                 {{ $playerSpawnPosition != -1 ? $playerSpawnPosition : 'No spawn data' }}
                             </div>
                         </div>
 
-                        <div id="playerdetails-{{ $k }}" class="player player-{{ $gameStats->colour($gameStats->col) }} player-details"
+                        <div id="playerdetails-{{ $k }}" class="player player-{{ $gameStats ? $gameStats->colour($gameStats->col) : '' }} player-details"
                             style="display:none;">
 
                             <div class="player-avatar">
