@@ -207,24 +207,24 @@ class LadderController extends Controller
      * @param Request $request
      * @param string|null $date Ladder history date (format: M-YYYY)
      * @param string|null $cncnetGame Game abbreviation (e.g., 'yr', 'ra2')
-     * @param int|null $gameId Game ID
-     * @param int|null $reportId Optional specific report ID
+     * @param string|int|null $gameId Game ID (route param comes as string)
+     * @param string|int|null $reportId Optional specific report ID (route param comes as string)
      * @return \Illuminate\View\View
      */
     public function getLadderGame(
         Request $request,
         ?string $date = null,
         ?string $cncnetGame = null,
-        ?int $gameId = null,
-        ?int $reportId = null
+        $gameId = null,
+        $reportId = null
     ) {
         $action = app(\App\Actions\Game\GetGameDetailAction::class);
 
         $viewData = $action->execute(
             date: $date,
             cncnetGame: $cncnetGame,
-            gameId: $gameId,
-            reportId: $reportId,
+            gameId: (int) $gameId,
+            reportId: $reportId ? (int) $reportId : null,
             authenticatedUser: $request->user()
         );
 

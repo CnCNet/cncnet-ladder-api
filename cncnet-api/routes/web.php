@@ -5,6 +5,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 
+// Global route parameter constraints for numeric IDs
+Route::pattern('ladderId', '[0-9]+');
+Route::pattern('playerId', '[0-9]+');
+Route::pattern('gameId', '[0-9]+');
+Route::pattern('reportId', '[0-9]+');
+Route::pattern('clanId', '[0-9]+');
+Route::pattern('banId', '[0-9]+');
+Route::pattern('id', '[0-9]+');
+
 Route::get('/', [\App\Http\Controllers\SiteController::class, 'getIndex']);
 Route::get('/ladder-champions/{game}', [\App\Http\Controllers\LeagueChampionsController::class, 'getLeagueChampions']);
 Route::get('/help/obs', [\App\Http\Controllers\SiteController::class, 'getOBSHelp']);

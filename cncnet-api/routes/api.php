@@ -2,6 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 
+// Global route parameter constraints for numeric IDs
+Route::pattern('ladderId', '[0-9]+');
+Route::pattern('playerId', '[0-9]+');
+Route::pattern('gameId', '[0-9]+');
+Route::pattern('pingsSent', '[0-9]+');
+Route::pattern('pingsReceived', '[0-9]+');
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
