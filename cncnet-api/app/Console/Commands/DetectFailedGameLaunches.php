@@ -63,13 +63,13 @@ class DetectFailedGameLaunches extends Command
         $recordsCreated = 0;
 
         // Batch check for already-logged matches to avoid N+1 queries
-        $loggedMatchIds = QmCanceledMatch::where('reason', 'failed_launch')
-            ->whereIn('qm_match_id', $failedGames->pluck('qm_match_id'))
+        // Check for ANY reason (player_canceled or failed_launch) to avoid duplicates
+        $loggedMatchIds = QmCanceledMatch::whereIn('qm_match_id', $failedGames->pluck('qm_match_id'))
             ->pluck('qm_match_id')
             ->toArray();
 
         foreach ($failedGames as $game) {
-            // Check if we've already logged this failed launch
+            // Check if we've already logged this match (any reason)
             if (in_array($game->qm_match_id, $loggedMatchIds)) {
                 continue;
             }
