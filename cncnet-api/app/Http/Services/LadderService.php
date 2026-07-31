@@ -37,8 +37,12 @@ class LadderService
 
     public function getAllLadders()
     {
-        $ladders = Ladder::all();
+        $ladders = Ladder::where('private', false)->get();
+        return $this->enrichLadders($ladders);
+    }
 
+    private function enrichLadders($ladders)
+    {
         foreach ($ladders as $ladder)
         {
             $ladder["sides"] = $ladder->sides()->get();
@@ -62,6 +66,25 @@ class LadderService
                 $ladder["alert"] = $alert->message;
         }
         return $ladders;
+    }
+
+    public function getAllowedPrivateLadders($user)
+    {
+        if ($user === null)
+        {
+            return collect();
+        }
+
+        $ladders = Ladder::where('private', true)->get();
+
+        $allowedLadders = $ladders->filter(function ($ladder) use ($user) {
+            if ($user->isGod()) return true;
+            return $user->isLadderAdmin($ladder)
+                || $user->isLadderMod($ladder)
+                || $user->isLadderTester($ladder);
+        })->values();
+
+        return $this->enrichLadders($allowedLadders);
     }
 
     public function getLadders($private = false)
