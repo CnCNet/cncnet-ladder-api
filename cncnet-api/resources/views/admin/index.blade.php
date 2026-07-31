@@ -54,6 +54,26 @@
 @section('content')
     <section class="pt-4 mt-5 mb-5">
         <div class="container">
+            @if (session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <strong>Success!</strong> {{ session('success') }}
+                    @if (session('output'))
+                        <br><small>Output: {{ session('output') }}</small>
+                    @endif
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error:</strong> {{ session('error') }}
+                    @if (session('remaining_cooldown'))
+                        <br><small>Please wait {{ session('remaining_cooldown') }} minute(s) before trying again.</small>
+                    @endif
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
             <div>
                 <div class="row mb-5">
                     <div class="col-md-4">
@@ -181,6 +201,23 @@
 
                                 <a id="observedGamesLink" href="/admin/observedGames/{{ $ladders[0]->abbreviation }}"
                                     class="btn btn-md btn-secondary mt-2">View</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mt-4">
+                        <div class="profile-link">
+                            <div class="player-box player-card">
+                                <h3>Bot Management</h3>
+                                <p>Recreate and start the CnCNet ladder bot container</p>
+
+                                <form method="POST" action="{{ route('admin.bot.restart') }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-md btn-warning mt-2">
+                                        <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">restart_alt</span>
+                                        Restart Bot
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
