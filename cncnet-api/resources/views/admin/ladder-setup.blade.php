@@ -414,6 +414,19 @@
                                                     </select>
                                                 </div>
 
+                                                <div class="form-group">
+                                                    <label for="enable_replays">Enable Replays
+                                                        <span class="material-symbols-outlined" data-bs-toggle="tooltip" title="Records a replay per player and uploads it after the match. Only supported on RA2/YR ladders. Turning this off makes the Quick Match client fall back to the standard spawner on the next match, with no client update needed." style="font-size: 16px; cursor: help; color: #999;">help</span>
+                                                    </label>
+                                                    <select id="enable_replays" name="enable_replays" class="form-control">
+                                                        <option value="1" @if ($rule->enable_replays) selected @endif>
+                                                            Yes
+                                                        </option>
+                                                        <option value="0" @if (!$rule->enable_replays) selected @endif>No
+                                                        </option>
+                                                    </select>
+                                                </div>
+
                                                 <hr>
                                                 <p style="color: #fff">Point System</p>
 
