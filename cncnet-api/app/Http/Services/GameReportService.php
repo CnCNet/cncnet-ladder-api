@@ -34,6 +34,7 @@ class GameReportService
             'report.playerGameReports.player.user.userSettings',
             'report.playerGameReports.player.clanPlayer.clan',
             'report.playerGameReports.player.gameClips', // For game clips display
+            'report.playerGameReports.player.gameReplays', // For replay download buttons
             'report.playerGameReports.stats.gameObjectCounts.countableGameObject', // CRITICAL: Eliminates N+1 for cameo stats
             'report.playerGameReports.clan',
             'report.playerGameReports.gameReport', // Needed for clan logic in views
@@ -55,6 +56,7 @@ class GameReportService
                 'allReports.playerGameReports.player.user.userSettings',
                 'allReports.playerGameReports.player.clanPlayer.clan',
                 'allReports.playerGameReports.player.gameClips',
+                'allReports.playerGameReports.player.gameReplays',
                 'allReports.playerGameReports.stats.gameObjectCounts.countableGameObject',
                 'allReports.playerGameReports.clan',
                 'allReports.playerGameReports.gameReport',

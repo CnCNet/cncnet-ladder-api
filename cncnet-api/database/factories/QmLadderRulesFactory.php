@@ -35,6 +35,7 @@ class QmLadderRulesFactory extends Factory
             'fixed_points' => 12,
             'no_negative_points' => 1,
             'show_map_preview' => 1,
+            'enable_replays' => 0,
             'reduce_map_repeats' => 5,
             'use_ranked_map_picker' => 0,
             'use_elo_map_picker' => 0

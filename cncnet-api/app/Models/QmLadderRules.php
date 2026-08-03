@@ -24,7 +24,7 @@ class QmLadderRules extends Model
         'allowed_sides', 'bail_time', 'bail_fps', 'tier2_rating', 'rating_per_second',
         'max_points_difference', 'points_per_second', 'use_elo_points', 'wol_k',
         'upset_k', 'upset_k_loser_multiplier', 'fixed_points', 'no_negative_points',
-        'show_map_preview', 'reduce_map_repeats', 'use_ranked_map_picker'
+        'show_map_preview', 'reduce_map_repeats', 'use_ranked_map_picker', 'enable_replays'
     ];
 
     public static function newDefault($ladderId)
@@ -50,6 +50,8 @@ class QmLadderRules extends Model
         $rules->fixed_points      = 12;
         $rules->no_negative_points = true;
         $rules->show_map_preview = true;
+        // Replays stay off until a ladder opts in - only RA2/YR supports them.
+        $rules->enable_replays = false;
         $rules->use_ranked_map_picker = false;
         $rules->reduce_map_repeats = 0; //number of recent maps to exclude from next played game
 

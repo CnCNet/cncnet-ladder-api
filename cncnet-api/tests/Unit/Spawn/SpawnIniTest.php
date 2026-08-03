@@ -58,6 +58,47 @@ class SpawnIniTest extends TestCase
         $this->assertNotNull($spawnStruct['spawn']['Settings']['IsSpectator']);
 
         $this->assertEquals($this->ladder->qmLadderRules->show_map_preview, $spawnStruct['client']['show_map_preview']);
+        $this->assertEquals((bool) $this->ladder->qmLadderRules->enable_replays, $spawnStruct['client']['enable_replays']);
+    }
+
+    /**
+     * The client keys off this flag to decide whether to record a replay and which spawner DLL to
+     * inject, so it has to be present and false unless a ladder has explicitly opted in.
+     */
+    public function test_enable_replays_defaults_off(): void
+    {
+        $p1 = $this->makePlayerForLadder('test1', $this->ladder, $this->makeUser('test1'));
+        $qmMatch = $this->makeQmMatch($this->ladder, $this->ladder->mapPool->maps->first());
+        $qmMatchPlayer = $this->makeQmMatchPlayer($p1, $this->ladder, $qmMatch, ['color' => 0, 'actual_side' => 1, 'location' => 0]);
+
+        $spawnStruct = QuickMatchSpawnService::createSpawnStruct(
+            $qmMatch,
+            $qmMatchPlayer,
+            $this->ladder,
+            $this->ladder->qmLadderRules
+        );
+
+        $this->assertArrayHasKey('enable_replays', $spawnStruct['client']);
+        $this->assertFalse($spawnStruct['client']['enable_replays']);
+    }
+
+    public function test_enable_replays_is_passed_through_when_on(): void
+    {
+        $this->ladder->qmLadderRules->enable_replays = true;
+        $this->ladder->qmLadderRules->save();
+
+        $p1 = $this->makePlayerForLadder('test1', $this->ladder, $this->makeUser('test1'));
+        $qmMatch = $this->makeQmMatch($this->ladder, $this->ladder->mapPool->maps->first());
+        $qmMatchPlayer = $this->makeQmMatchPlayer($p1, $this->ladder, $qmMatch, ['color' => 0, 'actual_side' => 1, 'location' => 0]);
+
+        $spawnStruct = QuickMatchSpawnService::createSpawnStruct(
+            $qmMatch,
+            $qmMatchPlayer,
+            $this->ladder,
+            $this->ladder->qmLadderRules->fresh()
+        );
+
+        $this->assertTrue($spawnStruct['client']['enable_replays']);
     }
 
     public function test_append_others_2(): void {

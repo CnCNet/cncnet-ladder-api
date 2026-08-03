@@ -53,6 +53,9 @@ Route::group(['prefix' => 'v1'], function ()
         Route::post('/result/ladder/{ladderId}/game/{gameId}/player/{playerId}/pings/{pingsSent}/{pingsReceived}', [\App\Http\Controllers\ApiLadderController::class, 'newPostLadder']);
         Route::post('/result/video-clip', [\App\Http\Controllers\ApiLadderController::class, 'saveVideoClip']);
 
+        // Replay Endpoints
+        Route::post('/replay/ladder/{ladderId}/game/{gameId}/player/{playerId}', [\App\Http\Controllers\ApiReplayController::class, 'uploadReplay']);
+
         // General Endpoints
         Route::get('/ping', [\App\Http\Controllers\ApiLadderController::class, 'pingLadder']);
 

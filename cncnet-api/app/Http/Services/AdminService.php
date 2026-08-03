@@ -48,6 +48,7 @@ class AdminService
         $ladderRule->points_per_second = $request->points_per_second;
 
         $ladderRule->show_map_preview = $request->show_map_preview;
+        $ladderRule->enable_replays = $request->enable_replays;
         $ladderRule->wol_k = $request->wol_k;
         $ladderRule->upset_k = $request->upset_k;
         $ladderRule->upset_k_loser_multiplier = $request->upset_k_loser_multiplier;

@@ -31,7 +31,12 @@ class QuickMatchSpawnService
                 "SpawnLocations" => [],
                 "Settings" => []
             ],
-            "client" => ["show_map_preview" => $ladderRules->show_map_preview]
+            "client" => [
+                "show_map_preview" => $ladderRules->show_map_preview,
+                // Drives both replay recording and which spawner DLL the client injects, so
+                // replays can be switched off server-side without a client update.
+                "enable_replays" => (bool) $ladderRules->enable_replays
+            ]
         ];
 
         srand($qmMatch->seed); // Seed the RNG for possibly random boolean options
