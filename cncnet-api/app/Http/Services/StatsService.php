@@ -368,7 +368,10 @@ class StatsService
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
                 ->where('draw', false)
                 ->where('no_completion', false)
-                ->with(['gameReport.playerGameReports.player'])
+                ->where('player_game_reports.spectator', false)
+                ->with(['gameReport.playerGameReports' => function($q) {
+                    $q->where('spectator', false);
+                }, 'gameReport.playerGameReports.player'])
                 ->get();
 
             $matchupResults = [];
@@ -461,12 +464,15 @@ class StatsService
                 })
                 ->whereHas('playerGameReports', function ($query) use ($player)
                 {
-                    $query->where('player_id', $player->id);
+                    $query->where('player_id', $player->id)
+                        ->where('spectator', false);
                 })
                 ->where('valid', true)
                 ->where('manual_report', false)
                 ->where('best_report', true)
-                ->with(['playerGameReports.player', 'game'])
+                ->with(['playerGameReports' => function($q) {
+                    $q->where('spectator', false);
+                }, 'playerGameReports.player', 'game'])
                 ->get();
 
             $matchupResults = [];

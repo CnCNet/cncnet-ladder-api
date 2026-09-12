@@ -69,6 +69,7 @@ class Clan extends Model
     public function pointsBefore($history, $gameId, $clanId)
     {
         $points = PlayerGameReport::where('player_game_reports.clan_id', $clanId)
+            ->where('player_game_reports.spectator', false)
             ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
             ->where("g.ladder_history_id", "=", $history->id)
             ->where('g.id', '<', $gameId)
@@ -83,6 +84,7 @@ class Clan extends Model
             ->join('games', 'games.id', '=', 'game_reports.game_id')
             ->join('stats2', 'player_game_reports.stats_id', '=', 'stats2.id')
             ->where('player_game_reports.clan_id', $this->id)
+            ->where('player_game_reports.spectator', false)
             ->where('game_reports.valid', true)
             ->where('game_reports.best_report', true)
             ->groupBy("game_reports.game_id")
@@ -181,6 +183,7 @@ class Clan extends Model
     public function points($history)
     {
         $points = PlayerGameReport::where('player_game_reports.clan_id', $this->id)
+            ->where('player_game_reports.spectator', false)
             ->join('games as g', 'g.game_report_id', '=', 'player_game_reports.game_report_id')
             ->where("g.ladder_history_id", "=", $history->id)
             ->sum('player_game_reports.points');

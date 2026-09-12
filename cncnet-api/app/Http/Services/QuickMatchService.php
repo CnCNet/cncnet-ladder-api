@@ -655,6 +655,7 @@ class QuickMatchService
             /** @var Collection $playerGameReports */
             $playerGameReports = $player->qmPlayer->player->playerGames()
                 ->where("ladder_history_id", "=", $history->id)
+                ->where("player_game_reports.spectator", "=", 0)
                 ->where("disconnected", "=", 0)
                 ->where("no_completion", "=", 0)
                 ->where("draw", "=", 0)

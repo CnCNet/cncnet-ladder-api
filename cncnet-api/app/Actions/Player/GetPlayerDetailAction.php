@@ -134,8 +134,12 @@ class GetPlayerDetailAction
     {
         $games = $player->playerGames()
             ->where('ladder_history_id', $history->id)
+            ->where('player_game_reports.spectator', false)
             ->with([
                 'gameReport.game.map',
+                'gameReport.playerGameReports' => function($q) {
+                    $q->where('spectator', false);
+                },
                 'gameReport.playerGameReports.player.user',
                 'gameReport.playerGameReports.stats',
                 'player.user',
