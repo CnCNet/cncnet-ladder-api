@@ -221,6 +221,12 @@ class GetGameDetailAction
                 ->where('game_id', $pgr->game_id)
                 ->first();
 
+            // Pre-compute replay (uses eager-loaded gameReplays collection). Each player has their
+            // own file - the replay records that player's viewport and unit selection.
+            $pgr->playerReplay = $pgr->player->gameReplays
+                ->where('game_id', $pgr->game_id)
+                ->first();
+
             // Pre-compute faction for display (fixes redundant Stats2 query in views)
             if ($pgr->stats) {
                 $pgr->playerFaction = $pgr->stats->faction($history->ladder, $pgr->stats->cty);

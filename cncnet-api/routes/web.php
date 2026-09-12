@@ -25,6 +25,13 @@ Route::get('/news/{slug}', [\App\Http\Controllers\NewsController::class, 'getNew
 // Route::get("/stats", "SiteController@getStats");
 Route::get('/canceledMatches/{ladderAbbreviation}', [\App\Http\Controllers\LadderController::class, 'getCanceledMatches']);
 
+# Replay downloads. Deliberately outside the 'cache.public' ladder group below - these responses
+# are permission-dependent and must never be served from a shared cache.
+Route::group(['prefix' => 'replay', 'middleware' => 'auth'], function ()
+{
+    Route::get('/{replayId}', [\App\Http\Controllers\ReplayController::class, 'download'])->name('replay.download');
+});
+
 # 1vs1 Player Ladders
 Route::group(['prefix' => 'ladder/', 'middleware' => ['cache.public']], function ()
 {

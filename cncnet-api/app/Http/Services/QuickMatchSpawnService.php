@@ -31,7 +31,10 @@ class QuickMatchSpawnService
                 "SpawnLocations" => [],
                 "Settings" => []
             ],
-            "client" => ["show_map_preview" => $ladderRules->show_map_preview]
+            "client" => [
+                "show_map_preview" => $ladderRules->show_map_preview,
+                "enable_replays" => $ladderRules->replaysEnabled()
+            ]
         ];
 
         srand($qmMatch->seed); // Seed the RNG for possibly random boolean options
