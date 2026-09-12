@@ -52,6 +52,7 @@ class ChartService
             // Use single query with DATE grouping instead of looping through each day
             $gamesByDate = $player->playerGames()
                 ->where("ladder_history_id", $history->id)
+                ->where('player_game_reports.spectator', false)
                 ->whereBetween("player_game_reports.created_at", [$from, $to])
                 ->selectRaw('
                     DATE(player_game_reports.created_at) as date,

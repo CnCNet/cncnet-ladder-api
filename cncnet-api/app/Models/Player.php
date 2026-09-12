@@ -112,6 +112,7 @@ class Player extends Model
 
         return $this->playerGames()
             ->where("ladder_history_id", $history->id)
+            ->where('player_game_reports.spectator', false)
             ->whereBetween("game_reports.created_at", [$start, $end])
             ->count();
     }
@@ -120,6 +121,7 @@ class Player extends Model
     {
         $lastGamePlayed = $this->playerGames()
             ->where("ladder_history_id", $history->id)
+            ->where('player_game_reports.spectator', false)
             ->orderBy("created_at", "DESC")
             ->first();
 
