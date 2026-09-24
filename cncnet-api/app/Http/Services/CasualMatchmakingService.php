@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Extensions\Qm\Matchup\CasualMatchupHandler;
 use App\Models\Ladder;
 use App\Models\Player;
 use App\Models\QmMatch;
@@ -10,6 +11,7 @@ use App\Models\QmQueueEntry;
 use App\Models\User;
 use App\Models\UserSettings;
 use Carbon\Carbon;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -69,6 +71,15 @@ class CasualMatchmakingService
     private const SEARCH_TOKEN_PATTERN = '/^[A-Za-z0-9\-]{16,64}$/';
     private const SEARCH_TOKEN_KEY = 'qm_casual_search_token:';
     private const SEARCH_TOKEN_SECONDS = 3600;
+
+    /**
+     * Matchups on a ladder run one at a time, so that a player is never put in two matches.
+     * The lock is released on its own if a request fails while holding it. The players of a ladder
+     * send their requests at the same moment, so a request waits a moment for the matchups of the others.
+     */
+    private const MATCHUP_LOCK_KEY = 'qm_casual_matchup:';
+    private const MATCHUP_LOCK_SECONDS = 30;
+    private const MATCHUP_LOCK_WAIT_SECONDS = 2;
 
     private QuickMatchService $quickMatchService;
     private PlayerService $playerService;
@@ -218,6 +229,36 @@ class CasualMatchmakingService
         $qmPlayer->save();
 
         return $qmPlayer;
+    }
+
+    /**
+     * Tries to match the player with the players waiting in the queue. Casual matches are made in
+     * the player's request instead of in FindOpponentJob, so casual players never keep the ranked
+     * matchmaking queue busy. While another request matches players on the same ladder, the player
+     * waits for it, or is matched on a later checkback if it takes too long.
+     */
+    public function findMatch(QmQueueEntry $qmQueueEntry, int $gameType): void
+    {
+        try
+        {
+            Cache::lock(self::MATCHUP_LOCK_KEY . $qmQueueEntry->ladder_history_id, self::MATCHUP_LOCK_SECONDS)
+                ->block(self::MATCHUP_LOCK_WAIT_SECONDS, function () use ($qmQueueEntry, $gameType)
+                {
+                    // The request that held the lock may have matched this player after this request
+                    // updated the player's queue entry, which then must not be matched again
+                    if ($qmQueueEntry->qmPlayer->refresh()->qm_match_id !== null)
+                    {
+                        $qmQueueEntry->delete();
+                        return;
+                    }
+
+                    (new CasualMatchupHandler($qmQueueEntry, $gameType))->matchup();
+                });
+        }
+        catch (LockTimeoutException)
+        {
+            // The player is matched on a later checkback
+        }
     }
 
     /**
