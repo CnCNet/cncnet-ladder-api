@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V2\Qm;
 use App\Http\Services\CasualMatchmakingService;
 use App\Http\Services\PlayerService;
 use App\Http\Services\QuickMatchService;
-use App\Jobs\Qm\FindOpponentJob;
 use App\Models\Game;
 use App\Models\Ladder;
 use App\Models\Player;
@@ -126,9 +125,9 @@ class CasualMatchUpController
             $gameType = $ladder->qmLadderRules->player_count > 2 ? Game::GAME_TYPE_2VS2 : Game::GAME_TYPE_1VS1;
             $qmQueueEntry = $this->quickMatchService->createOrUpdateQueueEntry($player, $qmPlayer, $ladder->current_history, $gameType);
 
-            dispatch(new FindOpponentJob($qmQueueEntry->id, $gameType));
+            $this->casualService->findMatch($qmQueueEntry, $gameType);
 
-            // The job may have matched this player already, then the spawn is sent right away
+            // If this player was matched now, the spawn is sent right away
             $qmPlayer->refresh();
             if ($qmPlayer->qm_match_id === null)
             {
