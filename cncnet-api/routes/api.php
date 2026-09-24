@@ -150,6 +150,7 @@ Route::group(['prefix' => 'v1'], function ()
                 \App\Http\Middleware\Api\ShadowBanMiddleware::class,
                 \App\Http\Middleware\Api\BanMiddleware::class,
                 \App\Http\Middleware\Api\VerifiedEmailMiddleware::class,
+                \App\Http\Middleware\Api\RejectCasualLadderMiddleware::class,
             ]);
     });
 
