@@ -3,6 +3,7 @@
 namespace Tests\Feature\Api\Qm\MatchRequest;
 
 use App\Models\Player;
+use App\Models\QmCanceledMatch;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
 use App\Models\QmQueueEntry;
@@ -207,6 +208,25 @@ class CasualMatchRequestTest extends TestCase
 
         $this->assertEquals('spawn', $response->json('type'), json_encode($response->json()));
         $this->assertEquals(1, QmMatch::count());
+    }
+
+    public function test_failed_launch_detection_skips_casual_matches(): void
+    {
+        $this->casualRequest('Newcomer1');
+        $this->waitSeconds(5);
+        $this->casualRequest('Newcomer2');
+        $casualMatch = QmMatch::where('ladder_id', $this->ladder->id)->first();
+
+        $rankedMatch = $this->makeQmMatch($this->rankedLadder, $this->rankedLadder->mapPool->maps->first());
+        $rankedPlayer = $this->makePlayerForLadder('RankedPlayer', $this->rankedLadder, $this->makeUser('RankedPlayer'));
+        $this->makeQmMatchPlayer($rankedPlayer, $this->rankedLadder, $rankedMatch);
+
+        // Neither match reports a result: casual matches never do, the ranked one failed to launch
+        $this->waitSeconds(30 * 60);
+        $this->artisan('qm:detect-failed-launches')->assertSuccessful();
+
+        $this->assertEquals(0, QmCanceledMatch::where('qm_match_id', $casualMatch->id)->count());
+        $this->assertEquals(1, QmCanceledMatch::where('qm_match_id', $rankedMatch->id)->count());
     }
 
     public function test_other_clients_cannot_cancel_a_search(): void
