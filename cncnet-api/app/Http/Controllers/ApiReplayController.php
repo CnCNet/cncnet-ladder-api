@@ -11,6 +11,7 @@ use App\Models\QmMatchPlayer;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ApiReplayController extends Controller
 {
@@ -111,6 +112,11 @@ class ApiReplayController extends Controller
                 'player_id' => $player->id,
                 'file_size' => $replay->file_size,
             ], 200);
+        }
+        catch (ValidationException $ex)
+        {
+            Log::warning("ApiReplayController: user {$user->id} uploaded an invalid replay for game {$gameId}.", ['errors' => $ex->errors()]);
+            return response()->json(['message' => $ex->getMessage()], 422);
         }
         catch (Exception $ex)
         {
