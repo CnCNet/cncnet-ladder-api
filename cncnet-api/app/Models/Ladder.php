@@ -43,6 +43,26 @@ class Ladder extends Model
         return $user->isLadderAdmin($this) || $user->isLadderMod($this) || $user->isLadderTester($this);
     }
 
+    /**
+     * Staff can always download replays. Beyond that the ladder's replay tier decides: testers as
+     * well when it is set to testers, anyone signed in when it is set to all.
+     */
+    public function allowedToDownloadReplays($user)
+    {
+        if ($user === null)
+            return false;
+
+        if ($user->isModerator() || $user->isLadderAdmin($this) || $user->isLadderMod($this))
+            return true;
+
+        $tier = (int) optional($this->qmLadderRules)->replays;
+
+        if ($tier === QmLadderRules::REPLAYS_ALL)
+            return true;
+
+        return $tier === QmLadderRules::REPLAYS_TESTERS && $user->isLadderTester($this);
+    }
+
     public function currentHistory() : ?LadderHistory
     {
         $start = now()->startOfMonth()->toDateTimeString();

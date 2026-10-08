@@ -110,6 +110,8 @@ $pageTitle = 'Viewing Game - ';
         </div>
     @endif
 
+    @include('ladders.game._game-replays')
+
     <section class="game-detail clan-detail">
         @php
             $gameAbbreviation = $history->ladder()->first()->abbreviation;
