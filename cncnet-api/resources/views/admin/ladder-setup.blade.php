@@ -414,6 +414,23 @@
                                                     </select>
                                                 </div>
 
+                                                <div class="form-group">
+                                                    <label for="replays">Replays
+                                                        <span class="material-symbols-outlined" data-bs-toggle="tooltip" title="Records a replay per player and uploads it after the match. Only supported on RA2/YR ladders. Staff can always download; this setting decides who else can." style="font-size: 16px; cursor: help; color: #999;">help</span>
+                                                    </label>
+                                                    <select id="replays" name="replays" class="form-control">
+                                                        <option value="{{ \App\Models\QmLadderRules::REPLAYS_DISABLED }}" @if ((int) $rule->replays === \App\Models\QmLadderRules::REPLAYS_DISABLED) selected @endif>
+                                                            Disabled
+                                                        </option>
+                                                        <option value="{{ \App\Models\QmLadderRules::REPLAYS_TESTERS }}" @if ((int) $rule->replays === \App\Models\QmLadderRules::REPLAYS_TESTERS) selected @endif>
+                                                            Enabled - testers can download
+                                                        </option>
+                                                        <option value="{{ \App\Models\QmLadderRules::REPLAYS_ALL }}" @if ((int) $rule->replays === \App\Models\QmLadderRules::REPLAYS_ALL) selected @endif>
+                                                            Enabled - everyone can download
+                                                        </option>
+                                                    </select>
+                                                </div>
+
                                                 <hr>
                                                 <p style="color: #fff">Point System</p>
 

@@ -118,6 +118,8 @@ else {
         </div>
     @endif
 
+    @include('ladders.game._game-replays')
+
     <section class="game-detail">
         <div class="game-players-container">
             <div class="{{ $history->ladder->qmLadderRules->player_count > 2 ? 'container-xl' : 'container' }}">
