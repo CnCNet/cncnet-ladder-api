@@ -157,6 +157,12 @@ class AccountController extends Controller
             return redirect()->back();
         }
 
+        if ($ladder->is_casual)
+        {
+            $request->session()->flash('error', 'Casual ladders are played without a registered nickname.');
+            return redirect()->back();
+        }
+
         $user = \Auth::user();
         $player = $this->playerService->addPlayerToUserAccount($request->username, $user, $ladder->id);
 

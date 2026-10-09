@@ -153,6 +153,17 @@ Route::group(['prefix' => 'v1'], function ()
                 \App\Http\Middleware\Api\ShadowBanMiddleware::class,
                 \App\Http\Middleware\Api\BanMiddleware::class,
                 \App\Http\Middleware\Api\VerifiedEmailMiddleware::class,
+                \App\Http\Middleware\Api\RejectCasualLadderMiddleware::class,
             ]);
+    });
+
+    // Casual matchmaking does not require an account, so these routes are rate limited per connection.
+    // A searching client sends about 16 requests per minute and several players can share a connection.
+    Route::group(['prefix' => 'qm/casual', 'middleware' => 'throttle:90,1'], function ()
+    {
+        Route::get('/queue-counts', [\App\Http\Controllers\Api\V2\Qm\CasualMatchUpController::class, 'queueCounts']);
+
+        Route::post('/{ladder:abbreviation}/{playerName}', \App\Http\Controllers\Api\V2\Qm\CasualMatchUpController::class)
+            ->middleware(\App\Http\Middleware\Api\ClientUpToDateMiddleware::class);
     });
 });
