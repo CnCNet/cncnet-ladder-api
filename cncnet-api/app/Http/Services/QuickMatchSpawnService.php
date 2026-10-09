@@ -373,11 +373,27 @@ class QuickMatchSpawnService
                     $p2Index = $players[$j]->color + 1;
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$i]->player->username} with Player: {$players[$j]->player->username}");
                     Log::info("QuickMatchSpawnService 2 ** Alliances: Teaming for $team, Player: {$players[$j]->player->username} with Player: {$players[$i]->player->username}");
-                    $spawnStruct["spawn"]["Multi{$p1Index}_Alliances"]["HouseAllyOne"] = $p2Index - 1;
-                    $spawnStruct["spawn"]["Multi{$p2Index}_Alliances"]["HouseAllyOne"] = $p1Index - 1;
+                    $spawnStruct = self::addAlly($spawnStruct, $p1Index, $p2Index - 1);
+                    $spawnStruct = self::addAlly($spawnStruct, $p2Index, $p1Index - 1);
                 }
             }
         }
+
+        return $spawnStruct;
+    }
+
+    /**
+     * Adds an ally to the first free HouseAlly key of a player, so that teams of any size are allied
+     * @param $spawnStruct
+     * @param int $multiIndex
+     * @param int $allyColor
+     * @return mixed
+     */
+    private static function addAlly($spawnStruct, int $multiIndex, int $allyColor)
+    {
+        $allyKeys = ["HouseAllyOne", "HouseAllyTwo", "HouseAllyThree", "HouseAllyFour", "HouseAllyFive", "HouseAllySix", "HouseAllySeven"];
+        $allyCount = count($spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"] ?? []);
+        $spawnStruct["spawn"]["Multi{$multiIndex}_Alliances"][$allyKeys[$allyCount]] = $allyColor;
 
         return $spawnStruct;
     }
