@@ -184,6 +184,33 @@ class SpawnIniTest extends TestCase
         $this->assertEquals(3, $spawnStruct['spawn']['Multi3_Alliances']['HouseAllyOne']);
     }
 
+    public function test_append_alliance_team_of_three(): void {
+        $qmMatch = $this->makeQmMatch($this->ladder, $this->ladder->mapPool->maps->first());
+
+        $qmMatchPlayers = collect();
+        foreach (['A', 'A', 'A', 'B', 'B', 'B'] as $color => $team)
+        {
+            $player = $this->makePlayerForLadder("test{$color}", $this->ladder, $this->makeUser("test{$color}"));
+            $qmMatchPlayers->push($this->makeQmMatchPlayer($player, $this->ladder, $qmMatch, ['color' => $color, 'actual_side' => 1, 'team' => $team, 'location' => $color]));
+        }
+
+        $qmMatchPlayer = $qmMatchPlayers->first();
+        $others = $qmMatchPlayers->slice(1)->values();
+
+        $spawnStruct = QuickMatchSpawnService::createSpawnStruct($qmMatch, $qmMatchPlayer, $this->ladder, $this->ladder->qmLadderRules);
+        $spawnStruct = QuickMatchSpawnService::appendOthersToSpawnIni($spawnStruct, $qmMatchPlayer, $others);
+        $spawnStruct = QuickMatchSpawnService::appendAlliancesToSpawnIni($spawnStruct, $qmMatchPlayer, $others);
+
+        // Every player is allied with both teammates
+        $this->assertEquals(['HouseAllyOne', 'HouseAllyTwo'], array_keys($spawnStruct['spawn']['Multi1_Alliances']));
+        $this->assertEqualsCanonicalizing([1, 2], $spawnStruct['spawn']['Multi1_Alliances']);
+        $this->assertEqualsCanonicalizing([0, 2], $spawnStruct['spawn']['Multi2_Alliances']);
+        $this->assertEqualsCanonicalizing([0, 1], $spawnStruct['spawn']['Multi3_Alliances']);
+        $this->assertEqualsCanonicalizing([4, 5], $spawnStruct['spawn']['Multi4_Alliances']);
+        $this->assertEqualsCanonicalizing([3, 5], $spawnStruct['spawn']['Multi5_Alliances']);
+        $this->assertEqualsCanonicalizing([3, 4], $spawnStruct['spawn']['Multi6_Alliances']);
+    }
+
     public function test_append_alliance_clan(): void {
         
     }
