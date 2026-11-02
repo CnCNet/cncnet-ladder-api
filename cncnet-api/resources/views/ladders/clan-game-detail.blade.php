@@ -193,4 +193,6 @@ $pageTitle = 'Viewing Game - ';
             </div>
         </section>
     </section>
+
+    @include('ladders.game._game-replay-stats')
 @endsection

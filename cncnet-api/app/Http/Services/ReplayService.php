@@ -2,7 +2,13 @@
 
 namespace App\Http\Services;
 
+use App\Http\Services\Replay\ReplayCanonical;
+use App\Http\Services\Replay\ReplayFileReader;
+use App\Http\Services\Replay\ReplayStatsBuilder;
+use App\Jobs\Qm\BuildReplayStatsJob;
 use App\Models\GameReplay;
+use App\Models\GameReplaySeals;
+use App\Models\GameReplayStats;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -96,7 +102,170 @@ class ReplayService
 
         $this->enforceStorageBudget();
 
+        // The seals and, for the first copy of a game, the statistics: off the upload request.
+        BuildReplayStatsJob::dispatch($replay->id);
+
         return $replay;
+    }
+
+    /**
+     * Whether a game still needs its statistics read from a replay. Every player's recording holds
+     * the same simulation, so one current build per game is enough.
+     */
+    public function needsStats(int $gameId): bool
+    {
+        $version = GameReplayStats::where('game_id', $gameId)->value('version');
+        return $version === null || (int) $version < ReplayStatsBuilder::VERSION;
+    }
+
+    /**
+     * Reads a replay into its game's statistics. Returns false when the replay had none to give -
+     * an older recording, or one cut off before the spawner closed it.
+     */
+    public function buildStats(GameReplay $replay): bool
+    {
+        $path = $this->replayPath($replay);
+        if ($path === null)
+        {
+            return false;
+        }
+
+        $builder = new ReplayStatsBuilder();
+        try
+        {
+            $stats = $builder->build($path);
+        }
+        catch (\Throwable $ex)
+        {
+            Log::warning("ReplayService: could not read stats from replay {$replay->id}: " . $ex->getMessage());
+            return false;
+        }
+
+        if ($stats === null)
+        {
+            return false;
+        }
+
+        GameReplayStats::updateOrCreate(
+            ['game_id' => $replay->game_id],
+            [
+                'game_replay_id' => $replay->id,
+                'version'        => ReplayStatsBuilder::VERSION,
+                'stats'          => $stats,
+            ]
+        );
+
+        return true;
+    }
+
+    /**
+     * Keeps a replay's canonical seals, recomputed from its contents rather than taken from the seals
+     * it carries, and whether those matched: a copy edited after the game fails that check unless its
+     * chain was redone, and then it no longer agrees with the other players' copies. Returns false
+     * when the replay carries no seals.
+     */
+    public function storeSeals(GameReplay $replay): bool
+    {
+        $path = $this->replayPath($replay);
+        if ($path === null)
+        {
+            return false;
+        }
+
+        try
+        {
+            $reader = new ReplayFileReader($path);
+            $complete = $reader->header()['cleanShutdown'];
+            $verified = ReplayCanonical::verify($reader);
+        }
+        catch (\Throwable $ex)
+        {
+            Log::warning("ReplayService: could not read seals from replay {$replay->id}: " . $ex->getMessage());
+            return false;
+        }
+
+        if ($verified === null)
+        {
+            return false;
+        }
+
+        $list = [];
+        foreach ($verified['seals'] as $through => $hash)
+        {
+            $list[] = [(int) $through, $hash];
+        }
+
+        GameReplaySeals::updateOrCreate(
+            ['game_id' => $replay->game_id, 'player_id' => $replay->player_id],
+            ['seals' => $list, 'complete' => $complete, 'consistent' => $verified['consistent']]
+        );
+
+        return true;
+    }
+
+    /**
+     * Whether the players' copies of a game agree. Every copy of one game has the same seal for every
+     * full interval both reached, so two copies that differ were either edited or recorded on machines
+     * that went out of sync - the interval they first differ in says when. A copy that does not match
+     * its own seals was edited after the game, and is listed apart rather than compared.
+     *
+     * Null with fewer than two copies to compare. Otherwise how many copies there are, the players
+     * whose copy was edited, and for each pair of the rest that disagree, the first interval they
+     * differ in.
+     */
+    public function integrity(int $gameId): ?array
+    {
+        $rows = GameReplaySeals::where('game_id', $gameId)->orderBy('player_id')->get();
+        if ($rows->count() < 2)
+        {
+            return null;
+        }
+
+        $edited = $rows->where('consistent', false)->pluck('player_id')->values()->all();
+
+        // Only full intervals: the last seal of a copy covers wherever that recording stopped.
+        $full = $rows->where('consistent', true)->mapWithKeys(function ($row)
+        {
+            $seals = [];
+            foreach ($row->seals as [$through, $hash])
+            {
+                if ($through % ReplayFileReader::SEAL_INTERVAL_FRAMES === ReplayFileReader::SEAL_INTERVAL_FRAMES - 1)
+                {
+                    $seals[$through] = $hash;
+                }
+            }
+            return [$row->player_id => $seals];
+        });
+
+        $players = $full->keys()->all();
+        $differences = [];
+        $lastShared = -1;
+
+        foreach ($players as $i => $a)
+        {
+            foreach (array_slice($players, $i + 1) as $b)
+            {
+                $shared = array_intersect_key($full[$a], $full[$b]);
+                ksort($shared);
+                foreach ($shared as $through => $hash)
+                {
+                    if ($full[$b][$through] !== $hash)
+                    {
+                        $differences[] = ['players' => [$a, $b], 'frame' => $through - ReplayFileReader::SEAL_INTERVAL_FRAMES + 1];
+                        continue 2;
+                    }
+                    $lastShared = max($lastShared, $through);
+                }
+            }
+        }
+
+        return [
+            'copies'      => $rows->count(),
+            'agree'       => count($differences) === 0 && count($edited) === 0,
+            'checkedTo'   => $lastShared,
+            'edited'      => $edited,
+            'differences' => $differences,
+        ];
     }
 
     /**
@@ -133,6 +302,7 @@ class ReplayService
                     $total -= (int) $replay->file_size;
                     $this->deleteFile($replay);
                     $replay->delete();
+                    GameReplayStats::where('game_replay_id', $replay->id)->update(['game_replay_id' => null]);
                 }
 
                 return true;

@@ -7,12 +7,16 @@ use App\Http\Services\ConnectionStatsService;
 use App\Http\Services\GameReportService;
 use App\Http\Services\LadderService;
 use App\Http\Services\PointsFixDetectionService;
+use App\Http\Services\Replay\ReplayStatsBuilder;
+use App\Http\Services\ReplayService;
 use App\Models\CountableObjectHeap;
 use App\Models\Game;
+use App\Models\GameReplayStats;
 use App\Models\GameReport;
 use App\Models\Ladder;
 use App\Models\LadderHistory;
 use App\Models\Map;
+use App\Models\Player;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class GetGameDetailAction
@@ -90,7 +94,26 @@ class GetGameDetailAction
 
         // Handle clan vs regular ladder display
         if ($history->ladder->clans_allowed) {
-            return $this->prepareClanGameData(
+            $viewData = $this->prepareClanGameData(
+                $game,
+                $gameReport,
+                $allGameReports,
+                $playerGameReports,
+                $history,
+                $heaps,
+                $authenticatedUser,
+                $userIsMod,
+                $cncnetGame,
+                $qmMatchStates,
+                $qmConnectionStats,
+                $qmMatchPlayers,
+                $date,
+                $showBothPositiveFix,
+                $showBothZeroFix,
+                $fixedPointsPreview
+            );
+        } else {
+            $viewData = $this->prepareRegularGameData(
                 $game,
                 $gameReport,
                 $allGameReports,
@@ -110,24 +133,54 @@ class GetGameDetailAction
             );
         }
 
-        return $this->prepareRegularGameData(
-            $game,
-            $gameReport,
-            $allGameReports,
-            $playerGameReports,
-            $history,
-            $heaps,
-            $authenticatedUser,
-            $userIsMod,
-            $cncnetGame,
-            $qmMatchStates,
-            $qmConnectionStats,
-            $qmMatchPlayers,
-            $date,
-            $showBothPositiveFix,
-            $showBothZeroFix,
-            $fixedPointsPreview
-        );
+        $viewData['replayStats'] = $this->getReplayStats($game, $history, $authenticatedUser);
+        $viewData['replayIntegrity'] = $this->getReplayIntegrity($game, $history, $authenticatedUser);
+        $viewData['replayStaff'] = $authenticatedUser !== null && ($authenticatedUser->isModerator()
+            || $authenticatedUser->isLadderAdmin($history->ladder) || $authenticatedUser->isLadderMod($history->ladder));
+
+        return $viewData;
+    }
+
+    /**
+     * Whether the players' replays of this game agree, by their canonical seals - which are kept
+     * after the files themselves are evicted. Same audience as the replays.
+     */
+    private function getReplayIntegrity(Game $game, LadderHistory $history, ?Authenticatable $user): ?array
+    {
+        if (!$history->ladder->allowedToDownloadReplays($user)) {
+            return null;
+        }
+
+        $integrity = (new ReplayService())->integrity($game->id);
+        if ($integrity === null) {
+            return null;
+        }
+
+        $playerIds = collect($integrity['differences'])->pluck('players')->flatten()
+            ->merge($integrity['edited'])->unique()->all();
+        $names = Player::whereIn('id', $playerIds)->pluck('username', 'id');
+        $nameOf = fn ($id) => $names[$id] ?? "Player {$id}";
+        foreach ($integrity['differences'] as &$difference) {
+            $difference['names'] = array_map($nameOf, $difference['players']);
+        }
+        unset($difference);
+        $integrity['editedNames'] = array_map($nameOf, $integrity['edited']);
+
+        return $integrity;
+    }
+
+    /**
+     * Statistics read from the game's replay, shown to whoever the ladder lets download its replays.
+     */
+    private function getReplayStats(Game $game, LadderHistory $history, ?Authenticatable $user): ?array
+    {
+        if (!$history->ladder->allowedToDownloadReplays($user)) {
+            return null;
+        }
+
+        return GameReplayStats::where('game_id', $game->id)
+            ->where('version', ReplayStatsBuilder::VERSION)
+            ->value('stats');
     }
 
     /**
