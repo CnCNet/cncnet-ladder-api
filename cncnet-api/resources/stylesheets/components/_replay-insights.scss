@@ -15,7 +15,7 @@ $ri-colours: (
 .replay-insights
 {
     --ri-panel: rgba(12, 15, 20, 0.85);
-    --ri-panel-border: rgba(255, 255, 255, 0.07);
+    --ri-panel-border: rgba(255, 255, 255, 0.3);
     --ri-muted: #7d8793;
 
     margin: 2.5rem 0;
@@ -413,7 +413,26 @@ $ri-colours: (
         .ri-legend-item { margin-right: 0.75rem; }
     }
 
-    .ri-tabs-mode { margin-bottom: 0.4rem; }
+    .ri-mode-toggle { margin-left: auto; }
+
+    // With a Players / Teams toggle the header rides along at the top while the section scrolls.
+    .ri-header-sticky
+    {
+        position: sticky;
+        // Below the site's fixed navbar while it is shown; the script sets the variable.
+        top: var(--ri-sticky-top, 0px);
+        transition: top 350ms ease-in-out;
+        z-index: 20;
+        padding: 0.5rem 1rem;
+        margin: 0 -1rem 1rem;
+        border-radius: 0 0 8px 8px;
+        background: rgba(12, 15, 20, 0.92);
+        backdrop-filter: blur(4px);
+    }
+
+    // The Players / Teams toggle shows one of the two forms of each section.
+    &[data-ri-mode="teams"] .ri-players-only,
+    &[data-ri-mode="players"] .ri-teams-only { display: none; }
 
     .ri-fastest { color: #3cff6e; }
 
@@ -424,5 +443,4 @@ $ri-colours: (
         gap: 1rem;
     }
 
-    .ri-chart-spending { height: 260px; }
 }
