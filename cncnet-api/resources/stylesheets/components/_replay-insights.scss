@@ -1,0 +1,446 @@
+// Replay insights on the game page: statistics read out of the game's replay.
+
+$ri-colours: (
+    yellow: #ffe14d,
+    red: #ff4545,
+    orange: #ffa31a,
+    pink: #ff5cc0,
+    purple: #b65cff,
+    blue: #4d86ff,
+    teal: #1fe0ef,
+    green: #3cff6e,
+    none: #9aa4b2,
+);
+
+.replay-insights
+{
+    --ri-panel: rgba(12, 15, 20, 0.85);
+    --ri-panel-border: rgba(255, 255, 255, 0.3);
+    --ri-muted: #7d8793;
+
+    margin: 2.5rem 0;
+
+    @each $name, $hex in $ri-colours
+    {
+        .ri-colour-#{$name} { --ri-colour: #{$hex}; }
+    }
+
+    .ri-header
+    {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.25rem 1rem;
+        margin-bottom: 1rem;
+
+        h3
+        {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+    }
+
+    .ri-hint,
+    .ri-muted
+    {
+        color: var(--ri-muted);
+    }
+
+    .ri-hint
+    {
+        font-size: 0.8rem;
+        font-weight: normal;
+        margin-left: 0.5rem;
+    }
+
+    .ri-card
+    {
+        background: var(--ri-panel);
+        border: 1px solid var(--ri-panel-border);
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+    }
+
+    .ri-card-title
+    {
+        font-weight: bold;
+        margin-bottom: 0.75rem;
+    }
+
+    // Headline cards
+    .ri-highlights
+    {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .ri-highlight
+    {
+        background: linear-gradient(135deg, color-mix(in srgb, var(--ri-colour) 18%, transparent), var(--ri-panel) 70%);
+        border: 1px solid var(--ri-panel-border);
+        border-left: 4px solid var(--ri-colour);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+    }
+
+    .ri-highlight-title
+    {
+        color: var(--ri-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+
+        i { color: var(--ri-colour); }
+    }
+
+    .ri-highlight-value
+    {
+        font-size: 1.4rem;
+        font-weight: bold;
+        line-height: 1.3;
+    }
+
+    .ri-highlight-player
+    {
+        color: var(--ri-colour);
+        font-weight: bold;
+    }
+
+    // Charts
+    .ri-chart { position: relative; }
+    .ri-chart-momentum { height: 130px; }
+    .ri-chart-timeline { height: 340px; }
+    .ri-chart-income { height: 260px; }
+    .ri-chart-connection { height: 200px; }
+
+    .ri-momentum-legend
+    {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .ri-legend-item { white-space: nowrap; }
+
+    .ri-connection-summary
+    {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .ri-sync-warning
+    {
+        margin-bottom: 1rem;
+        padding: 0.6rem 0.9rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 69, 69, 0.35);
+        background: rgba(255, 69, 69, 0.08);
+        color: #ff8a8a;
+
+        .bi { margin-right: 0.35rem; }
+    }
+    .ri-trophy { color: #ffc83d; }
+
+    .ri-dot
+    {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--ri-colour);
+        margin-right: 0.4rem;
+        vertical-align: baseline;
+    }
+
+    .ri-tabs
+    {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .ri-tab
+    {
+        background: transparent;
+        border: 1px solid var(--ri-panel-border);
+        border-radius: 999px;
+        color: var(--ri-muted);
+        font-size: 0.85rem;
+        padding: 0.25rem 0.85rem;
+        transition: all 0.15s;
+
+        &:hover { color: #fff; border-color: rgba(255, 255, 255, 0.25); }
+
+        &.active
+        {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.35);
+            color: #fff;
+        }
+    }
+
+    // Contribution bars
+    .ri-carry-team + .ri-carry-team { margin-top: 1rem; }
+
+    .ri-carry-team-name
+    {
+        font-weight: bold;
+        margin-bottom: 0.4rem;
+    }
+
+    .ri-carry-row
+    {
+        display: grid;
+        grid-template-columns: 9rem minmax(0, 1fr) 6rem;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.3rem;
+        font-size: 0.85rem;
+    }
+
+    .ri-carry-label { color: var(--ri-muted); }
+
+    .ri-carry-total
+    {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+        color: var(--ri-muted);
+    }
+
+    .ri-carry-bar
+    {
+        display: flex;
+        height: 22px;
+        border-radius: 4px;
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.04);
+    }
+
+    .ri-carry-segment
+    {
+        display: flex;
+        align-items: center;
+        min-width: 2px;
+        padding: 0 0.5rem;
+        overflow: hidden;
+        background: color-mix(in srgb, var(--ri-colour) 75%, #000);
+        color: #0b0e12;
+        font-size: 0.78rem;
+        font-weight: bold;
+        white-space: nowrap;
+
+        & + & { border-left: 2px solid rgba(0, 0, 0, 0.5); }
+
+        span
+        {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    // Player cards
+    .ri-players
+    {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 520px), 1fr));
+        gap: 1rem;
+    }
+
+    .ri-player
+    {
+        background: var(--ri-panel);
+        border: 1px solid var(--ri-panel-border);
+        border-top: 3px solid var(--ri-colour);
+        border-radius: 8px;
+        padding: 1rem 1.25rem;
+    }
+
+    .ri-player-header
+    {
+        display: flex;
+        align-items: baseline;
+        flex-wrap: wrap;
+        gap: 0.5rem 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .ri-player-name
+    {
+        color: var(--ri-colour);
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .ri-badge
+    {
+        border-radius: 999px;
+        font-size: 0.75rem;
+        padding: 0.1rem 0.6rem;
+        margin-left: auto;
+    }
+
+    .ri-badge-won { background: rgba(255, 200, 61, 0.15); color: #ffc83d; }
+    .ri-badge-lost { background: rgba(255, 69, 69, 0.12); color: #ff8a8a; }
+    .ri-badge-dropped { background: rgba(255, 163, 26, 0.12); color: #ffb866; }
+
+    .ri-player-stats
+    {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+
+        > div
+        {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 6px;
+            color: var(--ri-muted);
+            font-size: 0.8rem;
+            padding: 0.4rem 0.6rem;
+        }
+
+        span
+        {
+            display: block;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+    }
+
+    .ri-section-title
+    {
+        color: var(--ri-muted);
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin: 0.75rem 0 0.35rem;
+    }
+
+    .ri-cameo-strip
+    {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+
+    .ri-cameo-item
+    {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 60px;
+    }
+
+    .ri-cameo
+    {
+        position: relative;
+        width: 60px;
+        height: 48px;
+        border-radius: 4px;
+        background-color: rgba(255, 255, 255, 0.04);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    }
+
+    .ri-cameo-label
+    {
+        color: var(--ri-muted);
+        font-size: 0.72rem;
+        margin-top: 2px;
+    }
+}
+
+// Outside the block above on purpose: a single class loses to the sprite's `.yr-cameo.cameo-*` but
+// wins over the plain `.yr-cameo` declared before it. An unknown cameo then shows an empty tile
+// instead of whichever image sits first in the sheet.
+.ri-cameo
+{
+    background-position: 200px 0;
+}
+
+// Whether every player's copy of the replay is the same game, beside the download buttons.
+.replay-integrity
+{
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+}
+
+.replay-integrity-ok { color: #9fe3b2; }
+.replay-integrity-bad { color: #ff8a8a; }
+
+// The tech timings table and the two-column chart row.
+.replay-insights
+{
+    .ri-table
+    {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+        white-space: nowrap;
+
+        th,
+        td
+        {
+            padding: 0.35rem 0.55rem;
+            border-bottom: 1px solid var(--ri-panel-border);
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        th:first-child,
+        td:first-child { text-align: left; }
+
+        thead th
+        {
+            color: var(--ri-muted);
+            font-weight: normal;
+            font-size: 0.72rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        tbody tr:last-child td { border-bottom: 0; }
+
+        .ri-player-cell { color: var(--ri-colour); font-weight: bold; }
+        .ri-legend-item { margin-right: 0.75rem; }
+    }
+
+    .ri-mode-toggle { margin-left: auto; }
+
+    // With a Players / Teams toggle the header rides along at the top while the section scrolls.
+    .ri-header-sticky
+    {
+        position: sticky;
+        // Below the site's fixed navbar while it is shown; the script sets the variable.
+        top: var(--ri-sticky-top, 0px);
+        transition: top 350ms ease-in-out;
+        z-index: 20;
+        padding: 0.5rem 1rem;
+        margin: 0 -1rem 1rem;
+        border-radius: 0 0 8px 8px;
+        background: rgba(12, 15, 20, 0.92);
+        backdrop-filter: blur(4px);
+    }
+
+    // The Players / Teams toggle shows one of the two forms of each section.
+    &[data-ri-mode="teams"] .ri-players-only,
+    &[data-ri-mode="players"] .ri-teams-only { display: none; }
+
+    .ri-fastest { color: #3cff6e; }
+
+    .ri-grid-2
+    {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
+        gap: 1rem;
+    }
+
+}
