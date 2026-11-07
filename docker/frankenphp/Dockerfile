@@ -12,7 +12,8 @@ RUN install-php-extensions \
  intl xml bcmath \
  zip intl readline redis sockets && \
  pecl install excimer && \
- mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+ mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && \
+ echo "expose_php = Off" > "$PHP_INI_DIR/conf.d/zz-security.ini"
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN useradd -u ${UID} -U -d /app ${USER} && \
     setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp; \

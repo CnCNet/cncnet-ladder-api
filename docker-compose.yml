@@ -84,6 +84,7 @@ services:
     restart: unless-stopped
     command: --max_connections=500 --max_allowed_packet=128M --log_warnings=3 --wait_timeout=600 --slow-query-log --interactive_timeout=600 --long_query_time=0.5
     environment:
+      MARIADB_AUTO_UPGRADE: "1"
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -102,7 +103,7 @@ services:
     container_name: cncnet_ladder_backup${ENV_SUFFIX}
     env_file:
       - '.backup.env'
-    image: tiredofit/db-backup
+    image: nfrastack/db-backup:5.0.8
     volumes:
       - ./backups:/backup
     restart: always
