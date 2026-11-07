@@ -466,6 +466,15 @@ class LadderController extends Controller
         $ladder->clans_allowed = $request->clans_allowed;
         $ladder->game_object_schema_id = $request->game_object_schema_id;
         $ladder->private = $request->private;
+
+        // Ranked and casual players never share a ladder, so a ladder with players keeps its matchmaking type
+        $isCasual = (bool)$request->is_casual;
+        if ($ladder->exists && (bool)$ladder->is_casual !== $isCasual && $ladder->players()->exists())
+        {
+            $request->session()->flash('error', 'The matchmaking type of a ladder that already has players cannot be changed.');
+            return redirect()->back();
+        }
+        $ladder->is_casual = $isCasual;
         if ($request->ladder_type)
         {
             $ladder->ladder_type = $request->ladder_type;

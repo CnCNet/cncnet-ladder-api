@@ -43,6 +43,7 @@ class DetectFailedGameLaunches extends Command
      * 2. Are at least 20 minutes old (to avoid false positives for games in progress)
      * 3. Have no player_game_reports (game never launched or crashed during loading)
      * 4. Haven't already been logged in qm_canceled_matches
+     * 5. Are not casual matches, which never report results
      *
      * Note: False positives (long games) are auto-cleaned when reports arrive via saveLadderResult
      *
@@ -57,6 +58,7 @@ class DetectFailedGameLaunches extends Command
             ->where('created_at', '<', $timeThreshold)
             ->where('created_at', '>', Carbon::now()->subHours(2)) // Only look at last 2 hours
             ->whereDoesntHave('player_game_reports') // No reports submitted
+            ->whereDoesntHave('qmMatch.ladder', fn($query) => $query->where('is_casual', true)) // Casual matches never report results
             ->with(['qmMatch.map.map', 'qmMatch.players.player']) // Eager load for performance
             ->get();
 
