@@ -6,6 +6,8 @@ ARG USER=cncnet
 ARG UID=1001
 ARG GID=1001
 ENV SERVER_NAME="http://"
+# Replay uploads are accepted up to config(replays.max_upload_mb) (20 MB); php.ini-production
+# allows 2 MB per file and 8 MB per request, which would reject them before Laravel runs.
 RUN install-php-extensions \
  pcntl pdo_mysql curl yaml \
  gd mbstring \
@@ -13,7 +15,8 @@ RUN install-php-extensions \
  zip intl readline redis sockets && \
  pecl install excimer && \
  mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" && \
- echo "expose_php = Off" > "$PHP_INI_DIR/conf.d/zz-security.ini"
+ echo "expose_php = Off" > "$PHP_INI_DIR/conf.d/zz-security.ini" && \
+ printf 'upload_max_filesize = 20M\npost_max_size = 22M\n' > "$PHP_INI_DIR/conf.d/zz-uploads.ini"
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN useradd -u ${UID} -U -d /app ${USER} && \
     setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp; \
