@@ -65,6 +65,7 @@ services:
 
   redis:
     image: 'redis:alpine'
+    restart: unless-stopped
     container_name: cncnet_ladder_redis${ENV_SUFFIX}
     volumes:
       - redis:/data
