@@ -42,6 +42,7 @@ class ReplayFileReader
 
     // Frame block tags.
     private const BLOCK_END = 0;
+    private const BLOCK_SIDE_CHANNEL = 3;
     private const BLOCK_GAME_SPEED = 4;
     private const BLOCK_HOUSE_STATS = 6;
     private const BLOCK_MONEY_IN = 7;
@@ -51,6 +52,14 @@ class ReplayFileReader
     private const MONEY_IN_RECORD_SIZE = 12;
     public const SEAL_RECORD_SIZE = 36;
     public const SEAL_INTERVAL_FRAMES = 900;
+
+    // Side-channel records: chat, beacons and taunts, which travel outside the lockstep.
+    public const SIDE_CHANNEL_CHAT = 1;
+    private const SIDE_CHANNEL_MAX_PER_FRAME = 64;
+    // SideChannelTextLength wide characters, at most three UTF-8 bytes each.
+    private const SIDE_CHANNEL_MAX_TEXT_BYTES = 128 * 3;
+    public const CHAT_SALT_BYTES = 16;
+    public const CHAT_FINGERPRINT_BYTES = 16;
 
     // HouseStatsFlags
     public const HOUSE_DEFEATED = 1 << 0;
@@ -278,8 +287,8 @@ class ReplayFileReader
 
     /**
      * Walks the frame stream, calling $onFrame(int $frame, array $record) for every frame record.
-     * $record holds 'gameSpeed', 'houseStats', 'moneyIn', 'seals' and 'events' when the frame
-     * carries them. Each event is unpacked to a 111-byte EventClass string - type, executed flag,
+     * $record holds 'gameSpeed', 'houseStats', 'moneyIn', 'seals', 'sideChannel' and 'events' when
+     * the frame carries them. Each event is unpacked to a 111-byte EventClass string - type, executed flag,
      * house, frame, then the payload, zero beyond what the stream carries - and a FRAMEINFO keeps
      * the recorder's check result where its CRC was.
      *
@@ -445,10 +454,117 @@ class ReplayFileReader
                     }
                     break;
 
-                // The camera, selection, chat and selection triggers are the recording player's own
-                // view; nothing on the ladder uses them, and an unknown tag is skipped the same way.
+                case self::BLOCK_SIDE_CHANNEL:
+                    $sideChannel = self::parseSideChannel($b);
+                    if ($sideChannel !== null)
+                    {
+                        $record['sideChannel'] = $sideChannel;
+                    }
+                    break;
+
+                // The camera, selection and selection triggers are the recording player's own view;
+                // nothing on the ladder uses them, and an unknown tag is skipped the same way.
             }
         }
+    }
+
+    /**
+     * A SideChannel block: chat, beacons and taunts as this recording saw them. Null when the block is
+     * malformed, which loses only that frame's records.
+     *
+     * Each record is uint8 type, zigzag house, aux (a chat line's colour scheme), X, Y and Z, then the
+     * UTF-8 sender name and text, each behind a varint length. A chat line then has a flags byte: bit 0
+     * is followed by the 16-byte salt of its fingerprint, bit 1 by a uint8 label and a uint8 mask of
+     * the houses it went to.
+     */
+    private static function parseSideChannel(string $b): ?array
+    {
+        $length = strlen($b);
+        $p = 0;
+        $count = self::varint($b, $p, $length);
+        if ($count === null || $count > self::SIDE_CHANNEL_MAX_PER_FRAME)
+        {
+            return null;
+        }
+
+        $records = [];
+        for ($i = 0; $i < $count; $i++)
+        {
+            if ($p >= $length)
+            {
+                return null;
+            }
+            $type = ord($b[$p++]);
+
+            $numbers = [];
+            foreach (['house', 'aux', 'x', 'y', 'z'] as $field)
+            {
+                $raw = self::varint($b, $p, $length);
+                if ($raw === null)
+                {
+                    return null;
+                }
+                $numbers[$field] = ($raw >> 1) ^ -($raw & 1);
+            }
+
+            $name = self::utf8Field($b, $p, $length);
+            $text = $name === null ? null : self::utf8Field($b, $p, $length);
+            if ($text === null)
+            {
+                return null;
+            }
+
+            $record = ['type' => $type, 'house' => $numbers['house'], 'aux' => $numbers['aux'],
+                'name' => $name, 'text' => $text, 'salt' => null, 'label' => 0, 'recipients' => 0];
+
+            if ($type === self::SIDE_CHANNEL_CHAT)
+            {
+                if ($p >= $length)
+                {
+                    return null;
+                }
+                $flags = ord($b[$p++]);
+                if (($flags & ~3) !== 0)
+                {
+                    return null;
+                }
+                if ($flags & 1)
+                {
+                    if ($p + self::CHAT_SALT_BYTES > $length)
+                    {
+                        return null;
+                    }
+                    $record['salt'] = substr($b, $p, self::CHAT_SALT_BYTES);
+                    $p += self::CHAT_SALT_BYTES;
+                }
+                if ($flags & 2)
+                {
+                    if ($p + 2 > $length)
+                    {
+                        return null;
+                    }
+                    $record['label'] = ord($b[$p]);
+                    $record['recipients'] = ord($b[$p + 1]);
+                    $p += 2;
+                }
+            }
+
+            $records[] = $record;
+        }
+
+        return $records;
+    }
+
+    private static function utf8Field(string $b, int &$p, int $length): ?string
+    {
+        $size = self::varint($b, $p, $length);
+        if ($size === null || $size > self::SIDE_CHANNEL_MAX_TEXT_BYTES || $p + $size > $length)
+        {
+            return null;
+        }
+        $text = substr($b, $p, $size);
+        $p += $size;
+        return mb_scrub($text, 'UTF-8');
     }
 
     /** One event as a 111-byte EventClass string, or null when the stream ends part-way through. */

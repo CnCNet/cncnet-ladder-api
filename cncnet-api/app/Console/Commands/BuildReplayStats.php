@@ -11,7 +11,7 @@ class BuildReplayStats extends Command
 {
     protected $signature = 'replays:build-stats {--game= : Only this game} {--force : Rebuild stats and seals that are already current}';
 
-    protected $description = 'Read statistics and canonical seals out of stored replays, for games without current ones';
+    protected $description = 'Read statistics, canonical seals and chat out of stored replays, for games without current ones';
 
     public function handle()
     {
@@ -27,9 +27,10 @@ class BuildReplayStats extends Command
         $built = 0;
         $sealed = 0;
         $skipped = 0;
+        $chats = 0;
         $done = [];
 
-        $query->chunkById(100, function ($replays) use ($service, $force, &$built, &$sealed, &$skipped, &$done)
+        $query->chunkById(100, function ($replays) use ($service, $force, &$built, &$sealed, &$chats, &$skipped, &$done)
         {
             foreach ($replays as $replay)
             {
@@ -39,6 +40,12 @@ class BuildReplayStats extends Command
                 if (($force || !$hasSeals) && $service->storeSeals($replay))
                 {
                     $sealed++;
+                }
+
+                // And its own chat.
+                if (($force || $service->needsChat($replay)) && $service->storeChat($replay))
+                {
+                    $chats++;
                 }
 
                 // One replay per game is enough for the statistics; try the next one only if the
@@ -60,7 +67,7 @@ class BuildReplayStats extends Command
             }
         });
 
-        $this->info("Built stats for {$built} games and read seals from {$sealed} replays; {$skipped} replays had no stats to give.");
+        $this->info("Built stats for {$built} games, read seals from {$sealed} replays and chat from {$chats}; {$skipped} replays had no stats to give.");
         return 0;
     }
 }

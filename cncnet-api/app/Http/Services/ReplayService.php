@@ -3,10 +3,12 @@
 namespace App\Http\Services;
 
 use App\Http\Services\Replay\ReplayCanonical;
+use App\Http\Services\Replay\ReplayChat;
 use App\Http\Services\Replay\ReplayFileReader;
 use App\Http\Services\Replay\ReplayStatsBuilder;
 use App\Jobs\Qm\BuildReplayStatsJob;
 use App\Models\GameReplay;
+use App\Models\GameReplayChat;
 use App\Models\GameReplaySeals;
 use App\Models\GameReplayStats;
 use Illuminate\Http\UploadedFile;
@@ -201,6 +203,66 @@ class ReplayService
         );
 
         return true;
+    }
+
+    /**
+     * Keeps the chat a replay recorded, for the game page to merge with the other copies'. Returns
+     * false when the file cannot be read; a game with no chat stores an empty list.
+     */
+    public function storeChat(GameReplay $replay): bool
+    {
+        $path = $this->replayPath($replay);
+        if ($path === null)
+        {
+            return false;
+        }
+
+        try
+        {
+            $messages = ReplayChat::read(new ReplayFileReader($path));
+        }
+        catch (\Throwable $ex)
+        {
+            Log::warning("ReplayService: could not read chat from replay {$replay->id}: " . $ex->getMessage());
+            return false;
+        }
+
+        GameReplayChat::updateOrCreate(
+            ['game_id' => $replay->game_id, 'player_id' => $replay->player_id],
+            ['version' => ReplayChat::VERSION, 'messages' => $messages]
+        );
+
+        return true;
+    }
+
+    /** Whether a replay's chat has yet to be read, or was read by an older ReplayChat. */
+    public function needsChat(GameReplay $replay): bool
+    {
+        $version = GameReplayChat::where('game_id', $replay->game_id)
+            ->where('player_id', $replay->player_id)->value('version');
+        return $version === null || (int) $version < ReplayChat::VERSION;
+    }
+
+    /**
+     * Everything said in a game, from every copy's chat, each line once and in order. A copy whose
+     * seals show it was edited after the game verifies none of its lines. Returns how many copies it
+     * came from and the 'lines'; null when no copy's chat has been read.
+     */
+    public function chat(int $gameId): ?array
+    {
+        $rows = GameReplayChat::where('game_id', $gameId)->orderBy('player_id')->get();
+        if ($rows->isEmpty())
+        {
+            return null;
+        }
+
+        $edited = GameReplaySeals::where('game_id', $gameId)->where('consistent', false)
+            ->pluck('player_id')->map(fn ($id) => (int) $id)->all();
+
+        return [
+            'copies' => $rows->count(),
+            'lines'  => ReplayChat::merge($rows->pluck('messages', 'player_id')->all(), $edited),
+        ];
     }
 
     /**

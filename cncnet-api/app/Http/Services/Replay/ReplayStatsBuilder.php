@@ -89,7 +89,8 @@ class ReplayStatsBuilder
         'Russians' => 'Russia', 'YuriCountry' => 'Yuri',
     ];
 
-    private const COLOURS = [
+    // Colour scheme index to the name the game page styles it by.
+    public const COLOURS = [
         3 => 'yellow', 11 => 'red', 13 => 'orange', 15 => 'pink',
         17 => 'purple', 21 => 'blue', 25 => 'teal', 29 => 'green',
     ];

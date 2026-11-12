@@ -11,7 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
 /**
- * Reads a freshly uploaded replay: its canonical seals always, and the game's statistics when the
+ * Reads a freshly uploaded replay: its canonical seals and chat always, and the game's statistics when the
  * game has no current ones yet. Runs on the post-game queue so the upload request never waits on it.
  */
 class BuildReplayStatsJob implements ShouldQueue
@@ -39,6 +39,7 @@ class BuildReplayStatsJob implements ShouldQueue
 
         $service = new ReplayService();
         $service->storeSeals($replay);
+        $service->storeChat($replay);
 
         if ($service->needsStats($replay->game_id))
         {

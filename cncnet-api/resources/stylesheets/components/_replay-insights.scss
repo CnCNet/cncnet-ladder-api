@@ -376,6 +376,63 @@ $ri-colours: (
 .replay-integrity-ok { color: #9fe3b2; }
 .replay-integrity-bad { color: #ff8a8a; }
 
+// The game's chat, merged from every player's replay, under the download buttons. Staff only.
+.replay-chat
+{
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+
+    @each $name, $hex in $ri-colours
+    {
+        .ri-colour-#{$name} { --ri-colour: #{$hex}; }
+    }
+
+    .replay-chat-lines
+    {
+        list-style: none;
+        margin: 0.75rem 0 0;
+        padding: 0.75rem 1rem;
+        max-height: 28rem;
+        overflow-y: auto;
+        background: rgba(12, 15, 20, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 4px;
+
+        li
+        {
+            padding: 0.1rem 0;
+            overflow-wrap: anywhere;
+        }
+    }
+
+    .replay-chat-time
+    {
+        display: inline-block;
+        min-width: 3.2rem;
+        color: #7d8793;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .replay-chat-name
+    {
+        color: var(--ri-colour, #9aa4b2);
+        font-weight: 600;
+    }
+
+    .replay-chat-label { color: #7d8793; }
+
+    .replay-chat-unverified
+    {
+        margin-left: 0.4rem;
+        padding: 0 0.35rem;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        background: rgba(255, 163, 26, 0.12);
+        color: #ffb866;
+        cursor: help;
+    }
+}
+
 // The tech timings table and the two-column chart row.
 .replay-insights
 {
