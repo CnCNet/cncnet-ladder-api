@@ -138,7 +138,29 @@ class GetGameDetailAction
         $viewData['replayStaff'] = $authenticatedUser !== null && ($authenticatedUser->isModerator()
             || $authenticatedUser->isLadderAdmin($history->ladder) || $authenticatedUser->isLadderMod($history->ladder));
 
+        // Staff only, and never read for anyone else, so the chat cannot reach a page by mistake.
+        $viewData['replayChat'] = $viewData['replayStaff'] ? $this->getReplayChat($game) : null;
+
         return $viewData;
+    }
+
+    /**
+     * What was said in the game, merged from every player's replay, with each sender's colour as the
+     * game page names it.
+     */
+    private function getReplayChat(Game $game): ?array
+    {
+        $chat = (new ReplayService())->chat($game->id);
+        if ($chat === null) {
+            return null;
+        }
+
+        foreach ($chat['lines'] as &$line) {
+            $line['color'] = ReplayStatsBuilder::COLOURS[$line['color']] ?? 'none';
+        }
+        unset($line);
+
+        return $chat;
     }
 
     /**

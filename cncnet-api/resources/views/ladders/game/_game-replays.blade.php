@@ -12,6 +12,14 @@
 
     $canDownloadReplays = $history->ladder->allowedToDownloadReplays(\Auth::user());
     $integrity = $replayIntegrity ?? null;
+    // Staff only: GetGameDetailAction reads it for nobody else.
+    $chat = $replayChat ?? null;
+    $chatTime = function ($seconds) {
+        $seconds = (int) $seconds;
+        return $seconds >= 3600
+            ? sprintf('%d:%02d:%02d', intdiv($seconds, 3600), intdiv($seconds, 60) % 60, $seconds % 60)
+            : sprintf('%d:%02d', intdiv($seconds, 60), $seconds % 60);
+    };
     $frameTime = function (int $frame) {
         // Seals are 900 frames apart; at the usual 60 frames a second that is 15 seconds of game.
         $seconds = intdiv($frame, 60);
@@ -19,7 +27,7 @@
     };
 @endphp
 
-@if ($canDownloadReplays && ($replays->isNotEmpty() || $integrity !== null))
+@if ($canDownloadReplays && ($replays->isNotEmpty() || $integrity !== null || $chat !== null))
     <div class="container mt-3 mb-5">
         <h5>Replays</h5>
         <p class="text-muted" style="font-size: 0.9em;">
@@ -59,5 +67,44 @@
                 Download replay &ndash; {{ $pgr->player->username }}
             </a>
         @endforeach
+
+        {{-- Staff only: everything said in the game. Each replay holds only what its player sent and
+             received, so the lines are merged from every uploaded copy, each once. --}}
+        @if ($chat !== null)
+            <div class="replay-chat">
+                @if (count($chat['lines']) > 0)
+                    <a class="btn btn-sm btn-outline-secondary" data-bs-toggle="collapse" href="#replayChat"
+                       role="button" aria-expanded="false" aria-controls="replayChat">
+                        Chat &ndash; {{ count($chat['lines']) }} {{ count($chat['lines']) === 1 ? 'message' : 'messages' }}
+                    </a>
+                @else
+                    <span>No chat</span>
+                @endif
+                <span class="text-muted">
+                    from {{ $chat['copies'] === 1 ? "1 player's replay" : "{$chat['copies']} players' replays" }} &middot; staff only
+                </span>
+
+                @if (count($chat['lines']) > 0)
+                    <div class="collapse" id="replayChat">
+                        <ol class="replay-chat-lines">
+                            @foreach ($chat['lines'] as $line)
+                                <li class="ri-colour-{{ $line['color'] }}">
+                                    <span class="replay-chat-time" title="Frame {{ number_format($line['f']) }}">{{ $chatTime($line['t']) }}</span>
+                                    <span class="replay-chat-name">{{ $line['name'] }}</span>@if ($line['label'] !== null) <span class="replay-chat-label">({{ $line['label'] }})</span>@endif<span class="replay-chat-label">:</span>
+                                    <span class="replay-chat-text">{{ $line['text'] }}</span>
+                                    @if ($line['late'] ?? false)
+                                        <span class="replay-chat-late"
+                                              title="Sent as the game ended: every replay holding this line stopped before its fingerprint reached the game, so it cannot be checked either way.">sent as the game ended</span>
+                                    @elseif (!$line['verified'])
+                                        <span class="replay-chat-unverified"
+                                              title="No unedited copy of the game carries this line's fingerprint: it was added to a replay after the game, or recorded by a spawner too old to fingerprint chat.">unverified</span>
+                                    @endif
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                @endif
+            </div>
+        @endif
     </div>
 @endif

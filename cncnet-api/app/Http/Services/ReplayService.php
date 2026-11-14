@@ -3,13 +3,16 @@
 namespace App\Http\Services;
 
 use App\Http\Services\Replay\ReplayCanonical;
+use App\Http\Services\Replay\ReplayChat;
 use App\Http\Services\Replay\ReplayFileReader;
 use App\Http\Services\Replay\ReplayStatsBuilder;
 use App\Jobs\Qm\BuildReplayStatsJob;
 use App\Models\GameReplay;
+use App\Models\GameReplayChat;
 use App\Models\GameReplaySeals;
 use App\Models\GameReplayStats;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -102,20 +105,71 @@ class ReplayService
 
         $this->enforceStorageBudget();
 
-        // The seals and, for the first copy of a game, the statistics: off the upload request.
+        // The seals and, if this copy is the game's best so far, the statistics: off the upload request.
         BuildReplayStatsJob::dispatch($replay->id);
 
         return $replay;
     }
 
     /**
-     * Whether a game still needs its statistics read from a replay. Every player's recording holds
-     * the same simulation, so one current build per game is enough.
+     * The game's replays that can give its statistics, best first. Every copy holds the same game, but
+     * each stops where its player's game did, so a player who left early recorded less of it. Order:
+     * the copy that reached the furthest frame, then one that closed cleanly, then the first uploaded.
+     * Copies without seals come last, as there is no telling how far they reached. Copies edited after
+     * the game are left out.
      */
-    public function needsStats(int $gameId): bool
+    public function statsCandidates(int $gameId): Collection
     {
-        $version = GameReplayStats::where('game_id', $gameId)->value('version');
-        return $version === null || (int) $version < ReplayStatsBuilder::VERSION;
+        $seals = GameReplaySeals::where('game_id', $gameId)->get()->keyBy('player_id');
+
+        $rank = function (GameReplay $replay) use ($seals): array
+        {
+            $row = $seals->get($replay->player_id);
+            if ($row === null)
+            {
+                return [1, 0, 0, $replay->id];
+            }
+
+            $reached = max(array_map(fn ($seal) => (int) $seal[0], $row->seals ?: [[-1]]));
+            return [0, -$reached, $row->complete ? 0 : 1, $replay->id];
+        };
+
+        return GameReplay::where('game_id', $gameId)->get()
+            ->reject(fn (GameReplay $replay) => $seals->get($replay->player_id)?->consistent === false)
+            ->sort(fn (GameReplay $a, GameReplay $b) => $rank($a) <=> $rank($b))
+            ->values();
+    }
+
+    /**
+     * Reads the game's statistics from its best replay, unless they already come from it. Called after
+     * each upload, so a later, longer copy replaces stats read from one that stopped early. Returns
+     * whether the statistics were rebuilt.
+     */
+    public function refreshStats(int $gameId, bool $force = false): bool
+    {
+        $current = GameReplayStats::where('game_id', $gameId)->first();
+        $upToDate = $current !== null && (int) $current->version >= ReplayStatsBuilder::VERSION;
+
+        // Statistics kept after their replay was evicted: nothing left to compare them with.
+        if ($upToDate && $current->game_replay_id === null && !$force)
+        {
+            return false;
+        }
+
+        foreach ($this->statsCandidates($gameId) as $replay)
+        {
+            if ($upToDate && !$force && (int) $current->game_replay_id === $replay->id)
+            {
+                return false;
+            }
+
+            if ($this->buildStats($replay))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -130,7 +184,7 @@ class ReplayService
             return false;
         }
 
-        $builder = new ReplayStatsBuilder();
+        $builder = new ReplayStatsBuilder(config('replay-type-names', []));
         try
         {
             $stats = $builder->build($path);
@@ -201,6 +255,66 @@ class ReplayService
         );
 
         return true;
+    }
+
+    /**
+     * Keeps the chat a replay recorded, for the game page to merge with the other copies'. Returns
+     * false when the file cannot be read; a game with no chat stores an empty list.
+     */
+    public function storeChat(GameReplay $replay): bool
+    {
+        $path = $this->replayPath($replay);
+        if ($path === null)
+        {
+            return false;
+        }
+
+        try
+        {
+            $messages = ReplayChat::read(new ReplayFileReader($path));
+        }
+        catch (\Throwable $ex)
+        {
+            Log::warning("ReplayService: could not read chat from replay {$replay->id}: " . $ex->getMessage());
+            return false;
+        }
+
+        GameReplayChat::updateOrCreate(
+            ['game_id' => $replay->game_id, 'player_id' => $replay->player_id],
+            ['version' => ReplayChat::VERSION, 'messages' => $messages]
+        );
+
+        return true;
+    }
+
+    /** Whether a replay's chat has yet to be read, or was read by an older ReplayChat. */
+    public function needsChat(GameReplay $replay): bool
+    {
+        $version = GameReplayChat::where('game_id', $replay->game_id)
+            ->where('player_id', $replay->player_id)->value('version');
+        return $version === null || (int) $version < ReplayChat::VERSION;
+    }
+
+    /**
+     * Everything said in a game, from every copy's chat, each line once and in order. A copy whose
+     * seals show it was edited after the game verifies none of its lines. Returns how many copies it
+     * came from and the 'lines'; null when no copy's chat has been read.
+     */
+    public function chat(int $gameId): ?array
+    {
+        $rows = GameReplayChat::where('game_id', $gameId)->orderBy('player_id')->get();
+        if ($rows->isEmpty())
+        {
+            return null;
+        }
+
+        $edited = GameReplaySeals::where('game_id', $gameId)->where('consistent', false)
+            ->pluck('player_id')->map(fn ($id) => (int) $id)->all();
+
+        return [
+            'copies' => $rows->count(),
+            'lines'  => ReplayChat::merge($rows->pluck('messages', 'player_id')->all(), $edited),
+        ];
     }
 
     /**
