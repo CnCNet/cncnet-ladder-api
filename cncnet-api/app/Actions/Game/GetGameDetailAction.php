@@ -11,6 +11,7 @@ use App\Http\Services\Replay\ReplayStatsBuilder;
 use App\Http\Services\ReplayService;
 use App\Models\CountableObjectHeap;
 use App\Models\Game;
+use App\Models\GameChatFlag;
 use App\Models\GameReplayStats;
 use App\Models\GameReport;
 use App\Models\Ladder;
@@ -155,8 +156,16 @@ class GetGameDetailAction
             return null;
         }
 
+        // Each flag staff have not dismissed, on the line it starts at: the line itself for a word,
+        // the first line of a burst or of the repeats.
+        $flags = GameChatFlag::where('game_id', $game->id)->where('status', '!=', GameChatFlag::DISMISSED)
+            ->get()->groupBy(fn (GameChatFlag $f) => "{$f->house}|{$f->frame}");
+
         foreach ($chat['lines'] as &$line) {
             $line['color'] = ReplayStatsBuilder::COLOURS[$line['color']] ?? 'none';
+            $line['flags'] = ($flags["{$line['house']}|{$line['f']}"] ?? collect())
+                ->map(fn (GameChatFlag $f) => (GameChatFlag::REASONS[$f->reason] ?? $f->reason) . ': ' . $f->detail)
+                ->values()->all();
         }
         unset($line);
 

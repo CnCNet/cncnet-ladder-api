@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Http\Services\ChatFlagService;
 use App\Http\Services\ReplayService;
 use App\Models\GameReplay;
 use App\Models\GameReplaySeals;
@@ -47,12 +48,14 @@ class BuildReplayStats extends Command
         });
 
         $built = 0;
+        $flags = new ChatFlagService();
         foreach ((clone $query)->distinct()->orderBy('game_id')->pluck('game_id') as $gameId)
         {
             if ($service->refreshStats((int) $gameId, $force))
             {
                 $built++;
             }
+            $flags->refresh((int) $gameId);
         }
 
         $this->info("Read seals from {$sealed} replays and chat from {$chats}, and built stats for {$built} games.");

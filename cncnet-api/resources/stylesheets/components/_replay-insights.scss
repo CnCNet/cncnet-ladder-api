@@ -408,9 +408,15 @@ $ri-colours: (
     .replay-chat-time
     {
         display: inline-block;
-        min-width: 3.2rem;
+        min-width: 6.5rem;
         color: #7d8793;
         font-variant-numeric: tabular-nums;
+    }
+
+    .replay-chat-frame
+    {
+        font-size: 0.75rem;
+        opacity: 0.7;
     }
 
     .replay-chat-name
@@ -430,6 +436,16 @@ $ri-colours: (
         background: rgba(255, 163, 26, 0.12);
         color: #ffb866;
         cursor: help;
+    }
+
+    .replay-chat-flag
+    {
+        margin-left: 0.4rem;
+        padding: 0 0.35rem;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        background: rgba(220, 53, 69, 0.15);
+        color: #ff8a95;
     }
 
     .replay-chat-late
