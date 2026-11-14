@@ -92,6 +92,9 @@
                                     <span class="replay-chat-time" title="Frame {{ number_format($line['f']) }}">{{ $chatTime($line['t']) }}</span>
                                     <span class="replay-chat-name">{{ $line['name'] }}</span>@if ($line['label'] !== null) <span class="replay-chat-label">({{ $line['label'] }})</span>@endif<span class="replay-chat-label">:</span>
                                     <span class="replay-chat-text">{{ $line['text'] }}</span>
+                                    @foreach ($line['flags'] ?? [] as $flag)
+                                        <span class="replay-chat-flag">{{ $flag }}</span>
+                                    @endforeach
                                     @if ($line['late'] ?? false)
                                         <span class="replay-chat-late"
                                               title="Sent as the game ended: every replay holding this line stopped before its fingerprint reached the game, so it cannot be checked either way.">sent as the game ended</span>

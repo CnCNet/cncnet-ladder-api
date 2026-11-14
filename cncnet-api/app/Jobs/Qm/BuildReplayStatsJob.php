@@ -2,6 +2,7 @@
 
 namespace App\Jobs\Qm;
 
+use App\Http\Services\ChatFlagService;
 use App\Http\Services\ReplayService;
 use App\Models\GameReplay;
 use Illuminate\Bus\Queueable;
@@ -42,5 +43,8 @@ class BuildReplayStatsJob implements ShouldQueue
         $service->storeSeals($replay);
         $service->storeChat($replay);
         $service->refreshStats($replay->game_id);
+
+        // Each copy can add lines the others lacked.
+        (new ChatFlagService())->refresh($replay->game_id);
     }
 }

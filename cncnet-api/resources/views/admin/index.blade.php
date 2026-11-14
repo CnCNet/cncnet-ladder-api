@@ -65,6 +65,18 @@
                             </ul>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                        <div class="player-box player-card">
+                            <h3>Chat</h3>
+                            <p>Games whose replay chat has a listed word or spam</p>
+                            <ul class="list-unstyled">
+                                <li><a href="{{ route('admin.chat-flags') }}" class="btn btn-md btn-secondary">Flagged chat</a></li>
+                                @if ($user->isAdmin())
+                                    <li><a href="{{ route('admin.chat-filter') }}" class="btn btn-md btn-secondary mt-2">Word list and spam limits</a></li>
+                                @endif
+                            </ul>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="row">

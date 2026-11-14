@@ -432,6 +432,16 @@ $ri-colours: (
         cursor: help;
     }
 
+    .replay-chat-flag
+    {
+        margin-left: 0.4rem;
+        padding: 0 0.35rem;
+        border-radius: 3px;
+        font-size: 0.75rem;
+        background: rgba(220, 53, 69, 0.15);
+        color: #ff8a95;
+    }
+
     .replay-chat-late
     {
         margin-left: 0.4rem;

@@ -126,7 +126,14 @@ Route::group(['prefix' => 'admin'], function ()
 
             Route::get('clans', [\App\Http\Controllers\AdminController::class, 'getManageClansIndex']);
             Route::post('clans', [\App\Http\Controllers\AdminController::class, 'updateClan']);
+
+            Route::get('chat-filter', [\App\Http\Controllers\Admin\ChatFlagController::class, 'getFilter'])->name('admin.chat-filter');
+            Route::post('chat-filter', [\App\Http\Controllers\Admin\ChatFlagController::class, 'saveFilter']);
         });
+
+        // Ladder moderators see their own ladders' flags; the controller narrows it.
+        Route::get('chat-flags', [\App\Http\Controllers\Admin\ChatFlagController::class, 'getFlags'])->name('admin.chat-flags');
+        Route::post('chat-flags/{gameId}', [\App\Http\Controllers\Admin\ChatFlagController::class, 'reviewFlags'])->name('admin.chat-flags.review');
 
         Route::group(['prefix' => 'news', 'middleware' => ['restrict:adminRequired', 'restrict:isNewsAdmin']], function ()
         {
