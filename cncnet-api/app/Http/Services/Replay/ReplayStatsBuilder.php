@@ -14,7 +14,15 @@ namespace App\Http\Services\Replay;
 class ReplayStatsBuilder
 {
     /** Bumped whenever the output changes shape or meaning, so stored stats can be rebuilt. */
-    public const VERSION = 9;
+    public const VERSION = 10;
+
+    /**
+     * @param array $englishNames [game mode => [type ID => name]], the names an English client gives
+     *                            every type (config/replay-type-names.php)
+     */
+    public function __construct(private array $englishNames = [])
+    {
+    }
 
     private const INCOME_RATE_WINDOW_SECONDS = 30;
     private const MAX_CHART_POINTS = 240;
@@ -125,7 +133,7 @@ class ReplayStatsBuilder
         }
 
         $classifier = new IncomeClassifier($summary['modules']);
-        $types = $summary['types'];
+        $types = $this->inEnglish($summary['types']);
 
         // Game time: the recorded speed, changed wherever a frame record says so.
         $speedSegments = [[0, 0.0, ReplayFileReader::framesPerSecond($header['gameSpeed'])]];
@@ -515,6 +523,83 @@ class ReplayStatsBuilder
             $total += array_sum($arrays[$array] ?? []);
         }
         return $total;
+    }
+
+    /**
+     * The recording's types named as an English client names them. A recording names every type in
+     * its player's language. When most of its names differ from the English ones of the game mode
+     * whose types it has, the recording came from a client in another language, and the English
+     * names replace its own. A recording in English keeps its own, which follow any name its map
+     * changed.
+     */
+    private function inEnglish(array $types): array
+    {
+        $names = [];
+        foreach ($types as $list)
+        {
+            foreach ($list as $type)
+            {
+                $names[$type['id']] = $type['name'];
+            }
+        }
+
+        if (count($names) === 0)
+        {
+            return $types;
+        }
+
+        // The mode is the one that names the most of the recording's types, and of those, the one with
+        // the fewest types the recording lacks. A mode's table gathers the extra types of all its maps,
+        // so a mode built on another (Blitz on Yuri's Revenge) has every type the other has and more:
+        // which types are missing decides between them, not how many types are shared.
+        $english = null;
+        $best = [0.0, 0.0];
+        foreach ($this->englishNames as $modeNames)
+        {
+            $shared = count(array_intersect_key($names, $modeNames));
+            $score = [$shared / count($names), $shared / max(1, count($names) + count($modeNames) - $shared)];
+            if ($score > $best)
+            {
+                $english = $modeNames;
+                $best = $score;
+            }
+        }
+
+        if ($english === null)
+        {
+            return $types;
+        }
+
+        $compared = 0;
+        $same = 0;
+        foreach ($english as $id => $name)
+        {
+            if ($name !== '' && isset($names[$id]))
+            {
+                $compared++;
+                $same += $names[$id] === $name ? 1 : 0;
+            }
+        }
+
+        if ($compared === 0 || $same * 2 >= $compared)
+        {
+            return $types;
+        }
+
+        foreach ($types as &$list)
+        {
+            foreach ($list as &$type)
+            {
+                if (isset($english[$type['id']]))
+                {
+                    $type['name'] = $english[$type['id']];
+                }
+            }
+            unset($type);
+        }
+        unset($list);
+
+        return $types;
     }
 
     private function describeType(?array $type, int $list, int $index): array

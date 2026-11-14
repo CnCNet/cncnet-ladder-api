@@ -28,13 +28,19 @@ class ReplayChat
     // as it is sent, a recipient's as it arrives.
     private const UNSALTED_MATCH_FRAMES = 600;
 
+    // A line's fingerprint runs in the lockstep a little after the line is sent: 1 to 51 frames later
+    // across the November 2026 ladder replays, 16 typically. A recording that stopped sooner than this
+    // after a line cannot hold its fingerprint, so its lack says nothing about the line.
+    private const FINGERPRINT_DELAY_FRAMES = 180;
+
     public const LABELS = [1 => 'All', 2 => 'Team', 3 => 'Private'];
 
     /**
      * The chat lines one recording holds, in the order it recorded them: frame 'f', game time 't' in
      * seconds, the sender's house, name and colour scheme, 'label' and 'recipients' as the sender gave
-     * them, the text, the line's fingerprint 'key' (hex, null without a salt) and whether this copy's
-     * event stream carries that fingerprint ('verified').
+     * them, the text, the line's fingerprint 'key' (hex, null without a salt), whether this copy's
+     * event stream carries that fingerprint ('verified'), and if not, whether the recording stopped too
+     * soon after the line to hold it ('late').
      */
     public static function read(ReplayFileReader $reader): array
     {
@@ -58,7 +64,7 @@ class ReplayChat
         $messages = [];
         $fingerprints = [];
 
-        $reader->walkFrames(function (int $frame, array $record) use (&$speedSegments, $secondsAt, &$messages, &$fingerprints)
+        $walk = $reader->walkFrames(function (int $frame, array $record) use (&$speedSegments, $secondsAt, &$messages, &$fingerprints)
         {
             if (isset($record['gameSpeed']))
             {
@@ -103,6 +109,7 @@ class ReplayChat
         foreach ($messages as &$m)
         {
             $m['verified'] = $m['key'] !== null && isset($fingerprints[$m['key']]);
+            $m['late'] = $m['key'] !== null && !$m['verified'] && $walk['lastFrame'] - $m['f'] < self::FINGERPRINT_DELAY_FRAMES;
         }
         unset($m);
 
@@ -119,7 +126,9 @@ class ReplayChat
     /**
      * One conversation from several copies' lines, each line once and in the order it was said. A line
      * is verified when some copy that holds it carries its fingerprint; a copy in $untrusted - one
-     * edited after the game, going by its seals - verifies nothing.
+     * edited after the game, going by its seals - verifies nothing. An unverified line is 'late' when
+     * every trusted copy that holds it stopped too soon after it to hold the fingerprint: sent as the
+     * game ended, rather than missing a fingerprint it should have.
      *
      * @param array $copies [copyId => lines from read()]
      */
@@ -142,7 +151,7 @@ class ReplayChat
                 if ($index === null)
                 {
                     $index = count($merged);
-                    $merged[] = array_merge($line, ['verified' => false]);
+                    $merged[] = array_merge($line, ['verified' => false, 'checked' => false, 'lateCopies' => 0]);
                     if ($line['key'] !== null)
                     {
                         $byKey[$line['key']] = $index;
@@ -167,6 +176,17 @@ class ReplayChat
                 {
                     $merged[$index]['verified'] = true;
                 }
+                if ($trusted)
+                {
+                    if (!empty($line['late']))
+                    {
+                        $merged[$index]['lateCopies']++;
+                    }
+                    else
+                    {
+                        $merged[$index]['checked'] = true;
+                    }
+                }
             }
         }
 
@@ -181,6 +201,7 @@ class ReplayChat
             'label'    => self::LABELS[$m['label']] ?? null,
             'text'     => $m['text'],
             'verified' => $m['verified'],
+            'late'     => !$m['verified'] && !$m['checked'] && $m['lateCopies'] > 0,
         ], $merged);
     }
 

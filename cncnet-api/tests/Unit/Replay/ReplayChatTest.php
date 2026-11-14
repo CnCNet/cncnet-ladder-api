@@ -44,6 +44,26 @@ class ReplayChatTest extends TestCase
         $this->assertSame([false, true], array_column($merged, 'verified'));
     }
 
+    public function test_a_line_sent_as_the_game_ended_is_late_not_unverified(): void
+    {
+        $gg = ['verified' => false, 'late' => true] + $this->line(9000, 0, 'gg', 'g');
+        $missing = ['verified' => false, 'late' => false] + $this->line(5000, 0, 'hi', 'h');
+
+        // Late in one copy but checked by a longer one: that copy decides.
+        $checked = ['verified' => false, 'late' => false] + $this->line(9000, 0, 'gg', 'g');
+
+        $merged = ReplayChat::merge([10 => [$missing, $gg], 11 => [$gg]]);
+        $this->assertSame([false, true], array_column($merged, 'late'));
+        $this->assertSame([false, false], array_column($merged, 'verified'));
+
+        $merged = ReplayChat::merge([10 => [$gg], 11 => [$checked]]);
+        $this->assertSame([false], array_column($merged, 'late'));
+
+        // An edited copy's say-so counts for nothing either way.
+        $merged = ReplayChat::merge([10 => [$gg]], [10]);
+        $this->assertSame([false], array_column($merged, 'late'));
+    }
+
     public function test_unsalted_lines_match_by_sender_text_and_time(): void
     {
         $gg = fn (int $f) => ['key' => null, 'verified' => false] + $this->line($f, 0, 'gg', 'x');
