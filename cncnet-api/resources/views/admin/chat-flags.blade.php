@@ -104,7 +104,7 @@
                             @foreach ($gameFlags as $flag)
                                 <tr>
                                     <td style="width: 6rem">{{ $reasons[$flag->reason] ?? $flag->reason }}</td>
-                                    <td style="width: 4rem" class="text-muted">{{ $time($flag->seconds) }}</td>
+                                    <td style="width: 7rem" class="text-muted" title="Game time and frame">{{ $time($flag->seconds) }} <small>{{ $flag->frame }}</small></td>
                                     <td style="width: 10rem">{{ $flag->name }}</td>
                                     <td style="width: 12rem" class="text-muted">{{ $flag->detail }}</td>
                                     <td style="white-space: pre-line; word-break: break-word">{{ $flag->text }}</td>

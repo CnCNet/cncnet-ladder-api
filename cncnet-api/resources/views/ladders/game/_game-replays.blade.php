@@ -80,16 +80,13 @@
                 @else
                     <span>No chat</span>
                 @endif
-                <span class="text-muted">
-                    from {{ $chat['copies'] === 1 ? "1 player's replay" : "{$chat['copies']} players' replays" }} &middot; staff only
-                </span>
 
                 @if (count($chat['lines']) > 0)
                     <div class="collapse" id="replayChat">
                         <ol class="replay-chat-lines">
                             @foreach ($chat['lines'] as $line)
                                 <li class="ri-colour-{{ $line['color'] }}">
-                                    <span class="replay-chat-time" title="Frame {{ number_format($line['f']) }}">{{ $chatTime($line['t']) }}</span>
+                                    <span class="replay-chat-time" title="Game time and frame">{{ $chatTime($line['t']) }} <span class="replay-chat-frame">{{ $line['f'] }}</span></span>
                                     <span class="replay-chat-name">{{ $line['name'] }}</span>@if ($line['label'] !== null) <span class="replay-chat-label">({{ $line['label'] }})</span>@endif<span class="replay-chat-label">:</span>
                                     <span class="replay-chat-text">{{ $line['text'] }}</span>
                                     @foreach ($line['flags'] ?? [] as $flag)

@@ -408,9 +408,15 @@ $ri-colours: (
     .replay-chat-time
     {
         display: inline-block;
-        min-width: 3.2rem;
+        min-width: 6.5rem;
         color: #7d8793;
         font-variant-numeric: tabular-nums;
+    }
+
+    .replay-chat-frame
+    {
+        font-size: 0.75rem;
+        opacity: 0.7;
     }
 
     .replay-chat-name
