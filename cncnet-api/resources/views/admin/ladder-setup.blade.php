@@ -232,6 +232,16 @@
                                                 </select>
                                             </div>
 
+                                            <div class="form-group">
+                                                <label for="isCasual">Matchmaking</label>
+                                                <select name="is_casual" id="isCasual" class="form-control">
+                                                    <option value="0" @if (!$ladder->is_casual) selected @endif>Ranked
+                                                    </option>
+                                                    <option value="1" @if ($ladder->is_casual) selected @endif>Casual (no login, no rating)
+                                                    </option>
+                                                </select>
+                                            </div>
+
                                             <button type="submit" class="btn btn-primary btn-md">Save</button>
                                         </form>
                                     </div>

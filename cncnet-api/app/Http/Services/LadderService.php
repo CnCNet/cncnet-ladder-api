@@ -37,7 +37,8 @@ class LadderService
 
     public function getAllLadders()
     {
-        $ladders = Ladder::all();
+        // Casual ladders are not ranked ladders, they are played without an account
+        $ladders = Ladder::where('is_casual', false)->get();
 
         foreach ($ladders as $ladder)
         {
@@ -67,6 +68,7 @@ class LadderService
     public function getLadders($private = false)
     {
         $ladders = \App\Models\Ladder::where('private', '=', $private)
+            ->where('is_casual', false)
             ->with(['sides'])
             ->get();
 
@@ -103,6 +105,7 @@ class LadderService
                 ->when(isset($ladderType), function ($query) use ($ladderType) { $query->where("ladder_type", "=", $ladderType); })
                 ->where('ladder.clans_allowed', '=', false)
                 ->where('ladder.private', '=', false)
+                ->where('ladder.is_casual', '=', false)
                 ->orderBy('ladder.order', 'ASC')
                 ->with('ladder')
                 ->get();

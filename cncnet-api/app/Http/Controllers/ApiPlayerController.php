@@ -108,6 +108,11 @@ class ApiPlayerController extends Controller
                 return response()->json(["message" => "Ladder does not exist"], 400);
             }
 
+            if ($ladder->is_casual)
+            {
+                return response()->json(["message" => "Casual ladders are played without a registered nickname"], 400);
+            }
+
             // check if they already created a new nick this month
             $recentPlayer = \App\Models\Player::where("user_id", $user->id)
                 ->where('ladder_id', $ladder->id)
