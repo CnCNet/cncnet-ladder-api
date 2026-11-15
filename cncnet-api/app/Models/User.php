@@ -574,4 +574,9 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
     {
         return $this->belongsTo(IpAddress::class, 'ip_address_id');
     }
+
+    public function qmMapPicks()
+    {
+        return $this->hasMany(QmMapPick::class);
+    }
 }

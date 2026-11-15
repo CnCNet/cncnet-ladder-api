@@ -110,4 +110,9 @@ class QmMap extends Model
     {
         return $this->hasMany(SpawnOptionValue::class);
     }
+
+    public function qmMapPicks()
+    {
+        return $this->hasMany(QmMapPick::class);
+    }
 }

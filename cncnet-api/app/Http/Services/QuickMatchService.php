@@ -12,9 +12,11 @@ use App\Models\LadderHistory;
 use App\Models\PlayerGameReport;
 use App\Models\QmLadderRules;
 use App\Models\QmMap;
+use App\Models\QmMapPick;
 use App\Models\QmMatch;
 use App\Models\QmMatchPlayer;
 use App\Models\QmQueueEntry;
+use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -34,7 +36,7 @@ class QuickMatchService
         $qmPlayer = new QmMatchPlayer();
         $qmPlayer->player_id = $player->id;
         $qmPlayer->ladder_id = $player->ladder_id;
-        $qmPlayer->map_bitfield = $request->map_bitfield;
+        // map_bitfield removed - preferences now stored in qm_map_picks table
         $qmPlayer->tier = $player->playerHistory($history)->tier;
         $qmPlayer->waiting = true;
 
@@ -71,10 +73,7 @@ class QuickMatchService
             $qmPlayer->colors_opponent_pref = json_encode(array_values($request->colors_opponent));
         }
 
-        if ($request->map_sides)
-        {
-            $qmPlayer->map_sides_id = \App\Models\MapSideString::findValue(join(',', $request->map_sides))->id;
-        }
+        // map_sides removed - preferences now stored in qm_map_picks table
 
         if ($request->client_version)
         {
@@ -705,16 +704,21 @@ class QuickMatchService
         $qmPlayer->qm_match_id = $qmMatch->id;
         $qmPlayer->tunnel_id = $qmMatch->seed + $qmPlayer->color;
 
-        $psides = explode(',', $qmPlayer->mapSides->value);
+        // Get user's map picks and determine faction for selected map
+        $user = $qmPlayer->player->user;
+        $ladder = Ladder::find($qmPlayer->ladder_id);
+        $userMapPicks = $this->getUserMapPicks($user, $ladder);
+        $factionChoice = $this->getFactionForMap($userMapPicks, $qmMap->id);
 
-        if (count($psides) > $qmMap->bit_idx)
+        if ($factionChoice === -3 || $factionChoice === -1)
         {
-            $qmPlayer->actual_side = $psides[$qmMap->bit_idx];
-        }
-
-        if ($qmPlayer->actual_side < -1)
-        {
+            // Random (-3) or veto (-1): use chosen_side
             $qmPlayer->actual_side = $qmPlayer->chosen_side;
+        }
+        else
+        {
+            // User selected specific faction for this map
+            $qmPlayer->actual_side = $factionChoice;
         }
 
         $qmPlayer->save();
@@ -956,16 +960,20 @@ class QuickMatchService
                 return;
             }
 
-            $osides = explode(',', $otherQmPlayer->mapSides->value);
+            // Get user's map picks and determine faction for selected map
+            $otherUser = $otherQmPlayer->player->user;
+            $otherUserMapPicks = $this->getUserMapPicks($otherUser, $ladder);
+            $otherFactionChoice = $this->getFactionForMap($otherUserMapPicks, $qmMap->id);
 
-            if (count($osides) > $qmMap->bit_idx)
+            if ($otherFactionChoice === -3 || $otherFactionChoice === -1)
             {
-                $otherQmPlayer->actual_side = $osides[$qmMap->bit_idx];
-            }
-
-            if ($otherQmPlayer->actual_side  < -1)
-            {
+                // Random (-3) or veto (-1): use chosen_side
                 $otherQmPlayer->actual_side = $otherQmPlayer->chosen_side;
+            }
+            else
+            {
+                // User selected specific faction for this map
+                $otherQmPlayer->actual_side = $otherFactionChoice;
             }
 
             if ($otherQmPlayer->actual_side == -1)
@@ -1134,14 +1142,21 @@ class QuickMatchService
                 return;
             }
 
-            $osides = explode(',', $otherQmPlayer->mapSides->value);
+            // Get user's map picks and determine faction for selected map
+            $otherUser = $otherQmPlayer->player->user;
+            $otherLadder = Ladder::find($otherQmPlayer->ladder_id);
+            $otherUserMapPicks = $this->getUserMapPicks($otherUser, $otherLadder);
+            $otherFactionChoice = $this->getFactionForMap($otherUserMapPicks, $qmMap->id);
 
-            if (count($osides) > $qmMap->bit_idx)
-                $otherQmPlayer->actual_side = $osides[$qmMap->bit_idx];
-
-            if ($otherQmPlayer->actual_side  < -1)
+            if ($otherFactionChoice === -3 || $otherFactionChoice === -1)
             {
+                // Random (-3) or veto (-1): use chosen_side
                 $otherQmPlayer->actual_side = $otherQmPlayer->chosen_side;
+            }
+            else
+            {
+                // User selected specific faction for this map
+                $otherQmPlayer->actual_side = $otherFactionChoice;
             }
 
             if ($otherQmPlayer->actual_side == -1)
@@ -1254,15 +1269,20 @@ class QuickMatchService
         $qmPlayerFresh->tunnel_id = $qmMatch->seed + $qmPlayerFresh->color;
         $qmMap = $qmMatch->map;
 
-        $psides = explode(',', $qmPlayerFresh->mapSides->value);
-        if (count($psides) > $qmMap->bit_idx)
-        {
-            $qmPlayerFresh->actual_side = $psides[$qmMap->bit_idx];
-        }
+        // Get user's map picks and determine faction for selected map
+        $user = $qmPlayerFresh->player->user;
+        $userMapPicks = $this->getUserMapPicks($user, $ladder);
+        $factionChoice = $this->getFactionForMap($userMapPicks, $qmMap->id);
 
-        if ($qmPlayerFresh->actual_side < -1)
+        if ($factionChoice === -3 || $factionChoice === -1)
         {
+            // Random (-3) or veto (-1): use chosen_side
             $qmPlayerFresh->actual_side = $qmPlayerFresh->chosen_side;
+        }
+        else
+        {
+            // User selected specific faction for this map
+            $qmPlayerFresh->actual_side = $factionChoice;
         }
         $qmPlayerFresh->save();
 
@@ -1467,17 +1487,21 @@ class QuickMatchService
             $qmPlayer->color = $colors++;
             $qmPlayer->location = $spawnOrder[$i] - 1;
 
-            $osides = explode(',', $qmPlayer->mapSides->value);
+            // Get user's map picks and determine faction for selected map
+            $user = $qmPlayer->player->user;
+            $ladder = $qmMatch->ladder;
+            $userMapPicks = $this->getUserMapPicks($user, $ladder);
+            $factionChoice = $this->getFactionForMap($userMapPicks, $qmMap->id);
 
-            if (count($osides) > $qmMap->bit_idx)
+            if ($factionChoice === -3 || $factionChoice === -1)
             {
-                $qmPlayer->actual_side = $osides[$qmMap->bit_idx];
-            }
-
-
-            if ($qmPlayer->actual_side  < -1)
-            {
+                // Random (-3) or veto (-1): use chosen_side
                 $qmPlayer->actual_side = $qmPlayer->chosen_side;
+            }
+            else
+            {
+                // User selected specific faction for this map
+                $qmPlayer->actual_side = $factionChoice;
             }
 
             if ($qmPlayer->actual_side == -1)
@@ -2204,5 +2228,53 @@ class QuickMatchService
         }
 
         return response()->json($response);
+    }
+
+    /**
+     * Get user's map preferences for matchmaking.
+     *
+     * @param User $user
+     * @param Ladder $ladder
+     * @return Collection Collection of QmMapPick models
+     */
+    public function getUserMapPicks(User $user, Ladder $ladder): Collection
+    {
+        return QmMapPick::where('user_id', $user->id)
+            ->where('ladder_id', $ladder->id)
+            ->with('qmMap')
+            ->get();
+    }
+
+    /**
+     * Get maps available for matchmaking (not vetoed by either player).
+     *
+     * @param Collection $p1Picks Player 1's map picks
+     * @param Collection $p2Picks Player 2's map picks
+     * @param Ladder $ladder
+     * @return Collection Collection of QmMap models
+     */
+    public function getCommonMaps(Collection $p1Picks, Collection $p2Picks, Ladder $ladder): Collection
+    {
+        $allMaps = $ladder->qmMaps()->where('valid', true)->get();
+
+        return $allMaps->reject(function ($map) use ($p1Picks, $p2Picks) {
+            $p1Veto = $p1Picks->firstWhere('qm_map_id', $map->id);
+            $p2Veto = $p2Picks->firstWhere('qm_map_id', $map->id);
+
+            return ($p1Veto && $p1Veto->isVeto()) || ($p2Veto && $p2Veto->isVeto());
+        });
+    }
+
+    /**
+     * Get faction choice for a specific map.
+     *
+     * @param Collection $picks User's map picks
+     * @param int $qmMapId QM map ID
+     * @return int Side index (-3 = random, -1 = veto, 0+ = faction local_id)
+     */
+    public function getFactionForMap(Collection $picks, int $qmMapId): int
+    {
+        $pick = $picks->firstWhere('qm_map_id', $qmMapId);
+        return $pick ? $pick->side_index : -3; // Default to random
     }
 }

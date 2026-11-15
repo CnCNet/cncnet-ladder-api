@@ -213,6 +213,11 @@ class Ladder extends Model
         return $this->hasMany(QmCanceledMatch::class, 'ladder_id');
     }
 
+    public function qmMapPicks()
+    {
+        return $this->hasMany(QmMapPick::class);
+    }
+
     public function achievements()
     {
         return $this->hasMany(Achievement::class, 'ladder_id');
