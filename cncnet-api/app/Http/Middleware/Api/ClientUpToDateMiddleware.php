@@ -24,6 +24,15 @@ class ClientUpToDateMiddleware
 
     public function handle($request, Closure $next) {
 
+        // Reject clients still sending legacy map_bitfield or map_sides fields
+        if ($request->has('map_bitfield') || $request->has('map_sides')) {
+            return response()->json([
+                'error' => 'Client version too old, please update',
+                'min_version' => '1.86',
+                'download_url' => 'https://cncnet.org/download'
+            ], 426);
+        }
+
         // Deprecate older versions
         if ($this->qmService->checkQMClientRequiresUpdate($request->route('ladder'), $request->version) === true) {
             return $this->qmService->onFatalError(
