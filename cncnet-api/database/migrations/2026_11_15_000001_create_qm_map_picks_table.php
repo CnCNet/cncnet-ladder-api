@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('ladder_id');
             $table->unsignedInteger('qm_map_id');
-            $table->integer('side_index')->comment('-3 = random, -1 = veto/reject, 0+ = faction local_id');
+            $table->integer('side_index')->comment('-3 = unset (use main faction), -2 = veto/reject, -1 = random, 0+ = faction local_id');
             $table->timestamps();
 
             // Unique constraint: one pick per user/ladder/map combination

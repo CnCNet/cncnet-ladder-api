@@ -46,13 +46,21 @@ class QmMapPick extends Model
      */
     public function isVeto(): bool
     {
-        return $this->side_index === -1;
+        return $this->side_index === -2;
     }
 
     /**
      * Check if this pick is random faction.
      */
     public function isRandom(): bool
+    {
+        return $this->side_index === -1;
+    }
+
+    /**
+     * Check if this pick is unset (use main faction).
+     */
+    public function isUnset(): bool
     {
         return $this->side_index === -3;
     }
@@ -66,8 +74,8 @@ class QmMapPick extends Model
      */
     public static function validateSideIndex(int $sideIndex, Ladder $ladder): bool
     {
-        // -3 = random, -1 = veto
-        if (in_array($sideIndex, [-3, -1])) {
+        // -3 = unset (use main faction), -2 = veto, -1 = random
+        if (in_array($sideIndex, [-3, -2, -1])) {
             return true;
         }
 

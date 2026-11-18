@@ -24,30 +24,33 @@ class QmMapPickController extends Controller
     {
         $validated = $request->validate([
             'ladder_id' => 'required|integer|exists:ladders,id',
-            'user_id' => 'required|integer|exists:users,id',
             'mapChoices' => 'required|array|max:100',
             'mapChoices.*.qm_map_id' => 'required|integer|exists:qm_maps,id',
             'mapChoices.*.side_index' => 'required|integer|min:-3|max:100',
         ]);
 
-        // Authorization: user can only update their own picks
-        if (Auth::id() !== $validated['user_id']) {
-            Log::warning('Map picks authorization failed', [
-                'authenticated_user_id' => Auth::id(),
-                'requested_user_id' => $validated['user_id'],
-                'ladder_id' => $validated['ladder_id'],
-                'ip' => $request->ip(),
-            ]);
-            return response()->json([
-                'error' => 'Unauthorized to modify other users\' preferences'
-            ], 403);
-        }
-
+        // User is already authenticated via auth:api middleware
+        $user = Auth::user();
+        $userId = $user->id;
         $ladder = Ladder::findOrFail($validated['ladder_id']);
         $updated = 0;
 
         try {
-            DB::transaction(function () use ($validated, $ladder, &$updated) {
+            // Count vetoes in submission
+            $vetoCount = collect($validated['mapChoices'])->where('side_index', -2)->count();
+
+            // Get user's tier and max_vetoes limit
+            $userTier = $user->getUserLadderTier($ladder);
+            $maxVetoes = $userTier->max_vetoes ?? 0;
+
+            // Enforce veto limit
+            if ($vetoCount > $maxVetoes) {
+                throw new \InvalidArgumentException(
+                    "Too many vetoes: {$vetoCount} submitted, maximum {$maxVetoes} allowed for tier {$userTier->tier}"
+                );
+            }
+
+            DB::transaction(function () use ($userId, $validated, $ladder, &$updated) {
                 foreach ($validated['mapChoices'] as $choice) {
                     // Validate map belongs to ladder
                     $map = QmMap::where('id', $choice['qm_map_id'])
@@ -64,14 +67,14 @@ class QmMapPickController extends Controller
                     if (!QmMapPick::validateSideIndex($choice['side_index'], $ladder)) {
                         $maxSide = $ladder->sides()->max('local_id');
                         throw new \InvalidArgumentException(
-                            "Invalid side_index: {$choice['side_index']} (valid: -3, -1, 0-{$maxSide})"
+                            "Invalid side_index: {$choice['side_index']} (valid: -3, -2, -1, 0-{$maxSide})"
                         );
                     }
 
                     // Upsert (insert or update)
                     QmMapPick::updateOrCreate(
                         [
-                            'user_id' => $validated['user_id'],
+                            'user_id' => $userId,
                             'ladder_id' => $validated['ladder_id'],
                             'qm_map_id' => $choice['qm_map_id'],
                         ],
@@ -85,7 +88,7 @@ class QmMapPickController extends Controller
             });
 
             Log::info('Map picks updated successfully', [
-                'user_id' => $validated['user_id'],
+                'user_id' => $userId,
                 'ladder_id' => $validated['ladder_id'],
                 'count' => $updated,
             ]);
@@ -97,7 +100,7 @@ class QmMapPickController extends Controller
             ]);
         } catch (\InvalidArgumentException $e) {
             Log::warning('Invalid map picks data', [
-                'user_id' => $validated['user_id'],
+                'user_id' => $userId,
                 'ladder_id' => $validated['ladder_id'],
                 'error' => $e->getMessage(),
             ]);
@@ -106,7 +109,7 @@ class QmMapPickController extends Controller
             ], 400);
         } catch (\Exception $e) {
             Log::error('Error updating map picks', [
-                'user_id' => $validated['user_id'],
+                'user_id' => $userId,
                 'ladder_id' => $validated['ladder_id'],
                 'error' => $e->getMessage()
             ]);

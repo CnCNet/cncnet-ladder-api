@@ -44,22 +44,22 @@ class MigrateMapPicksCommand extends Command
             $this->info('Filtering to users active in last 60 days (use --all to include everyone)');
         }
 
-        // Get all QmMatchPlayers with map_sides_id, grouped by user and ladder
-        $query = QmMatchPlayer::whereNotNull('map_sides_id')
-            ->with(['player.user', 'ladder', 'mapSides'])
-            ->select('qm_match_players.player_id', 'qm_match_players.ladder_id', 'qm_match_players.map_sides_id')
-            ->distinct();
+        // Get the MOST RECENT QmMatchPlayer with map_sides_id for each user+ladder combination
+        // We use a subquery to find the latest qm_match_player.id per player_id+ladder_id
+        $latestMatchPlayerIds = QmMatchPlayer::select('player_id', 'ladder_id', DB::raw('MAX(id) as latest_id'))
+            ->whereNotNull('map_sides_id')
+            ->when($ladderId, fn($q) => $q->where('ladder_id', $ladderId))
+            ->when(!$includeAll, function($q) {
+                // Filter to active users only (QM match in last 60 days)
+                $cutoffDate = now()->subDays(60);
+                $q->join('qm_matches', 'qm_match_players.qm_match_id', '=', 'qm_matches.id')
+                  ->where('qm_matches.created_at', '>=', $cutoffDate);
+            })
+            ->groupBy('player_id', 'ladder_id');
 
-        if ($ladderId) {
-            $query->where('qm_match_players.ladder_id', $ladderId);
-        }
-
-        // Filter to active users only (QM match in last 60 days) unless --all specified
-        if (!$includeAll) {
-            $cutoffDate = now()->subDays(60);
-            $query->join('qm_matches', 'qm_match_players.qm_match_id', '=', 'qm_matches.id')
-                ->where('qm_matches.created_at', '>=', $cutoffDate);
-        }
+        // Now fetch the actual QmMatchPlayer records for those IDs
+        $query = QmMatchPlayer::whereIn('id', $latestMatchPlayerIds->pluck('latest_id'))
+            ->with(['player.user', 'ladder', 'mapSides']);
 
         $matchPlayers = $query->get();
 
@@ -130,11 +130,20 @@ class MigrateMapPicksCommand extends Command
             return ['created' => 0, 'skipped' => 0];
         }
 
-        // Parse CSV (e.g., "0,5,-1,2")
+        // Parse CSV (e.g., "0,5,-2,2" where -3=unset, -2=veto, -1=random, 0+=faction)
         $sideChoices = explode(',', $mapSidesValue);
 
-        // Get ladder's qm_maps ordered by bit_idx
-        $qmMaps = QmMap::where('ladder_id', $ladder->id)
+        // Get ladder's current map pool's valid maps only, ordered by bit_idx
+        // This ensures we only migrate picks for maps currently in the active pool
+        $mapPool = $ladder->mapPool;
+        if (!$mapPool) {
+            $this->warn("Ladder {$ladder->id} has no map pool, skipping");
+            return ['created' => 0, 'skipped' => 0];
+        }
+
+        $qmMaps = $mapPool->maps()
+            ->where('valid', true)
+            ->where('ladder_id', $ladder->id)
             ->orderBy('bit_idx')
             ->get();
 
@@ -142,17 +151,17 @@ class MigrateMapPicksCommand extends Command
         $skipped = 0;
 
         foreach ($sideChoices as $bitIdx => $sideIndex) {
-            // Find map with this bit_idx
+            // Find map with this bit_idx in the CURRENT POOL only
             $qmMap = $qmMaps->firstWhere('bit_idx', $bitIdx);
 
             if (!$qmMap) {
-                // No map for this bit position, skip
+                // No map for this bit position in current pool, skip
                 continue;
             }
 
             $sideIndex = (int) $sideIndex;
 
-            // Validate side_index
+            // Validate side_index (encoding: -3=unset, -2=veto, -1=random, 0+=faction)
             if (!QmMapPick::validateSideIndex($sideIndex, $ladder)) {
                 $this->warn("Invalid side_index {$sideIndex} for map {$qmMap->id}, skipping");
                 continue;
@@ -170,7 +179,7 @@ class MigrateMapPicksCommand extends Command
                     continue;
                 }
 
-                // Create new pick
+                // Create new pick (no encoding translation needed)
                 QmMapPick::create([
                     'user_id' => $user->id,
                     'ladder_id' => $ladder->id,

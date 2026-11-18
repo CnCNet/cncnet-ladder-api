@@ -451,19 +451,27 @@ class QuickMatchService
 
         Log::debug("Filtering out Yuri players for $playerName");
 
+        // Get user IDs for all opponents
+        $userIds = $opponents->map(fn($opponent) => $opponent->qmPlayer->player->user_id)->unique();
+
+        // Load all map picks for these users on this ladder
+        $allPicks = \App\Models\QmMapPick::whereIn('user_id', $userIds)
+            ->where('ladder_id', $ladder->id)
+            ->get()
+            ->groupBy('user_id');
+
         foreach ($opponents as $opponent)
         {
-            $playerMapSides = $opponent->qmPlayer->map_side_array();
+            $userId = $opponent->qmPlayer->player->user_id;
+            $playerPicks = $allPicks->get($userId, collect());
 
-            // Validate map sides
-            if (!is_array($playerMapSides))
+            // Check if player has Yuri (9) or random (-1) in any of their picks
+            $hasYuriOrRandom = $playerPicks->contains(function ($pick) {
+                return $pick->side_index === 9 || $pick->side_index === -1;
+            });
+
+            if ($hasYuriOrRandom)
             {
-                Log::warning("Invalid map sides for opponent: " . json_encode($opponent));
-                continue;
-            }
-
-            if (in_array(9, $playerMapSides) || in_array(-1, $playerMapSides))
-            { // Yuri or random
                 $opponentName = $opponent->qmPlayer->player->username;
                 $filteredOpponents[] = $opponentName;
             }
@@ -607,36 +615,49 @@ class QuickMatchService
      */
     public function getCommonMapsForPlayers(Ladder $ladder, Collection $players): Collection
     {
+        // Get all valid maps from the ladder's map pool
+        $qmMaps = $ladder->mapPool->maps->where('valid', true);
 
-        $qmMaps = $ladder->mapPool->maps;
+        // Get user IDs for all players
+        $userIds = $players->map(fn($queueEntry) => $queueEntry->qmPlayer->player->user_id)->unique();
 
-        $is_rejected_bit = -2;
+        // Load all map picks for these users on this ladder in one query
+        $allPicks = \App\Models\QmMapPick::whereIn('user_id', $userIds)
+            ->where('ladder_id', $ladder->id)
+            ->get()
+            ->groupBy('user_id');
 
-        $commonQmMaps = collect([]);
-        foreach ($qmMaps as $qmMap)
-        {
-            $rejectedMap = false;
-            foreach ($players as $player)
-            {
-                $playerMapSides = $player->qmPlayer->map_side_array();
-                if (!(
-                    array_key_exists($qmMap->bit_idx, $playerMapSides) // if the map exists in the player map side
-                    && $playerMapSides[$qmMap->bit_idx] > $is_rejected_bit // and if the map is not refjected by the player
-                    && in_array($playerMapSides[$qmMap->bit_idx], $qmMap->sides_array()) // and if the side chose by the player is allowed in the map
-                ))
-                {
-                    // this means the player reject this map
-                    $rejectedMap = true;
-                    break;
+        // Filter maps to find those acceptable to all players
+        $commonQmMaps = $qmMaps->filter(function ($qmMap) use ($players, $allPicks) {
+            foreach ($players as $queueEntry) {
+                $userId = $queueEntry->qmPlayer->player->user_id;
+                $playerPicks = $allPicks->get($userId, collect());
+
+                // Find this player's pick for this specific map
+                $pick = $playerPicks->firstWhere('qm_map_id', $qmMap->id);
+                $sideIndex = $pick ? $pick->side_index : -3; // Default to unset if no pick
+
+                // If player vetoed this map (-2), exclude it
+                if ($sideIndex === -2) {
+                    return false;
                 }
-            }
-            if (!$rejectedMap)
-            {
-                $commonQmMaps[] = $qmMap;
-            }
-        }
 
-        return $commonQmMaps;
+                // If player chose a specific faction (0+), verify it's allowed for this map
+                if ($sideIndex >= 0) {
+                    $allowedSides = $qmMap->sides_array();
+                    if (!in_array($sideIndex, $allowedSides)) {
+                        // Player's chosen faction not allowed on this map, exclude it
+                        return false;
+                    }
+                }
+
+                // -3 (unset/main faction) and -1 (random) are always acceptable
+            }
+
+            return true; // All players can play this map
+        });
+
+        return $commonQmMaps->values(); // Re-index collection
     }
 
     /**
