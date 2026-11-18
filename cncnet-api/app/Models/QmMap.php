@@ -34,6 +34,28 @@ class QmMap extends Model
             ->dontSubmitEmptyLogs();
     }
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Defensive fallback: Auto-set ladder_id from mapPool if missing
+        // Primary fix is in MapPoolController, but this catches edge cases
+        // (manual creation via tinker, imports, etc)
+        static::saving(function ($qmMap) {
+            if ((!$qmMap->ladder_id || $qmMap->ladder_id == 0) && $qmMap->map_pool_id) {
+                $mapPool = \App\Models\MapPool::find($qmMap->map_pool_id);
+                if ($mapPool && $mapPool->ladder_id) {
+                    $qmMap->ladder_id = $mapPool->ladder_id;
+                    \Illuminate\Support\Facades\Log::warning('QmMap auto-set ladder_id from mapPool (defensive fallback)', [
+                        'qm_map_id' => $qmMap->id,
+                        'map_pool_id' => $qmMap->map_pool_id,
+                        'ladder_id' => $qmMap->ladder_id,
+                    ]);
+                }
+            }
+        });
+    }
+
     protected $fillable = [
         'ladder_id',
         'map_pool_id',
@@ -61,6 +83,11 @@ class QmMap extends Model
         return $this->belongsTo(Map::class);
     }
 
+    public function mapPool()
+    {
+        return $this->belongsTo(MapPool::class, 'map_pool_id');
+    }
+
     public function scopeValid($query)
     {
         return $query->where('valid', true);
@@ -85,6 +112,20 @@ class QmMap extends Model
         }
 
         $qmMaps = $ladder->mapPool->maps;
+
+        // Safety check: Filter out any remaining orphan maps (ladder_id mismatch)
+        // Data should be clean now, but keep as defensive check
+        $qmMaps = $qmMaps->filter(function ($qmMap) use ($id) {
+            if ($qmMap->ladder_id != $id) {
+                \Illuminate\Support\Facades\Log::warning('QmMap in pool has wrong ladder_id', [
+                    'qm_map_id' => $qmMap->id,
+                    'qm_map_ladder_id' => $qmMap->ladder_id,
+                    'expected_ladder_id' => $id,
+                ]);
+                return false;
+            }
+            return true;
+        });
 
         return $qmMaps->map(function ($qmMap)
         {

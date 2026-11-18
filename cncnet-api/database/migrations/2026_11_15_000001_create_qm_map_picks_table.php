@@ -8,6 +8,11 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * NOTE: After running this migration, populate existing user preferences with:
+     *   php artisan migrate:map-picks --dry-run  (preview first)
+     *   php artisan migrate:map-picks             (migrate active users)
+     *   php artisan migrate:map-picks --all       (migrate all users)
      */
     public function up(): void
     {
@@ -15,7 +20,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('ladder_id');
-            $table->unsignedBigInteger('qm_map_id');
+            $table->unsignedInteger('qm_map_id');
             $table->integer('side_index')->comment('-3 = random, -1 = veto/reject, 0+ = faction local_id');
             $table->timestamps();
 

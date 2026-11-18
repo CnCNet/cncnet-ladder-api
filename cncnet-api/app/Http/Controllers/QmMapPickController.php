@@ -32,6 +32,12 @@ class QmMapPickController extends Controller
 
         // Authorization: user can only update their own picks
         if (Auth::id() !== $validated['user_id']) {
+            Log::warning('Map picks authorization failed', [
+                'authenticated_user_id' => Auth::id(),
+                'requested_user_id' => $validated['user_id'],
+                'ladder_id' => $validated['ladder_id'],
+                'ip' => $request->ip(),
+            ]);
             return response()->json([
                 'error' => 'Unauthorized to modify other users\' preferences'
             ], 403);
@@ -78,12 +84,23 @@ class QmMapPickController extends Controller
                 }
             });
 
+            Log::info('Map picks updated successfully', [
+                'user_id' => $validated['user_id'],
+                'ladder_id' => $validated['ladder_id'],
+                'count' => $updated,
+            ]);
+
             return response()->json([
                 'success' => true,
                 'updated' => $updated,
                 'message' => 'Map picks updated successfully'
             ]);
         } catch (\InvalidArgumentException $e) {
+            Log::warning('Invalid map picks data', [
+                'user_id' => $validated['user_id'],
+                'ladder_id' => $validated['ladder_id'],
+                'error' => $e->getMessage(),
+            ]);
             return response()->json([
                 'error' => $e->getMessage()
             ], 400);
