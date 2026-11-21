@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\QmMapPick;
 use App\Models\QmMap;
+use App\Models\MapTier;
 use App\Models\Ladder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -36,19 +37,7 @@ class QmMapPickController extends Controller
         $updated = 0;
 
         try {
-            // Count vetoes in submission
-            $vetoCount = collect($validated['mapChoices'])->where('side_index', -2)->count();
-
-            // Get user's tier and max_vetoes limit
-            $userTier = $user->getUserLadderTier($ladder);
-            $maxVetoes = $userTier->max_vetoes ?? 0;
-
-            // Enforce veto limit
-            if ($vetoCount > $maxVetoes) {
-                throw new \InvalidArgumentException(
-                    "Too many vetoes: {$vetoCount} submitted, maximum {$maxVetoes} allowed for tier {$userTier->tier}"
-                );
-            }
+            $this->enforceVetoLimits($validated['mapChoices'], $ladder, $userId);
 
             DB::transaction(function () use ($userId, $validated, $ladder, &$updated) {
                 foreach ($validated['mapChoices'] as $choice) {
@@ -117,6 +106,68 @@ class QmMapPickController extends Controller
             return response()->json([
                 'error' => 'Failed to update map picks'
             ], 500);
+        }
+    }
+
+    /**
+     * Veto limits are defined per map tier (MapTier.max_vetoes, keyed by
+     * map_pool_id + tier), not per player tier. Count submitted vetoes for
+     * each map tier and compare against that tier's limit.
+     *
+     * Only valid maps in the ladder's current pool are counted — those are the
+     * maps the client displays and counts against the limit. Vetoes on
+     * invalid/old-pool maps are harmless since matchmaking never uses them.
+     * Maps with no matching MapTier row are not limited.
+     *
+     * This is a safeguard only; the QM client enforces the limits itself.
+     *
+     * @param array $mapChoices
+     * @param Ladder $ladder
+     * @param int $userId
+     * @throws \InvalidArgumentException
+     */
+    private function enforceVetoLimits(array $mapChoices, Ladder $ladder, int $userId): void
+    {
+        $vetoedMapIds = collect($mapChoices)
+            ->where('side_index', -2)
+            ->pluck('qm_map_id')
+            ->unique();
+
+        if ($vetoedMapIds->isEmpty()) {
+            return;
+        }
+
+        $vetoesByTier = QmMap::whereIn('id', $vetoedMapIds)
+            ->where('map_pool_id', $ladder->map_pool_id)
+            ->valid()
+            ->get(['id', 'map_pool_id', 'map_tier'])
+            ->groupBy(fn($qmMap) => $qmMap->map_pool_id . ':' . $qmMap->map_tier);
+
+        foreach ($vetoesByTier as $maps) {
+            $first = $maps->first();
+            $mapTier = MapTier::where('map_pool_id', $first->map_pool_id)
+                ->where('tier', $first->map_tier)
+                ->first();
+
+            if (!$mapTier) {
+                continue;
+            }
+
+            $vetoCount = $maps->count();
+            if ($vetoCount > $mapTier->max_vetoes) {
+                Log::warning('Map veto limit exceeded', [
+                    'user_id' => $userId,
+                    'ladder_id' => $ladder->id,
+                    'map_tier' => $mapTier->tier,
+                    'max_vetoes' => $mapTier->max_vetoes,
+                    'counted_qm_map_ids' => $maps->pluck('id')->values()->all(),
+                    'all_submitted_veto_ids' => $vetoedMapIds->values()->all(),
+                ]);
+                $tierName = $mapTier->name ?: "tier {$mapTier->tier}";
+                throw new \InvalidArgumentException(
+                    "Too many vetoes: {$vetoCount} submitted, maximum {$mapTier->max_vetoes} allowed for {$tierName} maps"
+                );
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\MapTier;
 use App\Models\QmMapPick;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\Feature\Api\Auth\JwtAuthHelper;
@@ -310,5 +311,81 @@ class QmMapPickControllerTest extends TestCase
             ->postJson('/api/v1/user/map-picks', $payload);
 
         $response->assertStatus(429); // Too Many Requests
+    }
+
+    /**
+     * Set up two map tiers: maps 0-1 in tier 1 (max 1 veto), maps 2-3 in tier 2 (max 2 vetoes).
+     */
+    private function setUpMapTiers(): void
+    {
+        $poolId = $this->qmMaps[0]->map_pool_id;
+
+        MapTier::create(['map_pool_id' => $poolId, 'tier' => 1, 'name' => 'Standard', 'max_vetoes' => 1]);
+        MapTier::create(['map_pool_id' => $poolId, 'tier' => 2, 'name' => 'Non-Standard', 'max_vetoes' => 2]);
+
+        foreach ($this->qmMaps as $i => $qmMap) {
+            $qmMap->map_tier = $i < 2 ? 1 : 2;
+            $qmMap->save();
+        }
+    }
+
+    private function vetoPayload(array $mapIndexes): array
+    {
+        return [
+            'ladder_id' => $this->ladder->id,
+            'mapChoices' => array_map(fn($i) => [
+                'qm_map_id' => $this->qmMaps[$i]->id,
+                'side_index' => -2,
+            ], $mapIndexes),
+        ];
+    }
+
+    /**
+     * Veto limits come from MapTier.max_vetoes per map tier, so vetoes spread
+     * across tiers within each tier's limit are accepted.
+     */
+    public function test_vetoes_within_per_map_tier_limits_accepted(): void
+    {
+        $this->setUpMapTiers();
+
+        // 1 veto in tier 1, 2 in tier 2 — 3 total, each tier within its limit
+        $response = $this
+            ->jwtAuth($this->user)
+            ->postJson('/api/v1/user/map-picks', $this->vetoPayload([0, 2, 3]));
+
+        $response->assertStatus(200);
+        $response->assertJson(['success' => true, 'updated' => 3]);
+    }
+
+    public function test_vetoes_exceeding_map_tier_limit_rejected(): void
+    {
+        $this->setUpMapTiers();
+
+        // 2 vetoes in tier 1, which allows only 1
+        $response = $this
+            ->jwtAuth($this->user)
+            ->postJson('/api/v1/user/map-picks', $this->vetoPayload([0, 1]));
+
+        $response->assertStatus(400);
+        $this->assertStringContainsString('Standard', $response->json('error'));
+        $this->assertDatabaseMissing('qm_map_picks', ['user_id' => $this->user->id]);
+    }
+
+    /**
+     * Invalid maps aren't shown to the client, so vetoes on them don't count.
+     */
+    public function test_vetoes_on_invalid_maps_not_counted(): void
+    {
+        $this->setUpMapTiers();
+
+        $this->qmMaps[1]->valid = 0;
+        $this->qmMaps[1]->save();
+
+        // 2 vetoes in tier 1 (max 1), but map 1 is invalid so only 1 counts
+        $response = $this
+            ->jwtAuth($this->user)
+            ->postJson('/api/v1/user/map-picks', $this->vetoPayload([0, 1]));
+
+        $response->assertStatus(200);
     }
 }
