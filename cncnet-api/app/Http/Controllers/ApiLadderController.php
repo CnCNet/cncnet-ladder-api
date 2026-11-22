@@ -948,6 +948,41 @@ class ApiLadderController extends Controller
         });
     }
 
+    /**
+     * Top 5 players by net point gain and net point loss on a ladder for the current UTC day.
+     * Validation happens outside the cache so error responses are never cached.
+     */
+    public function getLadderDailyTopPlayers(Request $request, $game)
+    {
+        $ladder = Ladder::where('abbreviation', '=', $game)->first();
+        if (!$ladder)
+        {
+            return response()->json(['error' => 'Ladder not found'], 404);
+        }
+
+        if ($ladder->ladder_type === Ladder::CLAN_MATCH)
+        {
+            return response()->json(['error' => 'Not supported for clan ladders'], 404);
+        }
+
+        $history = $ladder->currentHistory();
+        if (!$history)
+        {
+            return response()->json(['error' => 'No active ladder history'], 404);
+        }
+
+        $today = Carbon::now();
+        $date = $today->format('Y-m-d');
+
+        $result = Cache::remember(
+            "getLadderDailyTopPlayers/$game/$date",
+            5 * 60,
+            fn () => $this->statsService->getDailyTopPlayers($history, $today)
+        );
+
+        return response()->json(['ladder' => $game, 'date' => $date] + $result, 200);
+    }
+
     public function getPlayerMonthlyStats(Request $request, $game = null, $player = null)
     {
         return Cache::remember("getPlayerMonthlyStats/$game/$player/" . Carbon::now()->format('m-Y'), 5 * 60, function () use ($game, $player)

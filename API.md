@@ -19,6 +19,8 @@ Prefix requests with `api/v1/`
 * GET `/ladder/:game` will return the top 150 leaderboard players for the supplied `:game`
 * GET `/ladder/:game/game/:gameId` will return all data for a given `:gameId`
 * GET `/ladder/:game/player/:player` will return most data for given `:player`
+* GET `/ladder/:game/player/:player/today` will return `:player`'s wins, losses and points for the current UTC day
+* GET `/ladder/:game/today` will return the top 5 players by net point gain (`best`) and net point loss (`worst`) for the current UTC day. Each entry has `player`, `wins`, `losses`, `points_won`, `points_lost`, `points` (net) and `games`. Not supported for clan ladders (404)
 
 ###### Clan Endpoints
 * Not yet implemented *
