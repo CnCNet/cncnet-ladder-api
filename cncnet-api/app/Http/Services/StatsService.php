@@ -15,6 +15,8 @@ use App\Models\GameReport;
 use App\Models\PlayerGameReport;
 use Carbon\Carbon;
 use DateTime;
+use DateTimeInterface;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -316,42 +318,88 @@ class StatsService
      */
     public function getPlayerTimeRangeStats(Player $player, LadderHistory $history, DateTime $startTime, DateTime $endTime): array
     {
-        // Single optimized query - fetch all player's games for time range with teammate data
-        $playerGames = PlayerGameReport::where('player_game_reports.player_id', '=', $player->id)
-            ->where('player_game_reports.spectator', '=', false)
-            ->whereBetween('player_game_reports.created_at', [$startTime, $endTime])
-            ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
-            ->join('games', 'games.id', '=', 'game_reports.game_id')
-            ->where('games.ladder_history_id', '=', $history->id)
-            ->where('game_reports.valid', '=', true)
-            ->where('game_reports.best_report', '=', true)
-            ->select('player_game_reports.*')
-            ->with(['gameReport.playerGameReports' => function($q) {
-                $q->where('spectator', false)->select('id', 'game_report_id', 'team', 'won', 'spectator');
-            }])
-            ->get();
-
-        // Process results to calculate wins, losses, and points
-        $wins = 0;
-        $losses = 0;
-        $points = 0;
-
-        foreach ($playerGames as $pgr) {
-            $points += $pgr->points ?? 0;
-
-            // Use points > 0 instead of won flag to handle 2v2 cases where a player dies but team wins
-            if ($pgr->points > 0) {
-                $wins++;
-            } else if (!$pgr->draw) {
-                $losses++;
-            }
-        }
+        $row = $this->aggregatePlayerStats($history, $startTime, $endTime, $player->id)->first();
 
         return [
-            'wins' => $wins,
-            'losses' => $losses,
-            'points' => $points,
+            'wins' => (int) ($row->wins ?? 0),
+            'losses' => (int) ($row->losses ?? 0),
+            'points' => (int) ($row->points ?? 0),
         ];
+    }
+
+    public const TOP_PLAYERS_LIMIT = 5;
+
+    /**
+     * Top players by net point gain ("best") and net point loss ("worst") for a time range.
+     *
+     * @return array{best: list<array>, worst: list<array>}
+     */
+    public function getTopPlayers(LadderHistory $history, DateTimeInterface $from, DateTimeInterface $to): array
+    {
+        $rows = $this->aggregatePlayerStats($history, $from, $to)->map(fn ($row) => [
+            'player' => $row->username,
+            'wins' => (int) $row->wins,
+            'losses' => (int) $row->losses,
+            'points_won' => (int) $row->points_won,
+            'points_lost' => (int) $row->points_lost,
+            'points' => (int) $row->points,
+            'games' => (int) $row->games,
+        ]);
+
+        $best = $rows
+            ->filter(fn ($r) => $r['points'] > 0)
+            ->sort(fn ($a, $b) => [$b['points'], $b['wins'], $a['losses'], $a['player']]
+                <=> [$a['points'], $a['wins'], $b['losses'], $b['player']])
+            ->take(self::TOP_PLAYERS_LIMIT)
+            ->values()
+            ->all();
+
+        $worst = $rows
+            ->filter(fn ($r) => $r['points'] < 0)
+            ->sort(fn ($a, $b) => [$a['points'], $b['losses'], $a['wins'], $a['player']]
+                <=> [$b['points'], $a['losses'], $b['wins'], $b['player']])
+            ->take(self::TOP_PLAYERS_LIMIT)
+            ->values()
+            ->all();
+
+        return ['best' => $best, 'worst' => $worst];
+    }
+
+    /**
+     * Single source of truth for per-player wins / losses / points over a time range.
+     * Win = points > 0 (handles 2v2 where a player dies but the team wins).
+     * Loss = points <= 0 and not a draw. Draws count as neither, but count towards games.
+     */
+    private function aggregatePlayerStats(
+        LadderHistory $history,
+        DateTimeInterface $start,
+        DateTimeInterface $end,
+        ?int $playerId = null
+    ): Collection
+    {
+        return PlayerGameReport::query()
+            ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
+            ->join('games', 'games.id', '=', 'game_reports.game_id')
+            ->join('players', 'players.id', '=', 'player_game_reports.player_id')
+            ->where('games.ladder_history_id', $history->id)
+            ->where('game_reports.valid', true)
+            ->where('game_reports.best_report', true)
+            ->where('player_game_reports.spectator', false)
+            ->whereBetween('player_game_reports.created_at', [$start, $end])
+            ->when($playerId, fn ($q) => $q->where('player_game_reports.player_id', $playerId))
+            ->groupBy('player_game_reports.player_id', 'players.username')
+            ->selectRaw('
+                player_game_reports.player_id,
+                players.username,
+                SUM(CASE WHEN player_game_reports.points > 0 THEN 1 ELSE 0 END) AS wins,
+                SUM(CASE WHEN player_game_reports.points <= 0 AND player_game_reports.draw = 0 THEN 1 ELSE 0 END) AS losses,
+                SUM(CASE WHEN player_game_reports.points > 0 THEN player_game_reports.points ELSE 0 END) AS points_won,
+                SUM(CASE WHEN player_game_reports.points < 0 THEN -player_game_reports.points ELSE 0 END) AS points_lost,
+                SUM(player_game_reports.points) AS points,
+                COUNT(*) AS games
+            ')
+            ->toBase()
+            ->get();
     }
 
     public function getPlayerMatchups($player, $history)

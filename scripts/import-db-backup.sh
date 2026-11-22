@@ -119,7 +119,7 @@ if ! confirm "Connect to server and find latest backup?" "y"; then
     SKIP_SERVER=true
 
     # Check if there's a local backup we can use
-    LOCAL_BACKUPS=$(ls -t "$BACKUP_DIR"/mariadb_all_mysql_*.sql.gz 2>/dev/null | head -1 || echo "")
+    LOCAL_BACKUPS=$(ls -t "$BACKUP_DIR"/mariadb-cncnet_api-mysql-full-*.sql.zst 2>/dev/null | head -1 || echo "")
 
     if [ -n "$LOCAL_BACKUPS" ]; then
         BACKUP_FILENAME=$(basename "$LOCAL_BACKUPS")
@@ -140,15 +140,15 @@ fi
 if [ "$SKIP_SERVER" = false ]; then
     echo -e "${YELLOW}Finding latest backup...${NC}"
 
-    # Try to find the latest .sql.gz file
+    # Try to find the latest .sql.zst file
     LATEST_BACKUP=$($SSH_CMD "$SERVER_USER@$SERVER_IP" \
-        "ls -t $SERVER_BACKUP_PATH/mariadb_all_mysql_*.sql.gz 2>/dev/null | head -n 1 || echo ''")
+        "ls -t $SERVER_BACKUP_PATH/mariadb-cncnet_api-mysql-full-*.sql.zst 2>/dev/null | head -n 1 || echo ''")
 
     # If not found, try yesterday's backup
     if [ -z "$LATEST_BACKUP" ]; then
         echo -e "${YELLOW}No backup found with latest timestamp, trying yesterday's backup...${NC}"
         YESTERDAY=$(date -d "yesterday" +%Y%m%d)
-        YESTERDAY_BACKUP="$SERVER_BACKUP_PATH/mariadb_all_mysql_${YESTERDAY}-000000.sql.gz"
+        YESTERDAY_BACKUP="$SERVER_BACKUP_PATH/mariadb-cncnet_api-mysql-full-${YESTERDAY}-000000.sql.zst"
 
         # Check if yesterday's backup exists
         if $SSH_CMD "$SERVER_USER@$SERVER_IP" "test -f $YESTERDAY_BACKUP"; then
@@ -157,7 +157,7 @@ if [ "$SKIP_SERVER" = false ]; then
         else
             echo -e "${RED}Error: No backup files found${NC}"
             echo "Tried:"
-            echo "  - Latest: $SERVER_BACKUP_PATH/mariadb_all_mysql_*.sql.gz"
+            echo "  - Latest: $SERVER_BACKUP_PATH/mariadb-cncnet_api-mysql-full-*.sql.zst"
             echo "  - Yesterday: $YESTERDAY_BACKUP"
             exit 1
         fi
@@ -213,7 +213,7 @@ if [ -f "$SQL_FILE" ]; then
         echo -e "${YELLOW}Using existing SQL file.${NC}\n"
     else
         echo -e "${YELLOW}Decompressing $BACKUP_FILENAME to $SQL_FILE...${NC}"
-        gunzip -c "$LOCAL_BACKUP_PATH" > "$SQL_FILE"
+        zstd -dc "$LOCAL_BACKUP_PATH" > "$SQL_FILE"
         SQL_SIZE=$(du -h "$SQL_FILE" | cut -f1)
         echo -e "${GREEN}✓ Extracted to $SQL_FILE ($SQL_SIZE)${NC}\n"
     fi
@@ -224,7 +224,7 @@ else
     fi
 
     echo -e "${YELLOW}Decompressing $BACKUP_FILENAME to $SQL_FILE...${NC}"
-    gunzip -c "$LOCAL_BACKUP_PATH" > "$SQL_FILE"
+    zstd -dc "$LOCAL_BACKUP_PATH" > "$SQL_FILE"
     SQL_SIZE=$(du -h "$SQL_FILE" | cut -f1)
     echo -e "${GREEN}✓ Extracted to $SQL_FILE ($SQL_SIZE)${NC}\n"
 fi

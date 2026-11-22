@@ -899,53 +899,136 @@ class ApiLadderController extends Controller
         });
     }
 
+    public const RECENT_HOURS_DEFAULT = 24;
+    public const RECENT_HOURS_MAX = 48;
+
+    /**
+     * Parse the optional ?hours=N query parameter (1..RECENT_HOURS_MAX, default RECENT_HOURS_DEFAULT).
+     * Returns null when invalid.
+     */
+    private function parseRecentHours(Request $request): ?int
+    {
+        $hours = filter_var(
+            $request->query('hours', self::RECENT_HOURS_DEFAULT),
+            FILTER_VALIDATE_INT,
+            ['options' => ['min_range' => 1, 'max_range' => self::RECENT_HOURS_MAX]]
+        );
+
+        return $hours === false ? null : $hours;
+    }
+
+    private function invalidHoursResponse()
+    {
+        return response()->json(['error' => 'hours must be an integer between 1 and ' . self::RECENT_HOURS_MAX], 422);
+    }
+
+    /**
+     * Rolling window of the last $hours ending now, never starting before the current
+     * ladder history (previous months are not considered).
+     *
+     * @return array{0: Carbon, 1: Carbon}
+     */
+    private function recentWindow(LadderHistory $history, int $hours): array
+    {
+        $to = Carbon::now();
+        $from = $to->copy()->subHours($hours)->max($history->starts);
+
+        return [$from, $to];
+    }
+
+    private function windowFields(int $hours, Carbon $from, Carbon $to): array
+    {
+        return [
+            'date' => $to->format('Y-m-d'),
+            'hours' => $hours,
+            'from' => $from->toIso8601String(),
+            'to' => $to->toIso8601String(),
+        ];
+    }
+
+    /**
+     * A player's wins, losses and points over the last ?hours=N (default 24, max 48),
+     * limited to the current month's ladder history.
+     * Validation happens outside the cache so error responses are never cached.
+     */
     public function getPlayerDailyStats(Request $request, $game = null, $player = null)
     {
-        return Cache::remember("getPlayerDailyStats/$game/$player/" . Carbon::now()->format('Y-m-d'), 5 * 60, function () use ($game, $player)
+        $hours = $this->parseRecentHours($request);
+        if ($hours === null)
         {
-            // Find the ladder by abbreviation
-            $ladder = Ladder::where('abbreviation', '=', $game)->first();
+            return $this->invalidHoursResponse();
+        }
 
-            if (!$ladder)
-            {
-                return response()->json(['error' => 'Ladder not found'], 404);
-            }
+        $ladder = Ladder::where('abbreviation', '=', $game)->first();
+        if (!$ladder)
+        {
+            return response()->json(['error' => 'Ladder not found'], 404);
+        }
 
-            // Find the player by username and ladder
-            $playerModel = Player::where('username', '=', $player)
-                ->where('ladder_id', '=', $ladder->id)
-                ->first();
+        $playerModel = Player::where('username', '=', $player)
+            ->where('ladder_id', '=', $ladder->id)
+            ->first();
+        if (!$playerModel)
+        {
+            return response()->json(['error' => 'Player not found'], 404);
+        }
 
-            if (!$playerModel)
-            {
-                return response()->json(['error' => 'Player not found'], 404);
-            }
+        $history = $ladder->currentHistory();
+        if (!$history)
+        {
+            return response()->json(['error' => 'No active ladder history'], 404);
+        }
 
-            // Get current ladder history
-            $history = $ladder->currentHistory();
+        $result = Cache::remember("getPlayerDailyStats/$game/$player/h$hours", 5 * 60, function () use ($playerModel, $history, $hours)
+        {
+            [$from, $to] = $this->recentWindow($history, $hours);
+            $stats = $this->statsService->getPlayerTimeRangeStats($playerModel, $history, $from, $to);
 
-            if (!$history)
-            {
-                return response()->json(['error' => 'No active ladder history'], 404);
-            }
-
-            // Get stats for today
-            $stats = $this->statsService->getPlayerTimeRangeStats(
-                $playerModel,
-                $history,
-                Carbon::now()->startOfDay(),
-                Carbon::now()->endOfDay()
-            );
-
-            return response()->json([
-                'player' => $player,
-                'ladder' => $game,
-                'date' => Carbon::now()->format('Y-m-d'),
-                'wins' => $stats['wins'],
-                'losses' => $stats['losses'],
-                'points' => $stats['points']
-            ], 200);
+            return $this->windowFields($hours, $from, $to) + $stats;
         });
+
+        return response()->json(['player' => $player, 'ladder' => $game] + $result, 200);
+    }
+
+    /**
+     * Top 5 players by net point gain and net point loss over the last ?hours=N
+     * (default 24, max 48), limited to the current month's ladder history.
+     * Validation happens outside the cache so error responses are never cached.
+     */
+    public function getLadderDailyTopPlayers(Request $request, $game)
+    {
+        $hours = $this->parseRecentHours($request);
+        if ($hours === null)
+        {
+            return $this->invalidHoursResponse();
+        }
+
+        $ladder = Ladder::where('abbreviation', '=', $game)->first();
+        if (!$ladder)
+        {
+            return response()->json(['error' => 'Ladder not found'], 404);
+        }
+
+        if ($ladder->ladder_type === Ladder::CLAN_MATCH)
+        {
+            return response()->json(['error' => 'Not supported for clan ladders'], 404);
+        }
+
+        $history = $ladder->currentHistory();
+        if (!$history)
+        {
+            return response()->json(['error' => 'No active ladder history'], 404);
+        }
+
+        $result = Cache::remember("getLadderDailyTopPlayers/$game/h$hours", 5 * 60, function () use ($history, $hours)
+        {
+            [$from, $to] = $this->recentWindow($history, $hours);
+
+            return $this->windowFields($hours, $from, $to)
+                + $this->statsService->getTopPlayers($history, $from, $to);
+        });
+
+        return response()->json(['ladder' => $game] + $result, 200);
     }
 
     public function getPlayerMonthlyStats(Request $request, $game = null, $player = null)
