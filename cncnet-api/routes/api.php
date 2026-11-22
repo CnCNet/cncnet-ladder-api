@@ -110,6 +110,7 @@ Route::group(['prefix' => 'v1'], function ()
     {
 
         Route::get('/{game}/top/{count}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderTopList']);
+        Route::get('/{game}/today', [\App\Http\Controllers\ApiLadderController::class, 'getLadderDailyTopPlayers']);
         Route::get('/{game}/player/{player}', [\App\Http\Controllers\ApiLadderController::class, 'getLadderPlayerFromPublicApi']);
         Route::get('/{game}/player/{player}/webview', [\App\Http\Controllers\ApiLadderStatsProfile::class, 'getWebview']);
         Route::get('/{game}/player/{player}/today', [\App\Http\Controllers\ApiLadderController::class, 'getPlayerDailyStats']);
