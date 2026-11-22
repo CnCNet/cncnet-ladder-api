@@ -19,8 +19,9 @@ Prefix requests with `api/v1/`
 * GET `/ladder/:game` will return the top 150 leaderboard players for the supplied `:game`
 * GET `/ladder/:game/game/:gameId` will return all data for a given `:gameId`
 * GET `/ladder/:game/player/:player` will return most data for given `:player`
-* GET `/ladder/:game/player/:player/today` will return `:player`'s wins, losses and points for the current UTC day
-* GET `/ladder/:game/today` will return the top 5 players by net point gain (`best`) and net point loss (`worst`) for the current UTC day. Each entry has `player`, `wins`, `losses`, `points_won`, `points_lost`, `points` (net) and `games`. Not supported for clan ladders (404)
+* GET `/ladder/:game/player/:player/today?hours=N` will return `:player`'s wins, losses and points over the last `N` hours
+* GET `/ladder/:game/today?hours=N` will return the top 5 players by net point gain (`best`) and net point loss (`worst`) over the last `N` hours. Each entry has `player`, `wins`, `losses`, `points_won`, `points_lost`, `points` (net) and `games`. Not supported for clan ladders (404)
+  * `hours` is optional: default `24`, maximum `48`, anything else returns 422. The window is rolling (ending now) and never starts before the current month, since previous months' ladders are not included. Responses include `hours`, `from` and `to` (ISO 8601, UTC)
 
 ###### Clan Endpoints
 * Not yet implemented *

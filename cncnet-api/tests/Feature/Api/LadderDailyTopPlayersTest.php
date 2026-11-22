@@ -314,7 +314,7 @@ class LadderDailyTopPlayersTest extends TestCase
         $this->addGame($p, 50, ['best_report' => false]);
         $this->addGame($p, 50, ['spectator' => true]);
         $this->addGame($p, 50, ['history' => $otherHistory]);
-        $this->addGame($p, 50, ['created_at' => now()->subDay()->endOfDay()]);
+        $this->addGame($p, 50, ['created_at' => now()->subHours(25)]);
 
         $response = $this->fetch()->assertOk();
 
@@ -329,9 +329,135 @@ class LadderDailyTopPlayersTest extends TestCase
             ->assertExactJson([
                 'ladder' => 'tl',
                 'date' => '2026-11-21',
+                'hours' => 24,
+                'from' => '2026-11-20T12:00:00+00:00',
+                'to' => '2026-11-21T12:00:00+00:00',
                 'best' => [],
                 'worst' => [],
             ]);
+    }
+
+    // ---------------------------------------------------------------------
+    // Rolling ?hours=N window
+    // ---------------------------------------------------------------------
+
+    public function test_default_window_is_rolling_24_hours(): void
+    {
+        $p = $this->makePlayer('roller');
+        $this->addGame($p, 10, ['created_at' => now()->subHours(23)]); // yesterday, inside 24h
+        $this->addGame($p, 99, ['created_at' => now()->subHours(25)]); // outside
+
+        $response = $this->fetch()->assertOk();
+
+        $this->assertSame(24, $response->json('hours'));
+        $this->assertSame(10, $response->json('best.0.points'));
+    }
+
+    public function test_hours_48_extends_the_window(): void
+    {
+        $p = $this->makePlayer('roller');
+        $this->addGame($p, 10, ['created_at' => now()->subHours(2)]);
+        $this->addGame($p, 20, ['created_at' => now()->subHours(47)]);
+        $this->addGame($p, 99, ['created_at' => now()->subHours(49)]);
+
+        $response = $this->getJson('/api/v1/ladder/tl/today?hours=48')->assertOk();
+
+        $this->assertSame(48, $response->json('hours'));
+        $this->assertSame('2026-11-19T12:00:00+00:00', $response->json('from'));
+        $this->assertSame(30, $response->json('best.0.points'));
+        $this->assertSame(2, $response->json('best.0.games'));
+    }
+
+    public function test_different_hours_are_cached_separately(): void
+    {
+        $p = $this->makePlayer('roller');
+        $this->addGame($p, 10, ['created_at' => now()->subHours(2)]);
+        $this->addGame($p, 20, ['created_at' => now()->subHours(30)]);
+
+        $this->assertSame(10, $this->getJson('/api/v1/ladder/tl/today?hours=24')->json('best.0.points'));
+        $this->assertSame(30, $this->getJson('/api/v1/ladder/tl/today?hours=48')->json('best.0.points'));
+    }
+
+    public function test_window_does_not_reach_into_previous_month(): void
+    {
+        $this->travelTo(Carbon::parse('2026-12-01 10:00:00', 'UTC'));
+        $november = $this->history;
+        $december = $this->makeHistory($this->ladder);
+
+        $p = $this->makePlayer('newmonth');
+        $this->addGame($p, 10, ['history' => $december, 'created_at' => now()->subHours(1)]);
+        $this->addGame($p, 50, ['history' => $november, 'created_at' => now()->subHours(20)]);
+        // Even a current-history row timestamped before the month start is excluded
+        $this->addGame($p, 70, ['history' => $december, 'created_at' => now()->subHours(12)]);
+
+        $response = $this->getJson('/api/v1/ladder/tl/today?hours=48')->assertOk();
+
+        $this->assertSame('2026-12-01T00:00:00+00:00', $response->json('from'));
+        $this->assertSame(10, $response->json('best.0.points'));
+        $this->assertSame(1, $response->json('best.0.games'));
+
+        $single = $this->getJson('/api/v1/ladder/tl/player/newmonth/today?hours=48')->assertOk();
+        $this->assertSame('2026-12-01T00:00:00+00:00', $single->json('from'));
+        $this->assertSame(10, $single->json('points'));
+    }
+
+    public function test_invalid_hours_returns_422_on_both_endpoints(): void
+    {
+        $this->makePlayer('someone');
+
+        // Note: an empty "?hours=" falls back to the default (24)
+        $bad = ['0', '49', '-1', 'abc', '1.5'];
+        $statuses = [];
+        foreach ($bad as $value)
+        {
+            $ladder = $this->getJson("/api/v1/ladder/tl/today?hours=$value");
+            $player = $this->getJson("/api/v1/ladder/tl/player/someone/today?hours=$value");
+            $statuses[$value] = [$ladder->status(), $player->status(), $ladder->json('error')];
+        }
+
+        $expected = array_fill_keys($bad, [422, 422, 'hours must be an integer between 1 and 48']);
+        $this->assertSame($expected, $statuses);
+    }
+
+    // ---------------------------------------------------------------------
+    // Per-player /today endpoint
+    // ---------------------------------------------------------------------
+
+    public function test_player_endpoint_response_shape(): void
+    {
+        $p = $this->makePlayer('shape');
+        $this->addGames($p, [20, -5]);
+        $this->addGame($p, 15, ['created_at' => now()->subHours(30)]);
+
+        $this->getJson('/api/v1/ladder/tl/player/shape/today')
+            ->assertOk()
+            ->assertExactJson([
+                'player' => 'shape',
+                'ladder' => 'tl',
+                'date' => '2026-11-21',
+                'hours' => 24,
+                'from' => '2026-11-20T12:00:00+00:00',
+                'to' => '2026-11-21T12:00:00+00:00',
+                'wins' => 1,
+                'losses' => 1,
+                'points' => 15,
+            ]);
+
+        $this->getJson('/api/v1/ladder/tl/player/shape/today?hours=48')
+            ->assertOk()
+            ->assertJsonPath('wins', 2)
+            ->assertJsonPath('points', 30);
+    }
+
+    public function test_player_endpoint_404_is_not_cached(): void
+    {
+        $this->getJson('/api/v1/ladder/tl/player/latecomer/today')
+            ->assertNotFound()
+            ->assertExactJson(['error' => 'Player not found']);
+
+        $this->makePlayer('latecomer');
+
+        $this->getJson('/api/v1/ladder/tl/player/latecomer/today')->assertOk();
     }
 
     // ---------------------------------------------------------------------

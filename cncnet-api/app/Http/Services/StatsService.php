@@ -327,20 +327,16 @@ class StatsService
         ];
     }
 
-    public const DAILY_TOP_LIMIT = 5;
+    public const TOP_PLAYERS_LIMIT = 5;
 
     /**
-     * Top players by net point gain ("best") and net point loss ("worst") for one day.
+     * Top players by net point gain ("best") and net point loss ("worst") for a time range.
      *
      * @return array{best: list<array>, worst: list<array>}
      */
-    public function getDailyTopPlayers(LadderHistory $history, Carbon $day): array
+    public function getTopPlayers(LadderHistory $history, DateTimeInterface $from, DateTimeInterface $to): array
     {
-        $rows = $this->aggregatePlayerStats(
-            $history,
-            $day->copy()->startOfDay(),
-            $day->copy()->endOfDay()
-        )->map(fn ($row) => [
+        $rows = $this->aggregatePlayerStats($history, $from, $to)->map(fn ($row) => [
             'player' => $row->username,
             'wins' => (int) $row->wins,
             'losses' => (int) $row->losses,
@@ -354,7 +350,7 @@ class StatsService
             ->filter(fn ($r) => $r['points'] > 0)
             ->sort(fn ($a, $b) => [$b['points'], $b['wins'], $a['losses'], $a['player']]
                 <=> [$a['points'], $a['wins'], $b['losses'], $b['player']])
-            ->take(self::DAILY_TOP_LIMIT)
+            ->take(self::TOP_PLAYERS_LIMIT)
             ->values()
             ->all();
 
@@ -362,7 +358,7 @@ class StatsService
             ->filter(fn ($r) => $r['points'] < 0)
             ->sort(fn ($a, $b) => [$a['points'], $b['losses'], $a['wins'], $a['player']]
                 <=> [$b['points'], $a['losses'], $b['wins'], $b['player']])
-            ->take(self::DAILY_TOP_LIMIT)
+            ->take(self::TOP_PLAYERS_LIMIT)
             ->values()
             ->all();
 
