@@ -312,33 +312,49 @@ class LadderEventService
     // ---------------------------------------------------------------------
 
     /**
-     * FR-021: candidate wins for a "selected by X" award, newest first, with game details.
-     * @return list<array{game_id:int, played_at:string, user_key:int, name:string, partner:string, opponents:string[], map:?string, url:string}>
+     * FR-021: candidate wins for each "selected by X" award, newest first, with game details.
+     * Builds the event context once for all awards.
+     *
+     * @return array<string, list<array{game_id:int, played_at:string, user_key:int, name:string, partner:string, opponents:string[], map:?string, url:string}>>
      */
-    public function candidateWins(LadderEvent $event, AwardDefinition $award): array
+    public function candidateWins(LadderEvent $event): array
     {
-        if ($award->candidates === null)
+        $def = $event->definition();
+        $awards = array_filter($def->cardAwards(), fn ($a) => $a->candidates !== null);
+        if (count($awards) === 0)
         {
             return [];
         }
 
         [$ctx, $historiesById] = $this->context($event, Carbon::now('UTC'));
-        $facts = $this->manual->candidateFacts($award, $ctx);
 
+        $perAward = [];
         $keys = [];
-        foreach ($facts as $f)
+        foreach ($awards as $award)
         {
-            $keys[$f->userKey] = true;
-            $keys[$f->partnerKey] = true;
-            foreach ($f->opponentKeys as $k)
+            $perAward[$award->key] = $this->manual->candidateFacts($award, $ctx);
+            foreach ($perAward[$award->key] as $f)
             {
-                $keys[$k] = true;
+                $keys[$f->userKey] = true;
+                $keys[(int) $f->partnerKey] = true;
+                foreach ($f->opponentKeys as $k)
+                {
+                    $keys[$k] = true;
+                }
             }
         }
         $names = $this->repo->userDisplay(array_keys($keys));
         $nameOf = fn ($k) => $names[$k] ?? ('#' . $k);
 
-        $gameIds = array_values(array_unique(array_map(fn ($f) => $f->gameId, $facts)));
+        $gameIds = [];
+        foreach ($perAward as $facts)
+        {
+            foreach ($facts as $f)
+            {
+                $gameIds[$f->gameId] = true;
+            }
+        }
+        $gameIds = array_keys($gameIds);
         $maps = [];
         foreach (array_chunk($gameIds, 1000) as $chunk)
         {
@@ -352,17 +368,21 @@ class LadderEventService
             }
         }
 
-        $def = $event->definition();
-        return array_map(fn (GameFact $f) => [
-            'game_id' => $f->gameId,
-            'played_at' => gmdate('Y-m-d H:i', $f->playedAt) . ' UTC',
-            'user_key' => $f->userKey,
-            'name' => $nameOf($f->userKey),
-            'partner' => $nameOf($f->partnerKey),
-            'opponents' => array_map($nameOf, $f->opponentKeys),
-            'map' => $maps[$f->gameId] ?? null,
-            'url' => '/ladder/' . $historiesById[$f->historyId]->short . '/' . $def->ladder . '/games/' . $f->gameId,
-        ], $facts);
+        $out = [];
+        foreach ($perAward as $awardKey => $facts)
+        {
+            $out[$awardKey] = array_map(fn (GameFact $f) => [
+                'game_id' => $f->gameId,
+                'played_at' => gmdate('Y-m-d H:i', $f->playedAt) . ' UTC',
+                'user_key' => $f->userKey,
+                'name' => $nameOf($f->userKey),
+                'partner' => $nameOf($f->partnerKey),
+                'opponents' => array_map($nameOf, $f->opponentKeys),
+                'map' => $maps[$f->gameId] ?? null,
+                'url' => '/ladder/' . $historiesById[$f->historyId]->short . '/' . $def->ladder . '/games/' . $f->gameId,
+            ], $facts);
+        }
+        return $out;
     }
 
     /**

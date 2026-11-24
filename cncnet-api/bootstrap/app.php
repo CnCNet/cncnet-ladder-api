@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'restrict' => \App\Http\Middleware\Restrict::class,
             'group' => \App\Http\Middleware\Group::class,
+            'event.ladder' => \App\Http\Middleware\ResolveLadderEvent::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {

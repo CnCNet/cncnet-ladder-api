@@ -87,6 +87,22 @@ Route::group(['prefix' => 'auth'], function ()
     Route::get('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout']);
 });
 
+# Ladder event admin. event.ladder resolves {slug} to the event's ladder id for restrict:canAdminLadder.
+Route::group([
+    'prefix' => 'admin/events/{slug}',
+    'where' => ['slug' => '[a-z0-9-]+'],
+    'middleware' => ['auth', 'event.ladder', 'restrict:canAdminLadder'],
+], function ()
+{
+    Route::get('/', [\App\Http\Controllers\Admin\EventAdminController::class, 'show'])->name('admin.events.show');
+    Route::post('groups', [\App\Http\Controllers\Admin\EventAdminController::class, 'updateGroups']);
+    Route::post('results', [\App\Http\Controllers\Admin\EventAdminController::class, 'saveResult']);
+    Route::delete('results/{awardKey}/{kind}', [\App\Http\Controllers\Admin\EventAdminController::class, 'clearResult']);
+    Route::post('recompute', [\App\Http\Controllers\Admin\EventAdminController::class, 'recompute']);
+    Route::post('finalise', [\App\Http\Controllers\Admin\EventAdminController::class, 'finalise']);
+    Route::post('unfinalise', [\App\Http\Controllers\Admin\EventAdminController::class, 'unfinalise']);
+});
+
 Route::group(['prefix' => 'admin'], function ()
 {
 
