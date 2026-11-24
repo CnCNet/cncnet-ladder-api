@@ -4,13 +4,9 @@ namespace App\Models;
 
 use App\Services\LadderEvents\LadderEventDefinition;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\LogOptions;
-use Spatie\Activitylog\Traits\LogsActivity;
 
 class LadderEvent extends Model
 {
-    use LogsActivity;
-
     const STATUS_UPCOMING = 'upcoming';
     const STATUS_LIVE = 'live';
     const STATUS_PENDING_FINAL = 'pending_final';
@@ -36,18 +32,8 @@ class LadderEvent extends Model
 
     private ?LadderEventDefinition $definitionCache = null;
 
-    /**
-     * FR-032: only organiser-driven changes are logged (finalise / un-finalise).
-     * Payload rewrites from the scheduler are not logged.
-     */
-    public function getActivitylogOptions(): LogOptions
-    {
-        return LogOptions::defaults()
-            ->logOnly(['status_override', 'finalised_by'])
-            ->logOnlyDirty()
-            ->dontSubmitEmptyLogs()
-            ->useLogName('admin');
-    }
+    // FR-032: finalise / un-finalise are logged explicitly by LadderEventService with the acting user.
+    // Payload rewrites from the scheduler are not logged.
 
     public function ladder()
     {
