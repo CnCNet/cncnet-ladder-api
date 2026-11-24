@@ -16,7 +16,8 @@ use Illuminate\Support\Facades\Schema;
  * - maps.hash: map lookups by hash
  * - qm_match_states (qm_match_id, state_type_id): exists() checks for a match's state
  *
- * Production already has these (added by hand on 2026-11-23/24), so each one is skipped if present.
+ * Production already has these (added by hand on 2026-11-23/24). An index is skipped when an existing
+ * index, under any name, already starts with the same columns.
  */
 return new class extends Migration
 {
@@ -34,7 +35,7 @@ return new class extends Migration
     {
         foreach ($this->indexes as [$table, $columns, $name])
         {
-            if ($this->hasIndex($table, $name))
+            if ($this->hasIndexOn($table, $columns))
             {
                 continue;
             }
@@ -46,24 +47,18 @@ return new class extends Migration
         }
     }
 
+    /**
+     * Intentionally empty. On production up() skipped indexes that were already there, so dropping
+     * them here would bring back the full table scans this migration is meant to remove.
+     */
     public function down(): void
     {
-        foreach ($this->indexes as [$table, $columns, $name])
-        {
-            if (!$this->hasIndex($table, $name))
-            {
-                continue;
-            }
-
-            Schema::table($table, function (Blueprint $t) use ($name)
-            {
-                $t->dropIndex($name);
-            });
-        }
     }
 
-    private function hasIndex(string $table, string $name): bool
+    private function hasIndexOn(string $table, array $columns): bool
     {
-        return collect(Schema::getIndexes($table))->pluck('name')->contains($name);
+        return collect(Schema::getIndexes($table))->contains(
+            fn ($index) => array_slice($index['columns'], 0, count($columns)) === $columns
+        );
     }
 };
