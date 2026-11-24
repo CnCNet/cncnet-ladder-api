@@ -144,6 +144,7 @@ class LadderController extends Controller
             'games' => $games,
             'ranks' => $ranks,
             'mostUsedFactions' => $mostUsedFactions ?? [],
+            'eventLinks' => \App\Models\LadderEvent::linksForHistory($history),
         ];
         return view("ladders.listing", $data);
     }

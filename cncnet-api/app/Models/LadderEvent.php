@@ -63,6 +63,60 @@ class LadderEvent extends Model
         return static::where('slug', '=', $slug)->first();
     }
 
+    /**
+     * Event dashboards to link from a ladder page: events on the same ladder whose window overlaps
+     * the viewed month, the month before it or the month after it. One query, only when config matches.
+     *
+     * @return list<array{slug:string, name:string, url:string, starts:\Carbon\Carbon, ends:\Carbon\Carbon, phase:string}>
+     */
+    public static function linksForHistory(LadderHistory $history): array
+    {
+        $abbrev = $history->ladder->abbreviation;
+        $monthStart = \Carbon\Carbon::parse($history->starts, 'UTC');
+        $monthEnd = \Carbon\Carbon::parse($history->ends, 'UTC');
+
+        $candidates = [];
+        foreach (config('ladder_events', []) as $slug => $cfg)
+        {
+            if (($cfg['ladder'] ?? null) !== $abbrev || empty($cfg['starts']) || empty($cfg['ends']))
+            {
+                continue;
+            }
+            $starts = \Carbon\Carbon::parse($cfg['starts'], 'UTC');
+            $ends = \Carbon\Carbon::parse($cfg['ends'], 'UTC');
+            if ($monthEnd->gte($starts->copy()->subMonthNoOverflow()) && $monthStart->lte($ends->copy()->addMonthNoOverflow()))
+            {
+                $candidates[$slug] = [$cfg['name'] ?? $slug, $starts, $ends];
+            }
+        }
+
+        if (count($candidates) === 0)
+        {
+            return [];
+        }
+
+        $existing = static::whereIn('slug', array_keys($candidates))->pluck('slug')->all();
+        $now = \Carbon\Carbon::now('UTC');
+
+        $links = [];
+        foreach ($candidates as $slug => [$name, $starts, $ends])
+        {
+            if (!in_array($slug, $existing, true))
+            {
+                continue;
+            }
+            $links[] = [
+                'slug' => $slug,
+                'name' => $name,
+                'url' => '/events/' . $slug,
+                'starts' => $starts,
+                'ends' => $ends,
+                'phase' => $now->lt($starts) ? 'upcoming' : ($now->lte($ends) ? 'live' : 'ended'),
+            ];
+        }
+        return $links;
+    }
+
     public function definition(): LadderEventDefinition
     {
         if ($this->definitionCache === null || $this->definitionCache->slug !== $this->slug)
