@@ -105,6 +105,11 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/{abbreviation}/active', [\App\Http\Controllers\ApiIrcController::class, 'getActivePlayers']);
     });
 
+    // Ladder event dashboards (precomputed payload; 60s public cache)
+    Route::get('/events/{slug}', [\App\Http\Controllers\Api\V1\EventController::class, 'show'])
+        ->where('slug', '[a-z0-9-]+')
+        ->middleware('cache.short.public');
+
     // Short cache ladder endpoints
     Route::group(['prefix' => 'ladder', 'middleware' => 'cache.public'], function ()
     {
