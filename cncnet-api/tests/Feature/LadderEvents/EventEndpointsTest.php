@@ -126,7 +126,8 @@ class EventEndpointsTest extends TestCase
             ->assertSee('selected by Steve')
             ->assertDontSee('selected by Monster')
             ->assertSee('/ladder/12-2026/ra2-2v2/player/Sanchez', false) // FR-026 profile link
-            ->assertSee('Live');
+            ->assertSee('Live')
+            ->assertSee('Sponsors and admins have the final say on all prize outcomes.');
     }
 
     // FR-020 (manual result rendered)

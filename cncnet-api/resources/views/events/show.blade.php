@@ -47,6 +47,10 @@
                 @endif
             </div>
 
+            <p class="small text-muted mb-4" id="event-disclaimer">
+                Standings and leaders update automatically and are provisional. Sponsors and admins have the final say on all prize outcomes.
+            </p>
+
             @if ($payload['status'] !== 'upcoming' && $computedAt === null)
                 <div class="alert alert-info">Results will appear shortly.</div>
             @endif
