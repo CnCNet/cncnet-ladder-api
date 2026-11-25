@@ -53,6 +53,20 @@
                 Standings and leaders update automatically and are provisional. Sponsors and admins have the final say on all prize outcomes.
             </p>
 
+            @if ($prizeImage ?? null)
+                <details class="mb-4" id="prize-list">
+                    <summary class="btn btn-outline-light btn-sm">🎁 Full prize list</summary>
+                    <div class="mt-3 text-center">
+                        <a href="{{ $prizeImage }}" target="_blank" rel="noopener">
+                            <img src="{{ $prizeImage }}" loading="lazy" width="1024" height="1024"
+                                 class="img-fluid rounded" style="max-width: 720px; width: 100%; height: auto;"
+                                 alt="{{ $payload['event']['name'] }}: full prize list, $1,900 USD total">
+                        </a>
+                        <p class="small text-muted mt-1 mb-0">Click to open full size</p>
+                    </div>
+                </details>
+            @endif
+
             @if ($payload['status'] !== 'upcoming' && $computedAt === null)
                 <div class="alert alert-info">Results will appear shortly.</div>
             @endif

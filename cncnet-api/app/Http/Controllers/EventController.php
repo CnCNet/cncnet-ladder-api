@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\LadderEvent;
 use App\Services\LadderEvents\LadderEventService;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Vite;
 
 /**
  * GET /events/{slug} — public event dashboard (FR-026, FR-028, FR-029).
@@ -57,6 +58,27 @@ class EventController extends Controller
             'ends' => Carbon::parse($payload['event']['ends']),
             'computedAt' => $payload['computed_at'] ? Carbon::parse($payload['computed_at']) : null,
             'previewAt' => $previewAt,
+            'prizeImage' => $this->prizeImageUrl($slug),
         ]);
+    }
+
+    /** Versioned URL of the event's prize graphic, or null if none is configured or it isn't built. */
+    private function prizeImageUrl(string $slug): ?string
+    {
+        $path = config('ladder_events.' . $slug . '.prize_image');
+        if (!$path)
+        {
+            return null;
+        }
+
+        try
+        {
+            return Vite::asset($path) ?: null;
+        }
+        catch (\Throwable $e)
+        {
+            // e.g. a local build that predates the image: hide the section rather than fail the page
+            return null;
+        }
     }
 }

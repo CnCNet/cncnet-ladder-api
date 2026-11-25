@@ -135,6 +135,20 @@ class EventEndpointsTest extends TestCase
         $this->assertSame(12, substr_count($html, 'data-faction='));
     }
 
+    // Prize graphic: the configured file ships with the code, and the page still renders if it can't be resolved
+    public function test_prize_image(): void
+    {
+        $path = config('ladder_events.' . self::SLUG . '.prize_image');
+        $this->assertFileExists(base_path($path));
+        $this->assertStringStartsWith('resources/images/', $path, 'must be under the Vite image glob');
+
+        $this->seedAndCompute();
+        $this->get('/events/' . self::SLUG)->assertOk()->assertDontSee('id="prize-list"', false);   // withoutVite() resolves no URL
+
+        config(['ladder_events.' . self::SLUG . '.prize_image' => null]);
+        $this->get('/events/' . self::SLUG)->assertOk()->assertDontSee('id="prize-list"', false);
+    }
+
     // FR-020 (manual result rendered)
     public function test_web_page_shows_manual_result(): void
     {

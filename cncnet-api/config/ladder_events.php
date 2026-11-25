@@ -33,6 +33,8 @@ return [
     'ra2-2v2-holiday-2026' => [
         'name' => 'RA2 2v2 Holiday Championship',
         'ladder' => 'ra2-2v2',
+        // Optional prize-list graphic shown on the dashboard (path under resources/, served through Vite)
+        'prize_image' => 'resources/images/events/ra2-2v2-holiday-2026-prizes.webp',
         'histories' => ['12-2026', '1-2027'],
         'starts' => '2026-12-01 00:00:00',
         'ends' => '2027-01-31 23:59:59',
