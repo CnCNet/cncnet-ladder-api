@@ -42,7 +42,9 @@
                 <span class="badge fs-6 {{ $statusClass[$payload['status']] ?? 'bg-secondary' }}" data-event-status="{{ $payload['status'] }}">
                     {{ $statusLabels[$payload['status']] ?? $payload['status'] }}
                 </span>
-                @if ($computedAt)
+                @if ($previewAt ?? null)
+                    <span class="badge bg-danger">Local preview as of {{ $previewAt->format('j M Y H:i') }} UTC</span>
+                @elseif ($computedAt)
                     <span class="text-muted small">Updated {{ $computedAt->diffForHumans() }}</span>
                 @endif
             </div>

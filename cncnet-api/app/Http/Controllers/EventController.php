@@ -19,7 +19,21 @@ class EventController extends Controller
             abort(404);
         }
 
-        $payload = $service->payloadFor($event);
+        // Local only: ?as_of=2027-01-20 previews the page at another date (statuses, countdowns)
+        $previewAt = null;
+        if (app()->environment('local') && request()->filled('as_of'))
+        {
+            try
+            {
+                $previewAt = Carbon::parse((string) request()->query('as_of'), 'UTC');
+            }
+            catch (\Throwable $e)
+            {
+                $previewAt = null;
+            }
+        }
+
+        $payload = $service->payloadFor($event, $previewAt);
 
         // Group cards by section, in section order (FR-026)
         $sections = [];
@@ -42,6 +56,7 @@ class EventController extends Controller
             'starts' => Carbon::parse($payload['event']['starts']),
             'ends' => Carbon::parse($payload['event']['ends']),
             'computedAt' => $payload['computed_at'] ? Carbon::parse($payload['computed_at']) : null,
+            'previewAt' => $previewAt,
         ]);
     }
 }
