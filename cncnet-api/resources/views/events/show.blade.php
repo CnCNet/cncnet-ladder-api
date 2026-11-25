@@ -112,7 +112,13 @@
                             <div class="card h-100 bg-dark text-light border-secondary" data-award="{{ $card['key'] }}">
                                 <div class="card-body d-flex flex-column">
                                     <div class="d-flex justify-content-between align-items-start mb-1">
-                                        <h5 class="card-title mb-0">{{ $card['title'] }}</h5>
+                                        <h5 class="card-title mb-0 d-flex align-items-center gap-2">
+                                            @if (!empty($card['faction']))
+                                                <span class="player-faction player-faction-{{ $card['faction'] }} flex-shrink-0"
+                                                      style="width: 44px; height: 28px;" title="{{ ucwords(str_replace('-', ' ', $card['faction'])) }}" data-faction="{{ $card['faction'] }}"></span>
+                                            @endif
+                                            {{ $card['title'] }}
+                                        </h5>
                                         <span class="badge bg-success ms-2">{{ implode(' / ', array_map($money, $card['prizes'])) }}</span>
                                     </div>
                                     <p class="card-text small text-muted mb-2">{{ $card['description'] }}</p>

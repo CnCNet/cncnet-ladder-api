@@ -127,7 +127,12 @@ class EventEndpointsTest extends TestCase
             ->assertDontSee('selected by Monster')
             ->assertSee('/ladder/12-2026/ra2-2v2/player/Sanchez', false) // FR-026 profile link
             ->assertSee('Live')
-            ->assertSee('Sponsors and admins have the final say on all prize outcomes.');
+            ->assertSee('Sponsors and admins have the final say on all prize outcomes.')
+            ->assertSee('player-faction player-faction-great-britain', false)   // faction icons
+            ->assertSee('player-faction player-faction-cuba', false);
+
+        // One icon per faction award plus the four holiday faction awards; none on other cards
+        $this->assertSame(12, substr_count($html, 'data-faction='));
     }
 
     // FR-020 (manual result rendered)

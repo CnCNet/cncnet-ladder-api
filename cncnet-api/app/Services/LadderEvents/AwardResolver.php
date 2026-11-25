@@ -217,6 +217,7 @@ class AwardResolver
             'ends' => self::iso($windowEnd),
             'prizes' => $award->prizes,
             'estimated' => $award->type === AwardDefinition::TYPE_STREAMING,
+            'faction' => $award->factionSlug(),
             'leaders' => $leaders,
             'entries' => $entries,
             'result' => $result,

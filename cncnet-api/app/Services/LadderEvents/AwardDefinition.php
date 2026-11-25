@@ -101,6 +101,18 @@ final class AwardDefinition
         };
     }
 
+    /** RA2/YR sides.local_id => faction slug used by the `player-faction-{slug}` icon classes. */
+    const FACTION_SLUGS = [
+        0 => 'america', 1 => 'korea', 2 => 'france', 3 => 'germany', 4 => 'great-britain',
+        5 => 'libya', 6 => 'iraq', 7 => 'cuba', 8 => 'russia',
+    ];
+
+    /** Faction slug when the award is restricted to one faction, else null. */
+    public function factionSlug(): ?string
+    {
+        return array_key_exists('faction', $this->filters) ? (self::FACTION_SLUGS[$this->filters['faction']] ?? null) : null;
+    }
+
     public function prizeTotal(): int
     {
         return (int) array_sum($this->prizes);

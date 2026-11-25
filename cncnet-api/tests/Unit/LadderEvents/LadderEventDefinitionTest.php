@@ -119,6 +119,17 @@ class LadderEventDefinitionTest extends TestCase
         LadderEventDefinition::fromConfig(self::SLUG, $this->withAward(['filters' => ['days' => ['easter']]]));
     }
 
+    // Faction icons: every faction-filtered award maps to an icon slug
+    public function test_faction_slugs(): void
+    {
+        $def = LadderEventDefinition::fromConfig(self::SLUG, $this->shipped());
+
+        $this->assertSame('great-britain', $def->award('faction_great_britain')->factionSlug());
+        $this->assertSame('cuba', $def->award('santa_cubaus')->factionSlug());
+        $this->assertSame('america', $def->award('faction_america')->factionSlug());
+        $this->assertNull($def->award('most_wins')->factionSlug());
+    }
+
     // FR-008 / FR-028: holiday windows are whole UTC days
     public function test_award_windows(): void
     {
