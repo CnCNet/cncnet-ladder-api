@@ -39,11 +39,11 @@ class QmMapPickControllerTest extends TestCase
             'mapChoices' => [
                 [
                     'qm_map_id' => $this->qmMaps[0]->id,
-                    'side_index' => 4,
+                    'side_index' => 1,
                 ],
                 [
                     'qm_map_id' => $this->qmMaps[1]->id,
-                    'side_index' => -1, // veto
+                    'side_index' => -2, // veto
                 ],
             ]
         ];
@@ -63,14 +63,14 @@ class QmMapPickControllerTest extends TestCase
             'user_id' => $this->user->id,
             'ladder_id' => $this->ladder->id,
             'qm_map_id' => $this->qmMaps[0]->id,
-            'side_index' => 4,
+            'side_index' => 1,
         ]);
 
         $this->assertDatabaseHas('qm_map_picks', [
             'user_id' => $this->user->id,
             'ladder_id' => $this->ladder->id,
             'qm_map_id' => $this->qmMaps[1]->id,
-            'side_index' => -1,
+            'side_index' => -2,
         ]);
     }
 
@@ -84,7 +84,7 @@ class QmMapPickControllerTest extends TestCase
             'user_id' => $this->user->id,
             'ladder_id' => $this->ladder->id,
             'qm_map_id' => $this->qmMaps[0]->id,
-            'side_index' => 2,
+            'side_index' => 1,
         ]);
 
         // Update to different faction
@@ -94,7 +94,7 @@ class QmMapPickControllerTest extends TestCase
             'mapChoices' => [
                 [
                     'qm_map_id' => $this->qmMaps[0]->id,
-                    'side_index' => 5,
+                    'side_index' => 2,
                 ],
             ]
         ];
@@ -109,7 +109,7 @@ class QmMapPickControllerTest extends TestCase
         $this->assertDatabaseHas('qm_map_picks', [
             'user_id' => $this->user->id,
             'qm_map_id' => $this->qmMaps[0]->id,
-            'side_index' => 5,
+            'side_index' => 2,
         ]);
 
         // Verify only one record exists (not duplicated)
@@ -117,9 +117,10 @@ class QmMapPickControllerTest extends TestCase
     }
 
     /**
-     * Test user cannot update another user's picks.
+     * A user cannot write another user's picks: the controller always uses the
+     * authenticated user and ignores any user_id in the payload.
      */
-    public function test_bulk_update_rejects_unauthorized_user(): void
+    public function test_bulk_update_ignores_payload_user_id(): void
     {
         $otherUser = $this->makeUser('otheruser');
 
@@ -129,7 +130,7 @@ class QmMapPickControllerTest extends TestCase
             'mapChoices' => [
                 [
                     'qm_map_id' => $this->qmMaps[0]->id,
-                    'side_index' => 4,
+                    'side_index' => 1,
                 ],
             ]
         ];
@@ -138,10 +139,12 @@ class QmMapPickControllerTest extends TestCase
             ->jwtAuth($this->user)
             ->postJson('/api/v1/user/map-picks', $payload);
 
-        $response->assertStatus(403);
-        $response->assertJson([
-            'error' => 'Unauthorized to modify other users\' preferences'
+        $response->assertStatus(200);
+        $this->assertDatabaseHas('qm_map_picks', [
+            'user_id' => $this->user->id,
+            'qm_map_id' => $this->qmMaps[0]->id,
         ]);
+        $this->assertDatabaseMissing('qm_map_picks', ['user_id' => $otherUser->id]);
     }
 
     /**
@@ -155,7 +158,7 @@ class QmMapPickControllerTest extends TestCase
             'mapChoices' => [
                 [
                     'qm_map_id' => 99999, // Invalid ID
-                    'side_index' => 4,
+                    'side_index' => 1,
                 ],
             ]
         ];
@@ -181,7 +184,7 @@ class QmMapPickControllerTest extends TestCase
             'mapChoices' => [
                 [
                     'qm_map_id' => $otherMap->id, // Map from different ladder
-                    'side_index' => 4,
+                    'side_index' => 1,
                 ],
             ]
         ];
@@ -191,7 +194,7 @@ class QmMapPickControllerTest extends TestCase
             ->postJson('/api/v1/user/map-picks', $payload);
 
         $response->assertStatus(400);
-        $response->assertJsonFragment(['error']);
+        $response->assertJsonStructure(['error']);
     }
 
     /**
@@ -205,7 +208,7 @@ class QmMapPickControllerTest extends TestCase
             'mapChoices' => [
                 [
                     'qm_map_id' => $this->qmMaps[0]->id,
-                    'side_index' => 999, // Out of range
+                    'side_index' => 50, // Passes request validation (max:100) but the ladder only has sides 0-2
                 ],
             ]
         ];
@@ -215,7 +218,7 @@ class QmMapPickControllerTest extends TestCase
             ->postJson('/api/v1/user/map-picks', $payload);
 
         $response->assertStatus(400);
-        $response->assertJsonFragment(['error']);
+        $response->assertJsonStructure(['error']);
     }
 
     /**
@@ -235,7 +238,7 @@ class QmMapPickControllerTest extends TestCase
             'user_id' => $this->user->id,
             'ladder_id' => $this->ladder->id,
             'qm_map_id' => $this->qmMaps[1]->id,
-            'side_index' => -1,
+            'side_index' => -2,
         ]);
 
         $response = $this
@@ -258,7 +261,7 @@ class QmMapPickControllerTest extends TestCase
         $this->assertEquals(4, $testLadder['mapChoices'][0]['side_index']);
 
         $this->assertEquals($this->qmMaps[1]->id, $testLadder['mapChoices'][1]['qm_map_id']);
-        $this->assertEquals(-1, $testLadder['mapChoices'][1]['side_index']);
+        $this->assertEquals(-2, $testLadder['mapChoices'][1]['side_index']);
     }
 
     /**
@@ -291,7 +294,7 @@ class QmMapPickControllerTest extends TestCase
             'mapChoices' => [
                 [
                     'qm_map_id' => $this->qmMaps[0]->id,
-                    'side_index' => 4,
+                    'side_index' => 1,
                 ],
             ]
         ];

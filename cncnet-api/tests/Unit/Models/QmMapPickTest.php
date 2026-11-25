@@ -12,82 +12,65 @@ class QmMapPickTest extends TestCase
 {
     use RefreshDatabase;
 
-    /**
-     * Test that isVeto() returns true when side_index is -1.
-     */
-    public function test_is_veto_returns_true_for_minus_one(): void
+    // side_index encoding: -3 unset (main faction), -2 veto, -1 random, 0+ side local_id.
+
+    public function test_is_veto_returns_true_for_minus_two(): void
     {
         $pick = new QmMapPick();
-        $pick->side_index = -1;
+        $pick->side_index = -2;
 
         $this->assertTrue($pick->isVeto());
     }
 
-    /**
-     * Test that isVeto() returns false when side_index is not -1.
-     */
     public function test_is_veto_returns_false_for_other_values(): void
     {
         $pick = new QmMapPick();
 
-        $pick->side_index = -3;
-        $this->assertFalse($pick->isVeto());
-
-        $pick->side_index = 0;
-        $this->assertFalse($pick->isVeto());
-
-        $pick->side_index = 5;
-        $this->assertFalse($pick->isVeto());
+        foreach ([-3, -1, 0, 5] as $value) {
+            $pick->side_index = $value;
+            $this->assertFalse($pick->isVeto(), "side_index {$value} must not be a veto");
+        }
     }
 
-    /**
-     * Test that isRandom() returns true when side_index is -3.
-     */
-    public function test_is_random_returns_true_for_minus_three(): void
+    public function test_is_random_returns_true_for_minus_one(): void
     {
         $pick = new QmMapPick();
-        $pick->side_index = -3;
+        $pick->side_index = -1;
 
         $this->assertTrue($pick->isRandom());
     }
 
-    /**
-     * Test that isRandom() returns false when side_index is not -3.
-     */
     public function test_is_random_returns_false_for_other_values(): void
     {
         $pick = new QmMapPick();
 
-        $pick->side_index = -1;
-        $this->assertFalse($pick->isRandom());
-
-        $pick->side_index = 0;
-        $this->assertFalse($pick->isRandom());
-
-        $pick->side_index = 5;
-        $this->assertFalse($pick->isRandom());
+        foreach ([-3, -2, 0, 5] as $value) {
+            $pick->side_index = $value;
+            $this->assertFalse($pick->isRandom(), "side_index {$value} must not be random");
+        }
     }
 
-    /**
-     * Test that validateSideIndex() returns true for -3 (random).
-     */
-    public function test_validate_side_index_accepts_random(): void
+    public function test_is_unset_returns_true_only_for_minus_three(): void
+    {
+        $pick = new QmMapPick();
+
+        $pick->side_index = -3;
+        $this->assertTrue($pick->isUnset());
+
+        foreach ([-2, -1, 0] as $value) {
+            $pick->side_index = $value;
+            $this->assertFalse($pick->isUnset(), "side_index {$value} must not be unset");
+        }
+    }
+
+    public function test_validate_side_index_accepts_special_values(): void
     {
         $ladder = new Ladder();
         $ladder->id = 1;
 
-        $this->assertTrue(QmMapPick::validateSideIndex(-3, $ladder));
-    }
-
-    /**
-     * Test that validateSideIndex() returns true for -1 (veto).
-     */
-    public function test_validate_side_index_accepts_veto(): void
-    {
-        $ladder = new Ladder();
-        $ladder->id = 1;
-
-        $this->assertTrue(QmMapPick::validateSideIndex(-1, $ladder));
+        $this->assertTrue(QmMapPick::validateSideIndex(-3, $ladder)); // unset
+        $this->assertTrue(QmMapPick::validateSideIndex(-2, $ladder)); // veto
+        $this->assertTrue(QmMapPick::validateSideIndex(-1, $ladder)); // random
     }
 
     /**
@@ -129,7 +112,6 @@ class QmMapPickTest extends TestCase
         // Test invalid side indices
         $this->assertFalse(QmMapPick::validateSideIndex(10, $ladder));
         $this->assertFalse(QmMapPick::validateSideIndex(99, $ladder));
-        $this->assertFalse(QmMapPick::validateSideIndex(-2, $ladder));
         $this->assertFalse(QmMapPick::validateSideIndex(-4, $ladder));
     }
 

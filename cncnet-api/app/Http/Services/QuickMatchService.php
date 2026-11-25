@@ -731,9 +731,9 @@ class QuickMatchService
         $userMapPicks = $this->getUserMapPicks($user, $ladder);
         $factionChoice = $this->getFactionForMap($userMapPicks, $qmMap->id);
 
-        if ($factionChoice === -3 || $factionChoice === -1)
+        if ($factionChoice < -1)
         {
-            // Random (-3) or veto (-1): use chosen_side
+            // Unset (-3) or veto (-2): use chosen_side. Random (-1) is kept and resolved below.
             $qmPlayer->actual_side = $qmPlayer->chosen_side;
         }
         else
@@ -986,9 +986,9 @@ class QuickMatchService
             $otherUserMapPicks = $this->getUserMapPicks($otherUser, $ladder);
             $otherFactionChoice = $this->getFactionForMap($otherUserMapPicks, $qmMap->id);
 
-            if ($otherFactionChoice === -3 || $otherFactionChoice === -1)
+            if ($otherFactionChoice < -1)
             {
-                // Random (-3) or veto (-1): use chosen_side
+                // Unset (-3) or veto (-2): use chosen_side. Random (-1) is kept and resolved below.
                 $otherQmPlayer->actual_side = $otherQmPlayer->chosen_side;
             }
             else
@@ -1169,9 +1169,9 @@ class QuickMatchService
             $otherUserMapPicks = $this->getUserMapPicks($otherUser, $otherLadder);
             $otherFactionChoice = $this->getFactionForMap($otherUserMapPicks, $qmMap->id);
 
-            if ($otherFactionChoice === -3 || $otherFactionChoice === -1)
+            if ($otherFactionChoice < -1)
             {
-                // Random (-3) or veto (-1): use chosen_side
+                // Unset (-3) or veto (-2): use chosen_side. Random (-1) is kept and resolved below.
                 $otherQmPlayer->actual_side = $otherQmPlayer->chosen_side;
             }
             else
@@ -1295,9 +1295,9 @@ class QuickMatchService
         $userMapPicks = $this->getUserMapPicks($user, $ladder);
         $factionChoice = $this->getFactionForMap($userMapPicks, $qmMap->id);
 
-        if ($factionChoice === -3 || $factionChoice === -1)
+        if ($factionChoice < -1)
         {
-            // Random (-3) or veto (-1): use chosen_side
+            // Unset (-3) or veto (-2): use chosen_side. Random (-1) is kept and resolved below.
             $qmPlayerFresh->actual_side = $qmPlayerFresh->chosen_side;
         }
         else
@@ -1514,9 +1514,9 @@ class QuickMatchService
             $userMapPicks = $this->getUserMapPicks($user, $ladder);
             $factionChoice = $this->getFactionForMap($userMapPicks, $qmMap->id);
 
-            if ($factionChoice === -3 || $factionChoice === -1)
+            if ($factionChoice < -1)
             {
-                // Random (-3) or veto (-1): use chosen_side
+                // Unset (-3) or veto (-2): use chosen_side. Random (-1) is kept and resolved below.
                 $qmPlayer->actual_side = $qmPlayer->chosen_side;
             }
             else
