@@ -28,7 +28,7 @@ class ClientUpToDateMiddleware
         if ($request->has('map_bitfield') || $request->has('map_sides')) {
             return response()->json([
                 'error' => 'Client version too old, please update',
-                'min_version' => '1.86',
+                'min_version' => '1.86b',
                 'download_url' => 'https://cncnet.org/download'
             ], 426);
         }
