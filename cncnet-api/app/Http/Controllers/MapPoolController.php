@@ -35,6 +35,13 @@ class MapPoolController extends Controller
 
         $qmMap->map_pool_id = $request->map_pool_id;
         $qmMap->map_id = $request->map_id;
+
+        // Set ladder_id from mapPool
+        $mapPool = \App\Models\MapPool::find($request->map_pool_id);
+        if ($mapPool && $mapPool->ladder_id) {
+            $qmMap->ladder_id = $mapPool->ladder_id;
+        }
+
         $qmMap->description = trim($request->description);
         $qmMap->admin_description = trim($request->admin_description);
         $qmMap->bit_idx = $request->bit_idx ?? 1;

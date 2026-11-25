@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Services\PlayerService;
 use App\Http\Services\UserService;
 use App\Models\Ladder;
+use App\Models\QmMapPick;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -73,7 +74,28 @@ class ApiUserController extends Controller
         try
         {
             $user = auth('api')->user();
-            return Ladder::getAllowedQMLaddersByUser($user);
+            $ladders = Ladder::getAllowedQMLaddersByUser($user);
+
+            // Add mapChoices to each ladder
+            $laddersWithPicks = array_map(function ($ladder) use ($user) {
+                $mapPicks = QmMapPick::where('user_id', $user->id)
+                    ->where('ladder_id', $ladder->id)
+                    ->get()
+                    ->map(function ($pick) {
+                        return [
+                            'qm_map_id' => $pick->qm_map_id,
+                            'side_index' => $pick->side_index,
+                        ];
+                    })
+                    ->values()
+                    ->toArray();
+
+                $ladderArray = is_array($ladder) ? $ladder : $ladder->toArray();
+                $ladderArray['mapChoices'] = $mapPicks;
+                return $ladderArray;
+            }, $ladders);
+
+            return $laddersWithPicks;
         }
         catch (Exception $ex)
         {

@@ -46,6 +46,7 @@ Route::group(['prefix' => 'v1'], function ()
         Route::get('/user/ladders', [\App\Http\Controllers\ApiUserController::class, 'getPrivateLadders']);
         Route::get('/user/preferences', [\App\Http\Controllers\ApiUserController::class, 'getUserPreferences']);
         Route::post('/user/preferences', [\App\Http\Controllers\ApiUserController::class, 'updateUserPreferences']);
+        Route::post('/user/map-picks', [\App\Http\Controllers\QmMapPickController::class, 'bulkUpdate'])->middleware('throttle:10,1');
 
         // Result Endpoints
         Route::post('/result/{game}/{username}', [\App\Http\Controllers\ApiLadderController::class, 'postLadder']);

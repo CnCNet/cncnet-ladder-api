@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Http;
 
 class TwitchService
 {
-    protected string $clientId;
-    protected string $clientSecret;
+    protected ?string $clientId;
+    protected ?string $clientSecret;
 
     public function __construct()
     {
