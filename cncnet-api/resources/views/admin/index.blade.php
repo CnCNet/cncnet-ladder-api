@@ -90,6 +90,15 @@
                                 <li><a href="/admin/podium" class="btn btn-md btn-secondary mt-2">Most-win Podium</a></li>
                             </ul>
                         </div>
+                        <div class="player-box player-card">
+                            <h3>Events</h3>
+                            <p>Event dashboards: named groups, manual winners, finalise</p>
+                            <ul class="list-unstyled">
+                                @foreach (config('ladder_events', []) as $eventSlug => $eventConfig)
+                                    <li><a href="/admin/events/{{ $eventSlug }}" class="btn btn-md btn-secondary mt-2">{{ $eventConfig['name'] ?? $eventSlug }}</a></li>
+                                @endforeach
+                            </ul>
+                        </div>
                     </div>
 
                     <div class="col-md-4">
