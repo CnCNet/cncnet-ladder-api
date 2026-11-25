@@ -296,8 +296,8 @@ class LadderEventService
 
         $ctx = new EventContext(
             definition: $def,
-            facts: $this->repo->gameFacts($historyIds)->all(),
-            streams: $this->repo->streamFacts((int) $event->ladder_id, $historyIds)->all(),
+            facts: $this->repo->gameFacts($historyIds, null, [$def->starts, $def->ends])->all(),
+            streams: $this->repo->streamFacts((int) $event->ladder_id, $historyIds, [$def->starts, $def->ends])->all(),
             groups: $this->repo->groups($event, $def->groups),
             standings: $this->repo->monthlyStandings($historyIds),
             historyIds: $historyIds,
@@ -390,8 +390,9 @@ class LadderEventService
      */
     public function validateResultGame(LadderEvent $event, AwardDefinition $award, int $userId, int $gameId): ?string
     {
+        $def = $event->definition();
         $historyIds = $event->histories()->pluck('id')->map(fn ($id) => (int) $id)->all();
-        $facts = $this->repo->gameFacts($historyIds, $gameId);
+        $facts = $this->repo->gameFacts($historyIds, $gameId, [$def->starts, $def->ends]);
 
         if ($facts->isEmpty())
         {
@@ -411,6 +412,28 @@ class LadderEventService
             if (!$mine->win || $mine->partnerKey === null || !isset($group[$mine->partnerKey]))
             {
                 return 'Game is not one of the candidate wins for this award';
+            }
+        }
+
+        // Overrides on count awards: the cited game must meet the award's own filters
+        // (days, faction, opponent/partner group, partner rank), and be a win for win awards.
+        if ($award->type === AwardDefinition::TYPE_COUNT)
+        {
+            $ctx = new EventContext(
+                definition: $def,
+                facts: [$mine],
+                streams: [],
+                groups: $this->repo->groups($event, $award->referencedGroups()),
+                standings: isset($award->filters['partner_outside_top']) ? $this->repo->monthlyStandings($historyIds) : [],
+                historyIds: $historyIds,
+                now: Carbon::now('UTC'),
+            );
+            $matches = (new CountCalculator())->matching($award->filters, $award->metric === 'wins', $ctx);
+            if (iterator_to_array($matches, false) === [])
+            {
+                return $award->metric === 'wins'
+                    ? 'Game is not a win for this player that meets the award criteria'
+                    : 'Game does not meet the award criteria';
             }
         }
 

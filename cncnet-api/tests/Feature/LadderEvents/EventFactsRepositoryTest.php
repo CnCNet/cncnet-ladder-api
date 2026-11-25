@@ -187,4 +187,33 @@ class EventFactsRepositoryTest extends TestCase
         $this->assertSame([$beta->id => true], $groups['partner_zedd_beta']);
         $this->assertSame([], $groups['s_class']);
     }
+
+    // FR-008: an admin regrade recreates player_game_reports, so the game's own time is used
+    public function test_played_at_uses_game_time_not_report_time(): void
+    {
+        [$a, $b, $c, $d] = [$this->makeUser('A'), $this->makeUser('B'), $this->makeUser('C'), $this->makeUser('D')];
+        $gameId = $this->addGame([$a, $b], [$c, $d], ['at' => '2026-12-25 18:00:00']);
+        \DB::table('player_game_reports')->where('game_id', $gameId)->update(['created_at' => '2026-12-27 09:00:00']);
+
+        $this->assertSame(strtotime('2026-12-25 18:00:00 UTC'), $this->factsFor($a->id)[0]->playedAt);
+    }
+
+    // Event starts/ends scope games, not just the histories
+    public function test_window_excludes_games_outside_event_dates(): void
+    {
+        [$a, $b, $c, $d] = [$this->makeUser('A'), $this->makeUser('B'), $this->makeUser('C'), $this->makeUser('D')];
+        $before = $this->addGame([$a, $b], [$c, $d], [
+            'at' => '2026-11-30 23:30:00', 'history' => $this->dec, 'qm' => [$a->id => ['live' => true]],
+        ]);
+        $inside = $this->addGame([$a, $b], [$c, $d], ['at' => '2026-12-01 00:00:00', 'qm' => [$a->id => ['live' => true]]]);
+
+        $window = [\Carbon\Carbon::parse('2026-12-01 00:00:00', 'UTC'), \Carbon\Carbon::parse('2027-01-31 23:59:59', 'UTC')];
+
+        $ids = $this->repo->gameFacts($this->historyIds(), null, $window)->pluck('gameId')->unique()->values()->all();
+        $this->assertSame([$inside], $ids);
+        $this->assertContains($before, $this->repo->gameFacts($this->historyIds())->pluck('gameId')->all());
+
+        $this->assertCount(1, $this->repo->streamFacts($this->ladder->id, $this->historyIds(), $window));
+        $this->assertCount(2, $this->repo->streamFacts($this->ladder->id, $this->historyIds()));
+    }
 }

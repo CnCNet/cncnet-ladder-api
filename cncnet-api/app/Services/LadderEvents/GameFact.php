@@ -21,7 +21,7 @@ final class GameFact
         public readonly bool $win,             // FR-005: points > 0
         public readonly bool $draw,
         public readonly ?int $country,         // FR-007: stats2.cty, null without stats
-        public readonly int $playedAt,         // FR-008: unix timestamp of player_game_reports.created_at (UTC)
+        public readonly int $playedAt,         // FR-008: unix timestamp of games.created_at (UTC); report rows are recreated on regrade
     ) {
     }
 }

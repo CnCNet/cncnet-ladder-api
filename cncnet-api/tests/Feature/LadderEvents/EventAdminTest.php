@@ -200,6 +200,33 @@ class EventAdminTest extends TestCase
         $this->assertDatabaseHas('activity_log', ['causer_id' => $this->organiser->id, 'event' => 'unfinalised']);
     }
 
+    // Overrides on count awards must cite a game that meets the award's own filters
+    public function test_override_game_must_meet_award_filters(): void
+    {
+        Queue::fake();
+        [$u, $v, $w, $x] = [$this->makeUser('U'), $this->makeUser('V'), $this->makeUser('W'), $this->makeUser('X')];
+
+        $xmasCubaWin = $this->addGame([[$u, 7], $v], [$w, $x], ['at' => '2026-12-25 18:00:00']);
+        $xmasCubaLoss = $this->addGame([$w, $x], [[$u, 7], $v], ['at' => '2026-12-25 19:00:00']);
+        $januaryCubaWin = $this->addGame([[$u, 7], $v], [$w, $x], ['at' => '2027-01-05 12:00:00']);
+        $xmasKoreaWin = $this->addGame([[$u, 1], $v], [$w, $x], ['at' => '2026-12-25 20:00:00']);
+
+        $post = fn (int $gameId) => $this->asOrganiser()->post($this->base . '/results',
+            ['award_key' => 'santa_cubaus', 'user_id' => $u->id, 'game_id' => $gameId]);
+
+        foreach ([$xmasCubaLoss, $januaryCubaWin, $xmasKoreaWin] as $gameId)
+        {
+            $post($gameId)->assertSessionHasErrors(['game_id' => 'Game is not a win for this player that meets the award criteria']);
+        }
+        $post($xmasCubaWin)->assertSessionHasNoErrors();
+    }
+
+    // Production has no worker on the default queue
+    public function test_recompute_job_uses_a_worked_queue(): void
+    {
+        $this->assertSame('saveladderresult', (new ComputeLadderEventJob($this->event->id))->queue);
+    }
+
     // Recompute job does the same work as the command
     public function test_recompute_job_computes_payload(): void
     {

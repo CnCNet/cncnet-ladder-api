@@ -24,6 +24,9 @@ class ComputeLadderEventJob implements ShouldQueue, ShouldBeUnique
 
     public function __construct(public int $ladderEventId)
     {
+        // Production only runs workers for findmatch and saveladderresult; nothing listens on 'default'.
+        // saveladderresult is the one that isn't latency-critical.
+        $this->onQueue('saveladderresult');
     }
 
     public function uniqueId(): string

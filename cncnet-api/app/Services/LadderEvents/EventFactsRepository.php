@@ -17,9 +17,10 @@ class EventFactsRepository
      * FR-002, FR-004, FR-006, FR-007.
      *
      * @param int[] $historyIds
+     * @param array{0:\Carbon\Carbon,1:\Carbon\Carbon}|null $window event starts/ends; games outside it are excluded
      * @return Collection<int, GameFact>
      */
-    public function gameFacts(array $historyIds, ?int $onlyGameId = null): Collection
+    public function gameFacts(array $historyIds, ?int $onlyGameId = null, ?array $window = null): Collection
     {
         $query = PlayerGameReport::query()
             ->join('game_reports', 'game_reports.id', '=', 'player_game_reports.game_report_id')
@@ -39,7 +40,7 @@ class EventFactsRepository
                 player_game_reports.team AS team,
                 player_game_reports.points AS points,
                 player_game_reports.draw AS draw,
-                player_game_reports.created_at AS created_at,
+                games.created_at AS created_at,
                 stats2.cty AS country,
                 players.username AS username,
                 users.id AS owner_id,
@@ -51,6 +52,8 @@ class EventFactsRepository
         {
             $query->where('games.id', '=', $onlyGameId);
         }
+
+        self::applyWindow($query, $window);
 
         $facts = [];
         $currentGame = null;
@@ -188,7 +191,7 @@ class EventFactsRepository
      * @param int[] $historyIds
      * @return Collection<int, StreamFact>
      */
-    public function streamFacts(int $ladderId, array $historyIds): Collection
+    public function streamFacts(int $ladderId, array $historyIds, ?array $window = null): Collection
     {
         $rows = DB::table('qm_match_players')
             ->join('games', 'games.qm_match_id', '=', 'qm_match_players.qm_match_id')
@@ -204,8 +207,10 @@ class EventFactsRepository
             ->orderBy('games.id')
             ->orderBy('qm_match_players.id')
             ->selectRaw('qm_match_players.is_observer AS is_observer, game_reports.duration AS duration,
-                games.created_at AS created_at, COALESCE(users.primary_user_id, users.id) AS user_key')
-            ->get();
+                games.created_at AS created_at, COALESCE(users.primary_user_id, users.id) AS user_key');
+
+        self::applyWindow($rows, $window);
+        $rows = $rows->get();
 
         return $rows->map(fn ($r) => new StreamFact(
             userKey: (int) $r->user_key,
@@ -278,6 +283,20 @@ class EventFactsRepository
             return null;
         }
         return (int) ($row->primary_user_id ?? $row->id);
+    }
+
+    /** Restrict a query to games played inside the event's starts/ends (inclusive, UTC). */
+    private static function applyWindow($query, ?array $window): void
+    {
+        if ($window === null)
+        {
+            return;
+        }
+        [$from, $to] = $window;
+        $query->whereBetween('games.created_at', [
+            $from->copy()->utc()->format('Y-m-d H:i:s'),
+            $to->copy()->utc()->format('Y-m-d H:i:s'),
+        ]);
     }
 
     private static function timestamp($value): int
