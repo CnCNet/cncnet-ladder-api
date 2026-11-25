@@ -3,15 +3,18 @@
 use App\Http\Services\Replay\ChatFilter;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 return new class extends Migration
 {
     /**
      * Starts the chat filter with a stock English list, so staff do not have to type one in. The list
-     * is database/seed/chat_filter_terms_en.txt, from github.com/coffee-and-fun/google-profanity-words
-     * (MIT). Only seeds an empty list, so it never overwrites words staff have saved.
+     * is downloaded from github.com/coffee-and-fun/google-profanity-words (MIT) rather than kept in
+     * this repository, pinned to one commit so every install gets the same words. Only seeds an empty
+     * list, so it never overwrites words staff have saved.
      */
-    private const FILE = 'seed/chat_filter_terms_en.txt';
+    private const URL = 'https://raw.githubusercontent.com/coffee-and-fun/google-profanity-words/5b2c59a78e777972f5bfafdf0e52919d1b72c99d/data/en.txt';
 
     // Left out because they would flag ordinary game chat: "nob" matches "n00b", "ho" matches "hooo".
     private const SKIP = [
@@ -26,7 +29,19 @@ return new class extends Migration
             return;
         }
 
-        $lines = preg_split('/\r\n|\r|\n/', (string) file_get_contents(database_path(self::FILE)));
+        // A failed download leaves the list empty rather than failing the deploy; staff can still type
+        // words in, or roll this migration back and run it again.
+        try
+        {
+            $response = Http::timeout(30)->retry(3, 1000)->get(self::URL)->throw();
+        }
+        catch (\Throwable $e)
+        {
+            Log::warning('Chat filter word list not seeded: ' . $e->getMessage());
+            return;
+        }
+
+        $lines = preg_split('/\r\n|\r|\n/', $response->body());
 
         // The list spells some words several ways ("5h1t", "s hit", "shit"), which the filter reads as
         // one since it skips spaces and symbols between letters, so keep one of each - the plain
