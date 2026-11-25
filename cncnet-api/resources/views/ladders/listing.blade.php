@@ -50,6 +50,22 @@
 @section('content')
     <section class="pt-3 pb-3">
         <div class="container-xl">
+            @foreach ($eventLinks ?? [] as $eventLink)
+                <a href="{{ $eventLink['url'] }}" class="alert alert-info d-flex flex-wrap align-items-center justify-content-between gap-2 text-decoration-none" data-event-link="{{ $eventLink['slug'] }}">
+                    <span>
+                        <strong>🏆 {{ $eventLink['name'] }}</strong>
+                        @if ($eventLink['phase'] === 'upcoming')
+                            · Starts {{ $eventLink['starts']->format('j M Y') }}
+                        @elseif ($eventLink['phase'] === 'live')
+                            · Live now until {{ $eventLink['ends']->format('j M Y') }}
+                        @else
+                            · {{ $eventLink['starts']->format('j M') }} – {{ $eventLink['ends']->format('j M Y') }}
+                        @endif
+                    </span>
+                    <span class="fw-bold">{{ $eventLink['phase'] === 'ended' ? 'View results' : 'View prize leaders' }} →</span>
+                </a>
+            @endforeach
+
             @if ($history->ladder->qmLadderRules->tier2_rating > 0)
                 <div class="league-selection">
                     <a href="{{ \App\Models\UrlHelper::getLadderLeague($history, 1) }}" title="{{ $history->ladder->name }}" class="league-box tier-1">

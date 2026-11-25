@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
             'restrict' => \App\Http\Middleware\Restrict::class,
             'group' => \App\Http\Middleware\Group::class,
+            'event.ladder' => \App\Http\Middleware\ResolveLadderEvent::class,
         ]);
     })
     ->withSchedule(function (Schedule $schedule) {
@@ -61,6 +62,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('clear_inactive_queue_entries')->everyMinute();
         $schedule->command('qm:detect-failed-launches')
             ->everyTenMinutes();
+
+        // Ladder event dashboards: recompute live / pending_final events
+        $schedule->command('events:compute')
+            ->everyFiveMinutes()
+            ->withoutOverlapping(10)
+            ->onOneServer();
     })
     ->withExceptions(function (Exceptions $exceptions) {
 
