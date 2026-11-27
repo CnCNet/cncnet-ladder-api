@@ -139,6 +139,11 @@ class GetGameDetailAction
         $viewData['replayStaff'] = $authenticatedUser !== null && ($authenticatedUser->isModerator()
             || $authenticatedUser->isLadderAdmin($history->ladder) || $authenticatedUser->isLadderMod($history->ladder));
 
+        // The Connection card is staff only; drop its data too, or it would still reach the page's JSON.
+        if (!$viewData['replayStaff'] && is_array($viewData['replayStats'])) {
+            unset($viewData['replayStats']['connection']);
+        }
+
         // Staff only, and never read for anyone else, so the chat cannot reach a page by mistake.
         $viewData['replayChat'] = $viewData['replayStaff'] ? $this->getReplayChat($game) : null;
 
@@ -201,11 +206,12 @@ class GetGameDetailAction
     }
 
     /**
-     * Statistics read from the game's replay, shown to whoever the ladder lets download its replays.
+     * Statistics read from the game's replay: public when the ladder lets everyone download its
+     * replays, otherwise shown to whoever may download them.
      */
     private function getReplayStats(Game $game, LadderHistory $history, ?Authenticatable $user): ?array
     {
-        if (!$history->ladder->allowedToDownloadReplays($user)) {
+        if (!$history->ladder->allowedToSeeReplayStats($user)) {
             return null;
         }
 

@@ -63,6 +63,18 @@ class Ladder extends Model
         return $tier === QmLadderRules::REPLAYS_TESTERS && $user->isLadderTester($this);
     }
 
+    /**
+     * The statistics read from a replay: public, signed in or not, when the ladder's replay tier is
+     * set to all. Otherwise the same people who may download the replays.
+     */
+    public function allowedToSeeReplayStats($user)
+    {
+        if ((int) optional($this->qmLadderRules)->replays === QmLadderRules::REPLAYS_ALL)
+            return true;
+
+        return $this->allowedToDownloadReplays($user);
+    }
+
     public function currentHistory() : ?LadderHistory
     {
         $start = now()->startOfMonth()->toDateTimeString();
