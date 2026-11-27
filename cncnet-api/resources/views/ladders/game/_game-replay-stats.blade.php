@@ -1,6 +1,6 @@
 {{--
     Statistics read out of the game's replay: see ReplayStatsBuilder for what each figure means.
-    Only rendered when the ladder lets this viewer download its replays. In a team game one toggle
+    Only rendered when the ladder lets this viewer see them (Ladder::allowedToSeeReplayStats). In a team game one toggle
     at the top switches every section between the players and their teams.
 --}}
 @if (!empty($replayStats))
